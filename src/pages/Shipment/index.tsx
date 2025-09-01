@@ -10,7 +10,7 @@ import dayjs from "dayjs";
 import FullWidthTextField from "../../components/MUI/FullWidthTextField";
 import DesktopDatePickers from "../../components/MUI/DesktopDatePicker";
 import BasicChips from "../../components/MUI/BasicChips";
-import { Box, Button, Divider, Paper, styled,Typography } from "@mui/material";
+import { Box, Button, Divider, Paper, styled, Typography } from "@mui/material";
 import ActionManageCell from "../../components/MUI/ActionManageCell";
 import { useAuth } from "../../auth/core/AuthContext";
 import EnhancedTable from "../../components/MUI/DataTable";
@@ -28,6 +28,7 @@ import ComplaintInsert from "./components/ComplaintInsert";
 import { log } from "node:console";
 import { v4 as uuidv4 } from "uuid";
 import { cleanAccessData } from "../../service/initmain/initmain";
+import CompalintView from "./components/ComplaintView";
 
 
 type Launch = {
@@ -43,7 +44,7 @@ interface LovType {
   lov1: string;
 };
 
-interface Complaint{
+interface Complaint {
   id: string;
   cas_number: string;
   product_name: string;
@@ -51,7 +52,7 @@ interface Complaint{
 
 export default function Complaint() {
   const {
-    
+
     Complaint_no,
     no,
     cas_number,
@@ -101,8 +102,8 @@ export default function Complaint() {
     update_by,
     update_datetime,
     ComplaintStatusID_Combobox,
-    dataReportType_Combobox,
-    dataReportTypeValue_Combobox,
+    dataReportType,
+    dataReportTypeValue,
     dataComplaintTypeValue_Combobox,
     dataComplaintType_Combobox,
     dataComplaintRsValue_Combobox,
@@ -115,9 +116,9 @@ export default function Complaint() {
     PriorityLevel,
     clauseOther,
     phoTypeOther,
-    
 
-    
+
+
     setComplaint_no,
     setno,
     setcas_number,
@@ -169,21 +170,22 @@ export default function Complaint() {
     setupdate_by,
     setupdate_datetime,
     setComplaintStatusID_Combobox,
-    setdataReportTypeValue_Combobox,
+    setdataReportType,
+    setdataReportTypeValue,
     setdataComplaintType_Combobox,
     setdataComplaintTypeValue_Combobox,
     setdataComplaintRs_Combobox,
     setdataComplaintRsValue_Combobox,
     setdataphoto_Combobox,
     setdataphotoValue_Combobox,
-    setdataReportType_Combobox,
+
     setdatapriorityValue_Combobox,
     setdatapriority_Combobox,
     setdatapriority,
     setPriorityLevel,
     setclauseOther,
     setphoTypeOther,
-    
+
 
 
   } = useListComplaint()
@@ -232,10 +234,6 @@ export default function Complaint() {
 
   //------------Start Get service refresh -------------//
   React.useEffect(() => {
-
-
-    
-    
     Complaint_Get();
     ReportType_Get();
     ComplaintType_Get();
@@ -255,9 +253,10 @@ export default function Complaint() {
       const response = await _POST(dataset, "/Lov/LovGet");
 
       if (response && response.status === "success") {
-        console.log("@@@@ success success success success success success success");
+        console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ :",response.data," @@@@@@@@@@@@@@@@@@@@");
 
-        setdataReportType_Combobox && setdataReportType_Combobox(response.data);
+        setdataReportType(response.data);
+        // setdataReportType && setdataReportType(response.data);
       }
     } catch (e) {
       console.log("error:", e);
@@ -335,7 +334,7 @@ export default function Complaint() {
     }
   }
 
-  const setData = (data : any) => {
+  const setData = (data: any) => {
 
 
 
@@ -344,251 +343,61 @@ export default function Complaint() {
     setno('')
     setcas_number('')
   }
-  // const Pack_unit_Get = async () => {
-  //   try {
-  //     const dataset = {
-  //       lov_type: "Pack_unit"
-
-  //     }
-  //     const response = await _POST(dataset, "/Lov/LovGet");
-
-  //     if (response && response.status === "success") {
-
-  //       setDataPackUnit_Combobox && setDataPackUnit_Combobox(response.data);
-  //     }
-  //   } catch (e) {
-  //     console.log("error:", e);
-  //   }
-  // }
-
-  // const Company_Get = async () => {
-  //   try {
-  //     const dataset = {
-  //       lov_type: "Company"
-
-  //     }
-  //     const response = await _POST(dataset, "/Lov/LovGet");
-
-  //     if (response && response.status === "success") {
-
-  //       setDataCompany_Combobox && setDataCompany_Combobox(response.data);
-  //     }
-  //   } catch (e) {
-  //     console.log("error:", e);
-  //   }
-  // }
-
-  // React.useEffect(() => {
-  //   Product_Get();
-  // }, [dataGroupProductValue_Combobox]);
-
-  // const Product_Get = async () => {
-  //   try {
-  //     const dataset = {
-  //       prod_group: dataGroupProductValue_Combobox?.id ? dataGroupProductValue_Combobox.id : null
-
-  //     }
-  //     const response = await _POST(dataset, "/Product/ProductGet");
-
-  //     if (response && response.status === "success") {
-  //       const filtered = response.data.filter(
-  //         (item: any) => item.prod_group !== null && item.prod_group !== ""
-  //       );
-  //       setDataProductValue_Combobox && setDataProductValue_Combobox(null);
-  //       setDataProduct_Combobox && setDataProduct_Combobox(filtered);
-  //     }
-  //   } catch (e) {
-  //     console.log("error:", e);
-  //   }
-  // }
 
   //----------------Call : Complaint_Get -----------------//
-  // const Complaint_Get = async () => {
-  //   setIsLoadingScreen(true)
-  //   const dataset = {
-  //     id : no,
-  //     cas_number: TextNameSearch.cas_number,
-  //     //Complaint_no: Complaint_no ? Complaint_no : null,
-  //     // truck_plate_main: truck_plate_main ? truck_plate_main : null,
-  //     // truck_plate_sub: truck_plate_sub ? truck_plate_sub : null,
-  //     // prod_group_id: dataGroupProductValue_Combobox?.id ? dataGroupProductValue_Combobox.id : null,
-  //     //product_id: dataProductValue_Combobox?.id ? dataProductValue_Combobox.id : null,
-
-  //   }
-
-
-  //   try {
-  //     let response = await _POST(dataset, "/Complaint/ComplaintGet");
-  //     console.log(response, "response_Get");
-  //     if (response && response.status == "success") {
-  //       setIsLoadingScreen(false)
-  //       const responseData: any = [];
-  //       Array.isArray(response.data) &&
-  //         response.data.forEach((el: any) => {
-  //           const ACTION = (
-  //             <ActionManageCell hadleOnclickMenu={(name: any) => {
-  //               if (name == "View") {
-  //                 hadleOnclickMenuView(el);
-  //               }
-  //               if (name == "Edit") {
-  //                 hadleOnclickMenuEdit(el);
-  //               }
-  //               if (name == "Delete") {
-  //                 hadleOnclickMenuDelete(el);
-  //               }
-  //               // if (name == "Print") {
-  //               //   hadleOnclickMenuPrint(el);
-  //               // }
-  //             }}
-  //               hiddenEdit={!statusMode.some((mode: any) =>
-  //                 mode.lov_code === el.launch_status && mode.lov5.split(",").includes("Edit")
-  //               )}
-  //               hiddenDelete={!statusMode.some((mode: any) =>
-  //                 mode.lov_code === el.launch_status && mode.lov5.split(",").includes("Delete"))}
-  //             />
-  //           );
-  //           el.truck_plate_all = el.truck_plate_main + (el.truck_plate_sub != null ? " / " + el.truck_plate_sub : "")
-  //           el.final_mois_result = el.final_mois ? el.final_mois : "-"
-  //           el.net_wt_result = el.net_wt ? el.net_wt : "-"
-  //           el.Complaint_status_id = (
-  //             <BasicChips label={`${el.Complaint_status_id}`}></BasicChips>
-  //           );
-  //           el.data_detail.forEach((element: any) => {
-  //             const ACTION_DETAIL = (
-  //               <ActionManageCell hadleOnclickMenu={(name: any) => {
-  //                 if (name == "View") {
-  //                   hadleOnclickMenuView(el);
-  //                 }
-  //                 if (name == "Edit") {
-  //                   hadleOnclickMenuEdit(el);
-  //                 }
-  //                 if (name == "Delete") {
-  //                   hadleOnclickMenuDelete(el);
-  //                 }
-  //                 // if (name == "Print") {
-  //                 //   hadleOnclickMenuPrint(el);
-  //                 // }
-  //               }}
-  //                 hiddenEdit={!statusMode.some((mode: any) =>
-  //                   mode.lov_code === el.launch_status && mode.lov5.split(",").includes("Edit")
-  //                 )}
-  //                 hiddenDelete={!statusMode.some((mode: any) =>
-  //                   mode.lov_code === el.launch_status && mode.lov5.split(",").includes("Delete"))}
-  //               />
-  //             );
-  //             element.ACTION_DETAIL = ACTION_DETAIL;
-  //           });
-
-  //           el.ACTION = ACTION;
-
-  //           responseData.push(el);
-  //         });
-
-  //       setdatalist(responseData);
-  //     }
-  //   } catch (e) {
-  //     console.log("error");
-  //   }
-  // };
-
-
   const Complaint_Get = async () => {
-  setIsLoadingScreen(true);
+    setIsLoadingScreen(true)
+    const dataset = {
+      cas_number: TextNameSearch.cas_number,
+      product_name: TextNameSearch.product_name,
+      lot_no: TextNameSearch.lot_no,
+      //Complaint_no: Complaint_no ? Complaint_no : null,
+      // truck_plate_main: truck_plate_main ? truck_plate_main : null,
+      // truck_plate_sub: truck_plate_sub ? truck_plate_sub : null,
+      // prod_group_id: dataGroupProductValue_Combobox?.id ? dataGroupProductValue_Combobox.id : null,
+      //product_id: dataProductValue_Combobox?.id ? dataProductValue_Combobox.id : null,
 
-  const dataset = {
-    id: no,
-    cas_number: TextNameSearch.cas_number,
-  };
+    }
 
-  try {
-    let response = await _POST(dataset, "/Complaint/ComplaintGet");
-    console.log(response, "response_Get");
 
-    if (response && response.status === "success") {
-      setIsLoadingScreen(false);
+    try {
+      let response = await _POST(dataset, "/Complaint/ComplaintGet");
+      console.log(response, "response_Get");
+      if (response && response.status === "success") {
+        setIsLoadingScreen(false);
 
-      const responseData: any[] = [];
+        const responseData: any = [];
 
-      if (Array.isArray(response.data)) {
-        response.data.forEach((el: any) => {
-          // action menu
-          const ACTION = (
-            <ActionManageCell
-              hadleOnclickMenu={(name: any) => {
-                if (name === "View") hadleOnclickMenuView(el);
-                if (name === "Edit") hadleOnclickMenuEdit(el);
-                if (name === "Delete") hadleOnclickMenuDelete(el);
-              }}
-              hiddenEdit={
-                !statusMode.some(
-                  (mode: any) =>
-                    mode.lov_code === el.launch_status &&
-                    mode.lov5.split(",").includes("Edit")
-                )
-              }
-              hiddenDelete={
-                !statusMode.some(
-                  (mode: any) =>
-                    mode.lov_code === el.launch_status &&
-                    mode.lov5.split(",").includes("Delete")
-                )
-              }
-            />
-          );
-
-          // เพิ่ม field display
-          el.truck_plate_all =
-            el.truck_plate_main +
-            (el.truck_plate_sub != null ? " / " + el.truck_plate_sub : "");
-          el.final_mois_result = el.final_mois || "-";
-          el.net_wt_result = el.net_wt || "-";
-          el.Complaint_status_id = (
-            <BasicChips label={`${el.Complaint_status_id}`} />
-          );
-
-          // safe check data_detail
-          if (Array.isArray(el.data_detail)) {
-            el.data_detail.forEach((element: any) => {
-              const ACTION_DETAIL = (
-                <ActionManageCell
-                  hadleOnclickMenu={(name: any) => {
-                    if (name === "View") hadleOnclickMenuView(el);
-                    if (name === "Edit") hadleOnclickMenuEdit(el);
-                    if (name === "Delete") hadleOnclickMenuDelete(el);
-                  }}
-                  hiddenEdit={
-                    !statusMode.some(
-                      (mode: any) =>
-                        mode.lov_code === el.launch_status &&
-                        mode.lov5.split(",").includes("Edit")
-                    )
+        if (Array.isArray(response.data)) {
+          response.data.forEach((el: any) => {
+            const ACTION = (
+              <ActionManageCell
+                hadleOnclickMenu={(name: any) => {
+                  if (name === "View") {
+                    console.log(name, 'namenamenamenamename');
+                    hadleOnclickMenuView(el);
+                  } else if (name === "Edit") {
+                    hadleOnclickMenuEdit(el);
+                  } else if (name === "Delete") {
+                    hadleOnclickMenuDelete(el);
                   }
-                  hiddenDelete={
-                    !statusMode.some(
-                      (mode: any) =>
-                        mode.lov_code === el.launch_status &&
-                        mode.lov5.split(",").includes("Delete")
-                    )
-                  }
-                />
-              );
-              element.ACTION_DETAIL = ACTION_DETAIL;
-            });
-          }
+                }}
+              />
+            );
 
-          el.ACTION = ACTION;
-          responseData.push(el);
-        });
+            el.ACTION = ACTION;
+            responseData.push(el);
+          });
+        }
+
+        setdatalist(responseData);
+
       }
 
-      console.log("responseData after mapping:", responseData);
-      setdatalist(responseData);
+    } catch (e) {
+      console.log("error");
     }
-  } catch (e) {
-    console.error("error", e);
-    setIsLoadingScreen(false);
-  }
-};
+  };
 
   type Block = {
     id: any,
@@ -650,418 +459,411 @@ export default function Complaint() {
 
     return details;
   }
-  
-  
 
 
-//----------------Call : validate -----------------//
-// const validate = async () => {
-//   const setObj = {
-//     Product_Group: !dataGroupProductValue_Combobox,
-//   }
-//   setValidateText(setObj)
-//   return setObj
-// }
-
-// const validate_detail = (blocks: Block[]) => {
-//   const validationResults: { [index: number]: data_detail } = {};
-
-//   blocks.forEach((block, index) => {
-//     validationResults[index] = {
-//       qty: !block.qty,
-//     };
-//   });
-
-//   setBlockValidateErrors(validationResults);
-
-//   const isValid = Object.values(validationResults).every(block =>
-//     Object.values(block).every(v => v === true)
-//   );
-
-//   return { isValid, validationResults };
-// };
 
 
-function compTypeUpdateCompId(dataComplaintTypeValue_Combobox: any, complaintid: string, compTypeOther: string) {
-  
-  const updatedData = dataComplaintTypeValue_Combobox.map((item: any) => {
-    return {
+  //----------------Call : validate -----------------//
+  // const validate = async () => {
+  //   const setObj = {
+  //     Product_Group: !dataGroupProductValue_Combobox,
+  //   }
+  //   setValidateText(setObj)
+  //   return setObj
+  // }
+
+  // const validate_detail = (blocks: Block[]) => {
+  //   const validationResults: { [index: number]: data_detail } = {};
+
+  //   blocks.forEach((block, index) => {
+  //     validationResults[index] = {
+  //       qty: !block.qty,
+  //     };
+  //   });
+
+  //   setBlockValidateErrors(validationResults);
+
+  //   const isValid = Object.values(validationResults).every(block =>
+  //     Object.values(block).every(v => v === true)
+  //   );
+
+  //   return { isValid, validationResults };
+  // };
+
+
+  function compTypeUpdateCompId(dataComplaintTypeValue_Combobox: any, complaintid: string, compTypeOther: string) {
+
+    const updatedData = dataComplaintTypeValue_Combobox.map((item: any) => {
+      return {
         ...item,
         complaint_id: complaintid,
         other: compTypeOther != null && compTypeOther != '' ? compTypeOther : null
       };
     });
 
-  return updatedData;
-}
+    return updatedData;
+  }
 
-function compRsUpdateCompId(dataComplaintRsValue_Combobox: any, complaintid: string, compRsOther: string, clauseOther: string ) {
-  
-  const updatedData = dataComplaintRsValue_Combobox.map((item: any) => {
-  return {
-      ...item,
-      complaint_id: complaintid,
-      other: compRsOther != null && compRsOther != '' ? compRsOther : null,
-      clause: clauseOther != null && clauseOther != '' ? clauseOther : null
-    };
-  });
+  function compRsUpdateCompId(dataComplaintRsValue_Combobox: any, complaintid: string, compRsOther: string, clauseOther: string) {
 
-  return updatedData;
-}
+    const updatedData = dataComplaintRsValue_Combobox.map((item: any) => {
+      return {
+        ...item,
+        complaint_id: complaintid,
+        other: compRsOther != null && compRsOther != '' ? compRsOther : null,
+        clause: clauseOther != null && clauseOther != '' ? clauseOther : null
+      };
+    });
 
-function compFileUpdateCompId(dataphotoValue_Combobox: any, complaintid: string, phoTypeOther: string) {
-  
-  const updatedData = dataphotoValue_Combobox.map((item: any) => {
-    return {
+    return updatedData;
+  }
+
+  function compFileUpdateCompId(dataphotoValue_Combobox: any, complaintid: string, phoTypeOther: string) {
+
+    const updatedData = dataphotoValue_Combobox.map((item: any) => {
+      return {
         ...item,
         complaint_id: complaintid,
         other: phoTypeOther != null && phoTypeOther != '' ? phoTypeOther : null
       };
     });
 
-  return updatedData;
-}
-
-// ----------------Call : Complaint_Add -----------------//
-const Report_Add = async () => {
-  
-  console.log("################### TEST UUID DATA :", uuidv4(), "###################");
-  console.log("datapriorityValue_Combobox", datapriorityValue_Combobox, "###################");
-  
-  
-  var tempid = uuidv4();
-
-  var complainttypeModel
-  var complaintRsModel
-  var complaintFileModel
-
-  if (dataComplaintTypeValue_Combobox != null) {
-    complainttypeModel = compTypeUpdateCompId(dataComplaintTypeValue_Combobox, tempid, compTypeOther);
+    return updatedData;
   }
 
-  if (dataComplaintRsValue_Combobox != null) {
-    complaintRsModel = compRsUpdateCompId(dataComplaintRsValue_Combobox, tempid, compRsOther, clauseOther);
-  }
-  
-  if (dataphotoValue_Combobox != null) {
-    complaintFileModel = compFileUpdateCompId(dataphotoValue_Combobox, tempid, phoTypeOther, );
-  }
+  // ----------------Call : Complaint_Add -----------------//
+  const Report_Add = async () => {
 
-  const dataset = {
-    complaintModel: {
-      id: tempid,
-      cas_number: cas_number,
-      //  doc_date: "2025-08-26T14:37:35.707",
-      date_of_detection: "2025-08-26T07:37:35.73",
-
-      //User Profile
-      request_name: "LKORN",
-      request_company_id: 8,
-      request_domain_id: "UwD",
-      request_department_id: 10,
-      request_position: "it",
-      request_email: "eBpie@gmail.com",
-      request_date: "2025-08-26T14:37:35.707",
-
-      //User Target
-      respondent_company_id: 10,
-      respondent_domain_id: "mkf",
-      respondent_department_id: 3,
-      respondent_email: "mqgcW@gmail.com",
-      respondent_other_name: "qnN",
-      respondent_other_email: "UigEP@gmail.com",
-
-      area_of_detection_dept: area_of_detection_dept,
-      product_name: product_name,
-      detail: detail,
-      priority_level: datapriorityValue_Combobox,
-      respond_date_within: "2025-08-26T07:37:35.73",
-      lot_no: lot_no,
-      complaint_status_id: "TRR_CS_SUBMIT",
-      create_by: "Kittiwin",
-      action_type: null
-    },
-    ComplaintType: complainttypeModel,
-    ComplaintRs: complaintRsModel,
-    ComplaintFile: complaintFileModel
-  }
-  console.log(dataset, 'datasetdatasetdataset');
-  console.log("newdataaaaaaa", complainttypeModel);
-  console.log("newdatRs", complaintRsModel);
-  console.log("newdatFilea", complaintFileModel);
-
-  setIsLoadingScreen(true)
+    console.log("################### TEST UUID DATA :", uuidv4(), "###################");
+    console.log("datapriorityValue_Combobox", datapriorityValue_Combobox, "###################");
 
 
-  try {
-    let response = await await _POST(dataset, "/Complaint/ComplaintAdd");
-    if (response && response.status == "success") {
-      setIsLoadingScreen(false)
+    var tempid = uuidv4();
 
-      console.log("dataadd", response.data)
-      // FullSweetalert({
-      //   title: 'Success',
-      //   text: `จำนวนเพิ่มข้อมูล : ${response.countAddSuccess} รายการ
-      //         <br/>
-      //         จำนวนอัพเดทข้อมูล ComplaintOrder : ${response.countUpdateSuccess} รายการ
-      //         <br/>
-      //         จำนวนเพิ่มข้อมูล ComplaintOrder : ${response.countAddOrderSuccess} รายการ
-      //   `,
-      //   icon: 'success'
-      // });
+    var complainttypeModel
+    var complaintRsModel
+    var complaintFileModel
 
-      //=================================================================================
-
-      // เรียกใช้งานฟังก์ชัน  Update Current Access Event Name
-      // updateSessionStorageCurrentAccess("event_name", "Add/Master_Service_Staff_Add");
-
-      // เตรียมข้อมูลสำหรับใช้ในการ Validate
-      // const dataForValidate = {
-      //   staffName: resultData.staffName,
-      //   staffCode: resultData.staffCode,
-      //   costCenter: resultData.costCenter,
-      //   staffPosition: resultData.staffPosition,
-      //   staffJobType: resultData.staffJobType,
-      // };
-
-      // const isValidate = checkValidate(dataForValidate, ["costCenter"]);
-      // const isValidateAll = isCheckValidateAll(isValidate);
-
-      // if (Object.keys(isValidateAll).length > 0 && isValidationEnabled) {
-      //   console.log(isValidateAll);
-      //   setIsValidate(isValidate);
-      //   return;
-      // }
-
-      // setIsValidate(null);
-
-      //=================================================================================
-
-    } else {
-      setIsLoadingScreen(false)
+    if (dataComplaintTypeValue_Combobox != null) {
+      complainttypeModel = compTypeUpdateCompId(dataComplaintTypeValue_Combobox, tempid, compTypeOther);
     }
 
-    //handleClose()
-  } catch (e) {
-    console.log("error");
-    setIsLoadingScreen(false)
-  }
-};
+    if (dataComplaintRsValue_Combobox != null) {
+      complaintRsModel = compRsUpdateCompId(dataComplaintRsValue_Combobox, tempid, compRsOther, clauseOther);
+    }
 
-//----------------Call : Complaint_Upload -----------------//
-// const Complaint_Upload = async () => {
-//   if (!selectedFile) {
-//     alert("กรุณาเลือกไฟล์ก่อนอัพโหลด");
-//     return;
-//   }
-//   setIsLoadingScreen(true)
+    if (dataphotoValue_Combobox != null) {
+      complaintFileModel = compFileUpdateCompId(dataphotoValue_Combobox, tempid, phoTypeOther,);
+    }
 
-//   const formData = new FormData();
-//   formData.append('file', selectedFile);
-//   formData.append("ComplaintUploadModel.file", selectedFile);
-//   formData.append("CurrentAccessModel.user_id", userData?.[0]?.employee_username?.toString() ?? "");
+    const dataset = {
+      complaintModel: {
+        id: tempid,
+        cas_number: cas_number,
+        //  doc_date: "2025-08-26T14:37:35.707",
+        date_of_detection: "2025-08-26T07:37:35.73",
 
-//   try {
-//     let response = await await _POST_FORMDATA(formData, "/Complaint/ComplaintUploadFile");
-//     if (response && response.status == "success") {
-//       setIsLoadingScreen(false)
-//       FullSweetalert({
-//         title: 'Success',
-//         text: `จำนวนเพิ่มข้อมูล : ${response.countAddSuccess} รายการ
-//               <br/>
-//               จำนวนอัพเดทข้อมูล ComplaintOrder : ${response.countUpdateSuccess} รายการ
-//               <br/>
-//               จำนวนเพิ่มข้อมูล ComplaintOrder : ${response.countAddOrderSuccess} รายการ
-//         `,
-//         icon: 'success'
-//       });
-//     }
+        //User Profile
+        request_name: "LKORN",
+        request_company_id: 8,
+        request_domain_id: "UwD",
+        request_department_id: 10,
+        request_position: "it",
+        request_email: "eBpie@gmail.com",
+        request_date: "2025-08-26T14:37:35.707",
 
-//     handleClose()
-//   } catch (e) {
-//     console.log("error");
-//   }
-// };
+        //User Target
+        respondent_company_id: 10,
+        respondent_domain_id: "mkf",
+        respondent_department_id: 3,
+        respondent_email: "mqgcW@gmail.com",
+        respondent_other_name: "qnN",
+        respondent_other_email: "UigEP@gmail.com",
 
-//----------------Call : Complaint_Print -----------------//
-// const Complaint_Print = async (data: any) => {
-//   const dataset = {
+        area_of_detection_dept: area_of_detection_dept,
+        product_name: product_name,
+        detail: detail,
+        priority_level: datapriorityValue_Combobox,
+        respond_date_within: "2025-08-26T07:37:35.73",
+        lot_no: lot_no,
+        complaint_status_id: "TRR_CS_SUBMIT",
+        create_by: "Kittiwin",
+        action_type: null,
+        ComplaintType: complainttypeModel,
+        ComplaintRs: complaintRsModel,
+        ComplaintFile: complaintFileModel
+      },
 
-//     "no": data?.no ? data.no : null,
-//     "LogoUrl": import.meta.env.VITE_APP_TRR_URL_LOGO
+    }
+    console.log(dataset, 'datasetdatasetdataset');
+    console.log("newdataaaaaaa", complainttypeModel);
+    console.log("newdatRs", complaintRsModel);
+    console.log("newdatFilea", complaintFileModel);
 
-//   }
-
-//   try {
-//     let response = await await _POST(dataset, "/Print/SendPrint");
-//     console.log(response, "response_Get");
-//     if (response && response.status == "success") {
-//       setIsLoadingScreen(false)
-
-//     }
-
-//   } catch (e) {
-//     console.log("error");
-//   }
-// };
+    setIsLoadingScreen(true)
 
 
-const hadleOnclickMenuSync = () => {
-  setOpenSync(true);
-};
-const hadleOnclickMenuAdd = () => {
-  setOpenAdd(true);
-};
-const hadleOnclickMenuView = (data: any) => {
-  setOpenView(true);
-  setdataelement(data);
-};
-const hadleOnclickMenuEdit = (data: any) => {
-  setOpenEdit(true);
-  setdataelement(data);
-};
-const hadleOnclickMenuDelete = (data: any) => {
-  setOpenDelete(true);
-  setdataelement(data);
-};
-// const hadleOnclickMenuPrint = (data: any) => {
-//   Complaint_Print(data);
-// };
-const hadleOnclickMenuUpload = () => {
-  setOpenUpload(true);
-};
+    try {
+      let response = await await _POST(dataset, "/Complaint/ComplaintAdd");
+      if (response && response.status == "success") {
+        setIsLoadingScreen(false)
 
-const handleTableButtonClick = (func_name: string) => {
-  switch (func_name) {
-    case 'Add':
-      hadleOnclickMenuAdd();
-      break;
-    case 'Upload':
-      hadleOnclickMenuUpload();
-      break;
-    case 'Print':
-      console.log("Print clicked");
-      break;
-    default:
-      console.warn("No handler for", func_name);
-  }
-};
+        console.log("dataadd", response.data)
+        // FullSweetalert({
+        //   title: 'Success',
+        //   text: `จำนวนเพิ่มข้อมูล : ${response.countAddSuccess} รายการ
+        //         <br/>
+        //         จำนวนอัพเดทข้อมูล ComplaintOrder : ${response.countUpdateSuccess} รายการ
+        //         <br/>
+        //         จำนวนเพิ่มข้อมูล ComplaintOrder : ${response.countAddOrderSuccess} รายการ
+        //   `,
+        //   icon: 'success'
+        // });
+
+        //=================================================================================
+
+        // เรียกใช้งานฟังก์ชัน  Update Current Access Event Name
+        // updateSessionStorageCurrentAccess("event_name", "Add/Master_Service_Staff_Add");
+
+        // เตรียมข้อมูลสำหรับใช้ในการ Validate
+        // const dataForValidate = {
+        //   staffName: resultData.staffName,
+        //   staffCode: resultData.staffCode,
+        //   costCenter: resultData.costCenter,
+        //   staffPosition: resultData.staffPosition,
+        //   staffJobType: resultData.staffJobType,
+        // };
+
+        // const isValidate = checkValidate(dataForValidate, ["costCenter"]);
+        // const isValidateAll = isCheckValidateAll(isValidate);
+
+        // if (Object.keys(isValidateAll).length > 0 && isValidationEnabled) {
+        //   console.log(isValidateAll);
+        //   setIsValidate(isValidate);
+        //   return;
+        // }
+
+        // setIsValidate(null);
+
+        //=================================================================================
+
+      } else {
+        setIsLoadingScreen(false)
+      }
+
+      //handleClose()
+    } catch (e) {
+      console.log("error");
+      setIsLoadingScreen(false)
+    }
+  };
+
+  //----------------Call : Complaint_Upload -----------------//
+  // const Complaint_Upload = async () => {
+  //   if (!selectedFile) {
+  //     alert("กรุณาเลือกไฟล์ก่อนอัพโหลด");
+  //     return;
+  //   }
+  //   setIsLoadingScreen(true)
+
+  //   const formData = new FormData();
+  //   formData.append('file', selectedFile);
+  //   formData.append("ComplaintUploadModel.file", selectedFile);
+  //   formData.append("CurrentAccessModel.user_id", userData?.[0]?.employee_username?.toString() ?? "");
+
+  //   try {
+  //     let response = await await _POST_FORMDATA(formData, "/Complaint/ComplaintUploadFile");
+  //     if (response && response.status == "success") {
+  //       setIsLoadingScreen(false)
+  //       FullSweetalert({
+  //         title: 'Success',
+  //         text: `จำนวนเพิ่มข้อมูล : ${response.countAddSuccess} รายการ
+  //               <br/>
+  //               จำนวนอัพเดทข้อมูล ComplaintOrder : ${response.countUpdateSuccess} รายการ
+  //               <br/>
+  //               จำนวนเพิ่มข้อมูล ComplaintOrder : ${response.countAddOrderSuccess} รายการ
+  //         `,
+  //         icon: 'success'
+  //       });
+  //     }
+
+  //     handleClose()
+  //   } catch (e) {
+  //     console.log("error");
+  //   }
+  // };
+
+  //----------------Call : Complaint_Print -----------------//
+  // const Complaint_Print = async (data: any) => {
+  //   const dataset = {
+
+  //     "no": data?.no ? data.no : null,
+  //     "LogoUrl": import.meta.env.VITE_APP_TRR_URL_LOGO
+
+  //   }
+
+  //   try {
+  //     let response = await await _POST(dataset, "/Print/SendPrint");
+  //     console.log(response, "response_Get");
+  //     if (response && response.status == "success") {
+  //       setIsLoadingScreen(false)
+
+  //     }
+
+  //   } catch (e) {
+  //     console.log("error");
+  //   }
+  // };
 
 
-const handleCloseSearch = () => {
-  setdataReportTypeValue_Combobox("");
-  setdataComplaintTypeValue_Combobox("");
-  setdataComplaintRsValue_Combobox("");
-  setdataphotoValue_Combobox("");
-  setTextNameSearch({
-    cas_number: "",
-    doc_date: "",
-    product_name: "",
-    lot_no: "",
-  });
+  const hadleOnclickMenuSync = () => {
+    setOpenSync(true);
+  };
+  const hadleOnclickMenuAdd = () => {
+    setOpenAdd(true);
+  };
+  const hadleOnclickMenuView = (data: any) => {
+    setOpenView(true);
+    setdataelement(data);
+  };
+  const hadleOnclickMenuEdit = (data: any) => {
+    setOpenEdit(true);
+    setdataelement(data);
+  };
+  const hadleOnclickMenuDelete = (data: any) => {
+    setOpenDelete(true);
+    setdataelement(data);
+  };
+  // const hadleOnclickMenuPrint = (data: any) => {
+  //   Complaint_Print(data);
+  // };
+  const hadleOnclickMenuUpload = () => {
+    setOpenUpload(true);
+  };
 
-};
+  const handleTableButtonClick = (func_name: string) => {
+    switch (func_name) {
+      case 'Add':
+        hadleOnclickMenuAdd();
+        break;
+      case 'Upload':
+        hadleOnclickMenuUpload();
+        break;
+      case 'Print':
+        console.log("Print clicked");
+        break;
+      default:
+        console.warn("No handler for", func_name);
+    }
+  };
 
 
-const handleClose = () => {
-  setOpenAdd(false);
-  setOpenSync(false);
-  setOpenView(false);
-  setOpenEdit(false);
-  setOpenDelete(false);
-  setOpenUpload(false);
-  // setDataCompanyValue_Combobox(null);
+  const handleCloseSearch = () => {
+    setdataReportTypeValue("");
+    setdataComplaintTypeValue_Combobox("");
+    setdataComplaintRsValue_Combobox("");
+    setdataphotoValue_Combobox("");
+    setTextNameSearch({
+      cas_number: "",
+      doc_date: "",
+      product_name: "",
+      lot_no: "",
+    });
 
-};
+    // โหลดข้อมูลใหม่ทั้งหมด
+    Complaint_Get();
+  };
 
-return (
-  <>
 
-    <Box
-      sx={{
-        p: 2,
-        mb: 2,
-        border: '2px solid #F29739',
-        borderRadius: 2,
-        backgroundColor: '#ffffff',
-      }}
-    >
-      <div className="px-2 pt-2 pb-5">
-        <label className="sarabun-regular-datatable">
-          ค้นหา
-        </label>
-      </div>
-      <Divider sx={{ my: 0.1, borderColor: "#F29739" }} />
-      <Grid container spacing={2} mt={2}>
-        {/* <Grid size={4}>
-          <AutocompleteComboBox
-            value={dataReportTypeValue_Combobox}
-            labelName={"Report Type"}
-            options={dataReportType_Combobox}
-            column="lov_code"
-            setvalue={setdataReportTypeValue_Combobox}
-          //disabled={false}
-          />
-        </Grid> */}
-        <Grid size={4}>
-          <FullWidthTextField
-            value={TextNameSearch.cas_number}
-            labelName={"CAS Number"}
-            onchange={(value) => setTextNameSearch({ ...TextNameSearch, ...{ cas_number: value } })}
-          />
-        </Grid>
-        <Grid size={4}>
-          <AutocompleteComboBox
-            value={dataComplaintTypeValue_Combobox}
-            labelName={"ComplaintType"}
-            options={dataComplaintType_Combobox}
-            column="lov1"
-            setvalue={setdataComplaintTypeValue_Combobox}
-          //disabled={false}
-          />
-        </Grid>
-        <Grid size={4}>
-          <FullWidthTextField
-            value={TextNameSearch.product_name}
-            labelName={"ชื่อสินค้า (Product Name)"}
-            onchange={(value) => setTextNameSearch({ ...TextNameSearch, ...{ product_name: value } })}
-          //disabled={false}
-          />
-        </Grid>
-        <Grid size={4}>
-          <FullWidthTextField
-            value={TextNameSearch.lot_no}
-            labelName={"Lot No./Bag No"}
-            onchange={(value) => setTextNameSearch({ ...TextNameSearch, ...{ lot_no: value } })}
-          //disabled={false}
-          />
-        </Grid>
-        {/* <Grid size={4}>
+  const handleClose = () => {
+    setOpenAdd(false);
+    setOpenSync(false);
+    setOpenView(false);
+    setOpenEdit(false);
+    setOpenDelete(false);
+    setOpenUpload(false);
+    // setDataCompanyValue_Combobox(null);
+
+  };
+
+  return (
+    <>
+
+      <Box
+        sx={{
+          p: 2,
+          mb: 2,
+          border: '2px solid #F29739',
+          borderRadius: 2,
+          backgroundColor: '#ffffff',
+        }}
+      >
+        <div className="px-2 pt-2 pb-5">
+          <label className="sarabun-regular-datatable">
+            ค้นหา
+          </label>
+        </div>
+        <Divider sx={{ my: 0.1, borderColor: "#F29739" }} />
+        <Grid container spacing={2} mt={2}>
+          <Grid size={4}>
+            <FullWidthTextField
+              value={TextNameSearch.cas_number}
+              labelName={"CAS Number"}
+              onchange={(value) => setTextNameSearch({ ...TextNameSearch, ...{ cas_number: value } })}
+            />
+          </Grid>
+          <Grid size={4}>
+            <AutocompleteComboBox
+              value={dataComplaintTypeValue_Combobox}
+              labelName={"ComplaintType"}
+              options={dataComplaintType_Combobox}
+              column="lov1"
+              setvalue={setdataComplaintTypeValue_Combobox}
+            //disabled={false}
+            />
+          </Grid>
+          <Grid size={4}>
+            <FullWidthTextField
+              value={TextNameSearch.product_name}
+              labelName={"ชื่อสินค้า (Product Name)"}
+              onchange={(value) => setTextNameSearch({ ...TextNameSearch, ...{ product_name: value } })}
+            //disabled={false}
+            />
+          </Grid>
+          <Grid size={4}>
+            <FullWidthTextField
+              value={TextNameSearch.lot_no}
+              labelName={"Lot No./Bag No"}
+              onchange={(value) => setTextNameSearch({ ...TextNameSearch, ...{ lot_no: value } })}
+            //disabled={false}
+            />
+          </Grid>
+          {/* <Grid size={4}>
           <FullWidthTextField
             value={TextNameSearch.respond_search}
             labelName={"Respond Within"}
             onchange={(value) => setTextNameSearch({ ...TextNameSearch, ...{ respond_search: value } })}
           />
         </Grid> */}
-        <Grid size={4}>
-          <AutocompleteComboBox
-            value={selectDataTable}
-            labelName={"Status"}
-            options={selectDataTable}
-            column="name_th"
-            setvalue={setSelectDataTable}
-          //disabled={false}
-          />
-        </Grid>
-        <Grid size={4}>
-          <DesktopDatePickers
-            labelName={"Respond Within"}
-            value={startDateSearch}
-            handleChange={setStartDateSearch}
-          />
-        </Grid>
+          <Grid size={4}>
+            <AutocompleteComboBox
+              value={selectDataTable}
+              labelName={"Status"}
+              options={selectDataTable}
+              column="name_th"
+              setvalue={setSelectDataTable}
+            //disabled={false}
+            />
+          </Grid>
+          <Grid size={4}>
+            <DesktopDatePickers
+              labelName={"Respond Within"}
+              value={startDateSearch}
+              handleChange={setStartDateSearch}
+            />
+          </Grid>
 
-        {/* <Grid size={3}>
+          {/* <Grid size={3}>
             <AutocompleteComboBox
               value={dataProductValue_Combobox}
               labelName={"สินค้า (Product)"}
@@ -1071,64 +873,61 @@ return (
             //disabled={false}
             />
           </Grid> */}
-        <Grid size={4}>
-          <DesktopDatePickers
-            labelName={"วันที่ออกเอกสาร (Document Issuance Date"}
-            value={startDateSearch}
-            handleChange={setStartDateSearch}
-          />
+          <Grid size={4}>
+            <DesktopDatePickers
+              labelName={"วันที่ออกเอกสาร (Document Issuance Date"}
+              value={startDateSearch}
+              handleChange={setStartDateSearch}
+            />
+          </Grid>
+
+          <Grid size={4}>
+            <DesktopDatePickers
+              labelName={"วันที่พบปัญหา (Date of Detection"}
+              value={endDateSearch}
+              handleChange={setEndDateSearch}
+            />
+          </Grid>
+
         </Grid>
 
-        <Grid size={4}>
-          <DesktopDatePickers
-            labelName={"วันที่พบปัญหา (Date of Detection"}
-            value={endDateSearch}
-            handleChange={setEndDateSearch}
-          />
+        <Grid container spacing={2} sx={{ mt: 2 }} justifyContent="flex-end" gap={1}>
+          <Grid>
+            <FullWidthButton
+              labelName={"ค้นหา"}
+              handleonClick={Complaint_Get}
+              variant_text="contained"
+              colorname={"primary"}
+            />
+          </Grid>
+          <Grid>
+            <FullWidthButton
+              labelName={"รีเซท"}
+              handleonClick={handleCloseSearch}
+              variant_text="outlined"
+              colorname={"inherit"}
+            />
+          </Grid>
         </Grid>
+      </Box>
 
-      </Grid>
+      <DataTable
+        colum={Complaint_headCells}
+        rows={datalist}
+        titlename={"ข้อมูล"}
+        buttonElement={
+          <div className="flex gap-x-4">
+            <Button
+              variant="contained"
+              disabled={menuFuncData?.find((item: auth_role_menu_func) => item?.func_name === "Add") ? false : true}
+              color="success"
+              onClick={hadleOnclickMenuAdd}
+            >
+              {menuFuncData?.find((item: auth_role_menu_func) => item?.func_name === "Add") ? "เพิ่มข้อมูล" : ""}
+              <AddIcon sx={{}} />
+            </Button>
 
-      <Grid container spacing={2} sx={{ mt: 2 }} justifyContent="flex-end" gap={1}>
-        <Grid>
-          <FullWidthButton
-            labelName={"ค้นหา"}
-            handleonClick={() => { }}
-            variant_text="contained"
-            colorname={"primary"}
-          />
-        </Grid>
-        <Grid>
-          <FullWidthButton
-            labelName={"รีเซท"}
-            handleonClick={handleCloseSearch}
-            variant_text="outlined"
-            colorname={"inherit"}
-          />
-        </Grid>
-      </Grid>
-
-
-
-    </Box>
-
-    <DataTable
-      colum={Complaint_headCells}
-      rows={datalist}
-      titlename={"ข้อมูล"}
-      buttonElement={
-        <div className="flex gap-x-4">
-          <Button
-            variant="contained"
-            disabled={menuFuncData?.find((item: auth_role_menu_func) => item?.func_name === "Add") ? false : true}
-            color="success"
-            onClick={hadleOnclickMenuAdd}
-          >
-            {menuFuncData?.find((item: auth_role_menu_func) => item?.func_name === "Add") ? "เพิ่มข้อมูล" : ""}
-            <AddIcon sx={{}} />
-          </Button>
-
-          {/* <Button
+            {/* <Button
               variant="outlined"
               disabled={
                 menuFuncData?.find((item: auth_role_menu_func) => item?.func_name === "Add") ? false : true
@@ -1136,15 +935,13 @@ return (
               color="secondary"
               onClick={hadleOnclickMenuUpload}
             >
-
-
               {menuFuncData?.find((item: auth_role_menu_func) => item?.func_name === "Add") ? "อัพโหลด " : ""}
               <UploadFileIcon sx={{}} /> */}
-          {/* </Button> */}
-        </div>
-      }
-    />
-    {/* <DataTableCollapsible
+            {/* </Button> */}
+          </div>
+        }
+      />
+      {/* <DataTableCollapsible
         colum={Complaint_headCells}
         rows={datalist}
         titlename={"ข้อมูล"}
@@ -1174,95 +971,51 @@ return (
           </div>
         }
       /> */}
-
-
-    <FuncDialog
-      open={openAdd}
-      dialogWidth="xl"
-      openBottonHidden={true}
-      titlename={'Save and Submit'}
-      handleClose={handleClose}
-      handlefunction={Report_Add}
-      colorBotton="success"
-      element={
-        <ComplaintInsert
-          action="add"
-          onBlocksChange={(data) => setComplaintBlocks(data)}
-          validateText={validateText}
-          validateDetailText={blockValidateErrors}
-
-        />}
-    />
- <FuncDialog
-      open={openAdd}
-      dialogWidth="xl"
-      openBottonHidden={true}
-      titlename={'Save and Submit'}
-      handleClose={handleClose}
-      handlefunction={Report_Add}
-      colorBotton="success"
-      element={
-        <ComplaintInsert
-          action="add"
-          onBlocksChange={(data) => setComplaintBlocks(data)}
-          validateText={validateText}
-          validateDetailText={blockValidateErrors}
-
-        />}
-    />
-    {/* {openView && viweData && (
-          <FuncDialog
-            open={openView}
-            handleClose={handleClose}
-            handlefunction={handleClose}
-           
-            element={
-              <div>
-                <Box>
-                  <Typography variant="h6" gutterBottom>
-                    รายละเอียดข้อมูล / ลูกค้า
-                  </Typography>
-
-                  <FullWidthTextField
-                    labelName="ID"
-                    fullWidth
-                    variant="outlined"
-                    sx={{ mb: 2, backgroundColor: "#e5e5e5" }}
-                    value={viweData.id}
-                    disabled
-                  />
-                
-                </Box>
-              </div>
-            }
-          />
-        )} */}
-    {/* <FuncDialog
-        open={openUpLoad}
+      <FuncDialog
+        open={openAdd}
         dialogWidth="xl"
         openBottonHidden={true}
-        titlename={'อัพโหลด'}
+        titlename={'Save and Submit'}
         handleClose={handleClose}
-        handlefunction={Complaint_Upload}
+        handlefunction={Report_Add}
         colorBotton="success"
-        element={<ComplaintUpload />}
-      /> */}
-
-    {/* <FuncDialog
+        element={
+          <ComplaintInsert
+            action="add"
+            onBlocksChange={(data) => setComplaintBlocks(data)}
+            validateText={validateText}
+            validateDetailText={blockValidateErrors}
+          />}
+      />
+      {/* <FuncDialog
         open={openView}
         dialogWidth="xl"
-        openBottonHidden={true}
+        openBottonHidden={false}
         titlename={'ดูข้อมูล'}
         handleClose={handleClose}
-        handlefunction={Complaint_Upload}
+        handlefunction={Report_Add}
         colorBotton="success"
-        element={<ComplaintView
-          action="view"
+        element={
+          <CompalintView
+            action="Read"
+            // onBlocksChange={(data) => setComplaintBlocks(data)}
+            // validateText={validateText}
+            // validateDetailText={blockValidateErrors}
+          />}
+      /> */}
+      <FuncDialog
+        open={openView}
+        dialogWidth="xl"
+        openBottonHidden={false}
+        titlename={'ดูข้อมูล'}
+        handleClose={handleClose}
+        handlefunction={Report_Add}
+        colorBotton="success"
+        element={<CompalintView
+          action="Read"
           dataelement={dataelement}
         />}
-      /> */}
-
-
-  </>
-);
+      />
+    </>
+  );
 }

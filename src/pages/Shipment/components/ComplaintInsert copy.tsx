@@ -358,24 +358,20 @@ export default function ComplaintInsert({
   const [filteredComplaintRs, setFilteredComplaintRs] = useState<LovType[]>([]);
   const [filteredpriority, setFilteredpriority] = useState<LovType[]>([]);
   const [filteredphoto, setFilteredphoto] = useState<LovType[]>([]);
-
-
   // กรอง complaint_type ตาม report_type ที่เลือก
   const handleReportTypeChange = (val: LovType | null) => {
     console.log(val, 'valvalvalvalvalvalvalvalvalvalvalvalvalvalvalval');
 
     setdataReportTypeValue(val);
     console.log(dataReportTypeValue, 'dataReportTypeValue');
-
-    // setdataComplaintTypeValue_Combobox(null);
-    // setdataComplaintType([]);
-    // setdataComplaintRsValue_Combobox(null);
-    // setdataComplaintRs([]);
-    // setdataphotoValue_Combobox(null);
-    // setdataphoto([]);
-    // setdatapriorityValue_Combobox(null);
-    // setdatapriority(null);
-
+    setdataComplaintTypeValue_Combobox(null);
+    setdataComplaintType([]);
+    setdataComplaintRsValue_Combobox(null);
+    setdataComplaintRs([]);
+    setdataphotoValue_Combobox(null);
+    setdataphoto([]);
+    setdatapriorityValue_Combobox(null);
+    setdatapriority(null);
 
     // if (!val) {
     //   setFilteredComplaintType([]);
@@ -385,9 +381,6 @@ export default function ComplaintInsert({
 
     //   return;
     };
-
-
-
   //   console.log("Report:", val, "All Complaint:", dataComplaintType_Combobox, dataComplaintRs_Combobox);
   //   //console.log("All Complaint:", dataComplaintType_Combobox);
   //   // กรอง complaint_type ที่ lov_code ตรงกับ report_type.lov_id
@@ -498,7 +491,7 @@ export default function ComplaintInsert({
         // },
       }}>
 
-      
+      {/* ====== ฟอร์ม NCR ====== */}
       <div className="px-2 pt-2 pb-5">
         <label className="sarabun-regular-datatable">
           ประเภทข้อมูลแบบฟอร์ม
@@ -519,284 +512,6 @@ export default function ComplaintInsert({
           />
         </Grid>
       </Grid>
-
-
-      {/* ====== Dynamic ฟอร์ม สำหรับเลือกประเภทเอกสาร ====== */}
-      <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>
-        <label className="sarabun-regular-datatable">{dataReportTypeValue?.lov4}</label>
-        <Divider sx={{ my: 1 }} />
-        <Grid container spacing={2}>
-          <Grid size={4}>
-            <FullWidthTextField
-              value={cas_number}
-              labelName="NCR Number"
-              onchange={(e) => { setcas_number(e); }}
-              hidden={true}
-            />
-          </Grid>
-          <Grid size={4}>
-            <FullWidthTextField
-              value={user[0]?.itasset_company_id ? user[0]?.itasset_company_id : '-'}
-              labelName="Factory"
-              onchange={(e) => setrequest_company_id(e)}
-              readonly
-            />
-          </Grid>
-          <Grid size={4}>
-            <FullWidthTextField
-              value={area_of_detection_dept}
-              labelName="Department / Area of Detection"
-              onchange={(e) => setarea_of_detection_dept(e)}
-            />
-          </Grid>
-          <Grid size={4}>
-            <FullWidthTextField
-              value={product_name}
-              labelName="Product Name"
-              onchange={(e) => setproduct_name(e)}
-            />
-          </Grid>
-          <Grid size={4}>
-            <FullWidthTextField
-              value={lot_no}
-              labelName="Lot No./Bag No"
-              onchange={(e) => setlot_no(e)}
-            />
-          </Grid>
-          <Grid size={4}>
-            <FullWidthTextField
-              value={user_file_name}
-              labelName="Attachments (if any)"
-              onchange={(e) => setuser_file_name(e)}
-            />
-          </Grid>
-          <Grid size={4}>
-            <DesktopDatePickers
-              labelName={"Document Issuance Date"}
-              value={doc_date}
-              handleChange={(val) => setdoc_date}
-              readonly
-            />
-          </Grid>
-          <Grid size={4}>
-            <DesktopDatePickers
-              labelName={"Date of Detection"}
-              value={date_of_detection}
-              handleChange={(val) => setdate_of_detection}
-            />
-          </Grid>
-          <Grid size={4}>
-            <DesktopDatePickers
-              labelName={"Required Response Date"}
-              value={respond_date_within}
-              handleChange={(val) => setrespond_date_within}
-              readonly
-            />
-          </Grid>
-          <Grid size={6}>
-            <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>
-              <label className="sarabun-regular-datatable">Type Of Complaint</label>
-              <Divider sx={{ my: 2 }} />
-              <Grid container spacing={2}>
-                {(filteredComplaintType || []).map((item: LovType) => (
-                  <Grid size={6} key={item.id}>
-                    <FullWidthCheckbox
-                      labelName={item.lov1}
-                      value={dataComplaintType.some(c => c.id === item.id)}
-                      onchange={() => handleCheckboxChange(item)}
-                    />
-                  </Grid>
-                ))}
-              </Grid>
-              {dataComplaintType.some(c => c.id === "TRR_CT_NCR_99") && (
-                <FullWidthTextArea
-                  value={compTypeOther}
-                  labelName="Other:"
-                  onchange={(e) => setcompTypeOther(e)}
-                />
-              )}
-            </Paper>
-          </Grid>
-          <Grid size={6}>
-            <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>
-              <label className="sarabun-regular-datatable">Reference Standard</label>
-              <Divider sx={{ my: 2 }} />
-              <Grid container spacing={2}>
-                {filteredComplaintRs.map((item: LovType) => (
-                  <Grid size={6} key={item.id}>
-                    <FullWidthCheckbox
-                      labelName={item.lov1}
-                      value={dataComplaintRs.some(rs => rs.id === item.id)}
-                      onchange={() => handleCheckboxChangeRs(item)}
-                    />
-                  </Grid>
-                ))}
-              </Grid>
-              {dataComplaintRs.some(rs => rs.id === "TRR_RS_NCR_99") && (
-                <FullWidthTextArea
-                  value={compRsOther}
-                  labelName="Other:"
-                  onchange={(e) => setcompRsOther(e)}
-                />
-              )}
-              {dataComplaintRs.some(rs => rs.id === "TRR_RS_NCR_6") && (
-                <FullWidthTextArea
-                  value={clauseOther}
-                  labelName="Clause:"
-                  onchange={(e) => setclauseOther(e)}
-                />
-              )}
-            </Paper>
-          </Grid>
-          <Grid size={7}>
-            <FullWidthTextArea
-              value={detail}
-              labelName="Detail"
-              onchange={(e) => setdetail(e)}
-            />
-          </Grid>
-          <Grid container spacing={2}>
-            {/* Row 1: Priority */}
-            <Grid size={5}>
-              <label className="sarabun-regular-datatable">Priority</label>
-              <Grid container spacing={2}>
-                {(filteredpriority || []).map((item: LovType) => (
-                  <Grid size={3} key={item.id}>
-                    <FormControlLabel
-                      control={
-                        <Radio
-                          checked={datapriority?.id === item.id}
-                          onChange={(e) => {
-                            console.log("eeeeeeeeeeee", e);
-                            setdatapriorityValue_Combobox(item.lov_code);
-                            // update priority state
-                            setdatapriority(item);
-                            // ดึงจำนวนวันจาก lov3 ของ item ที่เลือก
-                            const days = Number(item.lov3 ?? 0);
-                            // คำนวณวันที่
-                            priorityCalculateRespondDate(days, true); // ใช้ true เพราะกดเลือกแล้ว
-                            // log ค่า item ที่เลือก
-                            console.log("เลือก priority:", item.lov_code, "Days:", days);
-                          }}
-                        />
-                      }
-                      label={item.lov_code}
-                      sx={{ width: "100%", m: 0 }}
-                    />
-                  </Grid>
-                ))}
-              </Grid>
-            </Grid>
-            <Grid container spacing={2}>
-              <Grid size={6}>
-                <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>
-                  <label className="sarabun-regular-datatable">Please attach any relevant documents or photost</label>
-                  <Divider sx={{ my: 2 }} />
-                  <Grid container spacing={2}>
-                    {(filteredphoto || []).map((item: LovType) => (
-                      <Grid size={6} key={item.id}>
-                        <FullWidthCheckbox
-                          labelName={item.lov1}
-                          value={dataphoto.some(pho => pho.id === item.id)}
-                          onchange={() => handleCheckboxChangepho(item)}
-                        />
-                      </Grid>
-                    ))}
-                  </Grid>
-                  {dataphoto.some(pho => pho.id === "TRR_AT_4") && (
-                    <FullWidthTextArea
-                      value={phoTypeOther}
-                      labelName="Other:"
-                      onchange={(e) => setphoTypeOther(e)}
-                    />
-                  )}
-                </Paper>
-              </Grid>
-            </Grid>
-            <Grid container spacing={2}>
-              <Grid container spacing={2}>
-                <Grid container spacing={2}>
-                  <BrowseFileUpload setFile={handleFileChange} setFileName={() => { }} />
-                  {/* ตารางแสดงไฟล์ */}
-                  <TableContainer component={Paper} sx={{ mt: 2 }}>
-                    <Table size="small">
-                      <TableHead>
-                        <TableRow>
-                          <TableCell>ชื่อไฟล์</TableCell>
-                          <TableCell>ขนาด (MB)</TableCell>
-                          <TableCell>จัดการ</TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {files.map((file: File, index: number) => (
-                          <TableRow key={index}>
-                            <TableCell>{file.name}</TableCell>
-                            <TableCell>{(file.size / (1024 * 1024)).toFixed(2)} MB</TableCell>
-                            <TableCell>
-                              <IconButton
-                                color="error"
-                                size="small"
-                                onClick={() => handleRemoveFile(index)}
-                              >
-                                <DeleteIcon />
-                              </IconButton>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
-                </Grid>
-              </Grid>
-            </Grid>
-            <Grid container spacing={3}>
-              <Grid size={4}>
-                <FullWidthTextField
-                  value={user[0]?.employee_username ? user[0]?.employee_username : '-'}
-                  labelName="Reported by"
-                  onchange={(e) => setrequest_name(e)}
-                  readonly
-                />
-              </Grid>
-              <Grid size={4}>
-                <FullWidthTextField
-                  value={user[0]?.employee_position ? user[0]?.employee_position : '-'}
-                  labelName="Position"
-                  onchange={(e) => setrequest_position(e)}
-                  readonly
-                />
-              </Grid>
-              <Grid size={4}>
-                <FullWidthTextField
-                  value={user[0]?.itasset_department_name ? user[0]?.itasset_department_name : '-'}
-                  labelName="Department"
-                  onchange={(e) => setrequest_department_id(e)}
-                  readonly
-                />
-              </Grid>
-              <Grid size={4}>
-                <FullWidthTextField
-                  value={user[0]?.employee_email ? user[0]?.employee_email : '-'}
-                  labelName="Email"
-                  onchange={(e) => setrequest_email(e)}
-                  readonly
-                />
-              </Grid>
-              <Grid size={4}>
-                <FullWidthTextField
-                  value={user[0]?.employee_tel ? user[0]?.employee_tel : '-'}
-                  labelName="Phone"
-                  onchange={(e) => setemployee_tel(e)}
-                  readonly
-                />
-              </Grid>
-            </Grid>
-          </Grid>
-        </Grid>
-      </Paper>
-
-
-      {/* ====== ฟอร์ม NCR ====== */}
       {dataReportTypeValue?.lov_code === "NCR" && (
         <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>
           <label className="sarabun-regular-datatable">แบบฟอร์ม NCR</label>
@@ -1071,6 +786,7 @@ export default function ComplaintInsert({
           </Grid>
         </Paper>
       )}
+
       {/* ====== ฟอร์ม CAR ====== */}
       {dataReportTypeValue?.lov_code === "CAR" && (
         <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>
@@ -1757,7 +1473,6 @@ export default function ComplaintInsert({
           </Grid>
         </Paper>
       )}
-
     </Box>
   );
 }

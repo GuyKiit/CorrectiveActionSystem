@@ -7,8 +7,8 @@ export type ListComplaintContextProps = {
     Complaint_no?: string
     no?: string
     cas_number?: string
-    doc_date?: dayjs.Dayjs 
-    date_of_detection?: dayjs.Dayjs 
+    doc_date?: dayjs.Dayjs
+    date_of_detection?: dayjs.Dayjs
     request_name?: string | null
     request_company_id?: number | null
     request_domain_id?: string | null
@@ -21,9 +21,9 @@ export type ListComplaintContextProps = {
     respondent_department_id?: number | null
     respondent_email?: string | null
     area_of_detection_dept?: string | null
-    product_name?:string | null
+    product_name?: string | null
     detail?: string | null
-    user_file_name?:string | null
+    user_file_name?: string | null
     other?: string | null
     // dataComplaintType?: string | null
     respondent_other_name?: string | null
@@ -41,31 +41,31 @@ export type ListComplaintContextProps = {
     acknowledge_email?: string | null
     acknowledge_datetime?: dayjs.Dayjs
     complaint_status_id?: string
-    status_last_datetime?: dayjs.Dayjs 
+    status_last_datetime?: dayjs.Dayjs
     return_from_status_id?: string
     return_from_status_datetime?: dayjs.Dayjs
     dc_name?: string | null
     dc_company_id?: number | null
     dc_department_id?: number | null
     dc_position?: string | null
-    dc_email?:string | null
+    dc_email?: string | null
     record_status?: boolean
     create_by?: string
-    create_datetime?: dayjs.Dayjs 
+    create_datetime?: dayjs.Dayjs
     update_by?: string
-    update_datetime?: dayjs.Dayjs 
+    update_datetime?: dayjs.Dayjs
+    employee_tel?: string
 
-    
 
     ComplaintStatusID_Combobox?: any
-    dataReportType_Combobox?: any
-    dataReportTypeValue_Combobox?: any
+    dataReportType?: any
+    dataReportTypeValue?: any
     dataComplaintType_Combobox?: any
     dataComplaintTypeValue_Combobox?: any
     dataComplaintRs_Combobox?: any
     dataComplaintRsValue_Combobox?: any
     dataphoto_Combobox?: any
-    dataphotoValue_Combobox?: any  
+    dataphotoValue_Combobox?: any
     datapriority_Combobox?: any
     datapriorityValue_Combobox?: any
     datapriority?: any
@@ -75,7 +75,8 @@ export type ListComplaintContextProps = {
     photoOther?: any
     clauseOther?: any
     phoTypeOther?: any
-    
+
+
     // dataTruckTypeValue_Combobox?: any
     // dataProduct_Combobox?: any
     // dataProductValue_Combobox?: any
@@ -149,20 +150,20 @@ export type ListComplaintContextProps = {
     setcreate_datetime: Dispatch<SetStateAction<dayjs.Dayjs>>
     setupdate_by: Dispatch<SetStateAction<string>>
     setupdate_datetime: Dispatch<SetStateAction<dayjs.Dayjs>>
-    
+    setemployee_tel: Dispatch<SetStateAction<string>>
 
     setComplaintStatusID_Combobox: Dispatch<SetStateAction<any>>
-    setdataReportType_Combobox: Dispatch<SetStateAction<any>>
-    setdataReportTypeValue_Combobox: Dispatch<SetStateAction<any>>
+    setdataReportType: Dispatch<SetStateAction<any>>
+    setdataReportTypeValue: Dispatch<SetStateAction<any>>
     setdataComplaintType_Combobox: Dispatch<SetStateAction<any>>
     setdataComplaintTypeValue_Combobox: Dispatch<SetStateAction<any>>
     setdataComplaintRs_Combobox: Dispatch<SetStateAction<any>>
     setdataComplaintRsValue_Combobox: Dispatch<SetStateAction<any>>
     setdataphoto_Combobox: Dispatch<SetStateAction<any>>
-    setdataphotoValue_Combobox: Dispatch<SetStateAction<any>> 
+    setdataphotoValue_Combobox: Dispatch<SetStateAction<any>>
     setdatapriority_Combobox: Dispatch<SetStateAction<any>>
     setdatapriorityValue_Combobox: Dispatch<SetStateAction<any>>
-    setdatapriority: Dispatch<SetStateAction<any>> 
+    setdatapriority: Dispatch<SetStateAction<any>>
     setPriorityLevel: Dispatch<SetStateAction<any>>
     // setSelectedFile: Dispatch<SetStateAction<File>>
 
@@ -227,8 +228,8 @@ export const initialListComplaint: ListComplaintContextProps = {
     setupdate_datetime: () => { },
 
     setComplaintStatusID_Combobox: () => { },
-    setdataReportType_Combobox: () => { },
-    setdataReportTypeValue_Combobox: () => { },
+    setdataReportType: () => { },
+    setdataReportTypeValue: () => { },
     setdataComplaintType_Combobox: () => { },
     setdataComplaintTypeValue_Combobox: () => { },
     setdataComplaintRs_Combobox: () => { },
@@ -239,6 +240,7 @@ export const initialListComplaint: ListComplaintContextProps = {
     setdatapriorityValue_Combobox: () => { },
     setdatapriority: () => { },
     setPriorityLevel: () => { },
+    setemployee_tel: () => { },
 
     // setSelectedFile: () => { }
 

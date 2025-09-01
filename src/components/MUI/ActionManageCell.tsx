@@ -46,19 +46,41 @@ const ActionManageCell: React.FC<ActionManageCellProps> = (props) => {
     setAnchorEl(null);
   };
 
-  const renderMenuItem = (funcName: string, index: number) => (
+ const renderMenuItem = (
+    funcName: string,
+    display_name?: string,
+    iconElement?: string,
+    index?: number,
+    hasSubMenu?: boolean,
+  ) => (
     <MenuItem
       key={index}
-      onClick={() => hadleOnclickMenu && hadleOnclickMenu(funcName)}
-    // hidden={
-    //   (funcName === "Edit" && hiddenEdit) ||
-    //   (funcName === "Delete" && hiddenDelete)
-    // }
+      onClick={() => {
+        if (!hasSubMenu) {
+          hadleOnclickMenu?.(funcName);
+          handleClose(); // ✅ ปิดเมนูหลังเลือก
+        }
+      }}
+      hidden={
+        (funcName === "EditShipment" && hiddenEdit) ||
+        (funcName === "Delete" && hiddenDelete)
+      }
+      // onMouseEnter={(e) => {
+      //   if (hasSubMenu) {
+      //     setSubAnchorEl(e.currentTarget);
+      //     setCurrentSubMenu(funcName);
+      //   }
+      // }}
     >
-      <ListItemIcon>{ICONS_MAP[funcName]}</ListItemIcon>
-      {funcName}
+      <span className="mr-1 min-w-[20px] text-center">
+        {iconElement && <i className={`${iconElement} text-base`}></i>}
+      </span>
+      {display_name || ""}
+      {hasSubMenu && <span className="ml-auto">▶</span>}
     </MenuItem>
   );
+//  nsole.log(menuFuncData,'menuFuncDatamenuFuncDatamenuFuncDatamenuFuncDatamenuFuncDatamenuFuncDatamenuFuncDatamenuFuncDatamenuFuncDatamenuFuncDatamenuFuncData');
+  
 
   const filteredMenu = (menuFuncData ?? [])
     .filter(el =>
@@ -116,12 +138,14 @@ const ActionManageCell: React.FC<ActionManageCellProps> = (props) => {
         transformOrigin={{ horizontal: "right", vertical: "top" }}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
-        {!disabled && (
-          Array.isArray(filteredMenu) && filteredMenu.length > 0
-            ? filteredMenu.map((el, index) =>
-              el?.func_name ? renderMenuItem(el.func_name, index) : null
-            )
-            : renderMenuItem("View", 0)
+        {filteredMenu.map((el: any, index: number) =>
+          renderMenuItem(
+            el.func_name,
+            el.display_name ?? "",
+            el.menu_func_icon ?? "",
+            index,
+            el.children && el.children.length > 0
+          )
         )}
       </Menu>
     </div>
