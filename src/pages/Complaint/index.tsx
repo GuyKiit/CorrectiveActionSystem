@@ -24,11 +24,11 @@ import { useData } from "../../auth/core/DataContext";
 import { useListComplaint } from "./core/ListComlaintContext";
 import { Complaint_headCells } from "../../../libs/columnname";
 import DataTable from "../../components/MUI/DataTable";
-import ComplaintInsert from "./components/ComplaintInsert";
+import ComplaintInsert from "./components/ComplaintCreate";
 import { log } from "node:console";
 import { v4 as uuidv4 } from "uuid";
 import { cleanAccessData } from "../../service/initmain/initmain";
-import CompalintView from "./components/ComplaintView";
+import CompalintView from "./components/ComplaintRead";
 
 
 type Launch = {

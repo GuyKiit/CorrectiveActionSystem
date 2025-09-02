@@ -465,6 +465,7 @@ export default function ComplaintInsert({
         );
         setFilteredComplaintRs(filteredRs);
       }
+      
     } else {
       // reset ถ้า val null
       setFilteredComplaintType([]);
