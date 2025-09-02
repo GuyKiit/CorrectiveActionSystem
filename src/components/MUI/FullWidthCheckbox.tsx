@@ -114,6 +114,7 @@ import { grey } from "@mui/material/colors";
 interface FullWidthCheckboxProps {
   labelName: string;
   value?: boolean;
+  hidden?: boolean;
   onchange?: (value: boolean) => void;
   disabled?: boolean;
   readonly?: boolean;
@@ -122,7 +123,10 @@ interface FullWidthCheckboxProps {
   validateTextLable?: string;
 }
 
+
+
 export default function FullWidthCheckbox(props: FullWidthCheckboxProps) {
+  if (props.hidden) return null;
   return (
     <Box
       sx={{
@@ -143,6 +147,7 @@ export default function FullWidthCheckbox(props: FullWidthCheckboxProps) {
         }
         label={props.labelName}
       />
+      
       {props.Validate && props.validateTextLable && (
         <Typography color="error" variant="body2" sx={{ mt: 1 }}>
           {props.validateTextLable}

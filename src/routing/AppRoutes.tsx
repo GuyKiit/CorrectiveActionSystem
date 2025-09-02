@@ -5,7 +5,7 @@ import { AuthPage } from '../auth/AuthPage'
 import { ProtectedRoute } from './ProtectedRoute'
 import Dashboard from '../pages/dashboard'
 import Home from '../pages/Home'
-import PageShipment from '../pages/Shipment/PageShipment'
+import PageShipment from '../pages/Complaint/PageShipment'
 
 
 /**

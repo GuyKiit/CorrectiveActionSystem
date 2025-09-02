@@ -1,0 +1,823 @@
+//ทำobj เป็น array
+import React, { useState, useRef, use } from "react";
+import AddIcon from '@mui/icons-material/Add';
+import { setValueMas } from "../../../../libs/setvaluecallback";
+import DeleteIcon from '@mui/icons-material/Delete';
+import { _POST } from "../../../service/mas";
+import { _formatNumber, _formatNumberNotdecimal } from "../../../../libs/datacontrol";
+import dayjs from "dayjs";
+import { Box, Divider, IconButton, Paper, Table, TableCell, TableRow, TableBody, TableHead, TableContainer, styled, TextField, Radio, RadioGroup, FormControl, FormControlLabel, FormLabel, Grid2, Stack } from "@mui/material";
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import FullWidthTextField from "../../../components/MUI/FullWidthTextField";
+import AutocompleteComboBox from "../../../components/MUI/AutocompleteComboBox";
+import DesktopDatePickers from "../../../components/MUI/DesktopDatePicker";
+import FullWidthButton from "../../../components/MUI/FullWidthButton";
+import FullWidthTextArea from "../../../components/MUI/FullWidthTextFieldArea";
+import FullWidthCheckbox from "../../../components/MUI/FullWidthCheckbox";
+import Grid from '@mui/material/Grid2';
+import TimePickerTextField from "../../../components/MUI/TimePickerTextField";
+import FullSweetalert from "../../../components/MUI/Sweetalert";
+import { v4 as uuidv4 } from 'uuid';
+import { useData } from "../../../auth/core/DataContext";
+import { useLayout } from "../../../layout/core/LayoutProvider";
+import { useListComplaint } from "../core/ListComlaintContext";
+import { Collapse } from "@mui/material";
+import BrowseFileUpload from "./BrowseFileUpload";
+import { log } from "node:console";
+import { cleanAccessData } from "../../../service/initmain/initmain";
+type Validate = {
+  Product_Group: boolean,
+}
+
+type detail = {
+  qty?: false,
+}
+
+type Block = {
+  id: any,
+  season: number,
+  groupProduct: number,
+  prod_id: any,
+  customer: any,
+  address: any,
+  tms_Complaint_no: string,
+  order_po: string,
+  order_do: string,
+  qty: any,
+  pack_unit: any,
+  total_weight_ton: any,
+  note: any,
+  isValid: boolean,
+  validateMessage: string,
+  req: any,
+};
+
+interface ComplaintBody {
+  action: string
+  disableTextField?: boolean
+  readonlyTextField?: boolean
+  bgcolorTextField?: boolean
+  disableComBoBox?: boolean
+  dataelement?: any
+  validateText?: Validate
+  validateDetailText?: { [index: number]: detail }
+  onBlocksChange?: (blocks: Block[]) => void;
+
+
+}
+
+type LovType = {
+  id: string;
+  lov_id: string;
+  lov_group: string;
+  lov_type: string;
+  lov_code: string;
+  lov1: string;
+  lov3: string;
+};
+
+export default function ComplaintInsert({
+  action,
+  dataelement,
+  readonlyTextField,
+  bgcolorTextField,
+  validateText,
+  onBlocksChange,
+  validateDetailText
+
+
+}: ComplaintBody) {
+  const user = cleanAccessData('userSession');
+  console.log(user[0].employee_username, "userrrr");
+  const {
+    Complaint_no,
+    no,
+    cas_number,
+    doc_date,
+    date_of_detection,
+    request_name,
+    request_company_id,
+    request_domain_id,
+    request_department_id,
+    request_position,
+    request_email,
+    request_date,
+    respondent_company_id,
+    respondent_domain_id,
+    respondent_department_id,
+    respondent_email,
+    respondent_other_name,
+    respondent_other_email,
+    area_of_detection_dept,
+    product_name,
+    detail,
+    priority_level,
+    respond_date_within,
+    lot_no,
+    user_file_name,
+    other,
+    compTypeOther,
+    compRsOther,
+    clauseOther,
+    photoOther,
+    phoTypeOther,
+    acknowledge_flag,
+    acknowledge_name,
+    acknowledge_company_id,
+    acknowledge_department_id,
+    acknowledge_position,
+    acknowledge_email,
+    acknowledge_datetime,
+    complaint_status_id,
+    status_last_datetime,
+    return_from_status_id,
+    return_from_status_datetime,
+    dc_name,
+    dc_company_id,
+    dc_department_id,
+    dc_position,
+    dc_email,
+    record_status,
+    create_by,
+    create_datetime,
+    update_by,
+    update_datetime,
+    ComplaintStatusID_Combobox,
+    dataReportType,
+    dataReportTypeValue,
+    dataComplaintTypeValue_Combobox,
+    dataComplaintType_Combobox,
+    dataComplaintRsValue_Combobox,
+    dataComplaintRs_Combobox,
+    dataphotoValue_Combobox,
+    dataphoto_Combobox,
+    datapriority_Combobox,
+    datapriorityValue_Combobox,
+    employee_tel,
+
+
+
+    setComplaint_no,
+    setno,
+    setcas_number,
+    setdoc_date,
+    setdate_of_detection,
+    setrequest_name,
+    setrequest_company_id,
+    setrequest_domain_id,
+    setrequest_department_id,
+    setrequest_position,
+    setrequest_email,
+    setuser_file_name,
+    setrequest_date,
+    setrespondent_company_id,
+    setrespondent_domain_id,
+    setrespondent_department_id,
+    setrespondent_email,
+    setrespondent_other_name,
+    setrespondent_other_email,
+    setarea_of_detection_dept,
+    setproduct_name,
+    setdetail,
+    setcomplaint_type_other,
+    setpriority_level,
+    setrespond_date_within,
+    setlot_no,
+    setother,
+    setcompTypeOther,
+    setcompRsOther,
+    setclauseOther,
+    setphotoOther,
+    setphoTypeOther,
+    setemployee_tel,
+    setreference_standard_other,
+    setacknowledge_flag,
+    setacknowledge_name,
+    setacknowledge_company_id,
+    setacknowledge_department_id,
+    setacknowledge_position,
+    setacknowledge_email,
+    setacknowledge_datetime,
+    setcomplaint_status_id,
+    setstatus_last_datetime,
+    setreturn_from_status_id,
+    setreturn_from_status_datetime,
+    setdc_name,
+    setdc_company_id,
+    setdc_department_id,
+    setdc_position,
+    setdc_email,
+    setrecord_status,
+    setcreate_by,
+    setcreate_datetime,
+    setupdate_by,
+    setupdate_datetime,
+    setComplaintStatusID_Combobox,
+    setdataReportTypeValue,
+    setdataComplaintType_Combobox,
+    setdataComplaintTypeValue_Combobox,
+    setdataComplaintRs_Combobox,
+    setdataComplaintRsValue_Combobox,
+    setdataphoto_Combobox,
+    setdataphotoValue_Combobox,
+    setdatapriority_Combobox,
+    setdatapriorityValue_Combobox,
+
+  } = useListComplaint()
+
+  const { Customer } = useData()
+  const { setIsLoadingScreen } = useLayout()
+
+  const [dataComplaintType, setdataComplaintType] = useState<LovType[]>([]);
+  const [dataComplaintRs, setdataComplaintRs] = useState<LovType[]>([]);
+  const [dataphoto, setdataphoto] = useState<LovType[]>([]);
+  const [datapriority, setdatapriority] = useState<LovType | null>(null);
+  const [priorityLevel, setPriorityLevel] = useState<string>("");
+  const [files, setFiles] = useState<File[]>([]);
+
+  const handleCheckboxChange = (item: LovType) => {
+    console.log("item",item);
+    
+    setdataComplaintType((prev: LovType[] = []) => {
+      let newData: LovType[];
+
+      if (prev.some(c => c.id === item.id)) {
+        // ถ้ามีอยู่แล้ว → เอาออก
+        newData = prev.filter(c => c.id !== item.id);
+
+        // ถ้าเอาออกแล้วเป็น Other → เคลียร์ค่า
+        if (item.id === "TRR_CT_NCR_99") {
+          setcompTypeOther("");
+        }
+        if (item.id === "TRR_CT_CAR_99") {
+          setcompTypeOther("");
+        }
+        if (item.id === "TRR_CT_OBS_99") {
+          setcompTypeOther("");
+        }
+        if (item.id === "TRR_CT_CPAR_99") {
+          setcompTypeOther("");
+        }
+      } else {
+        // เพิ่ม object แบบเต็ม
+        newData = [...prev, item];
+      }
+
+      // สร้าง array ลดรูป
+      const reducedArray = newData.map(c => (
+        {
+          complaint_type_id: c.id,
+          label: c.lov1
+        }));
+
+      // ดู log
+      console.log("Reduced array:", reducedArray);
+
+      // อัปเดตเข้า context
+      setdataComplaintTypeValue_Combobox(reducedArray);
+      // อัปเดตเข้า context เป็น array ลดรูป (แค่ id, lov1)
+      // setdataComplaintTypeValue_Combobox(
+      //   newData.map(c => ({ id: c.id, lov1: c.lov1 }))
+      // );
+
+      return newData;
+    });
+  };
+
+
+
+  const handleCheckboxChangeRs = (item: LovType) => {
+    setdataComplaintRs((prev: LovType[] = []) => {
+      let newData: LovType[];
+
+      if (prev.some(rs => rs.id === item.id)) {
+        // ถ้ามีอยู่แล้ว → เอาออก
+        newData = prev.filter(rs => rs.id !== item.id);
+
+        // ถ้าเอาออกแล้วเป็น Other → เคลียร์ค่า
+        if (item.id === "TRR_RS_NCR_99") {
+          setcompRsOther("");
+        }
+        if (item.id === "TRR_RS_NCR_6") {
+          setclauseOther("");
+        }
+      }
+      else {
+        // เพิ่ม object แบบเต็ม
+        newData = [...prev, item];
+      }
+
+      // สร้าง array ลดรูปสำหรับ context
+      const reducedArray = newData.map(rs => ({ complaint_type_id: rs.id, lov1: rs.lov1 }));
+
+      console.log("Reduced array:", reducedArray);
+
+      setdataComplaintRsValue_Combobox(reducedArray);
+
+      return newData;
+    });
+  };
+  const handleCheckboxChangepho = (item: LovType) => {
+    setdataphoto((prev: LovType[] = []) => {
+      let newData: LovType[];
+
+      if (prev.some(pho => pho.id === item.id)) {
+        // ถ้ามีอยู่แล้ว → เอาออก
+        newData = [];
+
+        // ถ้าเอาออกแล้วเป็น Other → เคลียร์ค่า
+        if (item.id === "TRR_AT_4") {
+          setphoTypeOther("");
+        }
+      }
+      else {
+        // เพิ่ม object แบบเต็ม
+        newData = [item];
+      }
+
+      // สร้าง array ลดรูปสำหรับ context
+      const reducedArray = newData.map(pho => ({
+        complaint_at_id: pho.id,
+        label: pho.lov1
+      }));
+
+      console.log("Reduced array:", reducedArray);
+
+      setdataphotoValue_Combobox(reducedArray);
+
+      return newData;
+    });
+  };
+  const handleCheckboxChangepri = (item: LovType) => {
+    setdatapriority(prev => (prev?.id === item.id ? null : item));
+  };
+
+  const [filteredComplaintType, setFilteredComplaintType] = useState<LovType[]>([]);
+  const [filteredComplaintRs, setFilteredComplaintRs] = useState<LovType[]>([]);
+  const [filteredpriority, setFilteredpriority] = useState<LovType[]>([]);
+  const [filteredphoto, setFilteredphoto] = useState<LovType[]>([]);
+  const [isHidden, setIsHidden] = useState(true);
+
+
+  // กรอง complaint_type ตาม report_type ที่เลือก
+  const handleReportTypeChange = (val: LovType | null) => {
+    console.log(val, 'valvalvalvalvalvalvalvalvalvalvalvalvalvalvalval');
+    if (val?.lov_code === "CAR"|| val?.lov_code === "OBS"|| val?.lov_code === "CPAR") {
+      setIsHidden(true);
+    }else{setIsHidden(false);}
+    setdataReportTypeValue(val);
+    console.log(dataReportTypeValue, 'dataReportTypeValue');
+
+    setdataComplaintTypeValue_Combobox(null);
+    setdataComplaintType([]);
+    setdataComplaintRsValue_Combobox(null);
+    setdataComplaintRs([]);
+    setdataphotoValue_Combobox(null);
+    setdataphoto([]);
+    setdatapriorityValue_Combobox(null);
+    setdatapriority(null);
+    setcas_number("");
+    setarea_of_detection_dept("");
+    setproduct_name("");
+    setlot_no("");
+    setdetail("");
+    setcompTypeOther("");
+    setcompRsOther("");
+    setclauseOther("");
+    setphoTypeOther("");
+    setrespond_date_within(null);
+    
+
+
+    // if (!val) {
+    //   setFilteredComplaintType([]);
+    //   setFilteredComplaintRs([]);
+    //   setFilteredphoto([]);
+    //   setFilteredpriority([]);
+
+    //   return;
+    };
+
+
+
+  //   console.log("Report:", val, "All Complaint:", dataComplaintType_Combobox, dataComplaintRs_Combobox);
+  //   //console.log("All Complaint:", dataComplaintType_Combobox);
+  //   // กรอง complaint_type ที่ lov_code ตรงกับ report_type.lov_id
+  //   const filtered = dataComplaintType_Combobox.filter(
+  //     (item: LovType) =>
+  //       item.lov_type === "complaint_type" &&
+  //       item.lov_code === val.id  // เชื่อม parent-child
+  //   );
+  //   setFilteredComplaintType(filtered);
+  //   console.log("Filtered:", filtered);
+  //   const filteredpho = (dataphoto_Combobox || []).filter(
+  //     (item: LovType) =>
+  //       item.lov_type === "attach_type"  // กรองตาม report type id
+  //   );
+  //   console.log("Filtered66666:", filteredpho);
+  //   setFilteredphoto(filteredpho);
+
+  //   const filteredpriority = (datapriority_Combobox || []).filter(
+  //     (item: LovType) =>
+  //       item.lov_type === "priority_level"  // กรองตาม report type id
+  //   );
+  //   console.log("Filtere888888888888:", filteredpriority);
+  //   setFilteredpriority(filteredpriority);
+
+  //   // ถ้าเลือก NCR → filter Reference Standard
+  //   if (val.lov_code === "NCR") {
+  //     const filteredRs = (dataComplaintRs_Combobox || []).filter(
+  //       (item: LovType) =>
+  //         item.lov_type === "reference_standard" &&
+  //         item.lov_code === val.id // กรองตาม report type id
+  //     );
+
+  //     setFilteredComplaintRs(filteredRs);
+  //     console.log("FilteredRs:", filteredRs);
+  //   }
+  // };
+  React.useEffect(() => {
+  if (dataReportTypeValue) {
+    const val = dataReportTypeValue;
+
+      // กรอง complaint type
+      const filtered = (dataComplaintType_Combobox || []).filter((item: LovType) =>
+        item.lov_type === "complaint_type" && item.lov_code === val.id
+      );
+      setFilteredComplaintType(filtered);
+
+      // กรอง attach type
+      const filteredpho = (dataphoto_Combobox || []).filter((item: LovType) =>
+        item.lov_type === "attach_type"
+      );
+      setFilteredphoto(filteredpho);
+
+      // กรอง priority
+      const filteredpriority = (datapriority_Combobox || []).filter((item: LovType) =>
+        item.lov_type === "priority_level"
+      );
+      setFilteredpriority(filteredpriority);
+
+      // ถ้าเลือก NCR → filter Reference Standard
+      if (val.lov_code === "NCR") {
+        const filteredRs = (dataComplaintRs_Combobox || []).filter((item: LovType) =>
+          item.lov_type === "reference_standard" && item.lov_code === val.id
+        );
+        setFilteredComplaintRs(filteredRs);
+      }
+    } else {
+      // reset ถ้า val null
+      setFilteredComplaintType([]);
+      setFilteredComplaintRs([]);
+      setFilteredphoto([]);
+      setFilteredpriority([]);
+      
+    }
+  }, [dataReportTypeValue, dataComplaintType_Combobox, dataComplaintRs_Combobox, dataphoto_Combobox, datapriority_Combobox]);
+
+  const priorityCalculateRespondDate = (daysToAdd: number, checked: boolean) => {
+    if (checked) {
+      const newDate = dayjs().add(daysToAdd, "day"); // use dayjs instead of Date
+      setrespond_date_within(newDate);
+    } else {
+      setrespond_date_within(null);
+    }
+  };
+  const handleFileChange = (fileArray: File[]) => {
+    const file = fileArray[0]; // เลือกไฟล์ตัวแรก
+    if (file) {
+      setFiles(prev => [...prev, file]); // push File เดี่ยวเข้า File[]
+    }
+  };
+  const handleRemoveFile = (index: number) => {
+    setFiles(prevFiles => prevFiles.filter((_, i) => i !== index));
+  };
+
+
+
+  return (
+    <Box
+      sx={{
+        p: 2,
+        mb: 2,
+        border: '2px solid #F29739',
+        borderRadius: 2,
+        backgroundColor: '#ffffff',
+        // boxShadow: '0 0 10px 2px rgba(0, 98, 233, 0.5)',
+        // transition: 'box-shadow 0.3s ease',
+        // '&:hover': {
+        //   boxShadow: '0 0 20px 4px rgba(0, 98, 233, 0.8)',
+        // },
+      }}>
+
+      
+      <div className="px-2 pt-2 pb-5">
+        <label className="sarabun-regular-datatable">
+          ประเภทข้อมูลแบบฟอร์ม
+        </label>
+      </div>
+      <Divider sx={{ my: 0.1, borderColor: "#F29739" }} />
+      <Grid container spacing={2} mt={2}>
+        <Grid size={6}>
+          <AutocompleteComboBox
+            required="required"
+            value={dataReportTypeValue}
+            labelName={"ประเภทรายงาน (Report Type)"}
+            options={dataReportType}
+            column="lov_code"
+            setvalue={handleReportTypeChange}
+            readonly={action === "Edit" ? false : readonlyTextField}
+            bgcolorTextField={action === "Edit" ? false : bgcolorTextField}
+          />
+        </Grid>
+      </Grid>
+
+
+      {/* ====== Dynamic ฟอร์ม สำหรับเลือกประเภทเอกสาร ====== */}
+      <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>
+        <label className="sarabun-regular-datatable">{dataReportTypeValue?.lov4}</label>
+        <Divider sx={{ my: 1 }} />
+        <Grid container spacing={2}>
+          <Grid size={4}>
+            <FullWidthTextField
+              value={cas_number}
+              labelName="CAS Number"
+              onchange={(e) => { setcas_number(e); }}
+              // hidden={true}
+            />
+          </Grid>
+          <Grid size={4}>
+            <FullWidthTextField
+              value={user[0]?.itasset_company_id ? user[0]?.itasset_company_id : '-'}
+              labelName="Factory"
+              onchange={(e) => setrequest_company_id(e)}
+              readonly
+            />
+          </Grid>
+          <Grid size={4}>
+            <FullWidthTextField
+              value={area_of_detection_dept}
+              labelName="Department / Area of Detection"
+              onchange={(e) => setarea_of_detection_dept(e)}
+            />
+          </Grid>
+          <Grid size={4}>
+            <FullWidthTextField
+              value={product_name}
+              labelName="Product Name"
+              onchange={(e) => setproduct_name(e)}
+            />
+          </Grid>
+          <Grid size={4}>
+            <FullWidthTextField
+              value={lot_no}
+              labelName="Lot No./Bag No"
+              onchange={(e) => setlot_no(e)}
+            />
+          </Grid>
+          <Grid size={4}>
+            <FullWidthTextField
+              value={user_file_name}
+              labelName="Attachments (if any)"
+              onchange={(e) => setuser_file_name(e)}
+            />
+          </Grid>
+          <Grid size={4}>
+            <DesktopDatePickers
+              labelName={"Document Issuance Date"}
+              value={doc_date}
+              handleChange={(val) => setdoc_date}
+              readonly
+            />
+          </Grid>
+          <Grid size={4}>
+            <DesktopDatePickers
+              labelName={"Date of Detection"}
+              value={date_of_detection}
+              handleChange={(val) => setdate_of_detection}
+            />
+          </Grid>
+          <Grid size={4}>
+            <DesktopDatePickers
+              labelName={"Required Response Date"}
+              value={respond_date_within}
+              handleChange={(val) => setrespond_date_within}
+              readonly
+            />
+          </Grid>
+          {dataReportTypeValue && (
+          <Grid size={6}>
+            <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>
+              <label className="sarabun-regular-datatable">Type Of Complaint</label>
+              <Divider sx={{ my: 2 }} />
+              <Grid container spacing={2}>
+                {(filteredComplaintType || []).map((item: LovType) => (
+                  <Grid size={6} key={item.id}>
+                    <FullWidthCheckbox
+                      labelName={item.lov1}
+                      value={dataComplaintType.some(c => c.id === item.id)}
+                      onchange={() => handleCheckboxChange(item)}
+                    />
+                  </Grid>
+                ))}
+              </Grid>
+              {dataComplaintType.some(c => c.id === "TRR_CT_NCR_99") && (
+                <FullWidthTextArea
+                  value={compTypeOther}
+                  labelName="Other:"
+                  onchange={(e) => setcompTypeOther(e)}
+                />
+              )}
+            </Paper>
+          </Grid>
+          )}
+
+          {!isHidden && dataReportTypeValue && (
+          <Grid size={6}>
+            <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>
+              <label className="sarabun-regular-datatable">Reference Standard</label>
+              <Divider sx={{ my: 2 }} />
+              <Grid container spacing={2}>
+                {filteredComplaintRs.map((item: LovType) => (
+                  <Grid size={6} key={item.id}>
+                    <FullWidthCheckbox
+                      labelName={item.lov1}
+                      value={dataComplaintRs.some(rs => rs.id === item.id)}
+                      onchange={() => handleCheckboxChangeRs(item)}
+                      // hidden={true}
+                    />
+                  </Grid>
+                ))}
+              </Grid>
+              {dataComplaintRs.some(rs => rs.id === "TRR_RS_NCR_99") && (
+                <FullWidthTextArea
+                  value={compRsOther}
+                  labelName="Other:"
+                  onchange={(e) => setcompRsOther(e)}
+                />
+              )}
+              {dataComplaintRs.some(rs => rs.id === "TRR_RS_NCR_6") && (
+                <FullWidthTextArea
+                  value={clauseOther}
+                  labelName="Clause:"
+                  onchange={(e) => setclauseOther(e)}
+                />
+              )}
+            </Paper>
+          </Grid>
+          )}
+          <Grid size={7}>
+            <FullWidthTextArea
+              value={detail}
+              labelName="Detail"
+              onchange={(e) => setdetail(e)}
+            />
+          </Grid>
+          
+          <Grid container spacing={2}>
+            {/* Row 1: Priority */}
+            {dataReportTypeValue && (
+            <Grid size={5}>
+              <label className="sarabun-regular-datatable">Priority</label>
+              <Grid container spacing={2}>
+                {(filteredpriority || []).map((item: LovType) => (
+                  <Grid size={3} key={item.id}>
+                    <FormControlLabel
+                      control={
+                        <Radio
+                          checked={datapriority?.id === item.id}
+                          onChange={(e) => {
+                            console.log("eeeeeeeeeeee", e);
+                            setdatapriorityValue_Combobox(item.lov_code);
+                            // update priority state
+                            setdatapriority(item);
+                            // ดึงจำนวนวันจาก lov3 ของ item ที่เลือก
+                            const days = Number(item.lov3 ?? 0);
+                            // คำนวณวันที่
+                            priorityCalculateRespondDate(days, true); // ใช้ true เพราะกดเลือกแล้ว
+                            // log ค่า item ที่เลือก
+                            console.log("เลือก priority:", item.lov_code, "Days:", days);
+                          }}
+                        />
+                      }
+                      label={item.lov_code}
+                      sx={{ width: "100%", m: 0 }}
+                    />
+                  </Grid>
+                ))}
+              </Grid>
+            </Grid>
+            )}
+            {dataReportTypeValue && (
+            <Grid container spacing={2}>
+              <Grid size={6}>
+                <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>
+                  <label className="sarabun-regular-datatable">Please attach any relevant documents or photost</label>
+                  <Divider sx={{ my: 2 }} />
+                  <Grid container spacing={2}>
+                    {(filteredphoto || []).map((item: LovType) => (
+                      <Grid size={6} key={item.id}>
+                        <FullWidthCheckbox
+                          labelName={item.lov1}
+                          value={dataphoto.some(pho => pho.id === item.id)}
+                          onchange={() => handleCheckboxChangepho(item)}
+                        />
+                      </Grid>
+                    ))}
+                  </Grid>
+                  {dataphoto.some(pho => pho.id === "TRR_AT_4") && (
+                    <FullWidthTextArea
+                      value={phoTypeOther}
+                      labelName="Other:"
+                      onchange={(e) => setphoTypeOther(e)}
+                    />
+                  )}
+                </Paper>
+              </Grid>
+            </Grid>
+            )}
+            <Grid container spacing={2}>
+              <Grid container spacing={2}>
+                <Grid container spacing={2}>
+                  <BrowseFileUpload setFile={handleFileChange} setFileName={() => { }} />
+                  {/* ตารางแสดงไฟล์ */}
+                  <TableContainer component={Paper} sx={{ mt: 2 }}>
+                    <Table size="small">
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>ชื่อไฟล์</TableCell>
+                          <TableCell>ขนาด (MB)</TableCell>
+                          <TableCell>จัดการ</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {files.map((file: File, index: number) => (
+                          <TableRow key={index}>
+                            <TableCell>{file.name}</TableCell>
+                            <TableCell>{(file.size / (1024 * 1024)).toFixed(2)} MB</TableCell>
+                            <TableCell>
+                              <IconButton
+                                color="error"
+                                size="small"
+                                onClick={() => handleRemoveFile(index)}
+                              >
+                                <DeleteIcon />
+                              </IconButton>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                </Grid>
+              </Grid>
+            </Grid>
+            <Grid container spacing={3}>
+              <Grid size={4}>
+                <FullWidthTextField
+                  value={user[0]?.employee_username ? user[0]?.employee_username : '-'}
+                  labelName="Reported by"
+                  onchange={(e) => setrequest_name(e)}
+                  readonly
+                />
+              </Grid>
+              <Grid size={4}>
+                <FullWidthTextField
+                  value={user[0]?.employee_position ? user[0]?.employee_position : '-'}
+                  labelName="Position"
+                  onchange={(e) => setrequest_position(e)}
+                  readonly
+                />
+              </Grid>
+              <Grid size={4}>
+                <FullWidthTextField
+                  value={user[0]?.itasset_department_name ? user[0]?.itasset_department_name : '-'}
+                  labelName="Department"
+                  onchange={(e) => setrequest_department_id(e)}
+                  readonly
+                />
+              </Grid>
+              <Grid size={4}>
+                <FullWidthTextField
+                  value={user[0]?.employee_email ? user[0]?.employee_email : '-'}
+                  labelName="Email"
+                  onchange={(e) => setrequest_email(e)}
+                  readonly
+                />
+              </Grid>
+              <Grid size={4}>
+                <FullWidthTextField
+                  value={user[0]?.employee_tel ? user[0]?.employee_tel : '-'}
+                  labelName="Phone"
+                  onchange={(e) => setemployee_tel(e)}
+                  readonly
+                />
+              </Grid>
+            </Grid>
+          </Grid>
+        </Grid>
+      </Paper>
+    </Box>
+  );
+}
+

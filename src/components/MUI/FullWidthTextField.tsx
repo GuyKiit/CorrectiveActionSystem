@@ -26,6 +26,7 @@ export default function FullWidthTextField(props: FullWidthTextField) {
     props.onblur && props.onblur(e.target.value);
   };
 
+  ////////////////////////////
   // ถ้า hidden = true จะไม่ render ทั้ง Box และ TextField
   if (props.hidden) return null;
 

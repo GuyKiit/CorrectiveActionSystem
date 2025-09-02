@@ -205,6 +205,18 @@ export default function Complaint() {
   const [dataelement, setdataelement] = React.useState<Launch | null>(null);
   const [ComplaintBlocks, setComplaintBlocks] = useState<Block[]>([]);
 
+
+  const resetForm = () => {
+  setcas_number("");
+  setarea_of_detection_dept("");
+  setproduct_name("");
+  setlot_no("");
+  setuser_file_name("");
+  setdetail("");
+  setdatapriority("");
+  
+};
+
   const [validateText, setValidateText] = React.useState({
     Product_Group: false,
     //Product: false
@@ -609,6 +621,8 @@ export default function Complaint() {
         setIsLoadingScreen(false)
 
         console.log("dataadd", response.data)
+         handleClose?.();
+         Complaint_Get();
         // FullSweetalert({
         //   title: 'Success',
         //   text: `จำนวนเพิ่มข้อมูล : ${response.countAddSuccess} รายการ
@@ -720,17 +734,21 @@ export default function Complaint() {
     setOpenSync(true);
   };
   const hadleOnclickMenuAdd = () => {
+    resetForm();
     setOpenAdd(true);
   };
   const hadleOnclickMenuView = (data: any) => {
+    resetForm();
     setOpenView(true);
     setdataelement(data);
   };
   const hadleOnclickMenuEdit = (data: any) => {
+    resetForm();
     setOpenEdit(true);
     setdataelement(data);
   };
   const hadleOnclickMenuDelete = (data: any) => {
+    resetForm();
     setOpenDelete(true);
     setdataelement(data);
   };
@@ -862,17 +880,6 @@ export default function Complaint() {
               handleChange={setStartDateSearch}
             />
           </Grid>
-
-          {/* <Grid size={3}>
-            <AutocompleteComboBox
-              value={dataProductValue_Combobox}
-              labelName={"สินค้า (Product)"}
-              options={dataProduct_Combobox}
-              column="name_th"
-              setvalue={setDataProductValue_Combobox}
-            //disabled={false}
-            />
-          </Grid> */}
           <Grid size={4}>
             <DesktopDatePickers
               labelName={"วันที่ออกเอกสาร (Document Issuance Date"}
@@ -880,7 +887,6 @@ export default function Complaint() {
               handleChange={setStartDateSearch}
             />
           </Grid>
-
           <Grid size={4}>
             <DesktopDatePickers
               labelName={"วันที่พบปัญหา (Date of Detection"}
@@ -888,9 +894,7 @@ export default function Complaint() {
               handleChange={setEndDateSearch}
             />
           </Grid>
-
         </Grid>
-
         <Grid container spacing={2} sx={{ mt: 2 }} justifyContent="flex-end" gap={1}>
           <Grid>
             <FullWidthButton

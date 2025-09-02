@@ -39,6 +39,7 @@ interface ComplaintBody {
 
 
 
+
     startDate?: any;
     setStartDate?: (value: any) => void;
 
@@ -56,6 +57,7 @@ type LovType = {
     lov1: string;
     lov3: string;
     complaint_type_id: string;
+    complaint_at_id: string;
 };
 
 export default function CompalintView({
@@ -233,9 +235,14 @@ export default function CompalintView({
     const [startDueDate, setStartDueDate] = React.useState<dayjs.Dayjs | undefined | null>();
     const [endDueDate, setEndDueDate] = React.useState<dayjs.Dayjs | undefined | null>();
     const [dataComplaintType, setdataComplaintType] = useState<LovType[]>([]);
+    const [dataComplaintRs, setdataComplaintRs] = useState<LovType[]>([]);
+    const [dataComplaintphoto, setdataComplaintphoto] = useState<LovType[]>([]);
+    const [dataPriority, setdataPriority] = useState<string>("");
     const [filteredComplaintType, setFilteredComplaintType] = useState<LovType[]>([]);
     const [filteredComplaintRs, setFilteredComplaintRs] = useState<LovType[]>([]);
-    const [dataComplaintRs, setdataComplaintRs] = useState<LovType[]>([]);
+    const [filteredpriority, setFilteredpriority] = useState<LovType[]>([]);
+    const [filteredphoto, setFilteredphoto] = useState<LovType[]>([]);
+
     const [isHidden, setIsHidden] = React.useState(false); // เริ่มต้นแสดง
 
     React.useEffect(() => {
@@ -244,17 +251,28 @@ export default function CompalintView({
         // Complaint_img_Get()
         // cer_detail_Get()
         // กรอง complaint type
+
         const filtered = (dataComplaintType_Combobox || []).filter((item: LovType) =>
             item.lov_type === "complaint_type" && item.lov_code === "TRR_RT_NCR"
         );
-        // const filteredRs = (dataComplaintRs_Combobox || []).filter((item: LovType) =>
-        //     item.lov_type === "reference_standard" && item.lov_code === "TRR_RT_NCR"
-        // );
+        const filteredRs = (dataComplaintRs_Combobox || []).filter((item: LovType) =>
+            item.lov_type === "reference_standard" && item.lov_code === "TRR_RT_NCR"
+        );
+        const filteredpriority = (datapriority_Combobox || []).filter((item: LovType) =>
+            item.lov_type === "priority_level"
+        );
+        const filteredphoto = (dataphoto_Combobox || []).filter((item: LovType) =>
+            item.lov_type === "attach_type"
+        );
         console.log("filtered", filtered);
-        // console.log("filteredRS", filteredRs);
         setFilteredComplaintType(filtered);
-        // setFilteredComplaintRs(filteredRs);
-    }, [dataComplaintType_Combobox,])
+        console.log("filteredRS", filteredRs);
+        setFilteredComplaintRs(filteredRs);
+        console.log("filteredpriority", filteredpriority);
+        setFilteredpriority(filteredpriority);
+        console.log("filteredphoto", filteredphoto);
+        setFilteredphoto(filteredphoto);
+    }, [dataComplaintType_Combobox, dataComplaintRs_Combobox, datapriority_Combobox, dataphoto_Combobox, dataelement]);
 
     const [value, setValue] = React.useState(0);
 
@@ -263,7 +281,7 @@ export default function CompalintView({
     };
 
     const preViewComplaint = async () => {
-        //console.log(dataelement, 'dataelement');
+        console.log(dataelement, 'dataelement');
 
         if (dataelement) {
             setcas_number(dataelement.cas_number)
@@ -279,22 +297,33 @@ export default function CompalintView({
             setrequest_email(dataelement.request_email)
             setemployee_tel(dataelement.employee_tel)
             setdataComplaintType(dataelement?.complaintType)
-            // setdataComplaintRs(dataelement?.complaintRs)
+            setdataComplaintRs(dataelement?.complaintRs)
+            setdataComplaintphoto(dataelement?.complaintPhoto)
+            // แปลง priority text → id ของ RadioGroup
+            const selectedPriority = datapriority_Combobox.find(
+                (item: any) =>
+                    item.lov_code === dataelement.priority_level || item.lov1 === dataelement.priority_level
+            );
+            setdataPriority(selectedPriority?.id || ""); // id ของ priority หรือ "" ถ้าไม่เจอ
             // setdoc_date(dayjs(parseInt(dataelement.doc_date.match(/\d+/)[0])).format("DD/MM/YYYY HH:mm:ss"))
 
             console.log("dataComplaintType_Combobox", dataComplaintType_Combobox);
 
             console.log("dataelement?.complaint_type_id", dataelement?.complaintType);
+            console.log("dataelement?.complaint_type_id", dataelement?.complaintRs);
+            console.log("dataelement?.complaint_at_id", dataelement?.complaintPhoto);
+            console.log("dataelement?.priority_level", dataelement?.priority_level);
             const data_ComplaintType = await setValueMas(dataComplaintType_Combobox, dataelement?.complaint_type_id, "id")
-            // const data_ComplaintRs = await setValueMas(dataComplaintRs_Combobox, dataelement?.complaint_type_id, "id")
+            const data_ComplaintRs = await setValueMas(dataComplaintRs_Combobox, dataelement?.complaint_type_id, "id")
+            const data_ComplaintPhoto = await setValueMas(dataphoto_Combobox, dataelement?.complaint_at_id, "id")
+            const data_Priority = await setValueMas(datapriority_Combobox, dataelement?.priority_level, "id")
             // setdataComplaintTypeValue_Combobox && setdataComplaintTypeValue_Combobox(data_ComplaintType)
             console.log("data_ComplaintType", data_ComplaintType);
-            // console.log("data_ComplaintRs", data_ComplaintRs);
-
-console.log(dataReportType);
-
+            console.log("data_ComplaintRs", data_ComplaintRs);
+            console.log("data_ComplaintPhoto", data_ComplaintPhoto);
+            console.log("data_Priority", data_Priority);
+            console.log(dataReportType);
             setIsHidden(dataReportType)
-
         }
     }
     // React.useEffect(() => {
@@ -342,18 +371,18 @@ console.log(dataReportType);
 
             <Grid container spacing={2} mt={2}>
                 <Grid size={4}>
-                    {!isHidden && (   // <-- แทนที่ isHidden ด้วยเงื่อนไขของคุณ
-                        <FullWidthTextField
-                            value={cas_number}
-                            // required={"required"}
-                            labelName={"CasNumber"}
-                            onchange={(e) => {
-                                setcas_number(e);
-                            }}
-                            readonly
-                            bgcolorTextField={bgcolorTextField}
-                        />
-                    )}
+
+                    <FullWidthTextField
+                        value={cas_number}
+                        // required={"required"}
+                        labelName={"CasNumber"}
+                        onchange={(e) => {
+                            setcas_number(e);
+                        }}
+                        readonly
+                        bgcolorTextField={bgcolorTextField}
+                    />
+
                 </Grid>
 
                 <Grid size={4}>
@@ -461,6 +490,7 @@ console.log(dataReportType);
                         <Divider sx={{ my: 2 }} />
                         <Grid container spacing={2}>
                             {(filteredComplaintType || []).map((item: LovType) => {
+                                console.log('dataComplaintType:', dataComplaintType);
                                 const isChecked = dataComplaintType.some(c => {
                                     console.log('Checking c:', c, 'against item.id:', item.id);
                                     return c.complaint_type_id === item.id; // เปลี่ยนจาก c.id เป็น c.complaint_type_id
@@ -490,18 +520,20 @@ console.log(dataReportType);
                         )}
                     </Paper>
                 </Grid>
-                {/* <Grid size={6}>
+
+                <Grid size={6}>
                     <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>
                         <label className="sarabun-regular-datatable">Reference Standard</label>
                         <Divider sx={{ my: 2 }} />
                         <Grid container spacing={2}>
                             {(filteredComplaintRs || []).map((item: LovType) => {
+                                console.log('dataComplaintRs:', dataComplaintRs);
                                 const isChecked = dataComplaintRs.some(c => {
                                     console.log('Checking c:', c, 'against item.id:', item.id);
                                     return c.complaint_type_id === item.id; // เปลี่ยนจาก c.id เป็น c.complaint_type_id
                                 });
 
-                                console.log('Result for item', item.id, 'isChecked:', isChecked);
+                                console.log('Result for itemmmmm', item.id, 'isCheckeddddd:', isChecked);
 
                                 return (
                                     <Grid size={6} key={item.id}>
@@ -514,11 +546,15 @@ console.log(dataReportType);
                                     </Grid>
                                 );
                             })}
-                        </Grid> */}
-
-
-
-                {/* {dataComplaintRsValue_Combobox.some((c: any) => c.id === "TRR_RS_NCR_99") && (
+                        </Grid>
+                        {dataComplaintRsValue_Combobox?.some((c: any) => c.id === "TRR_RS_NCR_6") && (
+                            <FullWidthTextArea
+                                value={clauseOther}
+                                labelName="clause:"
+                                readonly
+                            />
+                        )}
+                        {dataComplaintRsValue_Combobox?.some((c: any) => c.id === "TRR_RS_NCR_99") && (
                             <FullWidthTextArea
                                 value={compRsOther}
                                 labelName="Other:"
@@ -526,22 +562,19 @@ console.log(dataReportType);
                             />
                         )}
                     </Paper>
-                </Grid> */}
+                </Grid>
 
                 <Grid size={3}>
                     <FormControl component="fieldset">
                         <FormLabel component="legend">Priority</FormLabel>
-                        <RadioGroup
-                            row
-                            value={datapriorityValue_Combobox?.id || ""}
-                            onChange={(e) => setdatapriorityValue_Combobox(e.target.value)}
-                        >
+                        <RadioGroup row value={dataPriority}>
                             {datapriority_Combobox.map((item: any) => (
                                 <FormControlLabel
                                     key={item.id}
-                                    value={item.id}
+                                    value={item.id}        // ต้องตรงกับ state
                                     control={<Radio />}
-                                    label={item.lov_code}
+                                    label={item.lov_code}  // หรือ lov1 ตามที่แสดง
+                                    disabled
                                 />
                             ))}
                         </RadioGroup>
@@ -560,6 +593,33 @@ console.log(dataReportType);
                         bgcolorTextField={bgcolorTextField}
                     />
                 </Grid>
+                <Grid size={6}>
+                    <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>
+                        <label className="sarabun-regular-datatable">Please attach any  photost</label>
+                        <Divider sx={{ my: 2 }} />
+                        <Grid container spacing={2}>
+                            {(filteredphoto || []).map((item: LovType) => {
+                                const isChecked = (dataelement?.complaintFile || []).some(
+                                    (c: { complaint_at_id: string; }) => c.complaint_at_id === item.id // ตรงกับ id แน่นอน
+                                );
+
+                                console.log('Result for itemmmmm', item.id, 'isCheckeddddd:', isChecked);
+
+                                return (
+                                    <Grid size={6} key={item.id}>
+                                        <FullWidthCheckbox
+                                            labelName={item.lov1}
+                                            value={isChecked}
+                                            readonly={true}
+                                            onchange={() => { }}
+                                        />
+                                    </Grid>
+                                );
+                            })}
+                        </Grid>
+                    </Paper>
+                </Grid>
+
                 <Grid container spacing={2} mt={2}>
                     <Grid size={4}>
                         <FullWidthTextField
