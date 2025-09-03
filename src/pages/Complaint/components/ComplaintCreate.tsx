@@ -102,6 +102,7 @@ export default function ComplaintInsert({
     request_department_id,
     request_position,
     request_email,
+    request_phone,
     request_date,
     respondent_company_id,
     respondent_domain_id,
@@ -169,6 +170,7 @@ export default function ComplaintInsert({
     setrequest_department_id,
     setrequest_position,
     setrequest_email,
+    setrequest_phone,
     setuser_file_name,
     setrequest_date,
     setrespondent_company_id,
@@ -800,7 +802,7 @@ export default function ComplaintInsert({
                 <FullWidthTextField
                   value={user[0]?.employee_tel ? user[0]?.employee_tel : '-'}
                   labelName="Phone"
-                  onchange={(e) => setemployee_tel(e)}
+                  onchange={(e) => setrequest_phone(e)}
                   readonly
                 />
               </Grid>

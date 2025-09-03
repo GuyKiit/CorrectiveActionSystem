@@ -29,6 +29,7 @@ import { v4 as uuidv4 } from "uuid";
 import { cleanAccessData } from "../../service/initmain/initmain";
 import CompalintView from "./components/ComplaintRead";
 import { useListComplaint } from "./core/ListComplaintContext";
+import { data } from "react-router-dom";
 
 type Launch = {
   id: string
@@ -54,6 +55,7 @@ export default function Complaint() {
 
     Complaint_no,
     no,
+    report_type,
     cas_number,
     doc_date,
     date_of_detection,
@@ -120,6 +122,7 @@ export default function Complaint() {
 
     setComplaint_no,
     setno,
+    setreport_type,
     setcas_number,
     setdoc_date,
     setdate_of_detection,
@@ -213,6 +216,7 @@ export default function Complaint() {
   //------------------Start Search Index ------------------//
   const [TextNameSearch, setTextNameSearch] = React.useState(
     {
+
       cas_number: "",
       doc_date: "",
       product_name: "",
@@ -336,9 +340,6 @@ export default function Complaint() {
   }
 
   const setData = (data: any) => {
-
-
-
     setcompTypeOther('')
     setComplaint_no('')
     setno('')
@@ -378,7 +379,8 @@ export default function Complaint() {
                     handleOnclickMenuView(el);
                   } else if (name === "Edit") {
                     handleOnclickMenuEdit(el);
-                  } else if (name === "Delete") {
+                  } 
+                  else if (name === "Delete") {
                     handleOnclickMenuDelete(el);
                   }
                 }}
@@ -504,6 +506,7 @@ export default function Complaint() {
     const dataset = {
       complaintModel: {
         id: tempid,
+        report_type: dataReportTypeValue?.id,
         cas_number: cas_number,
         //  doc_date: "2025-08-26T14:37:35.707",
         date_of_detection: "2025-08-26T07:37:35.73",
@@ -734,13 +737,23 @@ export default function Complaint() {
         <Divider sx={{ my: 0.1, borderColor: "#F29739" }} />
         <Grid container spacing={2} mt={2}>
           <Grid size={4}>
+            <AutocompleteComboBox
+              value={dataReportTypeValue}
+              labelName={"ReportType"}
+              options={dataReportType}
+              column="lov_code"
+              setvalue={setdataReportTypeValue}
+            //disabled={false}
+            />
+          </Grid>
+          <Grid size={4}>
             <FullWidthTextField
               value={TextNameSearch.cas_number}
               labelName={"CAS Number"}
               onchange={(value) => setTextNameSearch({ ...TextNameSearch, ...{ cas_number: value } })}
             />
           </Grid>
-          <Grid size={4}>
+          {/* <Grid size={4}>
             <AutocompleteComboBox
               value={dataComplaintTypeValue_Combobox}
               labelName={"ComplaintType"}
@@ -749,7 +762,7 @@ export default function Complaint() {
               setvalue={setdataComplaintTypeValue_Combobox}
             //disabled={false}
             />
-          </Grid>
+          </Grid> */}
           <Grid size={4}>
             <FullWidthTextField
               value={TextNameSearch.product_name}

@@ -87,6 +87,7 @@ export default function CompalintView({
     const {
         Complaint_no,
         no,
+        report_type,
         cas_number,
         doc_date,
         date_of_detection,
@@ -96,6 +97,7 @@ export default function CompalintView({
         request_department_id,
         request_position,
         request_email,
+        request_phone,
         request_date,
         respondent_company_id,
         respondent_domain_id,
@@ -154,6 +156,7 @@ export default function CompalintView({
 
         setComplaint_no,
         setno,
+        setreport_type,
         setcas_number,
         setdoc_date,
         setdate_of_detection,
@@ -163,6 +166,7 @@ export default function CompalintView({
         setrequest_department_id,
         setrequest_position,
         setrequest_email,
+        setrequest_phone,
         setuser_file_name,
         setrequest_date,
         setrespondent_company_id,
@@ -239,7 +243,7 @@ export default function CompalintView({
     const [filteredComplaintRs, setFilteredComplaintRs] = useState<LovType[]>([]);
     const [filteredpriority, setFilteredpriority] = useState<LovType[]>([]);
     const [filteredphoto, setFilteredphoto] = useState<LovType[]>([]);
-    const [isHidden, setIsHidden] = React.useState(false); // เริ่มต้นแสดง
+    const [isRSHidden, setIsRSHidden] = React.useState(true); // เริ่มต้นแสดง
     const [value, setValue] = React.useState(0);
 
 
@@ -250,13 +254,13 @@ export default function CompalintView({
 
     // Functions (Initial, Calculation or ETC.) =================================================
     const resetForm = () => {
-      setcas_number("");
-      setarea_of_detection_dept("");
-      setproduct_name("");
-      setlot_no("");
-      setuser_file_name("");
-      setdetail("");
-      setdatapriority("");
+        setcas_number("");
+        setarea_of_detection_dept("");
+        setproduct_name("");
+        setlot_no("");
+        setuser_file_name("");
+        setdetail("");
+        setdatapriority("");
     };
 
     React.useEffect(() => {
@@ -272,11 +276,11 @@ export default function CompalintView({
         const filtered = (dataComplaintType_Combobox || []).filter((item: LovType) =>
             // item.lov_type === "complaint_type" && item.lov_code === dataelement.report_type
             // item.lov_type === "complaint_type" && item.lov_code === "TRR_RT_NCR"
-            item.lov_type === "complaint_type" && item.lov_code === "TRR_RT_CAR"
+            item.lov_type === "complaint_type" && item.lov_code === dataelement.report_type
         );
         const filteredRs = (dataComplaintRs_Combobox || []).filter((item: LovType) =>
             // item.lov_type === "reference_standard" && item.lov_code === "TRR_RT_NCR"
-            item.lov_type === "reference_standard" && item.lov_code === "TRR_RT_CAR"
+            item.lov_type === "reference_standard" && item.lov_code === dataelement.report_type
         );
         const filteredpriority = (datapriority_Combobox || []).filter((item: LovType) =>
             item.lov_type === "priority_level"
@@ -293,11 +297,18 @@ export default function CompalintView({
         console.log("filteredphoto", filteredphoto);
         setFilteredphoto(filteredphoto);
     }, [dataComplaintType_Combobox, dataComplaintRs_Combobox, datapriority_Combobox, dataphoto_Combobox, dataelement]);
-
     const previewComplaint = async () => {
         console.log(dataelement, 'dataelement');
+        console.log("dataReportType", dataReportType);
+        console.log("NCR TEST", extractReportType("TRR_RT_NCR"));
+        console.log("OBS TEST", extractReportType("TRR_RT_OBS"));
+        console.log("CAR TEST", extractReportType("TRR_RT_CAR"));
+        console.log("CPAR TEST", extractReportType("TRR_RT_CPAR"));
+        
+
 
         if (dataelement) {
+            setreport_type(dataelement.report_type)
             setcas_number(dataelement.cas_number)
             setrequest_company_id(dataelement.request_company_id)
             setarea_of_detection_dept(dataelement.area_of_detection_dept)
@@ -313,6 +324,8 @@ export default function CompalintView({
             setdataComplaintType(dataelement?.complaintType)
             setdataComplaintRs(dataelement?.complaintRs)
             setdataComplaintphoto(dataelement?.complaintPhoto)
+            setIsRSHidden(extractReportType(dataelement.report_type) != "NCR" ? true : false);
+            // setIsRSHidden(dataelement.lov_code !== "TRR_RT_NCR");
             // แปลง priority text → id ของ RadioGroup
             const selectedPriority = datapriority_Combobox.find(
                 (item: any) =>
@@ -337,8 +350,10 @@ export default function CompalintView({
             console.log("data_ComplaintPhoto", data_ComplaintPhoto);
             console.log("data_Priority", data_Priority);
             console.log(dataReportType);
-            setIsHidden(dataReportType)
+            // setIsRSHidden(dataReportType)
+
         }
+
     }
 
     return (
@@ -362,10 +377,20 @@ export default function CompalintView({
                 </label>
             </div>
             <Divider sx={{ my: 0.1, borderColor: "#F29739" }} />
-
+            <Grid size={4}>
+                <FullWidthTextField
+                    value={report_type}
+                    // required={"required"}
+                    labelName={"ReportType"}
+                    onchange={(e) => {
+                        setdataReportTypeValue(e);
+                    }}
+                    readonly
+                    bgcolorTextField={bgcolorTextField}
+                />
+            </Grid>
             <Grid container spacing={2} mt={2}>
                 <Grid size={4}>
-
                     <FullWidthTextField
                         value={cas_number}
                         // required={"required"}
@@ -376,7 +401,6 @@ export default function CompalintView({
                         readonly
                         bgcolorTextField={bgcolorTextField}
                     />
-
                 </Grid>
 
                 <Grid size={4}>
@@ -505,7 +529,7 @@ export default function CompalintView({
                             })}
                         </Grid>
                         {/* แสดงช่อง Other ถ้ามีเลือกตัว TRR_CT_NCR_99 */}
-                        {dataComplaintTypeValue_Combobox.some((c: any) => c.id === "TRR_CT_NCR_99") && (
+                        {dataComplaintTypeValue_Combobox?.id === "TRR_CT_NCR_99" && (
                             <FullWidthTextArea
                                 value={compTypeOther}
                                 labelName="Other:"
@@ -515,49 +539,51 @@ export default function CompalintView({
                     </Paper>
                 </Grid>
 
-                {!isHidden && dataReportTypeValue && (
-                <Grid size={6}>
-                    <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>
-                        <label className="sarabun-regular-datatable">Reference Standard</label>
-                        <Divider sx={{ my: 2 }} />
-                        <Grid container spacing={2}>
-                            {(filteredComplaintRs || []).map((item: LovType) => {
-                                console.log('dataComplaintRs:', dataComplaintRs);
-                                const isChecked = dataComplaintRs.some(c => {
-                                    console.log('Checking c:', c, 'against item.id:', item.id);
-                                    return c.complaint_type_id === item.id; // เปลี่ยนจาก c.id เป็น c.complaint_type_id
-                                });
+                {!isRSHidden &&  (
+                    <Grid size={6}>
+                        <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>
+                            <label className="sarabun-regular-datatable">Reference Standard</label>
+                            <Divider sx={{ my: 2 }} />
+                            <Grid container spacing={2}>
+                                {(filteredComplaintRs || []).map((item: LovType) => {
+                                    console.log("❤❤❤❤filteredComplaintRs", filteredComplaintRs);
 
-                                console.log('Result for itemmmmm', item.id, 'isCheckeddddd:', isChecked);
+                                    console.log('dataComplaintRs:', dataComplaintRs);
+                                    const isChecked = dataComplaintRs.some(c => {
+                                        console.log('Checking c:', c, 'against item.lov_code:', item.lov_code);
+                                        return c.complaint_type_id === item.id;
+                                    });
 
-                                return (
-                                    <Grid size={6} key={item.id}>
-                                        <FullWidthCheckbox
-                                            labelName={item.lov1}
-                                            value={isChecked}
-                                            readonly={true}
-                                            onchange={() => { }}
-                                        />
-                                    </Grid>
-                                );
-                            })}
-                        </Grid>
-                        {dataComplaintRsValue_Combobox?.some((c: any) => c.id === "TRR_RS_NCR_6") && (
-                            <FullWidthTextArea
-                                value={clauseOther}
-                                labelName="clause:"
-                                readonly
-                            />
-                        )}
-                        {dataComplaintRsValue_Combobox?.some((c: any) => c.id === "TRR_RS_NCR_99") && (
-                            <FullWidthTextArea
-                                value={compRsOther}
-                                labelName="Other:"
-                                readonly
-                            />
-                        )}
-                    </Paper>
-                </Grid>
+                                    console.log('Result for itemmmmm', item.id, 'isCheckeddddd:', isChecked);
+
+                                    return (
+                                        <Grid size={6} key={item.id}>
+                                            <FullWidthCheckbox
+                                                labelName={item.lov1}
+                                                value={isChecked}
+                                                readonly={true}
+                                                onchange={() => { }}
+                                            />
+                                        </Grid>
+                                    );
+                                })}
+                            </Grid>
+                            {dataComplaintRsValue_Combobox?.some((c: any) => c.id === "TRR_RS_NCR_6") && (
+                                <FullWidthTextArea
+                                    value={clauseOther}
+                                    labelName="clause:"
+                                    readonly
+                                />
+                            )}
+                            {dataComplaintRsValue_Combobox?.some((c: any) => c.id === "TRR_RS_NCR_99") && (
+                                <FullWidthTextArea
+                                    value={compRsOther}
+                                    labelName="Other:"
+                                    readonly
+                                />
+                            )}
+                        </Paper>
+                    </Grid>
                 )}
 
                 <Grid size={3}>
@@ -577,7 +603,7 @@ export default function CompalintView({
                     </FormControl>
                 </Grid>
 
-                <Grid size={6}>
+                <Grid size={12}>
                     <FullWidthTextArea
                         value={detail}
                         //required={"required"}
@@ -671,11 +697,11 @@ export default function CompalintView({
                     </Grid>
                     <Grid size={4}>
                         <FullWidthTextField
-                            value={employee_tel}
+                            value={request_phone}
                             //required={"required"}
                             labelName={"Phone"}
                             onchange={(e) => {
-                                setemployee_tel(e);
+                                setrequest_phone(e);
                             }}
                             readonly
                             bgcolorTextField={bgcolorTextField}
@@ -686,4 +712,14 @@ export default function CompalintView({
             </Grid>
         </Box >
     )
+}
+
+export function extractReportType(code?: string): string {
+    if (!code) return "";
+    const prefix = "TRR_RT_";
+    if (code.includes(prefix)) {
+        return code.split(prefix)[1].trim().toUpperCase();
+    }
+    const parts = code.split("_");
+    return (parts[parts.length - 1] || "").trim().toUpperCase();
 }

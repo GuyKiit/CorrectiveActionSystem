@@ -6,6 +6,7 @@ export type Adds = undefined | null | boolean;
 export type ListComplaintContextProps = {
     Complaint_no?: string
     no?: string
+    report_type?: string
     cas_number?: string
     doc_date?: dayjs.Dayjs
     date_of_detection?: dayjs.Dayjs
@@ -15,6 +16,7 @@ export type ListComplaintContextProps = {
     request_department_id?: number | null
     request_position?: string | null
     request_email?: string | null
+    request_phone?: string | null
     request_date?: dayjs.Dayjs
     respondent_company_id?: number | null
     respondent_domain_id?: string | null
@@ -97,6 +99,7 @@ export type ListComplaintContextProps = {
 
     setComplaint_no: Dispatch<SetStateAction<string>>;
     setno: Dispatch<SetStateAction<string>>;
+    setreport_type: Dispatch<SetStateAction<string>>;
     setcas_number: Dispatch<SetStateAction<string>>
     setdoc_date: Dispatch<SetStateAction<dayjs.Dayjs>>
     setdate_of_detection: Dispatch<SetStateAction<dayjs.Dayjs>>
@@ -106,6 +109,7 @@ export type ListComplaintContextProps = {
     setrequest_department_id: Dispatch<SetStateAction<number | null>>;
     setrequest_position: Dispatch<SetStateAction<string | null>>;
     setrequest_email: Dispatch<SetStateAction<string | null>>;
+    setrequest_phone: Dispatch<SetStateAction<string | null>>;
     setrequest_date: Dispatch<SetStateAction<dayjs.Dayjs>>
     // setdataComplaintType: Dispatch<SetStateAction<boolean | null>>
     setrespondent_company_id: Dispatch<SetStateAction<number | null>>;
@@ -173,6 +177,7 @@ export type ListComplaintContextProps = {
 export const initialListComplaint: ListComplaintContextProps = {
     setComplaint_no: () => { },
     setno: () => { },
+    setreport_type: () => { },
     setcas_number: () => { },
     setdoc_date: () => { },
     setdate_of_detection: () => { },
@@ -182,6 +187,7 @@ export const initialListComplaint: ListComplaintContextProps = {
     setrequest_department_id: () => { },
     setrequest_position: () => { },
     setrequest_email: () => { },
+    setrequest_phone: () => { },
     setother: () => { },
     setcompTypeOther: () => { },
     setcompRsOther: () => { },

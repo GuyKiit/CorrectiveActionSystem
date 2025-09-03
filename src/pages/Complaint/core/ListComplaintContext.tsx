@@ -40,6 +40,9 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
     const [request_email, setrequest_email] = useState<any>(
         initialListComplaint.request_email
     );
+    const [request_phone, setrequest_phone] = useState<any>(
+        initialListComplaint.request_phone
+    );
     const [request_date, setrequest_date] = useState<dayjs.Dayjs>(
         dayjs(initialListComplaint.request_date)
     );
@@ -212,6 +215,9 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
     const [employee_tel, setemployee_tel] = useState<any>(
         initialListComplaint.employee_tel
     );
+    const [report_type, setreport_type] = useState<any>(
+        initialListComplaint.report_type
+    );
     
 
     const [dataComplaintTypeValue_Combobox, setdataComplaintTypeValue_Combobox] =
@@ -228,6 +234,7 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
             value={{
                 Complaint_no,
                 no,
+                report_type,
                 cas_number,
                 doc_date,
                 date_of_detection,
@@ -237,6 +244,7 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 request_department_id,
                 request_position,
                 request_email,
+                request_phone,
                 area_of_detection_dept,
                 product_name,
                 detail,
@@ -300,6 +308,7 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
 
                 setComplaint_no,
                 setno,
+                setreport_type,
                 setcas_number,
                 setuser_file_name,
                 setdoc_date,
@@ -310,6 +319,7 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 setrequest_department_id,
                 setrequest_position,
                 setrequest_email,
+                setrequest_phone,
                 setother,
                 setemployee_tel,
                 // setdataComplaintType,

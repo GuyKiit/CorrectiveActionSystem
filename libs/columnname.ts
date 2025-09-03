@@ -14,19 +14,27 @@ export const Complaint_headCells = [
         colWidth: 150
     },
     {
+        columnName: 'report_type',
+        numeric: 'center',
+        disablePadding: true,
+        label: 'Report Type',
+        colWidth: 150
+        
+    },
+    {
         columnName: 'cas_number',
         numeric: 'center',
         disablePadding: true,
         label: 'CAS Number',
         colWidth: 150
     },
-    {
-        columnName: 'lov.id',
-        numeric: 'center',
-        disablePadding: true,
-        label: 'Complaint Type',
-        colWidth: 150
-    },
+    // {
+    //     columnName: 'dataComplaintType',
+    //     numeric: 'center',
+    //     disablePadding: true,
+    //     label: 'Complaint Type',
+    //     colWidth: 150
+    // },
     {
         columnName: 'product_name',
         numeric: 'center',
@@ -53,7 +61,8 @@ export const Complaint_headCells = [
         numeric: 'center',
         disablePadding: false,
         label: 'สถานะ',
-        colWidth: 150
+        colWidth: 150,
+        
     },
     {
         columnName: 'create_by',
@@ -85,137 +94,3 @@ export const Complaint_headCells = [
     },
     
 ]
-// export const Shipment_headCells = [
-// //   {
-// //     columnName: 'expand',
-// //     numeric: 'center',
-// //     disablePadding: true,
-// //     label: '', // ไม่มี label บนหัวตาราง
-// //     colWidth: 50,
-// //     isExpand: true, // ใช้ระบุว่า column นี้เป็นปุ่ม Expand
-// //   },
-//   {
-//     columnName: 'ACTION',
-//     numeric: 'center',
-//     //disablePadding: true,
-//     label: 'จัดการ',
-//     //colWidth: 100
-//   },
-//   {
-//     columnName: 'shipment_status_id',
-//     numeric: 'center',
-//     disablePadding: true,
-//     label: 'สถานะงาน',
-//     colWidth: 150
-//   },
-//   {
-//     columnName: 'no',
-//     numeric: 'center',
-//     disablePadding: true,
-//     label: 'เลขที่จัดส่ง',
-//     colWidth: 150
-//   },
-//   {
-//     columnName: 'transport_name',
-//     numeric: 'center',
-//     disablePadding: true,
-//     label: 'บริษัทขนส่ง',
-//     //colWidth: 170
-//   },
-//   {
-//     columnName: 'truck_plate_all',
-//     numeric: 'center',
-//     disablePadding: true,
-//     label: 'ทะเบียนแม่ / ลูก',
-//     //colWidth: 220
-//   },
-//   {
-//     columnName: 'truck_type_name',
-//     numeric: 'center',
-//     disablePadding: true,
-//     label: 'ประเภทรถ',
-//     colWidth: 150
-//   },
-//   {
-//     columnName: 'due_datetime',
-//     numeric: 'center',
-//     disablePadding: true,
-//     label: 'วันที่ส่งมอบ',
-//     colWidth: 150
-//   },
-// ];
-
-// export const ShipmentDetail_headCells = [
-// //   {
-// //     columnName: 'expand',
-// //     numeric: 'center',
-// //     disablePadding: true,
-// //     label: '', // ไม่มี label บนหัวตาราง
-// //     colWidth: 50,
-// //     isExpand: true, // ใช้ระบุว่า column นี้เป็นปุ่ม Expand
-// //   },
-//   {
-//     columnName: 'ACTION_DETAIL',
-//     numeric: 'center',
-//     disablePadding: true,
-//     label: 'จัดการ',
-//     //colWidth: 100
-//   },
-//   {
-//     columnName: 'order_status',
-//     numeric: 'center',
-//     disablePadding: true,
-//     label: 'สถานะงาน',
-//     colWidth: 150
-//   },
-//   {
-//     columnName: 'tms_shipment_no',
-//     numeric: 'center',
-//     disablePadding: true,
-//     label: 'เลขที่จัดส่ง',
-//     colWidth: 150
-//   },
-//   {
-//     columnName: 'order_po',
-//     numeric: 'center',
-//     disablePadding: true,
-//     label: 'PO',
-//     colWidth: 150
-//   },
-//   {
-//     columnName: 'order_do',
-//     numeric: 'center',
-//     disablePadding: true,
-//     label: 'DO',
-//     colWidth: 150
-//   },
-//     {
-//     columnName: 'cus_name',
-//     numeric: 'center',
-//     disablePadding: true,
-//     label: 'ลูกค้า',
-//     colWidth: 150
-//   },
-//   {
-//     columnName: 'cus_name',
-//     numeric: 'center',
-//     disablePadding: true,
-//     label: 'สินค้า',
-//     colWidth: 150
-//   },
-//   {
-//     columnName: 'qty',
-//     numeric: 'center',
-//     disablePadding: true,
-//     label: 'จำนวน',
-//     colWidth: 150
-//   },
-//   {
-//     columnName: 'pack_unit_name',
-//     numeric: 'center',
-//     disablePadding: true,
-//     label: 'หน่วย',
-//     colWidth: 150
-//   },
-
-// ];
