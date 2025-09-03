@@ -6,7 +6,7 @@ import { setValueMas } from "../../../../libs/setvaluecallback";
 import { _POST } from "../../../service/mas";
 import { _formatNumber, _formatNumberNotdecimal } from "../../../../libs/datacontrol";
 import dayjs from "dayjs";
-import { useListComplaint } from "../core/ListComplaintContext";
+import { useListExplain } from "../core/ListExplainContext";
 import { Box, Divider, IconButton, Paper, Table, TableCell, TableRow, TableBody, TableHead, TableContainer, styled, TextField, Radio, RadioGroup, FormControl, FormControlLabel, FormLabel, Grid2, Stack } from "@mui/material";
 import Grid from '@mui/material/Grid2';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
@@ -218,7 +218,7 @@ export default function CompalintView({
         setclauseOther,
         setphoTypeOther,
         setemployee_tel
-    } = useListComplaint()
+    } = useListExplain();
 
 
     const [ComplaintCarData, setComplaintCarData] = useState<ComplaintCarData[] | null>(null);
@@ -260,7 +260,7 @@ export default function CompalintView({
     };
 
     React.useEffect(() => {
-        previewComplaint();
+        previewExplain();
         // Complaint_cer_Get()
         // Complaint_img_Get()
         // cer_detail_Get()
@@ -294,7 +294,7 @@ export default function CompalintView({
         setFilteredphoto(filteredphoto);
     }, [dataComplaintType_Combobox, dataComplaintRs_Combobox, datapriority_Combobox, dataphoto_Combobox, dataelement]);
 
-    const previewComplaint = async () => {
+    const previewExplain = async () => {
         console.log(dataelement, 'dataelement');
 
         if (dataelement) {

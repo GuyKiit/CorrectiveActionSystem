@@ -5,7 +5,8 @@ import { AuthPage } from '../auth/AuthPage'
 import { ProtectedRoute } from './ProtectedRoute'
 import Dashboard from '../pages/dashboard'
 import Home from '../pages/Home'
-import PageShipment from '../pages/Complaint/PageShipment'
+import PageComplaint from '../pages/Complaint/PageComplaint'
+import PageExplain from '../pages/Explain/PageExplain'
 
 
 /**
@@ -30,7 +31,8 @@ export default function AppRoutes() {
             <Route path='home' element={<Home />} />
             <Route path='dashboard' element={<Dashboard/>} />
             <Route path='profile' element={<div>Profile</div>} />
-            <Route path='Complaint' element={<PageShipment/>} />
+            <Route path='complaint' element={<PageComplaint/>} />
+            <Route path='explain' element={<PageExplain/>} />
             <Route path='users/list' element={<div>Users list</div>} />
             <Route path='users/roles' element={<div>Users roles</div>} />
             <Route path='reports/sales' element={<div>Reports sales</div>} />

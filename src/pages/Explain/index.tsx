@@ -21,6 +21,7 @@ import AddIcon from '@mui/icons-material/Add';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import DataTableCollapsible from "../../components/MUI/DataTableCollapsible";
 import { useData } from "../../auth/core/DataContext";
+import { useListExplain } from "./core/ListExplainContext";
 import { Complaint_headCells } from "../../../libs/columnname";
 import DataTable from "../../components/MUI/DataTable";
 import ComplaintInsert from "./components/ComplaintCreate";
@@ -28,7 +29,6 @@ import { log } from "node:console";
 import { v4 as uuidv4 } from "uuid";
 import { cleanAccessData } from "../../service/initmain/initmain";
 import CompalintView from "./components/ComplaintRead";
-import { useListComplaint } from "./core/ListComplaintContext";
 
 type Launch = {
   id: string
@@ -49,7 +49,7 @@ interface Complaint {
   product_name: string;
 }
 
-export default function Complaint() {
+export default function Explain() {
   const {
 
     Complaint_no,
@@ -187,7 +187,7 @@ export default function Complaint() {
 
 
 
-  } = useListComplaint();
+  } = useListExplain();
 
   // Utility Variables ======================================================
   const { setIsLoadingScreen } = useLayout()
@@ -828,7 +828,7 @@ export default function Complaint() {
       <DataTable
         colum={Complaint_headCells}
         rows={datalist}
-        titlename={"ข้อมูล Complaint"}
+        titlename={"ข้อมูล Explain"}
         buttonElement={
           <div className="flex gap-x-4">
             <Button
