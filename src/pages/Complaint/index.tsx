@@ -284,7 +284,7 @@ export default function Complaint() {
 
   //     if (response && response.status === "success") {
   //       console.log("🧑🏻‍🎤🧑🏻‍🎤🧑🏻‍🎤🧑🏻‍🎤 Call [Lov/LovGet] -> 3 Data at the same time :", response.data);
-        
+
   //       // Example loop: Iterate over response.data and log each item
   //       // response.data.forEach((item: any, index: any) => {
   //       //   console.log(`Item ${index}:`, item);
@@ -309,7 +309,7 @@ export default function Complaint() {
   //       //     setdatapriority_Combobox && setdatapriority_Combobox(item.data);
   //       //   }
   //       // });
-        
+
 
 
   //       Array.isArray(response.data) && response.data.forEach((item: any) => {
@@ -329,7 +329,7 @@ export default function Complaint() {
   //           setdatapriority_Combobox && setdatapriority_Combobox(item.data);
   //         }
   //       });
-        
+
   //       // costCenterCode.push(center.cost_center_code)
   //       // center.costCenterId = center.id,
   //       // center.costCenterCode = center.cost_center_code,
@@ -460,11 +460,11 @@ export default function Complaint() {
   const Domain_Get = async () => {
     try {
       const dataset = {
-        // lov_group: "TRR.TRRGROUP.COM",
-        // lov_type: "report_type"
+        lov_group: "TRR.TRRGROUP.COM",
+        
 
       }
-      const response = await _POST_SYS_API(dataset, "/Employee/Domain_Get");
+      const response = await _POST_SYS_API(dataset, "/Complaint/CASDomainGet");
 
       if (response && response.status === "success") {
         console.log("💞💞💞💞 :", response.data, " 💞💞💞💞");
@@ -666,7 +666,13 @@ export default function Complaint() {
         report_type: dataReportTypeValue?.id,
         cas_number: cas_number,
         //  doc_date: "2025-08-26T14:37:35.707",
-        date_of_detection: date_of_detection,
+        date_of_detection: date_of_detection
+          ? date_of_detection
+            .hour(dayjs().hour())      // ชั่วโมงปัจจุบัน
+            .minute(dayjs().minute())  // นาทีปัจจุบัน
+            .second(dayjs().second())  // วินาทีปัจจุบัน
+            .format("YYYY-MM-DDTHH:mm:ss")
+          : null,
 
         //User Profile
         request_name: user[0]?.employee_username || '',
@@ -705,6 +711,7 @@ export default function Complaint() {
     console.log("newdataaaaaaa", complainttypeModel);
     console.log("newdatRs", complaintRsModel);
     console.log("newdatFilea", complaintFileModel);
+    console.log("date_of_detection", date_of_detection);
 
     setIsLoadingScreen(true)
 

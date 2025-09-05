@@ -1,10 +1,19 @@
+import dayjs from "dayjs";
+export interface LovType {
+  id: string;
+  lov_id: string;
+  lov_group: string;
+  lov_type: string;
+  lov_code: string;
+  lov1: string;
+}
 export const Complaint_headCells = [
     {
-    columnName: 'ACTION',
-    numeric: 'center',
-    //disablePadding: true,
-    label: 'จัดการ',
-    //colWidth: 100
+        columnName: 'ACTION',
+        numeric: 'center',
+        //disablePadding: true,
+        label: 'จัดการ',
+        //colWidth: 100
     },
     {
         columnName: 'id',
@@ -18,8 +27,12 @@ export const Complaint_headCells = [
         numeric: 'center',
         disablePadding: true,
         label: 'Report Type',
-        colWidth: 150
-        
+        colWidth: 150,
+        render: (row: any, lovList: LovType[]) => {
+            // หา lov_code จาก lovList
+            const lov = lovList.find((l: LovType) => l.id === row.report_type);
+            return lov ? lov.lov_code : row.report_type;
+        }
     },
     {
         columnName: 'cas_number',
@@ -40,7 +53,8 @@ export const Complaint_headCells = [
         numeric: 'center',
         disablePadding: true,
         label: 'Doc Date',
-        colWidth: 150
+        colWidth: 200,
+        render: (row: any) => dayjs(row.doc_date).format("DD-MM-YYYY HH:mm:ss")
     },
     {
         columnName: 'lot_no',
@@ -55,7 +69,7 @@ export const Complaint_headCells = [
         disablePadding: false,
         label: 'สถานะ',
         colWidth: 150,
-        
+
     },
     {
         columnName: 'create_by',
@@ -85,5 +99,5 @@ export const Complaint_headCells = [
         label: 'วันที่แก้ไข',
         colWidth: 200
     },
-    
+
 ]

@@ -603,7 +603,7 @@ export default function ComplaintInsert({
             <DesktopDatePickers
               labelName={"Date of Detection"}
               value={date_of_detection}
-              handleChange={(val) => setdate_of_detection}
+              handleChange={(val) => setdate_of_detection(val??null)}
             />
           </Grid>
           <Grid size={4}>
