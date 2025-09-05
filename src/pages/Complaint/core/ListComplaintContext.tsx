@@ -19,8 +19,8 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
     const [doc_date, setdoc_date] = useState<dayjs.Dayjs>(
         dayjs(initialListComplaint.doc_date)
     );
-    const [date_of_detection, setdate_of_detection] = useState<dayjs.Dayjs>(
-        dayjs(initialListComplaint.date_of_detection)
+    const [date_of_detection, setdate_of_detection] = useState<dayjs.Dayjs | null>(
+        initialListComplaint.date_of_detection ? dayjs(initialListComplaint.date_of_detection) : null
     );
     const [request_name, setrequest_name] = useState<any>(
         initialListComplaint.request_name
@@ -39,6 +39,9 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
     );
     const [request_email, setrequest_email] = useState<any>(
         initialListComplaint.request_email
+    );
+    const [request_phone, setrequest_phone] = useState<any>(
+        initialListComplaint.request_phone
     );
     const [request_date, setrequest_date] = useState<dayjs.Dayjs>(
         dayjs(initialListComplaint.request_date)
@@ -163,7 +166,7 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
     const [dataReportTypeValue, setdataReportTypeValue] = useState<any>(
         initialListComplaint.dataReportTypeValue
     );
- 
+
     const [dataComplaintType_Combobox, setdataComplaintType_Combobox] = useState<any>(
         initialListComplaint.dataComplaintType_Combobox
     );
@@ -194,7 +197,7 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
     const [other, setother] = useState<any>(
         initialListComplaint.other
     );
-     const [compTypeOther, setcompTypeOther] = useState<any>(
+    const [compTypeOther, setcompTypeOther] = useState<any>(
         initialListComplaint.compTypeOther
     );
     const [compRsOther, setcompRsOther] = useState<any>(
@@ -209,10 +212,16 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
     const [phoTypeOther, setphoTypeOther] = useState<any>(
         initialListComplaint.phoTypeOther
     );
-    const [employee_tel, setemployee_tel] = useState<any>(
-        initialListComplaint.employee_tel
+    const [report_type, setreport_type] = useState<any>(
+        initialListComplaint.report_type
     );
-    
+    const [dataDomain, setdataDomain] = useState<any>(
+        initialListComplaint.dataDomain
+    );
+    const [dataDepartment, setdataDepartment] = useState<any>(
+        initialListComplaint.dataDepartment
+    );
+
 
     const [dataComplaintTypeValue_Combobox, setdataComplaintTypeValue_Combobox] =
         useState<any[]>([]); // รับ array ของอะไรก็ได้
@@ -221,13 +230,14 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
     //     initialListComplaint.selectedFile
     // );
 
-     
+
 
     return (
         <ListComplaintContext.Provider
             value={{
                 Complaint_no,
                 no,
+                report_type,
                 cas_number,
                 doc_date,
                 date_of_detection,
@@ -237,6 +247,7 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 request_department_id,
                 request_position,
                 request_email,
+                request_phone,
                 area_of_detection_dept,
                 product_name,
                 detail,
@@ -280,6 +291,8 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 create_by,
                 create_datetime,
                 update_by,
+                dataDomain,
+                dataDepartment,
 
                 update_datetime,
                 ComplaintStatusID_Combobox,
@@ -294,12 +307,12 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 datapriorityValue_Combobox,
                 datapriority,
                 PriorityLevel,
-                employee_tel,
                 // ✅ expose state ออกมาให้ component อื่นใช้
                 dataComplaintTypeValue_Combobox,
 
                 setComplaint_no,
                 setno,
+                setreport_type,
                 setcas_number,
                 setuser_file_name,
                 setdoc_date,
@@ -310,8 +323,8 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 setrequest_department_id,
                 setrequest_position,
                 setrequest_email,
+                setrequest_phone,
                 setother,
-                setemployee_tel,
                 // setdataComplaintType,
                 setrequest_date,
                 setrespondent_company_id,
@@ -367,6 +380,9 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 setdatapriority,
                 setPriorityLevel,
                 setdataComplaintTypeValue_Combobox,
+                setdataDomain,
+                setdataDepartment,
+
             }}
         >
             {children}

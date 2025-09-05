@@ -1,6 +1,6 @@
 // src/context/DataContext.tsx
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import { _GET_SCSS, _POST } from "../../service/mas";
+import { _POST } from "../../service/mas";
 import { CustomerAddressType, CustomerType, ProductGroupType, seasonType } from "../../types/data";
 
 
@@ -19,19 +19,19 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   const [Customer, setCustomer] = useState<CustomerType[] | null>(null);
   const [CustomerAddress, setCustomerAddress] = useState<CustomerAddressType[] | null>(null);
 
-  const fetchSeasons = async () => {
-    try {
-      const response = await _GET_SCSS({}, "/Season/Season_Get");
-      if (Array.isArray(response)) {
-        setSeasons(response);
-      } else {
-        setSeasons([]);
-      }
-    } catch (err) {
-      console.error("Failed to fetch seasons", err);
-      setSeasons([]);
-    }
-  };
+  // const fetchSeasons = async () => {
+  //   try {
+  //     const response = await _GET_SCSS({}, "/Season/Season_Get");
+  //     if (Array.isArray(response)) {
+  //       setSeasons(response);
+  //     } else {
+  //       setSeasons([]);
+  //     }
+  //   } catch (err) {
+  //     console.error("Failed to fetch seasons", err);
+  //     setSeasons([]);
+  //   }
+  // };
 
   // const Product_Group_Get = async () => {
   //   try {
@@ -93,7 +93,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   // };
 
   useEffect(() => {
-    fetchSeasons();
+    // fetchSeasons();
     // Product_Group_Get();
     // Customer_Get();
     // Customer_Address_Get();

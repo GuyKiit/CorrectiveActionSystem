@@ -1,12 +1,18 @@
 import axios from "axios";
 
-// export function statusOption(status: any){
-//     if (status === "TEST" || status === "SUBMIT"){
-//         return true;
-//     }else{
+// export async function getProvince() {
+//     const url = `${import.meta.env.VITE_APP_TRR_API_URL
+//         }/MasterData/Provinces_Get`;
+//     // console.log(url);
+//     try {
+//         const res = await axios.get(url);
+//         const data = res.data;
+//         if (data && data.status == "success") {
+//             return data.data;
+//         }
+//     } catch {
 //         return false;
 //     }
-    
 // }
 // export async function getDistrict(code: number) {
 //     const url = `${import.meta.env.VITE_APP_TRR_API_URL

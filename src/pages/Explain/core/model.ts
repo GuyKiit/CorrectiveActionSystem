@@ -150,7 +150,7 @@ export type ListExplainContextProps = {
     setcreate_datetime: Dispatch<SetStateAction<dayjs.Dayjs>>
     setupdate_by: Dispatch<SetStateAction<string>>
     setupdate_datetime: Dispatch<SetStateAction<dayjs.Dayjs>>
-    setemployee_tel: Dispatch<SetStateAction<string>>
+    
 
     setComplaintStatusID_Combobox: Dispatch<SetStateAction<any>>
     setdataReportType: Dispatch<SetStateAction<any>>
@@ -240,7 +240,7 @@ export const initialListComplaint: ListExplainContextProps = {
     setdatapriorityValue_Combobox: () => { },
     setdatapriority: () => { },
     setPriorityLevel: () => { },
-    setemployee_tel: () => { },
+    
 
     // setSelectedFile: () => { }
 

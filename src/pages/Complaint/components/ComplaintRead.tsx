@@ -17,6 +17,7 @@ import FullWidthButton from "../../../components/MUI/FullWidthButton";
 import FullWidthTextArea from "../../../components/MUI/FullWidthTextFieldArea";
 import FullWidthCheckbox from "../../../components/MUI/FullWidthCheckbox";
 import Tab from '@mui/material/Tab';
+
 type Validate = {
     driverName: boolean,
     driverTel: boolean,
@@ -81,12 +82,12 @@ export default function CompalintView({
     bgcolorTextField,
     validateText,
 
-
 }: ComplaintBody) {
 
     const {
         Complaint_no,
         no,
+        report_type,
         cas_number,
         doc_date,
         date_of_detection,
@@ -96,6 +97,7 @@ export default function CompalintView({
         request_department_id,
         request_position,
         request_email,
+        request_phone,
         request_date,
         respondent_company_id,
         respondent_domain_id,
@@ -154,6 +156,7 @@ export default function CompalintView({
 
         setComplaint_no,
         setno,
+        setreport_type,
         setcas_number,
         setdoc_date,
         setdate_of_detection,
@@ -163,6 +166,7 @@ export default function CompalintView({
         setrequest_department_id,
         setrequest_position,
         setrequest_email,
+        setrequest_phone,
         setuser_file_name,
         setrequest_date,
         setrespondent_company_id,
@@ -217,10 +221,9 @@ export default function CompalintView({
         setPriorityLevel,
         setclauseOther,
         setphoTypeOther,
-        setemployee_tel
     } = useListComplaint()
 
-
+    
     const [ComplaintCarData, setComplaintCarData] = useState<ComplaintCarData[] | null>(null);
     const [ComplaintServiceData, setComplaintServiceData] = useState<ComplaintServiceData[] | null>(null);
     const [ComplaintImgData, setComplaintImgData] = useState<ComplaintImgData[] | null>(null);
@@ -239,7 +242,7 @@ export default function CompalintView({
     const [filteredComplaintRs, setFilteredComplaintRs] = useState<LovType[]>([]);
     const [filteredpriority, setFilteredpriority] = useState<LovType[]>([]);
     const [filteredphoto, setFilteredphoto] = useState<LovType[]>([]);
-    const [isHidden, setIsHidden] = React.useState(false); // เริ่มต้นแสดง
+    const [isRSHidden, setIsRSHidden] = React.useState(true); // เริ่มต้นแสดง
     const [value, setValue] = React.useState(0);
 
 
@@ -250,13 +253,13 @@ export default function CompalintView({
 
     // Functions (Initial, Calculation or ETC.) =================================================
     const resetForm = () => {
-      setcas_number("");
-      setarea_of_detection_dept("");
-      setproduct_name("");
-      setlot_no("");
-      setuser_file_name("");
-      setdetail("");
-      setdatapriority("");
+        setcas_number("");
+        setarea_of_detection_dept("");
+        setproduct_name("");
+        setlot_no("");
+        setuser_file_name("");
+        setdetail("");
+        setdatapriority("");
     };
 
     React.useEffect(() => {
@@ -269,14 +272,16 @@ export default function CompalintView({
         // console.log("✨✨✨✨✨✨✨ dataelement", dataelement);
         // console.log("✨✨✨✨✨✨✨ dataelement.complaint_type", dataelement.complaint_type);
 
+        console.log("💥💥💥💥💥💥💥💥💥💥💥 [dataelement.report_type] : ", dataelement?.report_type, "💥💥💥💥💥💥💥💥💥💥💥");
+
         const filtered = (dataComplaintType_Combobox || []).filter((item: LovType) =>
             // item.lov_type === "complaint_type" && item.lov_code === dataelement.report_type
             // item.lov_type === "complaint_type" && item.lov_code === "TRR_RT_NCR"
-            item.lov_type === "complaint_type" && item.lov_code === "TRR_RT_CAR"
+            item.lov_type === "complaint_type" && item.lov_code === dataelement.report_type
         );
         const filteredRs = (dataComplaintRs_Combobox || []).filter((item: LovType) =>
             // item.lov_type === "reference_standard" && item.lov_code === "TRR_RT_NCR"
-            item.lov_type === "reference_standard" && item.lov_code === "TRR_RT_CAR"
+            item.lov_type === "reference_standard" && item.lov_code === dataelement.report_type
         );
         const filteredpriority = (datapriority_Combobox || []).filter((item: LovType) =>
             item.lov_type === "priority_level"
@@ -294,10 +299,24 @@ export default function CompalintView({
         setFilteredphoto(filteredphoto);
     }, [dataComplaintType_Combobox, dataComplaintRs_Combobox, datapriority_Combobox, dataphoto_Combobox, dataelement]);
 
+    console.log("❤❤❤❤❤❤dataelement.report_type =", dataelement.report_type);
+    console.log("❤❤❤❤❤❤dataComplaintType_Combobox =", dataComplaintType_Combobox);
+    console.log("❤❤❤❤❤❤dataComplaintRs_Combobox =", dataComplaintRs_Combobox);
+
     const previewComplaint = async () => {
         console.log(dataelement, 'dataelement');
+        console.log("dataReportType", dataReportType);
+        console.log("NCR TEST", extractReportType("TRR_RT_NCR"));
+        console.log("OBS TEST", extractReportType("TRR_RT_OBS"));
+        console.log("CAR TEST", extractReportType("TRR_RT_CAR"));
+        console.log("CPAR TEST", extractReportType("TRR_RT_CPAR"));
+
+
 
         if (dataelement) {
+            console.log("dataelement.report_type", dataelement.report_type);
+
+            setreport_type(dataelement.report_type)
             setcas_number(dataelement.cas_number)
             setrequest_company_id(dataelement.request_company_id)
             setarea_of_detection_dept(dataelement.area_of_detection_dept)
@@ -305,14 +324,20 @@ export default function CompalintView({
             setlot_no(dataelement.lot_no)
             setuser_file_name(dataelement.user_file_name)
             setdetail(dataelement.detail)
+            setrespondent_company_id(dataelement.respondent_company_id)
+            setrespondent_domain_id(dataelement.respondent_domain_id)
+            setrespondent_department_id(dataelement.respondent_department_id)
+            setrespondent_email(dataelement.respondent_email)
             setrequest_name(dataelement.request_name)
             setrequest_position(dataelement.request_position)
             setrequest_department_id(dataelement.request_department_id)
             setrequest_email(dataelement.request_email)
-            setemployee_tel(dataelement.employee_tel)
+            setrequest_phone(dataelement.request_phone)
             setdataComplaintType(dataelement?.complaintType)
             setdataComplaintRs(dataelement?.complaintRs)
             setdataComplaintphoto(dataelement?.complaintPhoto)
+            setIsRSHidden(extractReportType(dataelement.report_type) != "NCR" ? true : false);
+            // setIsRSHidden(dataelement.lov_code !== "TRR_RT_NCR");
             // แปลง priority text → id ของ RadioGroup
             const selectedPriority = datapriority_Combobox.find(
                 (item: any) =>
@@ -337,8 +362,10 @@ export default function CompalintView({
             console.log("data_ComplaintPhoto", data_ComplaintPhoto);
             console.log("data_Priority", data_Priority);
             console.log(dataReportType);
-            setIsHidden(dataReportType)
+            // setIsRSHidden(dataReportType)
+
         }
+
     }
 
     return (
@@ -362,42 +389,30 @@ export default function CompalintView({
                 </label>
             </div>
             <Divider sx={{ my: 0.1, borderColor: "#F29739" }} />
-
+            <Grid size={4}>
+                <FullWidthTextField
+                    value={
+                        dataReportType?.find(
+                            (c: any) => c.id === report_type
+                        )?.lov_code 
+                    }
+                    // required={"required"}
+                    labelName={"ReportType"}
+                    onchange={(e) => {
+                        setdataReportTypeValue(e);
+                    }}
+                    readonly
+                    bgcolorTextField={bgcolorTextField}
+                />
+            </Grid>
             <Grid container spacing={2} mt={2}>
                 <Grid size={4}>
-
                     <FullWidthTextField
                         value={cas_number}
                         // required={"required"}
                         labelName={"CasNumber"}
                         onchange={(e) => {
                             setcas_number(e);
-                        }}
-                        readonly
-                        bgcolorTextField={bgcolorTextField}
-                    />
-
-                </Grid>
-
-                <Grid size={4}>
-                    <FullWidthTextField
-                        value={request_company_id}
-                        //required={"required"}
-                        labelName={"Factory"}
-                        onchange={(e) => {
-                            setrequest_company_id(e);
-                        }}
-                        readonly
-                        bgcolorTextField={bgcolorTextField}
-                    />
-                </Grid>
-                <Grid size={4}>
-                    <FullWidthTextField
-                        value={area_of_detection_dept}
-                        //required={"required"}
-                        labelName={"Department / Area of Detection"}
-                        onchange={(e) => {
-                            setarea_of_detection_dept(e);
                         }}
                         readonly
                         bgcolorTextField={bgcolorTextField}
@@ -429,24 +444,47 @@ export default function CompalintView({
                 </Grid>
                 <Grid size={4}>
                     <FullWidthTextField
-                        value={user_file_name}
+                        value={respondent_company_id}
                         //required={"required"}
-                        labelName={"Attachments (if any)"}
+                        labelName={"Factory"}
                         onchange={(e) => {
-                            setuser_file_name(e);
+                            setrespondent_company_id(e);
                         }}
                         readonly
                         bgcolorTextField={bgcolorTextField}
                     />
                 </Grid>
                 <Grid size={4}>
-                    <DesktopDatePickers
-                        labelName={"Document Issuance Date"}
-                        value={doc_date}
-                        handleChange={(val) => {
-                            if (val) {
-                                setdoc_date(val); // val เป็น Dayjs แน่นอน
-                            }
+                    <FullWidthTextField
+                        value={respondent_domain_id}
+                        //required={"required"}
+                        labelName={"Domain"}
+                        onchange={(e) => {
+                            setrespondent_domain_id(e);
+                        }}
+                        readonly
+                        bgcolorTextField={bgcolorTextField}
+                    />
+                </Grid>
+                <Grid size={4}>
+                    <FullWidthTextField
+                        value={respondent_department_id}
+                        //required={"required"}
+                        labelName={"Department"}
+                        onchange={(e) => {
+                            setrespondent_department_id(e);
+                        }}
+                        readonly
+                        bgcolorTextField={bgcolorTextField}
+                    />
+                </Grid>
+                <Grid size={4}>
+                    <FullWidthTextField
+                        value={respondent_email}
+                        //required={"required"}
+                        labelName={"Email"}
+                        onchange={(e) => {
+                            setrespondent_email(e);
                         }}
                         readonly
                         bgcolorTextField={bgcolorTextField}
@@ -467,6 +505,20 @@ export default function CompalintView({
                 </Grid>
                 <Grid size={4}>
                     <DesktopDatePickers
+                        labelName={"Document Issuance Date"}
+                        value={doc_date}
+                        handleChange={(val) => {
+                            if (val) {
+                                setdoc_date(val); // val เป็น Dayjs แน่นอน
+                            }
+                        }}
+                        readonly
+                        bgcolorTextField={bgcolorTextField}
+                    />
+                </Grid>
+                
+                <Grid size={4}>
+                    <DesktopDatePickers
                         labelName={"Required Response Date"}
                         value={respond_date_within}
                         handleChange={(val) => {
@@ -478,87 +530,91 @@ export default function CompalintView({
                         bgcolorTextField={bgcolorTextField}
                     />
                 </Grid>
-                <Grid size={6}>
-                    <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>
-                        <label className="sarabun-regular-datatable">Type Of Complaint</label>
-                        <Divider sx={{ my: 2 }} />
-                        <Grid container spacing={2}>
-                            {(filteredComplaintType || []).map((item: LovType) => {
-                                console.log('dataComplaintType:', dataComplaintType);
-                                const isChecked = dataComplaintType.some(c => {
-                                    console.log('Checking c:', c, 'against item.id:', item.id);
-                                    return c.complaint_type_id === item.id; // เปลี่ยนจาก c.id เป็น c.complaint_type_id
-                                });
+                <Grid container spacing={2}>
+                    <Grid size={6}>
+                        <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>
+                            <label className="sarabun-regular-datatable">Type Of Complaint</label>
+                            <Divider sx={{ my: 2 }} />
+                            <Grid container spacing={2}>
+                                {(filteredComplaintType || []).map((item: LovType) => {
+                                    console.log('dataComplaintType:', dataComplaintType);
+                                    const isChecked = dataComplaintType.some(c => {
+                                        console.log('Checking c:', c, 'against item.id:', item.id);
+                                        return c.complaint_type_id === item.id; // เปลี่ยนจาก c.id เป็น c.complaint_type_id
+                                    });
 
-                                console.log('Result for item', item.id, 'isChecked:', isChecked);
+                                    console.log('Result for item', item.id, 'isChecked:', isChecked);
 
-                                return (
-                                    <Grid size={6} key={item.id}>
-                                        <FullWidthCheckbox
-                                            labelName={item.lov1}
-                                            value={isChecked}
-                                            readonly={true}
-                                            onchange={() => { }}
-                                        />
-                                    </Grid>
-                                );
-                            })}
+                                    return (
+                                        <Grid size={6} key={item.id}>
+                                            <FullWidthCheckbox
+                                                labelName={item.lov1}
+                                                value={isChecked}
+                                                readonly={true}
+                                                onchange={() => { }}
+                                            />
+                                        </Grid>
+                                    );
+                                })}
+                            </Grid>
+                            {/* แสดงช่อง Other ถ้ามีเลือกตัว TRR_CT_NCR_99 */}
+                            {dataComplaintTypeValue_Combobox?.id === "TRR_CT_NCR_99" && (
+                                <FullWidthTextArea
+                                    value={compTypeOther}
+                                    labelName="Other:"
+                                    readonly
+                                />
+                            )}
+                        </Paper>
+                    </Grid>
+
+                    {!isRSHidden && (
+                        <Grid size={6}>
+                            <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>
+                                <label className="sarabun-regular-datatable">Reference Standard</label>
+                                <Divider sx={{ my: 2 }} />
+                                <Grid container spacing={2}>
+                                    {(filteredComplaintRs || []).map((item: LovType) => {
+                                        console.log("❤❤❤❤filteredComplaintRs", filteredComplaintRs);
+
+                                        console.log('dataComplaintRs:', dataComplaintRs);
+                                        const isChecked = dataComplaintRs.some(c => {
+                                            console.log('Checking c:', c, 'against item.lov_code:', item.lov_code);
+                                            return c.complaint_type_id === item.id;
+                                        });
+
+                                        console.log('Result for itemmmmm', item.id, 'isCheckeddddd:', isChecked);
+
+                                        return (
+                                            <Grid size={6} key={item.id}>
+                                                <FullWidthCheckbox
+                                                    labelName={item.lov1}
+                                                    value={isChecked}
+                                                    readonly={true}
+                                                    onchange={() => { }}
+                                                />
+                                            </Grid>
+                                        );
+                                    })}
+                                </Grid>
+                                {dataComplaintRsValue_Combobox?.some((c: any) => c.id === "TRR_RS_NCR_6") && (
+                                    <FullWidthTextArea
+                                        value={clauseOther}
+                                        labelName="clause:"
+                                        readonly
+                                    />
+                                )}
+                                {dataComplaintRsValue_Combobox?.some((c: any) => c.id === "TRR_RS_NCR_99") && (
+                                    <FullWidthTextArea
+                                        value={compRsOther}
+                                        labelName="Other:"
+                                        readonly
+                                    />
+                                )}
+                            </Paper>
                         </Grid>
-                        {/* แสดงช่อง Other ถ้ามีเลือกตัว TRR_CT_NCR_99 */}
-                        {dataComplaintTypeValue_Combobox.some((c: any) => c.id === "TRR_CT_NCR_99") && (
-                            <FullWidthTextArea
-                                value={compTypeOther}
-                                labelName="Other:"
-                                readonly
-                            />
-                        )}
-                    </Paper>
+                    )}
                 </Grid>
-
-                {!isHidden && dataReportTypeValue && (
-                <Grid size={6}>
-                    <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>
-                        <label className="sarabun-regular-datatable">Reference Standard</label>
-                        <Divider sx={{ my: 2 }} />
-                        <Grid container spacing={2}>
-                            {(filteredComplaintRs || []).map((item: LovType) => {
-                                console.log('dataComplaintRs:', dataComplaintRs);
-                                const isChecked = dataComplaintRs.some(c => {
-                                    console.log('Checking c:', c, 'against item.id:', item.id);
-                                    return c.complaint_type_id === item.id; // เปลี่ยนจาก c.id เป็น c.complaint_type_id
-                                });
-
-                                console.log('Result for itemmmmm', item.id, 'isCheckeddddd:', isChecked);
-
-                                return (
-                                    <Grid size={6} key={item.id}>
-                                        <FullWidthCheckbox
-                                            labelName={item.lov1}
-                                            value={isChecked}
-                                            readonly={true}
-                                            onchange={() => { }}
-                                        />
-                                    </Grid>
-                                );
-                            })}
-                        </Grid>
-                        {dataComplaintRsValue_Combobox?.some((c: any) => c.id === "TRR_RS_NCR_6") && (
-                            <FullWidthTextArea
-                                value={clauseOther}
-                                labelName="clause:"
-                                readonly
-                            />
-                        )}
-                        {dataComplaintRsValue_Combobox?.some((c: any) => c.id === "TRR_RS_NCR_99") && (
-                            <FullWidthTextArea
-                                value={compRsOther}
-                                labelName="Other:"
-                                readonly
-                            />
-                        )}
-                    </Paper>
-                </Grid>
-                )}
 
                 <Grid size={3}>
                     <FormControl component="fieldset">
@@ -577,7 +633,7 @@ export default function CompalintView({
                     </FormControl>
                 </Grid>
 
-                <Grid size={6}>
+                <Grid size={12}>
                     <FullWidthTextArea
                         value={detail}
                         //required={"required"}
@@ -632,11 +688,37 @@ export default function CompalintView({
                     </Grid>
                     <Grid size={4}>
                         <FullWidthTextField
-                            value={request_position}
+                            value={request_company_id}
                             //required={"required"}
-                            labelName={"Position"}
+                            labelName={"Factory"}
                             onchange={(e) => {
-                                setrequest_position(e);
+                                setrequest_company_id(e);
+                            }}
+                            readonly
+                            bgcolorTextField={bgcolorTextField}
+                        // Validate={validateText && validateText.driverTel}
+                        />
+                    </Grid>
+                    <Grid size={4}>
+                        <FullWidthTextField
+                            value={request_name}
+                            //required={"required"}
+                            labelName={"Domain"}
+                            onchange={(e) => {
+                                setrequest_domain_id(e);
+                            }}
+                            readonly
+                            bgcolorTextField={bgcolorTextField}
+                        // Validate={validateText && validateText.driverTel}
+                        />
+                    </Grid>
+                    <Grid size={4}>
+                        <FullWidthTextField
+                            value={area_of_detection_dept}
+                            //required={"required"}
+                            labelName={"Department / Area of Detection"}
+                            onchange={(e) => {
+                                setarea_of_detection_dept(e);
                             }}
                             readonly
                             bgcolorTextField={bgcolorTextField}
@@ -658,6 +740,19 @@ export default function CompalintView({
                     </Grid>
                     <Grid size={4}>
                         <FullWidthTextField
+                            value={request_position}
+                            //required={"required"}
+                            labelName={"Position"}
+                            onchange={(e) => {
+                                setrequest_position(e);
+                            }}
+                            readonly
+                            bgcolorTextField={bgcolorTextField}
+                        // Validate={validateText && validateText.driverTel}
+                        />
+                    </Grid>
+                    <Grid size={4}>
+                        <FullWidthTextField
                             value={request_email}
                             //required={"required"}
                             labelName={"Email"}
@@ -671,19 +766,34 @@ export default function CompalintView({
                     </Grid>
                     <Grid size={4}>
                         <FullWidthTextField
-                            value={employee_tel}
+                            value={request_phone}
                             //required={"required"}
                             labelName={"Phone"}
                             onchange={(e) => {
-                                setemployee_tel(e);
+                                setrequest_phone(e);
                             }}
                             readonly
                             bgcolorTextField={bgcolorTextField}
                         // Validate={validateText && validateText.driverTel}
                         />
                     </Grid>
+
                 </Grid>
             </Grid>
         </Box >
     )
+}
+
+export function extractReportType(code?: string): string {
+
+    if (!code) return "";
+
+    const prefix = "TRR_RT_";
+
+    if (code.includes(prefix)) {
+        return code.split(prefix)[1].trim().toUpperCase();
+    }
+
+    const parts = code.split("_");
+    return (parts[parts.length - 1] || "").trim().toUpperCase();
 }

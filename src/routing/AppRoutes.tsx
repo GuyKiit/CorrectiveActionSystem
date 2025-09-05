@@ -33,10 +33,10 @@ export default function AppRoutes() {
             <Route path='profile' element={<div>Profile</div>} />
             <Route path='complaint' element={<PageComplaint/>} />
             <Route path='explain' element={<PageExplain/>} />
-            <Route path='users/list' element={<div>Users list</div>} />
+            {/* <Route path='users/list' element={<div>Users list</div>} />
             <Route path='users/roles' element={<div>Users roles</div>} />
             <Route path='reports/sales' element={<div>Reports sales</div>} />
-            <Route path='reports/analytics' element={<div>Reports analytics</div>} />
+            <Route path='reports/analytics' element={<div>Reports analytics</div>} /> */}
             {/* Redirect from dashboard to home */}
             <Route path='' element={<Navigate to='/home' />} />
           </Route>

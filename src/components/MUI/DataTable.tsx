@@ -142,6 +142,7 @@ export default function DataTable({ colum, rows, titlename, noDataname = "ไม
       );
     }
   };
+  
 
   // Clear selected data when rows change
   React.useEffect(() => {

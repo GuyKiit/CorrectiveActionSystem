@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from "react";
 //import { Divider, Paper, styled } from "@mui/material";
 import FullWidthButton from "../../components/MUI/FullWidthButton";
-import { _GET, _POST, _POST_FORMDATA, _POST_SYNC } from "../../service/mas";
+import { _GET, _POST, _POST_FORMDATA, _POST_SYNC, _POST_SYS_API } from "../../service/mas";
 import { _formatNumber, conCatDateTime } from "../../../libs/datacontrol";
 import FuncDialog from "../../components/MUI/FullDialog";
 import FullSweetalert from "../../components/MUI/Sweetalert";
@@ -29,6 +29,7 @@ import { v4 as uuidv4 } from "uuid";
 import { cleanAccessData } from "../../service/initmain/initmain";
 import CompalintView from "./components/ComplaintRead";
 import { useListComplaint } from "./core/ListComplaintContext";
+import { data } from "react-router-dom";
 
 type Launch = {
   id: string
@@ -50,10 +51,12 @@ interface Complaint {
 }
 
 export default function Complaint() {
+  const user = cleanAccessData('userSession');
   const {
 
     Complaint_no,
     no,
+    report_type,
     cas_number,
     doc_date,
     date_of_detection,
@@ -63,6 +66,7 @@ export default function Complaint() {
     request_department_id,
     request_position,
     request_email,
+    request_phone,
     request_date,
     respondent_company_id,
     respondent_domain_id,
@@ -115,11 +119,12 @@ export default function Complaint() {
     PriorityLevel,
     clauseOther,
     phoTypeOther,
-
-
+    dataDomain,
+    dataDepartment,
 
     setComplaint_no,
     setno,
+    setreport_type,
     setcas_number,
     setdoc_date,
     setdate_of_detection,
@@ -129,6 +134,7 @@ export default function Complaint() {
     setrequest_department_id,
     setrequest_position,
     setrequest_email,
+    setrequest_phone,
     setuser_file_name,
     setrequest_date,
     setrespondent_company_id,
@@ -177,6 +183,8 @@ export default function Complaint() {
     setdataComplaintRsValue_Combobox,
     setdataphoto_Combobox,
     setdataphotoValue_Combobox,
+    setdataDomain,
+    setdataDepartment,
 
     setdatapriorityValue_Combobox,
     setdatapriority_Combobox,
@@ -187,11 +195,11 @@ export default function Complaint() {
 
 
 
+
   } = useListComplaint();
 
   // Utility Variables ======================================================
   const { setIsLoadingScreen } = useLayout()
-
   const { menuFuncData, userData } = useAuth()
   const { Customer, ProductGroup, CustomerAddress } = useData()
   const [selectDataTable, setSelectDataTable] = React.useState<any>([])
@@ -213,6 +221,7 @@ export default function Complaint() {
   //------------------Start Search Index ------------------//
   const [TextNameSearch, setTextNameSearch] = React.useState(
     {
+
       cas_number: "",
       doc_date: "",
       product_name: "",
@@ -223,18 +232,27 @@ export default function Complaint() {
   // Function Handlers (On Change Event) ======================================================
 
   const resetForm = () => {
+    setdataReportTypeValue("");
     setcas_number("");
-    setarea_of_detection_dept("");
     setproduct_name("");
     setlot_no("");
-    setuser_file_name("");
+    setrespondent_company_id(null);
+    setrespondent_domain_id("");
+    setrespondent_department_id(null);
+    setrespondent_email("");
     setdetail("");
     setdatapriority("");
+    setcompTypeOther("");
+    setcompRsOther("");
+    setrequest_name("");
+    setrequest_company_id(null);
+    setrequest_domain_id("");
+    setarea_of_detection_dept("");
+    setrequest_department_id(null);
+    setrequest_position("");
+    setrequest_email("");
+    setrequest_phone("");
   };
-
-  
-
-  
 
   //------------Start Get service refresh -------------//
   React.useEffect(() => {
@@ -245,9 +263,13 @@ export default function Complaint() {
     ComplaintRs_Get();
     photo_Get();
     priority_Get();
-    //Company_Get();
-    //Pack_unit_Get();
+    Domain_Get();
+    // Department_Get();
   }, []);
+
+  // ==============
+  // user[0]?.domain_id
+  // ==============
 
   //========================================================================================================
 
@@ -359,6 +381,7 @@ export default function Complaint() {
         lov_group: "TRR.TRRGROUP.COM",
         lov_type: "complaint_type"
 
+
       }
       const response = await _POST(dataset, "/Lov/LovGet");
 
@@ -419,7 +442,7 @@ export default function Complaint() {
   const priority_Get = async () => {
     try {
       const dataset = {
-        lov_group: "TRR.TRRGROUP.COM",
+        lov_group: "SYSTEM",
         lov_type: "priority_level"
 
       }
@@ -434,13 +457,46 @@ export default function Complaint() {
       console.log("error:", e);
     }
   }
+  const Domain_Get = async () => {
+    try {
+      const dataset = {
+        // lov_group: "TRR.TRRGROUP.COM",
+        // lov_type: "report_type"
 
-  //========================================================================================================
+      }
+      const response = await _POST_SYS_API(dataset, "/Employee/Domain_Get");
+
+      if (response && response.status === "success") {
+        console.log("💞💞💞💞 :", response.data, " 💞💞💞💞");
+
+        setdataDomain(response.data);
+
+      }
+    } catch (e) {
+      console.log("error:", e);
+    }
+  }
+  // const Department_Get = async () => {
+  //   try {
+  //     const dataset = {
+  //       // lov_group: "TRR.TRRGROUP.COM",
+  //       // lov_type: "report_type"
+
+  //     }
+  //     const response = await _POST_SYS_API(dataset, "/Employee/Department_Get");
+
+  //     if (response && response.status === "success") {
+  //       console.log("💞💞💞💞💞💞 :", response.data, " 💞💞💞💞💞💞");
+
+  //       setdataDepartment(response.data);
+
+  //     }
+  //   } catch (e) {
+  //     console.log("error:", e);
+  //   }
+  // }
 
   const setData = (data: any) => {
-
-
-
     setcompTypeOther('')
     setComplaint_no('')
     setno('')
@@ -480,7 +536,8 @@ export default function Complaint() {
                     handleOnclickMenuView(el);
                   } else if (name === "Edit") {
                     handleOnclickMenuEdit(el);
-                  } else if (name === "Delete") {
+                  }
+                  else if (name === "Delete") {
                     handleOnclickMenuDelete(el);
                   }
                 }}
@@ -606,35 +663,37 @@ export default function Complaint() {
     const dataset = {
       complaintModel: {
         id: tempid,
+        report_type: dataReportTypeValue?.id,
         cas_number: cas_number,
         //  doc_date: "2025-08-26T14:37:35.707",
-        date_of_detection: "2025-08-26T07:37:35.73",
+        date_of_detection: date_of_detection,
 
         //User Profile
-        request_name: "LKORN",
-        request_company_id: 8,
-        request_domain_id: "UwD",
-        request_department_id: 10,
-        request_position: "it",
-        request_email: "eBpie@gmail.com",
-        request_date: "2025-08-26T14:37:35.707",
+        request_name: user[0]?.employee_username || '',
+        request_company_id: user[0]?.company_id || 0,   // ถ้ามีค่าใน profile
+        request_domain_id: user[0]?.domain_id || '',
+        request_department_id: user[0]?.itasset_department_id || 0,
+        request_position: user[0]?.employee_position || '',
+        request_email: user[0]?.employee_email || '',
+        request_phone: user[0]?.employee_tel || '',
+        request_date: new Date().toISOString(),
 
         //User Target
-        respondent_company_id: 10,
-        respondent_domain_id: "mkf",
-        respondent_department_id: 3,
-        respondent_email: "mqgcW@gmail.com",
-        respondent_other_name: "qnN",
-        respondent_other_email: "UigEP@gmail.com",
+        respondent_company_id: user[0]?.company_id || 0,   // ถ้ามีค่าใน profile
+        respondent_domain_id: user[0]?.domain_id || '',
+        respondent_department_id: user[0]?.itasset_department_id || 0,
+        respondent_email: user[0]?.employee_email || '',
+        respondent_other_name: respondent_other_name,
+        respondent_other_email: respondent_other_email,
 
         area_of_detection_dept: area_of_detection_dept,
         product_name: product_name,
         detail: detail,
         priority_level: datapriorityValue_Combobox,
-        respond_date_within: "2025-08-26T07:37:35.73",
+        respond_date_within: respond_date_within,
         lot_no: lot_no,
         complaint_status_id: "TRR_CS_SUBMIT",
-        create_by: "Kittiwin",
+        create_by: user[0]?.employee_username || '',
         action_type: null,
         ComplaintType: complainttypeModel,
         ComplaintRs: complaintRsModel,
@@ -656,8 +715,8 @@ export default function Complaint() {
         setIsLoadingScreen(false)
 
         console.log("dataadd", response.data)
-         handleClose?.();
-         Complaint_Get();
+        handleClose?.();
+        Complaint_Get();
         // FullSweetalert({
         //   title: 'Success',
         //   text: `จำนวนเพิ่มข้อมูล : ${response.countAddSuccess} รายการ
@@ -741,7 +800,7 @@ export default function Complaint() {
   //     console.log("error");
   //   }
   // };
-  
+
   // Function Handlers (On Click Event) ======================================================
   const handleOnclickMenuSync = () => {
     setOpenSync(true);
@@ -836,13 +895,23 @@ export default function Complaint() {
         <Divider sx={{ my: 0.1, borderColor: "#F29739" }} />
         <Grid container spacing={2} mt={2}>
           <Grid size={4}>
+            <AutocompleteComboBox
+              value={dataReportTypeValue}
+              labelName={"ReportType"}
+              options={dataReportType}
+              column="lov_code"
+              setvalue={setdataReportTypeValue}
+            //disabled={false}
+            />
+          </Grid>
+          <Grid size={4}>
             <FullWidthTextField
               value={TextNameSearch.cas_number}
               labelName={"CAS Number"}
               onchange={(value) => setTextNameSearch({ ...TextNameSearch, ...{ cas_number: value } })}
             />
           </Grid>
-          <Grid size={4}>
+          {/* <Grid size={4}>
             <AutocompleteComboBox
               value={dataComplaintTypeValue_Combobox}
               labelName={"ComplaintType"}
@@ -851,7 +920,7 @@ export default function Complaint() {
               setvalue={setdataComplaintTypeValue_Combobox}
             //disabled={false}
             />
-          </Grid>
+          </Grid> */}
           <Grid size={4}>
             <FullWidthTextField
               value={TextNameSearch.product_name}

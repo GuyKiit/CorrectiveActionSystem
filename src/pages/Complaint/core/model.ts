@@ -6,15 +6,17 @@ export type Adds = undefined | null | boolean;
 export type ListComplaintContextProps = {
     Complaint_no?: string
     no?: string
+    report_type?: string
     cas_number?: string
     doc_date?: dayjs.Dayjs
-    date_of_detection?: dayjs.Dayjs
+    date_of_detection?: dayjs.Dayjs | null
     request_name?: string | null
     request_company_id?: number | null
     request_domain_id?: string | null
     request_department_id?: number | null
     request_position?: string | null
     request_email?: string | null
+    request_phone?: string | null
     request_date?: dayjs.Dayjs
     respondent_company_id?: number | null
     respondent_domain_id?: string | null
@@ -75,6 +77,9 @@ export type ListComplaintContextProps = {
     photoOther?: any
     clauseOther?: any
     phoTypeOther?: any
+    dataDomain?: any
+    dataDepartment?: any
+    
 
 
     // dataTruckTypeValue_Combobox?: any
@@ -97,15 +102,17 @@ export type ListComplaintContextProps = {
 
     setComplaint_no: Dispatch<SetStateAction<string>>;
     setno: Dispatch<SetStateAction<string>>;
+    setreport_type: Dispatch<SetStateAction<string>>;
     setcas_number: Dispatch<SetStateAction<string>>
     setdoc_date: Dispatch<SetStateAction<dayjs.Dayjs>>
-    setdate_of_detection: Dispatch<SetStateAction<dayjs.Dayjs>>
+    setdate_of_detection: Dispatch<SetStateAction<dayjs.Dayjs | null>>
     setrequest_name: Dispatch<SetStateAction<string | null>>;
     setrequest_company_id: Dispatch<SetStateAction<number | null>>;
     setrequest_domain_id: Dispatch<SetStateAction<string> | null>;
     setrequest_department_id: Dispatch<SetStateAction<number | null>>;
     setrequest_position: Dispatch<SetStateAction<string | null>>;
     setrequest_email: Dispatch<SetStateAction<string | null>>;
+    setrequest_phone: Dispatch<SetStateAction<string | null>>;
     setrequest_date: Dispatch<SetStateAction<dayjs.Dayjs>>
     // setdataComplaintType: Dispatch<SetStateAction<boolean | null>>
     setrespondent_company_id: Dispatch<SetStateAction<number | null>>;
@@ -150,7 +157,7 @@ export type ListComplaintContextProps = {
     setcreate_datetime: Dispatch<SetStateAction<dayjs.Dayjs>>
     setupdate_by: Dispatch<SetStateAction<string>>
     setupdate_datetime: Dispatch<SetStateAction<dayjs.Dayjs>>
-    setemployee_tel: Dispatch<SetStateAction<string>>
+    
 
     setComplaintStatusID_Combobox: Dispatch<SetStateAction<any>>
     setdataReportType: Dispatch<SetStateAction<any>>
@@ -165,6 +172,9 @@ export type ListComplaintContextProps = {
     setdatapriorityValue_Combobox: Dispatch<SetStateAction<any>>
     setdatapriority: Dispatch<SetStateAction<any>>
     setPriorityLevel: Dispatch<SetStateAction<any>>
+    setdataDomain: Dispatch<SetStateAction<any>>
+    setdataDepartment: Dispatch<SetStateAction<any>>
+    
     // setSelectedFile: Dispatch<SetStateAction<File>>
 
 
@@ -173,6 +183,7 @@ export type ListComplaintContextProps = {
 export const initialListComplaint: ListComplaintContextProps = {
     setComplaint_no: () => { },
     setno: () => { },
+    setreport_type: () => { },
     setcas_number: () => { },
     setdoc_date: () => { },
     setdate_of_detection: () => { },
@@ -182,6 +193,7 @@ export const initialListComplaint: ListComplaintContextProps = {
     setrequest_department_id: () => { },
     setrequest_position: () => { },
     setrequest_email: () => { },
+    setrequest_phone: () => { },
     setother: () => { },
     setcompTypeOther: () => { },
     setcompRsOther: () => { },
@@ -240,7 +252,10 @@ export const initialListComplaint: ListComplaintContextProps = {
     setdatapriorityValue_Combobox: () => { },
     setdatapriority: () => { },
     setPriorityLevel: () => { },
-    setemployee_tel: () => { },
+    setdataDomain: () => { },
+    setdataDepartment: () => { },
+    
+    
 
     // setSelectedFile: () => { }
 

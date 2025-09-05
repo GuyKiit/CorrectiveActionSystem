@@ -209,9 +209,7 @@ const ListExplainProvider: FC<WithChildren> = ({ children }) => {
     const [phoTypeOther, setphoTypeOther] = useState<any>(
         initialListComplaint.phoTypeOther
     );
-    const [employee_tel, setemployee_tel] = useState<any>(
-        initialListComplaint.employee_tel
-    );
+
     
 
     const [dataComplaintTypeValue_Combobox, setdataComplaintTypeValue_Combobox] =
@@ -294,7 +292,6 @@ const ListExplainProvider: FC<WithChildren> = ({ children }) => {
                 datapriorityValue_Combobox,
                 datapriority,
                 PriorityLevel,
-                employee_tel,
                 // ✅ expose state ออกมาให้ component อื่นใช้
                 dataComplaintTypeValue_Combobox,
 
@@ -311,7 +308,7 @@ const ListExplainProvider: FC<WithChildren> = ({ children }) => {
                 setrequest_position,
                 setrequest_email,
                 setother,
-                setemployee_tel,
+                
                 // setdataComplaintType,
                 setrequest_date,
                 setrespondent_company_id,
