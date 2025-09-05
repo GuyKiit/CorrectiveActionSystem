@@ -9,7 +9,7 @@ export type ListComplaintContextProps = {
     report_type?: string
     cas_number?: string
     doc_date?: dayjs.Dayjs
-    date_of_detection?: dayjs.Dayjs
+    date_of_detection?: dayjs.Dayjs | null
     request_name?: string | null
     request_company_id?: number | null
     request_domain_id?: string | null
@@ -77,6 +77,9 @@ export type ListComplaintContextProps = {
     photoOther?: any
     clauseOther?: any
     phoTypeOther?: any
+    dataDomain?: any
+    dataDepartment?: any
+    
 
 
     // dataTruckTypeValue_Combobox?: any
@@ -102,7 +105,7 @@ export type ListComplaintContextProps = {
     setreport_type: Dispatch<SetStateAction<string>>;
     setcas_number: Dispatch<SetStateAction<string>>
     setdoc_date: Dispatch<SetStateAction<dayjs.Dayjs>>
-    setdate_of_detection: Dispatch<SetStateAction<dayjs.Dayjs>>
+    setdate_of_detection: Dispatch<SetStateAction<dayjs.Dayjs | null>>
     setrequest_name: Dispatch<SetStateAction<string | null>>;
     setrequest_company_id: Dispatch<SetStateAction<number | null>>;
     setrequest_domain_id: Dispatch<SetStateAction<string> | null>;
@@ -154,7 +157,7 @@ export type ListComplaintContextProps = {
     setcreate_datetime: Dispatch<SetStateAction<dayjs.Dayjs>>
     setupdate_by: Dispatch<SetStateAction<string>>
     setupdate_datetime: Dispatch<SetStateAction<dayjs.Dayjs>>
-    setemployee_tel: Dispatch<SetStateAction<string>>
+    
 
     setComplaintStatusID_Combobox: Dispatch<SetStateAction<any>>
     setdataReportType: Dispatch<SetStateAction<any>>
@@ -169,6 +172,9 @@ export type ListComplaintContextProps = {
     setdatapriorityValue_Combobox: Dispatch<SetStateAction<any>>
     setdatapriority: Dispatch<SetStateAction<any>>
     setPriorityLevel: Dispatch<SetStateAction<any>>
+    setdataDomain: Dispatch<SetStateAction<any>>
+    setdataDepartment: Dispatch<SetStateAction<any>>
+    
     // setSelectedFile: Dispatch<SetStateAction<File>>
 
 
@@ -246,7 +252,10 @@ export const initialListComplaint: ListComplaintContextProps = {
     setdatapriorityValue_Combobox: () => { },
     setdatapriority: () => { },
     setPriorityLevel: () => { },
-    setemployee_tel: () => { },
+    setdataDomain: () => { },
+    setdataDepartment: () => { },
+    
+    
 
     // setSelectedFile: () => { }
 

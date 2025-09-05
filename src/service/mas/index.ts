@@ -101,6 +101,33 @@ export async function _POST(datasend:any, path:string) {
     return false;
   }
 }
+export async function _POST_SYS_API(datasend:any, path:string) {
+  const url = `${
+    import.meta.env.VITE_APP_TRR_SYS_API_URL
+  }${path}`;
+  
+  const datasent = {
+    ...datasend,
+  };
+
+  try {
+    const res = await axios.post(url, datasent, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const data = res.data;    
+    if(data && data.status == "success"){      
+      return data;
+    }else if (data && data.status == "data_error"){
+      return data;
+    }else if (data && data.status == "error"){
+      return data;
+    }
+  } catch {
+    return false;
+  }
+}
 
 export async function _POST_FORMDATA(formData: FormData, path: string) {
   const url = `${import.meta.env.VITE_APP_TRR_API_URL}${path}`;

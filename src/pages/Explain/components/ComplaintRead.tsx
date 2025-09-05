@@ -96,6 +96,7 @@ export default function CompalintView({
         request_department_id,
         request_position,
         request_email,
+        request_phone,
         request_date,
         respondent_company_id,
         respondent_domain_id,
@@ -148,7 +149,7 @@ export default function CompalintView({
         PriorityLevel,
         clauseOther,
         phoTypeOther,
-        employee_tel,
+        
 
 
 
@@ -163,6 +164,7 @@ export default function CompalintView({
         setrequest_department_id,
         setrequest_position,
         setrequest_email,
+        setrequest_phone,
         setuser_file_name,
         setrequest_date,
         setrespondent_company_id,
@@ -217,7 +219,7 @@ export default function CompalintView({
         setPriorityLevel,
         setclauseOther,
         setphoTypeOther,
-        setemployee_tel
+        
     } = useListExplain();
 
 
@@ -309,7 +311,7 @@ export default function CompalintView({
             setrequest_position(dataelement.request_position)
             setrequest_department_id(dataelement.request_department_id)
             setrequest_email(dataelement.request_email)
-            setemployee_tel(dataelement.employee_tel)
+            setrequest_phone(dataelement.request_phone)
             setdataComplaintType(dataelement?.complaintType)
             setdataComplaintRs(dataelement?.complaintRs)
             setdataComplaintphoto(dataelement?.complaintPhoto)
@@ -671,11 +673,11 @@ export default function CompalintView({
                     </Grid>
                     <Grid size={4}>
                         <FullWidthTextField
-                            value={employee_tel}
+                            value={request_phone}
                             //required={"required"}
                             labelName={"Phone"}
                             onchange={(e) => {
-                                setemployee_tel(e);
+                                setrequest_phone(e);
                             }}
                             readonly
                             bgcolorTextField={bgcolorTextField}

@@ -28,13 +28,6 @@ export const Complaint_headCells = [
         label: 'CAS Number',
         colWidth: 150
     },
-    // {
-    //     columnName: 'dataComplaintType',
-    //     numeric: 'center',
-    //     disablePadding: true,
-    //     label: 'Complaint Type',
-    //     colWidth: 150
-    // },
     {
         columnName: 'product_name',
         numeric: 'center',
