@@ -238,6 +238,7 @@ export default function Complaint() {
 
   //------------Start Get service refresh -------------//
   React.useEffect(() => {
+    // allData_Get();
     Complaint_Get();
     ReportType_Get();
     ComplaintType_Get();
@@ -246,18 +247,101 @@ export default function Complaint() {
     priority_Get();
     //Company_Get();
     //Pack_unit_Get();
-
   }, []);
+
+  //========================================================================================================
+
+  // const allData_Get = async () => {
+  //   try {
+  //     const dataset = {
+  //       lov_group: "TRR.TRRGROUP.COM",
+  //       lov_type: "report_type,complaint_type,reference_standard,attach_type,priority_level"
+
+  //     }
+  //     const response = await _POST(dataset, "/Lov/LovGet");
+
+  //     if (response && response.status === "success") {
+  //       console.log("🧑🏻‍🎤🧑🏻‍🎤🧑🏻‍🎤🧑🏻‍🎤 Call [Lov/LovGet] -> 3 Data at the same time :", response.data);
+        
+  //       // Example loop: Iterate over response.data and log each item
+  //       // response.data.forEach((item: any, index: any) => {
+  //       //   console.log(`Item ${index}:`, item);
+  //       //   if (item.lov_type === "report_type") {
+  //       //     console.log(`💠 LOOP [report_type] : ${index}:`, item);
+  //       //     setdataReportType(item.data);
+  //       //   }
+  //       //   if (item.lov_type === "complaint_type") {
+  //       //     console.log(`💠 LOOP [complaint_type] : ${index}:`, item);
+  //       //     setdataComplaintType_Combobox && setdataComplaintType_Combobox(item.data);
+  //       //   }
+  //       //   if (item.lov_type === "reference_standard") {
+  //       //     console.log(`💠 LOOP [reference_standard] : ${index}:`, item);
+  //       //     setdataComplaintRs_Combobox && setdataComplaintRs_Combobox(item.data);
+  //       //   }
+  //       //   if (item.lov_type === "attach_type") {
+  //       //     console.log(`💠 LOOP [attach_type] : ${index}:`, item);
+  //       //     setdataphoto_Combobox && setdataphoto_Combobox(item.data);
+  //       //   }
+  //       //   if (item.lov_type === "priority_level") {
+  //       //     console.log(`💠 LOOP [priority_level] : ${index}:`, item);
+  //       //     setdatapriority_Combobox && setdatapriority_Combobox(item.data);
+  //       //   }
+  //       // });
+        
+
+
+  //       Array.isArray(response.data) && response.data.forEach((item: any) => {
+  //         if (item.lov_type === "report_type") {
+  //           setdataReportType(item.data);
+  //         }
+  //         if (item.lov_type === "complaint_type") {
+  //           setdataComplaintType_Combobox && setdataComplaintType_Combobox(item.data);
+  //         }
+  //         if (item.lov_type === "reference_standard") {
+  //           setdataComplaintRs_Combobox && setdataComplaintRs_Combobox(item.data);
+  //         }
+  //         if (item.lov_type === "attach_type") {
+  //           setdataphoto_Combobox && setdataphoto_Combobox(item.data);
+  //         }
+  //         if (item.lov_type === "priority_level") {
+  //           setdatapriority_Combobox && setdatapriority_Combobox(item.data);
+  //         }
+  //       });
+        
+  //       // costCenterCode.push(center.cost_center_code)
+  //       // center.costCenterId = center.id,
+  //       // center.costCenterCode = center.cost_center_code,
+  //       // center.costCenterName = center.cost_center_name,
+  //       // center.costCentersCodeAndName = "[" + center.site_code + "] " + center.cost_center_name + ' [' + center.cost_center_code + ']' + (center.service_center_flag === true ? ' (Service Center)' : '')
+  //       // newData.push(center);
+
+
+
+  //       // setdataReportType(response.data);
+  //       console.log("🧑🏻‍🎤🧑🏻‍🎤🧑🏻‍🎤🧑🏻‍🎤 Call [Lov/LovGet] -> dataReportType :", dataReportType);
+  //       console.log("🧑🏻‍🎤🧑🏻‍🎤🧑🏻‍🎤🧑🏻‍🎤 Call [Lov/LovGet] -> dataComplaintType_Combobox :", dataComplaintType_Combobox);
+  //       console.log("🧑🏻‍🎤🧑🏻‍🎤🧑🏻‍🎤🧑🏻‍🎤 Call [Lov/LovGet] -> dataComplaintRs_Combobox :", dataComplaintRs_Combobox);
+  //       console.log("🧑🏻‍🎤🧑🏻‍🎤🧑🏻‍🎤🧑🏻‍🎤 Call [Lov/LovGet] -> dataphoto_Combobox :", dataphoto_Combobox);
+  //       console.log("🧑🏻‍🎤🧑🏻‍🎤🧑🏻‍🎤🧑🏻‍🎤 Call [Lov/LovGet] -> datapriority_Combobox :", datapriority_Combobox);
+  //     }
+  //   } catch (e) {
+  //     console.log("error:", e);
+  //   }
+  // }
+
+  //========================================================================================================
+
   const ReportType_Get = async () => {
     try {
       const dataset = {
+        lov_group: "TRR.TRRGROUP.COM",
         lov_type: "report_type"
 
       }
       const response = await _POST(dataset, "/Lov/LovGet");
 
       if (response && response.status === "success") {
-        console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ :",response.data," @@@@@@@@@@@@@@@@@@@@");
+        console.log("⚡️⚡️⚡️⚡️ Call [Lov/LovGet] -> report_type :", response.data);
 
         setdataReportType(response.data);
         // setdataReportType && setdataReportType(response.data);
@@ -266,16 +350,20 @@ export default function Complaint() {
       console.log("error:", e);
     }
   }
+
+  //========================================================================================================
+
   const ComplaintType_Get = async () => {
     try {
       const dataset = {
+        lov_group: "TRR.TRRGROUP.COM",
         lov_type: "complaint_type"
 
       }
       const response = await _POST(dataset, "/Lov/LovGet");
 
       if (response && response.status === "success") {
-        console.log("@@@@ success success success success success success success");
+        console.log("⚡️⚡️⚡️⚡️ Call [Lov/LovGet] -> complaint_type :", response.data);
 
         setdataComplaintType_Combobox && setdataComplaintType_Combobox(response.data);
       }
@@ -283,16 +371,20 @@ export default function Complaint() {
       console.log("error:", e);
     }
   }
+
+  //========================================================================================================
+
   const ComplaintRs_Get = async () => {
     try {
       const dataset = {
+        lov_group: "TRR.TRRGROUP.COM",
         lov_type: "reference_standard"
 
       }
       const response = await _POST(dataset, "/Lov/LovGet");
 
       if (response && response.status === "success") {
-        console.log("@@@@ success success success success success success success");
+        console.log("⚡️⚡️⚡️⚡️ Call [Lov/LovGet] -> reference_standard :", response.data);
 
         setdataComplaintRs_Combobox && setdataComplaintRs_Combobox(response.data);
       }
@@ -300,16 +392,20 @@ export default function Complaint() {
       console.log("error:", e);
     }
   }
+
+  //========================================================================================================
+
   const photo_Get = async () => {
     try {
       const dataset = {
+        lov_group: "TRR.TRRGROUP.COM",
         lov_type: "attach_type"
 
       }
       const response = await _POST(dataset, "/Lov/LovGet");
 
       if (response && response.status === "success") {
-        console.log("@@@@ success success success success success success success");
+        console.log("⚡️⚡️⚡️⚡️ Call [Lov/LovGet] -> attach_type :", response.data);
 
         setdataphoto_Combobox && setdataphoto_Combobox(response.data);
       }
@@ -317,16 +413,20 @@ export default function Complaint() {
       console.log("error:", e);
     }
   }
+
+  //========================================================================================================
+
   const priority_Get = async () => {
     try {
       const dataset = {
+        lov_group: "TRR.TRRGROUP.COM",
         lov_type: "priority_level"
 
       }
       const response = await _POST(dataset, "/Lov/LovGet");
 
       if (response && response.status === "success") {
-        console.log("@@@@ success success success success success success success");
+        console.log("⚡️⚡️⚡️⚡️ Call [Lov/LovGet] -> priority_level :", response.data);
 
         setdatapriority_Combobox && setdatapriority_Combobox(response.data);
       }
@@ -334,6 +434,8 @@ export default function Complaint() {
       console.log("error:", e);
     }
   }
+
+  //========================================================================================================
 
   const setData = (data: any) => {
 

@@ -238,7 +238,7 @@ export default function Explain() {
 
   //------------Start Get service refresh -------------//
   React.useEffect(() => {
-    Complaint_Get();
+    // Complaint_Get();
     ReportType_Get();
     ComplaintType_Get();
     ComplaintRs_Get();
@@ -257,7 +257,7 @@ export default function Explain() {
       const response = await _POST(dataset, "/Lov/LovGet");
 
       if (response && response.status === "success") {
-        console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ :",response.data," @@@@@@@@@@@@@@@@@@@@");
+        console.log("⚡️⚡️⚡️⚡️ Call [Lov/LovGet] -> report_type :", response.data);
 
         setdataReportType(response.data);
         // setdataReportType && setdataReportType(response.data);
@@ -275,7 +275,7 @@ export default function Explain() {
       const response = await _POST(dataset, "/Lov/LovGet");
 
       if (response && response.status === "success") {
-        console.log("@@@@ success success success success success success success");
+        console.log("⚡️⚡️⚡️⚡️ Call [Lov/LovGet] -> complaint_type :", response.data);
 
         setdataComplaintType_Combobox && setdataComplaintType_Combobox(response.data);
       }
@@ -292,7 +292,7 @@ export default function Explain() {
       const response = await _POST(dataset, "/Lov/LovGet");
 
       if (response && response.status === "success") {
-        console.log("@@@@ success success success success success success success");
+        console.log("⚡️⚡️⚡️⚡️ Call [Lov/LovGet] -> reference_standard :", response.data);
 
         setdataComplaintRs_Combobox && setdataComplaintRs_Combobox(response.data);
       }
@@ -309,7 +309,7 @@ export default function Explain() {
       const response = await _POST(dataset, "/Lov/LovGet");
 
       if (response && response.status === "success") {
-        console.log("@@@@ success success success success success success success");
+        console.log("⚡️⚡️⚡️⚡️ Call [Lov/LovGet] -> attach_type :", response.data);
 
         setdataphoto_Combobox && setdataphoto_Combobox(response.data);
       }
@@ -326,7 +326,7 @@ export default function Explain() {
       const response = await _POST(dataset, "/Lov/LovGet");
 
       if (response && response.status === "success") {
-        console.log("@@@@ success success success success success success success");
+        console.log("⚡️⚡️⚡️⚡️ Call [Lov/LovGet] -> priority_level :", response.data);
 
         setdatapriority_Combobox && setdatapriority_Combobox(response.data);
       }
@@ -555,7 +555,7 @@ export default function Explain() {
 
         console.log("dataadd", response.data)
          handleClose?.();
-         Complaint_Get();
+        //  Complaint_Get();
         // FullSweetalert({
         //   title: 'Success',
         //   text: `จำนวนเพิ่มข้อมูล : ${response.countAddSuccess} รายการ
@@ -700,7 +700,7 @@ export default function Explain() {
     });
 
     // โหลดข้อมูลใหม่ทั้งหมด
-    Complaint_Get();
+    // Complaint_Get();
   };
 
 
