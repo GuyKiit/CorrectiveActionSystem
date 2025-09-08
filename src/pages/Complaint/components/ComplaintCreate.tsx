@@ -89,8 +89,9 @@ export default function ComplaintInsert({
 
 
 }: ComplaintBody) {
+
   const user = cleanAccessData('userSession');
-  console.log(user[0].employee_username, "userrrr");
+
   const {
     Complaint_no,
     no,
@@ -255,6 +256,8 @@ export default function ComplaintInsert({
   const [dataphoto, setdataphoto] = useState<LovType[]>([]);
   const [datapriority, setdatapriority] = useState<LovType | null>(null);
   const [files, setFiles] = useState<File[]>([]);
+  const [fileAttachmentTypes, setFileAttachmentTypes] = useState<{ [fileIndex: number]: string }>({});
+  const [fileOtherTexts, setFileOtherTexts] = useState<{ [fileIndex: number]: string }>({});
 
   // Hidden Variables ======================================================
   const [isFormHidden, setisFormHidden] = useState(true);
@@ -445,6 +448,53 @@ export default function ComplaintInsert({
   };
   const handleRemoveFile = (index: number) => {
     setFiles(prevFiles => prevFiles.filter((_, i) => i !== index));
+    // Remove attachment types for this file
+    setFileAttachmentTypes(prev => {
+      const newTypes = { ...prev };
+      delete newTypes[index];
+      // Reindex remaining files
+      const reindexed: { [fileIndex: number]: string } = {};
+      Object.keys(newTypes).forEach((key) => {
+        const keyNum = parseInt(key);
+        if (keyNum > index) {
+          reindexed[keyNum - 1] = newTypes[keyNum];
+        } else {
+          reindexed[keyNum] = newTypes[keyNum];
+        }
+      });
+      return reindexed;
+    });
+  };
+  const handleFileAttachmentTypeChange = (fileIndex: number, attachmentTypeId: string, checked: boolean) => {
+    setFileAttachmentTypes(prev => {
+      const newTypes = { ...prev };
+      
+      if (checked) {
+        // Single selection - replace any existing selection
+        newTypes[fileIndex] = attachmentTypeId;
+      } else {
+        // Remove selection if unchecked
+        delete newTypes[fileIndex];
+        // Clear the "Other" text if unchecked
+        if (attachmentTypeId === "TRR_AT_4") {
+          setFileOtherTexts(prevTexts => {
+            const newTexts = { ...prevTexts };
+            delete newTexts[fileIndex];
+            return newTexts;
+          });
+        }
+      }
+      
+      console.log("File attachment types updated:", newTypes);
+      return newTypes;
+    });
+  };
+  
+  const handleFileOtherTextChange = (fileIndex: number, text: string) => {
+    setFileOtherTexts(prev => ({
+      ...prev,
+      [fileIndex]: text
+    }));
   };
 
   // Functions (Initial, Calculation or ETC.) =================================================
@@ -560,6 +610,20 @@ export default function ComplaintInsert({
             bgcolorTextField={action === "Edit" ? false : bgcolorTextField}
           />
         </Grid>
+        {/* {isFormHidden && dataReportTypeValue && (
+        <Grid size={6}>
+          <AutocompleteComboBox
+            required="required"
+            value={dataReportTypeValue}
+            labelName={"โรงงาน (Factory)"}
+            options={dataset_reporttype}
+            column="lov_code"
+            setvalue={handleReportTypeChange}
+            readonly={action === "Edit" ? false : readonlyTextField}
+            bgcolorTextField={action === "Edit" ? false : bgcolorTextField}
+          />
+        </Grid>
+        )} */}
       </Grid>
 
 
@@ -570,50 +634,79 @@ export default function ComplaintInsert({
           <label className="sarabun-regular-datatable">{dataReportTypeValue?.lov4}</label>
           <Divider sx={{ my: 1 }} />
           <Grid container spacing={2}>
-            <Grid size={4}>
+            {/* <Grid size={4}>
+              <FullWidthTextField
+                required="required"
+                value={product_name}
+                labelName="ชื่อผลิตภัณฑ์ (Product Name)"
+                onchange={(e) => setproduct_name(e)}
+              />
+            </Grid> */}
+
+            <Grid size={4} mt={2}>
+              <AutocompleteComboBox
+                value={respondent_company_id}
+                labelName={"โรงงาน (Factory)"}
+                options={dataset_company}
+                column="domain_name"
+                setvalue={(v) => setrespondent_company_id(v)}
+                readonly
+              />
+            </Grid>
+            <Grid size={4} mt={2}>
               <FullWidthTextField
                 value={cas_number}
                 labelName="CAS Number"
                 onchange={(e) => { setcas_number(e); }}
-              // hidden={true}
               />
             </Grid>
-            <Grid size={4}>
-              <FullWidthTextField
-                required="required"
-                value={product_name}
-                labelName="Product Name"
-                onchange={(e) => setproduct_name(e)}
+            <Grid size={4} mt={2}>
+              <DesktopDatePickers
+                labelName={"วันที่ออกเอกสาร (Document Issuance Date)"}
+                value={doc_date}
+                handleChange={(val) => setdoc_date}
+                bgcolorTextField={true}
+                readonly
               />
             </Grid>
-            <Grid size={4}>
-              <FullWidthTextField
-                required="required"
-                value={lot_no}
-                labelName="Lot No./Bag No"
-                onchange={(e) => setlot_no(e)}
-              />
-            </Grid>
-            <Paper elevation={2} sx={{ p: 2, mt: 2, width: "100%" }}>
-              <div className="px-2 pt-2 pb-5">
-                <label className="sarabun-regular-datatable">
-                  Respondent
+
+            <Paper elevation={3} sx={{ 
+              p: 3, 
+              mt: 3, 
+              width: "100%", 
+              borderRadius: 3,
+              background: 'linear-gradient(135deg, #fff5f5 0%, #ffffff 100%)',
+              border: '1px solid #ffcdd2',
+              boxShadow: '0 4px 12px rgba(244,67,54,0.1)'
+            }}>
+              <Box sx={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                mb: 3,
+                pb: 2,
+                borderBottom: '2px solid #f44336'
+              }}>
+                <Box sx={{
+                  width: 6,
+                  height: 24,
+                  backgroundColor: '#f44336',
+                  borderRadius: 1,
+                  mr: 2
+                }} />
+                <label 
+                  className="sarabun-regular-datatable" 
+                  style={{ 
+                    fontSize: '18px', 
+                    fontWeight: '600', 
+                    color: '#d32f2f',
+                    margin: 0 
+                  }}
+                >
+                  แผนกผู้ถูกร้องเรียน (Respondent Department)
                 </label>
-                <Divider sx={{ my: 0.1, borderColor: "#FFFFF" }} />
-              </div>
-              <Grid container spacing={2}>
-                <Grid size={4}>
-                  <AutocompleteComboBox
-                    value={respondent_company_id}
-                    labelName={"Factory"}
-                    options={dataset_company}
-                    column="domain_name"
-                    setvalue={(v) => setrespondent_company_id(v)}
-                    // setvalue={setrespondent_company_id}
-                    readonly
-                  />
-                </Grid>
-                <Grid size={4}>
+              </Box>
+              <Grid container spacing={3}>
+                {/* <Grid size={4}>
                   <AutocompleteComboBox
                     value={respondent_domain_id}
                     labelName={"Domain"}
@@ -622,12 +715,20 @@ export default function ComplaintInsert({
                     setvalue={setrespondent_domain_id}
                     readonly
                   />
+                </Grid> */}
+                <Grid size={4}>
+                  <DesktopDatePickers
+                    required="required"
+                    labelName={"วันที่พบปัญหา (Date of Detection)"}
+                    value={date_of_detection}
+                    handleChange={(val) => setdate_of_detection(val ?? null)}
+                  />
                 </Grid>
                 <Grid size={4}>
                   <AutocompleteComboBox
                     required="required"
                     value={respondent_department_id}
-                    labelName={"Department"}
+                    labelName={"แผนกที่พบปัญหา (Department / Area of Detection)"}
                     options={dataset_department}
                     column="itasset_department_name"
                     setvalue={setrespondent_department_id}
@@ -635,230 +736,459 @@ export default function ComplaintInsert({
                 </Grid>
                 <Grid size={4}>
                   <FullWidthTextField
+                    required="required"
+                    value={product_name}
+                    labelName="ชื่อผลิตภัณฑ์ (Product Name)"
+                    onchange={(e) => setproduct_name(e)}
+                  />
+                </Grid>
+                <Grid size={4}>
+                  <FullWidthTextField
+                    required="required"
+                    value={lot_no}
+                    labelName="Lot No./Bag No"
+                    onchange={(e) => setlot_no(e)}
+                  />
+                </Grid>
+                <Grid size={4}>
+                  <FullWidthTextField
+                    required="required"
                     value={user[0]?.employee_email ? user[0]?.employee_email : '-'}
-                    labelName="Email"
+                    labelName="อีเมล (Email)"
                     onchange={(e) => setrespondent_email(e.target.value)}
                   />
                 </Grid>
-                <Grid size={4}>
-                  <DesktopDatePickers
-                    required="required"
-                    labelName={"Date of Detection"}
-                    value={date_of_detection}
-                    handleChange={(val) => setdate_of_detection(val ?? null)}
-                  />
+              </Grid>
+              
+              {/* รายละเอียด Sub-section */}
+              <Box sx={{ mt: 4 }}>
+                <Box sx={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  mb: 3,
+                  pb: 1,
+                  borderBottom: '1px solid #ffcdd2'
+                }}>
+                  <Box sx={{
+                    width: 4,
+                    height: 16,
+                    backgroundColor: '#f44336',
+                    borderRadius: 0.5,
+                    mr: 1.5
+                  }} />
+                  <label 
+                    className="sarabun-regular-datatable" 
+                    style={{ 
+                      fontSize: '16px', 
+                      fontWeight: '500', 
+                      color: '#d32f2f',
+                      margin: 0 
+                    }}
+                  >
+                    รายละเอียด
+                  </label>
+                </Box>
+                
+                <Grid container spacing={2} sx={{ alignItems: 'stretch' }}>
+                  {dataReportTypeValue && (
+                    <Grid size={6} sx={{ display: 'flex' }}>
+                      <Paper elevation={1} sx={{ 
+                        p: 2, 
+                        borderRadius: 2, 
+                        backgroundColor: '#fafafa',
+                        width: '100%',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        minHeight: '400px'
+                      }}>
+                        <label 
+                          className="sarabun-regular-datatable"
+                          style={{ 
+                            fontSize: '18px', 
+                            fontWeight: '600', 
+                            color: '#333',
+                            margin: 0 
+                          }}
+                        >
+                          ประเภทข้อร้องเรียน (Type Of Complaint) <span style={{ color: 'red' }}> *</span>
+                        </label>
+                        <Divider sx={{ my: 2 }} />
+                        <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+                          <Grid container spacing={2}>
+                            {(filteredComplaintType || []).map((item: LovType) => (
+                              <Grid size={6} key={item.id}>
+                                <FullWidthCheckbox
+                                  labelName={item.lov1}
+                                  value={dataComplaintType.some(c => c.id === item.id)}
+                                  onchange={() => handleCheckboxChangeCT(item)}
+                                />
+                              </Grid>
+                            ))}
+                          </Grid>
+                          <Box sx={{ mt: 'auto', pt: 2 }}>
+                            {dataComplaintType.some(c => c.id === "TRR_CT_NCR_99") && (
+                              <FullWidthTextArea
+                                value={compTypeOther}
+                                labelName="Other:"
+                                onchange={(e) => setcompTypeOther(e)}
+                              />
+                            )}
+                          </Box>
+                        </Box>
+                      </Paper>
+                    </Grid>
+                  )}
+
+                  {!isRSHidden && dataReportTypeValue && (
+                    <Grid size={6} sx={{ display: 'flex' }}>
+                      <Paper elevation={1} sx={{ 
+                        p: 2, 
+                        borderRadius: 2, 
+                        backgroundColor: '#fafafa',
+                        width: '100%',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        minHeight: '400px'
+                      }}>
+                        <label 
+                          className="sarabun-regular-datatable"
+                          style={{ 
+                            fontSize: '18px', 
+                            fontWeight: '600', 
+                            color: '#333',
+                            margin: 0 
+                          }}
+                        >
+                          มาตรฐานอ้างอิง (Reference Standard) <span style={{ color: 'red' }}> *</span>
+                        </label>
+                        <Divider sx={{ my: 2 }} />
+                        <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+                          <Grid container spacing={2}>
+                            {filteredComplaintRs.map((item: LovType) => (
+                              <Grid size={6} key={item.id}>
+                                <FullWidthCheckbox
+                                  labelName={item.lov1}
+                                  value={dataComplaintRs.some(rs => rs.id === item.id)}
+                                  onchange={() => handleCheckboxChangeRS(item)}
+                                />
+                              </Grid>
+                            ))}
+                          </Grid>
+                          <Box sx={{ mt: 'auto', pt: 2 }}>
+                            {dataComplaintRs.some(rs => rs.id === "TRR_RS_NCR_99") && (
+                              <FullWidthTextArea
+                                value={compRsOther}
+                                labelName="Other:"
+                                onchange={(e) => setcompRsOther(e)}
+                              />
+                            )}
+                            {dataComplaintRs.some(rs => rs.id === "TRR_RS_NCR_6") && (
+                              <FullWidthTextArea
+                                value={clauseOther}
+                                labelName="Clause:"
+                                onchange={(e) => setclauseOther(e)}
+                              />
+                            )}
+                          </Box>
+                        </Box>
+                      </Paper>
+                    </Grid>
+                  )}
                 </Grid>
+                
+                {/* Priority Section */}
+                {dataReportTypeValue && (
+                  <Box sx={{ mt: 3 }}>
+                    <Paper elevation={1} sx={{ 
+                      p: 2, 
+                      borderRadius: 2, 
+                      backgroundColor: '#fafafa'
+                    }}>
+                      <label 
+                        className="sarabun-regular-datatable"
+                        style={{ 
+                          fontSize: '18px', 
+                          fontWeight: '600', 
+                          color: '#333',
+                          margin: 0 
+                        }}
+                      >
+                        ระดับความสำคัญ (Priority) <span style={{ color: 'red' }}> *</span>
+                      </label>
+                      <Divider sx={{ my: 2 }} />
+                      <Grid container spacing={2} sx={{ justifyContent: 'center', alignItems: 'flex-start' }}>
+                        {(filteredpriority || [])
+                          .sort((a, b) => {
+                            const order: { [key: string]: number } = { 'Normal': 1, 'Urgent': 2, 'Emergency': 3 };
+                            return (order[a.lov_code] || 999) - (order[b.lov_code] || 999);
+                          })
+                          .map((item: LovType) => (
+                          <Grid size={3} key={item.id}>
+                            <Box sx={{ 
+                              border: '2px solid #e0e0e0',
+                              borderRadius: 2,
+                              p: 2,
+                              textAlign: 'center',
+                              backgroundColor: datapriority?.id === item.id ? '#fff3e0' : '#ffffff',
+                              borderColor: datapriority?.id === item.id ? '#ff9800' : '#e0e0e0',
+                              cursor: 'pointer',
+                              transition: 'all 0.2s ease',
+                              '&:hover': {
+                                borderColor: '#ff9800',
+                                backgroundColor: '#fff8f0'
+                              }
+                            }}>
+                              <FormControlLabel
+                                control={
+                                  <Radio
+                                    checked={datapriority?.id === item.id}
+                                    onChange={(e) => {
+                                      // console.log("Priority selected:", e);
+                                      console.log("Priority selected:", item);
+                                      setdatapriorityValue_Combobox(item.id);
+                                      setdatapriority(item);
+                                      const days = Number(item.lov3 ?? 0);
+                                      priorityCalculateRespondDate(days, true);
+                                      console.log("เลือก priority:", item.lov_code, "Days:", days);
+                                    }}
+                                    sx={{ color: '#ff9800' }}
+                                  />
+                                }
+                                label={
+                                  <Box sx={{ textAlign: 'center' }}>
+                                    <Box sx={{ 
+                                      fontSize: '16px', 
+                                      fontWeight: '600',
+                                      color: datapriority?.id === item.id ? '#f57c00' : '#666'
+                                    }}>
+                                      {item.lov1} ({item.lov_code})
+                                    </Box>
+                                    <Box sx={{ 
+                                      fontSize: '12px', 
+                                      color: datapriority?.id === item.id ? '#f57c00' : '#999',
+                                      mt: 0.5
+                                    }}>
+                                      (ภายใน {item.lov3} วัน)
+                                    </Box>
+                                  </Box>
+                                }
+                                sx={{ 
+                                  width: "100%", 
+                                  m: 0,
+                                  flexDirection: 'column',
+                                  alignItems: 'center'
+                                }}
+                              />
+                            </Box>
+                          </Grid>
+                        ))}
+                        
+                        {/* Response Date Field - positioned after Emergency option */}
+                        <Grid size={3}>
+                          <Box sx={{ 
+                            border: '2px solid #e0e0e0',
+                            borderRadius: 2,
+                            p: 2,
+                            textAlign: 'center',
+                            backgroundColor: '#ffffff',
+                            borderColor: '#e0e0e0',
+                            transition: 'all 0.2s ease',
+                            minHeight: '100px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'center'
+                          }}>
+                            <Box sx={{ 
+                              fontSize: '16px', 
+                              fontWeight: '600',
+                              mb: 3
+                            }}>
+                              ตอบกลับภายในวันที่ (Response Date)
+                            </Box>
+                            {/* <Box sx={{ 
+                              fontSize: '12px', 
+                              color: respond_date_within ? '#1976d2' : '#999',
+                              mb: 2
+                            }}>
+                              (Response Date)
+                            </Box> */}
+                            <DesktopDatePickers
+                              labelName=""
+                              value={respond_date_within}
+                              handleChange={(val) => setrespond_date_within(val ?? null)}
+                              bgcolorTextField={true}
+                              readonly
+                            />
+                          </Box>
+                        </Grid>
+                      </Grid>
+                    </Paper>
+                  </Box>
+                )}
+              </Box>
+            </Paper>
+
+            <Paper elevation={3} sx={{ 
+              p: 3, 
+              mt: 3, 
+              width: "100%", 
+              borderRadius: 3,
+              background: 'linear-gradient(135deg, #f0f8ff 0%, #ffffff 100%)',
+              border: '1px solid #bbdefb',
+              boxShadow: '0 4px 12px rgba(33,150,243,0.1)'
+            }}>
+              <Box sx={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                mb: 3,
+                pb: 2,
+                borderBottom: '2px solid #2196f3'
+              }}>
+                <Box sx={{
+                  width: 6,
+                  height: 24,
+                  backgroundColor: '#2196f3',
+                  borderRadius: 1,
+                  mr: 2
+                }} />
+                <label 
+                  className="sarabun-regular-datatable" 
+                  style={{ 
+                    fontSize: '18px', 
+                    fontWeight: '600', 
+                    color: '#1976d2',
+                    margin: 0 
+                  }}
+                >
+                  แผนกที่ทำการร้องเรียน (Reporting Department)
+                </label>
+              </Box>
+              <Grid container spacing={3}>
                 <Grid size={4}>
-                  <DesktopDatePickers
-                    labelName={"Document Issuance Date"}
-                    value={doc_date}
-                    handleChange={(val) => setdoc_date}
+                  <FullWidthTextField
+                    value={user[0]?.employee_username ? user[0]?.employee_username : '-'}
+                    labelName="ชื่อผู้ออกเอกสาร (Reported by)"
+                    onchange={(e) => setrequest_name(e.target.value)}
                     readonly
                   />
                 </Grid>
                 <Grid size={4}>
-                  <DesktopDatePickers
-                    labelName={"Required Response Date"}
-                    value={respond_date_within}
-                    handleChange={(val) => setrespond_date_within}
+                  <FullWidthTextField
+                    value={user[0]?.employee_position ? user[0]?.employee_position : '-'}
+                    labelName="ตำแหน่ง (Position)"
+                    onchange={(e) => setrequest_position(e.target.value)}
+                    readonly
+                  />
+                </Grid>
+                <Grid size={4}>
+                  <AutocompleteComboBox
+                    required="required"
+                    value={request_department_id}
+                    labelName={"แผนก (Department)"}
+                    options={dataset_department}
+                    column="itasset_department_name"
+                    setvalue={setrequest_department_id}
+                  />
+                </Grid>
+                <Grid size={4}>
+                  <FullWidthTextField
+                    value={user[0]?.employee_email ? user[0]?.employee_email : '-'}
+                    labelName="อีเมล (Email)"
+                    onchange={(e) => setrequest_email(e.target.value)}
+                    readonly
+                  />
+                </Grid>
+                <Grid size={4}>
+                  <FullWidthTextField
+                    value={user[0]?.employee_tel ? user[0]?.employee_tel : '-'}
+                    labelName="เบอร์โทรศัพท์ (Phone)"
+                    onchange={(e) => setrequest_phone(e.target.value)}
+                    readonly
+                  />
+                </Grid>
+                <Grid size={4}>
+                  <AutocompleteComboBox
+                    value={request_company_id}
+                    labelName={"โรงงาน (Factory)"}
+                    options={dataset_company}
+                    column="domain_name"
+                    setvalue={(v) => setrequest_company_id(v)}
+                    readonly
+                  />
+                </Grid>
+                <Grid size={4}>
+                  <AutocompleteComboBox
+                    // required="required"
+                    value={request_domain_id}
+                    labelName={"โดเมน (Domain)"}
+                    options={dataset_domain}
+                    column="domain_id"
+                    setvalue={setrequest_domain_id}
+                    readonly
+                  />
+                </Grid>
+                <Grid size={4}>
+                  <FullWidthTextField
+                    value={user[0]?.itasset_department_id ? user[0]?.itasset_department_id : '-'}
+                    labelName="แผนกที่พบปัญหา (Department / Area of Detection)"
+                    onchange={(e) => setarea_of_detection_dept(e.target.value)}
                     readonly
                   />
                 </Grid>
               </Grid>
             </Paper>
 
-            <Grid container spacing={2}>
-              {dataReportTypeValue && (
-                <Grid size={6}>
-                  <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>
-                    <label className="sarabun-regular-datatable">Type Of Complaint</label>
-                    <Divider sx={{ my: 2 }} />
-                    <Grid container spacing={2}>
-                      {(filteredComplaintType || []).map((item: LovType) => (
-                        <Grid size={6} key={item.id}>
-                          <FullWidthCheckbox
-                            labelName={item.lov1}
-                            value={dataComplaintType.some(c => c.id === item.id)}
-                            onchange={() => handleCheckboxChangeCT(item)}
-                          />
-                        </Grid>
-                      ))}
-                    </Grid>
-                    {dataComplaintType.some(c => c.id === "TRR_CT_NCR_99") && (
-                      <FullWidthTextArea
-                        value={compTypeOther}
-                        labelName="Other:"
-                        onchange={(e) => setcompTypeOther(e)}
-                      />
-                    )}
-                  </Paper>
-                </Grid>
-              )}
-
-              {!isRSHidden && dataReportTypeValue && (
-                <Grid size={6}>
-                  <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>
-                    <label className="sarabun-regular-datatable">Reference Standard</label>
-                    <Divider sx={{ my: 2 }} />
-                    <Grid container spacing={2}>
-                      {filteredComplaintRs.map((item: LovType) => (
-                        <Grid size={6} key={item.id}>
-                          <FullWidthCheckbox
-                            labelName={item.lov1}
-                            value={dataComplaintRs.some(rs => rs.id === item.id)}
-                            onchange={() => handleCheckboxChangeRS(item)}
-                          // hidden={true}
-                          />
-                        </Grid>
-                      ))}
-                    </Grid>
-                    {dataComplaintRs.some(rs => rs.id === "TRR_RS_NCR_99") && (
-                      <FullWidthTextArea
-                        value={compRsOther}
-                        labelName="Other:"
-                        onchange={(e) => setcompRsOther(e)}
-                      />
-                    )}
-                    {dataComplaintRs.some(rs => rs.id === "TRR_RS_NCR_6") && (
-                      <FullWidthTextArea
-                        value={clauseOther}
-                        labelName="Clause:"
-                        onchange={(e) => setclauseOther(e)}
-                      />
-                    )}
-                  </Paper>
-                </Grid>
-              )}
-              <Grid size={7}>
-                <FullWidthTextArea
-                  required="required"
-                  value={detail}
-                  labelName="Detail"
-                  onchange={(e) => setdetail(e)}
-                />
-              </Grid>
-            </Grid>
-            <Grid container spacing={2}>
-              {/* Row 1: Priority */}
-              {dataReportTypeValue && (
-                <Grid size={5}>
-                  <label className="sarabun-regular-datatable">Priority</label>
-                  <Grid container spacing={2}>
-                    {(filteredpriority || []).map((item: LovType) => (
-                      <Grid size={3} key={item.id}>
-                        <FormControlLabel
-                          control={
-                            <Radio
-                              checked={datapriority?.id === item.id}
-                              onChange={(e) => {
-                                console.log("eeeeeeeeeeee", e);
-                                setdatapriorityValue_Combobox(item.lov_code);
-                                // update priority state
-                                setdatapriority(item);
-                                // ดึงจำนวนวันจาก lov3 ของ item ที่เลือก
-                                const days = Number(item.lov3 ?? 0);
-                                // คำนวณวันที่
-                                priorityCalculateRespondDate(days, true); // ใช้ true เพราะกดเลือกแล้ว
-                                // log ค่า item ที่เลือก
-                                console.log("เลือก priority:", item.lov_code, "Days:", days);
-                              }}
-                            />
-                          }
-                          label={item.lov_code}
-                          sx={{ width: "100%", m: 0 }}
-                        />
-                      </Grid>
-                    ))}
-                  </Grid>
-                </Grid>
-              )}
-              <Paper elevation={2} sx={{ p: 2, mt: 2, width: "100%" }}>
-                <div className="px-2 pt-2 pb-5">
-                  <label className="sarabun-regular-datatable">
-                    Request
-                  </label>
-                  <Divider sx={{ my: 0.1, borderColor: "#FFFFF" }} />
-                </div>
-                <Grid container spacing={3}>
-                  <Grid size={4}>
-                    <FullWidthTextField
-                      value={user[0]?.employee_username ? user[0]?.employee_username : '-'}
-                      labelName="Reported by"
-                      onchange={(e) => setrequest_name(e.target.value)}
-                      readonly
-                    />
-                  </Grid>
-                  <Grid size={4}>
-                    <AutocompleteComboBox
-                      value={request_company_id}
-                      labelName={"Factory"}
-                      options={dataset_company}
-                      column="domain_name"
-                      setvalue={(v) => setrequest_company_id(v)}
-                      // setvalue={setrespondent_company_id}
-                      readonly
-                    />
-                  </Grid>
-                  <Grid size={4}>
-                    <AutocompleteComboBox
-                      required="required"
-                      value={request_domain_id}
-                      labelName={"Domain"}
-                      options={dataset_domain}
-                      column="domain_id"
-                      setvalue={setrequest_domain_id}
-                      readonly
-                    />
-                  </Grid>
-                  <Grid size={4}>
-                    <FullWidthTextField
-                      value={user[0]?.itasset_department_id ? user[0]?.itasset_department_id : '-'}
-                      labelName="Department / Area of Detection"
-                      onchange={(e) => setarea_of_detection_dept(e.target.value)}
-                      readonly
-                    />
-                  </Grid>
-                  <Grid size={4}>
-                    <AutocompleteComboBox
-                      required="required"
-                      value={request_department_id}
-                      labelName={"Department"}
-                      options={dataset_department}
-                      column="itasset_department_name"
-                      setvalue={setrequest_department_id}
-                    />
-                  </Grid>
-                  <Grid size={4}>
-                    <FullWidthTextField
-                      value={user[0]?.employee_position ? user[0]?.employee_position : '-'}
-                      labelName="Position"
-                      onchange={(e) => setrequest_position(e.target.value)}
-                      readonly
-                    />
-                  </Grid>
-                  <Grid size={4}>
-                    <FullWidthTextField
-                      value={user[0]?.employee_email ? user[0]?.employee_email : '-'}
-                      labelName="Email"
-                      onchange={(e) => setrequest_email(e.target.value)}
-                      readonly
-                    />
-                  </Grid>
-                  <Grid size={4}>
-                    <FullWidthTextField
-                      value={user[0]?.employee_tel ? user[0]?.employee_tel : '-'}
-                      labelName="Phone"
-                      onchange={(e) => setrequest_phone(e.target.value)}
-                      readonly
-                    />
-                  </Grid>
-                </Grid>
-              </Paper>
-              {dataReportTypeValue && (
-                <Grid container spacing={2}>
-                  <Grid size={6}>
-                    <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>
-                      <label className="sarabun-regular-datatable">Please attach any relevant documents or photost</label>
+            <Paper elevation={3} sx={{ 
+              p: 3, 
+              mt: 3, 
+              width: "100%", 
+              borderRadius: 3,
+              background: 'linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%)',
+              border: '1px solid #e0e0e0',
+              boxShadow: '0 4px 12px rgba(158,158,158,0.1)'
+            }}>
+              <Box sx={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                mb: 3,
+                pb: 2,
+                borderBottom: '2px solid #9e9e9e'
+              }}>
+                <Box sx={{
+                  width: 6,
+                  height: 24,
+                  backgroundColor: '#9e9e9e',
+                  borderRadius: 1,
+                  mr: 2
+                }} />
+                <label 
+                  className="sarabun-regular-datatable" 
+                  style={{ 
+                    fontSize: '18px', 
+                    fontWeight: '600', 
+                    color: '#616161',
+                    margin: 0 
+                  }}
+                >
+                  แนบไฟล์ (Attachments)
+                </label>
+              </Box>
+              
+              <Grid container spacing={2}>
+                {dataReportTypeValue && (
+                  <Grid size={12}>
+                    {/* <Paper elevation={2} sx={{ p: 2, borderRadius: 2, mb: 2 }}>
+                      <label 
+                        className="sarabun-regular-datatable"
+                        style={{ 
+                          fontSize: '18px', 
+                          fontWeight: '600', 
+                          color: '#333',
+                          margin: 0 
+                        }}
+                      >
+                        Please attach any relevant documents or photos
+                      </label>
                       <Divider sx={{ my: 2 }} />
                       <Grid container spacing={2}>
                         {(filteredphoto || []).map((item: LovType) => (
@@ -878,30 +1208,94 @@ export default function ComplaintInsert({
                           onchange={(e) => setphoTypeOther(e)}
                         />
                       )}
-                    </Paper>
-                  </Grid>
-                </Grid>
-              )}
-              <Grid container spacing={2}>
-                <Grid container spacing={2}>
-                  <Grid container spacing={2}>
+                    </Paper> */}
+                    
                     <BrowseFileUpload setFile={handleFileChange} setFileName={() => { }} />
-                    {/* ตารางแสดงไฟล์ */}
+                    
+                    {/* Enhanced File Table with Attachment Type Checkboxes */}
                     <TableContainer component={Paper} sx={{ mt: 2 }}>
                       <Table size="small">
                         <TableHead>
                           <TableRow>
-                            <TableCell>ชื่อไฟล์</TableCell>
-                            <TableCell>ขนาด (MB)</TableCell>
-                            <TableCell>จัดการ</TableCell>
+                            <TableCell sx={{ fontWeight: 'bold' }}>ชื่อไฟล์</TableCell>
+                            <TableCell sx={{ fontWeight: 'bold' }}>ขนาด (MB)</TableCell>
+                            <TableCell sx={{ fontWeight: 'bold', minWidth: '300px' }}>ประเภทเอกสาร</TableCell>
+                            <TableCell sx={{ fontWeight: 'bold' }}>จัดการ</TableCell>
                           </TableRow>
                         </TableHead>
                         <TableBody>
                           {files.map((file: File, index: number) => (
                             <TableRow key={index}>
-                              <TableCell>{file.name}</TableCell>
-                              <TableCell>{(file.size / (1024 * 1024)).toFixed(2)} MB</TableCell>
-                              <TableCell>
+                              <TableCell sx={{ verticalAlign: 'top', pt: 2 }}>
+                                {file.name}
+                              </TableCell>
+                              <TableCell sx={{ verticalAlign: 'top', pt: 2 }}>
+                                {(file.size / (1024 * 1024)).toFixed(2)} MB
+                              </TableCell>
+                              <TableCell sx={{ verticalAlign: 'middle', textAlign: 'center' }}>
+                                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, alignItems: 'start' }}>
+                                  {/* Horizontal radio buttons for single selection */}
+                                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, justifyContent: 'center' }}>
+                                    {(filteredphoto || []).map((item: LovType) => (
+                                      <FormControlLabel
+                                        key={`${index}-${item.id}`}
+                                        control={
+                                          <Box component="input" 
+                                            type="radio"
+                                            name={`file-${index}-attachment-type`}
+                                            checked={fileAttachmentTypes[index] === item.id}
+                                            onChange={(e) => handleFileAttachmentTypeChange(
+                                              index, 
+                                              item.id, 
+                                              (e.target as HTMLInputElement).checked
+                                            )}
+                                            sx={{ mr: 1 }}
+                                          />
+                                        }
+                                        label={
+                                          <Box sx={{ fontSize: '14px' }}>
+                                            {item.lov1}
+                                          </Box>
+                                        }
+                                        sx={{ 
+                                          margin: 0, 
+                                          display: 'flex', 
+                                          alignItems: 'center',
+                                          '& .MuiFormControlLabel-label': {
+                                            fontSize: '14px'
+                                          }
+                                        }}
+                                      />
+                                    ))}
+                                  </Box>
+                                  
+                                  {/* Conditional textarea for "Others" */}
+                                  {fileAttachmentTypes[index] === "TRR_AT_4" && (
+                                    <Box sx={{ mt: 1, width: '100%' }}>
+                                      <TextField
+                                        size="small"
+                                        fullWidth
+                                        multiline
+                                        rows={3}
+                                        variant="outlined"
+                                        placeholder="Please specify..."
+                                        value={fileOtherTexts[index] || ''}
+                                        onChange={(e) => handleFileOtherTextChange(index, e.target.value)}
+                                        sx={{ 
+                                          '& .MuiInputBase-input': { 
+                                            fontSize: '14px',
+                                            padding: '8px 12px'
+                                          },
+                                          '& .MuiOutlinedInput-root': {
+                                            borderRadius: '4px'
+                                          }
+                                        }}
+                                      />
+                                    </Box>
+                                  )}
+                                </Box>
+                              </TableCell>
+                              <TableCell sx={{ verticalAlign: 'top', pt: 2 }}>
                                 <IconButton
                                   color="error"
                                   size="small"
@@ -912,14 +1306,22 @@ export default function ComplaintInsert({
                               </TableCell>
                             </TableRow>
                           ))}
+                          {files.length === 0 && (
+                            <TableRow>
+                              <TableCell colSpan={4} sx={{ textAlign: 'center', py: 3, color: '#999' }}>
+                                ยังไม่มีไฟล์ที่อัปโหลด
+                              </TableCell>
+                            </TableRow>
+                          )}
                         </TableBody>
                       </Table>
                     </TableContainer>
                   </Grid>
-                </Grid>
+                )}
               </Grid>
+            </Paper>
 
-
+            <Grid container spacing={2}>
             </Grid>
           </Grid>
         </Paper>

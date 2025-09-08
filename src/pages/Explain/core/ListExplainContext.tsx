@@ -209,6 +209,9 @@ const ListExplainProvider: FC<WithChildren> = ({ children }) => {
     const [phoTypeOther, setphoTypeOther] = useState<any>(
         initialListComplaint.phoTypeOther
     );
+    const [employee_tel, setemployee_tel] = useState<any>(
+        initialListComplaint.employee_tel
+    );
 
     
 

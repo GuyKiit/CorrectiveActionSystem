@@ -40,7 +40,7 @@ export default function DesktopDatePickers({
   return (
     <div style={{ width: "100%" }}>
       <label htmlFor="" className={`${required} fs-5 py-2 sarabun-regular`}>
-        {labelName}
+        {labelName} {required && <span style={{ color: 'red' }}> *</span>}
       </label>
       <LocalizationProvider
         dateAdapter={OverwriteAdapterDayjs}

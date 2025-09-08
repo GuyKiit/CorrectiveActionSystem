@@ -264,7 +264,6 @@ export default function Complaint() {
 
   //------------Start Get service refresh -------------//
   React.useEffect(() => {
-    // allData_Get();
     Complaint_Get();
     ReportType_Get();
     ComplaintType_Get();
@@ -282,86 +281,6 @@ export default function Complaint() {
 
   //========================================================================================================
 
-  // const allData_Get = async () => {
-  //   try {
-  //     const dataset = {
-  //       lov_group: "TRR.TRRGROUP.COM",
-  //       lov_type: "report_type,complaint_type,reference_standard,attach_type,priority_level"
-
-  //     }
-  //     const response = await _POST(dataset, "/Lov/LovGet");
-
-  //     if (response && response.status === "success") {
-  //       console.log("🧑🏻‍🎤🧑🏻‍🎤🧑🏻‍🎤🧑🏻‍🎤 Call [Lov/LovGet] -> 3 Data at the same time :", response.data);
-
-  //       // Example loop: Iterate over response.data and log each item
-  //       // response.data.forEach((item: any, index: any) => {
-  //       //   console.log(`Item ${index}:`, item);
-  //       //   if (item.lov_type === "report_type") {
-  //       //     console.log(`💠 LOOP [report_type] : ${index}:`, item);
-  //       //     setdataReportType(item.data);
-  //       //   }
-  //       //   if (item.lov_type === "complaint_type") {
-  //       //     console.log(`💠 LOOP [complaint_type] : ${index}:`, item);
-  //       //     setdataComplaintType_Combobox && setdataComplaintType_Combobox(item.data);
-  //       //   }
-  //       //   if (item.lov_type === "reference_standard") {
-  //       //     console.log(`💠 LOOP [reference_standard] : ${index}:`, item);
-  //       //     setdataComplaintRs_Combobox && setdataComplaintRs_Combobox(item.data);
-  //       //   }
-  //       //   if (item.lov_type === "attach_type") {
-  //       //     console.log(`💠 LOOP [attach_type] : ${index}:`, item);
-  //       //     setdataphoto_Combobox && setdataphoto_Combobox(item.data);
-  //       //   }
-  //       //   if (item.lov_type === "priority_level") {
-  //       //     console.log(`💠 LOOP [priority_level] : ${index}:`, item);
-  //       //     setdatapriority_Combobox && setdatapriority_Combobox(item.data);
-  //       //   }
-  //       // });
-
-
-
-  //       Array.isArray(response.data) && response.data.forEach((item: any) => {
-  //         if (item.lov_type === "report_type") {
-  //           setdataReportType(item.data);
-  //         }
-  //         if (item.lov_type === "complaint_type") {
-  //           setdataComplaintType_Combobox && setdataComplaintType_Combobox(item.data);
-  //         }
-  //         if (item.lov_type === "reference_standard") {
-  //           setdataComplaintRs_Combobox && setdataComplaintRs_Combobox(item.data);
-  //         }
-  //         if (item.lov_type === "attach_type") {
-  //           setdataphoto_Combobox && setdataphoto_Combobox(item.data);
-  //         }
-  //         if (item.lov_type === "priority_level") {
-  //           setdatapriority_Combobox && setdatapriority_Combobox(item.data);
-  //         }
-  //       });
-
-  //       // costCenterCode.push(center.cost_center_code)
-  //       // center.costCenterId = center.id,
-  //       // center.costCenterCode = center.cost_center_code,
-  //       // center.costCenterName = center.cost_center_name,
-  //       // center.costCentersCodeAndName = "[" + center.site_code + "] " + center.cost_center_name + ' [' + center.cost_center_code + ']' + (center.service_center_flag === true ? ' (Service Center)' : '')
-  //       // newData.push(center);
-
-
-
-  //       // setdataReportType(response.data);
-  //       console.log("🧑🏻‍🎤🧑🏻‍🎤🧑🏻‍🎤🧑🏻‍🎤 Call [Lov/LovGet] -> dataset_reporttype :", dataset_reporttype);
-  //       console.log("🧑🏻‍🎤🧑🏻‍🎤🧑🏻‍🎤🧑🏻‍🎤 Call [Lov/LovGet] -> dataComplaintType_Combobox :", dataComplaintType_Combobox);
-  //       console.log("🧑🏻‍🎤🧑🏻‍🎤🧑🏻‍🎤🧑🏻‍🎤 Call [Lov/LovGet] -> dataComplaintRs_Combobox :", dataComplaintRs_Combobox);
-  //       console.log("🧑🏻‍🎤🧑🏻‍🎤🧑🏻‍🎤🧑🏻‍🎤 Call [Lov/LovGet] -> dataphoto_Combobox :", dataphoto_Combobox);
-  //       console.log("🧑🏻‍🎤🧑🏻‍🎤🧑🏻‍🎤🧑🏻‍🎤 Call [Lov/LovGet] -> datapriority_Combobox :", datapriority_Combobox);
-  //     }
-  //   } catch (e) {
-  //     console.log("error:", e);
-  //   }
-  // }
-
-  //========================================================================================================
-
   const ReportType_Get = async () => {
     try {
       const dataset = {
@@ -372,7 +291,7 @@ export default function Complaint() {
       const response = await _POST(dataset, "/Lov/LovGet");
 
       if (response && response.status === "success") {
-        console.log("⚡️⚡️⚡️⚡️ Call [Lov/LovGet] -> report_type :", response.data);
+        console.log("❇️ Call [Lov/LovGet] -> report_type :", response.data);
 
 
         setdataset_reporttype(response.data);
@@ -395,7 +314,7 @@ export default function Complaint() {
       const response = await _POST(dataset, "/Lov/LovGet");
 
       if (response && response.status === "success") {
-        console.log("⚡️⚡️⚡️⚡️ Call [Lov/LovGet] -> complaint_type :", response.data);
+        console.log("❇️ Call [Lov/LovGet] -> complaint_type :", response.data);
 
         setdataComplaintType_Combobox && setdataComplaintType_Combobox(response.data);
       }
@@ -415,7 +334,7 @@ export default function Complaint() {
       const response = await _POST(dataset, "/Lov/LovGet");
 
       if (response && response.status === "success") {
-        console.log("⚡️⚡️⚡️⚡️ Call [Lov/LovGet] -> reference_standard :", response.data);
+        console.log("❇️ Call [Lov/LovGet] -> reference_standard :", response.data);
 
         setdataComplaintRs_Combobox && setdataComplaintRs_Combobox(response.data);
       }
@@ -435,7 +354,7 @@ export default function Complaint() {
       const response = await _POST(dataset, "/Lov/LovGet");
 
       if (response && response.status === "success") {
-        console.log("⚡️⚡️⚡️⚡️ Call [Lov/LovGet] -> attach_type :", response.data);
+        console.log("❇️ Call [Lov/LovGet] -> attach_type :", response.data);
 
         setdataphoto_Combobox && setdataphoto_Combobox(response.data);
       }
@@ -456,7 +375,7 @@ export default function Complaint() {
       const response = await _POST(dataset, "/Lov/LovGet");
 
       if (response && response.status === "success") {
-        console.log("⚡️⚡️⚡️⚡️ Call [Lov/LovGet] -> priority_level :", response.data);
+        console.log("❇️ Call [Lov/LovGet] -> priority_level :", response.data);
 
         setdatapriority_Combobox && setdatapriority_Combobox(response.data);
       }
@@ -473,20 +392,17 @@ export default function Complaint() {
       const response = await _POST(dataset, "/Complaint/CasDomainGet");
 
       if (response && response.status === "success") {
-        console.log("💞💞💞💞 :", response.data, " 💞💞💞💞");
+        console.log("❇️ Call [Complaint/CasDomainGet] -> Domain_Get :", response.data);
 
         if (Array.isArray(response.data)) {
           let domain;
           domain = response.data.filter((item: any) => item.domain_id === "TRR.TRRGROUP.COM");
 
           if (domain) {
-            console.log("💚 :", domain, " 💚");
-            console.log("💚 :", domain[0], " 💚");
             setdataset_domain(domain);
             setdataset_company(domain);
           }
         }
-        console.log("💚💚💚💚 :", respondent_domain_id, " 💚💚💚💚");
       }
     } catch (e) {
       console.log("error:", e);
@@ -504,7 +420,7 @@ export default function Complaint() {
       const response = await _POST(dataset, "/Complaint/CasDepartmentDomainGet");
 
       if (response && response.status === "success") {
-        console.log("💞💞💞💞💞💞 :", response.data, " 💞💞💞💞💞💞");
+        console.log("❇️ Call [Complaint/CasDepartmentDomainGet] -> Department_Domain_Get :", response.data);
 
         setdataset_department(response.data);
         // setrespondent_department_id(response.data);
@@ -712,10 +628,7 @@ export default function Complaint() {
 
   // ----------------Call : Complaint_Add -----------------//
   const ComplaintAdd = async () => {
-
-    console.log("################### TEST UUID DATA :", uuidv4(), "###################");
-    console.log("datapriorityValue_Combobox", datapriorityValue_Combobox, "###################");
-
+    console.log("*️⃣ Call Function [ComplaintAdd] : UUID = ",uuidv4());
 
     var tempid = uuidv4();
 
@@ -782,11 +695,10 @@ export default function Complaint() {
       },
 
     }
-    console.log("💌💌💌💌 CHECK DATASET : ", dataset);
-    console.log("💌💌💌💌 CHECK complainttypeModel : ", complainttypeModel);
-    console.log("💌💌💌💌 CHECK complaintRsModel : ", complaintRsModel);
-    console.log("💌💌💌💌 CHECK complaintFileModel : ", complaintFileModel);
-    // console.log("date_of_detection", date_of_detection);
+    console.log("📤 📤 CHECK DATASET : ", dataset);
+    console.log("📤 📤 CHECK complainttypeModel : ", complainttypeModel);
+    console.log("📤 📤 CHECK complaintRsModel : ", complaintRsModel);
+    console.log("📤 📤 CHECK complaintFileModel : ", complaintFileModel);
 
     // setIsLoadingScreen(true)
 
@@ -984,7 +896,7 @@ export default function Complaint() {
           <Grid size={4}>
             <AutocompleteComboBox
               value={dataReportTypeValue}
-              labelName={"ReportType"}
+              labelName={"ประเภทเอกสาร (Report Type)"}
               options={dataset_reporttype}
               column="lov_code"
               setvalue={setdataReportTypeValue}
@@ -1034,7 +946,7 @@ export default function Complaint() {
           <Grid size={4}>
             <AutocompleteComboBox
               value={selectDataTable}
-              labelName={"Status"}
+              labelName={"สถานะ (Status)"}
               options={selectDataTable}
               column="name_th"
               setvalue={setSelectDataTable}
@@ -1043,21 +955,21 @@ export default function Complaint() {
           </Grid>
           <Grid size={4}>
             <DesktopDatePickers
-              labelName={"Respond Within"}
+              labelName={"ตอบกลับภายในวันที่ (Respond Within)"}
               value={startDateSearch}
               handleChange={setStartDateSearch}
             />
           </Grid>
           <Grid size={4}>
             <DesktopDatePickers
-              labelName={"วันที่ออกเอกสาร (Document Issuance Date"}
+              labelName={"วันที่ออกเอกสาร (Document Issuance Date)"}
               value={startDateSearch}
               handleChange={setStartDateSearch}
             />
           </Grid>
           <Grid size={4}>
             <DesktopDatePickers
-              labelName={"วันที่พบปัญหา (Date of Detection"}
+              labelName={"วันที่พบปัญหา (Date of Detection)"}
               value={endDateSearch}
               handleChange={setEndDateSearch}
             />
@@ -1147,7 +1059,7 @@ export default function Complaint() {
         open={openAdd}
         dialogWidth="xl"
         openBottonHidden={true}
-        titlename={'Save and Submit'}
+        titlename={'เพิ่มข้อมูล'}
         handleClose={handleClose}
         handlefunction={ComplaintAdd}
         colorBotton="success"

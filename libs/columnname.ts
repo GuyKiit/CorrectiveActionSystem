@@ -15,18 +15,18 @@ export const Complaint_headCells = [
         label: 'จัดการ',
         //colWidth: 100
     },
-    {
-        columnName: 'id',
-        numeric: 'center',
-        disablePadding: true,
-        label: 'ID',
-        colWidth: 150
-    },
+    // {
+    //     columnName: 'id',
+    //     numeric: 'center',
+    //     disablePadding: true,
+    //     label: 'ID',
+    //     colWidth: 150
+    // },
     {
         columnName: 'report_type',
         numeric: 'center',
         disablePadding: true,
-        label: 'Report Type',
+        label: 'ประเภทเอกสาร',
         colWidth: 150,
         render: (row: any, lovList: LovType[]) => {
             // หา lov_code จาก lovList
@@ -45,14 +45,14 @@ export const Complaint_headCells = [
         columnName: 'product_name',
         numeric: 'center',
         disablePadding: true,
-        label: 'Product Name',
+        label: 'ชื่อผลิตภัณฑ์',
         colWidth: 150
     },
     {
         columnName: 'doc_date',
         numeric: 'center',
         disablePadding: true,
-        label: 'Doc Date',
+        label: 'วันที่ออกเอกสาร',
         colWidth: 200,
         render: (row: any) => dayjs(row.doc_date).format("DD-MM-YYYY HH:mm:ss")
     },

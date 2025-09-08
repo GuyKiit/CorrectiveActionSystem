@@ -269,11 +269,6 @@ export default function CompalintView({
         // cer_detail_Get()
         // กรอง complaint type
 
-        // console.log("✨✨✨✨✨✨✨ dataelement", dataelement);
-        // console.log("✨✨✨✨✨✨✨ dataelement.complaint_type", dataelement.complaint_type);
-
-        console.log("💥💥💥💥💥💥💥💥💥💥💥 [dataelement.report_type] : ", dataelement?.report_type, "💥💥💥💥💥💥💥💥💥💥💥");
-
         const filtered = (dataComplaintType_Combobox || []).filter((item: LovType) =>
             // item.lov_type === "complaint_type" && item.lov_code === dataelement.report_type
             // item.lov_type === "complaint_type" && item.lov_code === "TRR_RT_NCR"

@@ -25,6 +25,8 @@ interface FuncDialog {
   openBottonHidden?: boolean;
   colorBotton?: string;
   element?: React.ReactNode;
+  modalWidth?: string | number;
+  modalHeight?: string | number;
 }
 
 export default function FuncDialog(props: FuncDialog) {
@@ -35,13 +37,18 @@ export default function FuncDialog(props: FuncDialog) {
       onClose={props.handleClose}
       open={props.open}
       PaperProps={{
-        sx: { width: "100%", maxWidth: "100%" },
+        sx: { 
+          width: props.modalWidth || "95%", 
+          maxWidth: props.modalWidth || "95%",
+          height: props.modalHeight || "90vh",
+          maxHeight: props.modalHeight || "90vh"
+        },
       }}
     >
       {/* Header */}
       <div className="px-5 flex justify-between items-start">
         <div className="pt-5 pb-5">
-          <label className="text-2xl sarabun-regular">
+          <label className="text-2xl sarabun-regular" style={{ fontSize: '18px' }}>
             {props.titlename}
           </label>
         </div>
@@ -65,8 +72,19 @@ export default function FuncDialog(props: FuncDialog) {
       )}
 
       {/* Actions */}
-      <DialogActions sx={{ justifyContent: "flex-end", px: 3, pb: 3 }}>
+      <DialogActions sx={{ justifyContent: "space-between", margin: 2, px: 3, pb: 3 }}>
+        {/* Left side - Save Draft */}
         <div>
+          <FullWidthButton
+            handleonClick={props.handlefunction ?? props.handleClose}
+            labelName="Save Draft"
+            variant_text="contained"
+            colorname={props.colorBotton ?? "primary"}
+          />
+        </div>
+        
+        {/* Right side - Save and Submit, Cancel */}
+        <div className="flex gap-3">
           {props.openBottonHidden && (
             <FullWidthButton
               handleonClick={props.handlefunction ?? props.handleClose}
@@ -75,23 +93,11 @@ export default function FuncDialog(props: FuncDialog) {
               colorname={props.colorBotton ?? "primary"}
             />
           )}
-        </div>
-        <FullWidthButton
-          handleonClick={props.handleClose}
-          labelName="Cancel"
-          variant_text="outlined"
-          colorname="inherit"
-        />
-      </DialogActions>
-
-      <DialogActions sx={{ justifyContent: "space-between", px: 3, pb: 3 }}>
-        {/* ปุ่มซ้าย */}
-        <div>
           <FullWidthButton
-            handleonClick={props.handlefunction ?? props.handleClose}
-            labelName="Save Draft"
-            variant_text="contained"
-            colorname={props.colorBotton ?? "primary"}
+            handleonClick={props.handleClose}
+            labelName="Cancel"
+            variant_text="outlined"
+            colorname="inherit"
           />
         </div>
       </DialogActions>

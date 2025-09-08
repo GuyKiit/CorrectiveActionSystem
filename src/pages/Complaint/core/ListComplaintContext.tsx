@@ -209,6 +209,9 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
     const [phoTypeOther, setphoTypeOther] = useState<any>(
         initialListComplaint.phoTypeOther
     );
+    const [employee_tel, setemployee_tel] = useState<any>(
+        initialListComplaint.employee_tel
+    );
     const [report_type, setreport_type] = useState<any>(
         initialListComplaint.report_type
     );

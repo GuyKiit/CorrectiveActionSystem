@@ -190,7 +190,6 @@ export default function ComplaintInsert({
     setclauseOther,
     setphotoOther,
     setphoTypeOther,
-    setemployee_tel,
     setreference_standard_other,
     setacknowledge_flag,
     setacknowledge_name,
@@ -800,7 +799,7 @@ export default function ComplaintInsert({
                 <FullWidthTextField
                   value={user[0]?.employee_tel ? user[0]?.employee_tel : '-'}
                   labelName="Phone"
-                  onchange={(e) => setemployee_tel(e)}
+                  onchange={() => {}}
                   readonly
                 />
               </Grid>
