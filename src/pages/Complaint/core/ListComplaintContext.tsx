@@ -160,9 +160,6 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
     const [ComplaintStatusID_Combobox, setComplaintStatusID_Combobox] = useState<any>(
         initialListComplaint.ComplaintStatusID_Combobox
     );
-    const [dataReportType, setdataReportType] = useState<any>(
-        initialListComplaint.dataReportType
-    );
     const [dataReportTypeValue, setdataReportTypeValue] = useState<any>(
         initialListComplaint.dataReportTypeValue
     );
@@ -215,13 +212,20 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
     const [report_type, setreport_type] = useState<any>(
         initialListComplaint.report_type
     );
-    const [dataDomain, setdataDomain] = useState<any>(
-        initialListComplaint.dataDomain
-    );
-    const [dataDepartment, setdataDepartment] = useState<any>(
-        initialListComplaint.dataDepartment
-    );
 
+    //--------dataset-------
+    const [dataset_reporttype, setdataset_reporttype] = useState<any>(
+        initialListComplaint.dataset_reporttype
+    );
+    const [dataset_company, setdataset_company] = useState<any>(
+        initialListComplaint.dataset_company
+    );
+    const [dataset_department, setdataset_department] = useState<any>(
+        initialListComplaint.dataset_department
+    );
+    const [dataset_domain, setdataset_domain] = useState<any>(
+        initialListComplaint.dataset_domain
+    );
 
     const [dataComplaintTypeValue_Combobox, setdataComplaintTypeValue_Combobox] =
         useState<any[]>([]); // รับ array ของอะไรก็ได้
@@ -291,12 +295,8 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 create_by,
                 create_datetime,
                 update_by,
-                dataDomain,
-                dataDepartment,
-
                 update_datetime,
                 ComplaintStatusID_Combobox,
-                dataReportType,
                 dataReportTypeValue,
                 dataComplaintType_Combobox,
                 dataComplaintRs_Combobox,
@@ -309,6 +309,15 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 PriorityLevel,
                 // ✅ expose state ออกมาให้ component อื่นใช้
                 dataComplaintTypeValue_Combobox,
+
+                //--------dataset-------
+                dataset_reporttype,
+                dataset_company,
+                dataset_department,
+                dataset_domain,
+
+
+
 
                 setComplaint_no,
                 setno,
@@ -368,7 +377,6 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 setupdate_by,
                 setupdate_datetime,
                 setComplaintStatusID_Combobox,
-                setdataReportType,
                 setdataReportTypeValue,
                 setdataComplaintType_Combobox,
                 setdataComplaintRs_Combobox,
@@ -380,8 +388,12 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 setdatapriority,
                 setPriorityLevel,
                 setdataComplaintTypeValue_Combobox,
-                setdataDomain,
-                setdataDepartment,
+
+                //--------dataset-------
+                setdataset_reporttype,
+                setdataset_company,
+                setdataset_department,
+                setdataset_domain,
 
             }}
         >

@@ -136,7 +136,7 @@ export default function CompalintView({
         update_by,
         update_datetime,
         ComplaintStatusID_Combobox,
-        dataReportType,
+        dataset_reporttype,
         dataReportTypeValue,
         dataComplaintTypeValue_Combobox,
         dataComplaintType_Combobox,
@@ -214,7 +214,7 @@ export default function CompalintView({
         setdataComplaintRsValue_Combobox,
         setdataphoto_Combobox,
         setdataphotoValue_Combobox,
-        setdataReportType,
+        setdataset_reporttype,
         setdatapriorityValue_Combobox,
         setdatapriority_Combobox,
         setdatapriority,
@@ -305,7 +305,7 @@ export default function CompalintView({
 
     const previewComplaint = async () => {
         console.log(dataelement, 'dataelement');
-        console.log("dataReportType", dataReportType);
+        console.log("dataset_reporttype", dataset_reporttype);
         console.log("NCR TEST", extractReportType("TRR_RT_NCR"));
         console.log("OBS TEST", extractReportType("TRR_RT_OBS"));
         console.log("CAR TEST", extractReportType("TRR_RT_CAR"));
@@ -361,8 +361,8 @@ export default function CompalintView({
             console.log("data_ComplaintRs", data_ComplaintRs);
             console.log("data_ComplaintPhoto", data_ComplaintPhoto);
             console.log("data_Priority", data_Priority);
-            console.log(dataReportType);
-            // setIsRSHidden(dataReportType)
+            console.log(dataset_reporttype);
+            // setIsRSHidden(dataset_reporttype)
 
         }
 
@@ -392,7 +392,7 @@ export default function CompalintView({
             <Grid size={4}>
                 <FullWidthTextField
                     value={
-                        dataReportType?.find(
+                        dataset_reporttype?.find(
                             (c: any) => c.id === report_type
                         )?.lov_code 
                     }

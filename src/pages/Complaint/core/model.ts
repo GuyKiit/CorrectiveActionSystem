@@ -11,16 +11,16 @@ export type ListComplaintContextProps = {
     doc_date?: dayjs.Dayjs
     date_of_detection?: dayjs.Dayjs | null
     request_name?: string | null
-    request_company_id?: number | null
-    request_domain_id?: string | null
-    request_department_id?: number | null
+    request_company_id?: any
+    request_domain_id?: any
+    request_department_id?: any
     request_position?: string | null
     request_email?: string | null
     request_phone?: string | null
     request_date?: dayjs.Dayjs
-    respondent_company_id?: number | null
-    respondent_domain_id?: string | null
-    respondent_department_id?: number | null
+    respondent_company_id?: any
+    respondent_domain_id?: any 
+    respondent_department_id?: any
     respondent_email?: string | null
     area_of_detection_dept?: string | null
     product_name?: string | null
@@ -60,7 +60,6 @@ export type ListComplaintContextProps = {
 
 
     ComplaintStatusID_Combobox?: any
-    dataReportType?: any
     dataReportTypeValue?: any
     dataComplaintType_Combobox?: any
     dataComplaintTypeValue_Combobox?: any
@@ -77,10 +76,12 @@ export type ListComplaintContextProps = {
     photoOther?: any
     clauseOther?: any
     phoTypeOther?: any
-    dataDomain?: any
-    dataDepartment?: any
     
-
+    //--------dataset-------
+     dataset_reporttype?: any
+     dataset_company?: any
+     dataset_department?: any
+     dataset_domain?: any
 
     // dataTruckTypeValue_Combobox?: any
     // dataProduct_Combobox?: any
@@ -160,7 +161,6 @@ export type ListComplaintContextProps = {
     
 
     setComplaintStatusID_Combobox: Dispatch<SetStateAction<any>>
-    setdataReportType: Dispatch<SetStateAction<any>>
     setdataReportTypeValue: Dispatch<SetStateAction<any>>
     setdataComplaintType_Combobox: Dispatch<SetStateAction<any>>
     setdataComplaintTypeValue_Combobox: Dispatch<SetStateAction<any>>
@@ -172,10 +172,13 @@ export type ListComplaintContextProps = {
     setdatapriorityValue_Combobox: Dispatch<SetStateAction<any>>
     setdatapriority: Dispatch<SetStateAction<any>>
     setPriorityLevel: Dispatch<SetStateAction<any>>
-    setdataDomain: Dispatch<SetStateAction<any>>
-    setdataDepartment: Dispatch<SetStateAction<any>>
-    
     // setSelectedFile: Dispatch<SetStateAction<File>>
+
+    //--------dataset-------
+    setdataset_reporttype: Dispatch<SetStateAction<any>>
+    setdataset_company: Dispatch<SetStateAction<any>>
+    setdataset_department: Dispatch<SetStateAction<any>>
+    setdataset_domain: Dispatch<SetStateAction<any>>
 
 
 };
@@ -240,7 +243,6 @@ export const initialListComplaint: ListComplaintContextProps = {
     setupdate_datetime: () => { },
 
     setComplaintStatusID_Combobox: () => { },
-    setdataReportType: () => { },
     setdataReportTypeValue: () => { },
     setdataComplaintType_Combobox: () => { },
     setdataComplaintTypeValue_Combobox: () => { },
@@ -252,10 +254,14 @@ export const initialListComplaint: ListComplaintContextProps = {
     setdatapriorityValue_Combobox: () => { },
     setdatapriority: () => { },
     setPriorityLevel: () => { },
-    setdataDomain: () => { },
-    setdataDepartment: () => { },
     
-    
+    //--------dataset-------
+    setdataset_reporttype: () => { },
+    setdataset_company: () => { },
+    setdataset_department: () => { },
+    setdataset_domain: () => { },
+
+
 
     // setSelectedFile: () => { }
 
