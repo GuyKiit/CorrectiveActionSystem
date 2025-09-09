@@ -22,7 +22,7 @@ export type ListComplaintContextProps = {
     respondent_domain_id?: any
     respondent_department_id?: any
     respondent_email?: string | null
-    area_of_detection_dept?: string | null
+    area_of_detection_dept?: string 
     product_name?: string | null
     detail?: string | null
     user_file_name?: string | null

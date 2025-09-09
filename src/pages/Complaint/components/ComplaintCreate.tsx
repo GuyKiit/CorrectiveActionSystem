@@ -324,16 +324,7 @@ export default function ComplaintInsert({
     setrespondent_company_id(dataset_company[0]);
     setrequest_domain_id(dataset_company[0]);
     setrequest_company_id(dataset_company[0]);
-
-
-
-    // if (!val) {
-    //   setFilteredComplaintType([]);
-    //   setFilteredComplaintRs([]);
-    //   setFilteredphoto([]);
-    //   setFilteredpriority([]);
-
-    //   return;
+    setrequest_department_id(dataset_department);
   };
   const handleCheckboxChangeCT = (item: LovType) => {
     console.log("item", item);
@@ -448,54 +439,53 @@ export default function ComplaintInsert({
   const handleCheckboxChangePriority = (item: LovType) => {
     setdatapriority(prev => (prev?.id === item.id ? null : item));
   };
- const handleFileChange = (fileArray: File[]) => {
-  if (!fileArray || fileArray.length === 0) return;
+  const handleFileChange = (fileArray: File[]) => {
+    if (!fileArray || fileArray.length === 0) return;
 
-  setFileList(prev => {
-    const updatedList = [
-      ...prev,
-      ...fileArray.map(f => ({
-        file: f,
-        original_file_name: f.name,   // เก็บชื่อไฟล์เดิม
-        attachmentType: "",
-        otherText: ""
-      }))
-    ];
+    setFileList(prev => {
+      const updatedList = [
+        ...prev,
+        ...fileArray.map(f => ({
+          file: f,
+          original_file_name: f.name,   // เก็บชื่อไฟล์เดิม
+          attachmentType: "",
+          otherText: ""
+        }))
+      ];
 
-    // sync เข้า context
-    setcomplaintFiles(updatedList);
+      // sync เข้า context
+      setcomplaintFiles(updatedList);
 
-    return updatedList;
-  });
-};
+      return updatedList;
+    });
+  };
 
   const handleRemoveFile = (index: number) => {
-   setFileList(prev => {
-    const updatedList = prev.filter((_, i) => i !== index);
-    setcomplaintFiles(updatedList); // sync
-    return updatedList;
-  });
+    setFileList(prev => {
+      const updatedList = prev.filter((_, i) => i !== index);
+      setcomplaintFiles(updatedList); // sync
+      return updatedList;
+    });
   };
   const handleFileAttachmentTypeChange = (index: number, type: string) => {
     setFileList(prev => {
-    const updated = [...prev];
-    updated[index] = {
-      ...updated[index],
-      attachmentType: type,
-      otherText: type === "TRR_AT_4" ? updated[index].otherText : "",
-    };
-    setcomplaintFiles(updated); // sync
-    return updated;
-  });
+      const updated = [...prev];
+      updated[index] = {
+        ...updated[index],
+        attachmentType: type,
+        otherText: type === "TRR_AT_4" ? updated[index].otherText : "",
+      };
+      setcomplaintFiles(updated); // sync
+      return updated;
+    });
   };
-
   const handleFileOtherTextChange = (index: number, text: string) => {
     setFileList(prev => {
-    const updated = [...prev];
-    updated[index] = { ...updated[index], otherText: text };
-    setcomplaintFiles(updated); // sync
-    return updated;
-  });
+      const updated = [...prev];
+      updated[index] = { ...updated[index], otherText: text };
+      setcomplaintFiles(updated); // sync
+      return updated;
+    });
   };
 
   // Functions (Initial, Calculation or ETC.) =================================================
@@ -521,11 +511,8 @@ export default function ComplaintInsert({
     setdetail("");
     setcompTypeOther("");
     setcompRsOther("");
-
-
-
-
   };
+
   const priorityCalculateRespondDate = (daysToAdd: number, checked: boolean) => {
     if (checked) {
       const newDate = dayjs().add(daysToAdd, "day"); // use dayjs instead of Date
@@ -715,7 +702,7 @@ export default function ComplaintInsert({
                   <FullWidthTextField
                     required="required"
                     value={product_name}
-                    labelName="ชื่อผลิตภัณฑ์ (Product Name)"
+                    labelName="ชื่อสินค้า (Product Name)"
                     onchange={(e) => setproduct_name(e)}
                   />
                 </Grid>
@@ -872,7 +859,42 @@ export default function ComplaintInsert({
                     </Grid>
                   )}
                 </Grid>
+                {/* Priority Section */}
+                {dataReportTypeValue && (
+                  <Box sx={{ mt: 3 }}>
+                    <Paper elevation={1} sx={{
+                      p: 2,
+                      borderRadius: 2,
+                      backgroundColor: '#fafafa'
+                    }}>
+                      <label
+                        className="sarabun-regular-datatable"
+                        style={{
+                          fontSize: '18px',
+                          fontWeight: '600',
+                          color: '#333',
+                          margin: 0
+                        }}
+                      >
+                        รายละเอียด (Detail) <span style={{ color: 'red' }}> *</span>
+                      </label>
+                      <Divider sx={{ my: 2 }} />
+                      <Grid container spacing={2} sx={{ justifyContent: 'center', alignItems: 'flex-start' }}>
 
+
+                        {/* Response Date Field - positioned after Emergency option */}
+                        <Grid size={12}>
+                          <FullWidthTextArea
+                            value={detail}
+                            labelName=""
+                            onchange={(e) => setdetail(e)}
+                          />
+
+                        </Grid>
+                      </Grid>
+                    </Paper>
+                  </Box>
+                )}
                 {/* Priority Section */}
                 {dataReportTypeValue && (
                   <Box sx={{ mt: 3 }}>
@@ -1051,13 +1073,19 @@ export default function ComplaintInsert({
                   />
                 </Grid>
                 <Grid size={4}>
-                  <AutocompleteComboBox
+                  {/* <AutocompleteComboBox
                     required="required"
                     value={request_department_id}
                     labelName={"แผนก (Department)"}
                     options={dataset_department}
                     column="itasset_department_name"
                     setvalue={setrequest_department_id}
+                  /> */}
+                  <FullWidthTextField
+                    value={user[0]?.itasset_department_id ? user[0]?.itasset_department_name : '-'}
+                    labelName="แผนก (Department)"
+                    onchange={(e) => setrequest_department_id(e.target.value)}
+                    readonly
                   />
                 </Grid>
                 <Grid size={4}>
@@ -1086,7 +1114,7 @@ export default function ComplaintInsert({
                     readonly
                   />
                 </Grid>
-                <Grid size={4}>
+                {/* <Grid size={4}>
                   <AutocompleteComboBox
                     value={request_domain_id}
                     labelName={"โดเมน (Domain)"}
@@ -1095,14 +1123,22 @@ export default function ComplaintInsert({
                     setvalue={setrequest_domain_id}
                     readonly
                   />
-                </Grid>
+                </Grid> */}
                 <Grid size={4}>
-                  <FullWidthTextField
+                  <AutocompleteComboBox
+                    required="required"
+                    value={area_of_detection_dept}
+                    labelName={"แผนกที่พบปัญหา (Department / Area of Detection)"}
+                    options={dataset_department}
+                    column="itasset_department_name"
+                    setvalue={setarea_of_detection_dept}
+                  />
+                  {/* <FullWidthTextField
                     value={user[0]?.itasset_department_id ? user[0]?.itasset_department_id : '-'}
                     labelName="แผนกที่พบปัญหา (Department / Area of Detection)"
                     onchange={(e) => setarea_of_detection_dept(e.target.value)}
                     readonly
-                  />
+                  /> */}
                 </Grid>
               </Grid>
             </Paper>

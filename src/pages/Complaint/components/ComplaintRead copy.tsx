@@ -223,7 +223,7 @@ export default function CompalintView({
         setphoTypeOther,
     } = useListComplaint()
 
-
+    
     const [ComplaintCarData, setComplaintCarData] = useState<ComplaintCarData[] | null>(null);
     const [ComplaintServiceData, setComplaintServiceData] = useState<ComplaintServiceData[] | null>(null);
     const [ComplaintImgData, setComplaintImgData] = useState<ComplaintImgData[] | null>(null);
@@ -384,12 +384,12 @@ export default function CompalintView({
                 </label>
             </div>
             <Divider sx={{ my: 0.1, borderColor: "#F29739" }} />
-            <Grid size={4} mt={2}>
+            <Grid size={4}>
                 <FullWidthTextField
                     value={
                         dataset_reporttype?.find(
                             (c: any) => c.id === report_type
-                        )?.lov_code
+                        )?.lov_code 
                     }
                     // required={"required"}
                     labelName={"ReportType"}
@@ -400,7 +400,43 @@ export default function CompalintView({
                     bgcolorTextField={bgcolorTextField}
                 />
             </Grid>
-            <Grid container spacing={2}>
+            <Grid container spacing={2} mt={2}>
+                <Grid size={4}>
+                    <FullWidthTextField
+                        value={cas_number}
+                        // required={"required"}
+                        labelName={"CasNumber"}
+                        onchange={(e) => {
+                            setcas_number(e);
+                        }}
+                        readonly
+                        bgcolorTextField={bgcolorTextField}
+                    />
+                </Grid>
+                <Grid size={4}>
+                    <FullWidthTextField
+                        value={product_name}
+                        //required={"required"}
+                        labelName={"ProductName"}
+                        onchange={(e) => {
+                            setproduct_name(e);
+                        }}
+                        readonly
+                        bgcolorTextField={bgcolorTextField}
+                    />
+                </Grid>
+                <Grid size={4}>
+                    <FullWidthTextField
+                        value={lot_no}
+                        //required={"required"}
+                        labelName={"Lot No./ Bag No."}
+                        onchange={(e) => {
+                            setlot_no(e);
+                        }}
+                        readonly
+                        bgcolorTextField={bgcolorTextField}
+                    />
+                </Grid>
                 <Grid size={4}>
                     <FullWidthTextField
                         value={respondent_company_id}
@@ -415,11 +451,48 @@ export default function CompalintView({
                 </Grid>
                 <Grid size={4}>
                     <FullWidthTextField
-                        value={cas_number}
-                        // required={"required"}
-                        labelName={"CasNumber"}
+                        value={respondent_domain_id}
+                        //required={"required"}
+                        labelName={"Domain"}
                         onchange={(e) => {
-                            setcas_number(e);
+                            setrespondent_domain_id(e);
+                        }}
+                        readonly
+                        bgcolorTextField={bgcolorTextField}
+                    />
+                </Grid>
+                <Grid size={4}>
+                    <FullWidthTextField
+                        value={respondent_department_id}
+                        //required={"required"}
+                        labelName={"Department"}
+                        onchange={(e) => {
+                            setrespondent_department_id(e);
+                        }}
+                        readonly
+                        bgcolorTextField={bgcolorTextField}
+                    />
+                </Grid>
+                <Grid size={4}>
+                    <FullWidthTextField
+                        value={respondent_email}
+                        //required={"required"}
+                        labelName={"Email"}
+                        onchange={(e) => {
+                            setrespondent_email(e);
+                        }}
+                        readonly
+                        bgcolorTextField={bgcolorTextField}
+                    />
+                </Grid>
+                <Grid size={4}>
+                    <DesktopDatePickers
+                        labelName={"Date of Detection"}
+                        value={date_of_detection}
+                        handleChange={(val) => {
+                            if (val) {
+                                setdate_of_detection(val); // val เป็น Dayjs แน่นอน
+                            }
                         }}
                         readonly
                         bgcolorTextField={bgcolorTextField}
@@ -438,157 +511,74 @@ export default function CompalintView({
                         bgcolorTextField={bgcolorTextField}
                     />
                 </Grid>
-                <Paper elevation={3} sx={{
-                    p: 3,
-                    mt: 3,
-                    width: "100%",
-                    borderRadius: 3,
-                    background: 'linear-gradient(135deg, #fff5f5 0%, #ffffff 100%)',
-                    border: '1px solid #ffcdd2',
-                    boxShadow: '0 4px 12px rgba(244,67,54,0.1)'
-                }}>
-                    <Box sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        mb: 3,
-                        pb: 2,
-                        borderBottom: '2px solid #f44336'
-                    }}>
-                        <Box sx={{
-                            width: 6,
-                            height: 24,
-                            backgroundColor: '#f44336',
-                            borderRadius: 1,
-                            mr: 2
-                        }} />
-                        <label
-                            className="sarabun-regular-datatable"
-                            style={{
-                                fontSize: '18px',
-                                fontWeight: '600',
-                                color: '#d32f2f',
-                                margin: 0
-                            }}
-                        >
-                            แผนกผู้ถูกร้องเรียน (Respondent Department)
-                        </label>
-                    </Box>
-                    <Grid size={4}>
-                        <DesktopDatePickers
-                            labelName={"Date of Detection"}
-                            value={date_of_detection}
-                            handleChange={(val) => {
-                                if (val) {
-                                    setdate_of_detection(val); // val เป็น Dayjs แน่นอน
-                                }
-                            }}
-                            readonly
-                            bgcolorTextField={bgcolorTextField}
-                        />
+                
+                <Grid size={4}>
+                    <DesktopDatePickers
+                        labelName={"Required Response Date"}
+                        value={respond_date_within}
+                        handleChange={(val) => {
+                            if (val) {
+                                setrespond_date_within(val); // val เป็น Dayjs แน่นอน
+                            }
+                        }}
+                        readonly
+                        bgcolorTextField={bgcolorTextField}
+                    />
+                </Grid>
+                <Grid container spacing={2}>
+                    <Grid size={6}>
+                        <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>
+                            <label className="sarabun-regular-datatable">Type Of Complaint</label>
+                            <Divider sx={{ my: 2 }} />
+                            <Grid container spacing={2}>
+                                {(filteredComplaintType || []).map((item: LovType) => {
+                                    console.log('dataComplaintType:', dataComplaintType);
+                                    const isChecked = dataComplaintType.some(c => {
+                                        console.log('Checking c:', c, 'against item.id:', item.id);
+                                        return c.complaint_type_id === item.id; // เปลี่ยนจาก c.id เป็น c.complaint_type_id
+                                    });
+
+                                    console.log('Result for item', item.id, 'isChecked:', isChecked);
+
+                                    return (
+                                        <Grid size={6} key={item.id}>
+                                            <FullWidthCheckbox
+                                                labelName={item.lov1}
+                                                value={isChecked}
+                                                readonly={true}
+                                                onchange={() => { }}
+                                            />
+                                        </Grid>
+                                    );
+                                })}
+                            </Grid>
+                            {/* แสดงช่อง Other ถ้ามีเลือกตัว TRR_CT_NCR_99 */}
+                            {dataComplaintTypeValue_Combobox?.id === "TRR_CT_NCR_99" && (
+                                <FullWidthTextArea
+                                    value={compTypeOther}
+                                    labelName="Other:"
+                                    readonly
+                                />
+                            )}
+                        </Paper>
                     </Grid>
-                    <Grid size={4}>
-                        <FullWidthTextField
-                            value={product_name}
-                            //required={"required"}
-                            labelName={"ProductName"}
-                            onchange={(e) => {
-                                setproduct_name(e);
-                            }}
-                            readonly
-                            bgcolorTextField={bgcolorTextField}
-                        />
-                    </Grid>
-                    <Grid size={4}>
-                        <FullWidthTextField
-                            value={lot_no}
-                            //required={"required"}
-                            labelName={"Lot No./ Bag No."}
-                            onchange={(e) => {
-                                setlot_no(e);
-                            }}
-                            readonly
-                            bgcolorTextField={bgcolorTextField}
-                        />
-                    </Grid>
-                    <Grid size={4}>
-                        <FullWidthTextField
-                            value={respondent_email}
-                            //required={"required"}
-                            labelName={"Email"}
-                            onchange={(e) => {
-                                setrespondent_email(e);
-                            }}
-                            readonly
-                            bgcolorTextField={bgcolorTextField}
-                        />
-                    </Grid>
-                    <Grid size={4}>
-                        <FullWidthTextField
-                            value={area_of_detection_dept}
-                            //required={"required"}
-                            labelName={"Department / Area of Detection"}
-                            onchange={(e) => {
-                                setarea_of_detection_dept(e);
-                            }}
-                            readonly
-                            bgcolorTextField={bgcolorTextField}
-                        // Validate={validateText && validateText.driverTel}
-                        />
-                    </Grid>
-                    <Grid size={4}>
-                        <DesktopDatePickers
-                            labelName={"Required Response Date"}
-                            value={respond_date_within}
-                            handleChange={(val) => {
-                                if (val) {
-                                    setrespond_date_within(val); // val เป็น Dayjs แน่นอน
-                                }
-                            }}
-                            readonly
-                            bgcolorTextField={bgcolorTextField}
-                        />
-                    </Grid>
-                    {/* รายละเอียด Sub-section */}
-                    <Box sx={{ mt: 4 }}>
-                        <Box sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            mb: 3,
-                            pb: 1,
-                            borderBottom: '1px solid #ffcdd2'
-                        }}>
-                            <Box sx={{
-                                width: 4,
-                                height: 16,
-                                backgroundColor: '#f44336',
-                                borderRadius: 0.5,
-                                mr: 1.5
-                            }} />
-                            <label
-                                className="sarabun-regular-datatable"
-                                style={{
-                                    fontSize: '16px',
-                                    fontWeight: '500',
-                                    color: '#d32f2f',
-                                    margin: 0
-                                }}
-                            >
-                                รายละเอียด
-                            </label>
-                        </Box>
-                    </Box>
-                    <Grid container spacing={2}>
+
+                    {!isRSHidden && (
                         <Grid size={6}>
                             <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>
-                                <label className="sarabun-regular-datatable">Type Of Complaint</label>
+                                <label className="sarabun-regular-datatable">Reference Standard</label>
                                 <Divider sx={{ my: 2 }} />
                                 <Grid container spacing={2}>
-                                    {(filteredComplaintType || []).map((item: LovType) => {
-                                        const isChecked = dataComplaintType_Combobox.some(
-                                            (c: LovType) => c.complaint_type_id === item.id
-                                        );
+                                    {(filteredComplaintRs || []).map((item: LovType) => {
+                                        console.log("❤❤❤❤filteredComplaintRs", filteredComplaintRs);
 
-                                        console.log('Result for item', item.id, 'isChecked:', isChecked);
+                                        console.log('dataComplaintRs:', dataComplaintRs);
+                                        const isChecked = dataComplaintRs.some(c => {
+                                            console.log('Checking c:', c, 'against item.lov_code:', item.lov_code);
+                                            return c.complaint_type_id === item.id;
+                                        });
+
+                                        console.log('Result for itemmmmm', item.id, 'isCheckeddddd:', isChecked);
 
                                         return (
                                             <Grid size={6} key={item.id}>
@@ -602,90 +592,54 @@ export default function CompalintView({
                                         );
                                     })}
                                 </Grid>
-                                {/* แสดงช่อง Other ถ้ามีเลือกตัว TRR_CT_NCR_99 */}
-                                {dataComplaintTypeValue_Combobox?.id === "TRR_CT_NCR_99" && (
+                                {dataComplaintRsValue_Combobox?.some((c: any) => c.id === "TRR_RS_NCR_6") && (
                                     <FullWidthTextArea
-                                        value={compTypeOther}
+                                        value={clauseOther}
+                                        labelName="clause:"
+                                        readonly
+                                    />
+                                )}
+                                {dataComplaintRsValue_Combobox?.some((c: any) => c.id === "TRR_RS_NCR_99") && (
+                                    <FullWidthTextArea
+                                        value={compRsOther}
                                         labelName="Other:"
                                         readonly
                                     />
                                 )}
                             </Paper>
                         </Grid>
+                    )}
+                </Grid>
 
-                        {!isRSHidden && (
-                            <Grid size={6}>
-                                <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>
-                                    <label className="sarabun-regular-datatable">Reference Standard</label>
-                                    <Divider sx={{ my: 2 }} />
-                                    <Grid container spacing={2}>
-                                        {(filteredComplaintRs || []).map((item: LovType) => {
-                                            const isChecked = dataComplaintRs_Combobox.some(
-                                                (c: LovType) => c.complaint_type_id === item.id
-                                            );
+                <Grid size={3}>
+                    <FormControl component="fieldset">
+                        <FormLabel component="legend">Priority</FormLabel>
+                        <RadioGroup row value={dataPriority}>
+                            {datapriority_Combobox.map((item: any) => (
+                                <FormControlLabel
+                                    key={item.id}
+                                    value={item.id}        // ต้องตรงกับ state
+                                    control={<Radio />}
+                                    label={item.lov_code}  // หรือ lov1 ตามที่แสดง
+                                    disabled
+                                />
+                            ))}
+                        </RadioGroup>
+                    </FormControl>
+                </Grid>
 
-                                            console.log('Result for itemmmmm', item.id, 'isCheckeddddd:', isChecked);
-
-                                            return (
-                                                <Grid size={6} key={item.id}>
-                                                    <FullWidthCheckbox
-                                                        labelName={item.lov1}
-                                                        value={isChecked}
-                                                        readonly={true}
-                                                        onchange={() => { }}
-                                                    />
-                                                </Grid>
-                                            );
-                                        })}
-                                    </Grid>
-                                    {dataComplaintRsValue_Combobox?.some((c: any) => c.id === "TRR_RS_NCR_6") && (
-                                        <FullWidthTextArea
-                                            value={clauseOther}
-                                            labelName="clause:"
-                                            readonly
-                                        />
-                                    )}
-                                    {dataComplaintRsValue_Combobox?.some((c: any) => c.id === "TRR_RS_NCR_99") && (
-                                        <FullWidthTextArea
-                                            value={compRsOther}
-                                            labelName="Other:"
-                                            readonly
-                                        />
-                                    )}
-                                </Paper>
-                            </Grid>
-                        )}
-                    </Grid>
-                    <Grid size={12}>
-                        <FullWidthTextArea
-                            value={detail}
-                            //required={"required"}
-                            labelName={"Detail"}
-                            onchange={(e) => {
-                                setdetail(e);
-                            }}
-                            readonly
-                            bgcolorTextField={bgcolorTextField}
-                        />
-                    </Grid>
-                    <Grid size={3}>
-                        <FormControl component="fieldset">
-                            <FormLabel component="legend">Priority</FormLabel>
-                            <RadioGroup row value={dataPriority}>
-                                {datapriority_Combobox.map((item: any) => (
-                                    <FormControlLabel
-                                        key={item.id}
-                                        value={item.id}        // ต้องตรงกับ state
-                                        control={<Radio />}
-                                        label={item.lov_code}  // หรือ lov1 ตามที่แสดง
-                                        disabled
-                                    />
-                                ))}
-                            </RadioGroup>
-                        </FormControl>
-                    </Grid>
-                </Paper>
-
+                <Grid size={12}>
+                    <FullWidthTextArea
+                        value={detail}
+                        //required={"required"}
+                        labelName={"Detail"}
+                        onchange={(e) => {
+                            setdetail(e);
+                        }}
+                        readonly
+                        bgcolorTextField={bgcolorTextField}
+                    />
+                </Grid>
                 <Grid size={6}>
                     <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>
                         <label className="sarabun-regular-datatable">Please attach any  photost</label>
@@ -753,7 +707,19 @@ export default function CompalintView({
                         // Validate={validateText && validateText.driverTel}
                         />
                     </Grid>
-
+                    <Grid size={4}>
+                        <FullWidthTextField
+                            value={area_of_detection_dept}
+                            //required={"required"}
+                            labelName={"Department / Area of Detection"}
+                            onchange={(e) => {
+                                setarea_of_detection_dept(e);
+                            }}
+                            readonly
+                            bgcolorTextField={bgcolorTextField}
+                        // Validate={validateText && validateText.driverTel}
+                        />
+                    </Grid>
                     <Grid size={4}>
                         <FullWidthTextField
                             value={request_department_id}

@@ -399,7 +399,7 @@ export default function Complaint() {
 
         if (Array.isArray(response.data)) {
           let domain;
-          domain = response.data.filter((item: any) => item.domain_id === "TRR.TRRGROUP.COM");
+          domain = response.data.filter((item: any) => item.domain_id === "TRRGROUP.COM");
 
           if (domain) {
             setdataset_domain(domain);
@@ -416,7 +416,7 @@ export default function Complaint() {
   const CasDepartmentDomainGet = async () => {
     try {
       const dataset = {
-        domain_id: "TRR.TRRGROUP.COM",
+        domain_id: "TRRGROUP.COM",
         // lov_type: "report_type"
 
       }
