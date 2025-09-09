@@ -84,7 +84,7 @@ type FileData = {
   otherText?: string;
 };
 
-export default function ComplaintInsert({
+export default function ComplaintBody({
   action,
   dataelement,
   readonlyTextField,
