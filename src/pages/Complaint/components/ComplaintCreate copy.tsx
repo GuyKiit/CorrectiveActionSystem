@@ -78,12 +78,6 @@ type LovType = {
   lov3: string;
 };
 
-type FileData = {
-  file: File;
-  attachmentType?: string;
-  otherText?: string;
-};
-
 export default function ComplaintInsert({
   action,
   dataelement,
@@ -168,7 +162,6 @@ export default function ComplaintInsert({
     dataset_company,
     dataset_department,
     dataset_domain,
-    complaintFiles,
 
 
     setComplaint_no,
@@ -244,7 +237,6 @@ export default function ComplaintInsert({
     setdataset_company,
     setdataset_department,
     setdataset_domain,
-    setcomplaintFiles
 
   } = useListComplaint();
 
@@ -266,7 +258,7 @@ export default function ComplaintInsert({
   const [files, setFiles] = useState<File[]>([]);
   const [fileAttachmentTypes, setFileAttachmentTypes] = useState<{ [fileIndex: number]: string }>({});
   const [fileOtherTexts, setFileOtherTexts] = useState<{ [fileIndex: number]: string }>({});
-  const [fileList, setFileList] = useState<FileData[]>([]);
+
   // Hidden Variables ======================================================
   const [isFormHidden, setisFormHidden] = useState(true);
 
@@ -448,54 +440,61 @@ export default function ComplaintInsert({
   const handleCheckboxChangePriority = (item: LovType) => {
     setdatapriority(prev => (prev?.id === item.id ? null : item));
   };
- const handleFileChange = (fileArray: File[]) => {
-  if (!fileArray || fileArray.length === 0) return;
-
-  setFileList(prev => {
-    const updatedList = [
-      ...prev,
-      ...fileArray.map(f => ({
-        file: f,
-        original_file_name: f.name,   // เก็บชื่อไฟล์เดิม
-        attachmentType: "",
-        otherText: ""
-      }))
-    ];
-
-    // sync เข้า context
-    setcomplaintFiles(updatedList);
-
-    return updatedList;
-  });
-};
-
+  const handleFileChange = (fileArray: File[]) => {
+    const file = fileArray[0]; // เลือกไฟล์ตัวแรก
+    if (file) {
+      setFiles(prev => [...prev, file]); // push File เดี่ยวเข้า File[]
+    }
+  };
   const handleRemoveFile = (index: number) => {
-   setFileList(prev => {
-    const updatedList = prev.filter((_, i) => i !== index);
-    setcomplaintFiles(updatedList); // sync
-    return updatedList;
-  });
+    setFiles(prevFiles => prevFiles.filter((_, i) => i !== index));
+    // Remove attachment types for this file
+    setFileAttachmentTypes(prev => {
+      const newTypes = { ...prev };
+      delete newTypes[index];
+      // Reindex remaining files
+      const reindexed: { [fileIndex: number]: string } = {};
+      Object.keys(newTypes).forEach((key) => {
+        const keyNum = parseInt(key);
+        if (keyNum > index) {
+          reindexed[keyNum - 1] = newTypes[keyNum];
+        } else {
+          reindexed[keyNum] = newTypes[keyNum];
+        }
+      });
+      return reindexed;
+    });
   };
-  const handleFileAttachmentTypeChange = (index: number, type: string) => {
-    setFileList(prev => {
-    const updated = [...prev];
-    updated[index] = {
-      ...updated[index],
-      attachmentType: type,
-      otherText: type === "TRR_AT_4" ? updated[index].otherText : "",
-    };
-    setcomplaintFiles(updated); // sync
-    return updated;
-  });
+  const handleFileAttachmentTypeChange = (fileIndex: number, attachmentTypeId: string, checked: boolean) => {
+    setFileAttachmentTypes(prev => {
+      const newTypes = { ...prev };
+      
+      if (checked) {
+        // Single selection - replace any existing selection
+        newTypes[fileIndex] = attachmentTypeId;
+      } else {
+        // Remove selection if unchecked
+        delete newTypes[fileIndex];
+        // Clear the "Other" text if unchecked
+        if (attachmentTypeId === "TRR_AT_4") {
+          setFileOtherTexts(prevTexts => {
+            const newTexts = { ...prevTexts };
+            delete newTexts[fileIndex];
+            return newTexts;
+          });
+        }
+      }
+      
+      console.log("File attachment types updated:", newTypes);
+      return newTypes;
+    });
   };
-
-  const handleFileOtherTextChange = (index: number, text: string) => {
-    setFileList(prev => {
-    const updated = [...prev];
-    updated[index] = { ...updated[index], otherText: text };
-    setcomplaintFiles(updated); // sync
-    return updated;
-  });
+  
+  const handleFileOtherTextChange = (fileIndex: number, text: string) => {
+    setFileOtherTexts(prev => ({
+      ...prev,
+      [fileIndex]: text
+    }));
   };
 
   // Functions (Initial, Calculation or ETC.) =================================================
@@ -647,18 +646,18 @@ export default function ComplaintInsert({
                 readonly
               />
             </Grid>
-            <Paper elevation={3} sx={{
-              p: 3,
-              mt: 3,
-              width: "100%",
+            <Paper elevation={3} sx={{ 
+              p: 3, 
+              mt: 3, 
+              width: "100%", 
               borderRadius: 3,
               background: 'linear-gradient(135deg, #fff5f5 0%, #ffffff 100%)',
               border: '1px solid #ffcdd2',
               boxShadow: '0 4px 12px rgba(244,67,54,0.1)'
             }}>
-              <Box sx={{
-                display: 'flex',
-                alignItems: 'center',
+              <Box sx={{ 
+                display: 'flex', 
+                alignItems: 'center', 
                 mb: 3,
                 pb: 2,
                 borderBottom: '2px solid #f44336'
@@ -670,13 +669,13 @@ export default function ComplaintInsert({
                   borderRadius: 1,
                   mr: 2
                 }} />
-                <label
-                  className="sarabun-regular-datatable"
-                  style={{
-                    fontSize: '18px',
-                    fontWeight: '600',
+                <label 
+                  className="sarabun-regular-datatable" 
+                  style={{ 
+                    fontSize: '18px', 
+                    fontWeight: '600', 
                     color: '#d32f2f',
-                    margin: 0
+                    margin: 0 
                   }}
                 >
                   แผนกผู้ถูกร้องเรียน (Respondent Department)
@@ -736,12 +735,12 @@ export default function ComplaintInsert({
                   />
                 </Grid>
               </Grid>
-
+              
               {/* รายละเอียด Sub-section */}
               <Box sx={{ mt: 4 }}>
-                <Box sx={{
-                  display: 'flex',
-                  alignItems: 'center',
+                <Box sx={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
                   mb: 3,
                   pb: 1,
                   borderBottom: '1px solid #ffcdd2'
@@ -753,38 +752,38 @@ export default function ComplaintInsert({
                     borderRadius: 0.5,
                     mr: 1.5
                   }} />
-                  <label
-                    className="sarabun-regular-datatable"
-                    style={{
-                      fontSize: '16px',
-                      fontWeight: '500',
+                  <label 
+                    className="sarabun-regular-datatable" 
+                    style={{ 
+                      fontSize: '16px', 
+                      fontWeight: '500', 
                       color: '#d32f2f',
-                      margin: 0
+                      margin: 0 
                     }}
                   >
                     รายละเอียด
                   </label>
                 </Box>
-
+                
                 <Grid container spacing={2} sx={{ alignItems: 'stretch' }}>
                   {dataReportTypeValue && (
                     <Grid size={6} sx={{ display: 'flex' }}>
-                      <Paper elevation={1} sx={{
-                        p: 2,
-                        borderRadius: 2,
+                      <Paper elevation={1} sx={{ 
+                        p: 2, 
+                        borderRadius: 2, 
                         backgroundColor: '#fafafa',
                         width: '100%',
                         display: 'flex',
                         flexDirection: 'column',
                         minHeight: '400px'
                       }}>
-                        <label
+                        <label 
                           className="sarabun-regular-datatable"
-                          style={{
-                            fontSize: '18px',
-                            fontWeight: '600',
+                          style={{ 
+                            fontSize: '18px', 
+                            fontWeight: '600', 
                             color: '#333',
-                            margin: 0
+                            margin: 0 
                           }}
                         >
                           ประเภทข้อร้องเรียน (Type Of Complaint) <span style={{ color: 'red' }}> *</span>
@@ -818,22 +817,22 @@ export default function ComplaintInsert({
 
                   {!isRSHidden && dataReportTypeValue && (
                     <Grid size={6} sx={{ display: 'flex' }}>
-                      <Paper elevation={1} sx={{
-                        p: 2,
-                        borderRadius: 2,
+                      <Paper elevation={1} sx={{ 
+                        p: 2, 
+                        borderRadius: 2, 
                         backgroundColor: '#fafafa',
                         width: '100%',
                         display: 'flex',
                         flexDirection: 'column',
                         minHeight: '400px'
                       }}>
-                        <label
+                        <label 
                           className="sarabun-regular-datatable"
-                          style={{
-                            fontSize: '18px',
-                            fontWeight: '600',
+                          style={{ 
+                            fontSize: '18px', 
+                            fontWeight: '600', 
                             color: '#333',
-                            margin: 0
+                            margin: 0 
                           }}
                         >
                           มาตรฐานอ้างอิง (Reference Standard) <span style={{ color: 'red' }}> *</span>
@@ -872,22 +871,22 @@ export default function ComplaintInsert({
                     </Grid>
                   )}
                 </Grid>
-
+                
                 {/* Priority Section */}
                 {dataReportTypeValue && (
                   <Box sx={{ mt: 3 }}>
-                    <Paper elevation={1} sx={{
-                      p: 2,
-                      borderRadius: 2,
+                    <Paper elevation={1} sx={{ 
+                      p: 2, 
+                      borderRadius: 2, 
                       backgroundColor: '#fafafa'
                     }}>
-                      <label
+                      <label 
                         className="sarabun-regular-datatable"
-                        style={{
-                          fontSize: '18px',
-                          fontWeight: '600',
+                        style={{ 
+                          fontSize: '18px', 
+                          fontWeight: '600', 
                           color: '#333',
-                          margin: 0
+                          margin: 0 
                         }}
                       >
                         ระดับความสำคัญ (Priority) <span style={{ color: 'red' }}> *</span>
@@ -900,69 +899,69 @@ export default function ComplaintInsert({
                             return (order[a.lov_code] || 999) - (order[b.lov_code] || 999);
                           })
                           .map((item: LovType) => (
-                            <Grid size={3} key={item.id}>
-                              <Box sx={{
-                                border: '2px solid #e0e0e0',
-                                borderRadius: 2,
-                                p: 2,
-                                textAlign: 'center',
-                                backgroundColor: datapriority?.id === item.id ? '#fff3e0' : '#ffffff',
-                                borderColor: datapriority?.id === item.id ? '#ff9800' : '#e0e0e0',
-                                cursor: 'pointer',
-                                transition: 'all 0.2s ease',
-                                '&:hover': {
-                                  borderColor: '#ff9800',
-                                  backgroundColor: '#fff8f0'
+                          <Grid size={3} key={item.id}>
+                            <Box sx={{ 
+                              border: '2px solid #e0e0e0',
+                              borderRadius: 2,
+                              p: 2,
+                              textAlign: 'center',
+                              backgroundColor: datapriority?.id === item.id ? '#fff3e0' : '#ffffff',
+                              borderColor: datapriority?.id === item.id ? '#ff9800' : '#e0e0e0',
+                              cursor: 'pointer',
+                              transition: 'all 0.2s ease',
+                              '&:hover': {
+                                borderColor: '#ff9800',
+                                backgroundColor: '#fff8f0'
+                              }
+                            }}>
+                              <FormControlLabel
+                                control={
+                                  <Radio
+                                    checked={datapriority?.id === item.id}
+                                    onChange={(e) => {
+                                      // console.log("Priority selected:", e);
+                                      console.log("Priority selected:", item);
+                                      setdatapriorityValue_Combobox(item.id);
+                                      setdatapriority(item);
+                                      const days = Number(item.lov3 ?? 0);
+                                      priorityCalculateRespondDate(days, true);
+                                      console.log("เลือก priority:", item.lov_code, "Days:", days);
+                                    }}
+                                    sx={{ color: '#ff9800' }}
+                                  />
                                 }
-                              }}>
-                                <FormControlLabel
-                                  control={
-                                    <Radio
-                                      checked={datapriority?.id === item.id}
-                                      onChange={(e) => {
-                                        // console.log("Priority selected:", e);
-                                        console.log("Priority selected:", item);
-                                        setdatapriorityValue_Combobox(item.id);
-                                        setdatapriority(item);
-                                        const days = Number(item.lov3 ?? 0);
-                                        priorityCalculateRespondDate(days, true);
-                                        console.log("เลือก priority:", item.lov_code, "Days:", days);
-                                      }}
-                                      sx={{ color: '#ff9800' }}
-                                    />
-                                  }
-                                  label={
-                                    <Box sx={{ textAlign: 'center' }}>
-                                      <Box sx={{
-                                        fontSize: '16px',
-                                        fontWeight: '600',
-                                        color: datapriority?.id === item.id ? '#f57c00' : '#666'
-                                      }}>
-                                        {item.lov1} ({item.lov_code})
-                                      </Box>
-                                      <Box sx={{
-                                        fontSize: '12px',
-                                        color: datapriority?.id === item.id ? '#f57c00' : '#999',
-                                        mt: 0.5
-                                      }}>
-                                        (ภายใน {item.lov3} วัน)
-                                      </Box>
+                                label={
+                                  <Box sx={{ textAlign: 'center' }}>
+                                    <Box sx={{ 
+                                      fontSize: '16px', 
+                                      fontWeight: '600',
+                                      color: datapriority?.id === item.id ? '#f57c00' : '#666'
+                                    }}>
+                                      {item.lov1} ({item.lov_code})
                                     </Box>
-                                  }
-                                  sx={{
-                                    width: "100%",
-                                    m: 0,
-                                    flexDirection: 'column',
-                                    alignItems: 'center'
-                                  }}
-                                />
-                              </Box>
-                            </Grid>
-                          ))}
-
+                                    <Box sx={{ 
+                                      fontSize: '12px', 
+                                      color: datapriority?.id === item.id ? '#f57c00' : '#999',
+                                      mt: 0.5
+                                    }}>
+                                      (ภายใน {item.lov3} วัน)
+                                    </Box>
+                                  </Box>
+                                }
+                                sx={{ 
+                                  width: "100%", 
+                                  m: 0,
+                                  flexDirection: 'column',
+                                  alignItems: 'center'
+                                }}
+                              />
+                            </Box>
+                          </Grid>
+                        ))}
+                        
                         {/* Response Date Field - positioned after Emergency option */}
                         <Grid size={3}>
-                          <Box sx={{
+                          <Box sx={{ 
                             border: '2px solid #e0e0e0',
                             borderRadius: 2,
                             p: 2,
@@ -975,8 +974,8 @@ export default function ComplaintInsert({
                             flexDirection: 'column',
                             justifyContent: 'center'
                           }}>
-                            <Box sx={{
-                              fontSize: '16px',
+                            <Box sx={{ 
+                              fontSize: '16px', 
                               fontWeight: '600',
                               mb: 3
                             }}>
@@ -998,18 +997,18 @@ export default function ComplaintInsert({
               </Box>
             </Paper>
 
-            <Paper elevation={3} sx={{
-              p: 3,
-              mt: 3,
-              width: "100%",
+            <Paper elevation={3} sx={{ 
+              p: 3, 
+              mt: 3, 
+              width: "100%", 
               borderRadius: 3,
               background: 'linear-gradient(135deg, #f0f8ff 0%, #ffffff 100%)',
               border: '1px solid #bbdefb',
               boxShadow: '0 4px 12px rgba(33,150,243,0.1)'
             }}>
-              <Box sx={{
-                display: 'flex',
-                alignItems: 'center',
+              <Box sx={{ 
+                display: 'flex', 
+                alignItems: 'center', 
                 mb: 3,
                 pb: 2,
                 borderBottom: '2px solid #2196f3'
@@ -1021,13 +1020,13 @@ export default function ComplaintInsert({
                   borderRadius: 1,
                   mr: 2
                 }} />
-                <label
-                  className="sarabun-regular-datatable"
-                  style={{
-                    fontSize: '18px',
-                    fontWeight: '600',
+                <label 
+                  className="sarabun-regular-datatable" 
+                  style={{ 
+                    fontSize: '18px', 
+                    fontWeight: '600', 
                     color: '#1976d2',
-                    margin: 0
+                    margin: 0 
                   }}
                 >
                   แผนกที่ทำการร้องเรียน (Reporting Department)
@@ -1107,18 +1106,18 @@ export default function ComplaintInsert({
               </Grid>
             </Paper>
 
-            <Paper elevation={3} sx={{
-              p: 3,
-              mt: 3,
-              width: "100%",
+            <Paper elevation={3} sx={{ 
+              p: 3, 
+              mt: 3, 
+              width: "100%", 
               borderRadius: 3,
               background: 'linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%)',
               border: '1px solid #e0e0e0',
               boxShadow: '0 4px 12px rgba(158,158,158,0.1)'
             }}>
-              <Box sx={{
-                display: 'flex',
-                alignItems: 'center',
+              <Box sx={{ 
+                display: 'flex', 
+                alignItems: 'center', 
                 mb: 3,
                 pb: 2,
                 borderBottom: '2px solid #9e9e9e'
@@ -1130,19 +1129,19 @@ export default function ComplaintInsert({
                   borderRadius: 1,
                   mr: 2
                 }} />
-                <label
-                  className="sarabun-regular-datatable"
-                  style={{
-                    fontSize: '18px',
-                    fontWeight: '600',
+                <label 
+                  className="sarabun-regular-datatable" 
+                  style={{ 
+                    fontSize: '18px', 
+                    fontWeight: '600', 
                     color: '#616161',
-                    margin: 0
+                    margin: 0 
                   }}
                 >
                   แนบไฟล์ (Attachments)
                 </label>
               </Box>
-
+              
               <Grid container spacing={2}>
                 {dataReportTypeValue && (
                   <Grid size={12}>
@@ -1178,9 +1177,9 @@ export default function ComplaintInsert({
                         />
                       )}
                     </Paper> */}
-
+                    
                     <BrowseFileUpload setFile={handleFileChange} setFileName={() => { }} />
-
+                    
                     {/* Enhanced File Table with Attachment Type Checkboxes */}
                     <TableContainer component={Paper} sx={{ mt: 2 }}>
                       <Table size="small">
@@ -1193,42 +1192,90 @@ export default function ComplaintInsert({
                           </TableRow>
                         </TableHead>
                         <TableBody>
-                          {fileList.map((item, index) => (
+                          {files.map((file: File, index: number) => (
                             <TableRow key={index}>
-                              <TableCell>{item.file.name}</TableCell>
-                              <TableCell>{(item.file.size / (1024 * 1024)).toFixed(2)} MB</TableCell>
-                              <TableCell>
-                                {filteredphoto.map(photo => (
-                                  <FormControlLabel
-                                    key={`${index}-${photo.id}`}
-                                    control={
-                                      <Radio
-                                        checked={item.attachmentType === photo.id}
-                                        onChange={() => handleFileAttachmentTypeChange(index, photo.id)}
-                                      />
-                                    }
-                                    label={photo.lov1}
-                                  />
-                                ))}
-                                {item.attachmentType === "TRR_AT_4" && (
-                                  <TextField
-                                    fullWidth
-                                    multiline
-                                    rows={3}
-                                    value={item.otherText || ""}
-                                    onChange={e => handleFileOtherTextChange(index, e.target.value)}
-                                    placeholder="Please specify..."
-                                  />
-                                )}
+                              <TableCell sx={{ verticalAlign: 'top', pt: 2 }}>
+                                {file.name}
                               </TableCell>
-                              <TableCell>
-                                <IconButton color="error" onClick={() => handleRemoveFile(index)}>
+                              <TableCell sx={{ verticalAlign: 'top', pt: 2 }}>
+                                {(file.size / (1024 * 1024)).toFixed(2)} MB
+                              </TableCell>
+                              <TableCell sx={{ verticalAlign: 'middle', textAlign: 'center' }}>
+                                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, alignItems: 'start' }}>
+                                  {/* Horizontal radio buttons for single selection */}
+                                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, justifyContent: 'center' }}>
+                                    {(filteredphoto || []).map((item: LovType) => (
+                                      <FormControlLabel
+                                        key={`${index}-${item.id}`}
+                                        control={
+                                          <Box component="input" 
+                                            type="radio"
+                                            name={`file-${index}-attachment-type`}
+                                            checked={fileAttachmentTypes[index] === item.id}
+                                            onChange={(e) => handleFileAttachmentTypeChange(
+                                              index, 
+                                              item.id, 
+                                              (e.target as HTMLInputElement).checked
+                                            )}
+                                            sx={{ mr: 1 }}
+                                          />
+                                        }
+                                        label={
+                                          <Box sx={{ fontSize: '14px' }}>
+                                            {item.lov1}
+                                          </Box>
+                                        }
+                                        sx={{ 
+                                          margin: 0, 
+                                          display: 'flex', 
+                                          alignItems: 'center',
+                                          '& .MuiFormControlLabel-label': {
+                                            fontSize: '14px'
+                                          }
+                                        }}
+                                      />
+                                    ))}
+                                  </Box>
+                                  
+                                  {/* Conditional textarea for "Others" */}
+                                  {fileAttachmentTypes[index] === "TRR_AT_4" && (
+                                    <Box sx={{ mt: 1, width: '100%' }}>
+                                      <TextField
+                                        size="small"
+                                        fullWidth
+                                        multiline
+                                        rows={3}
+                                        variant="outlined"
+                                        placeholder="Please specify..."
+                                        value={fileOtherTexts[index] || ''}
+                                        onChange={(e) => handleFileOtherTextChange(index, e.target.value)}
+                                        sx={{ 
+                                          '& .MuiInputBase-input': { 
+                                            fontSize: '14px',
+                                            padding: '8px 12px'
+                                          },
+                                          '& .MuiOutlinedInput-root': {
+                                            borderRadius: '4px'
+                                          }
+                                        }}
+                                      />
+                                    </Box>
+                                  )}
+                                </Box>
+                              </TableCell>
+                              <TableCell sx={{ verticalAlign: 'top', pt: 2 }}>
+                                <IconButton
+                                  color="error"
+                                  size="small"
+                                  onClick={() => handleRemoveFile(index)}
+                                >
                                   <DeleteIcon />
                                 </IconButton>
                               </TableCell>
                             </TableRow>
+                            
                           ))}
-                          {fileList.length === 0 && (
+                          {files.length === 0 && (
                             <TableRow>
                               <TableCell colSpan={4} sx={{ textAlign: 'center', py: 3, color: '#999' }}>
                                 ยังไม่มีไฟล์ที่อัปโหลด
@@ -1251,4 +1298,3 @@ export default function ComplaintInsert({
     </Box>
   );
 }
-

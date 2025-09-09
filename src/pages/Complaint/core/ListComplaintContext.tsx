@@ -236,7 +236,8 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
     // const [selectedFile, setSelectedFile] = useState<any>(
     //     initialListComplaint.selectedFile
     // );
-
+    // State สำหรับเก็บไฟล์จริง
+    const [complaintFiles, setcomplaintFiles] = useState<File[]>([]); // state ไฟล์
 
 
     return (
@@ -313,11 +314,13 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 // ✅ expose state ออกมาให้ component อื่นใช้
                 dataComplaintTypeValue_Combobox,
 
+
                 //--------dataset-------
                 dataset_reporttype,
                 dataset_company,
                 dataset_department,
                 dataset_domain,
+                complaintFiles,
 
 
 
@@ -397,6 +400,7 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 setdataset_company,
                 setdataset_department,
                 setdataset_domain,
+                setcomplaintFiles,
 
             }}
         >

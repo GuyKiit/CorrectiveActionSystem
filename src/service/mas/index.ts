@@ -66,6 +66,7 @@ export async function _POST(datasend:any, path:string) {
   }
 }
 
+
 export async function _POST_FORMDATA(formData: FormData, path: string) {
   const url = `${import.meta.env.VITE_APP_TRR_API_URL}${path}`;
 

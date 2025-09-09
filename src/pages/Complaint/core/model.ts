@@ -19,7 +19,7 @@ export type ListComplaintContextProps = {
     request_phone?: string | null
     request_date?: dayjs.Dayjs
     respondent_company_id?: any
-    respondent_domain_id?: any 
+    respondent_domain_id?: any
     respondent_department_id?: any
     respondent_email?: string | null
     area_of_detection_dept?: string | null
@@ -76,12 +76,13 @@ export type ListComplaintContextProps = {
     photoOther?: any
     clauseOther?: any
     phoTypeOther?: any
-    
+
     //--------dataset-------
-     dataset_reporttype?: any
-     dataset_company?: any
-     dataset_department?: any
-     dataset_domain?: any
+    dataset_reporttype?: any
+    dataset_company?: any
+    dataset_department?: any
+    dataset_domain?: any
+    complaintFiles?: any
 
     // dataTruckTypeValue_Combobox?: any
     // dataProduct_Combobox?: any
@@ -158,7 +159,7 @@ export type ListComplaintContextProps = {
     setcreate_datetime: Dispatch<SetStateAction<dayjs.Dayjs>>
     setupdate_by: Dispatch<SetStateAction<string>>
     setupdate_datetime: Dispatch<SetStateAction<dayjs.Dayjs>>
-    
+
 
     setComplaintStatusID_Combobox: Dispatch<SetStateAction<any>>
     setdataReportTypeValue: Dispatch<SetStateAction<any>>
@@ -179,6 +180,7 @@ export type ListComplaintContextProps = {
     setdataset_company: Dispatch<SetStateAction<any>>
     setdataset_department: Dispatch<SetStateAction<any>>
     setdataset_domain: Dispatch<SetStateAction<any>>
+    setcomplaintFiles: Dispatch<SetStateAction<any>>
 
 
 };
@@ -254,12 +256,13 @@ export const initialListComplaint: ListComplaintContextProps = {
     setdatapriorityValue_Combobox: () => { },
     setdatapriority: () => { },
     setPriorityLevel: () => { },
-    
+
     //--------dataset-------
     setdataset_reporttype: () => { },
     setdataset_company: () => { },
     setdataset_department: () => { },
     setdataset_domain: () => { },
+    setcomplaintFiles: () => { },
 
 
 
