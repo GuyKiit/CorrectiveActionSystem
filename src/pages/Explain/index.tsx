@@ -70,7 +70,7 @@ export default function Explain() {
     respondent_email,
     respondent_other_name,
     respondent_other_email,
-    area_of_detection_dept,
+    area_of_detection_dept_id,
     product_name,
     detail,
     compTypeOther,
@@ -137,7 +137,7 @@ export default function Explain() {
     setrespondent_email,
     setrespondent_other_name,
     setrespondent_other_email,
-    setarea_of_detection_dept,
+    setarea_of_detection_dept_id,
     setproduct_name,
     setdetail,
     setcomplaint_type_other,
@@ -224,7 +224,7 @@ export default function Explain() {
 
   const resetForm = () => {
     setcas_number("");
-    setarea_of_detection_dept("");
+    setarea_of_detection_dept_id("");
     setproduct_name("");
     setlot_no("");
     setuser_file_name("");
@@ -525,7 +525,7 @@ export default function Explain() {
         respondent_other_name: "qnN",
         respondent_other_email: "UigEP@gmail.com",
 
-        area_of_detection_dept: area_of_detection_dept,
+        area_of_detection_dept_id: area_of_detection_dept_id,
         product_name: product_name,
         detail: detail,
         priority_level: datapriorityValue_Combobox,

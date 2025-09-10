@@ -22,7 +22,8 @@ export type ListComplaintContextProps = {
     respondent_domain_id?: any
     respondent_department_id?: any
     respondent_email?: string | null
-    area_of_detection_dept?: string 
+    area_of_detection_dept_id?: string 
+    area_of_detection_dept_name?: string 
     product_name?: string | null
     detail?: string | null
     user_file_name?: string | null
@@ -57,6 +58,8 @@ export type ListComplaintContextProps = {
     update_by?: string
     update_datetime?: dayjs.Dayjs
     employee_tel?: string
+    explain_id?: number | null
+    approve_step?: number | null
 
 
     ComplaintStatusID_Combobox?: any
@@ -70,6 +73,7 @@ export type ListComplaintContextProps = {
     datapriority_Combobox?: any
     datapriorityValue_Combobox?: any
     datapriority?: any
+    datastatus?: any
     PriorityLevel?: any
     compTypeOther?: any
     compRsOther?: any
@@ -82,7 +86,10 @@ export type ListComplaintContextProps = {
     dataset_company?: any
     dataset_department?: any
     dataset_domain?: any
+
+    //--------dataset-------
     complaintFiles?: any
+    RunningModel?: any
 
     // dataTruckTypeValue_Combobox?: any
     // dataProduct_Combobox?: any
@@ -123,7 +130,8 @@ export type ListComplaintContextProps = {
     setrespondent_email: Dispatch<SetStateAction<string | null>>;
     setrespondent_other_name: Dispatch<SetStateAction<string | null>>;
     setrespondent_other_email: Dispatch<SetStateAction<string | null>>;
-    setarea_of_detection_dept: Dispatch<SetStateAction<string | null>>;
+    setarea_of_detection_dept_id: Dispatch<SetStateAction<string | null>>;
+    setarea_of_detection_dept_name: Dispatch<SetStateAction<string | null>>;
     setother: Dispatch<SetStateAction<string | null>>;
     setproduct_name: Dispatch<SetStateAction<string | null>>;
     setdetail: Dispatch<SetStateAction<string | null>>;
@@ -172,6 +180,7 @@ export type ListComplaintContextProps = {
     setdatapriority_Combobox: Dispatch<SetStateAction<any>>
     setdatapriorityValue_Combobox: Dispatch<SetStateAction<any>>
     setdatapriority: Dispatch<SetStateAction<any>>
+    setdatastatus: Dispatch<SetStateAction<any>>
     setPriorityLevel: Dispatch<SetStateAction<any>>
     // setSelectedFile: Dispatch<SetStateAction<File>>
 
@@ -213,7 +222,8 @@ export const initialListComplaint: ListComplaintContextProps = {
     setrespondent_email: () => { },
     setrespondent_other_name: () => { },
     setrespondent_other_email: () => { },
-    setarea_of_detection_dept: () => { },
+    setarea_of_detection_dept_id: () => { },
+    setarea_of_detection_dept_name: () => { },
     setproduct_name: () => { },
     setdetail: () => { },
     setcomplaint_type_other: () => { },
@@ -243,7 +253,6 @@ export const initialListComplaint: ListComplaintContextProps = {
     setcreate_datetime: () => { },
     setupdate_by: () => { },
     setupdate_datetime: () => { },
-
     setComplaintStatusID_Combobox: () => { },
     setdataReportTypeValue: () => { },
     setdataComplaintType_Combobox: () => { },
@@ -255,6 +264,7 @@ export const initialListComplaint: ListComplaintContextProps = {
     setdatapriority_Combobox: () => { },
     setdatapriorityValue_Combobox: () => { },
     setdatapriority: () => { },
+    setdatastatus: () => { },
     setPriorityLevel: () => { },
 
     //--------dataset-------

@@ -107,18 +107,19 @@ export default function ComplaintBody({
     request_name,
     request_company_id,
     request_domain_id,
-    request_department_id,
     request_position,
     request_email,
     request_phone,
     request_date,
     respondent_company_id,
+    // request_department_id,
     respondent_domain_id,
     respondent_department_id,
     respondent_email,
     respondent_other_name,
     respondent_other_email,
-    area_of_detection_dept,
+    area_of_detection_dept_id,
+    area_of_detection_dept_name,
     product_name,
     detail,
     priority_level,
@@ -179,7 +180,7 @@ export default function ComplaintBody({
     setrequest_name,
     setrequest_company_id,
     setrequest_domain_id,
-    setrequest_department_id,
+    // setrequest_department_id,
     setrequest_position,
     setrequest_email,
     setrequest_phone,
@@ -191,7 +192,8 @@ export default function ComplaintBody({
     setrespondent_email,
     setrespondent_other_name,
     setrespondent_other_email,
-    setarea_of_detection_dept,
+    setarea_of_detection_dept_id,
+    setarea_of_detection_dept_name,
     setproduct_name,
     setdetail,
     setcomplaint_type_other,
@@ -267,6 +269,12 @@ export default function ComplaintBody({
   const [fileAttachmentTypes, setFileAttachmentTypes] = useState<{ [fileIndex: number]: string }>({});
   const [fileOtherTexts, setFileOtherTexts] = useState<{ [fileIndex: number]: string }>({});
   const [fileList, setFileList] = useState<FileData[]>([]);
+  const [request_department_id, setrequest_department_id] = React.useState<{
+    itasset_department_id: number;
+    itasset_department_name: string;
+  } | null>(null);
+
+
   // Hidden Variables ======================================================
   const [isFormHidden, setisFormHidden] = useState(true);
 
@@ -311,7 +319,7 @@ export default function ComplaintBody({
     setdatapriorityValue_Combobox(null);
     setdatapriority(null);
     setcas_number("");
-    setarea_of_detection_dept("");
+    setarea_of_detection_dept_id("");
     setproduct_name("");
     setlot_no("");
     setdetail("");
@@ -324,7 +332,8 @@ export default function ComplaintBody({
     setrespondent_company_id(dataset_company[0]);
     setrequest_domain_id(dataset_company[0]);
     setrequest_company_id(dataset_company[0]);
-    setrequest_department_id(dataset_department);
+    setrequest_department_id(user);
+
   };
   const handleCheckboxChangeCT = (item: LovType) => {
     console.log("item", item);
@@ -524,6 +533,13 @@ export default function ComplaintBody({
 
   React.useEffect(() => {
 
+    // if (user && user.length > 0) {
+    //   setrequest_department_id({
+    //     itasset_department_id: user[0].itasset_department_id,
+    //     itasset_department_name: user[0].itasset_department_name
+    //   });
+    // }
+
     if (dataReportTypeValue) {
       const val = dataReportTypeValue;
 
@@ -553,6 +569,7 @@ export default function ComplaintBody({
         setFilteredComplaintRs(filteredRs);
       }
 
+
     } else {
       // reset ถ้า val null
       setFilteredComplaintType([]);
@@ -561,7 +578,7 @@ export default function ComplaintBody({
       setFilteredpriority([]);
 
     }
-  }, [dataReportTypeValue, dataComplaintType_Combobox, dataComplaintRs_Combobox, dataphoto_Combobox, datapriority_Combobox]);
+  }, [user, dataReportTypeValue, dataComplaintType_Combobox, dataComplaintRs_Combobox, dataphoto_Combobox, datapriority_Combobox, dataelement]);
 
   return (
     <Box
@@ -623,6 +640,7 @@ export default function ComplaintBody({
                 value={cas_number}
                 labelName="CAS Number"
                 onchange={(e) => { setcas_number(e); }}
+                readonly
               />
             </Grid>
             <Grid size={4} mt={2}>
@@ -686,6 +704,7 @@ export default function ComplaintBody({
                     labelName={"วันที่พบปัญหา (Date of Detection)"}
                     value={date_of_detection}
                     handleChange={(val) => setdate_of_detection(val ?? null)}
+                    readonly={action === "Read"}
                   />
                 </Grid>
                 <Grid size={4}>
@@ -695,7 +714,11 @@ export default function ComplaintBody({
                     labelName={"แผนกที่พบปัญหา (Department / Area of Detection)"}
                     options={dataset_department}
                     column="itasset_department_name"
-                    setvalue={setrespondent_department_id}
+                    setvalue={(e) => {
+                      console.log(e);  // ดูค่าของ e ที่ถูกส่งมาจาก AutocompleteComboBox
+                      setrespondent_department_id(e);
+                    }}
+                    readonly={action === "Read"}
                   />
                 </Grid>
                 <Grid size={4}>
@@ -704,6 +727,7 @@ export default function ComplaintBody({
                     value={product_name}
                     labelName="ชื่อสินค้า (Product Name)"
                     onchange={(e) => setproduct_name(e)}
+                    readonly={action === "Read"}
                   />
                 </Grid>
                 <Grid size={4}>
@@ -712,14 +736,16 @@ export default function ComplaintBody({
                     value={lot_no}
                     labelName="Lot No./Bag No"
                     onchange={(e) => setlot_no(e)}
+                    readonly={action === "Read"}
                   />
                 </Grid>
                 <Grid size={4}>
                   <FullWidthTextField
                     required="required"
-                    value={user[0]?.employee_email ? user[0]?.employee_email : '-'}
+                    value={respondent_email}
                     labelName="อีเมล (Email)"
-                    onchange={(e) => setrespondent_email(e.target.value)}
+                    onchange={(e) => setrespondent_email(e)}
+                    readonly={action === "Read"}
                   />
                 </Grid>
               </Grid>
@@ -785,6 +811,7 @@ export default function ComplaintBody({
                                   labelName={item.lov1}
                                   value={dataComplaintType.some(c => c.id === item.id)}
                                   onchange={() => handleCheckboxChangeCT(item)}
+                                  readonly={action === "Read"}
                                 />
                               </Grid>
                             ))}
@@ -795,6 +822,7 @@ export default function ComplaintBody({
                                 value={compTypeOther}
                                 labelName="Other:"
                                 onchange={(e) => setcompTypeOther(e)}
+                                readonly={action === "Read"}
                               />
                             )}
                           </Box>
@@ -834,6 +862,7 @@ export default function ComplaintBody({
                                   labelName={item.lov1}
                                   value={dataComplaintRs.some(rs => rs.id === item.id)}
                                   onchange={() => handleCheckboxChangeRS(item)}
+                                  readonly={action === "Read"}
                                 />
                               </Grid>
                             ))}
@@ -844,6 +873,7 @@ export default function ComplaintBody({
                                 value={compRsOther}
                                 labelName="Other:"
                                 onchange={(e) => setcompRsOther(e)}
+                                readonly={action === "Read"}
                               />
                             )}
                             {dataComplaintRs.some(rs => rs.id === "TRR_RS_NCR_6") && (
@@ -851,6 +881,7 @@ export default function ComplaintBody({
                                 value={clauseOther}
                                 labelName="Clause:"
                                 onchange={(e) => setclauseOther(e)}
+                                readonly={action === "Read"}
                               />
                             )}
                           </Box>
@@ -888,6 +919,7 @@ export default function ComplaintBody({
                             value={detail}
                             labelName=""
                             onchange={(e) => setdetail(e)}
+                            readonly={action === "Read"}
                           />
 
                         </Grid>
@@ -1127,16 +1159,20 @@ export default function ComplaintBody({
                 <Grid size={4}>
                   <AutocompleteComboBox
                     required="required"
-                    value={area_of_detection_dept}
+                    value={dataset_department.find((d: any) => d.itasset_department_id === area_of_detection_dept_id) || null}
                     labelName={"แผนกที่พบปัญหา (Department / Area of Detection)"}
                     options={dataset_department}
                     column="itasset_department_name"
-                    setvalue={setarea_of_detection_dept}
+                    setvalue={(v) => {
+                      setarea_of_detection_dept_id(v?.itasset_department_id ?? null);
+                      setarea_of_detection_dept_name(v?.itasset_department_name ?? "");
+                    }}
+                    readonly={action === "Read"}
                   />
                   {/* <FullWidthTextField
                     value={user[0]?.itasset_department_id ? user[0]?.itasset_department_id : '-'}
                     labelName="แผนกที่พบปัญหา (Department / Area of Detection)"
-                    onchange={(e) => setarea_of_detection_dept(e.target.value)}
+                    onchange={(e) => setarea_of_detection_dept_id(e.target.value)}
                     readonly
                   /> */}
                 </Grid>
@@ -1183,13 +1219,13 @@ export default function ComplaintBody({
                 {dataReportTypeValue && (
                   <Grid size={12}>
                     {/* <Paper elevation={2} sx={{ p: 2, borderRadius: 2, mb: 2 }}>
-                      <label 
+                      <label
                         className="sarabun-regular-datatable"
-                        style={{ 
-                          fontSize: '18px', 
-                          fontWeight: '600', 
+                        style={{
+                          fontSize: '18px',
+                          fontWeight: '600',
                           color: '#333',
-                          margin: 0 
+                          margin: 0
                         }}
                       >
                         Please attach any relevant documents or photos

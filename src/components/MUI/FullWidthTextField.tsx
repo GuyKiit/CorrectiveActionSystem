@@ -16,6 +16,7 @@ interface FullWidthTextField {
   endAdornment?: boolean;
   Validate?: boolean;
   validateTextLable?: string
+  readOnly?: boolean;
 }
 
 export default function FullWidthTextField(props: FullWidthTextField) {

@@ -61,8 +61,11 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
     const [user_file_name, setuser_file_name] = useState<any>(
         initialListComplaint.user_file_name
     );
-    const [area_of_detection_dept, setarea_of_detection_dept] = useState<any>(
-        initialListComplaint.area_of_detection_dept
+    const [area_of_detection_dept_id, setarea_of_detection_dept_id] = useState<any>(
+        initialListComplaint.area_of_detection_dept_id
+    );
+    const [area_of_detection_dept_name, setarea_of_detection_dept_name] = useState<any>(
+        initialListComplaint.area_of_detection_dept_name
     );
     const [product_name, setproduct_name] = useState<any>(
         initialListComplaint.product_name
@@ -188,6 +191,9 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
     const [datapriority, setdatapriority] = useState<any>(
         initialListComplaint.datapriority
     );
+    const [datastatus, setdatastatus] = useState<any>(
+        initialListComplaint.datastatus
+    );
     const [PriorityLevel, setPriorityLevel] = useState<any>(
         initialListComplaint.PriorityLevel
     );
@@ -256,7 +262,8 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 request_position,
                 request_email,
                 request_phone,
-                area_of_detection_dept,
+                area_of_detection_dept_id,
+                area_of_detection_dept_name,
                 product_name,
                 detail,
                 user_file_name,
@@ -310,6 +317,7 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 datapriority_Combobox,
                 datapriorityValue_Combobox,
                 datapriority,
+                datastatus,
                 PriorityLevel,
                 // ✅ expose state ออกมาให้ component อื่นใช้
                 dataComplaintTypeValue_Combobox,
@@ -346,7 +354,8 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 setrespondent_domain_id,
                 setrespondent_department_id,
                 setrespondent_email,
-                setarea_of_detection_dept,
+                setarea_of_detection_dept_id,
+                setarea_of_detection_dept_name,
                 setproduct_name,
                 setdetail,
                 setcompTypeOther,
@@ -392,6 +401,7 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 setdatapriority_Combobox,
                 setdatapriorityValue_Combobox,
                 setdatapriority,
+                setdatastatus,
                 setPriorityLevel,
                 setdataComplaintTypeValue_Combobox,
 

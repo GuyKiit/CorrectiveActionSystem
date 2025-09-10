@@ -108,7 +108,7 @@
 //     respondent_email,
 //     respondent_other_name,
 //     respondent_other_email,
-//     area_of_detection_dept,
+//     area_of_detection_dept_id,
 //     product_name,
 //     detail,
 //     priority_level,
@@ -176,7 +176,7 @@
 //     setrespondent_email,
 //     setrespondent_other_name,
 //     setrespondent_other_email,
-//     setarea_of_detection_dept,
+//     setarea_of_detection_dept_id,
 //     setproduct_name,
 //     setdetail,
 //     setcomplaint_type_other,
@@ -534,9 +534,9 @@
 //             </Grid>
 //             <Grid size={4}>
 //               <FullWidthTextField
-//                 value={area_of_detection_dept}
+//                 value={area_of_detection_dept_id}
 //                 labelName="Department / Area of Detection"
-//                 onchange={(e) => setarea_of_detection_dept(e)}
+//                 onchange={(e) => setarea_of_detection_dept_id(e)}
 //               />
 //             </Grid>
 //             <Grid size={4}>
@@ -809,9 +809,9 @@
 //             </Grid>
 //             <Grid size={4}>
 //               <FullWidthTextField
-//                 value={area_of_detection_dept}
+//                 value={area_of_detection_dept_id}
 //                 labelName="Department / Area of Detection"
-//                 onchange={(e) => setarea_of_detection_dept(e)}
+//                 onchange={(e) => setarea_of_detection_dept_id(e)}
 //               />
 //             </Grid>
 //             <Grid size={4}>
@@ -1050,9 +1050,9 @@
 //             </Grid>
 //             <Grid size={4}>
 //               <FullWidthTextField
-//                 value={area_of_detection_dept}
+//                 value={area_of_detection_dept_id}
 //                 labelName="Department / Area of Detection"
-//                 onchange={(e) => setarea_of_detection_dept(e)}
+//                 onchange={(e) => setarea_of_detection_dept_id(e)}
 //               />
 //             </Grid>
 //             <Grid size={4}>
@@ -1275,9 +1275,9 @@
 //             </Grid>
 //             <Grid size={4}>
 //               <FullWidthTextField
-//                 value={area_of_detection_dept}
+//                 value={area_of_detection_dept_id}
 //                 labelName="Department / Area of Detection"
-//                 onchange={(e) => setarea_of_detection_dept(e)}
+//                 onchange={(e) => setarea_of_detection_dept_id(e)}
 //               />
 //             </Grid>
 //             <Grid size={4}>

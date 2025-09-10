@@ -109,7 +109,7 @@ export default function ComplaintInsert({
     respondent_email,
     respondent_other_name,
     respondent_other_email,
-    area_of_detection_dept,
+    area_of_detection_dept_id,
     product_name,
     detail,
     priority_level,
@@ -177,7 +177,7 @@ export default function ComplaintInsert({
     setrespondent_email,
     setrespondent_other_name,
     setrespondent_other_email,
-    setarea_of_detection_dept,
+    setarea_of_detection_dept_id,
     setproduct_name,
     setdetail,
     setcomplaint_type_other,
@@ -284,7 +284,7 @@ export default function ComplaintInsert({
     setdatapriorityValue_Combobox(null);
     setdatapriority(null);
     setcas_number("");
-    setarea_of_detection_dept("");
+    setarea_of_detection_dept_id("");
     setproduct_name("");
     setlot_no("");
     setdetail("");
@@ -430,7 +430,7 @@ export default function ComplaintInsert({
   // Functions (Initial, Calculation or ETC.) =================================================
   const resetForm = () => {
       setcas_number("");
-      setarea_of_detection_dept("");
+      setarea_of_detection_dept_id("");
       setproduct_name("");
       setlot_no("");
       setuser_file_name("");
@@ -546,9 +546,9 @@ export default function ComplaintInsert({
           </Grid>
           <Grid size={4}>
             <FullWidthTextField
-              value={area_of_detection_dept}
+              value={area_of_detection_dept_id}
               labelName="Department / Area of Detection"
-              onchange={(e) => setarea_of_detection_dept(e)}
+              onchange={(e) => setarea_of_detection_dept_id(e)}
             />
           </Grid>
           <Grid size={4}>

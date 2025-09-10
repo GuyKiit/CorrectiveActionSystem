@@ -1,12 +1,14 @@
 import dayjs from "dayjs";
+
 export interface LovType {
-  id: string;
-  lov_id: string;
-  lov_group: string;
-  lov_type: string;
-  lov_code: string;
-  lov1: string;
+    id: string;
+    lov_id: string;
+    lov_group: string;
+    lov_type: string;
+    lov_code: string;
+    lov1: string;
 }
+
 export const Complaint_headCells = [
     {
         columnName: 'ACTION',
@@ -15,13 +17,6 @@ export const Complaint_headCells = [
         label: 'จัดการ',
         //colWidth: 100
     },
-    // {
-    //     columnName: 'id',
-    //     numeric: 'center',
-    //     disablePadding: true,
-    //     label: 'ID',
-    //     colWidth: 150
-    // },
     {
         columnName: 'report_type',
         numeric: 'center',
@@ -54,7 +49,6 @@ export const Complaint_headCells = [
         disablePadding: true,
         label: 'วันที่ออกเอกสาร',
         colWidth: 200,
-        render: (row: any) => dayjs(row.doc_date).format("DD-MM-YYYY HH:mm:ss")
     },
     {
         columnName: 'lot_no',
@@ -69,6 +63,11 @@ export const Complaint_headCells = [
         disablePadding: false,
         label: 'สถานะ',
         colWidth: 150,
+        render: (row: any, lovList: LovType[]) => {
+            // หา lov_code จาก lovList
+            const lov = lovList.find((l: LovType) => l.id === row.complaint_status);
+            return lov ? lov.lov_code : row.complaint_status;
+        }
 
     },
     {

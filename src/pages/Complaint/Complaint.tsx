@@ -42,7 +42,7 @@
 //   report_type?: string;
 //   cas_number?: string;
 //   request_company_id?: any;
-//   area_of_detection_dept?: string;
+//   area_of_detection_dept_id?: string;
 //   product_name?: string;
 //   lot_no?: string;
 //   user_file_name?: string;
@@ -170,7 +170,7 @@
 //     request_position, request_email, request_phone, request_date,
 //     respondent_company_id, respondent_domain_id, respondent_department_id,
 //     respondent_email, respondent_other_name, respondent_other_email,
-//     area_of_detection_dept, product_name, detail, compTypeOther, compRsOther,
+//     area_of_detection_dept_id, product_name, detail, compTypeOther, compRsOther,
 //     priority_level, respond_date_within, lot_no, user_file_name,
 //     acknowledge_flag, acknowledge_name, acknowledge_company_id,
 //     acknowledge_department_id, acknowledge_position, acknowledge_email,
@@ -194,7 +194,7 @@
 //     setrequest_email, setrequest_phone, setuser_file_name, setrequest_date,
 //     setrespondent_company_id, setrespondent_domain_id, setrespondent_department_id,
 //     setrespondent_email, setrespondent_other_name, setrespondent_other_email,
-//     setarea_of_detection_dept, setproduct_name, setdetail, setcomplaint_type_other,
+//     setarea_of_detection_dept_id, setproduct_name, setdetail, setcomplaint_type_other,
 //     setpriority_level, setrespond_date_within, setlot_no, setcompTypeOther,
 //     setcompRsOther, setreference_standard_other, setacknowledge_flag,
 //     setacknowledge_name, setacknowledge_company_id, setacknowledge_department_id,
@@ -284,7 +284,7 @@
 //     setrequest_name("");
 //     setrequest_company_id(null);
 //     setrequest_domain_id("");
-//     setarea_of_detection_dept("");
+//     setarea_of_detection_dept_id("");
 //     setrequest_department_id(null);
 //     setrequest_position("");
 //     setrequest_email("");
@@ -605,7 +605,7 @@
 //         respondent_email: user[0]?.employee_email || '',
 //         respondent_other_name: respondent_other_name,
 //         respondent_other_email: respondent_other_email,
-//         area_of_detection_dept: area_of_detection_dept,
+//         area_of_detection_dept_id: area_of_detection_dept_id,
 //         product_name: product_name,
 //         detail: detail,
 //         priority_level: datapriorityValue_Combobox,
@@ -680,7 +680,7 @@
 //       setreport_type(dataelement.report_type || "")
 //       setcas_number(dataelement.cas_number || "")
 //       setrequest_company_id(dataelement.request_company_id)
-//       setarea_of_detection_dept(dataelement.area_of_detection_dept || "")
+//       setarea_of_detection_dept_id(dataelement.area_of_detection_dept_id || "")
 //       setproduct_name(dataelement.product_name || "")
 //       setlot_no(dataelement.lot_no || "")
 //       setuser_file_name(dataelement.user_file_name || "")

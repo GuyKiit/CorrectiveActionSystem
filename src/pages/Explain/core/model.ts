@@ -20,7 +20,7 @@ export type ListExplainContextProps = {
     respondent_domain_id?: string | null
     respondent_department_id?: number | null
     respondent_email?: string | null
-    area_of_detection_dept?: string | null
+    area_of_detection_dept_id?: string | null
     product_name?: string | null
     detail?: string | null
     user_file_name?: string | null
@@ -114,7 +114,7 @@ export type ListExplainContextProps = {
     setrespondent_email: Dispatch<SetStateAction<string | null>>;
     setrespondent_other_name: Dispatch<SetStateAction<string | null>>;
     setrespondent_other_email: Dispatch<SetStateAction<string | null>>;
-    setarea_of_detection_dept: Dispatch<SetStateAction<string | null>>;
+    setarea_of_detection_dept_id: Dispatch<SetStateAction<string | null>>;
     setother: Dispatch<SetStateAction<string | null>>;
     setproduct_name: Dispatch<SetStateAction<string | null>>;
     setdetail: Dispatch<SetStateAction<string | null>>;
@@ -196,7 +196,7 @@ export const initialListComplaint: ListExplainContextProps = {
     setrespondent_email: () => { },
     setrespondent_other_name: () => { },
     setrespondent_other_email: () => { },
-    setarea_of_detection_dept: () => { },
+    setarea_of_detection_dept_id: () => { },
     setproduct_name: () => { },
     setdetail: () => { },
     setcomplaint_type_other: () => { },
