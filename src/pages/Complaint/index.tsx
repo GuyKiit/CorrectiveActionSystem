@@ -470,9 +470,9 @@ export default function Complaint() {
   const Complaint_Get = async () => {
     setIsLoadingScreen(true)
     const dataset = {
-      cas_number: TextNameSearch.cas_number,
-      product_name: TextNameSearch.product_name,
-      lot_no: TextNameSearch.lot_no,
+      // cas_number: TextNameSearch.cas_number,
+      // product_name: TextNameSearch.product_name,
+      // lot_no: TextNameSearch.lot_no,
     }
 
     try {
@@ -500,6 +500,7 @@ export default function Complaint() {
             responseData.push(el);
           });
         }
+        console.log("⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️", responseData, "⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️");
         setdatalist(responseData);
       }
     } catch (e) {
@@ -821,7 +822,7 @@ export default function Complaint() {
     photo_Get();
     priority_Get();
     CasDomainGet();
-    ListSearchGet();
+    // ListSearchGet();
     CasDepartmentDomainGet();
   }, []);
 
