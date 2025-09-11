@@ -78,7 +78,13 @@ type LovType = {
   lov3: string;
 };
 
-export default function ComplaintInsert({
+type FileData = {
+  file: File;
+  attachmentType?: string;
+  otherText?: string;
+};
+
+export default function ComplaintBody({
   action,
   dataelement,
   readonlyTextField,
@@ -101,18 +107,19 @@ export default function ComplaintInsert({
     request_name,
     request_company_id,
     request_domain_id,
-    request_department_id,
     request_position,
     request_email,
     request_phone,
     request_date,
     respondent_company_id,
+    // request_department_id,
     respondent_domain_id,
     respondent_department_id,
     respondent_email,
     respondent_other_name,
     respondent_other_email,
     area_of_detection_dept_id,
+    area_of_detection_dept_name,
     product_name,
     detail,
     priority_level,
@@ -162,6 +169,7 @@ export default function ComplaintInsert({
     dataset_company,
     dataset_department,
     dataset_domain,
+    complaintFiles,
 
 
     setComplaint_no,
@@ -172,7 +180,7 @@ export default function ComplaintInsert({
     setrequest_name,
     setrequest_company_id,
     setrequest_domain_id,
-    setrequest_department_id,
+    // setrequest_department_id,
     setrequest_position,
     setrequest_email,
     setrequest_phone,
@@ -185,6 +193,7 @@ export default function ComplaintInsert({
     setrespondent_other_name,
     setrespondent_other_email,
     setarea_of_detection_dept_id,
+    setarea_of_detection_dept_name,
     setproduct_name,
     setdetail,
     setcomplaint_type_other,
@@ -237,6 +246,7 @@ export default function ComplaintInsert({
     setdataset_company,
     setdataset_department,
     setdataset_domain,
+    setcomplaintFiles
 
   } = useListComplaint();
 
@@ -258,6 +268,12 @@ export default function ComplaintInsert({
   const [files, setFiles] = useState<File[]>([]);
   const [fileAttachmentTypes, setFileAttachmentTypes] = useState<{ [fileIndex: number]: string }>({});
   const [fileOtherTexts, setFileOtherTexts] = useState<{ [fileIndex: number]: string }>({});
+  const [fileList, setFileList] = useState<FileData[]>([]);
+  const [request_department_id, setrequest_department_id] = React.useState<{
+    itasset_department_id: number;
+    itasset_department_name: string;
+  } | null>(null);
+
 
   // Hidden Variables ======================================================
   const [isFormHidden, setisFormHidden] = useState(true);
@@ -316,19 +332,11 @@ export default function ComplaintInsert({
     setrespondent_company_id(dataset_company[0]);
     setrequest_domain_id(dataset_company[0]);
     setrequest_company_id(dataset_company[0]);
+    setrequest_department_id(user);
 
-
-
-    // if (!val) {
-    //   setFilteredComplaintType([]);
-    //   setFilteredComplaintRs([]);
-    //   setFilteredphoto([]);
-    //   setFilteredpriority([]);
-
-    //   return;
   };
   const handleCheckboxChangeCT = (item: LovType) => {
-    console.log("item", item);
+    console.log("💛💛item", item);
 
     setdataComplaintType((prev: LovType[] = []) => {
       let newData: LovType[];
@@ -441,60 +449,52 @@ export default function ComplaintInsert({
     setdatapriority(prev => (prev?.id === item.id ? null : item));
   };
   const handleFileChange = (fileArray: File[]) => {
-    const file = fileArray[0]; // เลือกไฟล์ตัวแรก
-    if (file) {
-      setFiles(prev => [...prev, file]); // push File เดี่ยวเข้า File[]
-    }
+    if (!fileArray || fileArray.length === 0) return;
+
+    setFileList(prev => {
+      const updatedList = [
+        ...prev,
+        ...fileArray.map(f => ({
+          file: f,
+          original_file_name: f.name,   // เก็บชื่อไฟล์เดิม
+          attachmentType: "",
+          otherText: ""
+        }))
+      ];
+
+      // sync เข้า context
+      setcomplaintFiles(updatedList);
+
+      return updatedList;
+    });
   };
+
   const handleRemoveFile = (index: number) => {
-    setFiles(prevFiles => prevFiles.filter((_, i) => i !== index));
-    // Remove attachment types for this file
-    setFileAttachmentTypes(prev => {
-      const newTypes = { ...prev };
-      delete newTypes[index];
-      // Reindex remaining files
-      const reindexed: { [fileIndex: number]: string } = {};
-      Object.keys(newTypes).forEach((key) => {
-        const keyNum = parseInt(key);
-        if (keyNum > index) {
-          reindexed[keyNum - 1] = newTypes[keyNum];
-        } else {
-          reindexed[keyNum] = newTypes[keyNum];
-        }
-      });
-      return reindexed;
+    setFileList(prev => {
+      const updatedList = prev.filter((_, i) => i !== index);
+      setcomplaintFiles(updatedList); // sync
+      return updatedList;
     });
   };
-  const handleFileAttachmentTypeChange = (fileIndex: number, attachmentTypeId: string, checked: boolean) => {
-    setFileAttachmentTypes(prev => {
-      const newTypes = { ...prev };
-      
-      if (checked) {
-        // Single selection - replace any existing selection
-        newTypes[fileIndex] = attachmentTypeId;
-      } else {
-        // Remove selection if unchecked
-        delete newTypes[fileIndex];
-        // Clear the "Other" text if unchecked
-        if (attachmentTypeId === "TRR_AT_4") {
-          setFileOtherTexts(prevTexts => {
-            const newTexts = { ...prevTexts };
-            delete newTexts[fileIndex];
-            return newTexts;
-          });
-        }
-      }
-      
-      console.log("File attachment types updated:", newTypes);
-      return newTypes;
+  const handleFileAttachmentTypeChange = (index: number, type: string) => {
+    setFileList(prev => {
+      const updated = [...prev];
+      updated[index] = {
+        ...updated[index],
+        attachmentType: type,
+        otherText: type === "TRR_AT_4" ? updated[index].otherText : "",
+      };
+      setcomplaintFiles(updated); // sync
+      return updated;
     });
   };
-  
-  const handleFileOtherTextChange = (fileIndex: number, text: string) => {
-    setFileOtherTexts(prev => ({
-      ...prev,
-      [fileIndex]: text
-    }));
+  const handleFileOtherTextChange = (index: number, text: string) => {
+    setFileList(prev => {
+      const updated = [...prev];
+      updated[index] = { ...updated[index], otherText: text };
+      setcomplaintFiles(updated); // sync
+      return updated;
+    });
   };
 
   // Functions (Initial, Calculation or ETC.) =================================================
@@ -520,11 +520,8 @@ export default function ComplaintInsert({
     setdetail("");
     setcompTypeOther("");
     setcompRsOther("");
-
-
-
-
   };
+
   const priorityCalculateRespondDate = (daysToAdd: number, checked: boolean) => {
     if (checked) {
       const newDate = dayjs().add(daysToAdd, "day"); // use dayjs instead of Date
@@ -535,6 +532,13 @@ export default function ComplaintInsert({
   };
 
   React.useEffect(() => {
+
+    // if (user && user.length > 0) {
+    //   setrequest_department_id({
+    //     itasset_department_id: user[0].itasset_department_id,
+    //     itasset_department_name: user[0].itasset_department_name
+    //   });
+    // }
 
     if (dataReportTypeValue) {
       const val = dataReportTypeValue;
@@ -565,6 +569,7 @@ export default function ComplaintInsert({
         setFilteredComplaintRs(filteredRs);
       }
 
+
     } else {
       // reset ถ้า val null
       setFilteredComplaintType([]);
@@ -573,7 +578,7 @@ export default function ComplaintInsert({
       setFilteredpriority([]);
 
     }
-  }, [dataReportTypeValue, dataComplaintType_Combobox, dataComplaintRs_Combobox, dataphoto_Combobox, datapriority_Combobox]);
+  }, [user, dataReportTypeValue, dataComplaintType_Combobox, dataComplaintRs_Combobox, dataphoto_Combobox, datapriority_Combobox, dataelement]);
 
   return (
     <Box
@@ -635,6 +640,7 @@ export default function ComplaintInsert({
                 value={cas_number}
                 labelName="CAS Number"
                 onchange={(e) => { setcas_number(e); }}
+                readonly
               />
             </Grid>
             <Grid size={4} mt={2}>
@@ -646,18 +652,18 @@ export default function ComplaintInsert({
                 readonly
               />
             </Grid>
-            <Paper elevation={3} sx={{ 
-              p: 3, 
-              mt: 3, 
-              width: "100%", 
+            <Paper elevation={3} sx={{
+              p: 3,
+              mt: 3,
+              width: "100%",
               borderRadius: 3,
               background: 'linear-gradient(135deg, #fff5f5 0%, #ffffff 100%)',
               border: '1px solid #ffcdd2',
               boxShadow: '0 4px 12px rgba(244,67,54,0.1)'
             }}>
-              <Box sx={{ 
-                display: 'flex', 
-                alignItems: 'center', 
+              <Box sx={{
+                display: 'flex',
+                alignItems: 'center',
                 mb: 3,
                 pb: 2,
                 borderBottom: '2px solid #f44336'
@@ -669,13 +675,13 @@ export default function ComplaintInsert({
                   borderRadius: 1,
                   mr: 2
                 }} />
-                <label 
-                  className="sarabun-regular-datatable" 
-                  style={{ 
-                    fontSize: '18px', 
-                    fontWeight: '600', 
+                <label
+                  className="sarabun-regular-datatable"
+                  style={{
+                    fontSize: '18px',
+                    fontWeight: '600',
                     color: '#d32f2f',
-                    margin: 0 
+                    margin: 0
                   }}
                 >
                   แผนกผู้ถูกร้องเรียน (Respondent Department)
@@ -698,6 +704,7 @@ export default function ComplaintInsert({
                     labelName={"วันที่พบปัญหา (Date of Detection)"}
                     value={date_of_detection}
                     handleChange={(val) => setdate_of_detection(val ?? null)}
+                    readonly={action === "Read"}
                   />
                 </Grid>
                 <Grid size={4}>
@@ -707,15 +714,20 @@ export default function ComplaintInsert({
                     labelName={"แผนกที่พบปัญหา (Department / Area of Detection)"}
                     options={dataset_department}
                     column="itasset_department_name"
-                    setvalue={setrespondent_department_id}
+                    setvalue={(e) => {
+                      console.log(e);  // ดูค่าของ e ที่ถูกส่งมาจาก AutocompleteComboBox
+                      setrespondent_department_id(e);
+                    }}
+                    readonly={action === "Read"}
                   />
                 </Grid>
                 <Grid size={4}>
                   <FullWidthTextField
                     required="required"
                     value={product_name}
-                    labelName="ชื่อผลิตภัณฑ์ (Product Name)"
+                    labelName="ชื่อสินค้า (Product Name)"
                     onchange={(e) => setproduct_name(e)}
+                    readonly={action === "Read"}
                   />
                 </Grid>
                 <Grid size={4}>
@@ -724,23 +736,25 @@ export default function ComplaintInsert({
                     value={lot_no}
                     labelName="Lot No./Bag No"
                     onchange={(e) => setlot_no(e)}
+                    readonly={action === "Read"}
                   />
                 </Grid>
                 <Grid size={4}>
                   <FullWidthTextField
                     required="required"
-                    value={user[0]?.employee_email ? user[0]?.employee_email : '-'}
+                    value={respondent_email}
                     labelName="อีเมล (Email)"
-                    onchange={(e) => setrespondent_email(e.target.value)}
+                    onchange={(e) => setrespondent_email(e)}
+                    readonly={action === "Read"}
                   />
                 </Grid>
               </Grid>
-              
+
               {/* รายละเอียด Sub-section */}
               <Box sx={{ mt: 4 }}>
-                <Box sx={{ 
-                  display: 'flex', 
-                  alignItems: 'center', 
+                <Box sx={{
+                  display: 'flex',
+                  alignItems: 'center',
                   mb: 3,
                   pb: 1,
                   borderBottom: '1px solid #ffcdd2'
@@ -752,38 +766,38 @@ export default function ComplaintInsert({
                     borderRadius: 0.5,
                     mr: 1.5
                   }} />
-                  <label 
-                    className="sarabun-regular-datatable" 
-                    style={{ 
-                      fontSize: '16px', 
-                      fontWeight: '500', 
+                  <label
+                    className="sarabun-regular-datatable"
+                    style={{
+                      fontSize: '16px',
+                      fontWeight: '500',
                       color: '#d32f2f',
-                      margin: 0 
+                      margin: 0
                     }}
                   >
                     รายละเอียด
                   </label>
                 </Box>
-                
+
                 <Grid container spacing={2} sx={{ alignItems: 'stretch' }}>
                   {dataReportTypeValue && (
                     <Grid size={6} sx={{ display: 'flex' }}>
-                      <Paper elevation={1} sx={{ 
-                        p: 2, 
-                        borderRadius: 2, 
+                      <Paper elevation={1} sx={{
+                        p: 2,
+                        borderRadius: 2,
                         backgroundColor: '#fafafa',
                         width: '100%',
                         display: 'flex',
                         flexDirection: 'column',
                         minHeight: '400px'
                       }}>
-                        <label 
+                        <label
                           className="sarabun-regular-datatable"
-                          style={{ 
-                            fontSize: '18px', 
-                            fontWeight: '600', 
+                          style={{
+                            fontSize: '18px',
+                            fontWeight: '600',
                             color: '#333',
-                            margin: 0 
+                            margin: 0
                           }}
                         >
                           ประเภทข้อร้องเรียน (Type Of Complaint) <span style={{ color: 'red' }}> *</span>
@@ -797,6 +811,7 @@ export default function ComplaintInsert({
                                   labelName={item.lov1}
                                   value={dataComplaintType.some(c => c.id === item.id)}
                                   onchange={() => handleCheckboxChangeCT(item)}
+                                  readonly={action === "Read"}
                                 />
                               </Grid>
                             ))}
@@ -806,7 +821,8 @@ export default function ComplaintInsert({
                               <FullWidthTextArea
                                 value={compTypeOther}
                                 labelName="Other:"
-                                onchange={(e) => setcompTypeOther(e)}
+                                onchange={(e) => setcompTypeOther(e.target.value)}
+                                readonly={action === "Read"}
                               />
                             )}
                           </Box>
@@ -817,22 +833,22 @@ export default function ComplaintInsert({
 
                   {!isRSHidden && dataReportTypeValue && (
                     <Grid size={6} sx={{ display: 'flex' }}>
-                      <Paper elevation={1} sx={{ 
-                        p: 2, 
-                        borderRadius: 2, 
+                      <Paper elevation={1} sx={{
+                        p: 2,
+                        borderRadius: 2,
                         backgroundColor: '#fafafa',
                         width: '100%',
                         display: 'flex',
                         flexDirection: 'column',
                         minHeight: '400px'
                       }}>
-                        <label 
+                        <label
                           className="sarabun-regular-datatable"
-                          style={{ 
-                            fontSize: '18px', 
-                            fontWeight: '600', 
+                          style={{
+                            fontSize: '18px',
+                            fontWeight: '600',
                             color: '#333',
-                            margin: 0 
+                            margin: 0
                           }}
                         >
                           มาตรฐานอ้างอิง (Reference Standard) <span style={{ color: 'red' }}> *</span>
@@ -846,6 +862,7 @@ export default function ComplaintInsert({
                                   labelName={item.lov1}
                                   value={dataComplaintRs.some(rs => rs.id === item.id)}
                                   onchange={() => handleCheckboxChangeRS(item)}
+                                  readonly={action === "Read"}
                                 />
                               </Grid>
                             ))}
@@ -856,6 +873,7 @@ export default function ComplaintInsert({
                                 value={compRsOther}
                                 labelName="Other:"
                                 onchange={(e) => setcompRsOther(e)}
+                                readonly={action === "Read"}
                               />
                             )}
                             {dataComplaintRs.some(rs => rs.id === "TRR_RS_NCR_6") && (
@@ -863,6 +881,7 @@ export default function ComplaintInsert({
                                 value={clauseOther}
                                 labelName="Clause:"
                                 onchange={(e) => setclauseOther(e)}
+                                readonly={action === "Read"}
                               />
                             )}
                           </Box>
@@ -871,22 +890,58 @@ export default function ComplaintInsert({
                     </Grid>
                   )}
                 </Grid>
-                
                 {/* Priority Section */}
                 {dataReportTypeValue && (
                   <Box sx={{ mt: 3 }}>
-                    <Paper elevation={1} sx={{ 
-                      p: 2, 
-                      borderRadius: 2, 
+                    <Paper elevation={1} sx={{
+                      p: 2,
+                      borderRadius: 2,
                       backgroundColor: '#fafafa'
                     }}>
-                      <label 
+                      <label
                         className="sarabun-regular-datatable"
-                        style={{ 
-                          fontSize: '18px', 
-                          fontWeight: '600', 
+                        style={{
+                          fontSize: '18px',
+                          fontWeight: '600',
                           color: '#333',
-                          margin: 0 
+                          margin: 0
+                        }}
+                      >
+                        รายละเอียด (Detail) <span style={{ color: 'red' }}> *</span>
+                      </label>
+                      <Divider sx={{ my: 2 }} />
+                      <Grid container spacing={2} sx={{ justifyContent: 'center', alignItems: 'flex-start' }}>
+
+
+                        {/* Response Date Field - positioned after Emergency option */}
+                        <Grid size={12}>
+                          <FullWidthTextArea
+                            value={detail}
+                            labelName=""
+                            onchange={(e) => setdetail(e)}
+                            readonly={action === "Read"}
+                          />
+
+                        </Grid>
+                      </Grid>
+                    </Paper>
+                  </Box>
+                )}
+                {/* Priority Section */}
+                {dataReportTypeValue && (
+                  <Box sx={{ mt: 3 }}>
+                    <Paper elevation={1} sx={{
+                      p: 2,
+                      borderRadius: 2,
+                      backgroundColor: '#fafafa'
+                    }}>
+                      <label
+                        className="sarabun-regular-datatable"
+                        style={{
+                          fontSize: '18px',
+                          fontWeight: '600',
+                          color: '#333',
+                          margin: 0
                         }}
                       >
                         ระดับความสำคัญ (Priority) <span style={{ color: 'red' }}> *</span>
@@ -899,69 +954,69 @@ export default function ComplaintInsert({
                             return (order[a.lov_code] || 999) - (order[b.lov_code] || 999);
                           })
                           .map((item: LovType) => (
-                          <Grid size={3} key={item.id}>
-                            <Box sx={{ 
-                              border: '2px solid #e0e0e0',
-                              borderRadius: 2,
-                              p: 2,
-                              textAlign: 'center',
-                              backgroundColor: datapriority?.id === item.id ? '#fff3e0' : '#ffffff',
-                              borderColor: datapriority?.id === item.id ? '#ff9800' : '#e0e0e0',
-                              cursor: 'pointer',
-                              transition: 'all 0.2s ease',
-                              '&:hover': {
-                                borderColor: '#ff9800',
-                                backgroundColor: '#fff8f0'
-                              }
-                            }}>
-                              <FormControlLabel
-                                control={
-                                  <Radio
-                                    checked={datapriority?.id === item.id}
-                                    onChange={(e) => {
-                                      // console.log("Priority selected:", e);
-                                      console.log("Priority selected:", item);
-                                      setdatapriorityValue_Combobox(item.id);
-                                      setdatapriority(item);
-                                      const days = Number(item.lov3 ?? 0);
-                                      priorityCalculateRespondDate(days, true);
-                                      console.log("เลือก priority:", item.lov_code, "Days:", days);
-                                    }}
-                                    sx={{ color: '#ff9800' }}
-                                  />
+                            <Grid size={3} key={item.id}>
+                              <Box sx={{
+                                border: '2px solid #e0e0e0',
+                                borderRadius: 2,
+                                p: 2,
+                                textAlign: 'center',
+                                backgroundColor: datapriority?.id === item.id ? '#fff3e0' : '#ffffff',
+                                borderColor: datapriority?.id === item.id ? '#ff9800' : '#e0e0e0',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s ease',
+                                '&:hover': {
+                                  borderColor: '#ff9800',
+                                  backgroundColor: '#fff8f0'
                                 }
-                                label={
-                                  <Box sx={{ textAlign: 'center' }}>
-                                    <Box sx={{ 
-                                      fontSize: '16px', 
-                                      fontWeight: '600',
-                                      color: datapriority?.id === item.id ? '#f57c00' : '#666'
-                                    }}>
-                                      {item.lov1} ({item.lov_code})
+                              }}>
+                                <FormControlLabel
+                                  control={
+                                    <Radio
+                                      checked={datapriority?.id === item.id}
+                                      onChange={(e) => {
+                                        // console.log("Priority selected:", e);
+                                        console.log("Priority selected:", item);
+                                        setdatapriorityValue_Combobox(item.id);
+                                        setdatapriority(item);
+                                        const days = Number(item.lov3 ?? 0);
+                                        priorityCalculateRespondDate(days, true);
+                                        console.log("เลือก priority:", item.lov_code, "Days:", days);
+                                      }}
+                                      sx={{ color: '#ff9800' }}
+                                    />
+                                  }
+                                  label={
+                                    <Box sx={{ textAlign: 'center' }}>
+                                      <Box sx={{
+                                        fontSize: '16px',
+                                        fontWeight: '600',
+                                        color: datapriority?.id === item.id ? '#f57c00' : '#666'
+                                      }}>
+                                        {item.lov1} ({item.lov_code})
+                                      </Box>
+                                      <Box sx={{
+                                        fontSize: '12px',
+                                        color: datapriority?.id === item.id ? '#f57c00' : '#999',
+                                        mt: 0.5
+                                      }}>
+                                        (ภายใน {item.lov3} วัน)
+                                      </Box>
                                     </Box>
-                                    <Box sx={{ 
-                                      fontSize: '12px', 
-                                      color: datapriority?.id === item.id ? '#f57c00' : '#999',
-                                      mt: 0.5
-                                    }}>
-                                      (ภายใน {item.lov3} วัน)
-                                    </Box>
-                                  </Box>
-                                }
-                                sx={{ 
-                                  width: "100%", 
-                                  m: 0,
-                                  flexDirection: 'column',
-                                  alignItems: 'center'
-                                }}
-                              />
-                            </Box>
-                          </Grid>
-                        ))}
-                        
+                                  }
+                                  sx={{
+                                    width: "100%",
+                                    m: 0,
+                                    flexDirection: 'column',
+                                    alignItems: 'center'
+                                  }}
+                                />
+                              </Box>
+                            </Grid>
+                          ))}
+
                         {/* Response Date Field - positioned after Emergency option */}
                         <Grid size={3}>
-                          <Box sx={{ 
+                          <Box sx={{
                             border: '2px solid #e0e0e0',
                             borderRadius: 2,
                             p: 2,
@@ -974,8 +1029,8 @@ export default function ComplaintInsert({
                             flexDirection: 'column',
                             justifyContent: 'center'
                           }}>
-                            <Box sx={{ 
-                              fontSize: '16px', 
+                            <Box sx={{
+                              fontSize: '16px',
                               fontWeight: '600',
                               mb: 3
                             }}>
@@ -997,18 +1052,18 @@ export default function ComplaintInsert({
               </Box>
             </Paper>
 
-            <Paper elevation={3} sx={{ 
-              p: 3, 
-              mt: 3, 
-              width: "100%", 
+            <Paper elevation={3} sx={{
+              p: 3,
+              mt: 3,
+              width: "100%",
               borderRadius: 3,
               background: 'linear-gradient(135deg, #f0f8ff 0%, #ffffff 100%)',
               border: '1px solid #bbdefb',
               boxShadow: '0 4px 12px rgba(33,150,243,0.1)'
             }}>
-              <Box sx={{ 
-                display: 'flex', 
-                alignItems: 'center', 
+              <Box sx={{
+                display: 'flex',
+                alignItems: 'center',
                 mb: 3,
                 pb: 2,
                 borderBottom: '2px solid #2196f3'
@@ -1020,13 +1075,13 @@ export default function ComplaintInsert({
                   borderRadius: 1,
                   mr: 2
                 }} />
-                <label 
-                  className="sarabun-regular-datatable" 
-                  style={{ 
-                    fontSize: '18px', 
-                    fontWeight: '600', 
+                <label
+                  className="sarabun-regular-datatable"
+                  style={{
+                    fontSize: '18px',
+                    fontWeight: '600',
                     color: '#1976d2',
-                    margin: 0 
+                    margin: 0
                   }}
                 >
                   แผนกที่ทำการร้องเรียน (Reporting Department)
@@ -1050,13 +1105,19 @@ export default function ComplaintInsert({
                   />
                 </Grid>
                 <Grid size={4}>
-                  <AutocompleteComboBox
+                  {/* <AutocompleteComboBox
                     required="required"
                     value={request_department_id}
                     labelName={"แผนก (Department)"}
                     options={dataset_department}
                     column="itasset_department_name"
                     setvalue={setrequest_department_id}
+                  /> */}
+                  <FullWidthTextField
+                    value={user[0]?.itasset_department_id ? user[0]?.itasset_department_name : '-'}
+                    labelName="แผนก (Department)"
+                    onchange={(e) => setrequest_department_id(e.target.value)}
+                    readonly
                   />
                 </Grid>
                 <Grid size={4}>
@@ -1085,7 +1146,7 @@ export default function ComplaintInsert({
                     readonly
                   />
                 </Grid>
-                <Grid size={4}>
+                {/* <Grid size={4}>
                   <AutocompleteComboBox
                     value={request_domain_id}
                     labelName={"โดเมน (Domain)"}
@@ -1094,30 +1155,42 @@ export default function ComplaintInsert({
                     setvalue={setrequest_domain_id}
                     readonly
                   />
-                </Grid>
+                </Grid> */}
                 <Grid size={4}>
-                  <FullWidthTextField
+                  <AutocompleteComboBox
+                    required="required"
+                    value={dataset_department.find((d: any) => d.itasset_department_id === area_of_detection_dept_id) || null}
+                    labelName={"แผนกที่พบปัญหา (Department / Area of Detection)"}
+                    options={dataset_department}
+                    column="itasset_department_name"
+                    setvalue={(v) => {
+                      setarea_of_detection_dept_id(v?.itasset_department_id ?? null);
+                      setarea_of_detection_dept_name(v?.itasset_department_name ?? "");
+                    }}
+                    readonly={action === "Read"}
+                  />
+                  {/* <FullWidthTextField
                     value={user[0]?.itasset_department_id ? user[0]?.itasset_department_id : '-'}
                     labelName="แผนกที่พบปัญหา (Department / Area of Detection)"
                     onchange={(e) => setarea_of_detection_dept_id(e.target.value)}
                     readonly
-                  />
+                  /> */}
                 </Grid>
               </Grid>
             </Paper>
 
-            <Paper elevation={3} sx={{ 
-              p: 3, 
-              mt: 3, 
-              width: "100%", 
+            <Paper elevation={3} sx={{
+              p: 3,
+              mt: 3,
+              width: "100%",
               borderRadius: 3,
               background: 'linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%)',
               border: '1px solid #e0e0e0',
               boxShadow: '0 4px 12px rgba(158,158,158,0.1)'
             }}>
-              <Box sx={{ 
-                display: 'flex', 
-                alignItems: 'center', 
+              <Box sx={{
+                display: 'flex',
+                alignItems: 'center',
                 mb: 3,
                 pb: 2,
                 borderBottom: '2px solid #9e9e9e'
@@ -1129,30 +1202,30 @@ export default function ComplaintInsert({
                   borderRadius: 1,
                   mr: 2
                 }} />
-                <label 
-                  className="sarabun-regular-datatable" 
-                  style={{ 
-                    fontSize: '18px', 
-                    fontWeight: '600', 
+                <label
+                  className="sarabun-regular-datatable"
+                  style={{
+                    fontSize: '18px',
+                    fontWeight: '600',
                     color: '#616161',
-                    margin: 0 
+                    margin: 0
                   }}
                 >
                   แนบไฟล์ (Attachments)
                 </label>
               </Box>
-              
+
               <Grid container spacing={2}>
                 {dataReportTypeValue && (
                   <Grid size={12}>
                     {/* <Paper elevation={2} sx={{ p: 2, borderRadius: 2, mb: 2 }}>
-                      <label 
+                      <label
                         className="sarabun-regular-datatable"
-                        style={{ 
-                          fontSize: '18px', 
-                          fontWeight: '600', 
+                        style={{
+                          fontSize: '18px',
+                          fontWeight: '600',
                           color: '#333',
-                          margin: 0 
+                          margin: 0
                         }}
                       >
                         Please attach any relevant documents or photos
@@ -1177,9 +1250,9 @@ export default function ComplaintInsert({
                         />
                       )}
                     </Paper> */}
-                    
+
                     <BrowseFileUpload setFile={handleFileChange} setFileName={() => { }} />
-                    
+
                     {/* Enhanced File Table with Attachment Type Checkboxes */}
                     <TableContainer component={Paper} sx={{ mt: 2 }}>
                       <Table size="small">
@@ -1192,90 +1265,42 @@ export default function ComplaintInsert({
                           </TableRow>
                         </TableHead>
                         <TableBody>
-                          {files.map((file: File, index: number) => (
+                          {fileList.map((item, index) => (
                             <TableRow key={index}>
-                              <TableCell sx={{ verticalAlign: 'top', pt: 2 }}>
-                                {file.name}
-                              </TableCell>
-                              <TableCell sx={{ verticalAlign: 'top', pt: 2 }}>
-                                {(file.size / (1024 * 1024)).toFixed(2)} MB
-                              </TableCell>
-                              <TableCell sx={{ verticalAlign: 'middle', textAlign: 'center' }}>
-                                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, alignItems: 'start' }}>
-                                  {/* Horizontal radio buttons for single selection */}
-                                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, justifyContent: 'center' }}>
-                                    {(filteredphoto || []).map((item: LovType) => (
-                                      <FormControlLabel
-                                        key={`${index}-${item.id}`}
-                                        control={
-                                          <Box component="input" 
-                                            type="radio"
-                                            name={`file-${index}-attachment-type`}
-                                            checked={fileAttachmentTypes[index] === item.id}
-                                            onChange={(e) => handleFileAttachmentTypeChange(
-                                              index, 
-                                              item.id, 
-                                              (e.target as HTMLInputElement).checked
-                                            )}
-                                            sx={{ mr: 1 }}
-                                          />
-                                        }
-                                        label={
-                                          <Box sx={{ fontSize: '14px' }}>
-                                            {item.lov1}
-                                          </Box>
-                                        }
-                                        sx={{ 
-                                          margin: 0, 
-                                          display: 'flex', 
-                                          alignItems: 'center',
-                                          '& .MuiFormControlLabel-label': {
-                                            fontSize: '14px'
-                                          }
-                                        }}
+                              <TableCell>{item.file.name}</TableCell>
+                              <TableCell>{(item.file.size / (1024 * 1024)).toFixed(2)} MB</TableCell>
+                              <TableCell>
+                                {filteredphoto.map(photo => (
+                                  <FormControlLabel
+                                    key={`${index}-${photo.id}`}
+                                    control={
+                                      <Radio
+                                        checked={item.attachmentType === photo.id}
+                                        onChange={() => handleFileAttachmentTypeChange(index, photo.id)}
                                       />
-                                    ))}
-                                  </Box>
-                                  
-                                  {/* Conditional textarea for "Others" */}
-                                  {fileAttachmentTypes[index] === "TRR_AT_4" && (
-                                    <Box sx={{ mt: 1, width: '100%' }}>
-                                      <TextField
-                                        size="small"
-                                        fullWidth
-                                        multiline
-                                        rows={3}
-                                        variant="outlined"
-                                        placeholder="Please specify..."
-                                        value={fileOtherTexts[index] || ''}
-                                        onChange={(e) => handleFileOtherTextChange(index, e.target.value)}
-                                        sx={{ 
-                                          '& .MuiInputBase-input': { 
-                                            fontSize: '14px',
-                                            padding: '8px 12px'
-                                          },
-                                          '& .MuiOutlinedInput-root': {
-                                            borderRadius: '4px'
-                                          }
-                                        }}
-                                      />
-                                    </Box>
-                                  )}
-                                </Box>
+                                    }
+                                    label={photo.lov1}
+                                  />
+                                ))}
+                                {item.attachmentType === "TRR_AT_4" && (
+                                  <TextField
+                                    fullWidth
+                                    multiline
+                                    rows={3}
+                                    value={item.otherText || ""}
+                                    onChange={e => handleFileOtherTextChange(index, e.target.value)}
+                                    placeholder="Please specify..."
+                                  />
+                                )}
                               </TableCell>
-                              <TableCell sx={{ verticalAlign: 'top', pt: 2 }}>
-                                <IconButton
-                                  color="error"
-                                  size="small"
-                                  onClick={() => handleRemoveFile(index)}
-                                >
+                              <TableCell>
+                                <IconButton color="error" onClick={() => handleRemoveFile(index)}>
                                   <DeleteIcon />
                                 </IconButton>
                               </TableCell>
                             </TableRow>
-                            
                           ))}
-                          {files.length === 0 && (
+                          {fileList.length === 0 && (
                             <TableRow>
                               <TableCell colSpan={4} sx={{ textAlign: 'center', py: 3, color: '#999' }}>
                                 ยังไม่มีไฟล์ที่อัปโหลด
@@ -1298,3 +1323,4 @@ export default function ComplaintInsert({
     </Box>
   );
 }
+

@@ -70,6 +70,7 @@ interface LovType {
   lov_type: string;
   lov_code: string;
   lov1: string;
+  lov2: string;
   lov3: string;
   complaint_type_id: string;
   complaint_at_id: string;
@@ -224,7 +225,8 @@ export default function Complaint() {
   const [blockValidateErrors, setBlockValidateErrors] = useState<{ [index: number]: data_detail }>({});
 
   // Date Search Variables (from index.tsx)
-  const [startDateSearch, setStartDateSearch] = React.useState<dayjs.Dayjs | undefined | null>(dayjs().subtract(1, 'month'));
+  const [respondWithinSearch, setrespondWithinSearch] = React.useState<dayjs.Dayjs | undefined | null>(dayjs().subtract(1, 'month'));
+  const [documentDateSearch, setdocumentDateSearch] = React.useState<dayjs.Dayjs | undefined | null>(dayjs().subtract(1, 'month'));
   const [endDateSearch, setEndDateSearch] = React.useState<dayjs.Dayjs | undefined | null>(dayjs().add(3, 'month'));
 
   // Search Variables (from index.tsx)
@@ -261,6 +263,13 @@ export default function Complaint() {
   // =====================================================================================================
   // UTILITY FUNCTIONS (from index.tsx and ComplaintRead.tsx)
   // =====================================================================================================
+
+  // Reset Form Function (from index.tsx)
+  const resetSearchTable = () => {
+    setdocumentDateSearch(null);
+    setrespondWithinSearch(null);
+    setEndDateSearch(null);
+  };
 
   // Reset Form Function (from index.tsx)
   const resetForm = () => {
@@ -304,12 +313,14 @@ export default function Complaint() {
   };
 
   // Update Complaint ID Functions (from index.tsx)
-  function compTypeUpdateCompId(dataComplaintTypeValue_Combobox: any, complaintid: string, compTypeOther: string) {
+  function compTypeUpdateCompId(dataComplaintTypeValue_Combobox: any, complaintid: string, compTypeOther: string,) {
     const updatedData = dataComplaintTypeValue_Combobox.map((item: any) => {
+      console.log("🧡🧡item",item)
       return {
         ...item,
         complaint_id: complaintid,
-        other: compTypeOther != null && compTypeOther != '' ? compTypeOther : null
+        other: item.isOther === "Y" ? (compTypeOther?.trim() || null) : null
+        
       };
     });
     return updatedData;
@@ -317,11 +328,14 @@ export default function Complaint() {
 
   function compRsUpdateCompId(dataComplaintRsValue_Combobox: any, complaintid: string, compRsOther: string, clauseOther: string) {
     const updatedData = dataComplaintRsValue_Combobox.map((item: any) => {
+      console.log("💚💚item",item)
       return {
         ...item,
         complaint_id: complaintid,
-        other: compRsOther != null && compRsOther != '' ? compRsOther : null,
-        clause: clauseOther != null && clauseOther != '' ? clauseOther : null
+        // other: compRsOther != null && compRsOther != '' ? compRsOther : null,
+        other: item.isOther === "Y" ? (compRsOther?.trim() || null) : null,
+        clause: clauseOther != null && clauseOther != '' ? clauseOther : null,
+        // clause: item.isOther === "Y" ? (clauseOther?.trim() || null) : null
       };
     });
     return updatedData;
@@ -580,9 +594,9 @@ export default function Complaint() {
   const ComplaintAdd = async () => {
     console.log("Departtttt", request_department_id?.itasset_department_id);
     console.log("Departtttt", request_department_id?.itasset_department_id);
-
+    console.log("🤍🤍dataComplaintTypeValue_Combobox",dataComplaintTypeValue_Combobox);
+    
     const tempid = uuidv4();
-
     // เตรียม Models
     const complainttypeModel = dataComplaintTypeValue_Combobox
       ? compTypeUpdateCompId(dataComplaintTypeValue_Combobox, tempid, compTypeOther)
@@ -696,7 +710,8 @@ export default function Complaint() {
       console.error("Upload failed:", error);
     } finally {
       setIsLoadingScreen(false);
-      // handleClose();
+      handleClose();
+      Complaint_Get();
     }
   };
 
@@ -854,6 +869,7 @@ export default function Complaint() {
 
   // Initialize data on component mount
   React.useEffect(() => {
+    resetSearchTable();
     Complaint_Get();
     ReportType_Get();
     ComplaintType_Get();
@@ -959,15 +975,15 @@ export default function Complaint() {
           <Grid size={4}>
             <DesktopDatePickers
               labelName={"ตอบกลับภายในวันที่ (Respond Within)"}
-              value={startDateSearch}
-              handleChange={setStartDateSearch}
+              value={respondWithinSearch}
+              handleChange={setrespondWithinSearch}
             />
           </Grid>
           <Grid size={4}>
             <DesktopDatePickers
               labelName={"วันที่ออกเอกสาร (Document Issuance Date)"}
-              value={startDateSearch}
-              handleChange={setStartDateSearch}
+              value={documentDateSearch}
+              handleChange={setdocumentDateSearch}
             />
           </Grid>
           <Grid size={4}>
@@ -978,6 +994,10 @@ export default function Complaint() {
             />
           </Grid>
         </Grid>
+
+        {/* ======================================================================== */}
+        {/* ======================================================================== */}
+
         <Grid container spacing={2} sx={{ mt: 2 }} justifyContent="flex-end" gap={1}>
           <Grid>
             <FullWidthButton

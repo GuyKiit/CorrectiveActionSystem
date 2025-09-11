@@ -74,7 +74,11 @@ type LovType = {
   lov_type: string;
   lov_code: string;
   lov1: string;
+  lov2: string;
   lov3: string;
+  lov4: string;
+  lov5: string;
+  lov6: string;
 };
 
 export default function ComplaintInsert({
@@ -315,18 +319,18 @@ export default function ComplaintInsert({
         newData = prev.filter(c => c.id !== item.id);
 
         // ถ้าเอาออกแล้วเป็น Other → เคลียร์ค่า
-        if (item.id === "TRR_CT_NCR_99") {
+        if (item.lov2 === "Y") {
           setcompTypeOther("");
         }
-        if (item.id === "TRR_CT_CAR_99") {
-          setcompTypeOther("");
-        }
-        if (item.id === "TRR_CT_OBS_99") {
-          setcompTypeOther("");
-        }
-        if (item.id === "TRR_CT_CPAR_99") {
-          setcompTypeOther("");
-        }
+        // if (item.id === "TRR_CT_CAR_99") {
+        //   setcompTypeOther("");
+        // }
+        // if (item.id === "TRR_CT_OBS_99") {
+        //   setcompTypeOther("");
+        // }
+        // if (item.id === "TRR_CT_CPAR_99") {
+        //   setcompTypeOther("");
+        // }
       } else {
         // เพิ่ม object แบบเต็ม
         newData = [...prev, item];

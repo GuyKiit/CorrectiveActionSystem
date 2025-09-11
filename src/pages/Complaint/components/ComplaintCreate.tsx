@@ -75,7 +75,11 @@ type LovType = {
   lov_type: string;
   lov_code: string;
   lov1: string;
+  lov2: string;
   lov3: string;
+  lov4: string;
+  lov5: string;
+  lov6: string;
 };
 
 type FileData = {
@@ -335,66 +339,73 @@ export default function ComplaintBody({
     setrequest_department_id(user);
 
   };
+
   const handleCheckboxChangeCT = (item: LovType) => {
-    console.log("item", item);
-
-    setdataComplaintType((prev: LovType[] = []) => {
-      let newData: LovType[];
-
-      if (prev.some(c => c.id === item.id)) {
-        // ถ้ามีอยู่แล้ว → เอาออก
-        newData = prev.filter(c => c.id !== item.id);
-
-        // ถ้าเอาออกแล้วเป็น Other → เคลียร์ค่า
-        if (item.id === "TRR_CT_NCR_99") {
-          setcompTypeOther("");
+      console.log("💛💛item", item);
+  
+      setdataComplaintType((prev: LovType[] = []) => {
+        let newData: LovType[];
+  
+        if (prev.some(c => c.id === item.id)) {
+          // ถ้ามีอยู่แล้ว → เอาออก
+          newData = prev.filter(c => c.id !== item.id);
+  
+          // ถ้าเอาออกแล้วเป็น Other → เคลียร์ค่า
+          if (item.lov2 === "Y") {
+            setcompTypeOther("");
+          }
+          // if (item.id === "TRR_CT_CAR_99") {
+          //   setcompTypeOther("");
+          // }
+          // if (item.id === "TRR_CT_OBS_99") {
+          //   setcompTypeOther("");
+          // }
+          // if (item.id === "TRR_CT_CPAR_99") {
+          //   setcompTypeOther("");
+          // }
+        } else {
+          // เพิ่ม object แบบเต็ม
+          newData = [...prev, item];
         }
-        if (item.id === "TRR_CT_CAR_99") {
-          setcompTypeOther("");
-        }
-        if (item.id === "TRR_CT_OBS_99") {
-          setcompTypeOther("");
-        }
-        if (item.id === "TRR_CT_CPAR_99") {
-          setcompTypeOther("");
-        }
-      } else {
-        // เพิ่ม object แบบเต็ม
-        newData = [...prev, item];
-      }
+  
+        // สร้าง array ลดรูป
+        const reducedArray = newData.map(c => (
+          {
+            complaint_type_id: c.id,
+            label: c.lov1,
+            isOther: c.lov2
+          }));
+  
+        // ดู log
+        console.log("Reduced array:", reducedArray);
+  
+        // อัปเดตเข้า context
+        setdataComplaintTypeValue_Combobox(reducedArray);
+        // อัปเดตเข้า context เป็น array ลดรูป (แค่ id, lov1)
+        // setdataComplaintTypeValue_Combobox(
+        //   newData.map(c => ({ id: c.id, lov1: c.lov1 }))
+        // );
+  
+        return newData;
+      });
+    };
 
-      // สร้าง array ลดรูป
-      const reducedArray = newData.map(c => (
-        {
-          complaint_type_id: c.id,
-          label: c.lov1
-        }));
-
-      // ดู log
-      console.log("Reduced array:", reducedArray);
-
-      // อัปเดตเข้า context
-      setdataComplaintTypeValue_Combobox(reducedArray);
-      // อัปเดตเข้า context เป็น array ลดรูป (แค่ id, lov1)
-      // setdataComplaintTypeValue_Combobox(
-      //   newData.map(c => ({ id: c.id, lov1: c.lov1 }))
-      // );
-
-      return newData;
-    });
-  };
   const handleCheckboxChangeRS = (item: LovType) => {
     setdataComplaintRs((prev: LovType[] = []) => {
+      console.log("💚💚item", item);
       let newData: LovType[];
 
       if (prev.some(rs => rs.id === item.id)) {
         // ถ้ามีอยู่แล้ว → เอาออก
         newData = prev.filter(rs => rs.id !== item.id);
 
+        if (item.lov2 === "Y") {
+            setcompRsOther("");
+          }
         // ถ้าเอาออกแล้วเป็น Other → เคลียร์ค่า
-        if (item.id === "TRR_RS_NCR_99") {
-          setcompRsOther("");
-        }
+        // if (item.id === "TRR_RS_NCR_99") {
+        //   setcompRsOther("");
+        // }
         if (item.id === "TRR_RS_NCR_6") {
           setclauseOther("");
         }
@@ -405,7 +416,13 @@ export default function ComplaintBody({
       }
 
       // สร้าง array ลดรูปสำหรับ context
-      const reducedArray = newData.map(rs => ({ complaint_type_id: rs.id, lov1: rs.lov1 }));
+      const reducedArray = newData.map(rs => (
+          {
+            complaint_type_id: rs.id,
+            label: rs.lov1,
+            isOther: rs.lov2
+          }));
+      // const reducedArray = newData.map(rs => ({ complaint_type_id: rs.id, lov1: rs.lov1 }));
 
       console.log("Reduced array:", reducedArray);
 
@@ -547,6 +564,9 @@ export default function ComplaintBody({
       const filtered = (dataComplaintType_Combobox || []).filter((item: LovType) =>
         item.lov_type === "complaint_type" && item.lov_code === val.id
       );
+      console.log("🖤🤎filtered",filtered);
+
+
       setFilteredComplaintType(filtered);
 
       // กรอง attach type
@@ -817,7 +837,7 @@ export default function ComplaintBody({
                             ))}
                           </Grid>
                           <Box sx={{ mt: 'auto', pt: 2 }}>
-                            {dataComplaintType.some(c => c.id === "TRR_CT_NCR_99") && (
+                            {dataComplaintType.some(c => c.lov2 === "Y") && (
                               <FullWidthTextArea
                                 value={compTypeOther}
                                 labelName="Other:"
@@ -868,7 +888,15 @@ export default function ComplaintBody({
                             ))}
                           </Grid>
                           <Box sx={{ mt: 'auto', pt: 2 }}>
-                            {dataComplaintRs.some(rs => rs.id === "TRR_RS_NCR_99") && (
+                            {/* {dataComplaintRs.some(rs => rs.id === "TRR_RS_NCR_99") && (
+                              <FullWidthTextArea
+                                value={compRsOther}
+                                labelName="Other:"
+                                onchange={(e) => setcompRsOther(e)}
+                                readonly={action === "Read"}
+                              />
+                            )} */}
+                            {dataComplaintRs.some(rs => rs.lov2 === "Y") && (
                               <FullWidthTextArea
                                 value={compRsOther}
                                 labelName="Other:"

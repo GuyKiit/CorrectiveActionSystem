@@ -17,7 +17,9 @@ interface FullWidthTextArea {
 }
 
 export default function FullWidthTextArea(props: FullWidthTextArea) {
-  const hedelonChange = (e: React.ChangeEvent<HTMLInputElement>) => { props.onchange && props.onchange(e.target.value) }
+ const hedelonChange = (e: React.ChangeEvent<HTMLInputElement>) => { 
+  props.onchange && props.onchange(e.target.value) 
+}
   return (
     <>
       <Box>
