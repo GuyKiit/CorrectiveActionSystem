@@ -1,9 +1,14 @@
 import dayjs from "dayjs";
 import { SetStateAction, Dispatch } from "react";
+import { Launch } from "..";
 
 export type Adds = undefined | null | boolean;
 
-export type ListComplaintContextProps = {
+export type ListComplaintContextProps = {  
+    // data get ListSearchGet
+    dataelement : Launch | null
+    setdataelement: Dispatch<SetStateAction<Launch | null>>;
+
     Complaint_no?: string
     no?: string
     report_type?: string
@@ -193,6 +198,10 @@ export type ListComplaintContextProps = {
 };
 
 export const initialListComplaint: ListComplaintContextProps = {
+       // data get ListSearchGet
+     dataelement :null,
+    setdataelement: ()=>{},
+
     setComplaint_no: () => { },
     setno: () => { },
     setreport_type: () => { },

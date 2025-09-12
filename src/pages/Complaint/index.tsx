@@ -36,7 +36,7 @@ import FullWidthButton from "../../components/MUI/FullWidthButton";
 // =====================================================================================================
 // TYPE DEFINITIONS (from index.tsx and ComplaintRead.tsx)
 // =====================================================================================================
-type Launch = {
+export type Launch = {
   id: string;
   report_type?: string;
   cas_number?: string;
@@ -60,6 +60,7 @@ type Launch = {
   priority_level?: string;
   complaint_type_id?: string;
   complaint_at_id?: string;
+  setdate_of_detection: dayjs.Dayjs | null
 }
 interface LovType {
   id: string;
@@ -160,12 +161,13 @@ export default function Complaint() {
   // =====================================================================================================
   const {
     // Main Complaint Fields
+    dataelement, setdataelement,
     Complaint_no, no, report_type, cas_number, doc_date, date_of_detection,
     request_name, request_company_id, request_domain_id, request_department_id,
     request_position, request_email, request_phone, request_date,
     respondent_company_id, respondent_domain_id, respondent_department_id,
     respondent_email, respondent_other_name, respondent_other_email,
-     product_name, detail, compTypeOther, compRsOther,
+    product_name, detail, compTypeOther, compRsOther,
     priority_level, respond_date_within, lot_no, user_file_name,
     acknowledge_flag, acknowledge_name, acknowledge_company_id,
     acknowledge_department_id, acknowledge_position, acknowledge_email,
@@ -175,9 +177,9 @@ export default function Complaint() {
     record_status, create_by, create_datetime, update_by, update_datetime,
     ComplaintStatusID_Combobox, dataReportTypeValue, dataComplaintTypeValue_Combobox,
     dataComplaintType_Combobox, dataComplaintRsValue_Combobox, dataComplaintRs_Combobox,
-    dataphotoValue_Combobox, dataphoto_Combobox, datapriorityValue_Combobox,datastatus,
+    dataphotoValue_Combobox, dataphoto_Combobox, datapriorityValue_Combobox, datastatus,
     datapriority_Combobox, datapriority, PriorityLevel, clauseOther, phoTypeOther,
-    complaintFiles, RunningModel, explain_id, approve_step,otherText,
+    complaintFiles, RunningModel, explain_id, approve_step, otherText,
 
     // Dataset Variables
     dataset_reporttype, dataset_department, dataset_company, dataset_domain,
@@ -199,11 +201,11 @@ export default function Complaint() {
     setdc_department_id, setdc_position, setdc_email, setrecord_status,
     setcreate_by, setcreate_datetime, setupdate_by, setupdate_datetime,
     setComplaintStatusID_Combobox, setdataReportTypeValue, setdataComplaintType_Combobox,
-    setdataComplaintTypeValue_Combobox, setdataComplaintRs_Combobox,setdatastatus,
+    setdataComplaintTypeValue_Combobox, setdataComplaintRs_Combobox, setdatastatus,
     setdataComplaintRsValue_Combobox, setdataphoto_Combobox, setdataphotoValue_Combobox,
     setdatapriorityValue_Combobox, setdatapriority_Combobox, setdatapriority,
     setPriorityLevel, setclauseOther, setphoTypeOther, setdataset_reporttype,
-    setdataset_department, setdataset_company, setdataset_domain, setcomplaintFiles,setotherText
+    setdataset_department, setdataset_company, setdataset_domain, setcomplaintFiles, setotherText
   } = useListComplaint();
 
   // =====================================================================================================
@@ -218,7 +220,6 @@ export default function Complaint() {
   const [openEdit, setOpenEdit] = React.useState(false);
   const [openDelete, setOpenDelete] = React.useState(false);
   const [openUpLoad, setOpenUpload] = React.useState(false);
-  const [dataelement, setdataelement] = React.useState<Launch | null>(null);
   const [ComplaintBlocks, setComplaintBlocks] = useState<Block[]>([]);
   const [blockValidateErrors, setBlockValidateErrors] = useState<{ [index: number]: data_detail }>({});
 
@@ -312,12 +313,12 @@ export default function Complaint() {
   // Update Complaint ID Functions (from index.tsx)
   function compTypeUpdateCompId(dataComplaintTypeValue_Combobox: any, complaintid: string, compTypeOther: string,) {
     const updatedData = dataComplaintTypeValue_Combobox.map((item: any) => {
-      console.log("🧡🧡item",item)
+      console.log("🧡🧡item", item)
       return {
         ...item,
         complaint_id: complaintid,
         other: item.isOther === "Y" ? (compTypeOther?.trim() || null) : null
-        
+
       };
     });
     return updatedData;
@@ -325,14 +326,14 @@ export default function Complaint() {
 
   function compRsUpdateCompId(dataComplaintRsValue_Combobox: any, complaintid: string, compRsOther: string, clauseOther: string) {
     const updatedData = dataComplaintRsValue_Combobox.map((item: any) => {
-      console.log("💚💚item",item)
+      console.log("💚💚item", item)
       return {
         ...item,
         complaint_id: complaintid,
         // other: compRsOther != null && compRsOther != '' ? compRsOther : null,
-        other:  item.isClause === "Other" ? (compRsOther?.trim() || null) : null,
+        other: item.isClause === "Other" ? (compRsOther?.trim() || null) : null,
         // clause: clauseOther != null && clauseOther != '' ? clauseOther : null,
-        clause:  item.isClause === "Clause" ?  (clauseOther?.trim() || null) : null
+        clause: item.isClause === "Clause" ? (clauseOther?.trim() || null) : null
       };
     });
     return updatedData;
@@ -351,9 +352,9 @@ export default function Complaint() {
 
   function getPaddingYear() {
     const paddingYear = String(new Date().getFullYear() % 100).padStart(2, '0');
- 
+
     return paddingYear;
-}
+  }
 
   // =====================================================================================================
   // API FUNCTIONS - DATA RETRIEVAL (from index.tsx)
@@ -591,8 +592,8 @@ export default function Complaint() {
   const ComplaintAdd = async () => {
     console.log("Departtttt", request_department_id?.itasset_department_id);
     console.log("Departtttt", request_department_id?.itasset_department_id);
-    console.log("🤍🤍dataComplaintTypeValue_Combobox",dataComplaintTypeValue_Combobox);
-    
+    console.log("🤍🤍dataComplaintTypeValue_Combobox", dataComplaintTypeValue_Combobox);
+
     const tempid = uuidv4();
     // เตรียม Models
     const complainttypeModel = dataComplaintTypeValue_Combobox
@@ -665,11 +666,11 @@ export default function Complaint() {
             create_datetime: new Date().toISOString()
           };
         },
-      ) || []
+        ) || []
       },
-      RunningModel:  {
+      RunningModel: {
         code_group: dataReportTypeValue.lov_code,
-        code_type: dataReportTypeValue.lov1  + "-" + getPaddingYear(),
+        code_type: dataReportTypeValue.lov1 + "-" + getPaddingYear(),
         code_num: 1,
       },
       CurrentAccessModel: {
@@ -693,22 +694,22 @@ export default function Complaint() {
     console.log("📤 dataReportTypeValue.id:", dataReportTypeValue.id);
     console.log("📤 dataReportTypeValue.lov_code:", dataReportTypeValue.lov_code);
     console.log("📤 dataReportTypeValue.lov1:", dataReportTypeValue.lov1);
-    // setIsLoadingScreen(true);
+    setIsLoadingScreen(true);
 
-    // try {
-    //   const response = await _POST_FORMDATA(formData, "/Complaint/ComplaintAdd");
-    //   if (response && response.status === "success") {
-    //     console.log("✅ Complaint added successfully:", response);
-    //   } else {
-    //     console.log("⚠️ Add failed:", response);
-    //   }
-    // } catch (error) {
-    //   console.error("Upload failed:", error);
-    // } finally {
-    //   setIsLoadingScreen(false);
-    //   handleClose();
-    //   Complaint_Get();
-    // }
+    try {
+      const response = await _POST_FORMDATA(formData, "/Complaint/ComplaintAdd");
+      if (response && response.status === "success") {
+        console.log("✅ Complaint added successfully:", response);
+      } else {
+        console.log("⚠️ Add failed:", response);
+      }
+    } catch (error) {
+      console.error("Upload failed:", error);
+    } finally {
+      setIsLoadingScreen(false);
+      handleClose();
+      Complaint_Get();
+    }
   };
 
   // READ - Preview Complaint (from ComplaintRead.tsx)
@@ -722,26 +723,8 @@ export default function Complaint() {
 
     if (dataelement) {
       console.log("dataelement.report_type", dataelement.report_type);
-      setreport_type(dataelement.report_type || "")
-      setcas_number(dataelement.cas_number || "")
-      setrequest_company_id(dataelement.request_company_id)
-      setproduct_name(dataelement.product_name || "")
-      setlot_no(dataelement.lot_no || "")
-      setuser_file_name(dataelement.user_file_name || "")
-      setdetail(dataelement.detail || "")
-      setrespondent_company_id(dataelement.respondent_company_id)
-      setrespondent_domain_id(dataelement.respondent_domain_id)
-      setrespondent_department_id(dataelement.respondent_department_id)
-      setrespondent_email(dataelement.respondent_email || "")
-      setrequest_name(dataelement.request_name || "")
-      setrequest_position(dataelement.request_position || "")
-      setrequest_department_id(dataelement.request_department_id)
-      setrequest_email(dataelement.request_email || "")
-      setrequest_phone(dataelement.request_phone || "")
-      setdataComplaintType(dataelement?.complaintType)
-      setdataComplaintRs(dataelement?.complaintRs)
-      setdataComplaintphoto(dataelement?.complaintPhoto)
-      setIsRSHidden(extractReportType(dataelement.report_type) != "NCR" ? true : false);
+     
+      // setIsRSHidden(extractReportType(dataelement.report_type) != "NCR" ? true : false);
 
       // แปลง priority text → id ของ RadioGroup
       const selectedPriority = datapriority_Combobox.find(
@@ -874,12 +857,12 @@ export default function Complaint() {
     // ListSearchGet();
     CasDepartmentDomainGet();
     complaint_status_Get();
-    console.log("gettttttt",getPaddingYear())
+    console.log("gettttttt", getPaddingYear())
   }, []);
 
   // Filter complaint types based on selected report type (from ComplaintRead.tsx)
   React.useEffect(() => {
-    previewComplaint();
+    // previewComplaint();
 
     // กรอง complaint type
     const filtered = (dataComplaintType_Combobox || []).filter((item: LovType) =>
@@ -1058,7 +1041,6 @@ export default function Complaint() {
         colorBotton="success"
         element={<ComplaintBody
           action="Read"
-          dataelement={dataelement}
         />}
       />
     </>

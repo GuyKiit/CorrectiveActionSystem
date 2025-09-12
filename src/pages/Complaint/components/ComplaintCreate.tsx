@@ -1,5 +1,5 @@
 //ทำobj เป็น array
-import React, { useState, useRef, use } from "react";
+import React, { useState, useRef, use, useEffect } from "react";
 import AddIcon from '@mui/icons-material/Add';
 import { setValueMas } from "../../../../libs/setvaluecallback";
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -90,7 +90,6 @@ type FileData = {
 
 export default function ComplaintBody({
   action,
-  dataelement,
   readonlyTextField,
   bgcolorTextField,
   validateText,
@@ -99,10 +98,12 @@ export default function ComplaintBody({
 
 
 }: ComplaintBody) {
+  const Read = action === "Read";
 
   const user = cleanAccessData('userSession');
 
   const {
+    dataelement,
     Complaint_no,
     no,
     cas_number,
@@ -339,54 +340,55 @@ export default function ComplaintBody({
   };
 
   const handleCheckboxChangeCT = (item: LovType) => {
-      console.log("💛💛item", item);
-  
-      setdataComplaintType((prev: LovType[] = []) => {
-        let newData: LovType[];
-  
-        if (prev.some(c => c.id === item.id)) {
-          // ถ้ามีอยู่แล้ว → เอาออก
-          newData = prev.filter(c => c.id !== item.id);
-  
-          // ถ้าเอาออกแล้วเป็น Other → เคลียร์ค่า
-          if (item.lov2 === "Y") {
-            setcompTypeOther("");
-          }
-          // if (item.id === "TRR_CT_CAR_99") {
-          //   setcompTypeOther("");
-          // }
-          // if (item.id === "TRR_CT_OBS_99") {
-          //   setcompTypeOther("");
-          // }
-          // if (item.id === "TRR_CT_CPAR_99") {
-          //   setcompTypeOther("");
-          // }
-        } else {
-          // เพิ่ม object แบบเต็ม
-          newData = [...prev, item];
+    console.log("💛💛item", item);
+
+    setdataComplaintType((prev: LovType[] = []) => {
+      let newData: LovType[];
+
+      if (prev.some(c => c.id === item.id)) {
+        // ถ้ามีอยู่แล้ว → เอาออก
+        newData = prev.filter(c => c.id !== item.id);
+
+        // ถ้าเอาออกแล้วเป็น Other → เคลียร์ค่า
+        if (item.lov2 === "Y") {
+          setcompTypeOther("");
         }
-  
-        // สร้าง array ลดรูป
-        const reducedArray = newData.map(c => (
-          {
-            complaint_type_id: c.id,
-            label: c.lov1,
-            isOther: c.lov2
-          }));
-  
-        // ดู log
-        console.log("Reduced array:", reducedArray);
-  
-        // อัปเดตเข้า context
-        setdataComplaintTypeValue_Combobox(reducedArray);
-        // อัปเดตเข้า context เป็น array ลดรูป (แค่ id, lov1)
-        // setdataComplaintTypeValue_Combobox(
-        //   newData.map(c => ({ id: c.id, lov1: c.lov1 }))
-        // );
-  
-        return newData;
-      });
-    };
+        // if (item.id === "TRR_CT_CAR_99") {
+        //   setcompTypeOther("");
+        // }
+        // if (item.id === "TRR_CT_OBS_99") {
+        //   setcompTypeOther("");
+        // }
+        // if (item.id === "TRR_CT_CPAR_99") {
+        //   setcompTypeOther("");
+        // }
+      } else {
+        // เพิ่ม object แบบเต็ม
+        newData = [...prev, item];
+      }
+
+      // สร้าง array ลดรูป
+      const reducedArray = newData.map(c => (
+        {
+          complaint_type_id: c.id,
+          label: c.lov1,
+          isOther: c.lov2
+        }));
+
+      // ดู log
+      console.log("Reduced array:", reducedArray);
+
+      // อัปเดตเข้า context
+      setdataComplaintTypeValue_Combobox(reducedArray);
+      // อัปเดตเข้า context เป็น array ลดรูป (แค่ id, lov1)
+      // setdataComplaintTypeValue_Combobox(
+      //   newData.map(c => ({ id: c.id, lov1: c.lov1 }))
+      // );
+      console.log(newData, "newData");
+
+      return newData;
+    });
+  };
 
   const handleCheckboxChangeRS = (item: LovType) => {
     setdataComplaintRs((prev: LovType[] = []) => {
@@ -398,8 +400,8 @@ export default function ComplaintBody({
         newData = prev.filter(rs => rs.id !== item.id);
 
         if (item.lov3 === "Other") {
-            setcompRsOther("");
-          }
+          setcompRsOther("");
+        }
         // ถ้าเอาออกแล้วเป็น Other → เคลียร์ค่า
         // if (item.id === "TRR_RS_NCR_99") {
         //   setcompRsOther("");
@@ -415,12 +417,12 @@ export default function ComplaintBody({
 
       // สร้าง array ลดรูปสำหรับ context
       const reducedArray = newData.map(rs => (
-          {
-            complaint_type_id: rs.id,
-            label: rs.lov1,
-            isOther: rs.lov2,
-            isClause: rs.lov3
-          }));
+        {
+          complaint_type_id: rs.id,
+          label: rs.lov1,
+          isOther: rs.lov2,
+          isClause: rs.lov3
+        }));
       // const reducedArray = newData.map(rs => ({ complaint_type_id: rs.id, lov1: rs.lov1 }));
 
       console.log("Reduced array:", reducedArray);
@@ -548,57 +550,325 @@ export default function ComplaintBody({
     }
   };
 
+  const arraysAreEqual = (a: any[], b: any[]) => {
+    if (a.length !== b.length) return false;
+    return a.every((item, index) => JSON.stringify(item) === JSON.stringify(b[index]));
+  };
+
+  // React.useEffect(() => {
+  //   if (dataReportTypeValue) {
+  //     const val = dataReportTypeValue;
+
+  //     // กรอง complaint type
+  //     const filtered = (dataComplaintType_Combobox || []).filter(
+  //       (item: LovType) => item.lov_type === "complaint_type" && item.lov_code === val.id
+  //     );
+
+  //     if (!arraysAreEqual(filteredComplaintType, filtered)) {
+  //       setFilteredComplaintType(filtered);
+  //     }
+
+  //     // กรอง attach type
+  //     const filteredpho = (dataphoto_Combobox || []).filter((item: LovType) => item.lov_type === "attach_type");
+  //     if (!arraysAreEqual(filteredphoto, filteredpho)) {
+  //       setFilteredphoto(filteredpho);
+  //     }
+
+  //     // กรอง priority
+  //     const filteredpriority = (datapriority_Combobox || []).filter((item: LovType) => item.lov_type === "priority_level");
+  //     if (!arraysAreEqual(filteredpriority, filteredpriority)) {
+  //       setFilteredpriority(filteredpriority);
+  //     }
+
+  //     // ถ้าเลือก NCR → filter Reference Standard
+  //     if (val.lov_code === "NCR") {
+  //       const filteredRs = (dataComplaintRs_Combobox || []).filter(
+  //         (item: LovType) => item.lov_type === "reference_standard" && item.lov_code === val.id
+  //       );
+  //       if (!arraysAreEqual(filteredComplaintRs, filteredRs)) {
+  //         setFilteredComplaintRs(filteredRs);
+  //       }
+  //     }
+  //   } else {
+  //     if (filteredComplaintType.length > 0) setFilteredComplaintType([]);
+  //     if (filteredComplaintRs.length > 0) setFilteredComplaintRs([]);
+  //     if (filteredphoto.length > 0) setFilteredphoto([]);
+  //     if (filteredpriority.length > 0) setFilteredpriority([]);
+  //   }
+  // }, [
+  //   user,
+  //   dataReportTypeValue,
+  //   dataComplaintType_Combobox,
+  //   dataComplaintRs_Combobox,
+  //   dataphoto_Combobox,
+  //   datapriority_Combobox,
+  //   dataelement,
+  //   filteredComplaintType,
+  //   filteredComplaintRs,
+  //   filteredphoto,
+  //   filteredpriority,
+  // ]);
+
+
+  //   /* backUp 20250912///////
+  //   React.useEffect(() => {
+
+  //     // if (user && user.length > 0) {
+  //     //   setrequest_department_id({
+  //     //     itasset_department_id: user[0].itasset_department_id,
+  //     //     itasset_department_name: user[0].itasset_department_name
+  //     //   });
+  //     // }
+
+  //     if (dataReportTypeValue) {
+  //       const val = dataReportTypeValue;
+
+  //       // กรอง complaint type
+  //       const filtered = (dataComplaintType_Combobox || []).filter((item: LovType) =>
+  //         item.lov_type === "complaint_type" && item.lov_code === val.id
+  //       );
+  //       console.log("🖤🤎filtered",filtered);
+
+
+  //       setFilteredComplaintType(filtered);
+
+  //       // กรอง attach type
+  //       const filteredpho = (dataphoto_Combobox || []).filter((item: LovType) =>
+  //         item.lov_type === "attach_type"
+  //       );
+  //       setFilteredphoto(filteredpho);
+
+  //       // กรอง priority
+  //       const filteredpriority = (datapriority_Combobox || []).filter((item: LovType) =>
+  //         item.lov_type === "priority_level"
+  //       );
+  //       setFilteredpriority(filteredpriority);
+
+  //       // ถ้าเลือก NCR → filter Reference Standard
+  //       if (val.lov_code === "NCR") {
+  //         const filteredRs = (dataComplaintRs_Combobox || []).filter((item: LovType) =>
+  //           item.lov_type === "reference_standard" && item.lov_code === val.id
+  //         );
+  //         setFilteredComplaintRs(filteredRs);
+  //       }
+
+
+  //     } else {
+  //       // reset ถ้า val null
+  //       setFilteredComplaintType([]);
+  //       setFilteredComplaintRs([]);
+  //       setFilteredphoto([]);
+  //       setFilteredpriority([]);
+
+  //     }
+  //   }, [user, dataReportTypeValue, dataComplaintType_Combobox, dataComplaintRs_Combobox, dataphoto_Combobox, datapriority_Combobox, dataelement]);
+  // */
+  // ////////
+
+
+
+  //  React.useEffect(() => {
+  //   // สร้าง async function ภายใน useEffect
+  //   const updateDatasetReporttype = async () => {
+  //     if (!Array.isArray(dataset_reporttype) || !dataelement) return;
+
+  //     // ใช้ await กับฟังก์ชัน async ของคุณ
+  //     const newdataset_reporttype = await setValueMas(dataset_reporttype, dataelement.report_type, "id");
+  //     console.log("newdataset_reporttype", newdataset_reporttype);
+
+  //     if (newdataset_reporttype) {
+  //       setdataset_reporttype((prev: any) => {
+  //         // ดัก loop: ถ้า object เหมือนเดิมไม่ต้อง setState
+  //         if (JSON.stringify(prev) !== JSON.stringify(newdataset_reporttype)) {
+  //           return newdataset_reporttype;
+  //         }
+  //         return prev;
+
+  //       });
+  //     }
+  //     if (!datapriority_Combobox) return;
+
+  //   const newFilteredPriority = datapriority_Combobox.filter(
+  //     (item: LovType) => item.lov_type === "priority_level"
+  //   );
+
+  //   setFilteredpriority(newFilteredPriority);
+
+  //   };
+
+  //   updateDatasetReporttype(); // เรียก async function
+  // }, [dataset_reporttype, dataelement,datapriority_Combobox]);
+
+  // React.useEffect(() => {
+  //   if (!datapriority_Combobox) return;
+
+  //   const newFilteredPriority = datapriority_Combobox.filter(
+  //     (item: LovType) => item.lov_type === "priority_level"
+  //   );
+
+  //   setFilteredpriority(newFilteredPriority);
+  // }, [datapriority_Combobox]);
+
   React.useEffect(() => {
+    const updateData = async () => {
+      // ถ้าไม่มี anything ที่จำเป็นก็ยังไม่ return ทันที — เราต้องการให้ logic พยายามทำงานเมื่อข้อมูลพร้อม
+      // 1) เตรียม newDataset จาก dataset_reporttype (ถ้ามี)
+      let newDataset: LovType[] | undefined = Array.isArray(dataset_reporttype) ? dataset_reporttype : undefined;
 
-    // if (user && user.length > 0) {
-    //   setrequest_department_id({
-    //     itasset_department_id: user[0].itasset_department_id,
-    //     itasset_department_name: user[0].itasset_department_name
-    //   });
-    // }
-
-    if (dataReportTypeValue) {
-      const val = dataReportTypeValue;
-
-      // กรอง complaint type
-      const filtered = (dataComplaintType_Combobox || []).filter((item: LovType) =>
-        item.lov_type === "complaint_type" && item.lov_code === val.id
-      );
-      console.log("🖤🤎filtered",filtered);
-
-
-      setFilteredComplaintType(filtered);
-
-      // กรอง attach type
-      const filteredpho = (dataphoto_Combobox || []).filter((item: LovType) =>
-        item.lov_type === "attach_type"
-      );
-      setFilteredphoto(filteredpho);
-
-      // กรอง priority
-      const filteredpriority = (datapriority_Combobox || []).filter((item: LovType) =>
-        item.lov_type === "priority_level"
-      );
-      setFilteredpriority(filteredpriority);
-
-      // ถ้าเลือก NCR → filter Reference Standard
-      if (val.lov_code === "NCR") {
-        const filteredRs = (dataComplaintRs_Combobox || []).filter((item: LovType) =>
-          item.lov_type === "reference_standard" && item.lov_code === val.id
-        );
-        setFilteredComplaintRs(filteredRs);
+      // ถ้ามี dataset_reporttype และ dataelement ให้เรียก setValueMas เพื่อ map ค่า (safe)
+      if (Array.isArray(dataset_reporttype) && dataelement) {
+        try {
+          const mapped = await setValueMas(dataset_reporttype, dataelement.report_type, "id");
+          // mapped อาจเป็น undefined หรือ array — ให้ใช้ mapped ถ้ามีค่าที่แตกต่างจากเดิม
+          if (mapped && Array.isArray(mapped)) {
+            // ถ้า different -> update state
+            if (JSON.stringify(mapped) !== JSON.stringify(dataset_reporttype)) {
+              setdataset_reporttype(mapped);
+            }
+            newDataset = mapped;
+          } else {
+            // ถ้า mapped เป็น object เดียว ๆ (กรณีฟังก์ชันคืน object) — เราอยากให้ newDataset เป็น array
+            if (mapped && !Array.isArray(mapped)) {
+              newDataset = Array.isArray(dataset_reporttype) ? dataset_reporttype : [mapped];
+            }
+          }
+        } catch (err) {
+          console.error("setValueMas error:", err);
+        }
       }
 
+      // 2) ถ้า action === "Read" และมี dataelement.report_type ให้หา default จาก newDataset (ถ้ามี)
+      if (action === "Read" && dataelement?.report_type && Array.isArray(newDataset) && newDataset.length > 0) {
+        const defaultVal = newDataset.find(
+          (item: LovType) =>
+            // บางที dataelement.report_type อาจเก็บ lov_code หรือ id ขึ้นกับ backend — เช็คทั้งสอง
+            item.lov_code === dataelement.report_type || item.id === dataelement.report_type
+        );
 
-    } else {
-      // reset ถ้า val null
-      setFilteredComplaintType([]);
-      setFilteredComplaintRs([]);
-      setFilteredphoto([]);
-      setFilteredpriority([]);
+        if (defaultVal) {
+          // ป้องกัน set ซ้ำ
+          if (!dataReportTypeValue || dataReportTypeValue.id !== defaultVal.id) {
+            setdataReportTypeValue(defaultVal);
+          }
+        }
+      }
 
+      // 3) กรอง priority (จาก datapriority_Combobox)
+      if (Array.isArray(datapriority_Combobox)) {
+        const newFilteredPriority = datapriority_Combobox.filter((item: LovType) => item.lov_type === "priority_level");
+        setFilteredpriority((prev: LovType[]) => {
+          if (JSON.stringify(prev) !== JSON.stringify(newFilteredPriority)) return newFilteredPriority;
+          return prev;
+        });
+      }
+
+      // 4) ถ้ามี dataReportTypeValue (จาก state หรือ เพิ่ง set ข้างบน) ให้กรอง complaint/attach/reference
+      const reportTypeToUse = dataReportTypeValue; // ใช้ state ปัจจุบัน (ซึ่งเราเพิ่งอาจจะ set)
+      if (reportTypeToUse) {
+        const val = reportTypeToUse;
+
+        const newFilteredComplaintType = (dataComplaintType_Combobox || []).filter(
+          (item: LovType) => item.lov_type === "complaint_type" && item.lov_code === val.id
+        );
+        setFilteredComplaintType((prev: LovType[]) => {
+          if (JSON.stringify(prev) !== JSON.stringify(newFilteredComplaintType)) return newFilteredComplaintType;
+          return prev;
+        });
+
+        const newFilteredPhoto = (dataphoto_Combobox || []).filter((item: LovType) => item.lov_type === "attach_type");
+        setFilteredphoto((prev: LovType[]) => {
+          if (JSON.stringify(prev) !== JSON.stringify(newFilteredPhoto)) return newFilteredPhoto;
+          return prev;
+        });
+
+        if (val.lov_code === "NCR") {
+          const newFilteredComplaintRs = (dataComplaintRs_Combobox || []).filter(
+            (item: LovType) => item.lov_type === "reference_standard" && item.lov_code === val.id
+          );
+          setFilteredComplaintRs((prev: LovType[]) => {
+            if (JSON.stringify(prev) !== JSON.stringify(newFilteredComplaintRs)) return newFilteredComplaintRs;
+            return prev;
+          });
+        } else {
+          setFilteredComplaintRs([]);
+        }
+      } else {
+        // ถ้ายังไม่มี reportType ก็ reset
+        setFilteredComplaintType([]);
+        setFilteredComplaintRs([]);
+        setFilteredphoto([]);
+        // หมายเหตุ: filteredpriority เรา update ข้างบนแล้ว
+      }
+    };
+
+    updateData();
+    // dependency: ให้ trigger เมื่อสิ่งที่สำคัญเปลี่ยนจริง ๆ (action, property ที่เปลี่ยน, dataset ที่ load)
+  }, [
+    action,
+    dataelement?.report_type, // ใช้ property เพื่อให้ effect รันเมื่อ report_type เปลี่ยน
+    dataset_reporttype,
+    datapriority_Combobox,
+    dataComplaintType_Combobox,
+    dataComplaintRs_Combobox,
+    dataphoto_Combobox,
+    dataReportTypeValue, // เพราะเรใช้ state นี้ต่อใน effect (และต้องการให้ flow ใช้ค่าล่าสุด)
+  ]);
+
+
+
+
+  React.useEffect(() => {
+    console.log(dataelement, '55555555555555555555555555555', filteredComplaintType);
+    console.log(dataelement, '55555555555555555555555555555', datapriority_Combobox);
+    
+
+    if (dataelement) {
+      setdate_of_detection(dayjs(dataelement?.setdate_of_detection))
+      setrespondent_department_id(dataset_department.find((el: any) => el.itasset_department_id == String(dataelement.respondent_department_id)));
+      setproduct_name(dataelement?.product_name ? dataelement?.product_name : "")
+      setlot_no(dataelement?.lot_no ? dataelement?.lot_no : "")
+      setrespondent_email(dataelement?.respondent_email ? dataelement?.respondent_email : "")
+      setdataComplaintType(setComplaintType(dataelement?.complaintType))
+      setdetail(dataelement?.detail ? dataelement?.detail : "")
+      // setpriority_level(dataelement?.priority_level ? dataelement?.priority_level :"")
+      setpriority_level(setPriorityLevel(dataelement?.priority_level));
     }
-  }, [user, dataReportTypeValue, dataComplaintType_Combobox, dataComplaintRs_Combobox, dataphoto_Combobox, datapriority_Combobox, dataelement]);
+
+  }, [dataset_reporttype]);
+
+  const setComplaintType = (data:any) => { 
+    const newData:any[] = []
+    Array.isArray(data) && data.forEach((el)=>{
+      const filter = dataComplaintType_Combobox.find((item:any)=> item.id === el.complaint_type_id)
+      // console.log(filter,"filterfilterfilterfilterfilter");
+      newData.push(filter)
+    })
+    return newData
+  }
+
+  const setPriorityLevel = (value: any) => {
+  if (!value) return null;
+
+  // หา object ที่ id ตรงกับค่าที่ DB ส่งมา
+  const selected = datapriority_Combobox.find(
+    (item: any) => item.id === value
+  ) || null;
+
+  console.log("🎯 Priority matched:", selected);
+  return selected;
+};
+  // React.useEffect(() => {
+  //   if (Array.isArray(dataset_reporttype) && dataset_reporttype.length > 0) {
+  //     // หา object ที่ lov_code = "NCR"
+  //     const defaultVal = dataset_reporttype.find((item: LovType) => item.lov_code === "NCR");
+
+  //     if (defaultVal) {
+  //       setdataReportTypeValue(defaultVal); // set ค่า default ให้ Autocomplete
+  //     }
+  //   }
+  // }, [dataset_reporttype]);
+
+
 
   return (
     <Box
@@ -628,11 +898,12 @@ export default function ComplaintBody({
             required="required"
             value={dataReportTypeValue}
             labelName={"ประเภทรายงาน (Report Type)"}
-            options={dataset_reporttype}
+            options={dataset_reporttype} // <-- แก้ตรงนี้
             column="lov_code"
             setvalue={handleReportTypeChange}
-            readonly={action === "Edit" ? false : readonlyTextField}
-            bgcolorTextField={action === "Edit" ? false : bgcolorTextField}
+            readonly={action === "Read" ? true : readonlyTextField}
+            bgcolorTextField={action === "Read" ? true : bgcolorTextField}
+
           />
         </Grid>
       </Grid>
@@ -652,15 +923,15 @@ export default function ComplaintBody({
                 options={dataset_company}
                 column="domain_name"
                 setvalue={(v) => setrespondent_company_id(v)}
-                readonly
+                readonly={Read || readonlyTextField}
               />
             </Grid>
             <Grid size={4} mt={2}>
               <FullWidthTextField
-                value= "Auto"
+                value="Auto"
                 labelName="CAS Number"
                 onchange={(e) => { setcas_number(e); }}
-                readonly 
+                readonly
               />
             </Grid>
             <Grid size={4} mt={2}>
@@ -1010,6 +1281,7 @@ export default function ComplaintBody({
                                         priorityCalculateRespondDate(days, true);
                                         console.log("เลือก priority:", item.lov_code, "Days:", days);
                                       }}
+                                      disabled={action === "Read"}
                                       sx={{ color: '#ff9800' }}
                                     />
                                   }
@@ -1080,7 +1352,7 @@ export default function ComplaintBody({
               </Box>
             </Paper>
 
-            
+
 
             <Paper elevation={3} sx={{
               p: 3,
@@ -1190,7 +1462,7 @@ export default function ComplaintBody({
                                     fullWidth
                                     multiline
                                     rows={3}
-                                    value={item.otherText }
+                                    value={item.otherText}
                                     onChange={e => handleFileOtherTextChange(index, e.target.value)}
                                     placeholder="Please specify..."
                                   />
@@ -1321,7 +1593,7 @@ export default function ComplaintBody({
                     readonly
                   />
                 </Grid> */}
-               
+
               </Grid>
             </Paper>
 
