@@ -173,6 +173,9 @@ export default function Sidebar({ isOpen }: SidebarProps) {
             <i className={`${item.menu_icon} text-base`}></i>
           </span>
         )}
+        <span className={`min-w-[20px] text-center ${isActive ? 'text-blue-600' : 'text-gray-500'}`}>
+            <i className={`text-base`}></i>
+          </span>
         {renderLabel()}
       </div>
     );
@@ -223,12 +226,12 @@ export default function Sidebar({ isOpen }: SidebarProps) {
  
   return (
     <aside
-      className={`fixed top-0 left-0 z-40 h-screen pt-20 transition-all bg-white border-r border-gray-200
-    ${isOpen ? 'w-64' : 'w-16'}
-    sm:translate-x-0
-    dark:bg-gray-800 dark:border-gray-700
-    overflow-x-hidden
-  `}
+      className={`fixed top-15 left-0 z-40 h-screen pt-20 transition-all bg-white border-r border-gray-200
+        ${isOpen ? 'w-64' : 'w-16'}
+        sm:translate-x-0
+        dark:bg-gray-800 dark:border-gray-700
+        overflow-x-hidden
+      `}
     >
       <div className="h-full px-3 pt-5 pb-4 overflow-y-auto overflow-x-hidden bg-white dark:bg-gray-800">
         <ul className="space-y-2 font-medium">
