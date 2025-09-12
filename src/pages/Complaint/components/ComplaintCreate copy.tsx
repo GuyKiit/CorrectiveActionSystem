@@ -118,8 +118,6 @@ export default function ComplaintBody({
     respondent_email,
     respondent_other_name,
     respondent_other_email,
-    area_of_detection_dept_id,
-    area_of_detection_dept_name,
     product_name,
     detail,
     priority_level,
@@ -192,8 +190,6 @@ export default function ComplaintBody({
     setrespondent_email,
     setrespondent_other_name,
     setrespondent_other_email,
-    setarea_of_detection_dept_id,
-    setarea_of_detection_dept_name,
     setproduct_name,
     setdetail,
     setcomplaint_type_other,
@@ -319,7 +315,6 @@ export default function ComplaintBody({
     setdatapriorityValue_Combobox(null);
     setdatapriority(null);
     setcas_number("");
-    setarea_of_detection_dept_id("");
     setproduct_name("");
     setlot_no("");
     setdetail("");
@@ -1156,26 +1151,7 @@ export default function ComplaintBody({
                     readonly
                   />
                 </Grid> */}
-                <Grid size={4}>
-                  <AutocompleteComboBox
-                    required="required"
-                    value={dataset_department.find((d: any) => d.itasset_department_id === area_of_detection_dept_id) || null}
-                    labelName={"แผนกที่พบปัญหา (Department / Area of Detection)"}
-                    options={dataset_department}
-                    column="itasset_department_name"
-                    setvalue={(v) => {
-                      setarea_of_detection_dept_id(v?.itasset_department_id ?? null);
-                      setarea_of_detection_dept_name(v?.itasset_department_name ?? "");
-                    }}
-                    readonly={action === "Read"}
-                  />
-                  {/* <FullWidthTextField
-                    value={user[0]?.itasset_department_id ? user[0]?.itasset_department_id : '-'}
-                    labelName="แผนกที่พบปัญหา (Department / Area of Detection)"
-                    onchange={(e) => setarea_of_detection_dept_id(e.target.value)}
-                    readonly
-                  /> */}
-                </Grid>
+                
               </Grid>
             </Paper>
 

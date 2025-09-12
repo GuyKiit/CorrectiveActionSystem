@@ -122,8 +122,6 @@ export default function ComplaintBody({
     respondent_email,
     respondent_other_name,
     respondent_other_email,
-    area_of_detection_dept_id,
-    area_of_detection_dept_name,
     product_name,
     detail,
     priority_level,
@@ -132,6 +130,7 @@ export default function ComplaintBody({
     user_file_name,
     other,
     compTypeOther,
+    otherText,
     compRsOther,
     clauseOther,
     photoOther,
@@ -196,8 +195,6 @@ export default function ComplaintBody({
     setrespondent_email,
     setrespondent_other_name,
     setrespondent_other_email,
-    setarea_of_detection_dept_id,
-    setarea_of_detection_dept_name,
     setproduct_name,
     setdetail,
     setcomplaint_type_other,
@@ -206,6 +203,7 @@ export default function ComplaintBody({
     setlot_no,
     setother,
     setcompTypeOther,
+    setotherText,
     setcompRsOther,
     setclauseOther,
     setphotoOther,
@@ -323,11 +321,11 @@ export default function ComplaintBody({
     setdatapriorityValue_Combobox(null);
     setdatapriority(null);
     setcas_number("");
-    setarea_of_detection_dept_id("");
     setproduct_name("");
     setlot_no("");
     setdetail("");
     setcompTypeOther("");
+    setotherText("");
     setcompRsOther("");
     setclauseOther("");
     setphoTypeOther("");
@@ -399,14 +397,14 @@ export default function ComplaintBody({
         // ถ้ามีอยู่แล้ว → เอาออก
         newData = prev.filter(rs => rs.id !== item.id);
 
-        if (item.lov2 === "Y") {
+        if (item.lov3 === "Other") {
             setcompRsOther("");
           }
         // ถ้าเอาออกแล้วเป็น Other → เคลียร์ค่า
         // if (item.id === "TRR_RS_NCR_99") {
         //   setcompRsOther("");
         // }
-        if (item.id === "TRR_RS_NCR_6") {
+        if (item.lov3 === "Clause") {
           setclauseOther("");
         }
       }
@@ -420,7 +418,8 @@ export default function ComplaintBody({
           {
             complaint_type_id: rs.id,
             label: rs.lov1,
-            isOther: rs.lov2
+            isOther: rs.lov2,
+            isClause: rs.lov3
           }));
       // const reducedArray = newData.map(rs => ({ complaint_type_id: rs.id, lov1: rs.lov1 }));
 
@@ -536,6 +535,7 @@ export default function ComplaintBody({
     setrespond_date_within(null);
     setdetail("");
     setcompTypeOther("");
+    setotherText("");
     setcompRsOther("");
   };
 
@@ -657,10 +657,10 @@ export default function ComplaintBody({
             </Grid>
             <Grid size={4} mt={2}>
               <FullWidthTextField
-                value={cas_number}
+                value= "Auto"
                 labelName="CAS Number"
                 onchange={(e) => { setcas_number(e); }}
-                readonly
+                readonly 
               />
             </Grid>
             <Grid size={4} mt={2}>
@@ -801,7 +801,7 @@ export default function ComplaintBody({
 
                 <Grid container spacing={2} sx={{ alignItems: 'stretch' }}>
                   {dataReportTypeValue && (
-                    <Grid size={6} sx={{ display: 'flex' }}>
+                    <Grid size={12} sx={{ display: 'flex' }}>
                       <Paper elevation={1} sx={{
                         p: 2,
                         borderRadius: 2,
@@ -826,7 +826,7 @@ export default function ComplaintBody({
                         <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
                           <Grid container spacing={2}>
                             {(filteredComplaintType || []).map((item: LovType) => (
-                              <Grid size={6} key={item.id}>
+                              <Grid size={3} key={item.id}>
                                 <FullWidthCheckbox
                                   labelName={item.lov1}
                                   value={dataComplaintType.some(c => c.id === item.id)}
@@ -852,7 +852,7 @@ export default function ComplaintBody({
                   )}
 
                   {!isRSHidden && dataReportTypeValue && (
-                    <Grid size={6} sx={{ display: 'flex' }}>
+                    <Grid size={12} sx={{ display: 'flex' }}>
                       <Paper elevation={1} sx={{
                         p: 2,
                         borderRadius: 2,
@@ -873,11 +873,11 @@ export default function ComplaintBody({
                         >
                           มาตรฐานอ้างอิง (Reference Standard) <span style={{ color: 'red' }}> *</span>
                         </label>
-                        <Divider sx={{ my: 2 }} />
+                        <Divider sx={{ my: 1 }} />
                         <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
                           <Grid container spacing={2}>
                             {filteredComplaintRs.map((item: LovType) => (
-                              <Grid size={6} key={item.id}>
+                              <Grid size={3} key={item.id}>
                                 <FullWidthCheckbox
                                   labelName={item.lov1}
                                   value={dataComplaintRs.some(rs => rs.id === item.id)}
@@ -896,7 +896,7 @@ export default function ComplaintBody({
                                 readonly={action === "Read"}
                               />
                             )} */}
-                            {dataComplaintRs.some(rs => rs.lov2 === "Y") && (
+                            {dataComplaintRs.some(rs => rs.lov3 === "Other") && (
                               <FullWidthTextArea
                                 value={compRsOther}
                                 labelName="Other:"
@@ -904,7 +904,7 @@ export default function ComplaintBody({
                                 readonly={action === "Read"}
                               />
                             )}
-                            {dataComplaintRs.some(rs => rs.id === "TRR_RS_NCR_6") && (
+                            {dataComplaintRs.some(rs => rs.lov3 === "Clause") && (
                               <FullWidthTextArea
                                 value={clauseOther}
                                 labelName="Clause:"
@@ -1080,132 +1080,7 @@ export default function ComplaintBody({
               </Box>
             </Paper>
 
-            <Paper elevation={3} sx={{
-              p: 3,
-              mt: 3,
-              width: "100%",
-              borderRadius: 3,
-              background: 'linear-gradient(135deg, #f0f8ff 0%, #ffffff 100%)',
-              border: '1px solid #bbdefb',
-              boxShadow: '0 4px 12px rgba(33,150,243,0.1)'
-            }}>
-              <Box sx={{
-                display: 'flex',
-                alignItems: 'center',
-                mb: 3,
-                pb: 2,
-                borderBottom: '2px solid #2196f3'
-              }}>
-                <Box sx={{
-                  width: 6,
-                  height: 24,
-                  backgroundColor: '#2196f3',
-                  borderRadius: 1,
-                  mr: 2
-                }} />
-                <label
-                  className="sarabun-regular-datatable"
-                  style={{
-                    fontSize: '18px',
-                    fontWeight: '600',
-                    color: '#1976d2',
-                    margin: 0
-                  }}
-                >
-                  แผนกที่ทำการร้องเรียน (Reporting Department)
-                </label>
-              </Box>
-              <Grid container spacing={3}>
-                <Grid size={4}>
-                  <FullWidthTextField
-                    value={user[0]?.employee_username ? user[0]?.employee_username : '-'}
-                    labelName="ชื่อผู้ออกเอกสาร (Reported by)"
-                    onchange={(e) => setrequest_name(e.target.value)}
-                    readonly
-                  />
-                </Grid>
-                <Grid size={4}>
-                  <FullWidthTextField
-                    value={user[0]?.employee_position ? user[0]?.employee_position : '-'}
-                    labelName="ตำแหน่ง (Position)"
-                    onchange={(e) => setrequest_position(e.target.value)}
-                    readonly
-                  />
-                </Grid>
-                <Grid size={4}>
-                  {/* <AutocompleteComboBox
-                    required="required"
-                    value={request_department_id}
-                    labelName={"แผนก (Department)"}
-                    options={dataset_department}
-                    column="itasset_department_name"
-                    setvalue={setrequest_department_id}
-                  /> */}
-                  <FullWidthTextField
-                    value={user[0]?.itasset_department_id ? user[0]?.itasset_department_name : '-'}
-                    labelName="แผนก (Department)"
-                    onchange={(e) => setrequest_department_id(e.target.value)}
-                    readonly
-                  />
-                </Grid>
-                <Grid size={4}>
-                  <FullWidthTextField
-                    value={user[0]?.employee_email ? user[0]?.employee_email : '-'}
-                    labelName="อีเมล (Email)"
-                    onchange={(e) => setrequest_email(e.target.value)}
-                    readonly
-                  />
-                </Grid>
-                <Grid size={4}>
-                  <FullWidthTextField
-                    value={user[0]?.employee_tel ? user[0]?.employee_tel : '-'}
-                    labelName="เบอร์โทรศัพท์ (Phone)"
-                    onchange={(e) => setrequest_phone(e.target.value)}
-                    readonly
-                  />
-                </Grid>
-                <Grid size={4}>
-                  <AutocompleteComboBox
-                    value={request_company_id}
-                    labelName={"โรงงาน (Factory)"}
-                    options={dataset_company}
-                    column="domain_name"
-                    setvalue={(v) => setrequest_company_id(v)}
-                    readonly
-                  />
-                </Grid>
-                {/* <Grid size={4}>
-                  <AutocompleteComboBox
-                    value={request_domain_id}
-                    labelName={"โดเมน (Domain)"}
-                    options={dataset_domain}
-                    column="domain_id"
-                    setvalue={setrequest_domain_id}
-                    readonly
-                  />
-                </Grid> */}
-                <Grid size={4}>
-                  <AutocompleteComboBox
-                    required="required"
-                    value={dataset_department.find((d: any) => d.itasset_department_id === area_of_detection_dept_id) || null}
-                    labelName={"แผนกที่พบปัญหา (Department / Area of Detection)"}
-                    options={dataset_department}
-                    column="itasset_department_name"
-                    setvalue={(v) => {
-                      setarea_of_detection_dept_id(v?.itasset_department_id ?? null);
-                      setarea_of_detection_dept_name(v?.itasset_department_name ?? "");
-                    }}
-                    readonly={action === "Read"}
-                  />
-                  {/* <FullWidthTextField
-                    value={user[0]?.itasset_department_id ? user[0]?.itasset_department_id : '-'}
-                    labelName="แผนกที่พบปัญหา (Department / Area of Detection)"
-                    onchange={(e) => setarea_of_detection_dept_id(e.target.value)}
-                    readonly
-                  /> */}
-                </Grid>
-              </Grid>
-            </Paper>
+            
 
             <Paper elevation={3} sx={{
               p: 3,
@@ -1315,7 +1190,7 @@ export default function ComplaintBody({
                                     fullWidth
                                     multiline
                                     rows={3}
-                                    value={item.otherText || ""}
+                                    value={item.otherText }
                                     onChange={e => handleFileOtherTextChange(index, e.target.value)}
                                     placeholder="Please specify..."
                                   />
@@ -1340,6 +1215,113 @@ export default function ComplaintBody({
                     </TableContainer>
                   </Grid>
                 )}
+              </Grid>
+            </Paper>
+            <Paper elevation={3} sx={{
+              p: 3,
+              mt: 3,
+              width: "100%",
+              borderRadius: 3,
+              background: 'linear-gradient(135deg, #f0f8ff 0%, #ffffff 100%)',
+              border: '1px solid #bbdefb',
+              boxShadow: '0 4px 12px rgba(33,150,243,0.1)'
+            }}>
+              <Box sx={{
+                display: 'flex',
+                alignItems: 'center',
+                mb: 3,
+                pb: 2,
+                borderBottom: '2px solid #2196f3'
+              }}>
+                <Box sx={{
+                  width: 6,
+                  height: 24,
+                  backgroundColor: '#2196f3',
+                  borderRadius: 1,
+                  mr: 2
+                }} />
+                <label
+                  className="sarabun-regular-datatable"
+                  style={{
+                    fontSize: '18px',
+                    fontWeight: '600',
+                    color: '#1976d2',
+                    margin: 0
+                  }}
+                >
+                  แผนกผู้ทำการออกเอกสาร (Reporting Department)
+                </label>
+              </Box>
+              <Grid container spacing={3}>
+                <Grid size={4}>
+                  <FullWidthTextField
+                    value={user[0]?.employee_username ? user[0]?.employee_username : '-'}
+                    labelName="ชื่อผู้ออกเอกสาร (Reported by)"
+                    onchange={(e) => setrequest_name(e.target.value)}
+                    readonly
+                  />
+                </Grid>
+                <Grid size={4}>
+                  <FullWidthTextField
+                    value={user[0]?.employee_position ? user[0]?.employee_position : '-'}
+                    labelName="ตำแหน่ง (Position)"
+                    onchange={(e) => setrequest_position(e.target.value)}
+                    readonly
+                  />
+                </Grid>
+                <Grid size={4}>
+                  {/* <AutocompleteComboBox
+                    required="required"
+                    value={request_department_id}
+                    labelName={"แผนก (Department)"}
+                    options={dataset_department}
+                    column="itasset_department_name"
+                    setvalue={setrequest_department_id}
+                  /> */}
+                  <FullWidthTextField
+                    value={user[0]?.itasset_department_id ? user[0]?.itasset_department_name : '-'}
+                    labelName="แผนก (Department)"
+                    onchange={(e) => setrequest_department_id(e.target.value)}
+                    readonly
+                  />
+                </Grid>
+                <Grid size={4}>
+                  <FullWidthTextField
+                    value={user[0]?.employee_email ? user[0]?.employee_email : '-'}
+                    labelName="อีเมล (Email)"
+                    onchange={(e) => setrequest_email(e.target.value)}
+                    readonly
+                  />
+                </Grid>
+                <Grid size={4}>
+                  <FullWidthTextField
+                    value={user[0]?.employee_tel ? user[0]?.employee_tel : '-'}
+                    labelName="เบอร์โทรศัพท์ (Phone)"
+                    onchange={(e) => setrequest_phone(e.target.value)}
+                    readonly
+                  />
+                </Grid>
+                <Grid size={4}>
+                  <AutocompleteComboBox
+                    value={request_company_id}
+                    labelName={"โรงงาน (Factory)"}
+                    options={dataset_company}
+                    column="domain_name"
+                    setvalue={(v) => setrequest_company_id(v)}
+                    readonly
+                  />
+                </Grid>
+                {/* <Grid size={4}>
+                  <AutocompleteComboBox
+                    value={request_domain_id}
+                    labelName={"โดเมน (Domain)"}
+                    options={dataset_domain}
+                    column="domain_id"
+                    setvalue={setrequest_domain_id}
+                    readonly
+                  />
+                </Grid> */}
+               
               </Grid>
             </Paper>
 

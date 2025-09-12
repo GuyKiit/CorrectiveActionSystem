@@ -41,8 +41,6 @@ type Launch = {
   report_type?: string;
   cas_number?: string;
   request_company_id?: any;
-  area_of_detection_dept_id?: string;
-  area_of_detection_dept_name?: string;
   product_name?: string;
   lot_no?: string;
   user_file_name?: string;
@@ -167,7 +165,7 @@ export default function Complaint() {
     request_position, request_email, request_phone, request_date,
     respondent_company_id, respondent_domain_id, respondent_department_id,
     respondent_email, respondent_other_name, respondent_other_email,
-    area_of_detection_dept_id, area_of_detection_dept_name, product_name, detail, compTypeOther, compRsOther,
+     product_name, detail, compTypeOther, compRsOther,
     priority_level, respond_date_within, lot_no, user_file_name,
     acknowledge_flag, acknowledge_name, acknowledge_company_id,
     acknowledge_department_id, acknowledge_position, acknowledge_email,
@@ -179,7 +177,7 @@ export default function Complaint() {
     dataComplaintType_Combobox, dataComplaintRsValue_Combobox, dataComplaintRs_Combobox,
     dataphotoValue_Combobox, dataphoto_Combobox, datapriorityValue_Combobox,datastatus,
     datapriority_Combobox, datapriority, PriorityLevel, clauseOther, phoTypeOther,
-    complaintFiles, RunningModel, explain_id, approve_step,
+    complaintFiles, RunningModel, explain_id, approve_step,otherText,
 
     // Dataset Variables
     dataset_reporttype, dataset_department, dataset_company, dataset_domain,
@@ -191,7 +189,7 @@ export default function Complaint() {
     setrequest_email, setrequest_phone, setuser_file_name, setrequest_date,
     setrespondent_company_id, setrespondent_domain_id, setrespondent_department_id,
     setrespondent_email, setrespondent_other_name, setrespondent_other_email,
-    setarea_of_detection_dept_id, setarea_of_detection_dept_name, setproduct_name, setdetail, setcomplaint_type_other,
+    setproduct_name, setdetail, setcomplaint_type_other,
     setpriority_level, setrespond_date_within, setlot_no, setcompTypeOther,
     setcompRsOther, setreference_standard_other, setacknowledge_flag,
     setacknowledge_name, setacknowledge_company_id, setacknowledge_department_id,
@@ -205,7 +203,7 @@ export default function Complaint() {
     setdataComplaintRsValue_Combobox, setdataphoto_Combobox, setdataphotoValue_Combobox,
     setdatapriorityValue_Combobox, setdatapriority_Combobox, setdatapriority,
     setPriorityLevel, setclauseOther, setphoTypeOther, setdataset_reporttype,
-    setdataset_department, setdataset_company, setdataset_domain, setcomplaintFiles,
+    setdataset_department, setdataset_company, setdataset_domain, setcomplaintFiles,setotherText
   } = useListComplaint();
 
   // =====================================================================================================
@@ -285,11 +283,10 @@ export default function Complaint() {
     setdatapriority("");
     setcompTypeOther("");
     setcompRsOther("");
+    setclauseOther("");
     setrequest_name("");
     setrequest_company_id(null);
     setrequest_domain_id("");
-    setarea_of_detection_dept_id("");
-    setarea_of_detection_dept_name("");
     setrequest_department_id(null);
     setrequest_position("");
     setrequest_email("");
@@ -333,9 +330,9 @@ export default function Complaint() {
         ...item,
         complaint_id: complaintid,
         // other: compRsOther != null && compRsOther != '' ? compRsOther : null,
-        other: item.isOther === "Y" ? (compRsOther?.trim() || null) : null,
-        clause: clauseOther != null && clauseOther != '' ? clauseOther : null,
-        // clause: item.isOther === "Y" ? (clauseOther?.trim() || null) : null
+        other:  item.isClause === "Other" ? (compRsOther?.trim() || null) : null,
+        // clause: clauseOther != null && clauseOther != '' ? clauseOther : null,
+        clause:  item.isClause === "Clause" ?  (clauseOther?.trim() || null) : null
       };
     });
     return updatedData;
@@ -639,8 +636,6 @@ export default function Complaint() {
         respondent_email: respondent_email,
         respondent_other_name: respondent_other_name,
         respondent_other_email: respondent_other_email,
-        area_of_detection_dept_id: area_of_detection_dept_id,
-        area_of_detection_dept_name: area_of_detection_dept_name,
         product_name: product_name,
         detail: detail,
         priority_level: datapriorityValue_Combobox,
@@ -657,6 +652,7 @@ export default function Complaint() {
             cf_type: "Complaint",
             complaint_id: tempid,
             complaint_at_id: (index + 1).toString(),
+            other: item.otherText?.trim() || null,
             // explain_id: explain_id,
             // approve_step: approve_step,
             cf_file_seq: (index + 2).toString(),
@@ -697,22 +693,22 @@ export default function Complaint() {
     console.log("📤 dataReportTypeValue.id:", dataReportTypeValue.id);
     console.log("📤 dataReportTypeValue.lov_code:", dataReportTypeValue.lov_code);
     console.log("📤 dataReportTypeValue.lov1:", dataReportTypeValue.lov1);
-    setIsLoadingScreen(true);
+    // setIsLoadingScreen(true);
 
-    try {
-      const response = await _POST_FORMDATA(formData, "/Complaint/ComplaintAdd");
-      if (response && response.status === "success") {
-        console.log("✅ Complaint added successfully:", response);
-      } else {
-        console.log("⚠️ Add failed:", response);
-      }
-    } catch (error) {
-      console.error("Upload failed:", error);
-    } finally {
-      setIsLoadingScreen(false);
-      handleClose();
-      Complaint_Get();
-    }
+    // try {
+    //   const response = await _POST_FORMDATA(formData, "/Complaint/ComplaintAdd");
+    //   if (response && response.status === "success") {
+    //     console.log("✅ Complaint added successfully:", response);
+    //   } else {
+    //     console.log("⚠️ Add failed:", response);
+    //   }
+    // } catch (error) {
+    //   console.error("Upload failed:", error);
+    // } finally {
+    //   setIsLoadingScreen(false);
+    //   handleClose();
+    //   Complaint_Get();
+    // }
   };
 
   // READ - Preview Complaint (from ComplaintRead.tsx)
@@ -729,8 +725,6 @@ export default function Complaint() {
       setreport_type(dataelement.report_type || "")
       setcas_number(dataelement.cas_number || "")
       setrequest_company_id(dataelement.request_company_id)
-      setarea_of_detection_dept_id(dataelement.area_of_detection_dept_id || "")
-      setarea_of_detection_dept_name(dataelement.area_of_detection_dept_name || "")
       setproduct_name(dataelement.product_name || "")
       setlot_no(dataelement.lot_no || "")
       setuser_file_name(dataelement.user_file_name || "")

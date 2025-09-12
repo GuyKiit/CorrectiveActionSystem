@@ -105,7 +105,6 @@ export default function CompalintView({
         respondent_email,
         respondent_other_name,
         respondent_other_email,
-        area_of_detection_dept_id,
         product_name,
         detail,
         compTypeOther,
@@ -175,7 +174,6 @@ export default function CompalintView({
         setrespondent_email,
         setrespondent_other_name,
         setrespondent_other_email,
-        setarea_of_detection_dept_id,
         setproduct_name,
         setdetail,
         setcomplaint_type_other,
@@ -254,7 +252,6 @@ export default function CompalintView({
     // Functions (Initial, Calculation or ETC.) =================================================
     const resetForm = () => {
         setcas_number("");
-        setarea_of_detection_dept_id("");
         setproduct_name("");
         setlot_no("");
         setuser_file_name("");
@@ -314,7 +311,6 @@ export default function CompalintView({
             setreport_type(dataelement.report_type)
             setcas_number(dataelement.cas_number)
             setrequest_company_id(dataelement.request_company_id)
-            setarea_of_detection_dept_id(dataelement.area_of_detection_dept_id)
             setproduct_name(dataelement.product_name)
             setlot_no(dataelement.lot_no)
             setuser_file_name(dataelement.user_file_name)
@@ -522,19 +518,7 @@ export default function CompalintView({
                             bgcolorTextField={bgcolorTextField}
                         />
                     </Grid>
-                    <Grid size={4}>
-                        <FullWidthTextField
-                            value={area_of_detection_dept_id}
-                            //required={"required"}
-                            labelName={"Department / Area of Detection"}
-                            onchange={(e) => {
-                                setarea_of_detection_dept_id(e);
-                            }}
-                            readonly
-                            bgcolorTextField={bgcolorTextField}
-                        // Validate={validateText && validateText.driverTel}
-                        />
-                    </Grid>
+                    
                     <Grid size={4}>
                         <DesktopDatePickers
                             labelName={"Required Response Date"}

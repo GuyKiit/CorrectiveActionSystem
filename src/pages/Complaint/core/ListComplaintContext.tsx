@@ -61,12 +61,6 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
     const [user_file_name, setuser_file_name] = useState<any>(
         initialListComplaint.user_file_name
     );
-    const [area_of_detection_dept_id, setarea_of_detection_dept_id] = useState<any>(
-        initialListComplaint.area_of_detection_dept_id
-    );
-    const [area_of_detection_dept_name, setarea_of_detection_dept_name] = useState<any>(
-        initialListComplaint.area_of_detection_dept_name
-    );
     const [product_name, setproduct_name] = useState<any>(
         initialListComplaint.product_name
     );
@@ -203,6 +197,9 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
     const [compTypeOther, setcompTypeOther] = useState<any>(
         initialListComplaint.compTypeOther
     );
+    const [otherText, setotherText] = useState<any>(
+        initialListComplaint.otherText
+    );
     const [compRsOther, setcompRsOther] = useState<any>(
         initialListComplaint.compRsOther
     );
@@ -262,13 +259,12 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 request_position,
                 request_email,
                 request_phone,
-                area_of_detection_dept_id,
-                area_of_detection_dept_name,
                 product_name,
                 detail,
                 user_file_name,
                 other,
                 compTypeOther,
+                otherText,
                 compRsOther,
                 photoOther,
                 clauseOther,
@@ -354,11 +350,10 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 setrespondent_domain_id,
                 setrespondent_department_id,
                 setrespondent_email,
-                setarea_of_detection_dept_id,
-                setarea_of_detection_dept_name,
                 setproduct_name,
                 setdetail,
                 setcompTypeOther,
+                setotherText,
                 setcompRsOther,
                 setphotoOther,
                 setclauseOther,
