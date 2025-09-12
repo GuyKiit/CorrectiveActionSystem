@@ -22,8 +22,6 @@ export type ListComplaintContextProps = {
     respondent_domain_id?: any
     respondent_department_id?: any
     respondent_email?: string | null
-    area_of_detection_dept_id?: string 
-    area_of_detection_dept_name?: string 
     product_name?: string | null
     detail?: string | null
     user_file_name?: string | null
@@ -78,6 +76,7 @@ export type ListComplaintContextProps = {
     compTypeOther?: any
     compRsOther?: any
     photoOther?: any
+    otherText?: any
     clauseOther?: any
     phoTypeOther?: any
 
@@ -130,8 +129,6 @@ export type ListComplaintContextProps = {
     setrespondent_email: Dispatch<SetStateAction<string | null>>;
     setrespondent_other_name: Dispatch<SetStateAction<string | null>>;
     setrespondent_other_email: Dispatch<SetStateAction<string | null>>;
-    setarea_of_detection_dept_id: Dispatch<SetStateAction<string | null>>;
-    setarea_of_detection_dept_name: Dispatch<SetStateAction<string | null>>;
     setother: Dispatch<SetStateAction<string | null>>;
     setproduct_name: Dispatch<SetStateAction<string | null>>;
     setdetail: Dispatch<SetStateAction<string | null>>;
@@ -159,6 +156,7 @@ export type ListComplaintContextProps = {
     setcompTypeOther: Dispatch<SetStateAction<string | null>>;
     setcompRsOther: Dispatch<SetStateAction<string | null>>;
     setphotoOther: Dispatch<SetStateAction<string | null>>;
+    setotherText: Dispatch<SetStateAction<string | null>>;
     setclauseOther: Dispatch<SetStateAction<string | null>>;
     setphoTypeOther: Dispatch<SetStateAction<string | null>>;
     setdc_email: Dispatch<SetStateAction<string | null>>;
@@ -212,6 +210,7 @@ export const initialListComplaint: ListComplaintContextProps = {
     setcompTypeOther: () => { },
     setcompRsOther: () => { },
     setphotoOther: () => { },
+    setotherText: () => { },
     setclauseOther: () => { },
     setphoTypeOther: () => { },
     // setdataComplaintType: () => { },
@@ -222,8 +221,6 @@ export const initialListComplaint: ListComplaintContextProps = {
     setrespondent_email: () => { },
     setrespondent_other_name: () => { },
     setrespondent_other_email: () => { },
-    setarea_of_detection_dept_id: () => { },
-    setarea_of_detection_dept_name: () => { },
     setproduct_name: () => { },
     setdetail: () => { },
     setcomplaint_type_other: () => { },
