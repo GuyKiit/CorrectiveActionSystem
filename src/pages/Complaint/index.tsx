@@ -39,12 +39,17 @@ import FullWidthButton from "../../components/MUI/FullWidthButton";
 export type Launch = {
   id: string;
   report_type?: string;
+  report_code?: string;
   cas_number?: string;
   request_company_id?: any;
+  doc_date: dayjs.Dayjs
   product_name?: string;
   lot_no?: string;
   user_file_name?: string;
   detail?: string;
+  compTypeOther?: string;
+  other?: string;
+  clause?: string;
   respondent_company_id?: any;
   respondent_domain_id?: any;
   respondent_department_id?: any;
@@ -60,7 +65,8 @@ export type Launch = {
   priority_level?: string;
   complaint_type_id?: string;
   complaint_at_id?: string;
-  setdate_of_detection: dayjs.Dayjs | null
+  date_of_detection: dayjs.Dayjs | null
+  respond_date_within: dayjs.Dayjs | null
 }
 interface LovType {
   id: string;
@@ -230,7 +236,7 @@ export default function Complaint() {
 
   // Search Variables (from index.tsx)
   const [TextNameSearch, setTextNameSearch] = React.useState({
-    report_type: "",
+    dataReportTypeValue: "",
     cas_number: "",
     product_name: "",
     lot_no: "",
@@ -279,6 +285,7 @@ export default function Complaint() {
     setrespondent_company_id(null);
     setrespondent_domain_id("");
     setrespondent_department_id(null);
+    setdate_of_detection(null);
     setrespondent_email("");
     setdetail("");
     setdatapriority("");
@@ -330,9 +337,7 @@ export default function Complaint() {
       return {
         ...item,
         complaint_id: complaintid,
-        // other: compRsOther != null && compRsOther != '' ? compRsOther : null,
         other: item.isClause === "Other" ? (compRsOther?.trim() || null) : null,
-        // clause: clauseOther != null && clauseOther != '' ? clauseOther : null,
         clause: item.isClause === "Clause" ? (clauseOther?.trim() || null) : null
       };
     });
@@ -531,6 +536,7 @@ export default function Complaint() {
                 }}
               />
             );
+            el.report_code = dataset_reporttype?.find((item:any)=> item.id == el.report_type)?.lov_code
             el.ACTION = ACTION;
             responseData.push(el);
           });
@@ -547,13 +553,12 @@ export default function Complaint() {
   const ListSearchGet = async () => {
     setIsLoadingScreen(true)
     const dataset = {
-      report_type: TextNameSearch.report_type ? TextNameSearch.report_type : null,
+      report_type: TextNameSearch.dataReportTypeValue ? TextNameSearch.dataReportTypeValue : null,
       cas_number: TextNameSearch.cas_number ? TextNameSearch.cas_number : null,
       product_name: TextNameSearch.product_name ? TextNameSearch.product_name : null,
       lot_no: TextNameSearch.lot_no ? TextNameSearch.lot_no : null,
       respond_date_within: TextNameSearch.respond_date_within ? TextNameSearch.respond_date_within : null,
       doc_date: TextNameSearch.doc_date ? TextNameSearch.doc_date : null,
-      date_of_detection: TextNameSearch.date_of_detection ? TextNameSearch.date_of_detection : null,
     }
 
     try {
@@ -577,14 +582,18 @@ export default function Complaint() {
                 }}
               />
             );
+            el.report_code = dataset_reporttype?.find((item:any)=> item.id == el.report_type)?.lov_code
             el.ACTION = ACTION;
             responseData.push(el);
           });
         }
         setdatalist(responseData);
+        console.log("raw response.data:", response.data); // เช็คว่ามีกี่แถวจริง ๆ
+        console.log("mapped responseData:", responseData); // เช็คว่ามีกี่แถวหลัง map
       }
     } catch (e) {
       console.log("error");
+
     }
   };
 
@@ -723,7 +732,7 @@ export default function Complaint() {
 
     if (dataelement) {
       console.log("dataelement.report_type", dataelement.report_type);
-     
+
       // setIsRSHidden(extractReportType(dataelement.report_type) != "NCR" ? true : false);
 
       // แปลง priority text → id ของ RadioGroup
@@ -806,12 +815,12 @@ export default function Complaint() {
 
   // Search Handlers
   const handleCloseSearch = () => {
-    setdataReportTypeValue("");
+    setdataReportTypeValue(null);
     setdataComplaintTypeValue_Combobox("");
     setdataComplaintRsValue_Combobox("");
     setdataphotoValue_Combobox("");
     setTextNameSearch({
-      report_type: "",
+      dataReportTypeValue: "",
       cas_number: "",
       product_name: "",
       lot_no: "",
@@ -819,7 +828,7 @@ export default function Complaint() {
       doc_date: "",
       date_of_detection: "",
     });
-    Complaint_Get();
+    Complaint_Get()
   };
 
   // Close Dialog Handler
@@ -830,6 +839,7 @@ export default function Complaint() {
     setOpenEdit(false);
     setOpenDelete(false);
     setOpenUpload(false);
+    resetForm();
   };
 
   // Set Data Handler
@@ -857,7 +867,6 @@ export default function Complaint() {
     // ListSearchGet();
     CasDepartmentDomainGet();
     complaint_status_Get();
-    console.log("gettttttt", getPaddingYear())
   }, []);
 
   // Filter complaint types based on selected report type (from ComplaintRead.tsx)
@@ -963,13 +972,7 @@ export default function Complaint() {
               handleChange={setdocumentDateSearch}
             />
           </Grid>
-          <Grid size={4}>
-            <DesktopDatePickers
-              labelName={"วันที่พบปัญหา (Date of Detection)"}
-              value={endDateSearch}
-              handleChange={setEndDateSearch}
-            />
-          </Grid>
+          
         </Grid>
 
         {/* ======================================================================== */}
@@ -1007,6 +1010,7 @@ export default function Complaint() {
               disabled={menuFuncData?.find((item: auth_role_menu_func) => item?.func_name === "Add") ? false : true}
               color="success"
               onClick={handleOnclickMenuAdd}
+              // onClick={handleOnclickMenuAdd}
             >
               {menuFuncData?.find((item: auth_role_menu_func) => item?.func_name === "Add") ? "เพิ่มข้อมูล" : ""}
               <AddIcon sx={{}} />
@@ -1026,7 +1030,7 @@ export default function Complaint() {
         colorBotton="success"
         element={
           <ComplaintBody
-            action="add"
+            action="Add"
             onBlocksChange={(data) => setComplaintBlocks(data)}
             validateDetailText={blockValidateErrors}
           />}
@@ -1041,6 +1045,31 @@ export default function Complaint() {
         colorBotton="success"
         element={<ComplaintBody
           action="Read"
+        />}
+      />
+
+
+      <FuncDialog
+        open={openEdit}
+        dialogWidth="xl"
+        openBottonHidden={false}
+        titlename={'ดูข้อมูล'}
+        handleClose={handleClose}
+        colorBotton="success"
+        element={<ComplaintBody
+          action="Edit"
+        />}
+      />
+
+      <FuncDialog
+        open={openDelete}
+        dialogWidth="xl"
+        openBottonHidden={false}
+        titlename={'ดูข้อมูล'}
+        handleClose={handleClose}
+        colorBotton="success"
+        element={<ComplaintBody
+          action="Delete"
         />}
       />
     </>

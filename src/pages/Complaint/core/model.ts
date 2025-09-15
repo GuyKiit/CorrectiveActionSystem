@@ -13,7 +13,7 @@ export type ListComplaintContextProps = {
     no?: string
     report_type?: string
     cas_number?: string
-    doc_date?: dayjs.Dayjs
+    doc_date?: dayjs.Dayjs 
     date_of_detection?: dayjs.Dayjs | null
     request_name?: string | null
     request_company_id?: any

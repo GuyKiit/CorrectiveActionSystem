@@ -309,34 +309,42 @@ export default function ComplaintBody({
     } else {
       setIsRSHidden(false);
     }
-
     setdataReportTypeValue(val);
     console.log(dataReportTypeValue, 'dataReportTypeValue');
 
-    setdataComplaintTypeValue_Combobox(null);
-    setdataComplaintType([]);
-    setdataComplaintRsValue_Combobox(null);
-    setdataComplaintRs([]);
-    setdataphotoValue_Combobox(null);
-    setdataphoto([]);
-    setdatapriorityValue_Combobox(null);
-    setdatapriority(null);
-    setcas_number("");
-    setproduct_name("");
-    setlot_no("");
-    setdetail("");
-    setcompTypeOther("");
-    setotherText("");
-    setcompRsOther("");
-    setclauseOther("");
-    setphoTypeOther("");
-    setrespond_date_within(null);
     setrespondent_domain_id(dataset_company[0]);
     setrespondent_company_id(dataset_company[0]);
+    setcas_number("");
+
+    setdate_of_detection(null)
+    setrespondent_department_id(null)
+    setproduct_name("");
+    setlot_no("");
+    setrespondent_email("")
+    setdataComplaintTypeValue_Combobox(null);
+    setdataComplaintType([]);
+    setcompTypeOther("");
+    setdataComplaintRsValue_Combobox(null);
+    setdataComplaintRs([]);
+    setcompRsOther("");
+    setclauseOther("");
+    setdetail("");
+    setdatapriorityValue_Combobox(null);
+    setdatapriority(null);
+    setrespond_date_within(null);
+    setdataphotoValue_Combobox(null);
+    setdataphoto([]);
+    setotherText("");
+    setphoTypeOther("");
+    
+    setrequest_name("")
+    setrequest_position("")
+    setrequest_department_id(user);
+    setrequest_email("")
+    setrequest_phone("")
     setrequest_domain_id(dataset_company[0]);
     setrequest_company_id(dataset_company[0]);
-    setrequest_department_id(user);
-
+    
   };
 
   const handleCheckboxChangeCT = (item: LovType) => {
@@ -353,15 +361,6 @@ export default function ComplaintBody({
         if (item.lov2 === "Y") {
           setcompTypeOther("");
         }
-        // if (item.id === "TRR_CT_CAR_99") {
-        //   setcompTypeOther("");
-        // }
-        // if (item.id === "TRR_CT_OBS_99") {
-        //   setcompTypeOther("");
-        // }
-        // if (item.id === "TRR_CT_CPAR_99") {
-        //   setcompTypeOther("");
-        // }
       } else {
         // เพิ่ม object แบบเต็ม
         newData = [...prev, item];
@@ -380,10 +379,6 @@ export default function ComplaintBody({
 
       // อัปเดตเข้า context
       setdataComplaintTypeValue_Combobox(reducedArray);
-      // อัปเดตเข้า context เป็น array ลดรูป (แค่ id, lov1)
-      // setdataComplaintTypeValue_Combobox(
-      //   newData.map(c => ({ id: c.id, lov1: c.lov1 }))
-      // );
       console.log(newData, "newData");
 
       return newData;
@@ -402,10 +397,6 @@ export default function ComplaintBody({
         if (item.lov3 === "Other") {
           setcompRsOther("");
         }
-        // ถ้าเอาออกแล้วเป็น Other → เคลียร์ค่า
-        // if (item.id === "TRR_RS_NCR_99") {
-        //   setcompRsOther("");
-        // }
         if (item.lov3 === "Clause") {
           setclauseOther("");
         }
@@ -555,160 +546,6 @@ export default function ComplaintBody({
     return a.every((item, index) => JSON.stringify(item) === JSON.stringify(b[index]));
   };
 
-  // React.useEffect(() => {
-  //   if (dataReportTypeValue) {
-  //     const val = dataReportTypeValue;
-
-  //     // กรอง complaint type
-  //     const filtered = (dataComplaintType_Combobox || []).filter(
-  //       (item: LovType) => item.lov_type === "complaint_type" && item.lov_code === val.id
-  //     );
-
-  //     if (!arraysAreEqual(filteredComplaintType, filtered)) {
-  //       setFilteredComplaintType(filtered);
-  //     }
-
-  //     // กรอง attach type
-  //     const filteredpho = (dataphoto_Combobox || []).filter((item: LovType) => item.lov_type === "attach_type");
-  //     if (!arraysAreEqual(filteredphoto, filteredpho)) {
-  //       setFilteredphoto(filteredpho);
-  //     }
-
-  //     // กรอง priority
-  //     const filteredpriority = (datapriority_Combobox || []).filter((item: LovType) => item.lov_type === "priority_level");
-  //     if (!arraysAreEqual(filteredpriority, filteredpriority)) {
-  //       setFilteredpriority(filteredpriority);
-  //     }
-
-  //     // ถ้าเลือก NCR → filter Reference Standard
-  //     if (val.lov_code === "NCR") {
-  //       const filteredRs = (dataComplaintRs_Combobox || []).filter(
-  //         (item: LovType) => item.lov_type === "reference_standard" && item.lov_code === val.id
-  //       );
-  //       if (!arraysAreEqual(filteredComplaintRs, filteredRs)) {
-  //         setFilteredComplaintRs(filteredRs);
-  //       }
-  //     }
-  //   } else {
-  //     if (filteredComplaintType.length > 0) setFilteredComplaintType([]);
-  //     if (filteredComplaintRs.length > 0) setFilteredComplaintRs([]);
-  //     if (filteredphoto.length > 0) setFilteredphoto([]);
-  //     if (filteredpriority.length > 0) setFilteredpriority([]);
-  //   }
-  // }, [
-  //   user,
-  //   dataReportTypeValue,
-  //   dataComplaintType_Combobox,
-  //   dataComplaintRs_Combobox,
-  //   dataphoto_Combobox,
-  //   datapriority_Combobox,
-  //   dataelement,
-  //   filteredComplaintType,
-  //   filteredComplaintRs,
-  //   filteredphoto,
-  //   filteredpriority,
-  // ]);
-
-
-  //   /* backUp 20250912///////
-  //   React.useEffect(() => {
-
-  //     // if (user && user.length > 0) {
-  //     //   setrequest_department_id({
-  //     //     itasset_department_id: user[0].itasset_department_id,
-  //     //     itasset_department_name: user[0].itasset_department_name
-  //     //   });
-  //     // }
-
-  //     if (dataReportTypeValue) {
-  //       const val = dataReportTypeValue;
-
-  //       // กรอง complaint type
-  //       const filtered = (dataComplaintType_Combobox || []).filter((item: LovType) =>
-  //         item.lov_type === "complaint_type" && item.lov_code === val.id
-  //       );
-  //       console.log("🖤🤎filtered",filtered);
-
-
-  //       setFilteredComplaintType(filtered);
-
-  //       // กรอง attach type
-  //       const filteredpho = (dataphoto_Combobox || []).filter((item: LovType) =>
-  //         item.lov_type === "attach_type"
-  //       );
-  //       setFilteredphoto(filteredpho);
-
-  //       // กรอง priority
-  //       const filteredpriority = (datapriority_Combobox || []).filter((item: LovType) =>
-  //         item.lov_type === "priority_level"
-  //       );
-  //       setFilteredpriority(filteredpriority);
-
-  //       // ถ้าเลือก NCR → filter Reference Standard
-  //       if (val.lov_code === "NCR") {
-  //         const filteredRs = (dataComplaintRs_Combobox || []).filter((item: LovType) =>
-  //           item.lov_type === "reference_standard" && item.lov_code === val.id
-  //         );
-  //         setFilteredComplaintRs(filteredRs);
-  //       }
-
-
-  //     } else {
-  //       // reset ถ้า val null
-  //       setFilteredComplaintType([]);
-  //       setFilteredComplaintRs([]);
-  //       setFilteredphoto([]);
-  //       setFilteredpriority([]);
-
-  //     }
-  //   }, [user, dataReportTypeValue, dataComplaintType_Combobox, dataComplaintRs_Combobox, dataphoto_Combobox, datapriority_Combobox, dataelement]);
-  // */
-  // ////////
-
-
-
-  //  React.useEffect(() => {
-  //   // สร้าง async function ภายใน useEffect
-  //   const updateDatasetReporttype = async () => {
-  //     if (!Array.isArray(dataset_reporttype) || !dataelement) return;
-
-  //     // ใช้ await กับฟังก์ชัน async ของคุณ
-  //     const newdataset_reporttype = await setValueMas(dataset_reporttype, dataelement.report_type, "id");
-  //     console.log("newdataset_reporttype", newdataset_reporttype);
-
-  //     if (newdataset_reporttype) {
-  //       setdataset_reporttype((prev: any) => {
-  //         // ดัก loop: ถ้า object เหมือนเดิมไม่ต้อง setState
-  //         if (JSON.stringify(prev) !== JSON.stringify(newdataset_reporttype)) {
-  //           return newdataset_reporttype;
-  //         }
-  //         return prev;
-
-  //       });
-  //     }
-  //     if (!datapriority_Combobox) return;
-
-  //   const newFilteredPriority = datapriority_Combobox.filter(
-  //     (item: LovType) => item.lov_type === "priority_level"
-  //   );
-
-  //   setFilteredpriority(newFilteredPriority);
-
-  //   };
-
-  //   updateDatasetReporttype(); // เรียก async function
-  // }, [dataset_reporttype, dataelement,datapriority_Combobox]);
-
-  // React.useEffect(() => {
-  //   if (!datapriority_Combobox) return;
-
-  //   const newFilteredPriority = datapriority_Combobox.filter(
-  //     (item: LovType) => item.lov_type === "priority_level"
-  //   );
-
-  //   setFilteredpriority(newFilteredPriority);
-  // }, [datapriority_Combobox]);
-
   React.useEffect(() => {
     const updateData = async () => {
       // ถ้าไม่มี anything ที่จำเป็นก็ยังไม่ return ทันที — เราต้องการให้ logic พยายามทำงานเมื่อข้อมูลพร้อม
@@ -820,54 +657,128 @@ export default function ComplaintBody({
   React.useEffect(() => {
     console.log(dataelement, '55555555555555555555555555555', filteredComplaintType);
     console.log(dataelement, '55555555555555555555555555555', datapriority_Combobox);
-    
+    console.log(dataelement?.priority_level, '55555555555555555555555555555', datapriority_Combobox);
+    console.log("💥💥CasNumber:", dataelement?.cas_number);
+    console.log("isRSHidden", isRSHidden);
+    console.log("dataReportTypeValue", dataReportTypeValue);
+    console.log("dataComplaintRs", dataComplaintRs);
+    console.log("filteredComplaintRs", filteredComplaintRs);
+    console.log("💚 raw complaintRs from element:", dataelement?.complaintRs);
+    console.log("💚 dataComplaintRs_Combobox:", dataComplaintRs_Combobox);
+    const rsData = setComplaintRs(dataelement?.complaintRs);
+    console.log("💚 mapped rsData:", rsData);
 
-    if (dataelement) {
-      setdate_of_detection(dayjs(dataelement?.setdate_of_detection))
+
+
+
+    if (dataelement && action != "Add") {
+      setrespondent_company_id(dataset_company.find((el: any) => el.itasset_company_id == String(dataelement.respondent_company_id)));
+      setcas_number(dataelement?.cas_number || "");
+      setdoc_date(dataelement?.doc_date ? dayjs(dataelement.doc_date, "DD-MM-YYYY") : dayjs());
+      setdate_of_detection(dayjs(dataelement?.date_of_detection))
       setrespondent_department_id(dataset_department.find((el: any) => el.itasset_department_id == String(dataelement.respondent_department_id)));
       setproduct_name(dataelement?.product_name ? dataelement?.product_name : "")
       setlot_no(dataelement?.lot_no ? dataelement?.lot_no : "")
       setrespondent_email(dataelement?.respondent_email ? dataelement?.respondent_email : "")
       setdataComplaintType(setComplaintType(dataelement?.complaintType))
+      setcompTypeOther(dataelement?.other ? dataelement?.other : "")
+      setdataComplaintRs(setComplaintRs(dataelement?.complaintRs))
+      setcompRsOther(dataelement?.other ? dataelement?.other : "")
+      setclauseOther(dataelement?.clause ? dataelement?.clause : "")
       setdetail(dataelement?.detail ? dataelement?.detail : "")
-      // setpriority_level(dataelement?.priority_level ? dataelement?.priority_level :"")
       setpriority_level(setPriorityLevel(dataelement?.priority_level));
-    }
+      setrespond_date_within(dayjs(dataelement?.respond_date_within))
+      setrequest_name(dataelement?.request_name ? dataelement?.request_name : "")
+      setrequest_position(dataelement?.request_position ? dataelement?.request_position : "")
+      setrequest_department_id(dataelement?.request_department_id ? dataelement?.request_department_id : "")
+      setrequest_email(dataelement?.request_email ? dataelement?.request_email : "")
+      setrequest_phone(dataelement?.request_phone ? dataelement?.request_phone : "")
+      setrequest_company_id(dataset_company.find((el: any) => el.itasset_company_id == String(dataelement.request_company_id)));
 
+      // สมมติ LovType คือ { id: string; label: string }
+
+      const ct = setComplaintType(dataelement?.complaintType);
+      setdataComplaintType(ct);
+
+      // ถ้ามี complaintType ที่เป็น Other ให้ดึงค่ามา
+      const otherCT = ct.find((el: any) => el.lov2 === "Y");
+      setcompTypeOther(otherCT?.other || "");
+
+      const rs = setComplaintRs(dataelement?.complaintRs);
+      setdataComplaintRs(rs);
+
+      // // ⭐ กรองตาม report_type
+      // const filteredRS = rsData.filter(el => el.report_type === dataelement.report_type);
+      // setdataComplaintRs(filteredRS);
+
+      // ⭐ ใช้ filteredRS หา Other/Clause ไม่ใช่ rsData
+      const otherRS = rs.find((el: any) => el.lov3 === "Other");
+      setcompRsOther(otherRS?.other || "");
+
+      const clauseRS = rs.find((el: any) => el.lov3 === "Clause");
+      setclauseOther(clauseRS?.clause || "");
+
+      // หา LovType จาก datapriority_Combobox ตาม dataelement?.priority_level
+      const selectedPriority = datapriority_Combobox.find(
+        (item: any) => item.id === dataelement?.priority_level
+      ) || null;
+
+      setdatapriority(selectedPriority);
+
+      if (dataelement?.report_type === "TRR_RT_NCR") {
+        setIsRSHidden(false);
+      } else {
+        setIsRSHidden(true);
+      }
+    }
+    
   }, [dataset_reporttype]);
 
-  const setComplaintType = (data:any) => { 
-    const newData:any[] = []
-    Array.isArray(data) && data.forEach((el)=>{
-      const filter = dataComplaintType_Combobox.find((item:any)=> item.id === el.complaint_type_id)
-      // console.log(filter,"filterfilterfilterfilterfilter");
-      newData.push(filter)
+  const setComplaintType = (data: any) => {
+    const newData: any[] = []
+    Array.isArray(data) && data.forEach((el) => {
+      const filter = dataComplaintType_Combobox.find(
+        (item: any) => item.id === el.complaint_type_id
+      )
+
+      if (filter) {
+        newData.push({
+          ...filter,
+          other: el.other || ""   // ⭐ เก็บค่าข้อความ Other มาด้วย
+        })
+      }
     })
     return newData
   }
 
+  const setComplaintRs = (data: any) => {
+    const newData: any[] = []
+    Array.isArray(data) && data.forEach((el) => {
+      const filter = dataComplaintRs_Combobox.find(
+        (item: any) => item.id === el.complaint_type_id
+      )
+
+      if (filter) {
+        newData.push({
+          ...filter,
+          other: el.other || "",   // ⭐ เก็บค่าข้อความ Other มาด้วย
+          clause: el.clause || ""
+        })
+      }
+    })
+    return newData
+  }
   const setPriorityLevel = (value: any) => {
-  if (!value) return null;
+    if (!value) return null;
 
-  // หา object ที่ id ตรงกับค่าที่ DB ส่งมา
-  const selected = datapriority_Combobox.find(
-    (item: any) => item.id === value
-  ) || null;
+    // หา object ที่ id ตรงกับค่าที่ DB ส่งมา
+    const selected = datapriority_Combobox.find(
+      (item: any) => item.id === value
+    ) || null;
 
-  console.log("🎯 Priority matched:", selected);
-  return selected;
-};
-  // React.useEffect(() => {
-  //   if (Array.isArray(dataset_reporttype) && dataset_reporttype.length > 0) {
-  //     // หา object ที่ lov_code = "NCR"
-  //     const defaultVal = dataset_reporttype.find((item: LovType) => item.lov_code === "NCR");
-
-  //     if (defaultVal) {
-  //       setdataReportTypeValue(defaultVal); // set ค่า default ให้ Autocomplete
-  //     }
-  //   }
-  // }, [dataset_reporttype]);
-
+    console.log("🎯 Priority matched:", selected);
+    return selected;
+  };
 
 
   return (
@@ -923,12 +834,13 @@ export default function ComplaintBody({
                 options={dataset_company}
                 column="domain_name"
                 setvalue={(v) => setrespondent_company_id(v)}
-                readonly={Read || readonlyTextField}
+                bgcolorTextField={true}
+                readonly
               />
             </Grid>
             <Grid size={4} mt={2}>
               <FullWidthTextField
-                value="Auto"
+                value={cas_number || "AUTO"}
                 labelName="CAS Number"
                 onchange={(e) => { setcas_number(e); }}
                 readonly
@@ -938,7 +850,9 @@ export default function ComplaintBody({
               <DesktopDatePickers
                 labelName={"วันที่ออกเอกสาร (Document Issuance Date)"}
                 value={doc_date}
-                handleChange={(val) => setdoc_date}
+                handleChange={(val: dayjs.Dayjs | null | undefined) => {
+                  if (val) setdoc_date(val); // ถ้า val เป็น null/undefined จะไม่เซ็ต
+                }}
                 bgcolorTextField={true}
                 readonly
               />
@@ -995,6 +909,7 @@ export default function ComplaintBody({
                     labelName={"วันที่พบปัญหา (Date of Detection)"}
                     value={date_of_detection}
                     handleChange={(val) => setdate_of_detection(val ?? null)}
+                    bgcolorTextField={action === "Add" ? false : true}
                     readonly={action === "Read"}
                   />
                 </Grid>
@@ -1009,6 +924,7 @@ export default function ComplaintBody({
                       console.log(e);  // ดูค่าของ e ที่ถูกส่งมาจาก AutocompleteComboBox
                       setrespondent_department_id(e);
                     }}
+                    bgcolorTextField={action === "Add" ? false : true}
                     readonly={action === "Read"}
                   />
                 </Grid>
@@ -1273,13 +1189,14 @@ export default function ComplaintBody({
                                     <Radio
                                       checked={datapriority?.id === item.id}
                                       onChange={(e) => {
+                                        setdatapriority(item);
                                         // console.log("Priority selected:", e);
                                         console.log("Priority selected:", item);
                                         setdatapriorityValue_Combobox(item.id);
-                                        setdatapriority(item);
                                         const days = Number(item.lov3 ?? 0);
                                         priorityCalculateRespondDate(days, true);
                                         console.log("เลือก priority:", item.lov_code, "Days:", days);
+                                        console.log("เลือก datapriority?.id:", datapriority?.id);
                                       }}
                                       disabled={action === "Read"}
                                       sx={{ color: '#ff9800' }}
@@ -1393,38 +1310,6 @@ export default function ComplaintBody({
               <Grid container spacing={2}>
                 {dataReportTypeValue && (
                   <Grid size={12}>
-                    {/* <Paper elevation={2} sx={{ p: 2, borderRadius: 2, mb: 2 }}>
-                      <label
-                        className="sarabun-regular-datatable"
-                        style={{
-                          fontSize: '18px',
-                          fontWeight: '600',
-                          color: '#333',
-                          margin: 0
-                        }}
-                      >
-                        Please attach any relevant documents or photos
-                      </label>
-                      <Divider sx={{ my: 2 }} />
-                      <Grid container spacing={2}>
-                        {(filteredphoto || []).map((item: LovType) => (
-                          <Grid size={6} key={item.id}>
-                            <FullWidthCheckbox
-                              labelName={item.lov1}
-                              value={dataphoto.some(pho => pho.id === item.id)}
-                              onchange={() => handleCheckboxChangePhotoType(item)}
-                            />
-                          </Grid>
-                        ))}
-                      </Grid>
-                      {dataphoto.some(pho => pho.id === "TRR_AT_4") && (
-                        <FullWidthTextArea
-                          value={phoTypeOther}
-                          labelName="Other:"
-                          onchange={(e) => setphoTypeOther(e)}
-                        />
-                      )}
-                    </Paper> */}
 
                     <BrowseFileUpload setFile={handleFileChange} setFileName={() => { }} />
 
@@ -1580,6 +1465,7 @@ export default function ComplaintBody({
                     options={dataset_company}
                     column="domain_name"
                     setvalue={(v) => setrequest_company_id(v)}
+                    bgcolorTextField={true}
                     readonly
                   />
                 </Grid>
