@@ -1,23 +1,51 @@
-//ทำobj เป็น array
 import React, { useState, useRef, use } from "react";
-import AddIcon from '@mui/icons-material/Add';
+import AddIcon from "@mui/icons-material/Add";
 import { setValueMas } from "../../../../libs/setvaluecallback";
-import DeleteIcon from '@mui/icons-material/Delete';
+import DeleteIcon from "@mui/icons-material/Delete";
 import { _POST } from "../../../service/mas";
-import { _formatNumber, _formatNumberNotdecimal } from "../../../../libs/datacontrol";
+import {
+  _formatNumber,
+  _formatNumberNotdecimal,
+} from "../../../../libs/datacontrol";
 import dayjs from "dayjs";
-import { Box, Divider, IconButton, Paper, Table, TableCell, TableRow, TableBody, TableHead, TableContainer, styled, TextField, Radio, RadioGroup, FormControl, FormControlLabel, FormLabel, Grid2, Stack } from "@mui/material";
-import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import CloseIcon from "@mui/icons-material/Close";
+import {
+  Box,
+  Divider,
+  IconButton,
+  Paper,
+  Table,
+  TableCell,
+  TableRow,
+  TableBody,
+  TableHead,
+  TableContainer,
+  styled,
+  TextField,
+  Radio,
+  RadioGroup,
+  FormControl,
+  FormControlLabel,
+  FormLabel,
+  Grid2,
+  Stack,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+} from "@mui/material";
+import { Document, Page, pdfjs } from "react-pdf";
+import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import FullWidthTextField from "../../../components/MUI/FullWidthTextField";
 import AutocompleteComboBox from "../../../components/MUI/AutocompleteComboBox";
 import DesktopDatePickers from "../../../components/MUI/DesktopDatePicker";
 import FullWidthButton from "../../../components/MUI/FullWidthButton";
 import FullWidthTextArea from "../../../components/MUI/FullWidthTextFieldArea";
 import FullWidthCheckbox from "../../../components/MUI/FullWidthCheckbox";
-import Grid from '@mui/material/Grid2';
+import Grid from "@mui/material/Grid2";
 import TimePickerTextField from "../../../components/MUI/TimePickerTextField";
 import FullSweetalert from "../../../components/MUI/Sweetalert";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 import { useData } from "../../../auth/core/DataContext";
 import { useLayout } from "../../../layout/core/LayoutProvider";
 import { Collapse } from "@mui/material";
@@ -26,46 +54,47 @@ import { log } from "node:console";
 import { cleanAccessData } from "../../../service/initmain/initmain";
 import { useListComplaint } from "../core/ListComplaintContext";
 import { data } from "react-router-dom";
+import { ComplaintFile } from "./BrowseFileUpload";
+
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
 type Validate = {
-  Product_Group: boolean,
-}
+  Product_Group: boolean;
+};
 
 type detail = {
-  qty?: false,
-}
+  qty?: false;
+};
 
 type Block = {
-  id: any,
-  season: number,
-  groupProduct: number,
-  prod_id: any,
-  customer: any,
-  address: any,
-  tms_Complaint_no: string,
-  order_po: string,
-  order_do: string,
-  qty: any,
-  pack_unit: any,
-  total_weight_ton: any,
-  note: any,
-  isValid: boolean,
-  validateMessage: string,
-  req: any,
+  id: any;
+  season: number;
+  groupProduct: number;
+  prod_id: any;
+  customer: any;
+  address: any;
+  tms_Complaint_no: string;
+  order_po: string;
+  order_do: string;
+  qty: any;
+  pack_unit: any;
+  total_weight_ton: any;
+  note: any;
+  isValid: boolean;
+  validateMessage: string;
+  req: any;
 };
 
 interface ComplaintBody {
-  action: string
-  disableTextField?: boolean
-  readonlyTextField?: boolean
-  bgcolorTextField?: boolean
-  disableComBoBox?: boolean
-  dataelement?: any
-  validateText?: Validate
-  validateDetailText?: { [index: number]: detail }
+  action: string;
+  disableTextField?: boolean;
+  readonlyTextField?: boolean;
+  bgcolorTextField?: boolean;
+  disableComBoBox?: boolean;
+  dataelement?: any;
+  validateText?: Validate;
+  validateDetailText?: { [index: number]: detail };
   onBlocksChange?: (blocks: Block[]) => void;
-
-
 }
 
 type LovType = {
@@ -95,12 +124,25 @@ export default function ComplaintBody({
   bgcolorTextField,
   validateText,
   onBlocksChange,
-  validateDetailText
-
-
+  validateDetailText,
 }: ComplaintBody) {
+  const user = cleanAccessData("userSession");
+  const allowedTypes = [
+    "application/pdf",
+    "image/jpg",
+    "image/jpeg",
+    "image/png",
+  ];
 
-  const user = cleanAccessData('userSession');
+  const [fileBuffer, setFileBuffer] = useState<ArrayBuffer | null>(null);
+
+  const handlePreviewFile = (file: File) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      setFileBuffer(e.target?.result as ArrayBuffer);
+    };
+    reader.readAsArrayBuffer(file);
+  };
 
   const {
     Complaint_no,
@@ -175,7 +217,6 @@ export default function ComplaintBody({
     dataset_domain,
     complaintFiles,
 
-
     setComplaint_no,
     setno,
     setcas_number,
@@ -244,22 +285,31 @@ export default function ComplaintBody({
     setdatapriority_Combobox,
     setdatapriorityValue_Combobox,
 
-
     // Dataset
     setdataset_reporttype,
     setdataset_company,
     setdataset_department,
     setdataset_domain,
-    setcomplaintFiles
-
+    setcomplaintFiles,
   } = useListComplaint();
 
+  const [previewFile, setPreviewFile] = useState<File | null>(null);
+
+  const getPdfUrl = (file: File) => {
+    if (file.type === "application/pdf") {
+      return URL.createObjectURL(file);
+    }
+    return null;
+  };
+
   // Utility Variables ======================================================
-  const { Customer } = useData()
-  const { setIsLoadingScreen } = useLayout()
+  const { Customer } = useData();
+  const { setIsLoadingScreen } = useLayout();
 
   // Get Master Variables ======================================================
-  const [filteredComplaintType, setFilteredComplaintType] = useState<LovType[]>([]);
+  const [filteredComplaintType, setFilteredComplaintType] = useState<LovType[]>(
+    []
+  );
   const [filteredComplaintRs, setFilteredComplaintRs] = useState<LovType[]>([]);
   const [filteredpriority, setFilteredpriority] = useState<LovType[]>([]);
   const [filteredphoto, setFilteredphoto] = useState<LovType[]>([]);
@@ -270,14 +320,17 @@ export default function ComplaintBody({
   const [dataphoto, setdataphoto] = useState<LovType[]>([]);
   const [datapriority, setdatapriority] = useState<LovType | null>(null);
   const [files, setFiles] = useState<File[]>([]);
-  const [fileAttachmentTypes, setFileAttachmentTypes] = useState<{ [fileIndex: number]: string }>({});
-  const [fileOtherTexts, setFileOtherTexts] = useState<{ [fileIndex: number]: string }>({});
+  const [fileAttachmentTypes, setFileAttachmentTypes] = useState<{
+    [fileIndex: number]: string;
+  }>({});
+  const [fileOtherTexts, setFileOtherTexts] = useState<{
+    [fileIndex: number]: string;
+  }>({});
   const [fileList, setFileList] = useState<FileData[]>([]);
   const [request_department_id, setrequest_department_id] = React.useState<{
     itasset_department_id: number;
     itasset_department_name: string;
   } | null>(null);
-
 
   // Hidden Variables ======================================================
   const [isFormHidden, setisFormHidden] = useState(true);
@@ -288,9 +341,11 @@ export default function ComplaintBody({
   const [isProductHidden, setisProductHidden] = useState(true);
   const [isLotNoHidden, setisLotNoHidden] = useState(true);
   const [isAttachmentsHidden, setisAttachmentsHidden] = useState(true);
-  const [isDocumentIssuanceHidden, setisDocumentIssuanceHidden] = useState(true);
+  const [isDocumentIssuanceHidden, setisDocumentIssuanceHidden] =
+    useState(true);
   const [isDateOfDetection, setisDateOfDetection] = useState(true);
-  const [isRequiredResponseDateHidden, setisRequiredResponseDateHidden] = useState(true);
+  const [isRequiredResponseDateHidden, setisRequiredResponseDateHidden] =
+    useState(true);
   const [isCTHidden, setisCTHidden] = useState(true);
   const [isRSHidden, setIsRSHidden] = useState(true);
   const [isDetailHidden, setisDetailHidden] = useState(true);
@@ -303,16 +358,20 @@ export default function ComplaintBody({
 
   // Function Handlers (On Change Event) ======================================================
   const handleReportTypeChange = (val: LovType | null) => {
-    console.log(val, 'valvalvalvalvalvalvalvalvalvalvalvalvalvalvalval');
+    console.log(val, "valvalvalvalvalvalvalvalvalvalvalvalvalvalvalval");
 
-    if (val?.lov_code === "CAR" || val?.lov_code === "OBS" || val?.lov_code === "CPAR") {
+    if (
+      val?.lov_code === "CAR" ||
+      val?.lov_code === "OBS" ||
+      val?.lov_code === "CPAR"
+    ) {
       setIsRSHidden(true);
     } else {
       setIsRSHidden(false);
     }
 
     setdataReportTypeValue(val);
-    console.log(dataReportTypeValue, 'dataReportTypeValue');
+    console.log(dataReportTypeValue, "dataReportTypeValue");
 
     setdataComplaintTypeValue_Combobox(null);
     setdataComplaintType([]);
@@ -337,71 +396,69 @@ export default function ComplaintBody({
     setrequest_domain_id(dataset_company[0]);
     setrequest_company_id(dataset_company[0]);
     setrequest_department_id(user);
-
   };
 
   const handleCheckboxChangeCT = (item: LovType) => {
-      console.log("💛💛item", item);
-  
-      setdataComplaintType((prev: LovType[] = []) => {
-        let newData: LovType[];
-  
-        if (prev.some(c => c.id === item.id)) {
-          // ถ้ามีอยู่แล้ว → เอาออก
-          newData = prev.filter(c => c.id !== item.id);
-  
-          // ถ้าเอาออกแล้วเป็น Other → เคลียร์ค่า
-          if (item.lov2 === "Y") {
-            setcompTypeOther("");
-          }
-          // if (item.id === "TRR_CT_CAR_99") {
-          //   setcompTypeOther("");
-          // }
-          // if (item.id === "TRR_CT_OBS_99") {
-          //   setcompTypeOther("");
-          // }
-          // if (item.id === "TRR_CT_CPAR_99") {
-          //   setcompTypeOther("");
-          // }
-        } else {
-          // เพิ่ม object แบบเต็ม
-          newData = [...prev, item];
+    console.log("💛💛item", item);
+
+    setdataComplaintType((prev: LovType[] = []) => {
+      let newData: LovType[];
+
+      if (prev.some((c) => c.id === item.id)) {
+        // ถ้ามีอยู่แล้ว → เอาออก
+        newData = prev.filter((c) => c.id !== item.id);
+
+        // ถ้าเอาออกแล้วเป็น Other → เคลียร์ค่า
+        if (item.lov2 === "Y") {
+          setcompTypeOther("");
         }
-  
-        // สร้าง array ลดรูป
-        const reducedArray = newData.map(c => (
-          {
-            complaint_type_id: c.id,
-            label: c.lov1,
-            isOther: c.lov2
-          }));
-  
-        // ดู log
-        console.log("Reduced array:", reducedArray);
-  
-        // อัปเดตเข้า context
-        setdataComplaintTypeValue_Combobox(reducedArray);
-        // อัปเดตเข้า context เป็น array ลดรูป (แค่ id, lov1)
-        // setdataComplaintTypeValue_Combobox(
-        //   newData.map(c => ({ id: c.id, lov1: c.lov1 }))
-        // );
-  
-        return newData;
-      });
-    };
+        // if (item.id === "TRR_CT_CAR_99") {
+        //   setcompTypeOther("");
+        // }
+        // if (item.id === "TRR_CT_OBS_99") {
+        //   setcompTypeOther("");
+        // }
+        // if (item.id === "TRR_CT_CPAR_99") {
+        //   setcompTypeOther("");
+        // }
+      } else {
+        // เพิ่ม object แบบเต็ม
+        newData = [...prev, item];
+      }
+
+      // สร้าง array ลดรูป
+      const reducedArray = newData.map((c) => ({
+        complaint_type_id: c.id,
+        label: c.lov1,
+        isOther: c.lov2,
+      }));
+
+      // ดู log
+      console.log("Reduced array:", reducedArray);
+
+      // อัปเดตเข้า context
+      setdataComplaintTypeValue_Combobox(reducedArray);
+      // อัปเดตเข้า context เป็น array ลดรูป (แค่ id, lov1)
+      // setdataComplaintTypeValue_Combobox(
+      //   newData.map(c => ({ id: c.id, lov1: c.lov1 }))
+      // );
+
+      return newData;
+    });
+  };
 
   const handleCheckboxChangeRS = (item: LovType) => {
     setdataComplaintRs((prev: LovType[] = []) => {
       console.log("💚💚item", item);
       let newData: LovType[];
 
-      if (prev.some(rs => rs.id === item.id)) {
+      if (prev.some((rs) => rs.id === item.id)) {
         // ถ้ามีอยู่แล้ว → เอาออก
-        newData = prev.filter(rs => rs.id !== item.id);
+        newData = prev.filter((rs) => rs.id !== item.id);
 
         if (item.lov2 === "Y") {
-            setcompRsOther("");
-          }
+          setcompRsOther("");
+        }
         // ถ้าเอาออกแล้วเป็น Other → เคลียร์ค่า
         // if (item.id === "TRR_RS_NCR_99") {
         //   setcompRsOther("");
@@ -409,19 +466,17 @@ export default function ComplaintBody({
         if (item.id === "TRR_RS_NCR_6") {
           setclauseOther("");
         }
-      }
-      else {
+      } else {
         // เพิ่ม object แบบเต็ม
         newData = [...prev, item];
       }
 
       // สร้าง array ลดรูปสำหรับ context
-      const reducedArray = newData.map(rs => (
-          {
-            complaint_type_id: rs.id,
-            label: rs.lov1,
-            isOther: rs.lov2
-          }));
+      const reducedArray = newData.map((rs) => ({
+        complaint_type_id: rs.id,
+        label: rs.lov1,
+        isOther: rs.lov2,
+      }));
       // const reducedArray = newData.map(rs => ({ complaint_type_id: rs.id, lov1: rs.lov1 }));
 
       console.log("Reduced array:", reducedArray);
@@ -435,7 +490,7 @@ export default function ComplaintBody({
     setdataphoto((prev: LovType[] = []) => {
       let newData: LovType[];
 
-      if (prev.some(pho => pho.id === item.id)) {
+      if (prev.some((pho) => pho.id === item.id)) {
         // ถ้ามีอยู่แล้ว → เอาออก
         newData = [];
 
@@ -443,16 +498,15 @@ export default function ComplaintBody({
         if (item.id === "TRR_AT_4") {
           setphoTypeOther("");
         }
-      }
-      else {
+      } else {
         // เพิ่ม object แบบเต็ม
         newData = [item];
       }
 
       // สร้าง array ลดรูปสำหรับ context
-      const reducedArray = newData.map(pho => ({
+      const reducedArray = newData.map((pho) => ({
         complaint_at_id: pho.id,
-        label: pho.lov1
+        label: pho.lov1,
       }));
 
       console.log("Reduced array:", reducedArray);
@@ -463,55 +517,43 @@ export default function ComplaintBody({
     });
   };
   const handleCheckboxChangePriority = (item: LovType) => {
-    setdatapriority(prev => (prev?.id === item.id ? null : item));
+    setdatapriority((prev) => (prev?.id === item.id ? null : item));
   };
-  const handleFileChange = (fileArray: File[]) => {
+
+  // รับ ComplaintFile[] จาก BrowseFileUpload
+  const handleFileChange = (fileArray: ComplaintFile[]) => {
     if (!fileArray || fileArray.length === 0) return;
 
-    setFileList(prev => {
-      const updatedList = [
-        ...prev,
-        ...fileArray.map(f => ({
-          file: f,
-          original_file_name: f.name,   // เก็บชื่อไฟล์เดิม
-          attachmentType: "",
-          otherText: ""
-        }))
-      ];
-
-      // sync เข้า context
-      setcomplaintFiles(updatedList);
-
-      return updatedList;
-    });
+    const updatedList = [...fileList, ...fileArray];
+    setFileList(updatedList);
+    setcomplaintFiles(updatedList);
+    // sync context
   };
 
   const handleRemoveFile = (index: number) => {
-    setFileList(prev => {
+    setFileList((prev) => {
       const updatedList = prev.filter((_, i) => i !== index);
       setcomplaintFiles(updatedList); // sync
       return updatedList;
     });
   };
   const handleFileAttachmentTypeChange = (index: number, type: string) => {
-    setFileList(prev => {
-      const updated = [...prev];
-      updated[index] = {
-        ...updated[index],
-        attachmentType: type,
-        otherText: type === "TRR_AT_4" ? updated[index].otherText : "",
-      };
-      setcomplaintFiles(updated); // sync
-      return updated;
-    });
+    const updated = [...fileList];
+    updated[index] = {
+      ...updated[index],
+      attachmentType: type,
+      otherText: type === "TRR_AT_4" ? updated[index].otherText : "",
+    };
+    setFileList(updated);
+    setcomplaintFiles(updated);
   };
+
   const handleFileOtherTextChange = (index: number, text: string) => {
-    setFileList(prev => {
-      const updated = [...prev];
-      updated[index] = { ...updated[index], otherText: text };
-      setcomplaintFiles(updated); // sync
-      return updated;
-    });
+    const updated = [...fileList];
+    updated[index] = { ...updated[index], otherText: text };
+    setFileList(updated);
+    setcomplaintFiles(updated);
+    return updated;
   };
 
   // Functions (Initial, Calculation or ETC.) =================================================
@@ -539,7 +581,10 @@ export default function ComplaintBody({
     setcompRsOther("");
   };
 
-  const priorityCalculateRespondDate = (daysToAdd: number, checked: boolean) => {
+  const priorityCalculateRespondDate = (
+    daysToAdd: number,
+    checked: boolean
+  ) => {
     if (checked) {
       const newDate = dayjs().add(daysToAdd, "day"); // use dayjs instead of Date
       setrespond_date_within(newDate);
@@ -549,7 +594,6 @@ export default function ComplaintBody({
   };
 
   React.useEffect(() => {
-
     // if (user && user.length > 0) {
     //   setrequest_department_id({
     //     itasset_department_id: user[0].itasset_department_id,
@@ -561,61 +605,66 @@ export default function ComplaintBody({
       const val = dataReportTypeValue;
 
       // กรอง complaint type
-      const filtered = (dataComplaintType_Combobox || []).filter((item: LovType) =>
-        item.lov_type === "complaint_type" && item.lov_code === val.id
+      const filtered = (dataComplaintType_Combobox || []).filter(
+        (item: LovType) =>
+          item.lov_type === "complaint_type" && item.lov_code === val.id
       );
-      console.log("🖤🤎filtered",filtered);
-
+      console.log("🖤🤎filtered", filtered);
 
       setFilteredComplaintType(filtered);
 
       // กรอง attach type
-      const filteredpho = (dataphoto_Combobox || []).filter((item: LovType) =>
-        item.lov_type === "attach_type"
+      const filteredpho = (dataphoto_Combobox || []).filter(
+        (item: LovType) => item.lov_type === "attach_type"
       );
       setFilteredphoto(filteredpho);
 
       // กรอง priority
-      const filteredpriority = (datapriority_Combobox || []).filter((item: LovType) =>
-        item.lov_type === "priority_level"
+      const filteredpriority = (datapriority_Combobox || []).filter(
+        (item: LovType) => item.lov_type === "priority_level"
       );
       setFilteredpriority(filteredpriority);
 
       // ถ้าเลือก NCR → filter Reference Standard
       if (val.lov_code === "NCR") {
-        const filteredRs = (dataComplaintRs_Combobox || []).filter((item: LovType) =>
-          item.lov_type === "reference_standard" && item.lov_code === val.id
+        const filteredRs = (dataComplaintRs_Combobox || []).filter(
+          (item: LovType) =>
+            item.lov_type === "reference_standard" && item.lov_code === val.id
         );
         setFilteredComplaintRs(filteredRs);
       }
-
-
     } else {
       // reset ถ้า val null
       setFilteredComplaintType([]);
       setFilteredComplaintRs([]);
       setFilteredphoto([]);
       setFilteredpriority([]);
-
     }
-  }, [user, dataReportTypeValue, dataComplaintType_Combobox, dataComplaintRs_Combobox, dataphoto_Combobox, datapriority_Combobox, dataelement]);
+  }, [
+    user,
+    dataReportTypeValue,
+    dataComplaintType_Combobox,
+    dataComplaintRs_Combobox,
+    dataphoto_Combobox,
+    datapriority_Combobox,
+    dataelement,
+  ]);
 
   return (
     <Box
       sx={{
         p: 2,
         mb: 2,
-        border: '2px solid #F29739',
+        border: "2px solid #F29739",
         borderRadius: 2,
-        backgroundColor: '#ffffff',
+        backgroundColor: "#ffffff",
         // boxShadow: '0 0 10px 2px rgba(0, 98, 233, 0.5)',
         // transition: 'box-shadow 0.3s ease',
         // '&:hover': {
         //   boxShadow: '0 0 20px 4px rgba(0, 98, 233, 0.8)',
         // },
-      }}>
-
-
+      }}
+    >
       <div className="px-2 pt-2 pb-5">
         <label className="sarabun-regular-datatable">
           ประเภทข้อมูลแบบฟอร์ม
@@ -637,12 +686,13 @@ export default function ComplaintBody({
         </Grid>
       </Grid>
 
-
       {/* ====== Dynamic ฟอร์ม สำหรับเลือกประเภทเอกสาร ====== */}
 
       {isFormHidden && dataReportTypeValue && (
         <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>
-          <label className="sarabun-regular-datatable">{dataReportTypeValue?.lov4}</label>
+          <label className="sarabun-regular-datatable">
+            {dataReportTypeValue?.lov4}
+          </label>
           <Divider sx={{ my: 1 }} />
           <Grid container spacing={2}>
             <Grid size={4} mt={2}>
@@ -659,7 +709,9 @@ export default function ComplaintBody({
               <FullWidthTextField
                 value={cas_number}
                 labelName="CAS Number"
-                onchange={(e) => { setcas_number(e); }}
+                onchange={(e) => {
+                  setcas_number(e);
+                }}
                 readonly
               />
             </Grid>
@@ -672,36 +724,43 @@ export default function ComplaintBody({
                 readonly
               />
             </Grid>
-            <Paper elevation={3} sx={{
-              p: 3,
-              mt: 3,
-              width: "100%",
-              borderRadius: 3,
-              background: 'linear-gradient(135deg, #fff5f5 0%, #ffffff 100%)',
-              border: '1px solid #ffcdd2',
-              boxShadow: '0 4px 12px rgba(244,67,54,0.1)'
-            }}>
-              <Box sx={{
-                display: 'flex',
-                alignItems: 'center',
-                mb: 3,
-                pb: 2,
-                borderBottom: '2px solid #f44336'
-              }}>
-                <Box sx={{
-                  width: 6,
-                  height: 24,
-                  backgroundColor: '#f44336',
-                  borderRadius: 1,
-                  mr: 2
-                }} />
+            <Paper
+              elevation={3}
+              sx={{
+                p: 3,
+                mt: 3,
+                width: "100%",
+                borderRadius: 3,
+                background: "linear-gradient(135deg, #fff5f5 0%, #ffffff 100%)",
+                border: "1px solid #ffcdd2",
+                boxShadow: "0 4px 12px rgba(244,67,54,0.1)",
+              }}
+            >
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  mb: 3,
+                  pb: 2,
+                  borderBottom: "2px solid #f44336",
+                }}
+              >
+                <Box
+                  sx={{
+                    width: 6,
+                    height: 24,
+                    backgroundColor: "#f44336",
+                    borderRadius: 1,
+                    mr: 2,
+                  }}
+                />
                 <label
                   className="sarabun-regular-datatable"
                   style={{
-                    fontSize: '18px',
-                    fontWeight: '600',
-                    color: '#d32f2f',
-                    margin: 0
+                    fontSize: "18px",
+                    fontWeight: "600",
+                    color: "#d32f2f",
+                    margin: 0,
                   }}
                 >
                   แผนกผู้ถูกร้องเรียน (Respondent Department)
@@ -731,11 +790,13 @@ export default function ComplaintBody({
                   <AutocompleteComboBox
                     required="required"
                     value={respondent_department_id}
-                    labelName={"แผนกที่พบปัญหา (Department / Area of Detection)"}
+                    labelName={
+                      "แผนกที่พบปัญหา (Department / Area of Detection)"
+                    }
                     options={dataset_department}
                     column="itasset_department_name"
                     setvalue={(e) => {
-                      console.log(e);  // ดูค่าของ e ที่ถูกส่งมาจาก AutocompleteComboBox
+                      console.log(e); // ดูค่าของ e ที่ถูกส่งมาจาก AutocompleteComboBox
                       setrespondent_department_id(e);
                     }}
                     readonly={action === "Read"}
@@ -772,72 +833,92 @@ export default function ComplaintBody({
 
               {/* รายละเอียด Sub-section */}
               <Box sx={{ mt: 4 }}>
-                <Box sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  mb: 3,
-                  pb: 1,
-                  borderBottom: '1px solid #ffcdd2'
-                }}>
-                  <Box sx={{
-                    width: 4,
-                    height: 16,
-                    backgroundColor: '#f44336',
-                    borderRadius: 0.5,
-                    mr: 1.5
-                  }} />
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    mb: 3,
+                    pb: 1,
+                    borderBottom: "1px solid #ffcdd2",
+                  }}
+                >
+                  <Box
+                    sx={{
+                      width: 4,
+                      height: 16,
+                      backgroundColor: "#f44336",
+                      borderRadius: 0.5,
+                      mr: 1.5,
+                    }}
+                  />
                   <label
                     className="sarabun-regular-datatable"
                     style={{
-                      fontSize: '16px',
-                      fontWeight: '500',
-                      color: '#d32f2f',
-                      margin: 0
+                      fontSize: "16px",
+                      fontWeight: "500",
+                      color: "#d32f2f",
+                      margin: 0,
                     }}
                   >
                     รายละเอียด
                   </label>
                 </Box>
 
-                <Grid container spacing={2} sx={{ alignItems: 'stretch' }}>
+                <Grid container spacing={2} sx={{ alignItems: "stretch" }}>
                   {dataReportTypeValue && (
-                    <Grid size={6} sx={{ display: 'flex' }}>
-                      <Paper elevation={1} sx={{
-                        p: 2,
-                        borderRadius: 2,
-                        backgroundColor: '#fafafa',
-                        width: '100%',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        minHeight: '400px'
-                      }}>
+                    <Grid size={6} sx={{ display: "flex" }}>
+                      <Paper
+                        elevation={1}
+                        sx={{
+                          p: 2,
+                          borderRadius: 2,
+                          backgroundColor: "#fafafa",
+                          width: "100%",
+                          display: "flex",
+                          flexDirection: "column",
+                          minHeight: "400px",
+                        }}
+                      >
                         <label
                           className="sarabun-regular-datatable"
                           style={{
-                            fontSize: '18px',
-                            fontWeight: '600',
-                            color: '#333',
-                            margin: 0
+                            fontSize: "18px",
+                            fontWeight: "600",
+                            color: "#333",
+                            margin: 0,
                           }}
                         >
-                          ประเภทข้อร้องเรียน (Type Of Complaint) <span style={{ color: 'red' }}> *</span>
+                          ประเภทข้อร้องเรียน (Type Of Complaint){" "}
+                          <span style={{ color: "red" }}> *</span>
                         </label>
                         <Divider sx={{ my: 2 }} />
-                        <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+                        <Box
+                          sx={{
+                            flexGrow: 1,
+                            display: "flex",
+                            flexDirection: "column",
+                          }}
+                        >
                           <Grid container spacing={2}>
-                            {(filteredComplaintType || []).map((item: LovType) => (
-                              <Grid size={6} key={item.id}>
-                                <FullWidthCheckbox
-                                  labelName={item.lov1}
-                                  value={dataComplaintType.some(c => c.id === item.id)}
-                                  onchange={() => handleCheckboxChangeCT(item)}
-                                  readonly={action === "Read"}
-                                />
-                              </Grid>
-                            ))}
+                            {(filteredComplaintType || []).map(
+                              (item: LovType) => (
+                                <Grid size={6} key={item.id}>
+                                  <FullWidthCheckbox
+                                    labelName={item.lov1}
+                                    value={dataComplaintType.some(
+                                      (c) => c.id === item.id
+                                    )}
+                                    onchange={() =>
+                                      handleCheckboxChangeCT(item)
+                                    }
+                                    readonly={action === "Read"}
+                                  />
+                                </Grid>
+                              )
+                            )}
                           </Grid>
-                          <Box sx={{ mt: 'auto', pt: 2 }}>
-                            {dataComplaintType.some(c => c.lov2 === "Y") && (
+                          <Box sx={{ mt: "auto", pt: 2 }}>
+                            {dataComplaintType.some((c) => c.lov2 === "Y") && (
                               <FullWidthTextArea
                                 value={compTypeOther}
                                 labelName="Other:"
@@ -852,42 +933,54 @@ export default function ComplaintBody({
                   )}
 
                   {!isRSHidden && dataReportTypeValue && (
-                    <Grid size={6} sx={{ display: 'flex' }}>
-                      <Paper elevation={1} sx={{
-                        p: 2,
-                        borderRadius: 2,
-                        backgroundColor: '#fafafa',
-                        width: '100%',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        minHeight: '400px'
-                      }}>
+                    <Grid size={6} sx={{ display: "flex" }}>
+                      <Paper
+                        elevation={1}
+                        sx={{
+                          p: 2,
+                          borderRadius: 2,
+                          backgroundColor: "#fafafa",
+                          width: "100%",
+                          display: "flex",
+                          flexDirection: "column",
+                          minHeight: "400px",
+                        }}
+                      >
                         <label
                           className="sarabun-regular-datatable"
                           style={{
-                            fontSize: '18px',
-                            fontWeight: '600',
-                            color: '#333',
-                            margin: 0
+                            fontSize: "18px",
+                            fontWeight: "600",
+                            color: "#333",
+                            margin: 0,
                           }}
                         >
-                          มาตรฐานอ้างอิง (Reference Standard) <span style={{ color: 'red' }}> *</span>
+                          มาตรฐานอ้างอิง (Reference Standard){" "}
+                          <span style={{ color: "red" }}> *</span>
                         </label>
                         <Divider sx={{ my: 2 }} />
-                        <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+                        <Box
+                          sx={{
+                            flexGrow: 1,
+                            display: "flex",
+                            flexDirection: "column",
+                          }}
+                        >
                           <Grid container spacing={2}>
                             {filteredComplaintRs.map((item: LovType) => (
                               <Grid size={6} key={item.id}>
                                 <FullWidthCheckbox
                                   labelName={item.lov1}
-                                  value={dataComplaintRs.some(rs => rs.id === item.id)}
+                                  value={dataComplaintRs.some(
+                                    (rs) => rs.id === item.id
+                                  )}
                                   onchange={() => handleCheckboxChangeRS(item)}
                                   readonly={action === "Read"}
                                 />
                               </Grid>
                             ))}
                           </Grid>
-                          <Box sx={{ mt: 'auto', pt: 2 }}>
+                          <Box sx={{ mt: "auto", pt: 2 }}>
                             {/* {dataComplaintRs.some(rs => rs.id === "TRR_RS_NCR_99") && (
                               <FullWidthTextArea
                                 value={compRsOther}
@@ -896,7 +989,7 @@ export default function ComplaintBody({
                                 readonly={action === "Read"}
                               />
                             )} */}
-                            {dataComplaintRs.some(rs => rs.lov2 === "Y") && (
+                            {dataComplaintRs.some((rs) => rs.lov2 === "Y") && (
                               <FullWidthTextArea
                                 value={compRsOther}
                                 labelName="Other:"
@@ -904,7 +997,9 @@ export default function ComplaintBody({
                                 readonly={action === "Read"}
                               />
                             )}
-                            {dataComplaintRs.some(rs => rs.id === "TRR_RS_NCR_6") && (
+                            {dataComplaintRs.some(
+                              (rs) => rs.id === "TRR_RS_NCR_6"
+                            ) && (
                               <FullWidthTextArea
                                 value={clauseOther}
                                 labelName="Clause:"
@@ -921,26 +1016,35 @@ export default function ComplaintBody({
                 {/* Priority Section */}
                 {dataReportTypeValue && (
                   <Box sx={{ mt: 3 }}>
-                    <Paper elevation={1} sx={{
-                      p: 2,
-                      borderRadius: 2,
-                      backgroundColor: '#fafafa'
-                    }}>
+                    <Paper
+                      elevation={1}
+                      sx={{
+                        p: 2,
+                        borderRadius: 2,
+                        backgroundColor: "#fafafa",
+                      }}
+                    >
                       <label
                         className="sarabun-regular-datatable"
                         style={{
-                          fontSize: '18px',
-                          fontWeight: '600',
-                          color: '#333',
-                          margin: 0
+                          fontSize: "18px",
+                          fontWeight: "600",
+                          color: "#333",
+                          margin: 0,
                         }}
                       >
-                        รายละเอียด (Detail) <span style={{ color: 'red' }}> *</span>
+                        รายละเอียด (Detail){" "}
+                        <span style={{ color: "red" }}> *</span>
                       </label>
                       <Divider sx={{ my: 2 }} />
-                      <Grid container spacing={2} sx={{ justifyContent: 'center', alignItems: 'flex-start' }}>
-
-
+                      <Grid
+                        container
+                        spacing={2}
+                        sx={{
+                          justifyContent: "center",
+                          alignItems: "flex-start",
+                        }}
+                      >
                         {/* Response Date Field - positioned after Emergency option */}
                         <Grid size={12}>
                           <FullWidthTextArea
@@ -949,7 +1053,6 @@ export default function ComplaintBody({
                             onchange={(e) => setdetail(e)}
                             readonly={action === "Read"}
                           />
-
                         </Grid>
                       </Grid>
                     </Paper>
@@ -958,45 +1061,71 @@ export default function ComplaintBody({
                 {/* Priority Section */}
                 {dataReportTypeValue && (
                   <Box sx={{ mt: 3 }}>
-                    <Paper elevation={1} sx={{
-                      p: 2,
-                      borderRadius: 2,
-                      backgroundColor: '#fafafa'
-                    }}>
+                    <Paper
+                      elevation={1}
+                      sx={{
+                        p: 2,
+                        borderRadius: 2,
+                        backgroundColor: "#fafafa",
+                      }}
+                    >
                       <label
                         className="sarabun-regular-datatable"
                         style={{
-                          fontSize: '18px',
-                          fontWeight: '600',
-                          color: '#333',
-                          margin: 0
+                          fontSize: "18px",
+                          fontWeight: "600",
+                          color: "#333",
+                          margin: 0,
                         }}
                       >
-                        ระดับความสำคัญ (Priority) <span style={{ color: 'red' }}> *</span>
+                        ระดับความสำคัญ (Priority){" "}
+                        <span style={{ color: "red" }}> *</span>
                       </label>
                       <Divider sx={{ my: 2 }} />
-                      <Grid container spacing={2} sx={{ justifyContent: 'center', alignItems: 'flex-start' }}>
+                      <Grid
+                        container
+                        spacing={2}
+                        sx={{
+                          justifyContent: "center",
+                          alignItems: "flex-start",
+                        }}
+                      >
                         {(filteredpriority || [])
                           .sort((a, b) => {
-                            const order: { [key: string]: number } = { 'Normal': 1, 'Urgent': 2, 'Emergency': 3 };
-                            return (order[a.lov_code] || 999) - (order[b.lov_code] || 999);
+                            const order: { [key: string]: number } = {
+                              Normal: 1,
+                              Urgent: 2,
+                              Emergency: 3,
+                            };
+                            return (
+                              (order[a.lov_code] || 999) -
+                              (order[b.lov_code] || 999)
+                            );
                           })
                           .map((item: LovType) => (
                             <Grid size={3} key={item.id}>
-                              <Box sx={{
-                                border: '2px solid #e0e0e0',
-                                borderRadius: 2,
-                                p: 2,
-                                textAlign: 'center',
-                                backgroundColor: datapriority?.id === item.id ? '#fff3e0' : '#ffffff',
-                                borderColor: datapriority?.id === item.id ? '#ff9800' : '#e0e0e0',
-                                cursor: 'pointer',
-                                transition: 'all 0.2s ease',
-                                '&:hover': {
-                                  borderColor: '#ff9800',
-                                  backgroundColor: '#fff8f0'
-                                }
-                              }}>
+                              <Box
+                                sx={{
+                                  border: "2px solid #e0e0e0",
+                                  borderRadius: 2,
+                                  p: 2,
+                                  textAlign: "center",
+                                  backgroundColor:
+                                    datapriority?.id === item.id
+                                      ? "#fff3e0"
+                                      : "#ffffff",
+                                  borderColor:
+                                    datapriority?.id === item.id
+                                      ? "#ff9800"
+                                      : "#e0e0e0",
+                                  cursor: "pointer",
+                                  transition: "all 0.2s ease",
+                                  "&:hover": {
+                                    borderColor: "#ff9800",
+                                    backgroundColor: "#fff8f0",
+                                  },
+                                }}
+                              >
                                 <FormControlLabel
                                   control={
                                     <Radio
@@ -1007,26 +1136,44 @@ export default function ComplaintBody({
                                         setdatapriorityValue_Combobox(item.id);
                                         setdatapriority(item);
                                         const days = Number(item.lov3 ?? 0);
-                                        priorityCalculateRespondDate(days, true);
-                                        console.log("เลือก priority:", item.lov_code, "Days:", days);
+                                        priorityCalculateRespondDate(
+                                          days,
+                                          true
+                                        );
+                                        console.log(
+                                          "เลือก priority:",
+                                          item.lov_code,
+                                          "Days:",
+                                          days
+                                        );
                                       }}
-                                      sx={{ color: '#ff9800' }}
+                                      sx={{ color: "#ff9800" }}
                                     />
                                   }
                                   label={
-                                    <Box sx={{ textAlign: 'center' }}>
-                                      <Box sx={{
-                                        fontSize: '16px',
-                                        fontWeight: '600',
-                                        color: datapriority?.id === item.id ? '#f57c00' : '#666'
-                                      }}>
+                                    <Box sx={{ textAlign: "center" }}>
+                                      <Box
+                                        sx={{
+                                          fontSize: "16px",
+                                          fontWeight: "600",
+                                          color:
+                                            datapriority?.id === item.id
+                                              ? "#f57c00"
+                                              : "#666",
+                                        }}
+                                      >
                                         {item.lov1} ({item.lov_code})
                                       </Box>
-                                      <Box sx={{
-                                        fontSize: '12px',
-                                        color: datapriority?.id === item.id ? '#f57c00' : '#999',
-                                        mt: 0.5
-                                      }}>
+                                      <Box
+                                        sx={{
+                                          fontSize: "12px",
+                                          color:
+                                            datapriority?.id === item.id
+                                              ? "#f57c00"
+                                              : "#999",
+                                          mt: 0.5,
+                                        }}
+                                      >
                                         (ภายใน {item.lov3} วัน)
                                       </Box>
                                     </Box>
@@ -1034,8 +1181,8 @@ export default function ComplaintBody({
                                   sx={{
                                     width: "100%",
                                     m: 0,
-                                    flexDirection: 'column',
-                                    alignItems: 'center'
+                                    flexDirection: "column",
+                                    alignItems: "center",
                                   }}
                                 />
                               </Box>
@@ -1044,30 +1191,36 @@ export default function ComplaintBody({
 
                         {/* Response Date Field - positioned after Emergency option */}
                         <Grid size={3}>
-                          <Box sx={{
-                            border: '2px solid #e0e0e0',
-                            borderRadius: 2,
-                            p: 2,
-                            textAlign: 'center',
-                            backgroundColor: '#ffffff',
-                            borderColor: '#e0e0e0',
-                            transition: 'all 0.2s ease',
-                            minHeight: '100px',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            justifyContent: 'center'
-                          }}>
-                            <Box sx={{
-                              fontSize: '16px',
-                              fontWeight: '600',
-                              mb: 3
-                            }}>
+                          <Box
+                            sx={{
+                              border: "2px solid #e0e0e0",
+                              borderRadius: 2,
+                              p: 2,
+                              textAlign: "center",
+                              backgroundColor: "#ffffff",
+                              borderColor: "#e0e0e0",
+                              transition: "all 0.2s ease",
+                              minHeight: "100px",
+                              display: "flex",
+                              flexDirection: "column",
+                              justifyContent: "center",
+                            }}
+                          >
+                            <Box
+                              sx={{
+                                fontSize: "16px",
+                                fontWeight: "600",
+                                mb: 3,
+                              }}
+                            >
                               ตอบกลับภายในวันที่ (Response Date)
                             </Box>
                             <DesktopDatePickers
                               labelName=""
                               value={respond_date_within}
-                              handleChange={(val) => setrespond_date_within(val ?? null)}
+                              handleChange={(val) =>
+                                setrespond_date_within(val ?? null)
+                              }
                               bgcolorTextField={true}
                               readonly
                             />
@@ -1080,36 +1233,43 @@ export default function ComplaintBody({
               </Box>
             </Paper>
 
-            <Paper elevation={3} sx={{
-              p: 3,
-              mt: 3,
-              width: "100%",
-              borderRadius: 3,
-              background: 'linear-gradient(135deg, #f0f8ff 0%, #ffffff 100%)',
-              border: '1px solid #bbdefb',
-              boxShadow: '0 4px 12px rgba(33,150,243,0.1)'
-            }}>
-              <Box sx={{
-                display: 'flex',
-                alignItems: 'center',
-                mb: 3,
-                pb: 2,
-                borderBottom: '2px solid #2196f3'
-              }}>
-                <Box sx={{
-                  width: 6,
-                  height: 24,
-                  backgroundColor: '#2196f3',
-                  borderRadius: 1,
-                  mr: 2
-                }} />
+            <Paper
+              elevation={3}
+              sx={{
+                p: 3,
+                mt: 3,
+                width: "100%",
+                borderRadius: 3,
+                background: "linear-gradient(135deg, #f0f8ff 0%, #ffffff 100%)",
+                border: "1px solid #bbdefb",
+                boxShadow: "0 4px 12px rgba(33,150,243,0.1)",
+              }}
+            >
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  mb: 3,
+                  pb: 2,
+                  borderBottom: "2px solid #2196f3",
+                }}
+              >
+                <Box
+                  sx={{
+                    width: 6,
+                    height: 24,
+                    backgroundColor: "#2196f3",
+                    borderRadius: 1,
+                    mr: 2,
+                  }}
+                />
                 <label
                   className="sarabun-regular-datatable"
                   style={{
-                    fontSize: '18px',
-                    fontWeight: '600',
-                    color: '#1976d2',
-                    margin: 0
+                    fontSize: "18px",
+                    fontWeight: "600",
+                    color: "#1976d2",
+                    margin: 0,
                   }}
                 >
                   แผนกที่ทำการร้องเรียน (Reporting Department)
@@ -1118,7 +1278,11 @@ export default function ComplaintBody({
               <Grid container spacing={3}>
                 <Grid size={4}>
                   <FullWidthTextField
-                    value={user[0]?.employee_username ? user[0]?.employee_username : '-'}
+                    value={
+                      user[0]?.employee_username
+                        ? user[0]?.employee_username
+                        : "-"
+                    }
                     labelName="ชื่อผู้ออกเอกสาร (Reported by)"
                     onchange={(e) => setrequest_name(e.target.value)}
                     readonly
@@ -1126,7 +1290,11 @@ export default function ComplaintBody({
                 </Grid>
                 <Grid size={4}>
                   <FullWidthTextField
-                    value={user[0]?.employee_position ? user[0]?.employee_position : '-'}
+                    value={
+                      user[0]?.employee_position
+                        ? user[0]?.employee_position
+                        : "-"
+                    }
                     labelName="ตำแหน่ง (Position)"
                     onchange={(e) => setrequest_position(e.target.value)}
                     readonly
@@ -1142,7 +1310,11 @@ export default function ComplaintBody({
                     setvalue={setrequest_department_id}
                   /> */}
                   <FullWidthTextField
-                    value={user[0]?.itasset_department_id ? user[0]?.itasset_department_name : '-'}
+                    value={
+                      user[0]?.itasset_department_id
+                        ? user[0]?.itasset_department_name
+                        : "-"
+                    }
                     labelName="แผนก (Department)"
                     onchange={(e) => setrequest_department_id(e.target.value)}
                     readonly
@@ -1150,7 +1322,9 @@ export default function ComplaintBody({
                 </Grid>
                 <Grid size={4}>
                   <FullWidthTextField
-                    value={user[0]?.employee_email ? user[0]?.employee_email : '-'}
+                    value={
+                      user[0]?.employee_email ? user[0]?.employee_email : "-"
+                    }
                     labelName="อีเมล (Email)"
                     onchange={(e) => setrequest_email(e.target.value)}
                     readonly
@@ -1158,7 +1332,7 @@ export default function ComplaintBody({
                 </Grid>
                 <Grid size={4}>
                   <FullWidthTextField
-                    value={user[0]?.employee_tel ? user[0]?.employee_tel : '-'}
+                    value={user[0]?.employee_tel ? user[0]?.employee_tel : "-"}
                     labelName="เบอร์โทรศัพท์ (Phone)"
                     onchange={(e) => setrequest_phone(e.target.value)}
                     readonly
@@ -1187,13 +1361,24 @@ export default function ComplaintBody({
                 <Grid size={4}>
                   <AutocompleteComboBox
                     required="required"
-                    value={dataset_department.find((d: any) => d.itasset_department_id === area_of_detection_dept_id) || null}
-                    labelName={"แผนกที่พบปัญหา (Department / Area of Detection)"}
+                    value={
+                      dataset_department.find(
+                        (d: any) =>
+                          d.itasset_department_id === area_of_detection_dept_id
+                      ) || null
+                    }
+                    labelName={
+                      "แผนกที่พบปัญหา (Department / Area of Detection)"
+                    }
                     options={dataset_department}
                     column="itasset_department_name"
                     setvalue={(v) => {
-                      setarea_of_detection_dept_id(v?.itasset_department_id ?? null);
-                      setarea_of_detection_dept_name(v?.itasset_department_name ?? "");
+                      setarea_of_detection_dept_id(
+                        v?.itasset_department_id ?? null
+                      );
+                      setarea_of_detection_dept_name(
+                        v?.itasset_department_name ?? ""
+                      );
                     }}
                     readonly={action === "Read"}
                   />
@@ -1207,36 +1392,43 @@ export default function ComplaintBody({
               </Grid>
             </Paper>
 
-            <Paper elevation={3} sx={{
-              p: 3,
-              mt: 3,
-              width: "100%",
-              borderRadius: 3,
-              background: 'linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%)',
-              border: '1px solid #e0e0e0',
-              boxShadow: '0 4px 12px rgba(158,158,158,0.1)'
-            }}>
-              <Box sx={{
-                display: 'flex',
-                alignItems: 'center',
-                mb: 3,
-                pb: 2,
-                borderBottom: '2px solid #9e9e9e'
-              }}>
-                <Box sx={{
-                  width: 6,
-                  height: 24,
-                  backgroundColor: '#9e9e9e',
-                  borderRadius: 1,
-                  mr: 2
-                }} />
+            <Paper
+              elevation={3}
+              sx={{
+                p: 3,
+                mt: 3,
+                width: "100%",
+                borderRadius: 3,
+                background: "linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%)",
+                border: "1px solid #e0e0e0",
+                boxShadow: "0 4px 12px rgba(158,158,158,0.1)",
+              }}
+            >
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  mb: 3,
+                  pb: 2,
+                  borderBottom: "2px solid #9e9e9e",
+                }}
+              >
+                <Box
+                  sx={{
+                    width: 6,
+                    height: 24,
+                    backgroundColor: "#9e9e9e",
+                    borderRadius: 1,
+                    mr: 2,
+                  }}
+                />
                 <label
                   className="sarabun-regular-datatable"
                   style={{
-                    fontSize: '18px',
-                    fontWeight: '600',
-                    color: '#616161',
-                    margin: 0
+                    fontSize: "18px",
+                    fontWeight: "600",
+                    color: "#616161",
+                    margin: 0,
                   }}
                 >
                   แนบไฟล์ (Attachments)
@@ -1279,76 +1471,216 @@ export default function ComplaintBody({
                       )}
                     </Paper> */}
 
-                    <BrowseFileUpload setFile={handleFileChange} setFileName={() => { }} />
+                    <BrowseFileUpload
+                      setFile={handleFileChange}
+                      setFileName={() => {}}
+                      options={(filteredphoto || []).map((p: any) => ({
+                        id: p.id,
+                        lov1: p.lov1,
+                      }))}
+                    />
 
-                    {/* Enhanced File Table with Attachment Type Checkboxes */}
-                    <TableContainer component={Paper} sx={{ mt: 2 }}>
-                      <Table size="small">
-                        <TableHead>
-                          <TableRow>
-                            <TableCell sx={{ fontWeight: 'bold' }}>ชื่อไฟล์</TableCell>
-                            <TableCell sx={{ fontWeight: 'bold' }}>ขนาด (MB)</TableCell>
-                            <TableCell sx={{ fontWeight: 'bold', minWidth: '300px' }}>ประเภทเอกสาร</TableCell>
-                            <TableCell sx={{ fontWeight: 'bold' }}>จัดการ</TableCell>
-                          </TableRow>
-                        </TableHead>
-                        <TableBody>
-                          {fileList.map((item, index) => (
-                            <TableRow key={index}>
-                              <TableCell>{item.file.name}</TableCell>
-                              <TableCell>{(item.file.size / (1024 * 1024)).toFixed(2)} MB</TableCell>
-                              <TableCell>
-                                {filteredphoto.map(photo => (
-                                  <FormControlLabel
-                                    key={`${index}-${photo.id}`}
-                                    control={
-                                      <Radio
-                                        checked={item.attachmentType === photo.id}
-                                        onChange={() => handleFileAttachmentTypeChange(index, photo.id)}
+                    {/* Grouped display by attachment type - Full width boxes stacked vertically */}
+                    <Box sx={{ mt: 1 }}>
+                      {(filteredphoto || []).map((photoType: any) => {
+                        const items = fileList.filter(
+                          (f) => f.attachmentType === photoType.id
+                        );
+                        if (items.length === 0) return null;
+                        return (
+                          <Paper
+                            key={photoType.id}
+                            elevation={1}
+                            sx={{ p: 2, borderRadius: 2, mb: 2, width: "100%" }}
+                          >
+                            <label
+                              className="sarabun-regular-datatable"
+                              style={{ fontWeight: 600, fontSize: "16px" }}
+                            >
+                              {photoType.lov1}
+                            </label>
+                            <Divider sx={{ my: 1 }} />
+                            <Table size="small" sx={{ width: "100%" }}>
+                              <TableHead>
+                                <TableRow>
+                                  <TableCell
+                                    sx={{
+                                      fontWeight: "bold",
+                                      width:
+                                        photoType.id === "TRR_AT_4"
+                                          ? "40%"
+                                          : "50%",
+                                    }}
+                                  >
+                                    ชื่อไฟล์
+                                  </TableCell>
+                                  <TableCell
+                                    sx={{
+                                      fontWeight: "bold",
+                                      width:
+                                        photoType.id === "TRR_AT_4"
+                                          ? "15%"
+                                          : "20%",
+                                    }}
+                                  >
+                                    ขนาด (MB)
+                                  </TableCell>
+                                  {photoType.id === "TRR_AT_4" && (
+                                    <TableCell
+                                      sx={{ fontWeight: "bold", width: "25%" }}
+                                    >
+                                      รายละเอียด
+                                    </TableCell>
+                                  )}
+                                  <TableCell
+                                    sx={{
+                                      fontWeight: "bold",
+                                      width:
+                                        photoType.id === "TRR_AT_4"
+                                          ? "20%"
+                                          : "30%",
+                                    }}
+                                  >
+                                    จัดการ
+                                  </TableCell>
+                                </TableRow>
+                              </TableHead>
+
+                              <TableBody>
+                                {items.map((item, idx) => {
+                                  const globalIndex = fileList.findIndex(
+                                    (f) => f === item
+                                  );
+                                  return (
+                                    <TableRow key={globalIndex}>
+                                      <TableCell>{item.file.name}</TableCell>
+                                      <TableCell>
+                                        {(
+                                          item.file.size /
+                                          (1024 * 1024)
+                                        ).toFixed(2)}{" "}
+                                        MB
+                                      </TableCell>
+                                      {photoType.id === "TRR_AT_4" && (
+                                        <TableCell>
+                                          <TextField
+                                            fullWidth
+                                            size="small"
+                                            placeholder="โปรดระบุ..."
+                                            value={item.otherText}
+                                            onChange={(e) =>
+                                              handleFileOtherTextChange(
+                                                globalIndex,
+                                                e.target.value
+                                              )
+                                            }
+                                          />
+                                        </TableCell>
+                                      )}
+                                      <TableCell>
+                                        <IconButton
+                                          color="error"
+                                          onClick={() =>
+                                            handleRemoveFile(globalIndex)
+                                          }
+                                        >
+                                          <DeleteIcon />
+                                        </IconButton>
+
+                                        <IconButton
+                                          color="primary"
+                                          onClick={() =>
+                                            window.open(
+                                              URL.createObjectURL(item.file),
+                                              "_blank"
+                                            )
+                                          }
+                                        >
+                                          <VisibilityIcon />
+                                        </IconButton>
+                                      </TableCell>
+                                    </TableRow>
+                                  );
+                                })}
+                              </TableBody>
+                              <Dialog
+                                open={!!previewFile}
+                                onClose={() => setPreviewFile(null)}
+                                maxWidth="md"
+                                fullWidth
+                              >
+                                <DialogTitle>
+                                  Preview File
+                                  <IconButton
+                                    aria-label="close"
+                                    onClick={() => setPreviewFile(null)}
+                                    sx={{
+                                      position: "absolute",
+                                      right: 8,
+                                      top: 8,
+                                    }}
+                                  >
+                                    <CloseIcon />
+                                  </IconButton>
+                                </DialogTitle>
+                                {/* <DialogContent
+                                  dividers
+                                  style={{ textAlign: "center" }}
+                                >
+                                  {previewFile &&
+                                  allowedTypes.includes(previewFile.type) ? (
+                                    previewFile.type.startsWith("image/") ? (
+                                      // กรณีเป็นรูป
+                                      <img
+                                        src={URL.createObjectURL(previewFile)}
+                                        alt={previewFile.name}
+                                        style={{
+                                          width: "100%",
+                                          maxHeight: "80vh",
+                                          objectFit: "contain",
+                                        }}
                                       />
-                                    }
-                                    label={photo.lov1}
-                                  />
-                                ))}
-                                {item.attachmentType === "TRR_AT_4" && (
-                                  <TextField
-                                    fullWidth
-                                    multiline
-                                    rows={3}
-                                    value={item.otherText || ""}
-                                    onChange={e => handleFileOtherTextChange(index, e.target.value)}
-                                    placeholder="Please specify..."
-                                  />
-                                )}
-                              </TableCell>
-                              <TableCell>
-                                <IconButton color="error" onClick={() => handleRemoveFile(index)}>
-                                  <DeleteIcon />
-                                </IconButton>
-                              </TableCell>
-                            </TableRow>
-                          ))}
-                          {fileList.length === 0 && (
-                            <TableRow>
-                              <TableCell colSpan={4} sx={{ textAlign: 'center', py: 3, color: '#999' }}>
-                                ยังไม่มีไฟล์ที่อัปโหลด
-                              </TableCell>
-                            </TableRow>
-                          )}
-                        </TableBody>
-                      </Table>
-                    </TableContainer>
+                                    ) : previewFile.type ==="application/pdf" ? (
+                                      <iframe src={pdfDataUrl}></iframe>
+                                    ) : (
+                                      // กรณีไฟล์อื่น ๆ
+                                      <p style={{ color: "blue" }}>
+                                        ไม่สามารถแสดงไฟล์นี้ได้ใน modal:{" "}
+                                        {previewFile.name} <br />
+                                        กรุณาดาวน์โหลดเพื่อเปิดดู
+                                      </p>
+                                    )
+                                  ) : (
+                                    <p style={{ color: "red" }}>
+                                      ไม่รองรับไฟล์ประเภทนี้:{" "}
+                                      {previewFile?.type}
+                                    </p>
+                                  )}
+                                </DialogContent> */}
+                              </Dialog>
+                            </Table>
+                          </Paper>
+                        );
+                      })}
+
+                      {fileList.length === 0 && (
+                        <Paper
+                          elevation={0}
+                          sx={{ p: 2, textAlign: "center", color: "#999" }}
+                        >
+                          ยังไม่มีไฟล์ที่อัปโหลด
+                        </Paper>
+                      )}
+                    </Box>
                   </Grid>
                 )}
               </Grid>
             </Paper>
 
-            <Grid container spacing={2}>
-            </Grid>
+            <Grid container spacing={2}></Grid>
           </Grid>
         </Paper>
       )}
     </Box>
   );
 }
-

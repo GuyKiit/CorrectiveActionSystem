@@ -244,7 +244,7 @@ export default function ComplaintInsert({
   const [dataComplaintRs, setdataComplaintRs] = useState<LovType[]>([]);
   const [dataphoto, setdataphoto] = useState<LovType[]>([]);
   const [datapriority, setdatapriority] = useState<LovType | null>(null);
-  const [files, setFiles] = useState<File[]>([]);
+  const [files, setFiles] = useState<Array<{file: File, attachmentType: string, otherText: string}>>([]);
   
   // Hidden Variables ======================================================
   const [isCasNumberHidden, setisCasNumberHidden] = useState(true);
@@ -421,11 +421,20 @@ export default function ComplaintInsert({
   const handleCheckboxChangePriority = (item: LovType) => {
     setdatapriority(prev => (prev?.id === item.id ? null : item));
   };
-  const handleFileChange = (fileArray: File[]) => {
-    const file = fileArray[0]; // เลือกไฟล์ตัวแรก
-    if (file) {
-      setFiles(prev => [...prev, file]); // push File เดี่ยวเข้า File[]
-    }
+  const handleFileChange = (fileArray: File[], attachmentType?: string, otherText?: string) => {
+    if (!fileArray || fileArray.length === 0) return;
+    
+    setFiles(prev => {
+      const updatedList = [
+        ...prev,
+        ...fileArray.map(f => ({
+          file: f,
+          attachmentType: attachmentType || "",
+          otherText: attachmentType === "TRR_AT_4" ? (otherText || "") : ""
+        }))
+      ];
+      return updatedList;
+    });
   };
   const handleRemoveFile = (index: number) => {
     setFiles(prevFiles => prevFiles.filter((_, i) => i !== index));
@@ -733,36 +742,71 @@ export default function ComplaintInsert({
             <Grid container spacing={2}>
               <Grid container spacing={2}>
                 <Grid container spacing={2}>
-                  <BrowseFileUpload setFile={handleFileChange} setFileName={() => { }} />
-                  {/* ตารางแสดงไฟล์ */}
-                  <TableContainer component={Paper} sx={{ mt: 2 }}>
-                    <Table size="small">
-                      <TableHead>
-                        <TableRow>
-                          <TableCell>ชื่อไฟล์</TableCell>
-                          <TableCell>ขนาด (MB)</TableCell>
-                          <TableCell>จัดการ</TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {files.map((file: File, index: number) => (
-                          <TableRow key={index}>
-                            <TableCell>{file.name}</TableCell>
-                            <TableCell>{(file.size / (1024 * 1024)).toFixed(2)} MB</TableCell>
-                            <TableCell>
-                              <IconButton
-                                color="error"
-                                size="small"
-                                onClick={() => handleRemoveFile(index)}
-                              >
-                                <DeleteIcon />
-                              </IconButton>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
+                  <BrowseFileUpload 
+                    setFile={handleFileChange} 
+                    setFileName={() => { }} 
+                    options={(filteredphoto || []).map((p: any) => ({ id: p.id, lov1: p.lov1 }))}
+                  />
+                  {/* Grouped display by attachment type - Full width boxes stacked vertically */}
+                  <Box sx={{ mt: 1 }}>
+                    {(filteredphoto || []).map((photoType: any) => {
+                      const items = files.filter(f => f.attachmentType === photoType.id);
+                      if (items.length === 0) return null;
+                      return (
+                        <Paper 
+                          key={photoType.id} 
+                          elevation={1} 
+                          sx={{ 
+                            p: 2, 
+                            borderRadius: 2, 
+                            mb: 2,
+                            width: '100%'
+                          }}
+                        >
+                          <label className="sarabun-regular-datatable" style={{ fontWeight: 600, fontSize: '16px' }}>
+                            {photoType.lov1}
+                          </label>
+                          <Divider sx={{ my: 1 }} />
+                          <Table size="small" sx={{ width: '100%' }}>
+                            <TableHead>
+                              <TableRow>
+                                <TableCell sx={{ fontWeight: 'bold', width: photoType.id === "TRR_AT_4" ? '40%' : '50%' }}>ชื่อไฟล์</TableCell>
+                                <TableCell sx={{ fontWeight: 'bold', width: photoType.id === "TRR_AT_4" ? '15%' : '20%' }}>ขนาด (MB)</TableCell>
+                                {photoType.id === "TRR_AT_4" && <TableCell sx={{ fontWeight: 'bold', width: '25%' }}>รายละเอียด</TableCell>}
+                                <TableCell sx={{ fontWeight: 'bold', width: photoType.id === "TRR_AT_4" ? '20%' : '30%' }}>จัดการ</TableCell>
+                              </TableRow>
+                            </TableHead>
+                            <TableBody>
+                              {items.map((it, idx) => {
+                                const globalIndex = files.findIndex(f => f === it);
+                                return (
+                                  <TableRow key={globalIndex}>
+                                    <TableCell sx={{ width: photoType.id === "TRR_AT_4" ? '40%' : '50%' }}>{it.file.name}</TableCell>
+                                    <TableCell sx={{ width: photoType.id === "TRR_AT_4" ? '15%' : '20%' }}>{(it.file.size / (1024 * 1024)).toFixed(2)} MB</TableCell>
+                                    {photoType.id === "TRR_AT_4" && (
+                                      <TableCell sx={{ width: '25%' }}>
+                                        {it.otherText || "-"}
+                                      </TableCell>
+                                    )}
+                                    <TableCell sx={{ width: photoType.id === "TRR_AT_4" ? '20%' : '30%' }}>
+                                      <IconButton color="error" onClick={() => handleRemoveFile(globalIndex)}>
+                                        <DeleteIcon />
+                                      </IconButton>
+                                    </TableCell>
+                                  </TableRow>
+                                );
+                              })}
+                            </TableBody>
+                          </Table>
+                        </Paper>
+                      );
+                    })}
+                    {files.length === 0 && (
+                      <Paper elevation={0} sx={{ p: 2, textAlign: 'center', color: '#999' }}>
+                        ยังไม่มีไฟล์ที่อัปโหลด
+                      </Paper>
+                    )}
+                  </Box>
                 </Grid>
               </Grid>
             </Grid>

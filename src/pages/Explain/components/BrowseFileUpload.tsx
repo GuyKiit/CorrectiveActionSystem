@@ -1,16 +1,19 @@
-import { TextField } from "@mui/material";
+import { MenuItem, Select, TextField } from "@mui/material";
 import React, { ChangeEvent } from "react";
 import DriveFolderUploadIcon from '@mui/icons-material/DriveFolderUpload';
 
 
 interface BrowseFileUpload {
   file?: any;
-  setFile: (arg: any) => void;
+  // Pass selected files back with selected attachment type and optional other text
+  setFile: (files: File[], attachmentType?: string, otherText?: string) => void;
   labelname?: string;
   fileName?: string;
   setFileName: (val: string | undefined) => void;
   required?: string
   validate?: boolean
+  // LOV options for document types (attach_type)
+  options?: Array<{ id: string; lov1: string }>;
 }
 
 const allowedTypes = [
@@ -27,9 +30,12 @@ export default function BrowseFileUpload({
   fileName,
   setFileName,
   required,
-  validate
+  validate,
+  options = []
 }: BrowseFileUpload) {
   const inputFile = React.useRef<HTMLInputElement>(null);
+  const [attachmentType, setAttachmentType] = React.useState<string>("");
+  const [otherText, setOtherText] = React.useState<string>("");
 
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     try {
@@ -48,7 +54,10 @@ export default function BrowseFileUpload({
         files.push(file);
       }
 
-      setFile([...files]);
+      setFile(
+        [...files],
+        attachmentType, 
+        attachmentType === "TRR_AT_4" ? otherText : undefined);
 
       event.target.value = "";
     } catch (e) {
@@ -63,56 +72,65 @@ export default function BrowseFileUpload({
   };
   return (
     <div className="my-3 mx-3 w-96">
-      <label className={`${required} text-xl text-gray-800 mb-2`}>{labelname}</label>
-      <div className="flex items-center">
-        <TextField
-          value={fileName}
-          size="small"
-          placeholder="กรุณาเลือกไฟล์"
-          disabled
-          error={validate}
-          sx={{
-            width: "100%",
-            "& .MuiInputBase-input.Mui-disabled": {
-              WebkitTextFillColor: "black", // For text color in WebKit browsers
-            },
-            "& .MuiInputBase-root": {
-              backgroundColor: "white", // Background color for the default input
-            },
-            "& .MuiInputBase-root.Mui-disabled": {
-              backgroundColor: "rgb(241,241,244)", // Background color for the disabled input
-            },
-            "& .MuiOutlinedInput-root": {
-              fontFamily: "Sarabun",
-              fontSize: 14,
-              "& .MuiOutlinedInput-notchedOutline": {
-                borderColor: validate ? "#d50000" : "",
-              },
-              "&.Mui-focused": {
-                "& .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "info.main",
-                },
-              },
-            },
-          }}
-        />
-        <a
-          className="bg-green-300 py-1 px-1 rounded-sm"
-          onClick={startUploadFile}
-        >
-          <DriveFolderUploadIcon />
-        </a>
-      </div>
-      <input
-        type="file"
-        onChange={handleFileChange}
-        ref={inputFile}
-        style={{ display: "none" }}
-        accept="application/pdf, image/jpg, image/jpeg, image/png"
+  <label className={`${required} text-xl text-gray-800 mb-2`}>
+    {labelname}
+  </label>
+
+  {/* Select + โปรดระบุ บรรทัดเดียวกัน */}
+  <div className="flex items-center gap-2 mb-2">
+    <Select
+      size="small"
+      value={attachmentType}
+      displayEmpty
+      onChange={(e) => setAttachmentType(e.target.value as string)}
+      sx={{ flex: 1, backgroundColor: "#fff" }}
+    >
+      <MenuItem value="">
+        <em>เลือกรูปแบบเอกสาร</em>
+      </MenuItem>
+      {options.map((opt) => (
+        <MenuItem key={opt.id} value={opt.id}>
+          {opt.lov1}
+        </MenuItem>
+      ))}
+    </Select>
+
+    {attachmentType === "TRR_AT_4" && (
+      <TextField
+        size="small"
+        placeholder="โปรดระบุ...กดเด"
+        value={otherText}
+        onChange={(e) => setOtherText(e.target.value)}
+        sx={{ flex: 1 }}
       />
-      {validate &&
-        <label htmlFor="" className="text-[9px] text-red-600">{`*** กรุณาอัปโหลดไฟล์ ${labelname} ***`}</label>
-      }
-    </div>
+    )}
+  </div>
+
+  {/* ปุ่ม Upload */}
+  <div className="flex items-center">
+    <a
+      className="bg-green-300 py-1 px-2 rounded-sm cursor-pointer flex items-center gap-1"
+      onClick={startUploadFile}
+    >
+      <DriveFolderUploadIcon />
+      <span>อัปโหลดไฟล์</span>
+    </a>
+  </div>
+
+  <input
+    type="file"
+    onChange={handleFileChange}
+    ref={inputFile}
+    style={{ display: "none" }}
+    accept="application/pdf, image/jpg, image/jpeg, image/png"
+  />
+
+  {validate && (
+    <label className="text-[9px] text-red-600">
+      {`*** กรุณาอัปโหลดไฟล์ ${labelname} ***`}
+    </label>
+  )}
+</div>
+
   );
 }
