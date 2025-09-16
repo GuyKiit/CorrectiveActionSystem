@@ -1500,165 +1500,70 @@ export default function ComplaintBody({
                               {photoType.lov1}
                             </label>
                             <Divider sx={{ my: 1 }} />
-                            <Table size="small" sx={{ width: "100%" }}>
-                              <TableHead>
-                                <TableRow>
-                                  <TableCell
-                                    sx={{
-                                      fontWeight: "bold",
-                                      width:
-                                        photoType.id === "TRR_AT_4"
-                                          ? "40%"
-                                          : "50%",
-                                    }}
-                                  >
-                                    ชื่อไฟล์
-                                  </TableCell>
-                                  <TableCell
-                                    sx={{
-                                      fontWeight: "bold",
-                                      width:
-                                        photoType.id === "TRR_AT_4"
-                                          ? "15%"
-                                          : "20%",
-                                    }}
-                                  >
-                                    ขนาด (MB)
-                                  </TableCell>
-                                  {photoType.id === "TRR_AT_4" && (
-                                    <TableCell
-                                      sx={{ fontWeight: "bold", width: "25%" }}
-                                    >
-                                      รายละเอียด
-                                    </TableCell>
-                                  )}
-                                  <TableCell
-                                    sx={{
-                                      fontWeight: "bold",
-                                      width:
-                                        photoType.id === "TRR_AT_4"
-                                          ? "20%"
-                                          : "30%",
-                                    }}
-                                  >
-                                    จัดการ
-                                  </TableCell>
-                                </TableRow>
-                              </TableHead>
-
-                              <TableBody>
-                                {items.map((item, idx) => {
-                                  const globalIndex = fileList.findIndex(
-                                    (f) => f === item
-                                  );
-                                  return (
-                                    <TableRow key={globalIndex}>
-                                      <TableCell>{item.file.name}</TableCell>
-                                      <TableCell>
-                                        {(
-                                          item.file.size /
-                                          (1024 * 1024)
-                                        ).toFixed(2)}{" "}
-                                        MB
-                                      </TableCell>
-                                      {photoType.id === "TRR_AT_4" && (
-                                        <TableCell>
-                                          <TextField
-                                            fullWidth
-                                            size="small"
-                                            placeholder="โปรดระบุ..."
-                                            value={item.otherText}
-                                            onChange={(e) =>
-                                              handleFileOtherTextChange(
-                                                globalIndex,
-                                                e.target.value
-                                              )
-                                            }
-                                          />
-                                        </TableCell>
-                                      )}
-                                      <TableCell>
-                                        <IconButton
-                                          color="error"
-                                          onClick={() =>
-                                            handleRemoveFile(globalIndex)
-                                          }
-                                        >
-                                          <DeleteIcon />
-                                        </IconButton>
-
-                                        <IconButton
-                                          color="primary"
-                                          onClick={() =>
-                                            window.open(
-                                              URL.createObjectURL(item.file),
-                                              "_blank"
-                                            )
-                                          }
-                                        >
-                                          <VisibilityIcon />
-                                        </IconButton>
-                                      </TableCell>
-                                    </TableRow>
-                                  );
-                                })}
-                              </TableBody>
-                              <Dialog
-                                open={!!previewFile}
-                                onClose={() => setPreviewFile(null)}
-                                maxWidth="md"
-                                fullWidth
+                            {items.map((item, idx) => (
+                              <Box
+                                key={idx}
+                                sx={{
+                                  p: 1.5,
+                                  border: "1px solid #e0e0e0",
+                                  borderRadius: 1,
+                                  mb: 1,
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                  alignItems: "center",
+                                  gap: 2,
+                                }}
                               >
-                                <DialogTitle>
-                                  Preview File
-                                  <IconButton
-                                    aria-label="close"
-                                    onClick={() => setPreviewFile(null)}
-                                    sx={{
-                                      position: "absolute",
-                                      right: 8,
-                                      top: 8,
-                                    }}
+                                <Box>
+                                  <div style={{ fontWeight: "bold" }}>
+                                    {item.file.name}
+                                  </div>
+                                  <div
+                                    style={{ fontSize: "15px", color: "#484444ff" }}
                                   >
-                                    <CloseIcon />
-                                  </IconButton>
-                                </DialogTitle>
-                                {/* <DialogContent
-                                  dividers
-                                  style={{ textAlign: "center" }}
-                                >
-                                  {previewFile &&
-                                  allowedTypes.includes(previewFile.type) ? (
-                                    previewFile.type.startsWith("image/") ? (
-                                      // กรณีเป็นรูป
-                                      <img
-                                        src={URL.createObjectURL(previewFile)}
-                                        alt={previewFile.name}
-                                        style={{
-                                          width: "100%",
-                                          maxHeight: "80vh",
-                                          objectFit: "contain",
-                                        }}
-                                      />
-                                    ) : previewFile.type ==="application/pdf" ? (
-                                      <iframe src={pdfDataUrl}></iframe>
-                                    ) : (
-                                      // กรณีไฟล์อื่น ๆ
-                                      <p style={{ color: "blue" }}>
-                                        ไม่สามารถแสดงไฟล์นี้ได้ใน modal:{" "}
-                                        {previewFile.name} <br />
-                                        กรุณาดาวน์โหลดเพื่อเปิดดู
-                                      </p>
-                                    )
-                                  ) : (
-                                    <p style={{ color: "red" }}>
-                                      ไม่รองรับไฟล์ประเภทนี้:{" "}
-                                      {previewFile?.type}
-                                    </p>
+                                    {(item.file.size / (1024 * 1024)).toFixed(
+                                      2
+                                    )}{" "}
+                                    MB
+                                  </div>
+                                  {photoType.id === "TRR_AT_4" && (
+                                    <div
+                                      style={{
+                                        //fontWeight: "bold",
+                                        fontSize:  "15px",
+                                        color: "#484444ff",
+                                        marginTop: "4px",
+                                      }}
+                                    >
+                                      รายละเอียด: {item.otherText}
+                                    </div>
                                   )}
-                                </DialogContent> */}
-                              </Dialog>
-                            </Table>
+                                </Box>
+                                <Box sx={{ display: "flex", gap: 1 }}>
+                                  <IconButton
+                                    color="error"
+                                    onClick={() =>
+                                      handleRemoveFile(
+                                        fileList.findIndex((f) => f === item)
+                                      )
+                                    }
+                                  >
+                                    <DeleteIcon />
+                                  </IconButton>
+                                  <IconButton
+                                    color="primary"
+                                    onClick={() =>
+                                      window.open(
+                                        URL.createObjectURL(item.file),
+                                        "_blank"
+                                      )
+                                    }
+                                  >
+                                    <VisibilityIcon />
+                                  </IconButton>
+                                </Box>
+                              </Box>
+                            ))}
                           </Paper>
                         );
                       })}
