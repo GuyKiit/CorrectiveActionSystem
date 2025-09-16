@@ -21,7 +21,7 @@ import { useData } from "../../auth/core/DataContext";
 import { Complaint_headCells } from "../../../libs/columnname";
 import DataTable from "../../components/MUI/DataTable";
 import ComplaintBody from "./components/ComplaintCreate";
-import CompalintView from "./components/ComplaintRead";
+// import CompalintView from "./components/ComplaintRead";
 import { useListComplaint } from "./core/ListComplaintContext";
 import { v4 as uuidv4 } from "uuid";
 import { cleanAccessData } from "../../service/initmain/initmain";
@@ -42,6 +42,8 @@ export type Launch = {
   report_code?: string;
   cas_number?: string;
   request_company_id?: any;
+  request_domain_id?: any;
+  employee_position?: any;
   doc_date: dayjs.Dayjs
   product_name?: string;
   lot_no?: string;
@@ -168,7 +170,7 @@ export default function Complaint() {
   const {
     // Main Complaint Fields
     dataelement, setdataelement,
-    Complaint_no, no, report_type, cas_number, doc_date, date_of_detection,
+    Complaint_no, no,id, report_type, cas_number, doc_date, date_of_detection,
     request_name, request_company_id, request_domain_id, request_department_id,
     request_position, request_email, request_phone, request_date,
     respondent_company_id, respondent_domain_id, respondent_department_id,
@@ -191,7 +193,7 @@ export default function Complaint() {
     dataset_reporttype, dataset_department, dataset_company, dataset_domain,
 
     // Setter Functions
-    setComplaint_no, setno, setreport_type, setcas_number, setdoc_date,
+    setComplaint_no, setno,setid, setreport_type, setcas_number, setdoc_date,
     setdate_of_detection, setrequest_name, setrequest_company_id,
     setrequest_domain_id, setrequest_department_id, setrequest_position,
     setrequest_email, setrequest_phone, setuser_file_name, setrequest_date,
@@ -536,7 +538,7 @@ export default function Complaint() {
                 }}
               />
             );
-            el.report_code = dataset_reporttype?.find((item:any)=> item.id == el.report_type)?.lov_code
+            // el.report_code = dataset_reporttype?.find((item: any) => item.id == el.report_type)?.lov_code
             el.ACTION = ACTION;
             responseData.push(el);
           });
@@ -582,7 +584,7 @@ export default function Complaint() {
                 }}
               />
             );
-            el.report_code = dataset_reporttype?.find((item:any)=> item.id == el.report_type)?.lov_code
+            // el.report_code = dataset_reporttype?.find((item: any) => item.id == el.report_type)?.lov_code
             el.ACTION = ACTION;
             responseData.push(el);
           });
@@ -649,7 +651,13 @@ export default function Complaint() {
         product_name: product_name,
         detail: detail,
         priority_level: datapriorityValue_Combobox,
-        respond_date_within: respond_date_within,
+        respond_date_within: respond_date_within
+          ? respond_date_within
+            .hour(dayjs().hour())
+            .minute(dayjs().minute())
+            .second(dayjs().second())
+            .format("YYYY-MM-DDTHH:mm:ss")
+          : null,
         lot_no: lot_no,
         complaint_status_id: "TRR_CS_SUBMIT",
         create_by: user[0]?.employee_username || '',
@@ -708,9 +716,9 @@ export default function Complaint() {
     try {
       const response = await _POST_FORMDATA(formData, "/Complaint/ComplaintAdd");
       if (response && response.status === "success") {
-        console.log("✅ Complaint added successfully:", response);
+        console.log("✅ Complaint edittt successfully:", response);
       } else {
-        console.log("⚠️ Add failed:", response);
+        console.log("⚠️ Edit failed:", response);
       }
     } catch (error) {
       console.error("Upload failed:", error);
@@ -720,6 +728,171 @@ export default function Complaint() {
       Complaint_Get();
     }
   };
+
+
+  // CREATE - Edit Complaint
+  const ComplaintEdit = async () => {
+    console.log("Departtttt", dataelement?.request_domain_id);
+    console.log("Departtttt", request_department_id?.itasset_department_id);
+    console.log("Departtttt", request_department_id?.itasset_department_id);
+    console.log("🤍🤍dataComplaintTypeValue_Combobox", dataComplaintTypeValue_Combobox);
+
+    const tempid = uuidv4();
+    // เตรียม Models
+    const complainttypeModel = dataComplaintTypeValue_Combobox
+      ? compTypeUpdateCompId(dataComplaintTypeValue_Combobox, tempid, compTypeOther)
+      : null;
+
+    const complaintRsModel = dataComplaintRsValue_Combobox
+      ? compRsUpdateCompId(dataComplaintRsValue_Combobox, tempid, compRsOther, clauseOther)
+      : null;
+
+    // สร้าง JSON payload
+    const complaintPayload = {
+      complaintModel: {
+        id: dataelement?.id,
+        report_type: dataReportTypeValue?.id,
+        cas_number: cas_number,
+        date_of_detection: date_of_detection
+          ? date_of_detection
+            .hour(dayjs().hour())
+            .minute(dayjs().minute())
+            .second(dayjs().second())
+            .format("YYYY-MM-DDTHH:mm:ss")
+          : null,
+        request_name: dataelement?.request_name,
+        request_company_id: dataelement?.request_company_id,
+        request_domain_id: dataelement?.request_domain_id,
+        request_department_id: dataelement?.request_department_id,
+        request_position: dataelement?.request_position,
+        request_email:  dataelement?.request_email ,
+        request_phone:  dataelement?.request_phone,
+        request_date: new Date().toISOString(),
+        respondent_company_id: dataelement?.respondent_company_id,
+        respondent_domain_id: dataelement?.respondent_domain_id,
+        respondent_department_id: respondent_department_id?.itasset_department_id
+          ? Number(respondent_department_id.itasset_department_id)
+          : undefined,
+        respondent_email: respondent_email,
+        respondent_other_name: respondent_other_name,
+        respondent_other_email: respondent_other_email,
+        product_name: product_name,
+        detail: detail,
+        priority_level: datapriority?.id ?? dataelement?.priority_level,
+        respond_date_within: respond_date_within
+          ? respond_date_within
+            .hour(dayjs().hour())
+            .minute(dayjs().minute())
+            .second(dayjs().second())
+            .format("YYYY-MM-DDTHH:mm:ss")
+          : null,
+        lot_no: lot_no,
+        complaint_status_id: "TRR_CS_SUBMIT",
+        create_by: user[0]?.employee_username || '',
+        update_by: user[0]?.employee_username || '',
+        action_type: null,
+        complaintType: complainttypeModel,
+        complaintRs: complaintRsModel,
+        // เพิ่ม complaintFile
+        complaintFile: complaintFiles?.map((item: any, index: number) => {
+          return {
+            cf_type: "Complaint",
+            complaint_id: tempid,
+            complaint_at_id: (index + 1).toString(),
+            other: item.otherText?.trim() || null,
+            // explain_id: explain_id,
+            // approve_step: approve_step,
+            cf_file_seq: (index + 2).toString(),
+            user_file_name: item.file.name,
+            file_name: item.file.name,
+            file_type: item.file.type.split("/")[1] || "",
+            file_size: item.file.size.toString(),
+            record_status: true,
+            create_by: user[0]?.employee_username || '',
+            create_datetime: new Date().toISOString()
+          };
+        },
+        ) || []
+      },
+      RunningModel: {
+        code_group: dataReportTypeValue.lov_code,
+        code_type: dataReportTypeValue.lov1 + "-" + getPaddingYear(),
+        code_num: 1,
+      },
+      CurrentAccessModel: {
+        user_id: user[0]?.employee_username || '',
+      }
+    };
+
+    // สร้าง FormData
+    const formData = new FormData();
+    formData.append("complaintPayloadJson", JSON.stringify(complaintPayload));
+
+    // แนบไฟล์จริง
+    if (complaintFiles && complaintFiles.length > 0) {
+      complaintFiles.forEach((fileItem: any) => {
+        formData.append("complaintFiles", fileItem.file);
+      });
+    }
+    console.log("🧡dataelement",dataelement);
+    
+    console.log("💨💨💨 FormData prepared:", formData);
+    console.log("💨💨💨 complaintPayload:", complaintPayload);
+    console.log("💨💨💨 dataReportTypeValue.id:", dataReportTypeValue.id);
+    console.log("💨💨💨 dataReportTypeValue.lov_code:", dataReportTypeValue.lov_code);
+    console.log("💨💨💨 dataReportTypeValue.lov1:", dataReportTypeValue.lov1);
+    setIsLoadingScreen(true);
+
+    try {
+      const response = await _POST_FORMDATA(formData, "/Complaint/ComplaintEdit");
+      if (response && response.status === "success") {
+        console.log("✅ Complaint edittt successfully:", response);
+      } else {
+        console.log("⚠️ Edit failed:", response);
+      }
+    } catch (error) {
+      console.error("Upload failed:", error);
+    } finally {
+      setIsLoadingScreen(false);
+      handleClose();
+      Complaint_Get();
+    }
+  };
+
+  // CREATE - Delete Complaint
+  const ComplaintDelete = async () => {
+    // สร้าง JSON payload
+    const complaintPayload = {
+      ComplaintModel: {
+        id: dataelement?.id,
+      },
+      CurrentAccessModel: {
+        user_id: user[0]?.employee_username || '',
+      }
+    };
+
+    console.log("📤 complaintPayload:", complaintPayload);
+    console.log("📤 dataReportTypeValue.id:", dataReportTypeValue.id);
+    console.log("📤 dataReportTypeValue.lov_code:", dataReportTypeValue.lov_code);
+    console.log("📤 dataReportTypeValue.lov1:", dataReportTypeValue.lov1);
+    setIsLoadingScreen(true);
+
+    try {
+      let  response = await _POST(complaintPayload, "/Complaint/ComplaintDelete");
+      if (response && response.status === "success") {
+        console.log("✅ Complaint edittt successfully:", response);
+      } else {
+        console.log("⚠️ Edit failed:", response);
+      }
+    } catch (error) {
+      console.error("Upload failed:", error);
+    } finally {
+      setIsLoadingScreen(false);
+      handleClose();
+      Complaint_Get();
+    }
+  };
+
 
   // READ - Preview Complaint (from ComplaintRead.tsx)
   const previewComplaint = async () => {
@@ -856,6 +1029,7 @@ export default function Complaint() {
 
   // Initialize data on component mount
   React.useEffect(() => {
+
     resetSearchTable();
     Complaint_Get();
     ReportType_Get();
@@ -864,15 +1038,26 @@ export default function Complaint() {
     photo_Get();
     priority_Get();
     CasDomainGet();
-    // ListSearchGet();
     CasDepartmentDomainGet();
     complaint_status_Get();
   }, []);
 
+  React.useEffect(() => {
+  if (!dataset_reporttype || dataset_reporttype.length === 0) return;
+
+  setdatalist((prev:any) =>
+    prev.map((el:any) => ({
+      ...el,
+      report_type: dataset_reporttype.find((item:any) => item.id == el.report_type)?.lov_code || el.report_type,
+    }))
+  );
+}, [dataset_reporttype]);
+  
   // Filter complaint types based on selected report type (from ComplaintRead.tsx)
   React.useEffect(() => {
     // previewComplaint();
-
+    if (!dataelement) return;
+    
     // กรอง complaint type
     const filtered = (dataComplaintType_Combobox || []).filter((item: LovType) =>
       item.lov_type === "complaint_type" && item.lov_code === dataelement?.report_type
@@ -972,7 +1157,7 @@ export default function Complaint() {
               handleChange={setdocumentDateSearch}
             />
           </Grid>
-          
+
         </Grid>
 
         {/* ======================================================================== */}
@@ -1010,7 +1195,7 @@ export default function Complaint() {
               disabled={menuFuncData?.find((item: auth_role_menu_func) => item?.func_name === "Add") ? false : true}
               color="success"
               onClick={handleOnclickMenuAdd}
-              // onClick={handleOnclickMenuAdd}
+            // onClick={handleOnclickMenuAdd}
             >
               {menuFuncData?.find((item: auth_role_menu_func) => item?.func_name === "Add") ? "เพิ่มข้อมูล" : ""}
               <AddIcon sx={{}} />
@@ -1052,9 +1237,10 @@ export default function Complaint() {
       <FuncDialog
         open={openEdit}
         dialogWidth="xl"
-        openBottonHidden={false}
-        titlename={'ดูข้อมูล'}
+        openBottonHidden={true}
+        titlename={'แก้ไขข้อมูล'}
         handleClose={handleClose}
+        handlefunction={ComplaintEdit}
         colorBotton="success"
         element={<ComplaintBody
           action="Edit"
@@ -1064,9 +1250,10 @@ export default function Complaint() {
       <FuncDialog
         open={openDelete}
         dialogWidth="xl"
-        openBottonHidden={false}
-        titlename={'ดูข้อมูล'}
+        openBottonHidden={true}
+        titlename={'ลบข้อมูล'}
         handleClose={handleClose}
+        handlefunction={ComplaintDelete}
         colorBotton="success"
         element={<ComplaintBody
           action="Delete"

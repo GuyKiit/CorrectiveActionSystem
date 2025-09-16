@@ -11,6 +11,7 @@ export type ListComplaintContextProps = {
 
     Complaint_no?: string
     no?: string
+    id?: string
     report_type?: string
     cas_number?: string
     doc_date?: dayjs.Dayjs 
@@ -115,6 +116,7 @@ export type ListComplaintContextProps = {
 
     setComplaint_no: Dispatch<SetStateAction<string>>;
     setno: Dispatch<SetStateAction<string>>;
+    setid: Dispatch<SetStateAction<string>>;
     setreport_type: Dispatch<SetStateAction<string>>;
     setcas_number: Dispatch<SetStateAction<string>>
     setdoc_date: Dispatch<SetStateAction<dayjs.Dayjs>>
@@ -204,6 +206,7 @@ export const initialListComplaint: ListComplaintContextProps = {
 
     setComplaint_no: () => { },
     setno: () => { },
+    setid: () => { },
     setreport_type: () => { },
     setcas_number: () => { },
     setdoc_date: () => { },
