@@ -15,6 +15,9 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
     const [no, setno] = useState<any>(
         initialListComplaint.no
     );
+    const [id, setid] = useState<any>(
+        initialListComplaint.id
+    );
     const [cas_number, setcas_number] = useState<any>(
         initialListComplaint.cas_number
     );
@@ -252,6 +255,7 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 setdataelement,
                 Complaint_no,
                 no,
+                id,
                 report_type,
                 cas_number,
                 doc_date,
@@ -335,6 +339,7 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
 
                 setComplaint_no,
                 setno,
+                setid,
                 setreport_type,
                 setcas_number,
                 setuser_file_name,
@@ -420,33 +425,3 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
 
 const useListComplaint = () => useContext(ListComplaintContext);
 export { ListComplaintProvider, useListComplaint };
-
-
-
-// const [complaintType, setComplaintType] = useState({
-//     Complaint_no: initialListComplaint.Complaint_no,
-//     no: initialListComplaint.no,
-//     complaint_id: initialListComplaint.complaint_id,
-//     Complaint_id: initialListComplaint.Complaint_id,
-//     record_status: initialListComplaint.record_status,
-//     create_by: initialListComplaint.create_by,
-//     create_datetime: initialListComplaint.create_datetime
-//       ? dayjs(initialListComplaint.create_datetime)
-//       : null,
-//     update_by: initialListComplaint.update_by,
-//     update_datetime: initialListComplaint.update_datetime
-//       ? dayjs(initialListComplaint.update_datetime)
-//       : null
-//   });
-
-//   const value: ListComplaintContextProps = {
-//     complaintType,
-//     setComplaintType
-//   };
-
-//   return (
-//     <ListComplaintContext.Provider value={value}>
-//       {children}
-//     </ListComplaintContext.Provider>
-//   );
-// };

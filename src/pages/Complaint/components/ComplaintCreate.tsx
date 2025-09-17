@@ -88,7 +88,7 @@ type Block = {
 };
 
 interface ComplaintBody {
-  action: "Add" | "Edit" | "Read";
+  action: string;
   disableTextField?: boolean;
   readonlyTextField?: boolean;
   bgcolorTextField?: boolean;
@@ -129,7 +129,9 @@ export default function ComplaintBody({
   onBlocksChange,
   validateDetailText,
 }: ComplaintBody) {
-  const Read = action === "Read";
+  const isActionRead = action === "Read";
+  const isActionEdit = action === "Edit";
+  const isActionDelete = action === "Delete";
 
   const user = cleanAccessData("userSession");
 
@@ -385,8 +387,8 @@ export default function ComplaintBody({
     setotherText("");
     setphoTypeOther("");
 
-    setrequest_name("");
-    setrequest_position("");
+    setrequest_name("")
+    setrequest_position("")
     setrequest_department_id(user);
     setrequest_email("");
     setrequest_phone("");
@@ -557,7 +559,7 @@ export default function ComplaintBody({
     setrespondent_email("");
 
     setdoc_date(dayjs(null));
-    setrespond_date_within(null);
+    setrespond_date_within(dayjs(null));
     setdetail("");
     setcompTypeOther("");
     setotherText("");
@@ -665,12 +667,7 @@ export default function ComplaintBody({
       }
 
       // 2) ถ้า action === "Read" และมี dataelement.report_type ให้หา default จาก newDataset (ถ้ามี)
-      if (
-        action === "Read" &&
-        dataelement?.report_type &&
-        Array.isArray(newDataset) &&
-        newDataset.length > 0
-      ) {
+      if ((isActionRead || isActionEdit || isActionDelete) && dataelement?.report_type && Array.isArray(newDataset) && newDataset.length > 0) {
         const defaultVal = newDataset.find(
           (item: LovType) =>
             // บางที dataelement.report_type อาจเก็บ lov_code หรือ id ขึ้นกับ backend — เช็คทั้งสอง
@@ -825,30 +822,13 @@ export default function ComplaintBody({
       setclauseOther(dataelement?.clause ? dataelement?.clause : "");
       setdetail(dataelement?.detail ? dataelement?.detail : "");
       setpriority_level(setPriorityLevel(dataelement?.priority_level));
-      setrespond_date_within(dayjs(dataelement?.respond_date_within));
-      setrequest_name(
-        dataelement?.request_name ? dataelement?.request_name : ""
-      );
-      setrequest_position(
-        dataelement?.request_position ? dataelement?.request_position : ""
-      );
-      setrequest_department_id(
-        dataelement?.request_department_id
-          ? dataelement?.request_department_id
-          : ""
-      );
-      setrequest_email(
-        dataelement?.request_email ? dataelement?.request_email : ""
-      );
-      setrequest_phone(
-        dataelement?.request_phone ? dataelement?.request_phone : ""
-      );
-      setrequest_company_id(
-        dataset_company.find(
-          (el: any) =>
-            el.itasset_company_id == String(dataelement.request_company_id)
-        )
-      );
+      setrespond_date_within(dataelement?.respond_date_within ? dayjs(dataelement.respond_date_within, "DD-MM-YYYY") : dayjs());
+      setrequest_name(dataelement?.request_name ? dataelement?.request_name : "")
+      setrequest_position(dataelement?.request_position ? dataelement?.request_position : "")
+      setrequest_department_id(dataelement?.request_department_id ? dataelement?.request_department_id : "")
+      setrequest_email(dataelement?.request_email ? dataelement?.request_email : "")
+      setrequest_phone(dataelement?.request_phone ? dataelement?.request_phone : "")
+      setrequest_company_id(dataset_company.find((el: any) => el.itasset_company_id == String(dataelement.request_company_id)));
 
       // สมมติ LovType คือ { id: string; label: string }
 
@@ -880,13 +860,14 @@ export default function ComplaintBody({
         ) || null;
 
       setdatapriority(selectedPriority);
-
+      setpriority_level(selectedPriority);
       if (dataelement?.report_type === "TRR_RT_NCR") {
         setIsRSHidden(false);
       } else {
         setIsRSHidden(true);
       }
     }
+
   }, [dataset_reporttype]);
 
   React.useEffect(() => {
@@ -973,8 +954,9 @@ export default function ComplaintBody({
             options={dataset_reporttype} // <-- แก้ตรงนี้
             column="lov_code"
             setvalue={handleReportTypeChange}
-            readonly={action === "Read" ? true : readonlyTextField}
-            bgcolorTextField={action === "Read" ? true : bgcolorTextField}
+            readonly={isActionRead ? true : isActionEdit ? true : isActionDelete ? true: readonlyTextField}
+            bgcolorTextField={isActionRead ? true : isActionEdit ? true : isActionDelete ? true:bgcolorTextField}
+
           />
         </Grid>
       </Grid>
@@ -1079,7 +1061,7 @@ export default function ComplaintBody({
                     value={date_of_detection}
                     handleChange={(val) => setdate_of_detection(val ?? null)}
                     bgcolorTextField={action === "Add" ? false : true}
-                    readonly={action === "Read"}
+                    readonly={isActionRead || isActionEdit || isActionDelete}
                   />
                 </Grid>
                 <Grid size={4}>
@@ -1095,8 +1077,8 @@ export default function ComplaintBody({
                       console.log(e); // ดูค่าของ e ที่ถูกส่งมาจาก AutocompleteComboBox
                       setrespondent_department_id(e);
                     }}
-                    bgcolorTextField={action === "Add" ? false : true}
-                    readonly={action === "Read"}
+                    bgcolorTextField={action === "Add" ? false : isActionEdit ? false : true}
+                    readonly={isActionRead || isActionDelete}
                   />
                 </Grid>
                 <Grid size={4}>
@@ -1105,7 +1087,7 @@ export default function ComplaintBody({
                     value={product_name}
                     labelName="ชื่อสินค้า (Product Name)"
                     onchange={(e) => setproduct_name(e)}
-                    readonly={action === "Read"}
+                    readonly={isActionRead || isActionDelete}
                   />
                 </Grid>
                 <Grid size={4}>
@@ -1114,7 +1096,7 @@ export default function ComplaintBody({
                     value={lot_no}
                     labelName="Lot No./Bag No"
                     onchange={(e) => setlot_no(e)}
-                    readonly={action === "Read"}
+                    readonly={isActionRead || isActionDelete}
                   />
                 </Grid>
                 <Grid size={4}>
@@ -1123,7 +1105,7 @@ export default function ComplaintBody({
                     value={respondent_email}
                     labelName="อีเมล (Email)"
                     onchange={(e) => setrespondent_email(e)}
-                    readonly={action === "Read"}
+                    readonly={isActionRead || isActionDelete}
                   />
                 </Grid>
               </Grid>
@@ -1197,22 +1179,16 @@ export default function ComplaintBody({
                           }}
                         >
                           <Grid container spacing={2}>
-                            {(filteredComplaintType || []).map(
-                              (item: LovType) => (
-                                <Grid size={3} key={item.id}>
-                                  <FullWidthCheckbox
-                                    labelName={item.lov1}
-                                    value={dataComplaintType.some(
-                                      (c) => c.id === item.id
-                                    )}
-                                    onchange={() =>
-                                      handleCheckboxChangeCT(item)
-                                    }
-                                    readonly={action === "Read"}
-                                  />
-                                </Grid>
-                              )
-                            )}
+                            {(filteredComplaintType || []).map((item: LovType) => (
+                              <Grid size={3} key={item.id}>
+                                <FullWidthCheckbox
+                                  labelName={item.lov1}
+                                  value={dataComplaintType.some(c => c.id === item.id)}
+                                  onchange={() => handleCheckboxChangeCT(item)}
+                                  readonly={isActionRead || isActionDelete}
+                                />
+                              </Grid>
+                            ))}
                           </Grid>
                           <Box sx={{ mt: "auto", pt: 2 }}>
                             {dataComplaintType.some((c) => c.lov2 === "Y") && (
@@ -1220,7 +1196,8 @@ export default function ComplaintBody({
                                 value={compTypeOther}
                                 labelName="Other:"
                                 onchange={(e) => setcompTypeOther(e)}
-                                readonly={action === "Read"}
+                                bgcolorTextField={action === "Add" ? false : isActionEdit ? false : true}
+                                readonly={isActionRead || isActionDelete}
                               />
                             )}
                           </Box>
@@ -1272,28 +1249,19 @@ export default function ComplaintBody({
                                     (rs) => rs.id === item.id
                                   )}
                                   onchange={() => handleCheckboxChangeRS(item)}
-                                  readonly={action === "Read"}
+                                  readonly={isActionRead || isActionDelete}
                                 />
                               </Grid>
                             ))}
                           </Grid>
-                          <Box sx={{ mt: "auto", pt: 2 }}>
-                            {/* {dataComplaintRs.some(rs => rs.id === "TRR_RS_NCR_99") && (
+                          <Box sx={{ mt: 'auto', pt: 2 }}>
+                            {dataComplaintRs.some(rs => rs.lov3 === "Other") && (
                               <FullWidthTextArea
                                 value={compRsOther}
                                 labelName="Other:"
                                 onchange={(e) => setcompRsOther(e)}
-                                readonly={action === "Read"}
-                              />
-                            )} */}
-                            {dataComplaintRs.some(
-                              (rs) => rs.lov3 === "Other"
-                            ) && (
-                              <FullWidthTextArea
-                                value={compRsOther}
-                                labelName="Other:"
-                                onchange={(e) => setcompRsOther(e)}
-                                readonly={action === "Read"}
+                                bgcolorTextField={action === "Add" ? false : isActionEdit ? false : true}
+                                readonly={isActionRead || isActionDelete}
                               />
                             )}
                             {dataComplaintRs.some(
@@ -1303,7 +1271,8 @@ export default function ComplaintBody({
                                 value={clauseOther}
                                 labelName="Clause:"
                                 onchange={(e) => setclauseOther(e)}
-                                readonly={action === "Read"}
+                                bgcolorTextField={action === "Add" ? false : isActionEdit ? false : true}
+                                readonly={isActionRead || isActionDelete}
                               />
                             )}
                           </Box>
@@ -1350,7 +1319,8 @@ export default function ComplaintBody({
                             value={detail}
                             labelName=""
                             onchange={(e) => setdetail(e)}
-                            readonly={action === "Read"}
+                            bgcolorTextField={action === "Add" ? false : isActionEdit ? false : true}
+                            readonly={isActionRead || isActionDelete}
                           />
                         </Grid>
                       </Grid>
@@ -1450,8 +1420,8 @@ export default function ComplaintBody({
                                           datapriority?.id
                                         );
                                       }}
-                                      disabled={action === "Read"}
-                                      sx={{ color: "#ff9800" }}
+                                      disabled={isActionRead || isActionEdit || isActionDelete}
+                                      sx={{ color: '#ff9800' }}
                                     />
                                   }
                                   label={
@@ -1763,11 +1733,9 @@ export default function ComplaintBody({
               <Grid container spacing={3}>
                 <Grid size={4}>
                   <FullWidthTextField
-                    value={
-                      user[0]?.employee_username
-                        ? user[0]?.employee_username
-                        : "-"
-                    }
+                    value={action === "Add"
+                      ? (user[0]?.employee_username || '-')
+                      : (dataelement?.request_name || '-')}
                     labelName="ชื่อผู้ออกเอกสาร (Reported by)"
                     onchange={(e) => setrequest_name(e.target.value)}
                     readonly
@@ -1775,11 +1743,9 @@ export default function ComplaintBody({
                 </Grid>
                 <Grid size={4}>
                   <FullWidthTextField
-                    value={
-                      user[0]?.employee_position
-                        ? user[0]?.employee_position
-                        : "-"
-                    }
+                    value={action === "Add"
+                      ? (user[0]?.employee_position || '-')
+                      : (dataelement?.request_position || '-')}
                     labelName="ตำแหน่ง (Position)"
                     onchange={(e) => setrequest_position(e.target.value)}
                     readonly
@@ -1795,30 +1761,37 @@ export default function ComplaintBody({
                     setvalue={setrequest_department_id}
                   /> */}
                   <FullWidthTextField
-                    value={
-                      user[0]?.itasset_department_id
-                        ? user[0]?.itasset_department_name
-                        : "-"
-                    }
+                    value={action === "Add"
+                      ? (user[0]?.itasset_department_name || '-')
+                      : (dataelement?.request_department_id || '-')}
                     labelName="แผนก (Department)"
-                    onchange={(e) => setrequest_department_id(e.target.value)}
+                    onchange={(e) => {
+                      // ถึง readonly แต่เผื่ออนาคตจะเปิดให้แก้
+                      setrequest_department_id(
+                        action === "Add"
+                          ? user[0]?.itasset_department_id
+                          : dataelement?.request_department_id
+                      );
+                    }}
                     readonly
                   />
                 </Grid>
                 <Grid size={4}>
                   <FullWidthTextField
-                    value={
-                      user[0]?.employee_email ? user[0]?.employee_email : "-"
-                    }
-                    labelName="อีเมล (Email)"
+                    value={action === "Add"
+                      ? (user[0]?.employee_email || '-')
+                      : (dataelement?.request_email || '-')}
+                    labelName="ตำแหน่ง (Position)"
                     onchange={(e) => setrequest_email(e.target.value)}
                     readonly
                   />
                 </Grid>
                 <Grid size={4}>
                   <FullWidthTextField
-                    value={user[0]?.employee_tel ? user[0]?.employee_tel : "-"}
-                    labelName="เบอร์โทรศัพท์ (Phone)"
+                    value={action === "Add"
+                      ? (user[0]?.employee_tel || '-')
+                      : (dataelement?.request_phone || '-')}
+                    labelName="ตำแหน่ง (Position)"
                     onchange={(e) => setrequest_phone(e.target.value)}
                     readonly
                   />

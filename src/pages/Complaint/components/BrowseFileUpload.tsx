@@ -19,7 +19,7 @@ interface BrowseFileUploadProps {
   required?: string;
   validate?: boolean;
   options?: Array<{ id: string; lov1: string }>;
-  action?: "Add" | "Edit" | "Read";
+  action?: string;
 }
 
 const allowedTypes = [
