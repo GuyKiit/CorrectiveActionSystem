@@ -75,16 +75,19 @@ export default function FuncDialog(props: FuncDialog) {
       <DialogActions sx={{ justifyContent: "space-between", margin: 2, px: 3, pb: 3 }}>
         {/* Left side - Save Draft */}
         <div>
-          <FullWidthButton
-            handleonClick={props.handlefunction ?? props.handleClose}
-            labelName="Save Draft"
-            variant_text="contained"
-            colorname={props.colorBotton ?? "primary"}
-          />
+          {props.openBottonHidden && (
+            <FullWidthButton
+              handleonClick={props.handlefunction ?? props.handleClose}
+              labelName= "Save Draft"
+              variant_text="contained"
+              colorname={props.colorBotton ?? "primary"}
+            />
+          )}
         </div>
         
         {/* Right side - Save and Submit, Cancel */}
         <div className="flex gap-3">
+          
           {props.openBottonHidden && (
             <FullWidthButton
               handleonClick={props.handlefunction ?? props.handleClose}
@@ -99,6 +102,7 @@ export default function FuncDialog(props: FuncDialog) {
             variant_text="outlined"
             colorname="inherit"
           />
+          
         </div>
       </DialogActions>
     </BootstrapDialog>

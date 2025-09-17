@@ -7,6 +7,7 @@ export interface ComplaintFile {
   attachmentType: string;
   otherText?: string;
   original_file_name?: string;
+  img_url?: string;
 }
 
 interface BrowseFileUploadProps {
@@ -18,6 +19,7 @@ interface BrowseFileUploadProps {
   required?: string;
   validate?: boolean;
   options?: Array<{ id: string; lov1: string }>;
+  action?: "Add" | "Edit" | "Read";
 }
 
 const allowedTypes = [
@@ -36,11 +38,15 @@ export default function BrowseFileUpload({
   required,
   validate,
   options = [],
+  action = "Add",
 }: BrowseFileUploadProps) {
+
+  const Read = action === "Read";
   const inputFile = useRef<HTMLInputElement>(null);
   const [attachmentType, setAttachmentType] = useState<string>("");
   const [otherText, setOtherText] = useState<string>("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
 
   // เมื่อผู้ใช้เลือกไฟล์
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -66,7 +72,7 @@ export default function BrowseFileUpload({
     setSelectedFile(null);
     setAttachmentType("");
     setOtherText("");
-  // eslint-disable-next-line
+    // eslint-disable-next-line
   }, [selectedFile, attachmentType, otherText]);
 
   // กดปุ่มอัปโหลด -> เปิด file dialog
@@ -79,55 +85,69 @@ export default function BrowseFileUpload({
         {labelname}
       </label>
 
-      {/* Select + OtherText */}
-      <div className="flex items-center gap-2 mb-2 w-full">
-        <Select
-          size="small"
-          value={attachmentType}
-          displayEmpty
-          onChange={(e) => setAttachmentType(e.target.value as string)}
-          sx={{ flex: 1, backgroundColor: "#fff" }}
-        >
-          <MenuItem value="">
-            <em>-- เลือกรูปแบบเอกสาร --</em>
-          </MenuItem>
-          {options.map((opt) => (
-            <MenuItem key={opt.id} value={opt.id}>
-              {opt.lov1}
-            </MenuItem>
-          ))}
-        </Select>
+      {/* Select + OtherText + Upload Button แสดงเฉพาะถ้าไม่ใช่ Read */}
+      {action !== "Read" && (
+        <>
+          {/* Select + OtherText */}
+          <div className="flex items-center gap-2 mb-2 w-full">
+            <Select
+              size="small"
+              value={attachmentType}
+              displayEmpty
+              onChange={(e) => {
+                const value = e.target.value as string;
+                setAttachmentType(value);
+                if (value !== "TRR_AT_4") {
+                  setOtherText("");
+                }
+              }}
+              sx={{ flex: 1, backgroundColor: "#fff" }}
+            >
+              <MenuItem value="">
+                <em>-- เลือกรูปแบบเอกสาร --</em>
+              </MenuItem>
+              {options.map((opt) => (
+                <MenuItem key={opt.id} value={opt.id}>
+                  {opt.lov1}
+                </MenuItem>
+              ))}
+            </Select>
 
-        {attachmentType === "TRR_AT_4" && (
-          <TextField
-            size="small"
-            placeholder="โปรดระบุ..."
-            value={otherText}
-            onChange={(e) => setOtherText(e.target.value)}
-            sx={{ width: 1 }}
-          />
-        )}
-      </div>
+            {attachmentType === "TRR_AT_4" && (
+              <TextField
+                size="small"
+                placeholder="โปรดระบุ..."
+                value={otherText}
+                onChange={(e) => setOtherText(e.target.value)}
+                sx={{ width: 1 }}
+              />
+            )}
+          </div>
 
-      {/* Upload Button */}
-      <div className="flex items-center">
-        <a
-    className={`py-1 px-2 rounded-sm flex items-center gap-1 ${
-      attachmentType && (attachmentType !== "TRR_AT_4" || otherText.trim())
-        ? "bg-green-300 cursor-pointer"
-        : "bg-gray-200 cursor-not-allowed"
-    }`}
-    onClick={() => {
-      // ป้องกันกรณี disable
-      if (!attachmentType || (attachmentType === "TRR_AT_4" && !otherText.trim()))
-        return;
-      startUploadFile();
-    }}
-  >
-    <DriveFolderUploadIcon />
-    <span>อัปโหลดไฟล์</span>
-  </a>
-      </div>
+          {/* Upload Button */}
+          <div className="flex items-center">
+            <a
+              className={`py-1 px-2 rounded-sm flex items-center gap-1 ${
+                attachmentType &&
+                (attachmentType !== "TRR_AT_4" || otherText.trim())
+                  ? "bg-green-300 cursor-pointer"
+                  : "bg-gray-200 cursor-not-allowed"
+              }`}
+              onClick={() => {
+                if (
+                  !attachmentType ||
+                  (attachmentType === "TRR_AT_4" && !otherText.trim())
+                )
+                  return;
+                startUploadFile();
+              }}
+            >
+              <DriveFolderUploadIcon />
+              <span>อัปโหลดไฟล์</span>
+            </a>
+          </div>
+        </>
+      )}
 
       {/* Hidden input */}
       <input
@@ -145,7 +165,5 @@ export default function BrowseFileUpload({
         </label>
       )}
     </div>
-
-    
   );
 }

@@ -42,17 +42,20 @@ import FullWidthButton from "../../components/MUI/FullWidthButton";
 // =====================================================================================================
 // TYPE DEFINITIONS (from index.tsx and ComplaintRead.tsx)
 // =====================================================================================================
-type Launch = {
+export type Launch = {
   id: string;
   report_type?: string;
+  report_code?: string;
   cas_number?: string;
   request_company_id?: any;
-  area_of_detection_dept_id?: string;
-  area_of_detection_dept_name?: string;
+  doc_date: dayjs.Dayjs
   product_name?: string;
   lot_no?: string;
   user_file_name?: string;
   detail?: string;
+  compTypeOther?: string;
+  other?: string;
+  clause?: string;
   respondent_company_id?: any;
   respondent_domain_id?: any;
   respondent_department_id?: any;
@@ -68,7 +71,9 @@ type Launch = {
   priority_level?: string;
   complaint_type_id?: string;
   complaint_at_id?: string;
-};
+  date_of_detection: dayjs.Dayjs | null
+  respond_date_within: dayjs.Dayjs | null
+}
 interface LovType {
   id: string;
   lov_id: string;
@@ -167,76 +172,25 @@ export default function Complaint() {
   // =====================================================================================================
   const {
     // Main Complaint Fields
-    Complaint_no,
-    no,
-    report_type,
-    cas_number,
-    doc_date,
-    date_of_detection,
-    request_name,
-    request_company_id,
-    request_domain_id,
-    request_department_id,
-    request_position,
-    request_email,
-    request_phone,
-    request_date,
-    respondent_company_id,
-    respondent_domain_id,
-    respondent_department_id,
-    respondent_email,
-    respondent_other_name,
-    respondent_other_email,
-    area_of_detection_dept_id,
-    area_of_detection_dept_name,
-    product_name,
-    detail,
-    compTypeOther,
-    compRsOther,
-    priority_level,
-    respond_date_within,
-    lot_no,
-    user_file_name,
-    acknowledge_flag,
-    acknowledge_name,
-    acknowledge_company_id,
-    acknowledge_department_id,
-    acknowledge_position,
-    acknowledge_email,
-    acknowledge_datetime,
-    complaint_status_id,
-    status_last_datetime,
-    return_from_status_id,
-    return_from_status_datetime,
-    dc_name,
-    dc_company_id,
-    dc_department_id,
-    dc_position,
-    dc_email,
-    record_status,
-    create_by,
-    create_datetime,
-    update_by,
-    update_datetime,
-    ComplaintStatusID_Combobox,
-    dataReportTypeValue,
-    dataComplaintTypeValue_Combobox,
-    dataComplaintType_Combobox,
-    dataComplaintRsValue_Combobox,
-    dataComplaintRs_Combobox,
-    dataphotoValue_Combobox,
-    dataphoto_Combobox,
-    datapriorityValue_Combobox,
-    datastatus,
-    datapriority_Combobox,
-    datapriority,
-    PriorityLevel,
-    clauseOther,
-    phoTypeOther,
-    complaintFiles,
-    RunningModel,
-    explain_id,
-    approve_step,
+    dataelement, setdataelement,
+    Complaint_no, no, report_type, cas_number, doc_date, date_of_detection,
+    request_name, request_company_id, request_domain_id, request_department_id,
+    request_position, request_email, request_phone, request_date,
+    respondent_company_id, respondent_domain_id, respondent_department_id,
+    respondent_email, respondent_other_name, respondent_other_email,
+    product_name, detail, compTypeOther, compRsOther,
+    priority_level, respond_date_within, lot_no, user_file_name,
+    acknowledge_flag, acknowledge_name, acknowledge_company_id,
+    acknowledge_department_id, acknowledge_position, acknowledge_email,
+    acknowledge_datetime, complaint_status_id, status_last_datetime,
+    return_from_status_id, return_from_status_datetime, dc_name,
+    dc_company_id, dc_department_id, dc_position, dc_email,
+    record_status, create_by, create_datetime, update_by, update_datetime,
+    ComplaintStatusID_Combobox, dataReportTypeValue, dataComplaintTypeValue_Combobox,
+    dataComplaintType_Combobox, dataComplaintRsValue_Combobox, dataComplaintRs_Combobox,
+    dataphotoValue_Combobox, dataphoto_Combobox, datapriorityValue_Combobox, datastatus,
+    datapriority_Combobox, datapriority, PriorityLevel, clauseOther, phoTypeOther,
+    complaintFiles, RunningModel, explain_id, approve_step, otherText,
 
     // Dataset Variables
     dataset_reporttype,
@@ -245,79 +199,27 @@ export default function Complaint() {
     dataset_domain,
 
     // Setter Functions
-    setComplaint_no,
-    setno,
-    setreport_type,
-    setcas_number,
-    setdoc_date,
-    setdate_of_detection,
-    setrequest_name,
-    setrequest_company_id,
-    setrequest_domain_id,
-    setrequest_department_id,
-    setrequest_position,
-    setrequest_email,
-    setrequest_phone,
-    setuser_file_name,
-    setrequest_date,
-    setrespondent_company_id,
-    setrespondent_domain_id,
-    setrespondent_department_id,
-    setrespondent_email,
-    setrespondent_other_name,
-    setrespondent_other_email,
-    setarea_of_detection_dept_id,
-    setarea_of_detection_dept_name,
-    setproduct_name,
-    setdetail,
-    setcomplaint_type_other,
-    setpriority_level,
-    setrespond_date_within,
-    setlot_no,
-    setcompTypeOther,
-    setcompRsOther,
-    setreference_standard_other,
-    setacknowledge_flag,
-    setacknowledge_name,
-    setacknowledge_company_id,
-    setacknowledge_department_id,
-    setacknowledge_position,
-    setacknowledge_email,
-    setacknowledge_datetime,
-    setcomplaint_status_id,
-    setstatus_last_datetime,
-    setreturn_from_status_id,
-    setreturn_from_status_datetime,
-    setdc_name,
-    setdc_company_id,
-    setdc_department_id,
-    setdc_position,
-    setdc_email,
-    setrecord_status,
-    setcreate_by,
-    setcreate_datetime,
-    setupdate_by,
-    setupdate_datetime,
-    setComplaintStatusID_Combobox,
-    setdataReportTypeValue,
-    setdataComplaintType_Combobox,
-    setdataComplaintTypeValue_Combobox,
-    setdataComplaintRs_Combobox,
-    setdatastatus,
-    setdataComplaintRsValue_Combobox,
-    setdataphoto_Combobox,
-    setdataphotoValue_Combobox,
-    setdatapriorityValue_Combobox,
-    setdatapriority_Combobox,
-    setdatapriority,
-    setPriorityLevel,
-    setclauseOther,
-    setphoTypeOther,
-    setdataset_reporttype,
-    setdataset_department,
-    setdataset_company,
-    setdataset_domain,
-    setcomplaintFiles,
+    setComplaint_no, setno, setreport_type, setcas_number, setdoc_date,
+    setdate_of_detection, setrequest_name, setrequest_company_id,
+    setrequest_domain_id, setrequest_department_id, setrequest_position,
+    setrequest_email, setrequest_phone, setuser_file_name, setrequest_date,
+    setrespondent_company_id, setrespondent_domain_id, setrespondent_department_id,
+    setrespondent_email, setrespondent_other_name, setrespondent_other_email,
+    setproduct_name, setdetail, setcomplaint_type_other,
+    setpriority_level, setrespond_date_within, setlot_no, setcompTypeOther,
+    setcompRsOther, setreference_standard_other, setacknowledge_flag,
+    setacknowledge_name, setacknowledge_company_id, setacknowledge_department_id,
+    setacknowledge_position, setacknowledge_email, setacknowledge_datetime,
+    setcomplaint_status_id, setstatus_last_datetime, setreturn_from_status_id,
+    setreturn_from_status_datetime, setdc_name, setdc_company_id,
+    setdc_department_id, setdc_position, setdc_email, setrecord_status,
+    setcreate_by, setcreate_datetime, setupdate_by, setupdate_datetime,
+    setComplaintStatusID_Combobox, setdataReportTypeValue, setdataComplaintType_Combobox,
+    setdataComplaintTypeValue_Combobox, setdataComplaintRs_Combobox, setdatastatus,
+    setdataComplaintRsValue_Combobox, setdataphoto_Combobox, setdataphotoValue_Combobox,
+    setdatapriorityValue_Combobox, setdatapriority_Combobox, setdatapriority,
+    setPriorityLevel, setclauseOther, setphoTypeOther, setdataset_reporttype,
+    setdataset_department, setdataset_company, setdataset_domain, setcomplaintFiles, setotherText
   } = useListComplaint();
 
   // =====================================================================================================
@@ -332,7 +234,6 @@ export default function Complaint() {
   const [openEdit, setOpenEdit] = React.useState(false);
   const [openDelete, setOpenDelete] = React.useState(false);
   const [openUpLoad, setOpenUpload] = React.useState(false);
-  const [dataelement, setdataelement] = React.useState<Launch | null>(null);
   const [ComplaintBlocks, setComplaintBlocks] = useState<Block[]>([]);
   const [blockValidateErrors, setBlockValidateErrors] = useState<{
     [index: number]: data_detail;
@@ -351,7 +252,7 @@ export default function Complaint() {
 
   // Search Variables (from index.tsx)
   const [TextNameSearch, setTextNameSearch] = React.useState({
-    report_type: "",
+    dataReportTypeValue: "",
     cas_number: "",
     product_name: "",
     lot_no: "",
@@ -412,16 +313,16 @@ export default function Complaint() {
     setrespondent_company_id(null);
     setrespondent_domain_id("");
     setrespondent_department_id(null);
+    setdate_of_detection(null);
     setrespondent_email("");
     setdetail("");
     setdatapriority("");
     setcompTypeOther("");
     setcompRsOther("");
+    setclauseOther("");
     setrequest_name("");
     setrequest_company_id(null);
     setrequest_domain_id("");
-    setarea_of_detection_dept_id("");
-    setarea_of_detection_dept_name("");
     setrequest_department_id(null);
     setrequest_position("");
     setrequest_email("");
@@ -451,11 +352,12 @@ export default function Complaint() {
     compTypeOther: string
   ) {
     const updatedData = dataComplaintTypeValue_Combobox.map((item: any) => {
-      console.log("🧡🧡item", item);
+      console.log("🧡🧡item", item)
       return {
         ...item,
         complaint_id: complaintid,
-        other: item.isOther === "Y" ? compTypeOther?.trim() || null : null,
+        other: item.isOther === "Y" ? (compTypeOther?.trim() || null) : null
+
       };
     });
     return updatedData;
@@ -468,14 +370,12 @@ export default function Complaint() {
     clauseOther: string
   ) {
     const updatedData = dataComplaintRsValue_Combobox.map((item: any) => {
-      console.log("💚💚item", item);
+      console.log("💚💚item", item)
       return {
         ...item,
         complaint_id: complaintid,
-        // other: compRsOther != null && compRsOther != '' ? compRsOther : null,
-        other: item.isOther === "Y" ? compRsOther?.trim() || null : null,
-        clause: clauseOther != null && clauseOther != "" ? clauseOther : null,
-        // clause: item.isOther === "Y" ? (clauseOther?.trim() || null) : null
+        other: item.isClause === "Other" ? (compRsOther?.trim() || null) : null,
+        clause: item.isClause === "Clause" ? (clauseOther?.trim() || null) : null
       };
     });
     return updatedData;
@@ -497,7 +397,7 @@ export default function Complaint() {
   }
 
   function getPaddingYear() {
-    const paddingYear = String(new Date().getFullYear() % 100).padStart(2, "0");
+    const paddingYear = String(new Date().getFullYear() % 100).padStart(2, '0');
 
     return paddingYear;
   }
@@ -696,6 +596,7 @@ export default function Complaint() {
                 }}
               />
             );
+            el.report_code = dataset_reporttype?.find((item:any)=> item.id == el.report_type)?.lov_code
             el.ACTION = ACTION;
             responseData.push(el);
           });
@@ -716,9 +617,7 @@ export default function Complaint() {
   const ListSearchGet = async () => {
     setIsLoadingScreen(true);
     const dataset = {
-      report_type: TextNameSearch.report_type
-        ? TextNameSearch.report_type
-        : null,
+      report_type: TextNameSearch.dataReportTypeValue ? TextNameSearch.dataReportTypeValue : null,
       cas_number: TextNameSearch.cas_number ? TextNameSearch.cas_number : null,
       product_name: TextNameSearch.product_name
         ? TextNameSearch.product_name
@@ -728,10 +627,7 @@ export default function Complaint() {
         ? TextNameSearch.respond_date_within
         : null,
       doc_date: TextNameSearch.doc_date ? TextNameSearch.doc_date : null,
-      date_of_detection: TextNameSearch.date_of_detection
-        ? TextNameSearch.date_of_detection
-        : null,
-    };
+    }
 
     try {
       let response = await _POST(dataset, "/ListSearch/ListSearchGet");
@@ -754,25 +650,28 @@ export default function Complaint() {
                 }}
               />
             );
+            el.report_code = dataset_reporttype?.find((item:any)=> item.id == el.report_type)?.lov_code
             el.ACTION = ACTION;
             responseData.push(el);
           });
         }
         setdatalist(responseData);
+        console.log("raw response.data:", response.data); // เช็คว่ามีกี่แถวจริง ๆ
+        console.log("mapped responseData:", responseData); // เช็คว่ามีกี่แถวหลัง map
       }
     } catch (e) {
       console.log("error");
+
     }
   };
+
+  
 
   // CREATE - Add Complaint
   const ComplaintAdd = async () => {
     console.log("Departtttt", request_department_id?.itasset_department_id);
     console.log("Departtttt", request_department_id?.itasset_department_id);
-    console.log(
-      "🤍🤍dataComplaintTypeValue_Combobox",
-      dataComplaintTypeValue_Combobox
-    );
+    console.log("🤍🤍dataComplaintTypeValue_Combobox", dataComplaintTypeValue_Combobox);
 
     const tempid = uuidv4();
     // เตรียม Models
@@ -827,8 +726,6 @@ export default function Complaint() {
         respondent_email: respondent_email,
         respondent_other_name: respondent_other_name,
         respondent_other_email: respondent_other_email,
-        area_of_detection_dept_id: area_of_detection_dept_id,
-        area_of_detection_dept_name: area_of_detection_dept_name,
         product_name: product_name,
         detail: detail,
         priority_level: datapriorityValue_Combobox,
@@ -925,32 +822,8 @@ export default function Complaint() {
 
     if (dataelement) {
       console.log("dataelement.report_type", dataelement.report_type);
-      setreport_type(dataelement.report_type || "");
-      setcas_number(dataelement.cas_number || "");
-      setrequest_company_id(dataelement.request_company_id);
-      setarea_of_detection_dept_id(dataelement.area_of_detection_dept_id || "");
-      setarea_of_detection_dept_name(
-        dataelement.area_of_detection_dept_name || ""
-      );
-      setproduct_name(dataelement.product_name || "");
-      setlot_no(dataelement.lot_no || "");
-      setuser_file_name(dataelement.user_file_name || "");
-      setdetail(dataelement.detail || "");
-      setrespondent_company_id(dataelement.respondent_company_id);
-      setrespondent_domain_id(dataelement.respondent_domain_id);
-      setrespondent_department_id(dataelement.respondent_department_id);
-      setrespondent_email(dataelement.respondent_email || "");
-      setrequest_name(dataelement.request_name || "");
-      setrequest_position(dataelement.request_position || "");
-      setrequest_department_id(dataelement.request_department_id);
-      setrequest_email(dataelement.request_email || "");
-      setrequest_phone(dataelement.request_phone || "");
-      setdataComplaintType(dataelement?.complaintType);
-      setdataComplaintRs(dataelement?.complaintRs);
-      setdataComplaintphoto(dataelement?.complaintPhoto);
-      setIsRSHidden(
-        extractReportType(dataelement.report_type) != "NCR" ? true : false
-      );
+
+      // setIsRSHidden(extractReportType(dataelement.report_type) != "NCR" ? true : false);
 
       // แปลง priority text → id ของ RadioGroup
       const selectedPriority = datapriority_Combobox.find(
@@ -1049,12 +922,12 @@ export default function Complaint() {
 
   // Search Handlers
   const handleCloseSearch = () => {
-    setdataReportTypeValue("");
+    setdataReportTypeValue(null);
     setdataComplaintTypeValue_Combobox("");
     setdataComplaintRsValue_Combobox("");
     setdataphotoValue_Combobox("");
     setTextNameSearch({
-      report_type: "",
+      dataReportTypeValue: "",
       cas_number: "",
       product_name: "",
       lot_no: "",
@@ -1062,7 +935,7 @@ export default function Complaint() {
       doc_date: "",
       date_of_detection: "",
     });
-    Complaint_Get();
+    Complaint_Get()
   };
 
   // Close Dialog Handler
@@ -1073,6 +946,7 @@ export default function Complaint() {
     setOpenEdit(false);
     setOpenDelete(false);
     setOpenUpload(false);
+    resetForm();
   };
 
   // Set Data Handler
@@ -1100,12 +974,11 @@ export default function Complaint() {
     // ListSearchGet();
     CasDepartmentDomainGet();
     complaint_status_Get();
-    console.log("gettttttt", getPaddingYear());
   }, []);
 
   // Filter complaint types based on selected report type (from ComplaintRead.tsx)
   React.useEffect(() => {
-    previewComplaint();
+    // previewComplaint();
 
     // กรอง complaint type
     const filtered = (dataComplaintType_Combobox || []).filter(
@@ -1226,13 +1099,7 @@ export default function Complaint() {
               handleChange={setdocumentDateSearch}
             />
           </Grid>
-          <Grid size={4}>
-            <DesktopDatePickers
-              labelName={"วันที่พบปัญหา (Date of Detection)"}
-              value={endDateSearch}
-              handleChange={setEndDateSearch}
-            />
-          </Grid>
+          
         </Grid>
 
         {/* ======================================================================== */}
@@ -1282,6 +1149,7 @@ export default function Complaint() {
               }
               color="success"
               onClick={handleOnclickMenuAdd}
+              // onClick={handleOnclickMenuAdd}
             >
               {menuFuncData?.find(
                 (item: auth_role_menu_func) => item?.func_name === "Add"
@@ -1305,7 +1173,7 @@ export default function Complaint() {
         colorBotton="success"
         element={
           <ComplaintBody
-            action="add"
+            action="Add"
             onBlocksChange={(data) => setComplaintBlocks(data)}
             validateDetailText={blockValidateErrors}
           />
@@ -1319,7 +1187,34 @@ export default function Complaint() {
         titlename={"ดูข้อมูล"}
         handleClose={handleClose}
         colorBotton="success"
-        element={<ComplaintBody action="Read" dataelement={dataelement} />}
+        element={<ComplaintBody
+          action="Read"
+        />}
+      />
+
+
+      <FuncDialog
+        open={openEdit}
+        dialogWidth="xl"
+        openBottonHidden={false}
+        titlename={'ดูข้อมูล'}
+        handleClose={handleClose}
+        colorBotton="success"
+        element={<ComplaintBody
+          action="Edit"
+        />}
+      />
+
+      <FuncDialog
+        open={openDelete}
+        dialogWidth="xl"
+        openBottonHidden={false}
+        titlename={'ดูข้อมูล'}
+        handleClose={handleClose}
+        colorBotton="success"
+        element={<ComplaintBody
+          action="Delete"
+        />}
       />
     </>
   );

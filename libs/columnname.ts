@@ -18,16 +18,11 @@ export const Complaint_headCells = [
         //colWidth: 100
     },
     {
-        columnName: 'report_type',
+        columnName: 'report_code',
         numeric: 'center',
         disablePadding: true,
         label: 'ประเภทเอกสาร',
         colWidth: 150,
-        render: (row: any, lovList: LovType[]) => {
-            // หา lov_code จาก lovList
-            const lov = lovList.find((l: LovType) => l.id === row.report_type);
-            return lov ? lov.lov_code : row.report_type;
-        }
     },
     {
         columnName: 'cas_number',
@@ -44,6 +39,13 @@ export const Complaint_headCells = [
         colWidth: 150
     },
     {
+        columnName: 'lot_no',
+        numeric: 'center',
+        disablePadding: true,
+        label: 'Lot No. / Bag No.',
+        colWidth: 150
+    },
+    {
         columnName: 'doc_date',
         numeric: 'center',
         disablePadding: true,
@@ -51,12 +53,13 @@ export const Complaint_headCells = [
         colWidth: 200,
     },
     {
-        columnName: 'lot_no',
+        columnName: 'respond_date_within',
         numeric: 'center',
         disablePadding: true,
-        label: 'Lot No. / Bag No.',
-        colWidth: 150
+        label: 'ตอบกลับภายในวันที่',
+        colWidth: 200,
     },
+    
     {
         columnName: 'record_status',
         numeric: 'center',
@@ -69,20 +72,6 @@ export const Complaint_headCells = [
             return lov ? lov.lov_code : row.complaint_status;
         }
 
-    },
-    {
-        columnName: 'create_by',
-        numeric: 'center',
-        disablePadding: true,
-        label: 'สร้างโดย',
-        colWidth: 150
-    },
-    {
-        columnName: 'create_datetime',
-        numeric: 'center',
-        disablePadding: false,
-        label: 'วันที่สร้าง',
-        colWidth: 200
     },
     {
         columnName: 'update_by',

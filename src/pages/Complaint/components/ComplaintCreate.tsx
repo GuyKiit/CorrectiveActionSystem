@@ -1,4 +1,5 @@
-import React, { useState, useRef, use } from "react";
+//ทำobj เป็น array
+import React, { useState, useRef, use, useEffect } from "react";
 import AddIcon from "@mui/icons-material/Add";
 import { setValueMas } from "../../../../libs/setvaluecallback";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -9,6 +10,7 @@ import {
 } from "../../../../libs/datacontrol";
 import dayjs from "dayjs";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import DownloadIcon from "@mui/icons-material/Download";
 import CloseIcon from "@mui/icons-material/Close";
 import {
   Box,
@@ -86,7 +88,7 @@ type Block = {
 };
 
 interface ComplaintBody {
-  action: string;
+  action: "Add" | "Edit" | "Read";
   disableTextField?: boolean;
   readonlyTextField?: boolean;
   bgcolorTextField?: boolean;
@@ -115,36 +117,24 @@ type FileData = {
   file: File;
   attachmentType?: string;
   otherText?: string;
+  original_file_name?: string;
+  img_url?: string;
 };
 
 export default function ComplaintBody({
   action,
-  dataelement,
   readonlyTextField,
   bgcolorTextField,
   validateText,
   onBlocksChange,
   validateDetailText,
 }: ComplaintBody) {
+  const Read = action === "Read";
+
   const user = cleanAccessData("userSession");
-  const allowedTypes = [
-    "application/pdf",
-    "image/jpg",
-    "image/jpeg",
-    "image/png",
-  ];
-
-  const [fileBuffer, setFileBuffer] = useState<ArrayBuffer | null>(null);
-
-  const handlePreviewFile = (file: File) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      setFileBuffer(e.target?.result as ArrayBuffer);
-    };
-    reader.readAsArrayBuffer(file);
-  };
 
   const {
+    dataelement,
     Complaint_no,
     no,
     cas_number,
@@ -164,8 +154,6 @@ export default function ComplaintBody({
     respondent_email,
     respondent_other_name,
     respondent_other_email,
-    area_of_detection_dept_id,
-    area_of_detection_dept_name,
     product_name,
     detail,
     priority_level,
@@ -174,6 +162,7 @@ export default function ComplaintBody({
     user_file_name,
     other,
     compTypeOther,
+    otherText,
     compRsOther,
     clauseOther,
     photoOther,
@@ -237,8 +226,6 @@ export default function ComplaintBody({
     setrespondent_email,
     setrespondent_other_name,
     setrespondent_other_email,
-    setarea_of_detection_dept_id,
-    setarea_of_detection_dept_name,
     setproduct_name,
     setdetail,
     setcomplaint_type_other,
@@ -247,6 +234,7 @@ export default function ComplaintBody({
     setlot_no,
     setother,
     setcompTypeOther,
+    setotherText,
     setcompRsOther,
     setclauseOther,
     setphotoOther,
@@ -369,33 +357,43 @@ export default function ComplaintBody({
     } else {
       setIsRSHidden(false);
     }
-
     setdataReportTypeValue(val);
     console.log(dataReportTypeValue, "dataReportTypeValue");
 
-    setdataComplaintTypeValue_Combobox(null);
-    setdataComplaintType([]);
-    setdataComplaintRsValue_Combobox(null);
-    setdataComplaintRs([]);
-    setdataphotoValue_Combobox(null);
-    setdataphoto([]);
-    setdatapriorityValue_Combobox(null);
-    setdatapriority(null);
-    setcas_number("");
-    setarea_of_detection_dept_id("");
-    setproduct_name("");
-    setlot_no("");
-    setdetail("");
-    setcompTypeOther("");
-    setcompRsOther("");
-    setclauseOther("");
-    setphoTypeOther("");
-    setrespond_date_within(null);
     setrespondent_domain_id(dataset_company[0]);
     setrespondent_company_id(dataset_company[0]);
+    setcas_number("");
+
+    setdate_of_detection(null);
+    setrespondent_department_id(null);
+    setproduct_name("");
+    setlot_no("");
+    setrespondent_email("");
+    setdataComplaintTypeValue_Combobox(null);
+    setdataComplaintType([]);
+    setcompTypeOther("");
+    setdataComplaintRsValue_Combobox(null);
+    setdataComplaintRs([]);
+    setcompRsOther("");
+    setclauseOther("");
+    setdetail("");
+    setdatapriorityValue_Combobox(null);
+    setdatapriority(null);
+    setrespond_date_within(null);
+    setdataphotoValue_Combobox(null);
+    setdataphoto([]);
+    setotherText("");
+    setphoTypeOther("");
+
+    setrequest_name("");
+    setrequest_position("");
+    setrequest_department_id(user);
+    setrequest_email("");
+    setrequest_phone("");
     setrequest_domain_id(dataset_company[0]);
     setrequest_company_id(dataset_company[0]);
-    setrequest_department_id(user);
+    setFileList([]);
+    setcomplaintFiles([]);
   };
 
   const handleCheckboxChangeCT = (item: LovType) => {
@@ -412,15 +410,6 @@ export default function ComplaintBody({
         if (item.lov2 === "Y") {
           setcompTypeOther("");
         }
-        // if (item.id === "TRR_CT_CAR_99") {
-        //   setcompTypeOther("");
-        // }
-        // if (item.id === "TRR_CT_OBS_99") {
-        //   setcompTypeOther("");
-        // }
-        // if (item.id === "TRR_CT_CPAR_99") {
-        //   setcompTypeOther("");
-        // }
       } else {
         // เพิ่ม object แบบเต็ม
         newData = [...prev, item];
@@ -438,10 +427,7 @@ export default function ComplaintBody({
 
       // อัปเดตเข้า context
       setdataComplaintTypeValue_Combobox(reducedArray);
-      // อัปเดตเข้า context เป็น array ลดรูป (แค่ id, lov1)
-      // setdataComplaintTypeValue_Combobox(
-      //   newData.map(c => ({ id: c.id, lov1: c.lov1 }))
-      // );
+      console.log(newData, "newData");
 
       return newData;
     });
@@ -456,14 +442,10 @@ export default function ComplaintBody({
         // ถ้ามีอยู่แล้ว → เอาออก
         newData = prev.filter((rs) => rs.id !== item.id);
 
-        if (item.lov2 === "Y") {
+        if (item.lov3 === "Other") {
           setcompRsOther("");
         }
-        // ถ้าเอาออกแล้วเป็น Other → เคลียร์ค่า
-        // if (item.id === "TRR_RS_NCR_99") {
-        //   setcompRsOther("");
-        // }
-        if (item.id === "TRR_RS_NCR_6") {
+        if (item.lov3 === "Clause") {
           setclauseOther("");
         }
       } else {
@@ -476,6 +458,7 @@ export default function ComplaintBody({
         complaint_type_id: rs.id,
         label: rs.lov1,
         isOther: rs.lov2,
+        isClause: rs.lov3,
       }));
       // const reducedArray = newData.map(rs => ({ complaint_type_id: rs.id, lov1: rs.lov1 }));
 
@@ -523,11 +506,10 @@ export default function ComplaintBody({
   // รับ ComplaintFile[] จาก BrowseFileUpload
   const handleFileChange = (fileArray: ComplaintFile[]) => {
     if (!fileArray || fileArray.length === 0) return;
-
     const updatedList = [...fileList, ...fileArray];
+
     setFileList(updatedList);
     setcomplaintFiles(updatedList);
-    // sync context
   };
 
   const handleRemoveFile = (index: number) => {
@@ -578,6 +560,7 @@ export default function ComplaintBody({
     setrespond_date_within(null);
     setdetail("");
     setcompTypeOther("");
+    setotherText("");
     setcompRsOther("");
   };
 
@@ -593,62 +576,372 @@ export default function ComplaintBody({
     }
   };
 
-  React.useEffect(() => {
-    // if (user && user.length > 0) {
-    //   setrequest_department_id({
-    //     itasset_department_id: user[0].itasset_department_id,
-    //     itasset_department_name: user[0].itasset_department_name
-    //   });
-    // }
+  const arraysAreEqual = (a: any[], b: any[]) => {
+    if (a.length !== b.length) return false;
+    return a.every(
+      (item, index) => JSON.stringify(item) === JSON.stringify(b[index])
+    );
+  };
 
-    if (dataReportTypeValue) {
-      const val = dataReportTypeValue;
+  // READ - Get Complaints
+  const ComplaintFile_Get = async () => {
+    setIsLoadingScreen(true);
+    const dataset = {
+      complaint_id: dataelement?.id,
+      cf_type: "Complaint",
+    };
 
-      // กรอง complaint type
-      const filtered = (dataComplaintType_Combobox || []).filter(
-        (item: LovType) =>
-          item.lov_type === "complaint_type" && item.lov_code === val.id
-      );
-      console.log("🖤🤎filtered", filtered);
+    try {
+      let response = await _POST(dataset, "/ComplaintFile/ComplaintFileGet");
+      console.log(response, "response_Get");
+      if (response && response.status === "success") {
+        setIsLoadingScreen(false);
+        const responseData: any = [];
 
-      setFilteredComplaintType(filtered);
+        if (Array.isArray(response.data)) {
+          console.log(
+            "################# FILE #######################:",
+            response.data
+          ); // เช็คว่ามีกี่แถวจริง ๆ
 
-      // กรอง attach type
-      const filteredpho = (dataphoto_Combobox || []).filter(
-        (item: LovType) => item.lov_type === "attach_type"
-      );
-      setFilteredphoto(filteredpho);
+          const mappedFiles: ComplaintFile[] = response.data.map(
+            (file: any) => ({
+              file: {
+                name: file.user_file_name || "unknown",
+                size: Number(file.file_size) || 0,
+                type: file.file_type || "",
+              } as File,
+              attachmentType: file.complaint_at_id,
+              otherText: file.other,
+              original_file_name: file.user_file_name,
+              img_url: file.img_url,
+            })
+          );
 
-      // กรอง priority
-      const filteredpriority = (datapriority_Combobox || []).filter(
-        (item: LovType) => item.lov_type === "priority_level"
-      );
-      setFilteredpriority(filteredpriority);
-
-      // ถ้าเลือก NCR → filter Reference Standard
-      if (val.lov_code === "NCR") {
-        const filteredRs = (dataComplaintRs_Combobox || []).filter(
-          (item: LovType) =>
-            item.lov_type === "reference_standard" && item.lov_code === val.id
-        );
-        setFilteredComplaintRs(filteredRs);
+          setFileList(mappedFiles);
+          setcomplaintFiles(mappedFiles);
+        }
+        console.log("mapped responseData:", responseData); // เช็คว่ามีกี่แถวหลัง map
       }
-    } else {
-      // reset ถ้า val null
-      setFilteredComplaintType([]);
-      setFilteredComplaintRs([]);
-      setFilteredphoto([]);
-      setFilteredpriority([]);
+    } catch (e) {
+      console.log("error");
     }
+  };
+
+  React.useEffect(() => {
+    const updateData = async () => {
+      // ถ้าไม่มี anything ที่จำเป็นก็ยังไม่ return ทันที — เราต้องการให้ logic พยายามทำงานเมื่อข้อมูลพร้อม
+      // 1) เตรียม newDataset จาก dataset_reporttype (ถ้ามี)
+      let newDataset: LovType[] | undefined = Array.isArray(dataset_reporttype)
+        ? dataset_reporttype
+        : undefined;
+
+      // ถ้ามี dataset_reporttype และ dataelement ให้เรียก setValueMas เพื่อ map ค่า (safe)
+      if (Array.isArray(dataset_reporttype) && dataelement) {
+        try {
+          const mapped = await setValueMas(
+            dataset_reporttype,
+            dataelement.report_type,
+            "id"
+          );
+          // mapped อาจเป็น undefined หรือ array — ให้ใช้ mapped ถ้ามีค่าที่แตกต่างจากเดิม
+          if (mapped && Array.isArray(mapped)) {
+            // ถ้า different -> update state
+            if (JSON.stringify(mapped) !== JSON.stringify(dataset_reporttype)) {
+              setdataset_reporttype(mapped);
+            }
+            newDataset = mapped;
+          } else {
+            // ถ้า mapped เป็น object เดียว ๆ (กรณีฟังก์ชันคืน object) — เราอยากให้ newDataset เป็น array
+            if (mapped && !Array.isArray(mapped)) {
+              newDataset = Array.isArray(dataset_reporttype)
+                ? dataset_reporttype
+                : [mapped];
+            }
+          }
+        } catch (err) {
+          console.error("setValueMas error:", err);
+        }
+      }
+
+      // 2) ถ้า action === "Read" และมี dataelement.report_type ให้หา default จาก newDataset (ถ้ามี)
+      if (
+        action === "Read" &&
+        dataelement?.report_type &&
+        Array.isArray(newDataset) &&
+        newDataset.length > 0
+      ) {
+        const defaultVal = newDataset.find(
+          (item: LovType) =>
+            // บางที dataelement.report_type อาจเก็บ lov_code หรือ id ขึ้นกับ backend — เช็คทั้งสอง
+            item.lov_code === dataelement.report_type ||
+            item.id === dataelement.report_type
+        );
+
+        if (defaultVal) {
+          // ป้องกัน set ซ้ำ
+          if (
+            !dataReportTypeValue ||
+            dataReportTypeValue.id !== defaultVal.id
+          ) {
+            setdataReportTypeValue(defaultVal);
+          }
+        }
+      }
+
+      // 3) กรอง priority (จาก datapriority_Combobox)
+      if (Array.isArray(datapriority_Combobox)) {
+        const newFilteredPriority = datapriority_Combobox.filter(
+          (item: LovType) => item.lov_type === "priority_level"
+        );
+        setFilteredpriority((prev: LovType[]) => {
+          if (JSON.stringify(prev) !== JSON.stringify(newFilteredPriority))
+            return newFilteredPriority;
+          return prev;
+        });
+      }
+
+      // 4) ถ้ามี dataReportTypeValue (จาก state หรือ เพิ่ง set ข้างบน) ให้กรอง complaint/attach/reference
+      const reportTypeToUse = dataReportTypeValue; // ใช้ state ปัจจุบัน (ซึ่งเราเพิ่งอาจจะ set)
+      if (reportTypeToUse) {
+        const val = reportTypeToUse;
+
+        const newFilteredComplaintType = (
+          dataComplaintType_Combobox || []
+        ).filter(
+          (item: LovType) =>
+            item.lov_type === "complaint_type" && item.lov_code === val.id
+        );
+        setFilteredComplaintType((prev: LovType[]) => {
+          if (JSON.stringify(prev) !== JSON.stringify(newFilteredComplaintType))
+            return newFilteredComplaintType;
+          return prev;
+        });
+
+        const newFilteredPhoto = (dataphoto_Combobox || []).filter(
+          (item: LovType) => item.lov_type === "attach_type"
+        );
+        setFilteredphoto((prev: LovType[]) => {
+          if (JSON.stringify(prev) !== JSON.stringify(newFilteredPhoto))
+            return newFilteredPhoto;
+          return prev;
+        });
+
+        if (val.lov_code === "NCR") {
+          const newFilteredComplaintRs = (
+            dataComplaintRs_Combobox || []
+          ).filter(
+            (item: LovType) =>
+              item.lov_type === "reference_standard" && item.lov_code === val.id
+          );
+          setFilteredComplaintRs((prev: LovType[]) => {
+            if (JSON.stringify(prev) !== JSON.stringify(newFilteredComplaintRs))
+              return newFilteredComplaintRs;
+            return prev;
+          });
+        } else {
+          setFilteredComplaintRs([]);
+        }
+      } else {
+        // ถ้ายังไม่มี reportType ก็ reset
+        setFilteredComplaintType([]);
+        setFilteredComplaintRs([]);
+        setFilteredphoto([]);
+        // หมายเหตุ: filteredpriority เรา update ข้างบนแล้ว
+      }
+    };
+
+    updateData();
+    // dependency: ให้ trigger เมื่อสิ่งที่สำคัญเปลี่ยนจริง ๆ (action, property ที่เปลี่ยน, dataset ที่ load)
   }, [
-    user,
-    dataReportTypeValue,
+    action,
+    dataelement?.report_type, // ใช้ property เพื่อให้ effect รันเมื่อ report_type เปลี่ยน
+    dataset_reporttype,
+    datapriority_Combobox,
     dataComplaintType_Combobox,
     dataComplaintRs_Combobox,
     dataphoto_Combobox,
-    datapriority_Combobox,
-    dataelement,
+    dataReportTypeValue, // เพราะเรใช้ state นี้ต่อใน effect (และต้องการให้ flow ใช้ค่าล่าสุด)
   ]);
+
+  React.useEffect(() => {
+    console.log(
+      dataelement,
+      "55555555555555555555555555555",
+      filteredComplaintType
+    );
+    console.log(
+      dataelement,
+      "55555555555555555555555555555",
+      datapriority_Combobox
+    );
+    console.log(
+      dataelement?.priority_level,
+      "55555555555555555555555555555",
+      datapriority_Combobox
+    );
+    console.log("💥💥CasNumber:", dataelement?.cas_number);
+    console.log("isRSHidden", isRSHidden);
+    console.log("dataReportTypeValue", dataReportTypeValue);
+    console.log("dataComplaintRs", dataComplaintRs);
+    console.log("filteredComplaintRs", filteredComplaintRs);
+    console.log("💚 raw complaintRs from element:", dataelement?.complaintRs);
+    console.log("💚 dataComplaintRs_Combobox:", dataComplaintRs_Combobox);
+    const rsData = setComplaintRs(dataelement?.complaintRs);
+    console.log("💚 mapped rsData:", rsData);
+
+    if (dataelement && action != "Add") {
+      setrespondent_company_id(
+        dataset_company.find(
+          (el: any) =>
+            el.itasset_company_id == String(dataelement.respondent_company_id)
+        )
+      );
+      setcas_number(dataelement?.cas_number || "");
+      setdoc_date(
+        dataelement?.doc_date
+          ? dayjs(dataelement.doc_date, "DD-MM-YYYY")
+          : dayjs()
+      );
+      setdate_of_detection(dayjs(dataelement?.date_of_detection));
+      setrespondent_department_id(
+        dataset_department.find(
+          (el: any) =>
+            el.itasset_department_id ==
+            String(dataelement.respondent_department_id)
+        )
+      );
+      setproduct_name(
+        dataelement?.product_name ? dataelement?.product_name : ""
+      );
+      setlot_no(dataelement?.lot_no ? dataelement?.lot_no : "");
+      setrespondent_email(
+        dataelement?.respondent_email ? dataelement?.respondent_email : ""
+      );
+      setdataComplaintType(setComplaintType(dataelement?.complaintType));
+      setcompTypeOther(dataelement?.other ? dataelement?.other : "");
+      setdataComplaintRs(setComplaintRs(dataelement?.complaintRs));
+      setcompRsOther(dataelement?.other ? dataelement?.other : "");
+      setclauseOther(dataelement?.clause ? dataelement?.clause : "");
+      setdetail(dataelement?.detail ? dataelement?.detail : "");
+      setpriority_level(setPriorityLevel(dataelement?.priority_level));
+      setrespond_date_within(dayjs(dataelement?.respond_date_within));
+      setrequest_name(
+        dataelement?.request_name ? dataelement?.request_name : ""
+      );
+      setrequest_position(
+        dataelement?.request_position ? dataelement?.request_position : ""
+      );
+      setrequest_department_id(
+        dataelement?.request_department_id
+          ? dataelement?.request_department_id
+          : ""
+      );
+      setrequest_email(
+        dataelement?.request_email ? dataelement?.request_email : ""
+      );
+      setrequest_phone(
+        dataelement?.request_phone ? dataelement?.request_phone : ""
+      );
+      setrequest_company_id(
+        dataset_company.find(
+          (el: any) =>
+            el.itasset_company_id == String(dataelement.request_company_id)
+        )
+      );
+
+      // สมมติ LovType คือ { id: string; label: string }
+
+      const ct = setComplaintType(dataelement?.complaintType);
+      setdataComplaintType(ct);
+
+      // ถ้ามี complaintType ที่เป็น Other ให้ดึงค่ามา
+      const otherCT = ct.find((el: any) => el.lov2 === "Y");
+      setcompTypeOther(otherCT?.other || "");
+
+      const rs = setComplaintRs(dataelement?.complaintRs);
+      setdataComplaintRs(rs);
+
+      // // ⭐ กรองตาม report_type
+      // const filteredRS = rsData.filter(el => el.report_type === dataelement.report_type);
+      // setdataComplaintRs(filteredRS);
+
+      // ⭐ ใช้ filteredRS หา Other/Clause ไม่ใช่ rsData
+      const otherRS = rs.find((el: any) => el.lov3 === "Other");
+      setcompRsOther(otherRS?.other || "");
+
+      const clauseRS = rs.find((el: any) => el.lov3 === "Clause");
+      setclauseOther(clauseRS?.clause || "");
+
+      // หา LovType จาก datapriority_Combobox ตาม dataelement?.priority_level
+      const selectedPriority =
+        datapriority_Combobox.find(
+          (item: any) => item.id === dataelement?.priority_level
+        ) || null;
+
+      setdatapriority(selectedPriority);
+
+      if (dataelement?.report_type === "TRR_RT_NCR") {
+        setIsRSHidden(false);
+      } else {
+        setIsRSHidden(true);
+      }
+    }
+  }, [dataset_reporttype]);
+
+  React.useEffect(() => {
+    // เฉพาะตอน Read เท่านั้น
+    if (action === "Read") {
+      ComplaintFile_Get();
+    }
+  }, [action, dataelement]);
+
+  const setComplaintType = (data: any) => {
+    const newData: any[] = [];
+    Array.isArray(data) &&
+      data.forEach((el) => {
+        const filter = dataComplaintType_Combobox.find(
+          (item: any) => item.id === el.complaint_type_id
+        );
+
+        if (filter) {
+          newData.push({
+            ...filter,
+            other: el.other || "", // ⭐ เก็บค่าข้อความ Other มาด้วย
+          });
+        }
+      });
+    return newData;
+  };
+
+  const setComplaintRs = (data: any) => {
+    const newData: any[] = [];
+    Array.isArray(data) &&
+      data.forEach((el) => {
+        const filter = dataComplaintRs_Combobox.find(
+          (item: any) => item.id === el.complaint_type_id
+        );
+
+        if (filter) {
+          newData.push({
+            ...filter,
+            other: el.other || "", // ⭐ เก็บค่าข้อความ Other มาด้วย
+            clause: el.clause || "",
+          });
+        }
+      });
+    return newData;
+  };
+  const setPriorityLevel = (value: any) => {
+    if (!value) return null;
+
+    // หา object ที่ id ตรงกับค่าที่ DB ส่งมา
+    const selected =
+      datapriority_Combobox.find((item: any) => item.id === value) || null;
+
+    console.log("🎯 Priority matched:", selected);
+    return selected;
+  };
 
   return (
     <Box
@@ -677,17 +970,16 @@ export default function ComplaintBody({
             required="required"
             value={dataReportTypeValue}
             labelName={"ประเภทรายงาน (Report Type)"}
-            options={dataset_reporttype}
+            options={dataset_reporttype} // <-- แก้ตรงนี้
             column="lov_code"
             setvalue={handleReportTypeChange}
-            readonly={action === "Edit" ? false : readonlyTextField}
-            bgcolorTextField={action === "Edit" ? false : bgcolorTextField}
+            readonly={action === "Read" ? true : readonlyTextField}
+            bgcolorTextField={action === "Read" ? true : bgcolorTextField}
           />
         </Grid>
       </Grid>
 
       {/* ====== Dynamic ฟอร์ม สำหรับเลือกประเภทเอกสาร ====== */}
-
       {isFormHidden && dataReportTypeValue && (
         <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>
           <label className="sarabun-regular-datatable">
@@ -702,12 +994,13 @@ export default function ComplaintBody({
                 options={dataset_company}
                 column="domain_name"
                 setvalue={(v) => setrespondent_company_id(v)}
+                bgcolorTextField={true}
                 readonly
               />
             </Grid>
             <Grid size={4} mt={2}>
               <FullWidthTextField
-                value={cas_number}
+                value={cas_number || "AUTO"}
                 labelName="CAS Number"
                 onchange={(e) => {
                   setcas_number(e);
@@ -719,7 +1012,9 @@ export default function ComplaintBody({
               <DesktopDatePickers
                 labelName={"วันที่ออกเอกสาร (Document Issuance Date)"}
                 value={doc_date}
-                handleChange={(val) => setdoc_date}
+                handleChange={(val: dayjs.Dayjs | null | undefined) => {
+                  if (val) setdoc_date(val); // ถ้า val เป็น null/undefined จะไม่เซ็ต
+                }}
                 bgcolorTextField={true}
                 readonly
               />
@@ -783,6 +1078,7 @@ export default function ComplaintBody({
                     labelName={"วันที่พบปัญหา (Date of Detection)"}
                     value={date_of_detection}
                     handleChange={(val) => setdate_of_detection(val ?? null)}
+                    bgcolorTextField={action === "Add" ? false : true}
                     readonly={action === "Read"}
                   />
                 </Grid>
@@ -799,6 +1095,7 @@ export default function ComplaintBody({
                       console.log(e); // ดูค่าของ e ที่ถูกส่งมาจาก AutocompleteComboBox
                       setrespondent_department_id(e);
                     }}
+                    bgcolorTextField={action === "Add" ? false : true}
                     readonly={action === "Read"}
                   />
                 </Grid>
@@ -866,7 +1163,7 @@ export default function ComplaintBody({
 
                 <Grid container spacing={2} sx={{ alignItems: "stretch" }}>
                   {dataReportTypeValue && (
-                    <Grid size={6} sx={{ display: "flex" }}>
+                    <Grid size={12} sx={{ display: "flex" }}>
                       <Paper
                         elevation={1}
                         sx={{
@@ -902,7 +1199,7 @@ export default function ComplaintBody({
                           <Grid container spacing={2}>
                             {(filteredComplaintType || []).map(
                               (item: LovType) => (
-                                <Grid size={6} key={item.id}>
+                                <Grid size={3} key={item.id}>
                                   <FullWidthCheckbox
                                     labelName={item.lov1}
                                     value={dataComplaintType.some(
@@ -933,7 +1230,7 @@ export default function ComplaintBody({
                   )}
 
                   {!isRSHidden && dataReportTypeValue && (
-                    <Grid size={6} sx={{ display: "flex" }}>
+                    <Grid size={12} sx={{ display: "flex" }}>
                       <Paper
                         elevation={1}
                         sx={{
@@ -958,7 +1255,7 @@ export default function ComplaintBody({
                           มาตรฐานอ้างอิง (Reference Standard){" "}
                           <span style={{ color: "red" }}> *</span>
                         </label>
-                        <Divider sx={{ my: 2 }} />
+                        <Divider sx={{ my: 1 }} />
                         <Box
                           sx={{
                             flexGrow: 1,
@@ -968,7 +1265,7 @@ export default function ComplaintBody({
                         >
                           <Grid container spacing={2}>
                             {filteredComplaintRs.map((item: LovType) => (
-                              <Grid size={6} key={item.id}>
+                              <Grid size={3} key={item.id}>
                                 <FullWidthCheckbox
                                   labelName={item.lov1}
                                   value={dataComplaintRs.some(
@@ -989,7 +1286,9 @@ export default function ComplaintBody({
                                 readonly={action === "Read"}
                               />
                             )} */}
-                            {dataComplaintRs.some((rs) => rs.lov2 === "Y") && (
+                            {dataComplaintRs.some(
+                              (rs) => rs.lov3 === "Other"
+                            ) && (
                               <FullWidthTextArea
                                 value={compRsOther}
                                 labelName="Other:"
@@ -998,7 +1297,7 @@ export default function ComplaintBody({
                               />
                             )}
                             {dataComplaintRs.some(
-                              (rs) => rs.id === "TRR_RS_NCR_6"
+                              (rs) => rs.lov3 === "Clause"
                             ) && (
                               <FullWidthTextArea
                                 value={clauseOther}
@@ -1131,10 +1430,10 @@ export default function ComplaintBody({
                                     <Radio
                                       checked={datapriority?.id === item.id}
                                       onChange={(e) => {
+                                        setdatapriority(item);
                                         // console.log("Priority selected:", e);
                                         console.log("Priority selected:", item);
                                         setdatapriorityValue_Combobox(item.id);
-                                        setdatapriority(item);
                                         const days = Number(item.lov3 ?? 0);
                                         priorityCalculateRespondDate(
                                           days,
@@ -1146,7 +1445,12 @@ export default function ComplaintBody({
                                           "Days:",
                                           days
                                         );
+                                        console.log(
+                                          "เลือก datapriority?.id:",
+                                          datapriority?.id
+                                        );
                                       }}
+                                      disabled={action === "Read"}
                                       sx={{ color: "#ff9800" }}
                                     />
                                   }
@@ -1240,6 +1544,187 @@ export default function ComplaintBody({
                 mt: 3,
                 width: "100%",
                 borderRadius: 3,
+                background: "linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%)",
+                border: "1px solid #e0e0e0",
+                boxShadow: "0 4px 12px rgba(158,158,158,0.1)",
+              }}
+            >
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  mb: 3,
+                  pb: 2,
+                  borderBottom: "2px solid #9e9e9e",
+                }}
+              >
+                <Box
+                  sx={{
+                    width: 6,
+                    height: 24,
+                    backgroundColor: "#9e9e9e",
+                    borderRadius: 1,
+                    mr: 2,
+                  }}
+                />
+                <label
+                  className="sarabun-regular-datatable"
+                  style={{
+                    fontSize: "18px",
+                    fontWeight: "600",
+                    color: "#616161",
+                    margin: 0,
+                  }}
+                >
+                  แนบไฟล์ (Attachments)
+                </label>
+              </Box>
+
+              <Grid container spacing={2}>
+                {dataReportTypeValue && (
+                  <Grid size={12}>
+                    <BrowseFileUpload
+                      setFile={handleFileChange}
+                      setFileName={() => {}}
+                      options={(filteredphoto || []).map((p: any) => ({
+                        id: p.id,
+                        lov1: p.lov1,
+                      }))}
+                      action={action}
+                    />
+
+                    {/* Grouped display by attachment type - Full width boxes stacked vertically */}
+                    <Box sx={{ mt: 1 }}>
+                      {(filteredphoto || []).map((photoType: any) => {
+                        const items = fileList.filter(
+                          (f) => f.attachmentType === photoType.id
+                        );
+                        if (items.length === 0) return null;
+                        return (
+                          <Paper
+                            key={photoType.id}
+                            elevation={1}
+                            sx={{ p: 2, borderRadius: 2, mb: 2, width: "100%" }}
+                          >
+                            <label
+                              className="sarabun-regular-datatable"
+                              style={{ fontWeight: 600, fontSize: "16px" }}
+                            >
+                              {photoType.lov1}
+                            </label>
+                            <Divider sx={{ my: 1 }} />
+                            {items.map((item, idx) => (
+                              <Box
+                                key={idx}
+                                sx={{
+                                  p: 1.5,
+                                  border: "1px solid #e0e0e0",
+                                  borderRadius: 1,
+                                  mb: 1,
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                  alignItems: "center",
+                                  gap: 2,
+                                }}
+                              >
+                                <Box>
+                                  <div style={{ fontWeight: "bold" }}>
+                                    {item.file.name}
+                                  </div>
+                                  <div
+                                    style={{
+                                      fontSize: "15px",
+                                      color: "#484444ff",
+                                    }}
+                                  >
+                                    {(item.file.size / (1024 * 1024)).toFixed(
+                                      2
+                                    )}{" "}
+                                    MB
+                                  </div>
+                                  {photoType.id === "TRR_AT_4" && (
+                                    <div
+                                      style={{
+                                        fontSize: "15px",
+                                        color: "#484444ff",
+                                        marginTop: "4px",
+                                      }}
+                                    >
+                                      รายละเอียด: {item.otherText}
+                                    </div>
+                                  )}
+                                </Box>
+                                <Box sx={{ display: "flex", gap: 1 }}>
+                                  {action !== "Read" && (
+                                    <IconButton
+                                      color="error"
+                                      onClick={() => handleRemoveFile(idx)}
+                                    >
+                                      <DeleteIcon />
+                                    </IconButton>
+                                  )}
+                                  <IconButton
+                                    color="primary"
+                                    onClick={() =>
+                                      action === "Read"
+                                        ? window.open(item.img_url, "_blank")
+                                        : window.open(
+                                            URL.createObjectURL(item.file),
+                                            "_blank"
+                                          )
+                                    }
+                                  >
+                                    <VisibilityIcon />
+                                  </IconButton>
+                                  {/* <IconButton
+                                    color="primary"
+                                    onClick={() => {
+                                      const link = document.createElement("a");
+                                      if (action === "Read") {
+                                        link.href = item.img_url ?? "";
+                                        link.download =
+                                          item.original_file_name ?? "file";
+                                      } else {
+                                        const url = URL.createObjectURL(
+                                          item.file
+                                        );
+                                        link.href = url;
+                                        link.download = item.file.name;
+                                        URL.revokeObjectURL(url); // ปล่อย memory หลังดาวน์โหลด
+                                      }
+                                      link.click();
+                                    }}
+                                  >
+                                    <DownloadIcon />
+                                  </IconButton> */}
+                                </Box>
+                              </Box>
+                            ))}
+                          </Paper>
+                        );
+                      })}
+
+                      {fileList.length === 0 && (
+                        <Paper
+                          elevation={0}
+                          sx={{ p: 2, textAlign: "center", color: "#999" }}
+                        >
+                          ยังไม่มีไฟล์ที่แนบ
+                        </Paper>
+                      )}
+                    </Box>
+                  </Grid>
+                )}
+              </Grid>
+            </Paper>
+
+            <Paper
+              elevation={3}
+              sx={{
+                p: 3,
+                mt: 3,
+                width: "100%",
+                borderRadius: 3,
                 background: "linear-gradient(135deg, #f0f8ff 0%, #ffffff 100%)",
                 border: "1px solid #bbdefb",
                 boxShadow: "0 4px 12px rgba(33,150,243,0.1)",
@@ -1272,7 +1757,7 @@ export default function ComplaintBody({
                     margin: 0,
                   }}
                 >
-                  แผนกที่ทำการร้องเรียน (Reporting Department)
+                  แผนกผู้ทำการออกเอกสาร (Reporting Department)
                 </label>
               </Box>
               <Grid container spacing={3}>
@@ -1345,6 +1830,7 @@ export default function ComplaintBody({
                     options={dataset_company}
                     column="domain_name"
                     setvalue={(v) => setrequest_company_id(v)}
+                    bgcolorTextField={true}
                     readonly
                   />
                 </Grid>
@@ -1358,227 +1844,6 @@ export default function ComplaintBody({
                     readonly
                   />
                 </Grid> */}
-                <Grid size={4}>
-                  <AutocompleteComboBox
-                    required="required"
-                    value={
-                      dataset_department.find(
-                        (d: any) =>
-                          d.itasset_department_id === area_of_detection_dept_id
-                      ) || null
-                    }
-                    labelName={
-                      "แผนกที่พบปัญหา (Department / Area of Detection)"
-                    }
-                    options={dataset_department}
-                    column="itasset_department_name"
-                    setvalue={(v) => {
-                      setarea_of_detection_dept_id(
-                        v?.itasset_department_id ?? null
-                      );
-                      setarea_of_detection_dept_name(
-                        v?.itasset_department_name ?? ""
-                      );
-                    }}
-                    readonly={action === "Read"}
-                  />
-                  {/* <FullWidthTextField
-                    value={user[0]?.itasset_department_id ? user[0]?.itasset_department_id : '-'}
-                    labelName="แผนกที่พบปัญหา (Department / Area of Detection)"
-                    onchange={(e) => setarea_of_detection_dept_id(e.target.value)}
-                    readonly
-                  /> */}
-                </Grid>
-              </Grid>
-            </Paper>
-
-            <Paper
-              elevation={3}
-              sx={{
-                p: 3,
-                mt: 3,
-                width: "100%",
-                borderRadius: 3,
-                background: "linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%)",
-                border: "1px solid #e0e0e0",
-                boxShadow: "0 4px 12px rgba(158,158,158,0.1)",
-              }}
-            >
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  mb: 3,
-                  pb: 2,
-                  borderBottom: "2px solid #9e9e9e",
-                }}
-              >
-                <Box
-                  sx={{
-                    width: 6,
-                    height: 24,
-                    backgroundColor: "#9e9e9e",
-                    borderRadius: 1,
-                    mr: 2,
-                  }}
-                />
-                <label
-                  className="sarabun-regular-datatable"
-                  style={{
-                    fontSize: "18px",
-                    fontWeight: "600",
-                    color: "#616161",
-                    margin: 0,
-                  }}
-                >
-                  แนบไฟล์ (Attachments)
-                </label>
-              </Box>
-
-              <Grid container spacing={2}>
-                {dataReportTypeValue && (
-                  <Grid size={12}>
-                    {/* <Paper elevation={2} sx={{ p: 2, borderRadius: 2, mb: 2 }}>
-                      <label
-                        className="sarabun-regular-datatable"
-                        style={{
-                          fontSize: '18px',
-                          fontWeight: '600',
-                          color: '#333',
-                          margin: 0
-                        }}
-                      >
-                        Please attach any relevant documents or photos
-                      </label>
-                      <Divider sx={{ my: 2 }} />
-                      <Grid container spacing={2}>
-                        {(filteredphoto || []).map((item: LovType) => (
-                          <Grid size={6} key={item.id}>
-                            <FullWidthCheckbox
-                              labelName={item.lov1}
-                              value={dataphoto.some(pho => pho.id === item.id)}
-                              onchange={() => handleCheckboxChangePhotoType(item)}
-                            />
-                          </Grid>
-                        ))}
-                      </Grid>
-                      {dataphoto.some(pho => pho.id === "TRR_AT_4") && (
-                        <FullWidthTextArea
-                          value={phoTypeOther}
-                          labelName="Other:"
-                          onchange={(e) => setphoTypeOther(e)}
-                        />
-                      )}
-                    </Paper> */}
-
-                    <BrowseFileUpload
-                      setFile={handleFileChange}
-                      setFileName={() => {}}
-                      options={(filteredphoto || []).map((p: any) => ({
-                        id: p.id,
-                        lov1: p.lov1,
-                      }))}
-                    />
-
-                    {/* Grouped display by attachment type - Full width boxes stacked vertically */}
-                    <Box sx={{ mt: 1 }}>
-                      {(filteredphoto || []).map((photoType: any) => {
-                        const items = fileList.filter(
-                          (f) => f.attachmentType === photoType.id
-                        );
-                        if (items.length === 0) return null;
-                        return (
-                          <Paper
-                            key={photoType.id}
-                            elevation={1}
-                            sx={{ p: 2, borderRadius: 2, mb: 2, width: "100%" }}
-                          >
-                            <label
-                              className="sarabun-regular-datatable"
-                              style={{ fontWeight: 600, fontSize: "16px" }}
-                            >
-                              {photoType.lov1}
-                            </label>
-                            <Divider sx={{ my: 1 }} />
-                            {items.map((item, idx) => (
-                              <Box
-                                key={idx}
-                                sx={{
-                                  p: 1.5,
-                                  border: "1px solid #e0e0e0",
-                                  borderRadius: 1,
-                                  mb: 1,
-                                  display: "flex",
-                                  justifyContent: "space-between",
-                                  alignItems: "center",
-                                  gap: 2,
-                                }}
-                              >
-                                <Box>
-                                  <div style={{ fontWeight: "bold" }}>
-                                    {item.file.name}
-                                  </div>
-                                  <div
-                                    style={{ fontSize: "15px", color: "#484444ff" }}
-                                  >
-                                    {(item.file.size / (1024 * 1024)).toFixed(
-                                      2
-                                    )}{" "}
-                                    MB
-                                  </div>
-                                  {photoType.id === "TRR_AT_4" && (
-                                    <div
-                                      style={{
-                                        //fontWeight: "bold",
-                                        fontSize:  "15px",
-                                        color: "#484444ff",
-                                        marginTop: "4px",
-                                      }}
-                                    >
-                                      รายละเอียด: {item.otherText}
-                                    </div>
-                                  )}
-                                </Box>
-                                <Box sx={{ display: "flex", gap: 1 }}>
-                                  <IconButton
-                                    color="error"
-                                    onClick={() =>
-                                      handleRemoveFile(
-                                        fileList.findIndex((f) => f === item)
-                                      )
-                                    }
-                                  >
-                                    <DeleteIcon />
-                                  </IconButton>
-                                  <IconButton
-                                    color="primary"
-                                    onClick={() =>
-                                      window.open(
-                                        URL.createObjectURL(item.file),
-                                        "_blank"
-                                      )
-                                    }
-                                  >
-                                    <VisibilityIcon />
-                                  </IconButton>
-                                </Box>
-                              </Box>
-                            ))}
-                          </Paper>
-                        );
-                      })}
-
-                      {fileList.length === 0 && (
-                        <Paper
-                          elevation={0}
-                          sx={{ p: 2, textAlign: "center", color: "#999" }}
-                        >
-                          ยังไม่มีไฟล์ที่อัปโหลด
-                        </Paper>
-                      )}
-                    </Box>
-                  </Grid>
-                )}
               </Grid>
             </Paper>
 
