@@ -18,6 +18,13 @@ export const Complaint_headCells = [
         //colWidth: 100
     },
     {
+        columnName: 'complaint_status_label',
+        numeric: 'center',
+        disablePadding: false,
+        label: 'สถานะ',
+        colWidth: 150,
+    },
+    {
         columnName: 'report_code',
         numeric: 'center',
         disablePadding: true,
@@ -58,20 +65,6 @@ export const Complaint_headCells = [
         disablePadding: true,
         label: 'ตอบกลับภายในวันที่',
         colWidth: 200,
-    },
-    
-    {
-        columnName: 'record_status',
-        numeric: 'center',
-        disablePadding: false,
-        label: 'สถานะ',
-        colWidth: 150,
-        render: (row: any, lovList: LovType[]) => {
-            // หา lov_code จาก lovList
-            const lov = lovList.find((l: LovType) => l.id === row.complaint_status);
-            return lov ? lov.lov_code : row.complaint_status;
-        }
-
     },
     {
         columnName: 'update_by',
