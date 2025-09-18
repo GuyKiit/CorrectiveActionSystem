@@ -18,7 +18,7 @@ export const Complaint_headCells = [
         //colWidth: 100
     },
     {
-        columnName: 'report_type',
+        columnName: 'report_code',
         numeric: 'center',
         disablePadding: true,
         label: 'ประเภทเอกสาร',

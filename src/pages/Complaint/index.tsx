@@ -7,7 +7,7 @@ import { _GET, _POST, _POST_FORMDATA, _POST_SYNC, _POST_SYS_API } from "../../se
 import { _formatNumber, conCatDateTime } from "../../../libs/datacontrol";
 import { setValueMas } from "../../../libs/setvaluecallback";
 import dayjs from "dayjs";
-import { Box, Button, Divider, Paper, styled, Typography } from "@mui/material";
+import { Alert, Snackbar, Box, Button, Divider, Paper, styled, Typography, Slide, Card, CardContent, IconButton, Grow } from "@mui/material";
 import ActionManageCell from "../../components/MUI/ActionManageCell";
 import { useAuth } from "../../auth/core/AuthContext";
 import EnhancedTable from "../../components/MUI/DataTable";
@@ -32,6 +32,8 @@ import FullWidthTextField from "../../components/MUI/FullWidthTextField";
 import DesktopDatePickers from "../../components/MUI/DesktopDatePicker";
 import BasicChips from "../../components/MUI/BasicChips";
 import FullWidthButton from "../../components/MUI/FullWidthButton";
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CloseIcon from '@mui/icons-material/CheckCircle';
 
 // =====================================================================================================
 // TYPE DEFINITIONS (from index.tsx and ComplaintRead.tsx)
@@ -170,7 +172,7 @@ export default function Complaint() {
   const {
     // Main Complaint Fields
     dataelement, setdataelement,
-    Complaint_no, no,id, report_type, cas_number, doc_date, date_of_detection,
+    Complaint_no, no, id, report_type, cas_number, doc_date, date_of_detection,
     request_name, request_company_id, request_domain_id, request_department_id,
     request_position, request_email, request_phone, request_date,
     respondent_company_id, respondent_domain_id, respondent_department_id,
@@ -193,7 +195,7 @@ export default function Complaint() {
     dataset_reporttype, dataset_department, dataset_company, dataset_domain,
 
     // Setter Functions
-    setComplaint_no, setno,setid, setreport_type, setcas_number, setdoc_date,
+    setComplaint_no, setno, setid, setreport_type, setcas_number, setdoc_date,
     setdate_of_detection, setrequest_name, setrequest_company_id,
     setrequest_domain_id, setrequest_department_id, setrequest_position,
     setrequest_email, setrequest_phone, setuser_file_name, setrequest_date,
@@ -230,7 +232,11 @@ export default function Complaint() {
   const [openUpLoad, setOpenUpload] = React.useState(false);
   const [ComplaintBlocks, setComplaintBlocks] = useState<Block[]>([]);
   const [blockValidateErrors, setBlockValidateErrors] = useState<{ [index: number]: data_detail }>({});
-
+  const [openSnackbar, setOpenSnackbar] = React.useState(false);
+  const [snackbarMessage, setSnackbarMessage] = React.useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = React.useState<"success" | "error">("success");
+  const [successCardOpen, setSuccessCardOpen] = React.useState(false);
+  const [successCardMessage, setSuccessCardMessage] = React.useState("");
   // Date Search Variables (from index.tsx)
   const [respondWithinSearch, setrespondWithinSearch] = React.useState<dayjs.Dayjs | undefined | null>(dayjs().subtract(1, 'month'));
   const [documentDateSearch, setdocumentDateSearch] = React.useState<dayjs.Dayjs | undefined | null>(dayjs().subtract(1, 'month'));
@@ -318,6 +324,8 @@ export default function Complaint() {
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
+
+
 
   // Update Complaint ID Functions (from index.tsx)
   function compTypeUpdateCompId(dataComplaintTypeValue_Combobox: any, complaintid: string, compTypeOther: string,) {
@@ -510,6 +518,7 @@ export default function Complaint() {
 
   // READ - Get Complaints
   const Complaint_Get = async () => {
+
     setIsLoadingScreen(true)
     const dataset = {
       // cas_number: TextNameSearch.cas_number,
@@ -538,7 +547,6 @@ export default function Complaint() {
                 }}
               />
             );
-            // el.report_code = dataset_reporttype?.find((item: any) => item.id == el.report_type)?.lov_code
             el.ACTION = ACTION;
             responseData.push(el);
           });
@@ -555,14 +563,17 @@ export default function Complaint() {
   const ListSearchGet = async () => {
     setIsLoadingScreen(true)
     const dataset = {
-      report_type: TextNameSearch.dataReportTypeValue ? TextNameSearch.dataReportTypeValue : null,
+      report_code: TextNameSearch.dataReportTypeValue || null,
       cas_number: TextNameSearch.cas_number ? TextNameSearch.cas_number : null,
       product_name: TextNameSearch.product_name ? TextNameSearch.product_name : null,
       lot_no: TextNameSearch.lot_no ? TextNameSearch.lot_no : null,
       respond_date_within: TextNameSearch.respond_date_within ? TextNameSearch.respond_date_within : null,
       doc_date: TextNameSearch.doc_date ? TextNameSearch.doc_date : null,
     }
-
+    console.log("😍😍Search payload:", dataset);
+    console.log("😍😍TextNameSearch:", TextNameSearch);
+    console.log("😍😍dataReportTypeValue (raw):", dataReportTypeValue);
+    console.log("😍😍TextNameSearch.dataReportTypeValue:", TextNameSearch.dataReportTypeValue)
     try {
       let response = await _POST(dataset, "/ListSearch/ListSearchGet");
       console.log(response, "response_Get");
@@ -584,7 +595,6 @@ export default function Complaint() {
                 }}
               />
             );
-            // el.report_code = dataset_reporttype?.find((item: any) => item.id == el.report_type)?.lov_code
             el.ACTION = ACTION;
             responseData.push(el);
           });
@@ -716,11 +726,20 @@ export default function Complaint() {
     try {
       const response = await _POST_FORMDATA(formData, "/Complaint/ComplaintAdd");
       if (response && response.status === "success") {
-        console.log("✅ Complaint edittt successfully:", response);
+        setSuccessCardMessage("บันทึกข้อมูลสำเร็จ ✅");
+        setSuccessCardOpen(true);
+
+        // auto hide หลัง 3 วิ
+        setTimeout(() => setSuccessCardOpen(false), 3000);
+        console.log("✅ Complaint Add successfully:", response);
       } else {
-        console.log("⚠️ Edit failed:", response);
+        setSuccessCardMessage("❌ บันทึกข้อมูลไม่สำเร็จ");
+        setSuccessCardOpen(true);
+        console.log("⚠️ Add failed:", response);
       }
     } catch (error) {
+      setSuccessCardMessage("❌ เกิดข้อผิดพลาด!");
+      setSuccessCardOpen(true);
       console.error("Upload failed:", error);
     } finally {
       setIsLoadingScreen(false);
@@ -765,8 +784,8 @@ export default function Complaint() {
         request_domain_id: dataelement?.request_domain_id,
         request_department_id: dataelement?.request_department_id,
         request_position: dataelement?.request_position,
-        request_email:  dataelement?.request_email ,
-        request_phone:  dataelement?.request_phone,
+        request_email: dataelement?.request_email,
+        request_phone: dataelement?.request_phone,
         request_date: new Date().toISOString(),
         respondent_company_id: dataelement?.respondent_company_id,
         respondent_domain_id: dataelement?.respondent_domain_id,
@@ -788,7 +807,6 @@ export default function Complaint() {
           : null,
         lot_no: lot_no,
         complaint_status_id: "TRR_CS_SUBMIT",
-        create_by: user[0]?.employee_username || '',
         update_by: user[0]?.employee_username || '',
         action_type: null,
         complaintType: complainttypeModel,
@@ -834,8 +852,8 @@ export default function Complaint() {
         formData.append("complaintFiles", fileItem.file);
       });
     }
-    console.log("🧡dataelement",dataelement);
-    
+    console.log("🧡dataelement", dataelement);
+
     console.log("💨💨💨 FormData prepared:", formData);
     console.log("💨💨💨 complaintPayload:", complaintPayload);
     console.log("💨💨💨 dataReportTypeValue.id:", dataReportTypeValue.id);
@@ -878,7 +896,7 @@ export default function Complaint() {
     setIsLoadingScreen(true);
 
     try {
-      let  response = await _POST(complaintPayload, "/Complaint/ComplaintDelete");
+      let response = await _POST(complaintPayload, "/Complaint/ComplaintDelete");
       if (response && response.status === "success") {
         console.log("✅ Complaint edittt successfully:", response);
       } else {
@@ -1042,22 +1060,12 @@ export default function Complaint() {
     complaint_status_Get();
   }, []);
 
-  React.useEffect(() => {
-  if (!dataset_reporttype || dataset_reporttype.length === 0) return;
 
-  setdatalist((prev:any) =>
-    prev.map((el:any) => ({
-      ...el,
-      report_type: dataset_reporttype.find((item:any) => item.id == el.report_type)?.lov_code || el.report_type,
-    }))
-  );
-}, [dataset_reporttype]);
-  
   // Filter complaint types based on selected report type (from ComplaintRead.tsx)
   React.useEffect(() => {
     // previewComplaint();
     if (!dataelement) return;
-    
+
     // กรอง complaint type
     const filtered = (dataComplaintType_Combobox || []).filter((item: LovType) =>
       item.lov_type === "complaint_type" && item.lov_code === dataelement?.report_type
@@ -1106,11 +1114,11 @@ export default function Complaint() {
         <Grid container spacing={2} mt={2}>
           <Grid size={4}>
             <AutocompleteComboBox
-              value={dataReportTypeValue}
-              labelName={"ประเภทเอกสาร (Report Type)"}
+              value={TextNameSearch.dataReportTypeValue}
+              labelName="ประเภทเอกสาร (Report Type)"
               options={dataset_reporttype}
               column="lov_code"
-              setvalue={setdataReportTypeValue}
+              setvalue={(val) => setTextNameSearch({ ...TextNameSearch, dataReportTypeValue: val })}
             />
           </Grid>
           <Grid size={4}>
@@ -1182,6 +1190,7 @@ export default function Complaint() {
           </Grid>
         </Grid>
       </Box>
+
 
       {/* Data Table Section */}
       <DataTable
@@ -1259,6 +1268,48 @@ export default function Complaint() {
           action="Delete"
         />}
       />
+      {/* ================= Snackbar ================= */}
+      {/* <Snackbar
+        open={openSnackbar}
+        autoHideDuration={1000}
+        onClose={() => setOpenSnackbar(false)}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert
+          onClose={() => setOpenSnackbar(false)}
+          severity={snackbarSeverity}
+          sx={{ width: "100%" }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar> */}
+
+
+      <Grow in={successCardOpen} mountOnEnter unmountOnExit>
+  <Card
+    sx={{
+      position: "fixed",
+      top: "50%",
+      left: "50%",
+      transform: "translate(-50%, -50%)",
+      zIndex: 1500,
+      minWidth: 300,
+      bgcolor: "#e8f5e9",
+      boxShadow: 8,
+      borderRadius: 3,
+    }}
+  >
+    <CardContent sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+      <CheckCircleIcon color="success" fontSize="large" />
+      <Typography variant="body1" sx={{ flexGrow: 1 }}>
+        {successCardMessage}
+      </Typography>
+      <IconButton size="small" onClick={() => setSuccessCardOpen(false)}>
+        <CloseIcon />
+      </IconButton>
+    </CardContent>
+  </Card>
+</Grow>
     </>
   );
 }

@@ -6,7 +6,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { _POST } from "../../../service/mas";
 import { _formatNumber, _formatNumberNotdecimal } from "../../../../libs/datacontrol";
 import dayjs from "dayjs";
-import { Box, Divider, IconButton, Paper, Table, TableCell, TableRow, TableBody, TableHead, TableContainer, styled, TextField, Radio, RadioGroup, FormControl, FormControlLabel, FormLabel, Grid2, Stack } from "@mui/material";
+import { Box, Divider, IconButton, Paper, Table, TableCell, TableRow, TableBody, TableHead, TableContainer, styled, TextField, Radio, RadioGroup, FormControl, FormControlLabel, FormLabel, Grid2, Stack, AccordionDetails, Accordion, AccordionSummary, Typography } from "@mui/material";
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import FullWidthTextField from "../../../components/MUI/FullWidthTextField";
 import AutocompleteComboBox from "../../../components/MUI/AutocompleteComboBox";
@@ -26,6 +26,7 @@ import { log } from "node:console";
 import { cleanAccessData } from "../../../service/initmain/initmain";
 import { useListComplaint } from "../core/ListComplaintContext";
 import { data } from "react-router-dom";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 type Validate = {
   Product_Group: boolean,
@@ -101,6 +102,7 @@ export default function ComplaintBody({
   const isActionRead = action === "Read";
   const isActionEdit = action === "Edit";
   const isActionDelete = action === "Delete";
+
 
   const user = cleanAccessData('userSession');
 
@@ -301,6 +303,14 @@ export default function ComplaintBody({
   const [isDepartmentHidden, setisDepartmentHidden] = useState(true);
   const [isEmailHidden, setisEmailHidden] = useState(true);
   const [isPhoneHidden, setisPhoneHidden] = useState(true);
+
+  // สร้าง state สำหรับควบคุม Accordion
+  const [isMinimizetypeOpen, setisMinimizeTypeOpen] = useState(!isActionRead);
+  const [isMinimizersOpen, setisMinimizeRsOpen] = useState(!isActionRead);
+  const [isMinimizedetailOpen, setisMinimizeDetailOpen] = useState(!isActionRead);
+  const [isMinimizepriorityOpen, setisMinimizePriorityOpen] = useState(!isActionRead);
+  const [isMinimizerespondOpen, setisMinimizeRespondOpen] = useState(!isActionRead);
+
 
   // Function Handlers (On Change Event) ======================================================
   const handleReportTypeChange = (val: LovType | null) => {
@@ -814,8 +824,8 @@ export default function ComplaintBody({
             options={dataset_reporttype} // <-- แก้ตรงนี้
             column="lov_code"
             setvalue={handleReportTypeChange}
-            readonly={isActionRead ? true : isActionEdit ? true : isActionDelete ? true: readonlyTextField}
-            bgcolorTextField={isActionRead ? true : isActionEdit ? true : isActionDelete ? true:bgcolorTextField}
+            readonly={isActionRead ? true : isActionEdit ? true : isActionDelete ? true : readonlyTextField}
+            bgcolorTextField={isActionRead ? true : isActionEdit ? true : isActionDelete ? true : bgcolorTextField}
 
           />
         </Grid>
@@ -859,6 +869,7 @@ export default function ComplaintBody({
                 readonly
               />
             </Grid>
+
             <Paper elevation={3} sx={{
               p: 3,
               mt: 3,
@@ -895,16 +906,6 @@ export default function ComplaintBody({
                 </label>
               </Box>
               <Grid container spacing={3}>
-                {/* <Grid size={4}>
-                  <AutocompleteComboBox
-                    value={respondent_domain_id}
-                    labelName={"Domain"}
-                    options={dataset_domain}
-                    column="domain_id"
-                    setvalue={setrespondent_domain_id}
-                    readonly
-                  />
-                </Grid> */}
                 <Grid size={4}>
                   <DesktopDatePickers
                     required="required"
@@ -989,279 +990,306 @@ export default function ComplaintBody({
                 </Box>
 
                 <Grid container spacing={2} sx={{ alignItems: 'stretch' }}>
+                  {/* ✅ Accordion แทน Paper */}
                   {dataReportTypeValue && (
-                    <Grid size={12} sx={{ display: 'flex' }}>
-                      <Paper elevation={1} sx={{
-                        p: 2,
-                        borderRadius: 2,
-                        backgroundColor: '#fafafa',
-                        width: '100%',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        minHeight: '400px'
-                      }}>
-                        <label
-                          className="sarabun-regular-datatable"
-                          style={{
-                            fontSize: '18px',
-                            fontWeight: '600',
-                            color: '#333',
-                            margin: 0
-                          }}
+                    <Grid size={12}>
+                      <Accordion expanded={isMinimizetypeOpen}
+                        onChange={() => setisMinimizeTypeOpen(!isMinimizetypeOpen)}
+                        sx={{ borderRadius: 2, backgroundColor: "#fafafa" }}>
+                        <AccordionSummary
+                          expandIcon={<ExpandMoreIcon />}
+                          aria-controls="complaint-type-content"
+                          id="complaint-type-header"
                         >
-                          ประเภทข้อร้องเรียน (Type Of Complaint) <span style={{ color: 'red' }}> *</span>
-                        </label>
-                        <Divider sx={{ my: 2 }} />
-                        <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-                          <Grid container spacing={2}>
-                            {(filteredComplaintType || []).map((item: LovType) => (
-                              <Grid size={3} key={item.id}>
-                                <FullWidthCheckbox
-                                  labelName={item.lov1}
-                                  value={dataComplaintType.some(c => c.id === item.id)}
-                                  onchange={() => handleCheckboxChangeCT(item)}
+                          <Typography
+                            className="sarabun-regular-datatable"
+                            sx={{ fontSize: "18px", fontWeight: 600, color: "#333" }}
+                          >
+                            ประเภทข้อร้องเรียน (Type Of Complaint)
+                            <span style={{ color: "red" }}> *</span>
+                          </Typography>
+                        </AccordionSummary>
+
+                        <AccordionDetails>
+                          <Divider sx={{ my: 2 }} />
+                          <Box sx={{ flexGrow: 1, display: "flex", flexDirection: "column" }}>
+                            <Grid container spacing={2}>
+                              {(filteredComplaintType || []).map((item: LovType) => (
+                                <Grid size={3} key={item.id}>
+                                  <FullWidthCheckbox
+                                    labelName={item.lov1}
+                                    value={dataComplaintType.some((c) => c.id === item.id)}
+                                    onchange={() => handleCheckboxChangeCT(item)}
+                                    readonly={isActionRead || isActionDelete}
+                                  />
+                                </Grid>
+                              ))}
+                            </Grid>
+                            <Box sx={{ mt: "auto", pt: 2 }}>
+                              {dataComplaintType.some((c) => c.lov2 === "Y") && (
+                                <FullWidthTextArea
+                                  value={compTypeOther}
+                                  labelName="Other:"
+                                  onchange={(e) => setcompTypeOther(e)}
+                                  bgcolorTextField={
+                                    action === "Add" ? false : isActionEdit ? false : true
+                                  }
                                   readonly={isActionRead || isActionDelete}
                                 />
-                              </Grid>
-                            ))}
-                          </Grid>
-                          <Box sx={{ mt: 'auto', pt: 2 }}>
-                            {dataComplaintType.some(c => c.lov2 === "Y") && (
-                              <FullWidthTextArea
-                                value={compTypeOther}
-                                labelName="Other:"
-                                onchange={(e) => setcompTypeOther(e)}
-                                bgcolorTextField={action === "Add" ? false : isActionEdit ? false : true}
-                                readonly={isActionRead || isActionDelete}
-                              />
-                            )}
+                              )}
+                            </Box>
                           </Box>
-                        </Box>
-                      </Paper>
+                        </AccordionDetails>
+                      </Accordion>
                     </Grid>
                   )}
 
                   {!isRSHidden && dataReportTypeValue && (
-                    <Grid size={12} sx={{ display: 'flex' }}>
-                      <Paper elevation={1} sx={{
-                        p: 2,
-                        borderRadius: 2,
-                        backgroundColor: '#fafafa',
-                        width: '100%',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        minHeight: '400px'
-                      }}>
-                        <label
-                          className="sarabun-regular-datatable"
-                          style={{
-                            fontSize: '18px',
-                            fontWeight: '600',
-                            color: '#333',
-                            margin: 0
-                          }}
+                    <Grid size={12}>
+                      <Accordion
+                        expanded={isMinimizersOpen}
+                        onChange={() => setisMinimizeRsOpen(!isMinimizersOpen)}
+                        sx={{ borderRadius: 2, backgroundColor: "#fafafa" }}>
+                        <AccordionSummary
+                          expandIcon={<ExpandMoreIcon />}
+                          aria-controls="reference-standard-content"
+                          id="reference-standard-header"
                         >
-                          มาตรฐานอ้างอิง (Reference Standard) <span style={{ color: 'red' }}> *</span>
-                        </label>
-                        <Divider sx={{ my: 1 }} />
-                        <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-                          <Grid container spacing={2}>
-                            {filteredComplaintRs.map((item: LovType) => (
-                              <Grid size={3} key={item.id}>
-                                <FullWidthCheckbox
-                                  labelName={item.lov1}
-                                  value={dataComplaintRs.some(rs => rs.id === item.id)}
-                                  onchange={() => handleCheckboxChangeRS(item)}
+                          <Typography
+                            className="sarabun-regular-datatable"
+                            sx={{ fontSize: "18px", fontWeight: 600, color: "#333" }}
+                          >
+                            มาตรฐานอ้างอิง (Reference Standard)
+                            <span style={{ color: "red" }}> *</span>
+                          </Typography>
+                        </AccordionSummary>
+
+                        <AccordionDetails>
+                          <Divider sx={{ my: 1 }} />
+                          <Box sx={{ flexGrow: 1, display: "flex", flexDirection: "column" }}>
+                            <Grid container spacing={2}>
+                              {filteredComplaintRs.map((item: LovType) => (
+                                <Grid size={3} key={item.id}>
+                                  <FullWidthCheckbox
+                                    labelName={item.lov1}
+                                    value={dataComplaintRs.some((rs) => rs.id === item.id)}
+                                    onchange={() => handleCheckboxChangeRS(item)}
+                                    readonly={isActionRead || isActionDelete}
+                                  />
+                                </Grid>
+                              ))}
+                            </Grid>
+
+                            <Box sx={{ mt: "auto", pt: 2 }}>
+                              {dataComplaintRs.some((rs) => rs.lov3 === "Other") && (
+                                <FullWidthTextArea
+                                  value={compRsOther}
+                                  labelName="Other:"
+                                  onchange={(e) => setcompRsOther(e)}
+                                  bgcolorTextField={
+                                    action === "Add" ? false : isActionEdit ? false : true
+                                  }
                                   readonly={isActionRead || isActionDelete}
                                 />
-                              </Grid>
-                            ))}
-                          </Grid>
-                          <Box sx={{ mt: 'auto', pt: 2 }}>
-                            {dataComplaintRs.some(rs => rs.lov3 === "Other") && (
-                              <FullWidthTextArea
-                                value={compRsOther}
-                                labelName="Other:"
-                                onchange={(e) => setcompRsOther(e)}
-                                bgcolorTextField={action === "Add" ? false : isActionEdit ? false : true}
-                                readonly={isActionRead || isActionDelete}
-                              />
-                            )}
-                            {dataComplaintRs.some(rs => rs.lov3 === "Clause") && (
-                              <FullWidthTextArea
-                                value={clauseOther}
-                                labelName="Clause:"
-                                onchange={(e) => setclauseOther(e)}
-                                bgcolorTextField={action === "Add" ? false : isActionEdit ? false : true}
-                                readonly={isActionRead || isActionDelete}
-                              />
-                            )}
+                              )}
+
+                              {dataComplaintRs.some((rs) => rs.lov3 === "Clause") && (
+                                <FullWidthTextArea
+                                  value={clauseOther}
+                                  labelName="Clause:"
+                                  onchange={(e) => setclauseOther(e)}
+                                  bgcolorTextField={
+                                    action === "Add" ? false : isActionEdit ? false : true
+                                  }
+                                  readonly={isActionRead || isActionDelete}
+                                />
+                              )}
+                            </Box>
                           </Box>
-                        </Box>
-                      </Paper>
+                        </AccordionDetails>
+                      </Accordion>
                     </Grid>
                   )}
                 </Grid>
+
                 {/* Priority Section */}
+
                 {dataReportTypeValue && (
-                  <Box sx={{ mt: 3 }}>
-                    <Paper elevation={1} sx={{
-                      p: 2,
+                  <Accordion
+                    expanded={isMinimizedetailOpen}
+                        onChange={() => setisMinimizeDetailOpen(!isMinimizedetailOpen)}
+                    sx={{
                       borderRadius: 2,
-                      backgroundColor: '#fafafa'
+                      backgroundColor: "#fafafa",
+                      mt: 2  // <-- เพิ่ม margin-top
                     }}>
-                      <label
+                    <AccordionSummary
+                      expandIcon={<ExpandMoreIcon />}
+                      aria-controls="detail-content"
+                      id="detail-header"
+                    >
+                      <Typography
                         className="sarabun-regular-datatable"
-                        style={{
-                          fontSize: '18px',
-                          fontWeight: '600',
-                          color: '#333',
-                          margin: 0
-                        }}
+                        sx={{ fontSize: "18px", fontWeight: 600, color: "#333" }}
                       >
-                        รายละเอียด (Detail) <span style={{ color: 'red' }}> *</span>
-                      </label>
-                      <Divider sx={{ my: 2 }} />
-                      <Grid container spacing={2} sx={{ justifyContent: 'center', alignItems: 'flex-start' }}>
+                        รายละเอียด (Detail)
+                        <span style={{ color: "red" }}> *</span>
+                      </Typography>
+                    </AccordionSummary>
+
+                    <AccordionDetails>
+                      <Box sx={{ mt: 3 }}>
+
+                        <Divider sx={{ my: 2 }} />
+                        <Grid container spacing={2} sx={{ justifyContent: 'center', alignItems: 'flex-start' }}>
 
 
-                        {/* Response Date Field - positioned after Emergency option */}
-                        <Grid size={12}>
-                          <FullWidthTextArea
-                            value={detail}
-                            labelName=""
-                            onchange={(e) => setdetail(e)}
-                            bgcolorTextField={action === "Add" ? false : isActionEdit ? false : true}
-                            readonly={isActionRead || isActionDelete}
-                          />
+                          {/* Response Date Field - positioned after Emergency option */}
+                          <Grid size={12}>
+                            <FullWidthTextArea
+                              value={detail}
+                              labelName=""
+                              onchange={(e) => setdetail(e)}
+                              bgcolorTextField={action === "Add" ? false : isActionEdit ? false : true}
+                              readonly={isActionRead || isActionDelete}
+                            />
 
+                          </Grid>
                         </Grid>
-                      </Grid>
-                    </Paper>
-                  </Box>
+                      </Box>
+                    </AccordionDetails>
+                  </Accordion>
                 )}
                 {/* Priority Section */}
                 {dataReportTypeValue && (
                   <Box sx={{ mt: 3 }}>
-                    <Paper elevation={1} sx={{
-                      p: 2,
-                      borderRadius: 2,
-                      backgroundColor: '#fafafa'
-                    }}>
-                      <label
-                        className="sarabun-regular-datatable"
-                        style={{
-                          fontSize: '18px',
-                          fontWeight: '600',
-                          color: '#333',
-                          margin: 0
-                        }}
+                    <Accordion
+                      expanded={isMinimizepriorityOpen}
+                        onChange={() => setisMinimizePriorityOpen(!isMinimizepriorityOpen)}
+                      sx={{
+                        borderRadius: 2,
+                        backgroundColor: "#fafafa",
+                        mt: 2  // <-- เพิ่ม margin-top
+                      }}>
+                      <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="Priority-content"
+                        id="Priority-header"
                       >
-                        ระดับความสำคัญ (Priority) <span style={{ color: 'red' }}> *</span>
-                      </label>
-                      <Divider sx={{ my: 2 }} />
-                      <Grid container spacing={2} sx={{ justifyContent: 'center', alignItems: 'flex-start' }}>
-                        {(filteredpriority || [])
-                          .sort((a, b) => {
-                            const order: { [key: string]: number } = { 'Normal': 1, 'Urgent': 2, 'Emergency': 3 };
-                            return (order[a.lov_code] || 999) - (order[b.lov_code] || 999);
-                          })
-                          .map((item: LovType) => (
-                            <Grid size={3} key={item.id}>
-                              <Box sx={{
-                                border: '2px solid #e0e0e0',
-                                borderRadius: 2,
-                                p: 2,
-                                textAlign: 'center',
-                                backgroundColor: datapriority?.id === item.id ? '#fff3e0' : '#ffffff',
-                                borderColor: datapriority?.id === item.id ? '#ff9800' : '#e0e0e0',
-                                cursor: 'pointer',
-                                transition: 'all 0.2s ease',
-                                '&:hover': {
-                                  borderColor: '#ff9800',
-                                  backgroundColor: '#fff8f0'
-                                }
-                              }}>
-                                <FormControlLabel
-                                  control={
-                                    <Radio
-                                      checked={datapriority?.id === item.id}
-                                      onChange={(e) => {
-                                        setdatapriority(item);
-                                        // console.log("Priority selected:", e);
-                                        console.log("Priority selected:", item);
-                                        setdatapriorityValue_Combobox(item.id);
-                                        const days = Number(item.lov3 ?? 0);
-                                        priorityCalculateRespondDate(days, true);
-                                        console.log("เลือก priority:", item.lov_code, "Days:", days);
-                                        console.log("เลือก datapriority?.id:", datapriority?.id);
-                                      }}
-                                      disabled={isActionRead || isActionEdit || isActionDelete}
-                                      sx={{ color: '#ff9800' }}
-                                    />
-                                  }
-                                  label={
-                                    <Box sx={{ textAlign: 'center' }}>
-                                      <Box sx={{
-                                        fontSize: '16px',
-                                        fontWeight: '600',
-                                        color: datapriority?.id === item.id ? '#f57c00' : '#666'
-                                      }}>
-                                        {item.lov1} ({item.lov_code})
-                                      </Box>
-                                      <Box sx={{
-                                        fontSize: '12px',
-                                        color: datapriority?.id === item.id ? '#f57c00' : '#999',
-                                        mt: 0.5
-                                      }}>
-                                        (ภายใน {item.lov3} วัน)
-                                      </Box>
-                                    </Box>
-                                  }
-                                  sx={{
-                                    width: "100%",
-                                    m: 0,
-                                    flexDirection: 'column',
-                                    alignItems: 'center'
-                                  }}
-                                />
-                              </Box>
-                            </Grid>
-                          ))}
+                        <Typography
+                          className="sarabun-regular-datatable"
+                          sx={{ fontSize: "18px", fontWeight: 600, color: "#333" }}
+                        >
+                          ระดับความสำคัญ (Priority)
+                          <span style={{ color: "red" }}> *</span>
+                        </Typography>
+                      </AccordionSummary>
 
-                        {/* Response Date Field - positioned after Emergency option */}
-                        <Grid size={3}>
-                          <Box sx={{
-                            border: '2px solid #e0e0e0',
-                            borderRadius: 2,
-                            p: 2,
-                            textAlign: 'center',
-                            backgroundColor: '#ffffff',
-                            borderColor: '#e0e0e0',
-                            transition: 'all 0.2s ease',
-                            minHeight: '100px',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            justifyContent: 'center'
-                          }}>
+                      <AccordionDetails>
+                        <Divider sx={{ my: 2 }} />
+                        <Grid container spacing={2} sx={{ justifyContent: 'center', alignItems: 'flex-start' }}>
+                          {(filteredpriority || [])
+                            .sort((a, b) => {
+                              const order: { [key: string]: number } = { 'Normal': 1, 'Urgent': 2, 'Emergency': 3 };
+                              return (order[a.lov_code] || 999) - (order[b.lov_code] || 999);
+                            })
+                            .map((item: LovType) => (
+                              <Grid size={3} key={item.id}>
+                                <Box sx={{
+                                  border: '2px solid #e0e0e0',
+                                  borderRadius: 2,
+                                  p: 2,
+                                  textAlign: 'center',
+                                  backgroundColor: datapriority?.id === item.id ? '#fff3e0' : '#ffffff',
+                                  borderColor: datapriority?.id === item.id ? '#ff9800' : '#e0e0e0',
+                                  cursor: 'pointer',
+                                  transition: 'all 0.2s ease',
+                                  '&:hover': {
+                                    borderColor: '#ff9800',
+                                    backgroundColor: '#fff8f0'
+                                  }
+                                }}>
+                                  <FormControlLabel
+                                    control={
+                                      <Radio
+                                        checked={datapriority?.id === item.id}
+                                        onChange={(e) => {
+                                          setdatapriority(item);
+                                          // console.log("Priority selected:", e);
+                                          console.log("Priority selected:", item);
+                                          setdatapriorityValue_Combobox(item.id);
+                                          const days = Number(item.lov3 ?? 0);
+                                          priorityCalculateRespondDate(days, true);
+                                          console.log("เลือก priority:", item.lov_code, "Days:", days);
+                                          console.log("เลือก datapriority?.id:", datapriority?.id);
+                                        }}
+                                        disabled={isActionRead || isActionEdit || isActionDelete}
+                                        sx={{ color: '#ff9800' }}
+                                      />
+                                    }
+                                    label={
+                                      <Box sx={{ textAlign: 'center' }}>
+                                        <Box sx={{
+                                          fontSize: '16px',
+                                          fontWeight: '600',
+                                          color: datapriority?.id === item.id ? '#f57c00' : '#666'
+                                        }}>
+                                          {item.lov1} ({item.lov_code})
+                                        </Box>
+                                        <Box sx={{
+                                          fontSize: '12px',
+                                          color: datapriority?.id === item.id ? '#f57c00' : '#999',
+                                          mt: 0.5
+                                        }}>
+                                          (ภายใน {item.lov3} วัน)
+                                        </Box>
+                                      </Box>
+                                    }
+                                    sx={{
+                                      width: "100%",
+                                      m: 0,
+                                      flexDirection: 'column',
+                                      alignItems: 'center'
+                                    }}
+                                  />
+                                </Box>
+                              </Grid>
+                            ))}
+
+                          {/* Response Date Field - positioned after Emergency option */}
+                          <Grid size={3}>
                             <Box sx={{
-                              fontSize: '16px',
-                              fontWeight: '600',
-                              mb: 3
+                              border: '2px solid #e0e0e0',
+                              borderRadius: 2,
+                              p: 2,
+                              textAlign: 'center',
+                              backgroundColor: '#ffffff',
+                              borderColor: '#e0e0e0',
+                              transition: 'all 0.2s ease',
+                              minHeight: '100px',
+                              display: 'flex',
+                              flexDirection: 'column',
+                              justifyContent: 'center'
                             }}>
-                              ตอบกลับภายในวันที่ (Response Date)
+                              <Box sx={{
+                                fontSize: '16px',
+                                fontWeight: '600',
+                                mb: 3
+                              }}>
+                                ตอบกลับภายในวันที่ (Response Date)
+                              </Box>
+                              <DesktopDatePickers
+                                labelName=""
+                                value={respond_date_within}
+                                handleChange={(val) => setrespond_date_within(val ?? null)}
+                                bgcolorTextField={true}
+                                readonly
+                              />
                             </Box>
-                            <DesktopDatePickers
-                              labelName=""
-                              value={respond_date_within}
-                              handleChange={(val) => setrespond_date_within(val ?? null)}
-                              bgcolorTextField={true}
-                              readonly
-                            />
-                          </Box>
+                          </Grid>
                         </Grid>
-                      </Grid>
-                    </Paper>
+                      </AccordionDetails>
+                    </Accordion>
                   </Box>
                 )}
               </Box>
@@ -1372,134 +1400,123 @@ export default function ComplaintBody({
                 )}
               </Grid>
             </Paper>
+
             <Paper elevation={3} sx={{
               p: 3,
               mt: 3,
               width: "100%",
               borderRadius: 3,
-              background: 'linear-gradient(135deg, #f0f8ff 0%, #ffffff 100%)',
-              border: '1px solid #bbdefb',
-              boxShadow: '0 4px 12px rgba(33,150,243,0.1)'
+              background: 'linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%)',
+              border: '1px solid #e0e0e0',
+              boxShadow: '0 4px 12px rgba(158,158,158,0.1)'
             }}>
-              <Box sx={{
-                display: 'flex',
-                alignItems: 'center',
-                mb: 3,
-                pb: 2,
-                borderBottom: '2px solid #2196f3'
-              }}>
-                <Box sx={{
-                  width: 6,
-                  height: 24,
-                  backgroundColor: '#2196f3',
-                  borderRadius: 1,
-                  mr: 2
-                }} />
-                <label
-                  className="sarabun-regular-datatable"
-                  style={{
-                    fontSize: '18px',
-                    fontWeight: '600',
-                    color: '#1976d2',
-                    margin: 0
-                  }}
-                >
-                  แผนกผู้ทำการออกเอกสาร (Reporting Department)
-                </label>
-              </Box>
-              <Grid container spacing={3}>
-                <Grid size={4}>
-                  <FullWidthTextField
-                    value={action === "Add"
-                      ? (user[0]?.employee_username || '-')
-                      : (dataelement?.request_name || '-')}
-                    labelName="ชื่อผู้ออกเอกสาร (Reported by)"
-                    onchange={(e) => setrequest_name(e.target.value)}
-                    readonly
-                  />
-                </Grid>
-                <Grid size={4}>
-                  <FullWidthTextField
-                    value={action === "Add"
-                      ? (user[0]?.employee_position || '-')
-                      : (dataelement?.request_position || '-')}
-                    labelName="ตำแหน่ง (Position)"
-                    onchange={(e) => setrequest_position(e.target.value)}
-                    readonly
-                  />
-                </Grid>
-                <Grid size={4}>
-                  {/* <AutocompleteComboBox
-                    required="required"
-                    value={request_department_id}
-                    labelName={"แผนก (Department)"}
-                    options={dataset_department}
-                    column="itasset_department_name"
-                    setvalue={setrequest_department_id}
-                  /> */}
-                  <FullWidthTextField
-                    value={action === "Add"
-                      ? (user[0]?.itasset_department_name || '-')
-                      : (dataelement?.request_department_id || '-')}
-                    labelName="แผนก (Department)"
-                    onchange={(e) => {
-                      // ถึง readonly แต่เผื่ออนาคตจะเปิดให้แก้
-                      setrequest_department_id(
-                        action === "Add"
-                          ? user[0]?.itasset_department_id
-                          : dataelement?.request_department_id
-                      );
-                    }}
-                    readonly
-                  />
-                </Grid>
-                <Grid size={4}>
-                  <FullWidthTextField
-                    value={action === "Add"
-                      ? (user[0]?.employee_email || '-')
-                      : (dataelement?.request_email || '-')}
-                    labelName="ตำแหน่ง (Position)"
-                    onchange={(e) => setrequest_email(e.target.value)}
-                    readonly
-                  />
-                </Grid>
-                <Grid size={4}>
-                  <FullWidthTextField
-                    value={action === "Add"
-                      ? (user[0]?.employee_tel || '-')
-                      : (dataelement?.request_phone || '-')}
-                    labelName="ตำแหน่ง (Position)"
-                    onchange={(e) => setrequest_phone(e.target.value)}
-                    readonly
-                  />
-                </Grid>
-                <Grid size={4}>
-                  <AutocompleteComboBox
-                    value={request_company_id}
-                    labelName={"โรงงาน (Factory)"}
-                    options={dataset_company}
-                    column="domain_name"
-                    setvalue={(v) => setrequest_company_id(v)}
-                    bgcolorTextField={true}
-                    readonly
-                  />
-                </Grid>
-                {/* <Grid size={4}>
-                  <AutocompleteComboBox
-                    value={request_domain_id}
-                    labelName={"โดเมน (Domain)"}
-                    options={dataset_domain}
-                    column="domain_id"
-                    setvalue={setrequest_domain_id}
-                    readonly
-                  />
-                </Grid> */}
+              <Grid container spacing={2}>
+                <Grid size={12}>
+                  <Accordion expanded={isMinimizerespondOpen}
+                        onChange={() => setisMinimizeRespondOpen(!isMinimizerespondOpen)}
+                         sx={{
+                    width: '100%',
+                    borderRadius: 3,
+                    background: 'linear-gradient(135deg, #f0f8ff 0%, #ffffff 100%)',
+                    border: '1px solid #bbdefb',
+                    boxShadow: '0 4px 12px rgba(33,150,243,0.1)',
+                    mt: 3
+                  }}>
+                    <AccordionSummary
+                      expandIcon={<ExpandMoreIcon />}
+                      aria-controls="reporting-dept-content"
+                      id="reporting-dept-header"
+                    >
+                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        <Box sx={{
+                          width: 6,
+                          height: 24,
+                          backgroundColor: '#2196f3',
+                          borderRadius: 1,
+                          mr: 2
+                        }} />
+                        <Typography
+                          className="sarabun-regular-datatable"
+                          sx={{ fontSize: 18, fontWeight: 600, color: '#1976d2' }}
+                        >
+                          แผนกผู้ทำการออกเอกสาร (Reporting Department)
+                        </Typography>
+                      </Box>
+                    </AccordionSummary>
 
+                    <AccordionDetails>
+                      <Divider sx={{ my: 1, borderBottom: '2px solid #2196f3' }} />
+                      <Grid container spacing={3}>
+                        <Grid size={4}>
+                          <FullWidthTextField
+                            value={action === "Add"
+                              ? (user[0]?.employee_username || '-')
+                              : (dataelement?.request_name || '-')}
+                            labelName="ชื่อผู้ออกเอกสาร (Reported by)"
+                            onchange={(e) => setrequest_name(e.target.value)}
+                            readonly
+                          />
+                        </Grid>
+                        <Grid size={4}>
+                          <FullWidthTextField
+                            value={action === "Add"
+                              ? (user[0]?.employee_position || '-')
+                              : (dataelement?.request_position || '-')}
+                            labelName="ตำแหน่ง (Position)"
+                            onchange={(e) => setrequest_position(e.target.value)}
+                            readonly
+                          />
+                        </Grid>
+                        <Grid size={4}>
+                          <FullWidthTextField
+                            value={action === "Add"
+                              ? (user[0]?.itasset_department_name || '-')
+                              : (dataelement?.request_department_id || '-')}
+                            labelName="แผนก (Department)"
+                            onchange={(e) => setrequest_department_id(
+                              action === "Add" ? user[0]?.itasset_department_id : dataelement?.request_department_id
+                            )}
+                            readonly
+                          />
+                        </Grid>
+                        <Grid size={4}>
+                          <FullWidthTextField
+                            value={action === "Add"
+                              ? (user[0]?.employee_email || '-')
+                              : (dataelement?.request_email || '-')}
+                            labelName="อีเมล (Email)"
+                            onchange={(e) => setrequest_email(e.target.value)}
+                            readonly
+                          />
+                        </Grid>
+                        <Grid size={4}>
+                          <FullWidthTextField
+                            value={action === "Add"
+                              ? (user[0]?.employee_tel || '-')
+                              : (dataelement?.request_phone || '-')}
+                            labelName="เบอร์โทร (Phone)"
+                            onchange={(e) => setrequest_phone(e.target.value)}
+                            readonly
+                          />
+                        </Grid>
+                        <Grid size={4}>
+                          <AutocompleteComboBox
+                            value={request_company_id}
+                            labelName={"โรงงาน (Factory)"}
+                            options={dataset_company}
+                            column="domain_name"
+                            setvalue={(v) => setrequest_company_id(v)}
+                            bgcolorTextField={true}
+                            readonly
+                          />
+                        </Grid>
+                      </Grid>
+                    </AccordionDetails>
+                  </Accordion>
+                </Grid>
               </Grid>
-            </Paper>
 
-            <Grid container spacing={2}>
-            </Grid>
+            </Paper>
           </Grid>
         </Paper>
       )}
