@@ -130,10 +130,22 @@ export default function ComplaintBody({
   validateDetailText,
 }: ComplaintBody) {
   const isActionRead = action === "Read";
+  const isActionAdd = action === "Add";
   const isActionEdit = action === "Edit";
   const isActionDelete = action === "Delete";
 
   const user = cleanAccessData("userSession");
+
+  const [openConfirm, setOpenConfirm] = useState(false);
+  const [deleteIndex, setDeleteIndex] = useState<number | null>(null);
+
+  // const handleConfirmDelete = () => {
+  //   if (deleteIndex !== null) {
+  //     handleRemoveFile(deleteIndex);
+  //     setDeleteIndex(null);
+  //   }
+  //   setOpenConfirm(false);
+  // };
 
   const {
     dataelement,
@@ -387,8 +399,8 @@ export default function ComplaintBody({
     setotherText("");
     setphoTypeOther("");
 
-    setrequest_name("")
-    setrequest_position("")
+    setrequest_name("");
+    setrequest_position("");
     setrequest_department_id(user);
     setrequest_email("");
     setrequest_phone("");
@@ -514,13 +526,8 @@ export default function ComplaintBody({
     setcomplaintFiles(updatedList);
   };
 
-  const handleRemoveFile = (index: number) => {
-    setFileList((prev) => {
-      const updatedList = prev.filter((_, i) => i !== index);
-      setcomplaintFiles(updatedList); // sync
-      return updatedList;
-    });
-  };
+  
+
   const handleFileAttachmentTypeChange = (index: number, type: string) => {
     const updated = [...fileList];
     updated[index] = {
@@ -584,6 +591,16 @@ export default function ComplaintBody({
       (item, index) => JSON.stringify(item) === JSON.stringify(b[index])
     );
   };
+
+const handleRemoveFile = (index: number) => {
+    setFileList((prev) => {
+      const updatedList = prev.filter((_, i) => i !== index);
+      return updatedList;
+    });
+  };
+  useEffect(() => {
+  setcomplaintFiles(fileList); // sync
+}, [fileList]);
 
   // READ - Get Complaints
   const ComplaintFile_Get = async () => {
@@ -667,7 +684,12 @@ export default function ComplaintBody({
       }
 
       // 2) ถ้า action === "Read" และมี dataelement.report_type ให้หา default จาก newDataset (ถ้ามี)
-      if ((isActionRead || isActionEdit || isActionDelete) && dataelement?.report_type && Array.isArray(newDataset) && newDataset.length > 0) {
+      if (
+        (isActionRead || isActionEdit || isActionDelete) &&
+        dataelement?.report_type &&
+        Array.isArray(newDataset) &&
+        newDataset.length > 0
+      ) {
         const defaultVal = newDataset.find(
           (item: LovType) =>
             // บางที dataelement.report_type อาจเก็บ lov_code หรือ id ขึ้นกับ backend — เช็คทั้งสอง
@@ -822,13 +844,34 @@ export default function ComplaintBody({
       setclauseOther(dataelement?.clause ? dataelement?.clause : "");
       setdetail(dataelement?.detail ? dataelement?.detail : "");
       setpriority_level(setPriorityLevel(dataelement?.priority_level));
-      setrespond_date_within(dataelement?.respond_date_within ? dayjs(dataelement.respond_date_within, "DD-MM-YYYY") : dayjs());
-      setrequest_name(dataelement?.request_name ? dataelement?.request_name : "")
-      setrequest_position(dataelement?.request_position ? dataelement?.request_position : "")
-      setrequest_department_id(dataelement?.request_department_id ? dataelement?.request_department_id : "")
-      setrequest_email(dataelement?.request_email ? dataelement?.request_email : "")
-      setrequest_phone(dataelement?.request_phone ? dataelement?.request_phone : "")
-      setrequest_company_id(dataset_company.find((el: any) => el.itasset_company_id == String(dataelement.request_company_id)));
+      setrespond_date_within(
+        dataelement?.respond_date_within
+          ? dayjs(dataelement.respond_date_within, "DD-MM-YYYY")
+          : dayjs()
+      );
+      setrequest_name(
+        dataelement?.request_name ? dataelement?.request_name : ""
+      );
+      setrequest_position(
+        dataelement?.request_position ? dataelement?.request_position : ""
+      );
+      setrequest_department_id(
+        dataelement?.request_department_id
+          ? dataelement?.request_department_id
+          : ""
+      );
+      setrequest_email(
+        dataelement?.request_email ? dataelement?.request_email : ""
+      );
+      setrequest_phone(
+        dataelement?.request_phone ? dataelement?.request_phone : ""
+      );
+      setrequest_company_id(
+        dataset_company.find(
+          (el: any) =>
+            el.itasset_company_id == String(dataelement.request_company_id)
+        )
+      );
 
       // สมมติ LovType คือ { id: string; label: string }
 
@@ -867,12 +910,11 @@ export default function ComplaintBody({
         setIsRSHidden(true);
       }
     }
-
   }, [dataset_reporttype]);
 
   React.useEffect(() => {
     // เฉพาะตอน Read เท่านั้น
-    if (action === "Read") {
+    if (action === "Read" || action === "Edit" || action === "Delete") {
       ComplaintFile_Get();
     }
   }, [action, dataelement]);
@@ -954,9 +996,24 @@ export default function ComplaintBody({
             options={dataset_reporttype} // <-- แก้ตรงนี้
             column="lov_code"
             setvalue={handleReportTypeChange}
-            readonly={isActionRead ? true : isActionEdit ? true : isActionDelete ? true: readonlyTextField}
-            bgcolorTextField={isActionRead ? true : isActionEdit ? true : isActionDelete ? true:bgcolorTextField}
-
+            readonly={
+              isActionRead
+                ? true
+                : isActionEdit
+                ? true
+                : isActionDelete
+                ? true
+                : readonlyTextField
+            }
+            bgcolorTextField={
+              isActionRead
+                ? true
+                : isActionEdit
+                ? true
+                : isActionDelete
+                ? true
+                : bgcolorTextField
+            }
           />
         </Grid>
       </Grid>
@@ -1077,7 +1134,9 @@ export default function ComplaintBody({
                       console.log(e); // ดูค่าของ e ที่ถูกส่งมาจาก AutocompleteComboBox
                       setrespondent_department_id(e);
                     }}
-                    bgcolorTextField={action === "Add" ? false : isActionEdit ? false : true}
+                    bgcolorTextField={
+                      action === "Add" ? false : isActionEdit ? false : true
+                    }
                     readonly={isActionRead || isActionDelete}
                   />
                 </Grid>
@@ -1179,16 +1238,22 @@ export default function ComplaintBody({
                           }}
                         >
                           <Grid container spacing={2}>
-                            {(filteredComplaintType || []).map((item: LovType) => (
-                              <Grid size={3} key={item.id}>
-                                <FullWidthCheckbox
-                                  labelName={item.lov1}
-                                  value={dataComplaintType.some(c => c.id === item.id)}
-                                  onchange={() => handleCheckboxChangeCT(item)}
-                                  readonly={isActionRead || isActionDelete}
-                                />
-                              </Grid>
-                            ))}
+                            {(filteredComplaintType || []).map(
+                              (item: LovType) => (
+                                <Grid size={3} key={item.id}>
+                                  <FullWidthCheckbox
+                                    labelName={item.lov1}
+                                    value={dataComplaintType.some(
+                                      (c) => c.id === item.id
+                                    )}
+                                    onchange={() =>
+                                      handleCheckboxChangeCT(item)
+                                    }
+                                    readonly={isActionRead || isActionDelete}
+                                  />
+                                </Grid>
+                              )
+                            )}
                           </Grid>
                           <Box sx={{ mt: "auto", pt: 2 }}>
                             {dataComplaintType.some((c) => c.lov2 === "Y") && (
@@ -1196,7 +1261,13 @@ export default function ComplaintBody({
                                 value={compTypeOther}
                                 labelName="Other:"
                                 onchange={(e) => setcompTypeOther(e)}
-                                bgcolorTextField={action === "Add" ? false : isActionEdit ? false : true}
+                                bgcolorTextField={
+                                  action === "Add"
+                                    ? false
+                                    : isActionEdit
+                                    ? false
+                                    : true
+                                }
                                 readonly={isActionRead || isActionDelete}
                               />
                             )}
@@ -1254,13 +1325,21 @@ export default function ComplaintBody({
                               </Grid>
                             ))}
                           </Grid>
-                          <Box sx={{ mt: 'auto', pt: 2 }}>
-                            {dataComplaintRs.some(rs => rs.lov3 === "Other") && (
+                          <Box sx={{ mt: "auto", pt: 2 }}>
+                            {dataComplaintRs.some(
+                              (rs) => rs.lov3 === "Other"
+                            ) && (
                               <FullWidthTextArea
                                 value={compRsOther}
                                 labelName="Other:"
                                 onchange={(e) => setcompRsOther(e)}
-                                bgcolorTextField={action === "Add" ? false : isActionEdit ? false : true}
+                                bgcolorTextField={
+                                  action === "Add"
+                                    ? false
+                                    : isActionEdit
+                                    ? false
+                                    : true
+                                }
                                 readonly={isActionRead || isActionDelete}
                               />
                             )}
@@ -1271,7 +1350,13 @@ export default function ComplaintBody({
                                 value={clauseOther}
                                 labelName="Clause:"
                                 onchange={(e) => setclauseOther(e)}
-                                bgcolorTextField={action === "Add" ? false : isActionEdit ? false : true}
+                                bgcolorTextField={
+                                  action === "Add"
+                                    ? false
+                                    : isActionEdit
+                                    ? false
+                                    : true
+                                }
                                 readonly={isActionRead || isActionDelete}
                               />
                             )}
@@ -1319,7 +1404,13 @@ export default function ComplaintBody({
                             value={detail}
                             labelName=""
                             onchange={(e) => setdetail(e)}
-                            bgcolorTextField={action === "Add" ? false : isActionEdit ? false : true}
+                            bgcolorTextField={
+                              action === "Add"
+                                ? false
+                                : isActionEdit
+                                ? false
+                                : true
+                            }
                             readonly={isActionRead || isActionDelete}
                           />
                         </Grid>
@@ -1420,8 +1511,12 @@ export default function ComplaintBody({
                                           datapriority?.id
                                         );
                                       }}
-                                      disabled={isActionRead || isActionEdit || isActionDelete}
-                                      sx={{ color: '#ff9800' }}
+                                      disabled={
+                                        isActionRead ||
+                                        isActionEdit ||
+                                        isActionDelete
+                                      }
+                                      sx={{ color: "#ff9800" }}
                                     />
                                   }
                                   label={
@@ -1624,8 +1719,9 @@ export default function ComplaintBody({
                                     </div>
                                   )}
                                 </Box>
-                                <Box sx={{ display: "flex", gap: 1 }}>
-                                  {action !== "Read" && (
+                                <Box sx={{ display: "flex", gap: 1 }}>                              
+                                  {/* //ปุ่มลบไฟล์ */}
+                                  {(action == "Edit" || action == "Add") && (
                                     <IconButton
                                       color="error"
                                       onClick={() => handleRemoveFile(idx)}
@@ -1633,10 +1729,13 @@ export default function ComplaintBody({
                                       <DeleteIcon />
                                     </IconButton>
                                   )}
+
+                                  {/* //ปุ่มดูไฟล์ */}
+
                                   <IconButton
                                     color="primary"
                                     onClick={() =>
-                                      action === "Read"
+                                      (action === "Read" || action === "Delete" || action === "Edit")
                                         ? window.open(item.img_url, "_blank")
                                         : window.open(
                                             URL.createObjectURL(item.file),
@@ -1646,27 +1745,47 @@ export default function ComplaintBody({
                                   >
                                     <VisibilityIcon />
                                   </IconButton>
-                                  {/* <IconButton
-                                    color="primary"
-                                    onClick={() => {
-                                      const link = document.createElement("a");
-                                      if (action === "Read") {
-                                        link.href = item.img_url ?? "";
-                                        link.download =
-                                          item.original_file_name ?? "file";
-                                      } else {
-                                        const url = URL.createObjectURL(
-                                          item.file
-                                        );
-                                        link.href = url;
-                                        link.download = item.file.name;
-                                        URL.revokeObjectURL(url); // ปล่อย memory หลังดาวน์โหลด
-                                      }
-                                      link.click();
-                                    }}
-                                  >
-                                    <DownloadIcon />
-                                  </IconButton> */}
+
+                                  {/* //ปุ่มดาวน์โหลดไฟล์ */}
+                                  {action === "Read" 
+                                     && (
+                                      <IconButton
+                                        color="primary"
+                                        onClick={async () => {
+                                          if (!item.img_url) return;
+
+                                          try {
+                                            const response = await fetch(
+                                              item.img_url,
+                                              { method: "GET" }
+                                            );
+                                            const blob = await response.blob();
+                                            const url =
+                                              URL.createObjectURL(blob);
+
+                                            const link =
+                                              document.createElement("a");
+                                            link.href = url;
+                                            link.setAttribute(
+                                              "download",
+                                              item.original_file_name ?? "file"
+                                            );
+                                            document.body.appendChild(link);
+                                            link.click();
+                                            document.body.removeChild(link);
+
+                                            URL.revokeObjectURL(url); // cleanup memory
+                                          } catch (err) {
+                                            console.error(
+                                              "Download failed:",
+                                              err
+                                            );
+                                          }
+                                        }}
+                                      >
+                                        <DownloadIcon />
+                                      </IconButton>
+                                    )}
                                 </Box>
                               </Box>
                             ))}
@@ -1733,9 +1852,11 @@ export default function ComplaintBody({
               <Grid container spacing={3}>
                 <Grid size={4}>
                   <FullWidthTextField
-                    value={action === "Add"
-                      ? (user[0]?.employee_username || '-')
-                      : (dataelement?.request_name || '-')}
+                    value={
+                      action === "Add"
+                        ? user[0]?.employee_username || "-"
+                        : dataelement?.request_name || "-"
+                    }
                     labelName="ชื่อผู้ออกเอกสาร (Reported by)"
                     onchange={(e) => setrequest_name(e.target.value)}
                     readonly
@@ -1743,9 +1864,11 @@ export default function ComplaintBody({
                 </Grid>
                 <Grid size={4}>
                   <FullWidthTextField
-                    value={action === "Add"
-                      ? (user[0]?.employee_position || '-')
-                      : (dataelement?.request_position || '-')}
+                    value={
+                      action === "Add"
+                        ? user[0]?.employee_position || "-"
+                        : dataelement?.request_position || "-"
+                    }
                     labelName="ตำแหน่ง (Position)"
                     onchange={(e) => setrequest_position(e.target.value)}
                     readonly
@@ -1761,9 +1884,11 @@ export default function ComplaintBody({
                     setvalue={setrequest_department_id}
                   /> */}
                   <FullWidthTextField
-                    value={action === "Add"
-                      ? (user[0]?.itasset_department_name || '-')
-                      : (dataelement?.request_department_id || '-')}
+                    value={
+                      action === "Add"
+                        ? user[0]?.itasset_department_name || "-"
+                        : dataelement?.request_department_id || "-"
+                    }
                     labelName="แผนก (Department)"
                     onchange={(e) => {
                       // ถึง readonly แต่เผื่ออนาคตจะเปิดให้แก้
@@ -1778,9 +1903,11 @@ export default function ComplaintBody({
                 </Grid>
                 <Grid size={4}>
                   <FullWidthTextField
-                    value={action === "Add"
-                      ? (user[0]?.employee_email || '-')
-                      : (dataelement?.request_email || '-')}
+                    value={
+                      action === "Add"
+                        ? user[0]?.employee_email || "-"
+                        : dataelement?.request_email || "-"
+                    }
                     labelName="ตำแหน่ง (Position)"
                     onchange={(e) => setrequest_email(e.target.value)}
                     readonly
@@ -1788,9 +1915,11 @@ export default function ComplaintBody({
                 </Grid>
                 <Grid size={4}>
                   <FullWidthTextField
-                    value={action === "Add"
-                      ? (user[0]?.employee_tel || '-')
-                      : (dataelement?.request_phone || '-')}
+                    value={
+                      action === "Add"
+                        ? user[0]?.employee_tel || "-"
+                        : dataelement?.request_phone || "-"
+                    }
                     labelName="ตำแหน่ง (Position)"
                     onchange={(e) => setrequest_phone(e.target.value)}
                     readonly
