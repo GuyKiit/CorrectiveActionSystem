@@ -26,7 +26,7 @@ import DataTableCollapsible from "../../components/MUI/DataTableCollapsible";
 import { useData } from "../../auth/core/DataContext";
 import { Complaint_headCells } from "../../../libs/columnname";
 import DataTable from "../../components/MUI/DataTable";
-import ComplaintBody from "./components/ComplaintCreate";
+import ComplaintBody from "./components/ComplaintBody";
 // import CompalintView from "./components/ComplaintRead";
 import { useListComplaint } from "./core/ListComplaintContext";
 import { v4 as uuidv4 } from "uuid";
@@ -38,6 +38,7 @@ import FullWidthTextField from "../../components/MUI/FullWidthTextField";
 import DesktopDatePickers from "../../components/MUI/DesktopDatePicker";
 import BasicChips from "../../components/MUI/BasicChips";
 import FullWidthButton from "../../components/MUI/FullWidthButton";
+import ExplainBody from "./components/ExplainBody";
 
 // =====================================================================================================
 // TYPE DEFINITIONS (from index.tsx and ComplaintRead.tsx)
@@ -815,6 +816,11 @@ export default function Complaint() {
     } finally {
       setIsLoadingScreen(false);
       handleClose();
+      FullSweetalert({
+          title: 'Success',
+          text: `บันทึกข้อมูลสำเร็จ`,
+          icon: 'success'
+        });
       Complaint_Get();
     }
   };
@@ -945,6 +951,11 @@ export default function Complaint() {
     } finally {
       setIsLoadingScreen(false);
       handleClose();
+      FullSweetalert({
+          title: 'Success',
+          text: `บันทึกข้อมูลสำเร็จ`,
+          icon: 'success'
+        });
       Complaint_Get();
     }
   };
@@ -979,6 +990,11 @@ export default function Complaint() {
     } finally {
       setIsLoadingScreen(false);
       handleClose();
+      FullSweetalert({
+          title: 'Success',
+          text: `ลบข้อมูลสำเร็จ`,
+          icon: 'success'
+        });
       Complaint_Get();
     }
   };
@@ -1372,7 +1388,7 @@ export default function Complaint() {
         titlename={"ดูข้อมูล"}
         handleClose={handleClose}
         colorBotton="success"
-        element={<ComplaintBody
+        element={<ExplainBody
           action="Read"
         />}
       />
