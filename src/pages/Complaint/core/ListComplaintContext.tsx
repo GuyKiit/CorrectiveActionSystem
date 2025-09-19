@@ -248,6 +248,24 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
     const [complaintFiles, setcomplaintFiles] = useState<File[]>([]); // state ไฟล์
 
 
+    
+    //--------Explaint-------
+    const [dataTooluse, setdataToolUse] = useState<any>(
+        initialListComplaint.dataTooluse
+    );
+    const [dataTooluseValue, setdataToolUseValue] = useState<any>(
+        initialListComplaint.dataTooluseValue
+    );
+    const [ToolOther, setToolOther] = useState<any>(
+        initialListComplaint.ToolOther
+    );
+    const [dataDecision, setdataDecision] = useState<any>(
+        initialListComplaint.dataDecision
+    );
+    const [DecisionOther, setDecisionOther] = useState<any>(
+        initialListComplaint.DecisionOther
+    );
+
     return (
         <ListComplaintContext.Provider
             value={{
@@ -334,7 +352,13 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 dataset_domain,
                 complaintFiles,
 
-
+                
+                //--------Explaint-------
+                dataTooluse,
+                dataTooluseValue,
+                dataDecision,
+                ToolOther,
+                DecisionOther,
 
 
                 setComplaint_no,
@@ -415,6 +439,14 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 setdataset_department,
                 setdataset_domain,
                 setcomplaintFiles,
+
+                
+                //--------Explaint-------
+                setdataToolUse,
+                setdataToolUseValue,
+                setdataDecision,
+                setToolOther,
+                setDecisionOther,
 
             }}
         >

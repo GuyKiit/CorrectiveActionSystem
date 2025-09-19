@@ -41,6 +41,7 @@ import FullWidthButton from "../../components/MUI/FullWidthButton";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CloseIcon from '@mui/icons-material/CheckCircle';
 import ExplaintBody from "./components/ExplaintCreate";
+import moments from "moment";
 
 // =====================================================================================================
 // TYPE DEFINITIONS (from index.tsx and ComplaintRead.tsx)
@@ -203,6 +204,11 @@ export default function Complaint() {
     dataset_company,
     dataset_domain,
 
+    //Explaint
+    dataTooluse,
+    dataDecision,
+    
+
     // Setter Functions
     setComplaint_no, setno, setid, setreport_type, setcas_number, setdoc_date,
     setdate_of_detection, setrequest_name, setrequest_company_id,
@@ -224,7 +230,14 @@ export default function Complaint() {
     setdataComplaintRsValue_Combobox, setdataphoto_Combobox, setdataphotoValue_Combobox,
     setdatapriorityValue_Combobox, setdatapriority_Combobox, setdatapriority,
     setPriorityLevel, setclauseOther, setphoTypeOther, setdataset_reporttype,
-    setdataset_department, setdataset_company, setdataset_domain, setcomplaintFiles, setotherText
+    setdataset_department, setdataset_company, setdataset_domain, setcomplaintFiles, setotherText,
+
+
+    //set Explaint
+    setdataToolUse,
+    setdataDecision
+
+
   } = useListComplaint();
 
   // =====================================================================================================
@@ -246,6 +259,14 @@ export default function Complaint() {
   const [snackbarSeverity, setSnackbarSeverity] = React.useState<"success" | "error">("success");
   const [successCardOpen, setSuccessCardOpen] = React.useState(false);
   const [successCardMessage, setSuccessCardMessage] = React.useState("");
+  
+  
+  const [attach_type, setattach_type] = React.useState<any>([]);
+  const [complaint_status, setcomplaint_status] = React.useState<any>([]);
+  const [complaint_type, setcomplaint_type] = React.useState<any>([]);
+  const [reference_standard, setreference_standard] = React.useState<any>([]);
+  const [tool_use, settool_use] = React.useState<any>([]);
+  const [decision_disposition, setdecision_disposition] = React.useState<any>([]);
   // Date Search Variables (from index.tsx)
   const [respondWithinSearch, setrespondWithinSearch] = React.useState<
     dayjs.Dayjs | undefined | null
@@ -291,9 +312,7 @@ export default function Complaint() {
   const [dataComplaintRs, setdataComplaintRs] = useState<LovType[]>([]);
   const [dataComplaintphoto, setdataComplaintphoto] = useState<LovType[]>([]);
   const [dataPriority, setdataPriority] = useState<string>("");
-  const [filteredComplaintType, setFilteredComplaintType] = useState<LovType[]>(
-    []
-  );
+  const [filteredComplaintType, setFilteredComplaintType] = useState<LovType[]>([]);
   const [filteredComplaintRs, setFilteredComplaintRs] = useState<LovType[]>([]);
   const [filteredpriority, setFilteredpriority] = useState<LovType[]>([]);
   const [filteredphoto, setFilteredphoto] = useState<LovType[]>([]);
@@ -416,77 +435,119 @@ export default function Complaint() {
   // =====================================================================================================
 
   // Get Report Types
-  const ReportType_Get = async () => {
-    try {
-      const dataset = {
-        lov_group: "TRR.TRRGROUP.COM",
-        lov_type: "report_type",
-      };
-      const response = await _POST(dataset, "/Lov/LovGet");
-      if (response && response.status === "success") {
-        console.log("❇️ Call [Lov/LovGet] -> report_type :", response.data);
-        setdataset_reporttype(response.data);
-      }
-    } catch (e) {
-      console.log("error:", e);
-    }
-  };
+  // const ReportType_Get = async () => {
+  //   try {
+  //     const dataset = {
+  //       lov_group: "TRR.TRRGROUP.COM",
+  //       lov_type: "report_type",
+  //     };
+  //     const response = await _POST(dataset, "/Lov/LovGet");
+  //     if (response && response.status === "success") {
+  //       console.log("❇️ Call [Lov/LovGet] -> report_type :", response.data);
+  //       setdataset_reporttype(response.data);
+  //     }
+  //   } catch (e) {
+  //     console.log("error:", e);
+  //   }
+  // };
 
   // Get Complaint Types
-  const ComplaintType_Get = async () => {
-    try {
-      const dataset = {
-        lov_group: "TRR.TRRGROUP.COM",
-        lov_type: "complaint_type",
-      };
-      const response = await _POST(dataset, "/Lov/LovGet");
-      if (response && response.status === "success") {
-        console.log("❇️ Call [Lov/LovGet] -> complaint_type :", response.data);
-        setdataComplaintType_Combobox &&
-          setdataComplaintType_Combobox(response.data);
-      }
-    } catch (e) {
-      console.log("error:", e);
-    }
-  };
+  // const ComplaintType_Get = async () => {
+  //   try {
+  //     const dataset = {
+  //       lov_group: "TRR.TRRGROUP.COM",
+  //       lov_type: "complaint_type",
+  //     };
+  //     const response = await _POST(dataset, "/Lov/LovGet");
+  //     if (response && response.status === "success") {
+  //       console.log("❇️ Call [Lov/LovGet] -> complaint_type :", response.data);
+  //       setdataComplaintType_Combobox &&
+  //         setdataComplaintType_Combobox(response.data);
+  //     }
+  //   } catch (e) {
+  //     console.log("error:", e);
+  //   }
+  // };
 
-  // Get Complaint Reference Standards
-  const ComplaintRs_Get = async () => {
-    try {
-      const dataset = {
-        lov_group: "TRR.TRRGROUP.COM",
-        lov_type: "reference_standard",
-      };
-      const response = await _POST(dataset, "/Lov/LovGet");
-      if (response && response.status === "success") {
-        console.log(
-          "❇️ Call [Lov/LovGet] -> reference_standard :",
-          response.data
-        );
-        setdataComplaintRs_Combobox &&
-          setdataComplaintRs_Combobox(response.data);
-      }
-    } catch (e) {
-      console.log("error:", e);
+  // Get lovGet
+  const LovAll_Get = async () => {
+   console.log(
+    "🕒 Call Function : [LovAll_Get] at",
+    moments().format("YYYY-MM-DD HH:mm:ss")
+  );
+    
+  try {
+    const dataset = {
+      lov_group: "TRR.TRRGROUP.COM",
+      lov_type:
+        "report_type,complaint_type,reference_standard,attach_type,complaint_status,tool_use,decision_disposition",
+    };
+    const response = await _POST(dataset, "/Lov/LovGet");
+
+    if (response && response.status === "success") {
+      const lovData = response.data || [];
+
+      // ✅ จัดกลุ่มตาม lov_type
+      const grouped = lovData.reduce((acc: any, item: any) => {
+        if (!acc[item.lov_type]) acc[item.lov_type] = [];
+        acc[item.lov_type].push(item);
+        return acc;
+      }, {});
+
+      console.log("📌 Raw Data:", lovData);
+      console.log("📂 Grouped by lov_type:", grouped);
+
+      // ตัวอย่างการ set state
+      setdataset_reporttype?.(grouped["report_type"] || []);
+      setdataComplaintType_Combobox?.(grouped["complaint_type"] || []);
+      setdataComplaintRs_Combobox?.(grouped["reference_standard"] || []);
+      setdataphoto_Combobox?.(grouped["attach_type"] || []);
+      setdatastatus?.(grouped["complaint_status"] || []);
+      setdataToolUse?.(grouped["tool_use"] || []);
+      setdataDecision?.(grouped["decision_disposition"] || []);
+      
     }
-  };
+  } catch (e) {
+    console.log("error:", e);
+  }
+};
+  // Get Complaint Reference Standards
+  // const ComplaintRs_Get = async () => {
+  //   try {
+  //     const dataset = {
+  //       lov_group: "TRR.TRRGROUP.COM",
+  //       lov_type: "reference_standard",
+  //     };
+  //     const response = await _POST(dataset, "/Lov/LovGet");
+  //     if (response && response.status === "success") {
+  //       console.log(
+  //         "❇️ Call [Lov/LovGet] -> reference_standard :",
+  //         response.data
+  //       );
+  //       setdataComplaintRs_Combobox &&
+  //         setdataComplaintRs_Combobox(response.data);
+  //     }
+  //   } catch (e) {
+  //     console.log("error:", e);
+  //   }
+  // };
 
   // Get Photo Attachment Types
-  const photo_Get = async () => {
-    try {
-      const dataset = {
-        lov_group: "TRR.TRRGROUP.COM",
-        lov_type: "attach_type",
-      };
-      const response = await _POST(dataset, "/Lov/LovGet");
-      if (response && response.status === "success") {
-        console.log("❇️ Call [Lov/LovGet] -> attach_type :", response.data);
-        setdataphoto_Combobox && setdataphoto_Combobox(response.data);
-      }
-    } catch (e) {
-      console.log("error:", e);
-    }
-  };
+  // const photo_Get = async () => {
+  //   try {
+  //     const dataset = {
+  //       lov_group: "TRR.TRRGROUP.COM",
+  //       lov_type: "attach_type",
+  //     };
+  //     const response = await _POST(dataset, "/Lov/LovGet");
+  //     if (response && response.status === "success") {
+  //       console.log("❇️ Call [Lov/LovGet] -> attach_type :", response.data);
+  //       setdataphoto_Combobox && setdataphoto_Combobox(response.data);
+  //     }
+  //   } catch (e) {
+  //     console.log("error:", e);
+  //   }
+  // };
 
   // Get Priority Levels
   const priority_Get = async () => {
@@ -552,24 +613,62 @@ export default function Complaint() {
     }
   };
   // Get Complaint Status Data
-  const complaint_status_Get = async () => {
-    try {
-      const dataset = {
-        lov_group: "TRR.TRRGROUP.COM",
-        lov_type: "complaint_status",
-      };
-      const response = await _POST(dataset, "/Lov/LovGet");
-      if (response && response.status === "success") {
-        console.log(
-          "❇️ Call [Lov/LovGet] -> complaint_status_Get :",
-          response.data
-        );
-        setdatastatus && setdatastatus(response.data);
-      }
-    } catch (e) {
-      console.log("error:", e);
-    }
-  };
+  // const complaint_status_Get = async () => {
+  //   try {
+  //     const dataset = {
+  //       lov_group: "TRR.TRRGROUP.COM",
+  //       lov_type: "complaint_status",
+  //     };
+  //     const response = await _POST(dataset, "/Lov/LovGet");
+  //     if (response && response.status === "success") {
+  //       console.log(
+  //         "❇️ Call [Lov/LovGet] -> complaint_status_Get :",
+  //         response.data
+  //       );
+  //       setdatastatus && setdatastatus(response.data);
+  //     }
+  //   } catch (e) {
+  //     console.log("error:", e);
+  //   }
+  // };
+
+  // Get Tool Use
+  // const ToolUse_Get = async () => {
+  //   try {
+  //     const dataset = {
+  //       lov_group: "TRR.TRRGROUP.COM",
+  //       lov_type: "tool_use",
+  //     };
+  //     const response = await _POST(dataset, "/Lov/LovGet");
+  //     if (response && response.status === "success") {
+  //       console.log("❇️ Call [Lov/LovGet] -> tool_use :", response.data);
+  //       setdataToolUse &&
+  //         setdataToolUse(response.data);
+  //     }
+  //   } catch (e) {
+  //     console.log("error:", e);
+  //   }
+  // };
+
+  // Get decision_disposition
+  // const Decision_Get = async () => {
+  //   try {
+  //     const dataset = {
+  //       lov_group: "TRR.TRRGROUP.COM",
+  //       lov_type: "decision_disposition",
+  //     };
+  //     const response = await _POST(dataset, "/Lov/LovGet");
+  //     if (response && response.status === "success") {
+  //       console.log("❇️ Call [Lov/LovGet] -> decision_disposition :", response.data);
+  //       setdataDecision &&
+  //         setdataDecision(response.data);
+  //     }
+  //   } catch (e) {
+  //     console.log("error:", e);
+  //   }
+  // };
+
+
 
   // =====================================================================================================
   // API FUNCTIONS - CRUD OPERATIONS (from index.tsx)
@@ -1178,14 +1277,17 @@ export default function Complaint() {
 
     resetSearchTable();
     Complaint_Get();
-    ReportType_Get();
-    ComplaintType_Get();
-    ComplaintRs_Get();
-    photo_Get();
+    LovAll_Get();
+    // ReportType_Get();
+    // ComplaintType_Get();
+    // ComplaintRs_Get();
+    // photo_Get();
     priority_Get();
     CasDomainGet();
     CasDepartmentDomainGet();
-    complaint_status_Get();
+    // complaint_status_Get();
+    // ToolUse_Get();
+    // Decision_Get();
   }, []);
 
 
@@ -1478,3 +1580,7 @@ export default function Complaint() {
     </>
   );
 }
+function moment() {
+  throw new Error("Function not implemented.");
+}
+

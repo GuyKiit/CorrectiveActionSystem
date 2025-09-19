@@ -96,22 +96,13 @@ export type ListComplaintContextProps = {
     complaintFiles?: any
     RunningModel?: any
 
-    // dataTruckTypeValue_Combobox?: any
-    // dataProduct_Combobox?: any
-    // dataProductValue_Combobox?: any
-    // dataGroupProduct_Combobox?: any
-    // dataGroupProductValue_Combobox?: any
-    // dataCompany_Combobox?: any
-    // dataCompanyValue_Combobox?: any
-    // dataPackUnit_Combobox?: any
-    // dataPackUnitValue_Combobox?: any
-    // dataCustomer_Combobox?: any
-    // dataCustomerValue_Combobox?: any
-    // dataCustomerAddress_Combobox?: any
-    // dataCustomerAddressValue_Combobox?: any
+    //--------Explaint-------
+    dataTooluse?: any
+    dataTooluseValue?: any
+    dataDecision?: any
+    ToolOther?: any
+    DecisionOther?: any
 
-
-    // selectedFile?: File
 
 
     setComplaint_no: Dispatch<SetStateAction<string>>;
@@ -197,6 +188,12 @@ export type ListComplaintContextProps = {
     setcomplaintFiles: Dispatch<SetStateAction<any>>
 
 
+    //--------Explaint-------
+    setdataToolUse: Dispatch<SetStateAction<any>>
+    setdataToolUseValue: Dispatch<SetStateAction<any>>
+    setdataDecision: Dispatch<SetStateAction<any>>
+    setToolOther: Dispatch<SetStateAction<any>>
+    setDecisionOther: Dispatch<SetStateAction<any>>
 };
 
 export const initialListComplaint: ListComplaintContextProps = {
@@ -285,6 +282,11 @@ export const initialListComplaint: ListComplaintContextProps = {
 
 
 
-    // setSelectedFile: () => { }
+    //--------Explaint-------
+    setdataToolUse: () => { },
+    setdataToolUseValue: () => { },
+    setdataDecision: () => { },
+    setToolOther: () => { },
+    setDecisionOther: () => { },
 
 };

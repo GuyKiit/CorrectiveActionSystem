@@ -151,142 +151,57 @@ export default function ExplaintBody({
 
   const {
     dataelement,
-    Complaint_no,
-    no,
-    cas_number,
-    doc_date,
     date_of_detection,
-    request_name,
-    request_company_id,
-    request_domain_id,
-    request_position,
-    request_email,
-    request_phone,
-    request_date,
-    respondent_company_id,
-    // request_department_id,
-    respondent_domain_id,
     respondent_department_id,
     respondent_email,
-    respondent_other_name,
-    respondent_other_email,
     product_name,
     detail,
-    priority_level,
-    respond_date_within,
-    lot_no,
-    user_file_name,
-    other,
     compTypeOther,
-    otherText,
     compRsOther,
     clauseOther,
-    photoOther,
-    phoTypeOther,
-    acknowledge_flag,
-    acknowledge_name,
-    acknowledge_company_id,
-    acknowledge_department_id,
-    acknowledge_position,
-    acknowledge_email,
-    acknowledge_datetime,
-    complaint_status_id,
-    status_last_datetime,
-    return_from_status_id,
-    return_from_status_datetime,
-    dc_name,
-    dc_company_id,
-    dc_department_id,
-    dc_position,
-    dc_email,
-    record_status,
-    create_by,
-    create_datetime,
-    update_by,
-    update_datetime,
-    ComplaintStatusID_Combobox,
     dataReportTypeValue,
-    dataComplaintTypeValue_Combobox,
     dataComplaintType_Combobox,
-    dataComplaintRsValue_Combobox,
     dataComplaintRs_Combobox,
-    dataphotoValue_Combobox,
     dataphoto_Combobox,
-    datapriority_Combobox,
-    datapriorityValue_Combobox,
 
     // Dataset
     dataset_reporttype,
     dataset_company,
     dataset_department,
-    dataset_domain,
-    complaintFiles,
+    ToolOther,
+    DecisionOther,
 
-    setComplaint_no,
-    setno,
+    //Explaint
+    dataTooluse,
+    dataTooluseValue,
+    dataDecision,
+
     setcas_number,
     setdoc_date,
     setdate_of_detection,
     setrequest_name,
     setrequest_company_id,
     setrequest_domain_id,
-    // setrequest_department_id,
     setrequest_position,
     setrequest_email,
     setrequest_phone,
-    setuser_file_name,
-    setrequest_date,
     setrespondent_company_id,
     setrespondent_domain_id,
     setrespondent_department_id,
     setrespondent_email,
-    setrespondent_other_name,
-    setrespondent_other_email,
     setproduct_name,
     setdetail,
-    setcomplaint_type_other,
-    setpriority_level,
     setrespond_date_within,
     setlot_no,
-    setother,
     setcompTypeOther,
     setotherText,
     setcompRsOther,
     setclauseOther,
-    setphotoOther,
     setphoTypeOther,
-
-    setreference_standard_other,
-    setacknowledge_flag,
-    setacknowledge_name,
-    setacknowledge_company_id,
-    setacknowledge_department_id,
-    setacknowledge_position,
-    setacknowledge_email,
-    setacknowledge_datetime,
-    setcomplaint_status_id,
-    setstatus_last_datetime,
-    setreturn_from_status_id,
-    setreturn_from_status_datetime,
-    setdc_name,
-    setdc_company_id,
-    setdc_department_id,
-    setdc_position,
-    setdc_email,
-    setrecord_status,
-    setcreate_by,
-    setcreate_datetime,
-    setupdate_by,
-    setupdate_datetime,
-    setComplaintStatusID_Combobox,
     setdataReportTypeValue,
-    setdataComplaintType_Combobox,
     setdataComplaintTypeValue_Combobox,
-    setdataComplaintRs_Combobox,
     setdataComplaintRsValue_Combobox,
-    setdataphoto_Combobox,
     setdataphotoValue_Combobox,
-    setdatapriority_Combobox,
     setdatapriorityValue_Combobox,
 
     // Dataset
@@ -295,6 +210,15 @@ export default function ExplaintBody({
     setdataset_department,
     setdataset_domain,
     setcomplaintFiles,
+
+
+    //Explaint
+    setdataToolUse,
+    setdataToolUseValue,
+    setToolOther,
+    setdataDecision,
+    setDecisionOther,
+
   } = useListComplaint();
 
   const [previewFile, setPreviewFile] = useState<File | null>(null);
@@ -318,6 +242,9 @@ export default function ExplaintBody({
   const [filteredpriority, setFilteredpriority] = useState<LovType[]>([]);
   const [filteredphoto, setFilteredphoto] = useState<LovType[]>([]);
 
+
+  const [filteredTooluse, setFilteredToolUse] = useState<LovType[]>([]);
+  const [filteredDecision, setFilteredDecision] = useState<LovType[]>([]);
   // Value Variables ======================================================
   const [dataComplaintType, setdataComplaintType] = useState<LovType[]>([]);
   const [dataComplaintRs, setdataComplaintRs] = useState<LovType[]>([]);
@@ -363,18 +290,16 @@ export default function ExplaintBody({
   const [isMinimizetoolOpen, setisMinimizeToolOpen] = useState(true);
   const [isMinimizeddOpen, setisMinimizeDdOpen] = useState(true);
   const [isMinimizerootOpen, setisMinimizeRootOpen] = useState(true);
-  const [isMinimizepriorityOpen, setisMinimizePriorityOpen] = useState(true);
   const [isMinimizefileOpen, setisMinimizeFileOpen] = useState(true);
-  const [isMinimizerespondOpen, setisMinimizeRespondOpen] = useState(true);
 
 
   // Function Handlers (On Change Event) ======================================================
   const handleReportTypeChange = (val: LovType | null) => {
-    console.log(val, "valvalvalvalvalvalvalvalvalvalvalvalvalvalvalval");
+    console.log(": Step : 01 handleReportTypeChange", val);
 
 
     setdataReportTypeValue(val);
-    console.log(dataReportTypeValue, "dataReportTypeValue");
+    // //console.log(dataReportTypeValue, "dataReportTypeValue");
 
     setrespondent_domain_id(dataset_company[0]);
     setrespondent_company_id(dataset_company[0]);
@@ -410,21 +335,22 @@ export default function ExplaintBody({
     setrequest_company_id(dataset_company[0]);
     setFileList([]);
     setcomplaintFiles([]);
+    setdataToolUseValue("")
   };
 
-  const handleCheckboxChangeCT = (item: LovType) => {
-    console.log("💛💛item", item);
+  const handleCheckboxChangeTU = (item: LovType) => {
+    //console.log("💛💛item", item);
 
-    setdataComplaintType((prev: LovType[] = []) => {
+    setdataToolUse((prev: LovType[] = []) => {
       let newData: LovType[];
 
-      if (prev.some((c) => c.id === item.id)) {
+      if (prev.some((t) => t.id === item.id)) {
         // ถ้ามีอยู่แล้ว → เอาออก
-        newData = prev.filter((c) => c.id !== item.id);
+        newData = prev.filter((t) => t.id !== item.id);
 
         // ถ้าเอาออกแล้วเป็น Other → เคลียร์ค่า
         if (item.lov2 === "Y") {
-          setcompTypeOther("");
+          setToolOther("");
         }
       } else {
         // เพิ่ม object แบบเต็ม
@@ -432,26 +358,26 @@ export default function ExplaintBody({
       }
 
       // สร้าง array ลดรูป
-      const reducedArray = newData.map((c) => ({
-        complaint_type_id: c.id,
-        label: c.lov1,
-        isOther: c.lov2,
+      const reducedArray = newData.map((t) => ({
+        explain_tu_id: t.id,
+        label: t.lov1,
+        isOther: t.lov2,
       }));
 
       // ดู log
-      console.log("Reduced array:", reducedArray);
+      //console.log("Reduced array:", reducedArray);
 
       // อัปเดตเข้า context
-      setdataComplaintTypeValue_Combobox(reducedArray);
-      console.log(newData, "newData");
-
+      setdataToolUseValue(reducedArray);
+      // //console.log(newData, "newData");
       return newData;
     });
   };
 
-  const handleCheckboxChangeRS = (item: LovType) => {
-    setdataComplaintRs((prev: LovType[] = []) => {
-      console.log("💚💚item", item);
+
+  const handleCheckboxChangeDD = (item: LovType) => {
+    setdataDecision((prev: LovType[] = []) => {
+      //console.log("💚💚item", item);
       let newData: LovType[];
 
       if (prev.some((rs) => rs.id === item.id)) {
@@ -471,52 +397,19 @@ export default function ExplaintBody({
 
       // สร้าง array ลดรูปสำหรับ context
       const reducedArray = newData.map((rs) => ({
-        complaint_type_id: rs.id,
+        explain_dd_id: rs.id,
         label: rs.lov1,
         isOther: rs.lov2,
         isClause: rs.lov3,
       }));
       // const reducedArray = newData.map(rs => ({ complaint_type_id: rs.id, lov1: rs.lov1 }));
 
-      console.log("Reduced array:", reducedArray);
+      //console.log("Reduced array:", reducedArray);
 
       setdataComplaintRsValue_Combobox(reducedArray);
 
       return newData;
     });
-  };
-  const handleCheckboxChangePhotoType = (item: LovType) => {
-    setdataphoto((prev: LovType[] = []) => {
-      let newData: LovType[];
-
-      if (prev.some((pho) => pho.id === item.id)) {
-        // ถ้ามีอยู่แล้ว → เอาออก
-        newData = [];
-
-        // ถ้าเอาออกแล้วเป็น Other → เคลียร์ค่า
-        if (item.id === "TRR_AT_4") {
-          setphoTypeOther("");
-        }
-      } else {
-        // เพิ่ม object แบบเต็ม
-        newData = [item];
-      }
-
-      // สร้าง array ลดรูปสำหรับ context
-      const reducedArray = newData.map((pho) => ({
-        complaint_at_id: pho.id,
-        label: pho.lov1,
-      }));
-
-      console.log("Reduced array:", reducedArray);
-
-      setdataphotoValue_Combobox(reducedArray);
-
-      return newData;
-    });
-  };
-  const handleCheckboxChangePriority = (item: LovType) => {
-    setdatapriority((prev) => (prev?.id === item.id ? null : item));
   };
 
   // รับ ComplaintFile[] จาก BrowseFileUpload
@@ -526,27 +419,6 @@ export default function ExplaintBody({
 
     setFileList(updatedList);
     setcomplaintFiles(updatedList);
-  };
-
-
-
-  const handleFileAttachmentTypeChange = (index: number, type: string) => {
-    const updated = [...fileList];
-    updated[index] = {
-      ...updated[index],
-      attachmentType: type,
-      otherText: type === "TRR_AT_4" ? updated[index].otherText : "",
-    };
-    setFileList(updated);
-    setcomplaintFiles(updated);
-  };
-
-  const handleFileOtherTextChange = (index: number, text: string) => {
-    const updated = [...fileList];
-    updated[index] = { ...updated[index], otherText: text };
-    setFileList(updated);
-    setcomplaintFiles(updated);
-    return updated;
   };
 
   // Functions (Initial, Calculation or ETC.) =================================================
@@ -575,25 +447,6 @@ export default function ExplaintBody({
     setcompRsOther("");
   };
 
-  const priorityCalculateRespondDate = (
-    daysToAdd: number,
-    checked: boolean
-  ) => {
-    if (checked) {
-      const newDate = dayjs().add(daysToAdd, "day"); // use dayjs instead of Date
-      setrespond_date_within(newDate);
-    } else {
-      setrespond_date_within(null);
-    }
-  };
-
-  const arraysAreEqual = (a: any[], b: any[]) => {
-    if (a.length !== b.length) return false;
-    return a.every(
-      (item, index) => JSON.stringify(item) === JSON.stringify(b[index])
-    );
-  };
-
   const handleRemoveFile = (index: number) => {
     setFileList((prev) => {
       const updatedList = prev.filter((_, i) => i !== index);
@@ -601,8 +454,9 @@ export default function ExplaintBody({
     });
   };
   useEffect(() => {
+    
     setcomplaintFiles(fileList); // sync
-  }, [fileList]);
+  }, [fileList,filteredTooluse]);
 
   // READ - Get Complaints
   const ComplaintFile_Get = async () => {
@@ -614,16 +468,16 @@ export default function ExplaintBody({
 
     try {
       let response = await _POST(dataset, "/ComplaintFile/ComplaintFileGet");
-      console.log(response, "response_Get");
+      //console.log(response, "response_Get");
       if (response && response.status === "success") {
         setIsLoadingScreen(false);
         const responseData: any = [];
 
         if (Array.isArray(response.data)) {
-          console.log(
-            "################# FILE #######################:",
-            response.data
-          ); // เช็คว่ามีกี่แถวจริง ๆ
+          // console.log(
+          //   "################# FILE #######################:",
+          //   response.data
+          // ); // เช็คว่ามีกี่แถวจริง ๆ
 
           const mappedFiles: ComplaintFile[] = response.data.map(
             (file: any) => ({
@@ -642,12 +496,120 @@ export default function ExplaintBody({
           setFileList(mappedFiles);
           setcomplaintFiles(mappedFiles);
         }
-        console.log("mapped responseData:", responseData); // เช็คว่ามีกี่แถวหลัง map
+        //console.log("mapped responseData:", responseData); // เช็คว่ามีกี่แถวหลัง map
       }
     } catch (e) {
-      console.log("error");
+      //console.log("error");
     }
   };
+
+  // 1️⃣ ตั้ง default report type
+  // React.useEffect(() => {
+  //   if (
+  //     (isActionRead || isActionEdit || isActionDelete) &&
+  //     dataelement?.report_type &&
+  //     Array.isArray(dataset_reporttype)
+  //   ) {
+  //     const defaultVal = dataset_reporttype.find(
+  //       (item: LovType) =>
+  //         item.lov_code === dataelement.report_type ||
+  //         item.id === dataelement.report_type
+  //     );
+  //     if (defaultVal && dataReportTypeValue?.id !== defaultVal.id) {
+  //       setdataReportTypeValue(defaultVal);
+  //     }
+  //   }
+  // }, [dataelement, dataset_reporttype, dataReportTypeValue]);
+
+  // // 2️⃣ Update filteredToolUse / filteredPhoto / filteredDecision
+  // React.useEffect(() => {
+  //   if (!dataReportTypeValue) {
+  //     setFilteredToolUse([]);
+  //     setFilteredDecision([]);
+  //     setFilteredphoto([]);
+  //     return;
+  //   }
+
+  //   const reportTypeToUse = dataReportTypeValue; // ใช้ state ปัจจุบัน (ซึ่งเราเพิ่งอาจจะ set)
+  //   if (reportTypeToUse) {
+  //     const val = reportTypeToUse;
+
+
+
+  //     // const val = dataReportTypeValue;
+  //     console.log(": Step : 02 dataReportTypeValue", val);
+  //     console.log(": Step : 02.1 dataComplaintType", dataComplaintType);
+  //     console.log(": Step : 02.2 dataComplaintRs", dataComplaintRs);
+
+
+
+  //     console.log(": Step : 02.3 dataDecision", dataDecision);
+  //     console.log(": Step : 02.4 dataTooluse", dataTooluse);
+
+  //     const newFilteredComplaintType = (
+  //       dataComplaintType_Combobox || []
+  //     ).filter(
+  //       (item: LovType) =>
+  //         item.lov_type === "complaint_type" && item.lov_code === val.id
+  //     );
+  //     setFilteredComplaintType((prev: LovType[]) => {
+  //       if (JSON.stringify(prev) !== JSON.stringify(newFilteredComplaintType))
+  //         return newFilteredComplaintType;
+  //       return prev;
+  //     });
+
+  //     const newFilteredToolUse = (dataTooluse || []).filter(
+  //       (item: LovType) => item.lov_type === "tool_use"
+  //     );
+  //     setFilteredToolUse((prev) =>
+  //       JSON.stringify(prev) !== JSON.stringify(newFilteredToolUse)
+  //         ? newFilteredToolUse
+  //         : prev
+  //     );
+
+  //     const newFilteredPhoto = (dataphoto_Combobox || []).filter(
+  //       (item: LovType) => item.lov_type === "attach_type"
+  //     );
+  //     setFilteredphoto((prev) =>
+  //       JSON.stringify(prev) !== JSON.stringify(newFilteredPhoto)
+  //         ? newFilteredPhoto
+  //         : prev
+  //     );
+
+  //     if (val.lov_code === "NCR") {
+  //       const newFilteredComplaintRs = (
+  //         dataComplaintRs_Combobox || []
+  //       ).filter(
+  //         (item: LovType) =>
+  //           item.lov_type === "reference_standard" && item.lov_code === val.id
+  //       );
+  //       setFilteredComplaintRs((prev: LovType[]) => {
+  //         if (JSON.stringify(prev) !== JSON.stringify(newFilteredComplaintRs))
+  //           return newFilteredComplaintRs;
+  //         return prev;
+  //       });
+  //     } else {
+  //       setFilteredComplaintRs([]);
+  //     }
+
+  //     if (val.lov_code === "NCR") {
+  //       const newFilteredDecision = (
+  //         dataDecision || []
+  //       ).filter(
+  //         (item: LovType) =>
+  //           item.lov_type === "decision_disposition" && item.lov_code === val.id
+  //       );
+  //       setFilteredDecision((prev: LovType[]) => {
+  //         if (JSON.stringify(prev) !== JSON.stringify(newFilteredDecision))
+  //           return newFilteredDecision;
+  //         return prev;
+  //       });
+  //     } else {
+  //       setFilteredDecision([]);
+  //     }
+  //   }
+  // }, [dataReportTypeValue, dataTooluse, dataDecision, dataphoto_Combobox]);
+
 
   React.useEffect(() => {
     const updateData = async () => {
@@ -660,6 +622,7 @@ export default function ExplaintBody({
       // ถ้ามี dataset_reporttype และ dataelement ให้เรียก setValueMas เพื่อ map ค่า (safe)
       if (Array.isArray(dataset_reporttype) && dataelement) {
         try {
+
           const mapped = await setValueMas(
             dataset_reporttype,
             dataelement.report_type,
@@ -711,33 +674,50 @@ export default function ExplaintBody({
       }
 
       // 3) กรอง priority (จาก datapriority_Combobox)
-      if (Array.isArray(datapriority_Combobox)) {
-        const newFilteredPriority = datapriority_Combobox.filter(
-          (item: LovType) => item.lov_type === "priority_level"
-        );
-        setFilteredpriority((prev: LovType[]) => {
-          if (JSON.stringify(prev) !== JSON.stringify(newFilteredPriority))
-            return newFilteredPriority;
-          return prev;
-        });
-      }
+      // if (Array.isArray(datapriority_Combobox)) {
+      //   const newFilteredPriority = datapriority_Combobox.filter(
+      //     (item: LovType) => item.lov_type === "priority_level"
+      //   );
+      //   setFilteredpriority((prev: LovType[]) => {
+      //     if (JSON.stringify(prev) !== JSON.stringify(newFilteredPriority))
+      //       return newFilteredPriority;
+      //     return prev;
+      //   });
+      // }
 
       // 4) ถ้ามี dataReportTypeValue (จาก state หรือ เพิ่ง set ข้างบน) ให้กรอง complaint/attach/reference
       const reportTypeToUse = dataReportTypeValue; // ใช้ state ปัจจุบัน (ซึ่งเราเพิ่งอาจจะ set)
       if (reportTypeToUse) {
-        const val = reportTypeToUse;
 
-        const newFilteredComplaintType = (
-          dataComplaintType_Combobox || []
+        const val = reportTypeToUse;
+        console.log(": Step : 02 dataReportTypeValue", val);
+        console.log(": Step : 02.1 dataComplaintType", dataComplaintType);
+        console.log(": Step : 02.2 dataComplaintRs", dataComplaintRs);
+        console.log(": Step : 02.3 dataDecision", dataDecision);
+        console.log(": Step : 02.4 dataTooluse", dataTooluse);
+        console.log(": Step : 02.5 dataComplaintType_Combobox", dataComplaintType_Combobox);
+        var toolUselovCode = dataTooluse.lov_code
+        if (!toolUselovCode) {
+          const newDataTooluse = (
+          dataTooluse || []
         ).filter(
           (item: LovType) =>
-            item.lov_type === "complaint_type" && item.lov_code === val.id
+            item.lov_type === "tool_use" 
         );
-        setFilteredComplaintType((prev: LovType[]) => {
-          if (JSON.stringify(prev) !== JSON.stringify(newFilteredComplaintType))
-            return newFilteredComplaintType;
-          return prev;
-        });
+          setFilteredToolUse(newDataTooluse);
+        }
+
+        // const newFilteredComplaintType = (
+        //   dataComplaintType_Combobox || []
+        // ).filter(
+        //   (item: LovType) =>
+        //     item.lov_type === "complaint_type" && item.lov_code != toolUselovCode
+        // );
+        // setFilteredComplaintType((prev: LovType[]) => {
+        //   if (JSON.stringify(prev) !== JSON.stringify(newFilteredComplaintType))
+        //     return newFilteredComplaintType;
+        //   return prev;
+        // });
 
         const newFilteredPhoto = (dataphoto_Combobox || []).filter(
           (item: LovType) => item.lov_type === "attach_type"
@@ -749,19 +729,19 @@ export default function ExplaintBody({
         });
 
         if (val.lov_code === "NCR") {
-          const newFilteredComplaintRs = (
-            dataComplaintRs_Combobox || []
+          const newFilteredDecision = (
+            dataDecision || []
           ).filter(
             (item: LovType) =>
-              item.lov_type === "reference_standard" && item.lov_code === val.id
+              item.lov_type === "decision_disposition" && item.lov_code === val.id
           );
-          setFilteredComplaintRs((prev: LovType[]) => {
-            if (JSON.stringify(prev) !== JSON.stringify(newFilteredComplaintRs))
-              return newFilteredComplaintRs;
+          setFilteredDecision((prev: LovType[]) => {
+            if (JSON.stringify(prev) !== JSON.stringify(newFilteredDecision))
+              return newFilteredDecision;
             return prev;
           });
         } else {
-          setFilteredComplaintRs([]);
+          setFilteredDecision([]);
         }
       } else {
         // ถ้ายังไม่มี reportType ก็ reset
@@ -778,37 +758,27 @@ export default function ExplaintBody({
     action,
     dataelement?.report_type, // ใช้ property เพื่อให้ effect รันเมื่อ report_type เปลี่ยน
     dataset_reporttype,
-    datapriority_Combobox,
     dataComplaintType_Combobox,
     dataComplaintRs_Combobox,
     dataphoto_Combobox,
     dataReportTypeValue, // เพราะเรใช้ state นี้ต่อใน effect (และต้องการให้ flow ใช้ค่าล่าสุด)
   ]);
 
+
   React.useEffect(() => {
-    console.log(
-      dataelement,
-      "55555555555555555555555555555",
-      filteredComplaintType
-    );
-    console.log(
-      dataelement,
-      "55555555555555555555555555555",
-      datapriority_Combobox
-    );
-    console.log(
-      dataelement?.priority_level,
-      "55555555555555555555555555555",
-      datapriority_Combobox
-    );
-    console.log("💥💥CasNumber:", dataelement?.cas_number);
-    console.log("dataReportTypeValue", dataReportTypeValue);
-    console.log("dataComplaintRs", dataComplaintRs);
-    console.log("filteredComplaintRs", filteredComplaintRs);
-    console.log("💚 raw complaintRs from element:", dataelement?.complaintRs);
-    console.log("💚 dataComplaintRs_Combobox:", dataComplaintRs_Combobox);
-    const rsData = setComplaintRs(dataelement?.complaintRs);
-    console.log("💚 mapped rsData:", rsData);
+    // //console.log(
+    //   dataelement,
+    //   "55555555555555555555555555555",
+    //   filteredTooluse
+    // );
+    // //console.log("💥💥CasNumber:", dataelement?.cas_number);
+    // //console.log("dataReportTypeValue", dataReportTypeValue);
+    // //console.log("dataComplaintRs", dataComplaintRs);
+    // //console.log("filteredComplaintRs", filteredComplaintRs);
+    // //console.log("💚 raw complaintRs from element:", dataelement?.complaintRs);
+    // //console.log("💚 dataComplaintRs_Combobox:", dataComplaintRs_Combobox);
+    // const rsData = setComplaintRs(dataelement?.complaintRs);
+    // //console.log("💚 mapped rsData:", rsData);
 
     if (dataelement && action != "Add") {
       setrespondent_company_id(
@@ -844,7 +814,6 @@ export default function ExplaintBody({
       setcompRsOther(dataelement?.other ? dataelement?.other : "");
       setclauseOther(dataelement?.clause ? dataelement?.clause : "");
       setdetail(dataelement?.detail ? dataelement?.detail : "");
-      setpriority_level(setPriorityLevel(dataelement?.priority_level));
       setrespond_date_within(
         dataelement?.respond_date_within
           ? dayjs(dataelement.respond_date_within, "DD-MM-YYYY")
@@ -896,16 +865,6 @@ export default function ExplaintBody({
 
       const clauseRS = rs.find((el: any) => el.lov3 === "Clause");
       setclauseOther(clauseRS?.clause || "");
-
-      // หา LovType จาก datapriority_Combobox ตาม dataelement?.priority_level
-      const selectedPriority =
-        datapriority_Combobox.find(
-          (item: any) => item.id === dataelement?.priority_level
-        ) || null;
-
-      setdatapriority(selectedPriority);
-      setpriority_level(selectedPriority);
-
     }
   }, [dataset_reporttype]);
 
@@ -952,16 +911,7 @@ export default function ExplaintBody({
       });
     return newData;
   };
-  const setPriorityLevel = (value: any) => {
-    if (!value) return null;
 
-    // หา object ที่ id ตรงกับค่าที่ DB ส่งมา
-    const selected =
-      datapriority_Combobox.find((item: any) => item.id === value) || null;
-
-    console.log("🎯 Priority matched:", selected);
-    return selected;
-  };
 
   return (
     <Box
@@ -1080,7 +1030,7 @@ export default function ExplaintBody({
                     options={dataset_department}
                     column="itasset_department_name"
                     setvalue={(e) => {
-                      console.log(e); // ดูค่าของ e ที่ถูกส่งมาจาก AutocompleteComboBox
+                      // //console.log(e); // ดูค่าของ e ที่ถูกส่งมาจาก AutocompleteComboBox
                       setrespondent_department_id(e);
                     }}
                     bgcolorTextField={
@@ -1190,23 +1140,23 @@ export default function ExplaintBody({
                           <Divider sx={{ my: 0 }} />
                           <Box sx={{ flexGrow: 1, display: "flex", flexDirection: "column" }}>
                             <Grid container spacing={2}>
-                              {(filteredComplaintType || []).map((item: LovType) => (
+                              {(filteredTooluse || []).map((item: LovType) => (
                                 <Grid size={3} key={item.id}>
                                   <FullWidthCheckbox
                                     labelName={item.lov1}
-                                    value={dataComplaintType.some((c) => c.id === item.id)}
-                                    onchange={() => handleCheckboxChangeCT(item)}
+                                    value={dataTooluse.some((t: any) => t.id === item.id)}
+                                    onchange={() => handleCheckboxChangeTU(item)}
                                     readonly={isActionRead || isActionDelete}
                                   />
                                 </Grid>
                               ))}
                             </Grid>
                             <Box sx={{ mt: "auto", pt: 2 }}>
-                              {dataComplaintType.some((c) => c.lov2 === "Y") && (
+                              {dataTooluse.some((t: any) => t.lov2 === "Y") && (
                                 <FullWidthTextArea
-                                  value={compTypeOther}
+                                  value={ToolOther}
                                   labelName="Other:"
-                                  onchange={(e) => setcompTypeOther(e)}
+                                  onchange={(e) => setToolOther(e)}
                                   bgcolorTextField={
                                     action === "Add" ? false : isActionEdit ? false : true
                                   }
@@ -1244,12 +1194,12 @@ export default function ExplaintBody({
                           <Divider sx={{ my: 0 }} />
                           <Box sx={{ flexGrow: 1, display: "flex", flexDirection: "column" }}>
                             <Grid container spacing={2}>
-                              {filteredComplaintRs.map((item: LovType) => (
+                              {filteredDecision.map((item: LovType) => (
                                 <Grid size={3} key={item.id}>
                                   <FullWidthCheckbox
                                     labelName={item.lov1}
-                                    value={dataComplaintRs.some((rs) => rs.id === item.id)}
-                                    onchange={() => handleCheckboxChangeRS(item)}
+                                    value={dataDecision.some((rs:any) => rs.id === item.id)}
+                                    onchange={() => handleCheckboxChangeDD(item)}
                                     readonly={isActionRead || isActionDelete}
                                   />
                                 </Grid>
@@ -1257,23 +1207,11 @@ export default function ExplaintBody({
                             </Grid>
 
                             <Box sx={{ mt: "auto", pt: 2 }}>
-                              {dataComplaintRs.some((rs) => rs.lov3 === "Other") && (
+                              {dataDecision.some((t: any) => t.lov2 === "Y") && (
                                 <FullWidthTextArea
-                                  value={compRsOther}
+                                  value={DecisionOther}
                                   labelName="Other:"
-                                  onchange={(e) => setcompRsOther(e)}
-                                  bgcolorTextField={
-                                    action === "Add" ? false : isActionEdit ? false : true
-                                  }
-                                  readonly={isActionRead || isActionDelete}
-                                />
-                              )}
-
-                              {dataComplaintRs.some((rs) => rs.lov3 === "Clause") && (
-                                <FullWidthTextArea
-                                  value={clauseOther}
-                                  labelName="Clause:"
-                                  onchange={(e) => setclauseOther(e)}
+                                  onchange={(e) => setDecisionOther(e)}
                                   bgcolorTextField={
                                     action === "Add" ? false : isActionEdit ? false : true
                                   }
@@ -1501,10 +1439,10 @@ export default function ExplaintBody({
 
                                                 URL.revokeObjectURL(url); // cleanup memory
                                               } catch (err) {
-                                                console.error(
-                                                  "Download failed:",
-                                                  err
-                                                );
+                                                // //console.error(
+                                                //   "Download failed:",
+                                                //   err
+                                                // );
                                               }
                                             }}
                                           >
@@ -1534,7 +1472,7 @@ export default function ExplaintBody({
               </Accordion>
             </Paper>
 
-            
+
           </Grid>
         </Paper>
       )}
