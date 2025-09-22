@@ -253,17 +253,41 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
     const [dataTooluse, setdataToolUse] = useState<any>(
         initialListComplaint.dataTooluse
     );
+    const [dataToolUse_Combobox, setdataToolUse_Combobox] = useState<any>(
+        initialListComplaint.dataToolUse_Combobox
+    );
     const [dataTooluseValue, setdataToolUseValue] = useState<any>(
         initialListComplaint.dataTooluseValue
     );
     const [ToolOther, setToolOther] = useState<any>(
         initialListComplaint.ToolOther
     );
+    const [dataDecision_Combobox, setdataDecision_Combobox] = useState<any>(
+        initialListComplaint.dataDecision_Combobox
+    );
     const [dataDecision, setdataDecision] = useState<any>(
         initialListComplaint.dataDecision
     );
+    const [dataDecisionValue, setdataDecisionValue] = useState<any>(
+        initialListComplaint.dataDecisionValue
+    );
     const [DecisionOther, setDecisionOther] = useState<any>(
         initialListComplaint.DecisionOther
+    );
+    const [dataApprove_Combobox, setdataApprove_Combobox] = useState<any>(
+        initialListComplaint.dataApprove_Combobox
+    );
+    const [dataSectionapp, setdataSectionapp] = useState<any>(
+        initialListComplaint.dataSectionapp
+    );
+    const [dataSectionappValue, setdataSectionappValue] = useState<any>(
+        initialListComplaint.dataSectionappValue
+    );
+    const [dataQcapp, setdataQcapp] = useState<any>(
+        initialListComplaint.dataQcapp
+    );
+    const [dataQcappValue, setdataQcappValue] = useState<any>(
+        initialListComplaint.dataQcappValue
     );
 
     return (
@@ -355,10 +379,18 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 
                 //--------Explaint-------
                 dataTooluse,
+                dataToolUse_Combobox,
                 dataTooluseValue,
                 dataDecision,
+                dataDecision_Combobox,
+                dataDecisionValue,
                 ToolOther,
                 DecisionOther,
+                dataApprove_Combobox,
+                dataSectionapp,
+                dataSectionappValue,
+                dataQcapp,
+                dataQcappValue,
 
 
                 setComplaint_no,
@@ -443,10 +475,18 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 
                 //--------Explaint-------
                 setdataToolUse,
+                setdataToolUse_Combobox,
                 setdataToolUseValue,
+                setdataDecision_Combobox,
                 setdataDecision,
+                setdataDecisionValue,
                 setToolOther,
                 setDecisionOther,
+                setdataApprove_Combobox,
+                setdataSectionapp,
+                setdataSectionappValue,
+                setdataQcapp,
+                setdataQcappValue,
 
             }}
         >

@@ -207,6 +207,8 @@ export default function Complaint() {
     //Explaint
     dataTooluse,
     dataDecision,
+    dataDecision_Combobox,
+    dataApprove_Combobox,
     
 
     // Setter Functions
@@ -235,6 +237,9 @@ export default function Complaint() {
 
     //set Explaint
     setdataToolUse,
+    setdataToolUse_Combobox,
+    setdataDecision_Combobox,
+    setdataApprove_Combobox,
     setdataDecision
 
 
@@ -480,7 +485,7 @@ export default function Complaint() {
     const dataset = {
       lov_group: "TRR.TRRGROUP.COM",
       lov_type:
-        "report_type,complaint_type,reference_standard,attach_type,complaint_status,tool_use,decision_disposition",
+        "report_type,complaint_type,reference_standard,attach_type,complaint_status,tool_use,decision_disposition,approve_select",
     };
     const response = await _POST(dataset, "/Lov/LovGet");
 
@@ -503,9 +508,9 @@ export default function Complaint() {
       setdataComplaintRs_Combobox?.(grouped["reference_standard"] || []);
       setdataphoto_Combobox?.(grouped["attach_type"] || []);
       setdatastatus?.(grouped["complaint_status"] || []);
-      setdataToolUse?.(grouped["tool_use"] || []);
-      setdataDecision?.(grouped["decision_disposition"] || []);
-      
+      setdataToolUse_Combobox?.(grouped["tool_use"] || []);
+      setdataDecision_Combobox?.(grouped["decision_disposition"] || []);
+      setdataApprove_Combobox?.(grouped["approve_select"] || []);
     }
   } catch (e) {
     console.log("error:", e);
@@ -1489,7 +1494,7 @@ export default function Complaint() {
         handlefunction={ComplaintAdd}
         colorBotton="success"
         element={
-          <ComplaintBody
+          <ExplaintBody
             action="Add"
             onBlocksChange={(data) => setComplaintBlocks(data)}
             validateDetailText={blockValidateErrors}
