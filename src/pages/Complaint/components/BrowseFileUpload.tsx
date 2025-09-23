@@ -85,8 +85,8 @@ export default function BrowseFileUpload({
         {labelname}
       </label>
 
-      {/* Select + OtherText + Upload Button แสดงเฉพาะถ้าไม่ใช่ Read */}
-      {action !== "Read" && (
+      {/*select ประเภทไฟล์ และ ปุ่มอัปโหลด */}
+      {(action == "Add" || action == "Edit") && (
         <>
           {/* Select + OtherText */}
           <div className="flex items-center gap-2 mb-2 w-full">
