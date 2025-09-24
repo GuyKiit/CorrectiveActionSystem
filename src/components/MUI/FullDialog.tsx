@@ -20,6 +20,7 @@ interface FuncDialog {
   open: boolean;
   handleClose: () => void;
   handlefunction?: () => void;
+  handlesavedraft?: () => void;
   titlename?: string;
   dialogWidth?: "xs" | "sm" | "md" | "lg" | "xl";
   openBottonHidden?: boolean;
@@ -77,7 +78,7 @@ export default function FuncDialog(props: FuncDialog) {
         <div>
           {props.openBottonHidden && (
             <FullWidthButton
-              handleonClick={props.handlefunction ?? props.handleClose}
+              handleonClick={props.handlesavedraft ?? props.handleClose}
               labelName= "Save Draft"
               variant_text="contained"
               colorname={props.colorBotton ?? "primary"}

@@ -182,6 +182,39 @@ export default function ExplaintBody({
     dataSectionappValue,
     dataQcapp,
     dataQcappValue,
+    explain_id,
+    complaint_id,
+    explain_seq,
+    observation_analysis,
+    root_cause,
+    corrective_action,
+    preventive_action_plan,
+    follow_up_date,
+    responsible_name,
+    responsible_company_id,
+    responsible_department_id,
+    responsible_position,
+    responsible_email,
+    responsible_date,
+    close_status,
+    close_name,
+    close_company_id,
+    close_department_id,
+    close_position,
+    close_email,
+    close_date,
+    return_detail,
+    return_name,
+    return_company_id,
+    return_department_id,
+    return_position,
+    return_email,
+    return_datetime,
+    explain_record_status,
+    explain_create_by,
+    explain_create_datetime,
+    explain_update_by,
+    explain_update_datetime,
 
     setcas_number,
     setdoc_date,
@@ -232,6 +265,39 @@ export default function ExplaintBody({
     setdataSectionappValue,
     setdataQcapp,
     setdataQcappValue,
+    setexplain_id,
+    setcomplaint_id,
+    setexplain_seq,
+    setobservation_analysis,
+    setroot_cause,
+    setcorrective_action,
+    setpreventive_action_plan,
+    setfollow_up_date,
+    setresponsible_name,
+    setresponsible_company_id,
+    setresponsible_department_id,
+    setresponsible_position,
+    setresponsible_email,
+    setresponsible_date,
+    setclose_status,
+    setclose_name,
+    setclose_company_id,
+    setclose_department_id,
+    setclose_position,
+    setclose_email,
+    setclose_date,
+    setreturn_detail,
+    setreturn_name,
+    setreturn_company_id,
+    setreturn_department_id,
+    setreturn_position,
+    setreturn_email,
+    setreturn_datetime,
+    setexplain_record_status,
+    setexplain_create_by,
+    setexplain_create_datetime,
+    setexplain_update_by,
+    setexplain_update_datetime,
 
   } = useListComplaint();
 
@@ -274,6 +340,8 @@ export default function ExplaintBody({
   const [isTUHidden, setIsTUHidden] = useState(true);
   const [isCAHidden, setIsCAHidden] = useState(true);
   const [isPAPHidden, setIsPAPHidden] = useState(true);
+  const [isOBSAHidden, setIsOBSAHidden] = useState(true);
+  const [isROOTHidden, setIsROOTHidden] = useState(true);
 
   const [isCasNumberHidden, setisCasNumberHidden] = useState(true);
   const [isFactoryHidden, setisFactoryHidden] = useState(true);
@@ -297,6 +365,7 @@ export default function ExplaintBody({
 
   // สร้าง state สำหรับควบคุม Accordion
   const [isMinimizetoolOpen, setisMinimizeToolOpen] = useState(true);
+  const [isMinimizeobservOpen, setisMinimizeObservOpen] = useState(true);
   const [isMinimizeddOpen, setisMinimizeDdOpen] = useState(true);
   const [isMinimizerootOpen, setisMinimizeRootOpen] = useState(true);
   const [isMinimizecaOpen, setisMinimizeCaOpen] = useState(true);
@@ -304,6 +373,10 @@ export default function ExplaintBody({
   const [isMinimizefileOpen, setisMinimizeFileOpen] = useState(true);
   const [isMinimizesectionappOpen, setisMinimizeSectionappOpen] = useState(true);
   const [isMinimizeqcappOpen, setisMinimizeQcappOpen] = useState(true);
+  const [isMinimizedeappOpen, setisMinimizeDeappOpen] = useState(true);
+  const [isMinimizeotappOpen, setisMinimizeOtappOpen] = useState(true);
+  const [isMinimizedeapp2Open, setisMinimizeDeapp2Open] = useState(true);
+  const [isMinimizeotapp2Open, setisMinimizeOtapp2Open] = useState(true);
 
 
   // Function Handlers (On Change Event) ======================================================
@@ -317,6 +390,8 @@ export default function ExplaintBody({
     setIsTUHidden(["NCR", "CAR", "CPAR"].includes(code));
     setIsCAHidden(["NCR", "OBS"].includes(code));
     setIsPAPHidden(["NCR", "OBS", "CAR"].includes(code));
+    setIsOBSAHidden(["NCR", "CPAR", "CAR"].includes(code));
+    setIsROOTHidden(["OBS"].includes(code));
     setdataReportTypeValue(val);
 
     setrespondent_domain_id(dataset_company[0]);
@@ -332,7 +407,6 @@ export default function ExplaintBody({
     setdataComplaintType([]);
     setcompTypeOther("");
     setdataComplaintRsValue_Combobox(null);
-    setdataDecision([]);
     setcompRsOther("");
     setclauseOther("");
     setdetail("");
@@ -353,7 +427,9 @@ export default function ExplaintBody({
     setrequest_company_id(dataset_company[0]);
     setFileList([]);
     setcomplaintFiles([]);
-    setdataToolUseValue("")
+    setdataToolUseValue(null)
+    setdataToolUse([]);
+    setdataDecision([]);
   };
 
   const handleCheckboxChangeTU = (item: LovType) => {
@@ -418,7 +494,7 @@ export default function ExplaintBody({
     });
   };
 
-  
+
   // รับ ComplaintFile[] จาก BrowseFileUpload
   const handleFileChange = (fileArray: ComplaintFile[]) => {
     if (!fileArray || fileArray.length === 0) return;
@@ -618,15 +694,15 @@ export default function ExplaintBody({
         });
 
         if (val.lov_code === "NCR") {
-          const newFilteredComplaintRs = (
+          const newFilteredDecision = (
             dataDecision_Combobox || []
           ).filter(
             (item: LovType) =>
               item.lov_type === "decision_disposition"
           );
           setFilteredDecision((prev: LovType[]) => {
-            if (JSON.stringify(prev) !== JSON.stringify(newFilteredComplaintRs))
-              return newFilteredComplaintRs;
+            if (JSON.stringify(prev) !== JSON.stringify(newFilteredDecision))
+              return newFilteredDecision;
             return prev;
           });
         } else {
@@ -636,6 +712,8 @@ export default function ExplaintBody({
         // ถ้ายังไม่มี reportType ก็ reset
         setFilteredToolUse([]);
         setFilteredDecision([]);
+        setFilteredQcApprove([]);
+        setFilteredSecApprove([]);
         setFilteredphoto([]);
         // หมายเหตุ: filteredpriority เรา update ข้างบนแล้ว
       }
@@ -650,6 +728,7 @@ export default function ExplaintBody({
     dataToolUse_Combobox,
     dataDecision_Combobox,
     dataphoto_Combobox,
+    dataApprove_Combobox,
     dataReportTypeValue, // เพราะเรใช้ state นี้ต่อใน effect (และต้องการให้ flow ใช้ค่าล่าสุด)
   ]);
 
@@ -684,11 +763,10 @@ export default function ExplaintBody({
       setrespondent_email(
         dataelement?.respondent_email ? dataelement?.respondent_email : ""
       );
-      setdataComplaintType(setComplaintType(dataelement?.complaintType));
-      setcompTypeOther(dataelement?.other ? dataelement?.other : "");
-      setdataDecision(setExplaintDD(dataelement?.complaintRs));
-      setcompRsOther(dataelement?.other ? dataelement?.other : "");
-      setclauseOther(dataelement?.clause ? dataelement?.clause : "");
+      setdataToolUse(setExplainTU(dataelement?.complaintType));
+      setToolOther(dataelement?.other ? dataelement?.other : "");
+      setdataDecision(setExplainDD(dataelement?.complaintRs));
+      setDecisionOther(dataelement?.other ? dataelement?.other : "");
       setdetail(dataelement?.detail ? dataelement?.detail : "");
       setrespond_date_within(
         dataelement?.respond_date_within
@@ -721,14 +799,14 @@ export default function ExplaintBody({
 
       // สมมติ LovType คือ { id: string; label: string }
 
-      const ct = setComplaintType(dataelement?.complaintType);
-      setdataComplaintType(ct);
+      const tu = setExplainTU(dataelement?.complaintType);
+      setdataToolUse(tu);
 
       // ถ้ามี complaintType ที่เป็น Other ให้ดึงค่ามา
-      const otherCT = ct.find((el: any) => el.lov2 === "Y");
-      setcompTypeOther(otherCT?.other || "");
+      const othertu = tu.find((el: any) => el.lov2 === "Y");
+      setToolOther(othertu?.other || "");
 
-      const dd = setExplaintDD(dataelement?.complaintRs);
+      const dd = setExplainDD(dataelement?.complaintRs);
       setdataDecision(dd);
 
       const otherdd = dd.find((el: any) => el.lov2 === "Y");
@@ -743,12 +821,12 @@ export default function ExplaintBody({
     }
   }, [action, dataelement]);
 
-  const setComplaintType = (data: any) => {
+  const setExplainTU = (data: any) => {
     const newData: any[] = [];
     Array.isArray(data) &&
       data.forEach((el) => {
         const filter = dataToolUse_Combobox.find(
-          (item: any) => item.id === el.complaint_type_id
+          (item: any) => item.id === el.explain_tu_id
         );
 
         if (filter) {
@@ -761,7 +839,7 @@ export default function ExplaintBody({
     return newData;
   };
 
-  const setExplaintDD = (data: any) => {
+  const setExplainDD = (data: any) => {
     const newData: any[] = [];
     Array.isArray(data) &&
       data.forEach((el) => {
@@ -871,48 +949,48 @@ export default function ExplaintBody({
                 <Grid size={4}>
                   <FullWidthTextField
                     required="required"
-                    value={product_name}
+                    value={responsible_name}
                     labelName="ชื่อผู้ดำเนินการ (Responsible Person)"
-                    onchange={(e) => setproduct_name(e)}
+                    onchange={(e) => setresponsible_name(e)}
                     readonly={isActionRead || isActionDelete}
                   />
                 </Grid>
                 <Grid size={4}>
                   <FullWidthTextField
                     required="required"
-                    value={product_name}
+                    value={responsible_company_id}
                     labelName="บริษัท (Company)"
-                    onchange={(e) => setproduct_name(e)}
+                    onchange={(e) => setresponsible_company_id(e)}
                     readonly={isActionRead || isActionDelete}
                   />
                 </Grid>
                 <Grid size={4}>
                   <AutocompleteComboBox
                     required="required"
-                    value={respondent_department_id}
-                    labelName={"แผนก (Department)" }
+                    value={responsible_department_id}
+                    labelName={"แผนก (Department)"}
                     options={dataset_department}
                     column="itasset_department_name"
-                    setvalue={(e) => {setrespondent_department_id(e);}}
-                    bgcolorTextField={action === "Add" ? false : isActionEdit ? false : true }
+                    setvalue={(e) => { setresponsible_department_id(e); }}
+                    bgcolorTextField={action === "Add" ? false : isActionEdit ? false : true}
                     readonly={isActionRead || isActionDelete}
                   />
                 </Grid>
                 <Grid size={4}>
                   <FullWidthTextField
                     required="required"
-                    value={product_name}
-                    labelName="แผนก (Position)"
-                    onchange={(e) => setproduct_name(e)}
+                    value={responsible_position}
+                    labelName="ตำแหน่ง (Position)"
+                    onchange={(e) => setresponsible_position(e)}
                     readonly={isActionRead || isActionDelete}
                   />
                 </Grid>
                 <Grid size={4}>
                   <FullWidthTextField
                     required="required"
-                    value={respondent_email}
+                    value={responsible_email}
                     labelName="อีเมล (Email)"
-                    onchange={(e) => setrespondent_email(e)}
+                    onchange={(e) => setresponsible_email(e)}
                     readonly={isActionRead || isActionDelete}
                   />
                 </Grid>
@@ -920,18 +998,18 @@ export default function ExplaintBody({
                   <DesktopDatePickers
                     required="required"
                     labelName={"วันที่ชี้แจง (Date)"}
-                    value={date_of_detection}
-                    handleChange={(val) => setdate_of_detection(val ?? null)}
+                    value={responsible_date}
+                    handleChange={(val) => setresponsible_date(val ?? null)}
                     bgcolorTextField={action === "Add" ? false : true}
-                    readonly={isActionRead || isActionEdit || isActionDelete}
+                    readonly
                   />
                 </Grid>
                 <Grid size={4}>
                   <DesktopDatePickers
                     required="required"
                     labelName={"กำหนดวันตรวจติดตามผลวันที่ (Follow-up Date)"}
-                    value={date_of_detection}
-                    handleChange={(val) => setdate_of_detection(val ?? null)}
+                    value={follow_up_date}
+                    handleChange={(val) => setfollow_up_date(val ?? null)}
                     bgcolorTextField={action === "Add" ? false : true}
                     readonly={isActionRead || isActionEdit || isActionDelete}
                   />
@@ -1081,7 +1159,51 @@ export default function ExplaintBody({
                     </Grid>
                   )}
                 </Grid>
-                {
+                {!isOBSAHidden && dataReportTypeValue && (
+                  <Accordion
+                    expanded={isMinimizeobservOpen}
+                    onChange={() => setisMinimizeObservOpen(!isMinimizeobservOpen)}
+                    sx={{
+                      borderRadius: 2,
+                      backgroundColor: "#fafafa",
+                      mt: 2  // <-- เพิ่ม margin-top
+                    }}>
+                    <AccordionSummary
+                      expandIcon={<ExpandMoreIcon />}
+                      aria-controls="detail-content"
+                      id="detail-header"
+                    >
+                      <Typography
+                        className="sarabun-regular-datatable"
+                        sx={{ fontSize: "18px", fontWeight: 600, color: "#333" }}
+                      >
+                        การวิเคราะห์เบื้องต้นของข้อสังเกต (Observation Analysis)
+                        <span style={{ color: "red" }}> *</span>
+                      </Typography>
+                    </AccordionSummary>
+
+                    <AccordionDetails>
+                      <Box sx={{ mt: -3 }}>
+                        <Divider sx={{ my: 1 }} />
+                        <Grid container spacing={2} sx={{ justifyContent: 'center', alignItems: 'flex-start' }}>
+                          {/* Response Date Field - positioned after Emergency option */}
+                          <Grid size={12}>
+                            <FullWidthTextArea
+                              value={observation_analysis}
+                              labelName=""
+                              onchange={(e) => setobservation_analysis(e)}
+                              bgcolorTextField={action === "Add" ? false : isActionEdit ? false : true}
+                              readonly={isActionRead || isActionDelete}
+                            />
+
+                          </Grid>
+                        </Grid>
+                      </Box>
+                    </AccordionDetails>
+                  </Accordion>
+                )}
+
+                {!isROOTHidden && dataReportTypeValue && (
                   <Accordion
                     expanded={isMinimizerootOpen}
                     onChange={() => setisMinimizeRootOpen(!isMinimizerootOpen)}
@@ -1111,9 +1233,9 @@ export default function ExplaintBody({
                           {/* Response Date Field - positioned after Emergency option */}
                           <Grid size={12}>
                             <FullWidthTextArea
-                              value={detail}
+                              value={root_cause}
                               labelName=""
-                              onchange={(e) => setdetail(e)}
+                              onchange={(e) => setroot_cause(e)}
                               bgcolorTextField={action === "Add" ? false : isActionEdit ? false : true}
                               readonly={isActionRead || isActionDelete}
                             />
@@ -1123,7 +1245,7 @@ export default function ExplaintBody({
                       </Box>
                     </AccordionDetails>
                   </Accordion>
-                }
+                )}
 
                 {!isCAHidden && dataReportTypeValue && (
                   <Accordion
@@ -1155,9 +1277,9 @@ export default function ExplaintBody({
                           {/* Response Date Field - positioned after Emergency option */}
                           <Grid size={12}>
                             <FullWidthTextArea
-                              value={detail}
+                              value={corrective_action}
                               labelName=""
-                              onchange={(e) => setdetail(e)}
+                              onchange={(e) => setcorrective_action(e)}
                               bgcolorTextField={action === "Add" ? false : isActionEdit ? false : true}
                               readonly={isActionRead || isActionDelete}
                             />
@@ -1199,9 +1321,9 @@ export default function ExplaintBody({
                           {/* Response Date Field - positioned after Emergency option */}
                           <Grid size={12}>
                             <FullWidthTextArea
-                              value={detail}
+                              value={preventive_action_plan}
                               labelName=""
-                              onchange={(e) => setdetail(e)}
+                              onchange={(e) => setpreventive_action_plan(e)}
                               bgcolorTextField={action === "Add" ? false : isActionEdit ? false : true}
                               readonly={isActionRead || isActionDelete}
                             />
@@ -1606,6 +1728,91 @@ export default function ExplaintBody({
                         </Box>
                       </AccordionDetails>
                     </Accordion>
+                    {dataReportTypeValue && (
+                      <Accordion
+                        expanded={isMinimizedeappOpen}
+                        onChange={() => setisMinimizeDeappOpen(!isMinimizedeappOpen)}
+                        sx={{
+                          borderRadius: 2,
+                          backgroundColor: "#fafafa",
+                          mt: 2  // <-- เพิ่ม margin-top
+                        }}>
+                        <AccordionSummary
+                          expandIcon={<ExpandMoreIcon />}
+                          aria-controls="detail-content"
+                          id="detail-header"
+                        >
+                          <Typography
+                            className="sarabun-regular-datatable"
+                            sx={{ fontSize: "18px", fontWeight: 600, color: "#333" }}
+                          >
+                            หมายเหตุการอนุมัติ
+                            <span style={{ color: "red" }}> *</span>
+                          </Typography>
+                        </AccordionSummary>
+
+                        <AccordionDetails>
+                          <Box sx={{ mt: -3 }}>
+                            <Divider sx={{ my: 1 }} />
+                            <Grid container spacing={2} sx={{ justifyContent: 'center', alignItems: 'flex-start' }}>
+                              {/* Response Date Field - positioned after Emergency option */}
+                              <Grid size={12}>
+                                <FullWidthTextArea
+                                  value={root_cause}
+                                  labelName=""
+                                  onchange={(e) => setroot_cause(e)}
+                                  bgcolorTextField={action === "Add" ? false : isActionEdit ? false : true}
+                                  readonly={isActionRead || isActionDelete}
+                                />
+                              </Grid>
+                            </Grid>
+                          </Box>
+                        </AccordionDetails>
+                      </Accordion>
+                    )}
+                    {dataReportTypeValue && (
+                      <Accordion
+                        expanded={isMinimizeotappOpen}
+                        onChange={() => setisMinimizeOtappOpen(!isMinimizeotappOpen)}
+                        sx={{
+                          borderRadius: 2,
+                          backgroundColor: "#fafafa",
+                          mt: 2  // <-- เพิ่ม margin-top
+                        }}>
+                        <AccordionSummary
+                          expandIcon={<ExpandMoreIcon />}
+                          aria-controls="detail-content"
+                          id="detail-header"
+                        >
+                          <Typography
+                            className="sarabun-regular-datatable"
+                            sx={{ fontSize: "18px", fontWeight: 600, color: "#333" }}
+                          >
+                            หมายเหตุเพิ่มเติม
+                            <span style={{ color: "red" }}> *</span>
+                          </Typography>
+                        </AccordionSummary>
+
+                        <AccordionDetails>
+                          <Box sx={{ mt: -3 }}>
+                            <Divider sx={{ my: 1 }} />
+                            <Grid container spacing={2} sx={{ justifyContent: 'center', alignItems: 'flex-start' }}>
+                              {/* Response Date Field - positioned after Emergency option */}
+                              <Grid size={12}>
+                                <FullWidthTextArea
+                                  value={root_cause}
+                                  labelName=""
+                                  onchange={(e) => setroot_cause(e)}
+                                  bgcolorTextField={action === "Add" ? false : isActionEdit ? false : true}
+                                  readonly={isActionRead || isActionDelete}
+                                />
+
+                              </Grid>
+                            </Grid>
+                          </Box>
+                        </AccordionDetails>
+                      </Accordion>
+                    )}
                   </Grid>
                 )}
               </Grid>
@@ -1719,6 +1926,7 @@ export default function ExplaintBody({
                     readonly={isActionRead || isActionEdit || isActionDelete}
                   />
                 </Grid>
+
               </Grid>
 
               <Box sx={{ mt: 4 }}>
@@ -1818,6 +2026,92 @@ export default function ExplaintBody({
                         </Box>
                       </AccordionDetails>
                     </Accordion>
+                    {dataReportTypeValue && (
+                      <Accordion
+                        expanded={isMinimizedeapp2Open}
+                        onChange={() => setisMinimizeDeapp2Open(!isMinimizedeapp2Open)}
+                        sx={{
+                          borderRadius: 2,
+                          backgroundColor: "#fafafa",
+                          mt: 2  // <-- เพิ่ม margin-top
+                        }}>
+                        <AccordionSummary
+                          expandIcon={<ExpandMoreIcon />}
+                          aria-controls="detail-content"
+                          id="detail-header"
+                        >
+                          <Typography
+                            className="sarabun-regular-datatable"
+                            sx={{ fontSize: "18px", fontWeight: 600, color: "#333" }}
+                          >
+                            หมายเหตุการอนุมัติ
+                            <span style={{ color: "red" }}> *</span>
+                          </Typography>
+                        </AccordionSummary>
+
+                        <AccordionDetails>
+                          <Box sx={{ mt: -3 }}>
+                            <Divider sx={{ my: 1 }} />
+                            <Grid container spacing={2} sx={{ justifyContent: 'center', alignItems: 'flex-start' }}>
+                              {/* Response Date Field - positioned after Emergency option */}
+                              <Grid size={12}>
+                                <FullWidthTextArea
+                                  value={root_cause}
+                                  labelName=""
+                                  onchange={(e) => setroot_cause(e)}
+                                  bgcolorTextField={action === "Add" ? false : isActionEdit ? false : true}
+                                  readonly={isActionRead || isActionDelete}
+                                />
+
+                              </Grid>
+                            </Grid>
+                          </Box>
+                        </AccordionDetails>
+                      </Accordion>
+                    )}
+                    {dataReportTypeValue && (
+                      <Accordion
+                        expanded={isMinimizeotapp2Open}
+                        onChange={() => setisMinimizeOtapp2Open(!isMinimizeotapp2Open)}
+                        sx={{
+                          borderRadius: 2,
+                          backgroundColor: "#fafafa",
+                          mt: 2  // <-- เพิ่ม margin-top
+                        }}>
+                        <AccordionSummary
+                          expandIcon={<ExpandMoreIcon />}
+                          aria-controls="detail-content"
+                          id="detail-header"
+                        >
+                          <Typography
+                            className="sarabun-regular-datatable"
+                            sx={{ fontSize: "18px", fontWeight: 600, color: "#333" }}
+                          >
+                            หมายเหตุเพิ่มเติม
+                            <span style={{ color: "red" }}> *</span>
+                          </Typography>
+                        </AccordionSummary>
+
+                        <AccordionDetails>
+                          <Box sx={{ mt: -3 }}>
+                            <Divider sx={{ my: 1 }} />
+                            <Grid container spacing={2} sx={{ justifyContent: 'center', alignItems: 'flex-start' }}>
+                              {/* Response Date Field - positioned after Emergency option */}
+                              <Grid size={12}>
+                                <FullWidthTextArea
+                                  value={root_cause}
+                                  labelName=""
+                                  onchange={(e) => setroot_cause(e)}
+                                  bgcolorTextField={action === "Add" ? false : isActionEdit ? false : true}
+                                  readonly={isActionRead || isActionDelete}
+                                />
+
+                              </Grid>
+                            </Grid>
+                          </Box>
+                        </AccordionDetails>
+                      </Accordion>
+                    )}
                   </Grid>
                 )}
               </Grid>
