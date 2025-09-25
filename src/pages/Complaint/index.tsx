@@ -911,7 +911,7 @@ export default function Complaint() {
         lot_no: lot_no,
         complaint_status_id: tempComplaintStatus[0] + "_CS_NEW",
         create_by: user[0]?.employee_username || "",
-        action_type: null,
+        save_type: "save_draft",
         complaintType: complainttypeModel,
         complaintRs: complaintRsModel,
         // เพิ่ม complaintFile
@@ -933,11 +933,7 @@ export default function Complaint() {
               remark: item.otherText || null,
             };
           }) || []
-
       },
-
-
-
       RunningModel: {
         code_group: dataReportTypeValue.lov_code,
         code_type: dataReportTypeValue.lov1 + "-" + getPaddingYear(),
@@ -947,7 +943,6 @@ export default function Complaint() {
         user_id: user[0]?.employee_username || "",
       },
     };
-    console.log("complaintFile:", complaintPayload.complaintModel.complaintFile);
 
     // สร้าง FormData
     const formData = new FormData();
@@ -960,14 +955,7 @@ export default function Complaint() {
       });
     }
 
-    console.log("📤 FormData prepared:", formData);
-    console.log("📤 complaintPayload:", complaintPayload);
-    console.log("📤 dataReportTypeValue.id:", dataReportTypeValue.id);
-    console.log(
-      "📤 dataReportTypeValue.lov_code:",
-      dataReportTypeValue.lov_code
-    );
-    console.log("📤 dataReportTypeValue.lov1:", dataReportTypeValue.lov1);
+    console.log("📤 complaintPayloadSavedraft:", complaintPayload);
     setIsLoadingScreen(true);
 
     try {
@@ -1076,7 +1064,7 @@ export default function Complaint() {
         lot_no: lot_no,
         complaint_status_id: tempComplaintStatus[0] + "_CS_SUBMIT",
         create_by: user[0]?.employee_username || "",
-        action_type: null,
+        save_type: "save_submit",
         complaintType: complainttypeModel,
         complaintRs: complaintRsModel,
         // เพิ่ม complaintFile
