@@ -41,7 +41,7 @@ import FullWidthButton from "../../components/MUI/FullWidthButton";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CloseIcon from '@mui/icons-material/CheckCircle';
 import ExplaintBody from "./components/ExplaintBody";
-import moments from "moment";
+// import moments from "moment";
 
 // =====================================================================================================
 // TYPE DEFINITIONS (from index.tsx and ComplaintRead.tsx)
@@ -116,13 +116,21 @@ interface ComplaintImgData {
 }
 
 type Validate = {
-  driverName: boolean;
-  driverTel: boolean;
-  truckPlateSub: boolean;
-  truckType: boolean;
-  finalMois: boolean;
-  sampleAttr: boolean;
-  workShift: boolean;
+  Product_Group: boolean;
+  Report_Type: boolean;
+  Respondent_Department: boolean;
+  Date_of_Detection: boolean;
+  Department_Area: boolean;
+  Product_Name: boolean;
+  Lot_No: boolean;
+  Email: boolean;
+  Complaint_Type: boolean;
+  Other_Type: boolean;
+  Complaint_Rs: boolean;
+  Other_Rs: boolean;
+  Clause_Rs: boolean;
+  Detail: boolean;
+  Priority: boolean;
 };
 
 type Block = {
@@ -193,7 +201,8 @@ export default function Complaint() {
     return_from_status_id, return_from_status_datetime, dc_name,
     dc_company_id, dc_department_id, dc_position, dc_email,
     record_status, create_by, create_datetime, update_by, update_datetime,
-    ComplaintStatusID_Combobox, dataReportTypeValue, dataComplaintTypeValue_Combobox,
+    ComplaintStatusID_Combobox, dataReportTypeValue, 
+    dataComplaintTypeValue_Combobox,
     dataComplaintType_Combobox, dataComplaintRsValue_Combobox, dataComplaintRs_Combobox,
     dataphotoValue_Combobox, dataphoto_Combobox, datapriorityValue_Combobox, datastatus,
     datapriority_Combobox, datapriority, PriorityLevel, clauseOther, phoTypeOther,
@@ -330,6 +339,22 @@ export default function Complaint() {
   // UTILITY FUNCTIONS (from index.tsx and ComplaintRead.tsx)
   // =====================================================================================================
 
+  const [reportTypeError, setReportTypeError] = useState(false);
+  const [respondentDepartmentError, setRespondentDepartmentError] = useState(false);
+  const [dateOfDetectionError, setDateOfDetectionError] = useState(false);
+  const [departmentAreaError, setDepartmentAreaError] = useState(false);
+  const [productNameError, setProductNameError] = useState(false);
+  const [lotNoError,setLotNoError] = useState(false);
+  const [emailError, setEmailError] = useState(false);
+  const [complaintTypeError, setComplaintTypeError] = useState(false);
+  const [otherTypeError, setOtherTypeError] = useState(false);
+  const [complaintRsError, setComplaintRsError] = useState(false);
+  const [otherRsError, setOtherRsError] = useState(false);
+  const [clauseRsError, setClauseRsError] = useState(false);
+  const [detailError, setDetailError] = useState(false);
+  const [priorityError, setPriorityError] = useState(false);
+
+
   // Reset Form Function (from index.tsx)
   const resetSearchTable = () => {
     setdocumentDateSearch(null);
@@ -349,7 +374,7 @@ export default function Complaint() {
     setdate_of_detection(null);
     setrespondent_email("");
     setdetail("");
-    setdatapriority("");
+    setdatapriority(null);
     setcompTypeOther("");
     setcompRsOther("");
     setclauseOther("");
@@ -360,6 +385,22 @@ export default function Complaint() {
     setrequest_position("");
     setrequest_email("");
     setrequest_phone("");
+    
+    // Clear ALL validation errors
+    setReportTypeError(false);
+    setRespondentDepartmentError(false);
+    setDateOfDetectionError(false);
+    setDepartmentAreaError(false);
+    setProductNameError(false);
+    setLotNoError(false);
+    setEmailError(false);
+    setComplaintTypeError(false);
+    setOtherTypeError(false);
+    setComplaintRsError(false);
+    setOtherRsError(false);
+    setClauseRsError(false);
+    setDetailError(false);
+    setPriorityError(false);
   };
 
   // Extract Report Type Function (from ComplaintRead.tsx)
@@ -725,7 +766,10 @@ export default function Complaint() {
 
     setIsLoadingScreen(true)
     const dataset = {
-      domain_id: user[0]?.employee_domain
+      user_id: user[0]?.employee_username,
+      domain_id: user[0]?.employee_domain,
+      department_id: user[0]?.itasset_department_id,
+      company_id: user[0]?.itasset_company_id,
       // cas_number: TextNameSearch.cas_number,
       // product_name: TextNameSearch.product_name,
       // lot_no: TextNameSearch.lot_no,
@@ -833,6 +877,143 @@ export default function Complaint() {
     }
   };
 
+  //validate
+  const validateBeforeAdd = () : boolean => {
+    let valid = true;
+    // Clear ALL validation errors before validation
+    setReportTypeError(false);
+    setRespondentDepartmentError(false);
+    setDateOfDetectionError(false);
+    setDepartmentAreaError(false);
+    setProductNameError(false);
+    setLotNoError(false);
+    setEmailError(false);
+    setComplaintTypeError(false);
+    setOtherTypeError(false);
+    setComplaintRsError(false);
+    setOtherRsError(false);
+    setClauseRsError(false);
+    setDetailError(false);
+    setPriorityError(false);
+
+    // Validate Report Type - ตรวจสอบก่อนและถ้าไม่มีให้ return false ทันที
+    if (!dataReportTypeValue || !dataReportTypeValue.id) {
+      console.log("❌ Report Type validation failed");
+      setReportTypeError(true);
+      document.getElementById("reportTypeField")?.focus();
+      return false; // หยุดการตรวจสอบส่วนอื่น
+    }
+    console.log("✅ Report Type validation passed");
+
+    // Validate Date of Detection
+    if (!date_of_detection) {
+      setDateOfDetectionError(true);
+      valid = false;
+    }
+
+    // Validate Department/Area of Detection
+    if (!respondent_department_id || !respondent_department_id.itasset_department_id) {
+      setDepartmentAreaError(true);
+      valid = false;
+    }
+
+    // Validate Product Name
+    if (!product_name || product_name.trim() === "") {
+      setProductNameError(true);
+      valid = false;
+    }
+
+    // Validate Lot no
+    if (!lot_no || lot_no.trim() === "") {
+      setLotNoError(true);
+      valid = false;
+    }
+
+    // Validate Email
+    if (!respondent_email || respondent_email.trim() === "") {
+      setEmailError(true);
+      valid = false;
+    }
+
+    // Validate Complaint Type
+    if (!dataComplaintTypeValue_Combobox || dataComplaintTypeValue_Combobox.length === 0) {
+      console.log("❌ Complaint Type validation failed");
+      setComplaintTypeError(true);
+      valid = false;
+    } else {
+      console.log("✅ Complaint Type validation passed");
+    }
+
+    // Validate Other Type (if complaint type has "Other" selected)
+    if (dataComplaintTypeValue_Combobox && dataComplaintTypeValue_Combobox.some((item: any) => item.isOther === "Y")) {
+      if (!compTypeOther || compTypeOther.trim() === "") {
+        console.log("❌ Other Type validation failed");
+        setOtherTypeError(true);
+        valid = false;
+      } else {
+        console.log("✅ Other Type validation passed");
+      }
+    }
+
+
+    // Validate Complaint Rs - ตรวจสอบตาม Report Type
+    const reportTypeCode = dataReportTypeValue?.lov_code;
+    console.log("🔍 Report Type Code:", reportTypeCode);
+    
+    // เฉพาะ NCR เท่านั้นที่ต้อง validate Complaint Rs
+    if (reportTypeCode === "NCR") {
+      if (!dataComplaintRsValue_Combobox || dataComplaintRsValue_Combobox.length === 0) {
+        console.log("❌ Complaint Rs validation failed for NCR");
+        setComplaintRsError(true);
+        valid = false;
+      } else {
+        console.log("✅ Complaint Rs validation passed for NCR");
+      }
+    } else {
+      console.log("✅ Complaint Rs validation skipped for", reportTypeCode);
+    }
+
+    // Validate Other Rs (if complaint rs has "Other" selected) - เฉพาะ NCR เท่านั้น
+    if (reportTypeCode === "NCR" && dataComplaintRsValue_Combobox && dataComplaintRsValue_Combobox.some((item: any) => item.isClause === "Other")) {
+      if (!compRsOther || compRsOther.trim() === "") {
+        console.log("❌ Other Rs validation failed for NCR");
+        setOtherRsError(true);
+        valid = false;
+      } else {
+        console.log("✅ Other Rs validation passed for NCR");
+      }
+    }
+
+    // Validate Clause Rs (if complaint rs has "Clause" selected) - เฉพาะ NCR เท่านั้น
+    if (reportTypeCode === "NCR" && dataComplaintRsValue_Combobox && dataComplaintRsValue_Combobox.some((item: any) => item.isClause === "Clause")) {
+      if (!clauseOther || clauseOther.trim() === "") {
+        console.log("❌ Clause Rs validation failed for NCR");
+        setClauseRsError(true);
+        valid = false;
+      } else {
+        console.log("✅ Clause Rs validation passed for NCR");
+      }
+    }
+
+    // Validate Detail
+    if (!detail || detail.trim() === "") {
+      setDetailError(true);
+      valid = false;
+    }
+
+    // Validate Priority
+    console.log("🔍 Priority validation - datapriorityValue_Combobox:", datapriorityValue_Combobox);
+    if (!datapriorityValue_Combobox || datapriorityValue_Combobox.trim() === "") {
+      console.log("❌ Priority validation failed");
+      setPriorityError(true);
+      valid = false;
+    } else {
+      console.log("✅ Priority validation passed");
+    }
+
+    console.log("🔍 Final validation result:", valid);
+    return valid;
+  }
 
 
   // CREATE -SaveDraft Add Complaint
@@ -994,6 +1175,10 @@ export default function Complaint() {
     console.log("Departtttt", request_department_id?.itasset_department_id);
     console.log("🤍🤍dataComplaintTypeValue_Combobox", dataComplaintTypeValue_Combobox);
 
+    if(!validateBeforeAdd()){
+      return;
+    }
+
     const tempid = uuidv4();
 
     //Function Split Domain (For using with Complaint Status)
@@ -1074,7 +1259,7 @@ export default function Complaint() {
               cf_type: "Complaint",
               complaint_id: tempid,
               complaint_at_id: item.attachmentType,
-              other: item.otherText?.trim() || null,
+              other: item.attachmentType === "TRR_AT_4" ? (item.otherText?.trim() || null) : null,
               cf_file_seq: (index + 1).toString(),
               user_file_name: item.file.name,
               file_name: item.file.name,
@@ -1083,7 +1268,7 @@ export default function Complaint() {
               record_status: true,
               create_by: user[0]?.employee_username || "",
               create_datetime: new Date().toISOString(),
-              remark: item.otherText || null,
+              remark: item.attachmentType === "TRR_AT_4" ? (item.otherText?.trim() || null) : null,
             };
           }) || []
 
@@ -1156,11 +1341,11 @@ export default function Complaint() {
 
   // CREATE - Edit Complaint
   const ComplaintEdit = async () => {
-    console.log("Departtttt", dataelement?.request_domain_id);
-    console.log("Departtttt", request_department_id?.itasset_department_id);
-    console.log("Departtttt", request_department_id?.itasset_department_id);
-    console.log("🤍🤍dataComplaintTypeValue_Combobox", dataComplaintTypeValue_Combobox);
-
+    // console.log("Departtttt", dataelement?.request_domain_id);
+    // console.log("Departtttt", request_department_id?.itasset_department_id);
+    // console.log("Departtttt", request_department_id?.itasset_department_id);
+    // console.log("🤍🤍dataComplaintTypeValue_Combobox", dataComplaintTypeValue_Combobox);
+    console.log("ฟหกฟหกฟหกcomplaintFiles", complaintFiles);
     const tempid = uuidv4();
     // เตรียม Models
     const complainttypeModel = dataComplaintTypeValue_Combobox
@@ -1172,7 +1357,9 @@ export default function Complaint() {
       : null;
 
     // สร้าง JSON payload
+    
     const complaintPayload = {
+      
       complaintModel: {
         id: dataelement?.id,
         report_type: dataReportTypeValue?.id,
@@ -1212,31 +1399,38 @@ export default function Complaint() {
           : null,
         lot_no: lot_no,
         complaint_status_id: "TRR_CS_SUBMIT",
+        create_by: user[0]?.employee_username || '',
         update_by: user[0]?.employee_username || '',
         action_type: null,
         complaintType: complainttypeModel,
         complaintRs: complaintRsModel,
         // เพิ่ม complaintFile
-        complaintFile: complaintFiles?.map((item: any, index: number) => {
-          return {
-            cf_type: "Complaint",
-            complaint_id: tempid,
-            complaint_at_id: (index + 1).toString(),
-            other: item.otherText?.trim() || null,
-            // explain_id: explain_id,
-            // approve_step: approve_step,
-            cf_file_seq: (index + 2).toString(),
-            user_file_name: item.file.name,
-            file_name: item.file.name,
-            file_type: item.file.type.split("/")[1] || "",
-            file_size: item.file.size.toString(),
-            record_status: true,
-            create_by: user[0]?.employee_username || '',
-            create_datetime: new Date().toISOString()
-          };
+        
+
+        
+       complaintFile:
+          complaintFiles?.map((item: any, index: number) => {
+            return {        
+              id: item.id || undefined,
+              cf_type: "Complaint",
+              //complaint_id: tempid,
+              complaint_id: dataelement?.id,
+              complaint_at_id: item.attachmentType,
+              other: item.attachmentType === "TRR_AT_4" ? (item.otherText?.trim() || null) : null,
+              cf_file_seq: (index + 1).toString(),
+              user_file_name: item.file.name,
+              file_name: item.file.name,
+              file_type: item.file.type,
+              file_size: item.file.size.toString(),
+              record_status: true,
+              create_by: user[0]?.employee_username || "",
+              create_datetime: new Date().toISOString(),
+              remark: item.attachmentType === "TRR_AT_4" ? (item.otherText?.trim() || null) : null,
+            };
         },
         ) || []
       },
+      
       RunningModel: {
         code_group: dataReportTypeValue.lov_code,
         code_type: dataReportTypeValue.lov1 + "-" + getPaddingYear(),
@@ -1741,12 +1935,21 @@ export default function Complaint() {
               labelName="ประเภทเอกสาร (Report Type)"
               options={dataset_reporttype || []}
               column="lov_code" // หรือชื่อ field ที่คุณต้องการแสดง
-              setvalue={(val) =>
+              // setvalue={(val) =>
+              //   setTextNameSearch({
+              //     ...TextNameSearch,
+              //     report_code: val?.id || "", // เก็บแค่ id เป็น string
+              //   })
+              // }
+              setvalue={(val) => {
                 setTextNameSearch({
                   ...TextNameSearch,
                   report_code: val?.id || "", // เก็บแค่ id เป็น string
                 })
-              }
+                setdataReportTypeValue(val);
+                setReportTypeError(false);
+              }}
+              error={reportTypeError}
             />
           </Grid>
           <Grid size={4}>
@@ -1893,7 +2096,86 @@ export default function Complaint() {
             action="Add"
             onBlocksChange={(data) => setComplaintBlocks(data)}
             validateDetailText={blockValidateErrors}
-             handleOpenAdd={handleOpenAddList}
+            handleOpenAdd={handleOpenAddList}
+            validateText={{ 
+              Product_Group: false,
+              Report_Type: reportTypeError,
+              Respondent_Department: false,
+              Date_of_Detection: dateOfDetectionError,
+              Department_Area: departmentAreaError,
+              Product_Name: productNameError,
+              Lot_No: lotNoError,
+              Email: emailError,
+              Complaint_Type: complaintTypeError,
+              Other_Type:  otherTypeError,
+              Complaint_Rs: complaintRsError,
+              Other_Rs: otherRsError,
+              Clause_Rs : clauseRsError,
+              Detail: detailError,
+              Priority: priorityError,
+            }}
+            onReportTypeChange={(val) => {
+              setdataReportTypeValue(val);
+              setReportTypeError(false);
+              // Clear all validation errors when report type changes
+              setDateOfDetectionError(false);
+              setDepartmentAreaError(false);
+              setProductNameError(false);
+              setLotNoError(false);
+              setEmailError(false);
+              setComplaintTypeError(false);
+              setOtherTypeError(false);
+              setComplaintRsError(false);
+              setOtherRsError(false);
+              setClauseRsError(false);
+              setDetailError(false);
+              setPriorityError(false);
+            }}
+            onDateOfDetectionChange={(val) => {
+              setdate_of_detection(val);
+              setDateOfDetectionError(false);
+            }}
+            onDepartmentAreaChange={(val) => {
+              setrespondent_department_id(val);
+              setDepartmentAreaError(false);
+            }}
+            onProductNameChange={(val) => {
+              setproduct_name(val);
+              setProductNameError(false);
+            }}
+            onLotNoChange={(val) => {
+              setlot_no(val);
+              setLotNoError(false);
+            }}
+
+            onEmailChange={(val) => {
+              setrespondent_email(val);
+              setEmailError(false);
+            }}
+            onComplaintTypeChange={(val) => {
+              setComplaintTypeError(false);
+              setOtherTypeError(false);
+            }}
+            onOtherTypeChange={(val) => {
+              setOtherTypeError(false);
+            }}
+            onComplaintRsChange={(val) => {
+              setComplaintRsError(false);
+              setOtherRsError(false);
+              setClauseRsError(false);
+            }}
+            onOtherRsChange={(val) => {
+              setOtherRsError(false);
+            }}
+            onClauseChange={(val) => {
+              setClauseRsError(false);
+            }}
+            onDetailChange={(val) => {
+              setDetailError(false);
+            }}
+            onPriorityChange={(val) => {
+              setPriorityError(false);
+            }}
           />
         }
       />
@@ -1902,7 +2184,7 @@ export default function Complaint() {
         open={openView}
         dialogWidth="xl"
         openBottonHidden={false}
-        titlename={"Explain // ดูข้อมูล"}
+        titlename={"Complaint // ดูข้อมูล"}
         handleClose={handleClose}
         colorBotton="success"
         element={<ComplaintBody
