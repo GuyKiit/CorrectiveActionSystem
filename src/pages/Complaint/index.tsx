@@ -518,7 +518,7 @@ export default function Complaint() {
   const LovAll_Get = async () => {
     console.log(
       "🕒 Call Function : [LovAll_Get] at",
-      moments().format("YYYY-MM-DD HH:mm:ss")
+      // moments().format("YYYY-MM-DD HH:mm:ss")
     );
 
     try {
@@ -742,11 +742,15 @@ export default function Complaint() {
             const ACTION = (
               <ActionManageCell
                 hadleOnclickMenu={(name: any) => {
+                  console.log("🎆 🎆 🎆 🎆 hadleOnclickMenu (name) :", name);
+
                   if (name === "View") {
                     handleOnclickMenuView(el);
-                  } else if (name === "Edit") {
+                  } 
+                  else if (name === "Edit") {
                     handleOnclickMenuEdit(el);
-                  } else if (name === "Delete") {
+                  }
+                   else if (name === "Delete") {
                     handleOnclickMenuDelete(el);
                   }
                 }}
@@ -800,6 +804,7 @@ export default function Complaint() {
             const ACTION = (
               <ActionManageCell
                 hadleOnclickMenu={(name: any) => {
+                  console.log("🎆 🎆 🎆 🎆 hadleOnclickMenu (name) :", name);
                   if (name === "View") {
                     handleOnclickMenuView(el);
                   } else if (name === "Edit") {
@@ -819,7 +824,7 @@ export default function Complaint() {
           });
         }
         setdatalist(responseData);
-        console.log("raw response.data:", response.data); // เช็คว่ามีกี่แถวจริง ๆ
+        console.log("raw response.data:", response.data); // เช็คว่ามีกี่แถวจริง ๆ\
         console.log("mapped responseData:", responseData); // เช็คว่ามีกี่แถวหลัง map
       }
     } catch (e) {
@@ -831,7 +836,7 @@ export default function Complaint() {
 
 
   // CREATE -SaveDraft Add Complaint
-  const SavedraftAdd = async () => {
+  const ComplaintSavedraftAdd = async () => {
     console.log("Departtttt", request_department_id?.itasset_department_id);
     console.log("Departtttt", request_department_id?.itasset_department_id);
     console.log("🤍🤍dataComplaintTypeValue_Combobox", dataComplaintTypeValue_Combobox);
@@ -1295,6 +1300,11 @@ export default function Complaint() {
     } finally {
       setIsLoadingScreen(false);
       handleClose();
+      FullSweetalert({
+          title: 'Success',
+          text: `บันทึกข้อมูลสำเร็จ`,
+          icon: 'success'
+        });
       Complaint_Get();
     }
   };
@@ -1339,6 +1349,11 @@ export default function Complaint() {
     } finally {
       setIsLoadingScreen(false);
       handleClose();
+      FullSweetalert({
+          title: 'Success',
+          text: `ลบข้อมูลสำเร็จ`,
+          icon: 'success'
+        });
       Complaint_Get();
     }
   };
@@ -1861,37 +1876,29 @@ export default function Complaint() {
           <div className="flex gap-x-4">
             <Button
               variant="contained"
-              disabled={
-                menuFuncData?.find(
-                  (item: auth_role_menu_func) => item?.func_name === "Add"
-                )
-                  ? false
-                  : true
-              }
+              hidden={menuFuncData?.find((item: auth_role_menu_func) => item?.func_name === "Add") ? false : true}
               color="success"
               onClick={handleOnclickMenuAdd}
-            // onClick={handleOnclickMenuAdd}
             >
-              {menuFuncData?.find(
-                (item: auth_role_menu_func) => item?.func_name === "Add"
-              )
-                ? "เพิ่มข้อมูล"
-                : ""}
+              {menuFuncData?.find((item: auth_role_menu_func) => item?.func_name === "Add") ? "เพิ่มข้อมูล" : ""}
               <AddIcon sx={{}} />
             </Button>
           </div>
         }
       />
 
-      {/* Dialog Sections */}
+      {/* ---------------------------------------------------------------------- */}
+      {/* ------------------------ Complaint FuncDialog ------------------------ */}
+      {/* ---------------------------------------------------------------------- */}
+
       <FuncDialog
         open={openAdd}
         dialogWidth="xl"
         openBottonHidden={true}
-        titlename={"เพิ่มข้อมูล"}
+        titlename={"Complaint // เพิ่มข้อมูล"}
         handleClose={handleClose}
         handlefunction={ComplaintAdd}
-        handlesavedraft={SavedraftAdd}
+        handlesavedraft={ComplaintSavedraftAdd}
         colorBotton="success"
         element={
           <ComplaintBody
@@ -1907,10 +1914,53 @@ export default function Complaint() {
         open={openView}
         dialogWidth="xl"
         openBottonHidden={false}
-        titlename={"ดูข้อมูล"}
+        titlename={"Explain // ดูข้อมูล"}
         handleClose={handleClose}
         colorBotton="success"
         element={<ComplaintBody
+          action="Read"
+        />}
+      />
+
+
+      <FuncDialog
+        open={openEdit}
+        dialogWidth="xl"
+        openBottonHidden={true}
+        titlename={'Complaint // แก้ไขข้อมูล'}
+        handleClose={handleClose}
+        handlefunction={ComplaintEdit}
+        colorBotton="success"
+        element={<ComplaintBody
+          action="Edit"
+        />}
+      />
+
+      <FuncDialog
+        open={openDelete}
+        dialogWidth="xl"
+        openBottonHidden={false}
+        titlename={'Complaint // ลบข้อมูล'}
+        handleClose={handleClose}
+        handlefunction={ComplaintDelete}
+        colorBotton="success"
+        element={<ComplaintBody
+          action="Delete"
+        />}
+      />
+
+      {/* ---------------------------------------------------------------------- */}
+      {/* ------------------------ Explain FuncDialog ------------------------ */}
+      {/* ---------------------------------------------------------------------- */}
+
+      {/* {/* <FuncDialog
+        open={openView}
+        dialogWidth="xl"
+        openBottonHidden={false}
+        titlename={"ดูข้อมูล"}
+        handleClose={handleClose}
+        colorBotton="success"
+        element={<ExplainBody
           action="Read"
         />}
       />
