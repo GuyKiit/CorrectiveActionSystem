@@ -98,6 +98,7 @@ interface ExplaintBody {
   validateText?: Validate;
   validateDetailText?: { [index: number]: detail };
   onBlocksChange?: (blocks: Block[]) => void;
+  handleOpenAdd?: () => void;
 }
 
 type LovType = {
@@ -129,6 +130,7 @@ export default function ExplaintBody({
   validateText,
   onBlocksChange,
   validateDetailText,
+  handleOpenAdd,
 }: ExplaintBody) {
   const isActionRead = action === "Read";
   const isActionAdd = action === "Add";

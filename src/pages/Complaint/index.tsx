@@ -26,7 +26,7 @@ import DataTableCollapsible from "../../components/MUI/DataTableCollapsible";
 import { useData } from "../../auth/core/DataContext";
 import { Complaint_headCells } from "../../../libs/columnname";
 import DataTable from "../../components/MUI/DataTable";
-import ComplaintBody from "./components/ComplaintCreate";
+import ComplaintBody from "./components/ComplaintBody";
 // import CompalintView from "./components/ComplaintRead";
 import { useListComplaint } from "./core/ListComplaintContext";
 import { v4 as uuidv4 } from "uuid";
@@ -40,7 +40,7 @@ import BasicChips from "../../components/MUI/BasicChips";
 import FullWidthButton from "../../components/MUI/FullWidthButton";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CloseIcon from '@mui/icons-material/CheckCircle';
-import ExplaintBody from "./components/ExplaintCreate";
+import ExplaintBody from "./components/ExplaintBody";
 import moments from "moment";
 
 // =====================================================================================================
@@ -265,7 +265,10 @@ export default function Complaint() {
   const [snackbarSeverity, setSnackbarSeverity] = React.useState<"success" | "error">("success");
   const [successCardOpen, setSuccessCardOpen] = React.useState(false);
   const [successCardMessage, setSuccessCardMessage] = React.useState("");
+  const [openAddlist, setOpenAddlist] = React.useState(false);
 
+  const handleOpenAddList = () => setOpenAddlist(true);
+  const handleCloseAddlist = () => setOpenAddlist(false);
 
   const [attach_type, setattach_type] = React.useState<any>([]);
   const [complaint_status, setcomplaint_status] = React.useState<any>([]);
@@ -322,7 +325,7 @@ export default function Complaint() {
   const [filteredphoto, setFilteredphoto] = useState<LovType[]>([]);
   const [isRSHidden, setIsRSHidden] = React.useState(true);
   const [value, setValue] = React.useState(0);
-
+  
   // =====================================================================================================
   // UTILITY FUNCTIONS (from index.tsx and ComplaintRead.tsx)
   // =====================================================================================================
@@ -1879,7 +1882,7 @@ export default function Complaint() {
           </div>
         }
       />
-  
+
       {/* Dialog Sections */}
       <FuncDialog
         open={openAdd}
@@ -1895,6 +1898,7 @@ export default function Complaint() {
             action="Add"
             onBlocksChange={(data) => setComplaintBlocks(data)}
             validateDetailText={blockValidateErrors}
+             handleOpenAdd={handleOpenAddList}
           />
         }
       />
@@ -1938,6 +1942,25 @@ export default function Complaint() {
         />}
       />
 
+      {/* Dialog Sections */}
+      
+      <FuncDialog
+        open={openAddlist}
+        dialogWidth="xl"
+        openBottonHidden={true}
+        titlename={"เพิ่มข้อมูล"}
+        handleClose={handleCloseAddlist}
+        handlefunction={ExplainAdd}
+        colorBotton="success"
+        element={
+          <ExplaintBody
+            action="Add"
+            onBlocksChange={(data) => setComplaintBlocks(data)}
+            validateDetailText={blockValidateErrors}
+            
+          />
+        }
+      />
 
       <Grow in={successCardOpen} mountOnEnter unmountOnExit>
         <Card

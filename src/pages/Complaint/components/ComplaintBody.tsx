@@ -99,6 +99,8 @@ interface ComplaintBody {
   validateText?: Validate;
   validateDetailText?: { [index: number]: detail };
   onBlocksChange?: (blocks: Block[]) => void;
+  handleOpenAdd?: () => void;
+
 }
 
 type LovType = {
@@ -130,6 +132,7 @@ export default function ComplaintBody({
   validateText,
   onBlocksChange,
   validateDetailText,
+  handleOpenAdd,
 }: ComplaintBody) {
   const isActionRead = action === "Read";
   const isActionAdd = action === "Add";
@@ -370,10 +373,6 @@ export default function ComplaintBody({
   const [isMinimizeexlistOpen, setisMinimizeExlistOpen] = useState(true);
   const [isMinimizecloseOpen, setisMinimizeCloseOpen] = useState(true);
 
-  const [openAdd, setOpenAdd] = React.useState(false);
-
-  const handleOpenAdd = () => setOpenAdd(true);
-  const handleCloseAdd = () => setOpenAdd(false);
   // Function Handlers (On Change Event) ======================================================
   const handleReportTypeChange = (val: LovType | null) => {
     console.log(val, "valvalvalvalvalvalvalvalvalvalvalvalvalvalvalval");
@@ -1833,8 +1832,10 @@ export default function ComplaintBody({
               </Grid>
             </AccordionDetails>
           </Accordion>
+
         </Paper>
       )}
+
 
       {isFormHidden && dataReportTypeValue && (
         <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>
@@ -1901,7 +1902,7 @@ export default function ComplaintBody({
                           borderRadius: 2,
                           textTransform: "none",
                         }}
-                        onClick={(handleOpenAdd)}
+                        onClick={() => handleOpenAdd && handleOpenAdd()}
                       >
                         + เพิ่มคำชี้แจง
                       </Button>
@@ -1920,6 +1921,7 @@ export default function ComplaintBody({
             </Grid>
           </Paper>
         </Paper>
+
       )}
 
       {isFormHidden && dataReportTypeValue && (
@@ -1929,7 +1931,7 @@ export default function ComplaintBody({
             mt: 3,
             width: "100%",
             borderRadius: 3,
-            background: 'linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%)',
+            background: 'linear-gradient(135deg, #e0e0e0 0%, #f5f5f5 100%)',
             border: '1px solid #e0e0e0',
             boxShadow: '0 4px 12px rgba(158,158,158,0.1)'
           }}>
@@ -1940,7 +1942,7 @@ export default function ComplaintBody({
                   sx={{
                     width: '100%',
                     borderRadius: 3,
-                    background: 'linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%)',
+                    background: 'linear-gradient(135deg, #e0e0e0 0%, #f5f5f5 100%)',
                     border: '1px solid #9e9e9e',
                     boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
                     mt: 3
@@ -1976,9 +1978,9 @@ export default function ComplaintBody({
                 </Accordion>
               </Grid>
             </Grid>
-
           </Paper>
         </Paper>
+
       )}
     </Box>
 
