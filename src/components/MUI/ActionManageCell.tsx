@@ -81,10 +81,10 @@ const ActionManageCell: React.FC<ActionManageCellProps> = (props) => {
   );
 //  nsole.log(menuFuncData,'menuFuncDatamenuFuncDatamenuFuncDatamenuFuncDatamenuFuncDatamenuFuncDatamenuFuncDatamenuFuncDatamenuFuncDatamenuFuncDatamenuFuncData');
   
-
+console.log('CHECK DATE el in ActionManageCell', menuFuncData)
   const filteredMenu = (menuFuncData ?? [])
     .filter(el =>
-      el?.func_name &&
+      el?.func_name && el?.func_name !== "Add" &&
       el.menu_func_sequence !== 0 &&      
       (!chack_data || chack_data === el.func_name)
     )
@@ -139,6 +139,7 @@ const ActionManageCell: React.FC<ActionManageCellProps> = (props) => {
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
         {filteredMenu.map((el: any, index: number) =>
+
           renderMenuItem(
             el.func_name,
             el.display_name ?? "",

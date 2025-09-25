@@ -62,7 +62,6 @@ export type ListComplaintContextProps = {
     update_by?: string
     update_datetime?: dayjs.Dayjs
     employee_tel?: string
-    explain_id?: number | null
     approve_step?: number | null
 
 
@@ -96,22 +95,64 @@ export type ListComplaintContextProps = {
     complaintFiles?: any
     RunningModel?: any
 
-    // dataTruckTypeValue_Combobox?: any
-    // dataProduct_Combobox?: any
-    // dataProductValue_Combobox?: any
-    // dataGroupProduct_Combobox?: any
-    // dataGroupProductValue_Combobox?: any
-    // dataCompany_Combobox?: any
-    // dataCompanyValue_Combobox?: any
-    // dataPackUnit_Combobox?: any
-    // dataPackUnitValue_Combobox?: any
-    // dataCustomer_Combobox?: any
-    // dataCustomerValue_Combobox?: any
-    // dataCustomerAddress_Combobox?: any
-    // dataCustomerAddressValue_Combobox?: any
+    //--------Explaint-------
+    dataTooluse?: any
+    dataToolUse_Combobox?: any
+    dataTooluseValue?: any
+    dataDecision_Combobox?: any
+    dataDecision?: any
+    dataDecisionValue?: any
+    ToolOther?: any
+    DecisionOther?: any
+    dataApprove_Combobox?: any
+    dataSectionapp?: any
+    dataSectionappValue?: any
+    dataQcapp?: any
+    dataQcappValue?: any
 
+    explain_id?: string
+    complaint_id?: string
+    explain_seq?: number
+    observation_analysis?: string
+    root_cause?: string
+    corrective_action?: string
+    preventive_action_plan?: string
+    follow_up_date?: dayjs.Dayjs | null
+    responsible_name?: string
+    responsible_company_id?: any
+    responsible_department_id?: any
+    responsible_position?: string
+    responsible_email?: string
+    responsible_date?: dayjs.Dayjs | null
+    close_status?: string
+    close_name?: string
+    close_company_id?: number
+    close_department_id?: number
+    close_position?: string
+    close_email?: string
+    close_date?: dayjs.Dayjs
+    return_detail?: string
+    return_name?: string
+    return_company_id?: number
+    return_department_id?: number
+    return_position?: string
+    return_email?: string
+    return_datetime?: dayjs.Dayjs
+    explain_record_status?: boolean
+    explain_create_by?: string
+    explain_create_datetime?: dayjs.Dayjs | null
+    explain_update_by?: string
+    explain_update_datetime?: dayjs.Dayjs
 
-    // selectedFile?: File
+    approve_status?: string
+    approve_detail?: string
+    approve_note?: string
+    approve_name?: string
+    approve_company_id?: number
+    approve_department_id?: number
+    approve_position?: string
+    approve_email?: string
+    approve_date?: dayjs.Dayjs
 
 
     setComplaint_no: Dispatch<SetStateAction<string>>;
@@ -172,6 +213,7 @@ export type ListComplaintContextProps = {
     setcreate_datetime: Dispatch<SetStateAction<dayjs.Dayjs>>
     setupdate_by: Dispatch<SetStateAction<string>>
     setupdate_datetime: Dispatch<SetStateAction<dayjs.Dayjs>>
+    
 
 
     setComplaintStatusID_Combobox: Dispatch<SetStateAction<any>>
@@ -197,6 +239,64 @@ export type ListComplaintContextProps = {
     setcomplaintFiles: Dispatch<SetStateAction<any>>
 
 
+    //--------Explaint-------
+    setdataToolUse: Dispatch<SetStateAction<any>>
+    setdataToolUse_Combobox: Dispatch<SetStateAction<any>>
+    setdataToolUseValue: Dispatch<SetStateAction<any>>
+    setdataDecision_Combobox: Dispatch<SetStateAction<any>>
+    setdataDecision: Dispatch<SetStateAction<any>>
+    setdataDecisionValue: Dispatch<SetStateAction<any>>
+    setToolOther: Dispatch<SetStateAction<any>>
+    setDecisionOther: Dispatch<SetStateAction<any>>
+    setdataApprove_Combobox: Dispatch<SetStateAction<any>>
+    setdataSectionapp: Dispatch<SetStateAction<any>>
+    setdataSectionappValue: Dispatch<SetStateAction<any>>
+    setdataQcapp: Dispatch<SetStateAction<any>>
+    setdataQcappValue: Dispatch<SetStateAction<any>>
+
+    setexplain_id: Dispatch<SetStateAction<string>>;
+    setcomplaint_id: Dispatch<SetStateAction<string>>;
+    setexplain_seq: Dispatch<SetStateAction<number>>;
+    setobservation_analysis: Dispatch<SetStateAction<string>>;
+    setroot_cause: Dispatch<SetStateAction<string>>;
+    setcorrective_action: Dispatch<SetStateAction<string>>;
+    setpreventive_action_plan: Dispatch<SetStateAction<string>>;
+    setfollow_up_date: Dispatch<SetStateAction<dayjs.Dayjs | null>>
+    setresponsible_name: Dispatch<SetStateAction<string>>;
+    setresponsible_company_id: Dispatch<SetStateAction<number>>;
+    setresponsible_department_id: Dispatch<SetStateAction<number>>;
+    setresponsible_position: Dispatch<SetStateAction<string>>;
+    setresponsible_email: Dispatch<SetStateAction<string>>;
+    setresponsible_date: Dispatch<SetStateAction<dayjs.Dayjs | null>>;
+    setclose_status: Dispatch<SetStateAction<string>>;
+    setclose_name: Dispatch<SetStateAction<string>>
+    setclose_company_id: Dispatch<SetStateAction<number>>
+    setclose_department_id: Dispatch<SetStateAction<number>>
+    setclose_position: Dispatch<SetStateAction<string>>
+    setclose_email: Dispatch<SetStateAction<string>>
+    setclose_date: Dispatch<SetStateAction<dayjs.Dayjs>>;
+    setreturn_detail: Dispatch<SetStateAction<string>>
+    setreturn_name: Dispatch<SetStateAction<string>>
+    setreturn_company_id: Dispatch<SetStateAction<number>>
+    setreturn_department_id: Dispatch<SetStateAction<number>>
+    setreturn_position: Dispatch<SetStateAction<string>>
+    setreturn_email: Dispatch<SetStateAction<string>>
+    setreturn_datetime: Dispatch<SetStateAction<dayjs.Dayjs>>
+    setexplain_record_status: Dispatch<SetStateAction<boolean>>
+    setexplain_create_by: Dispatch<SetStateAction<string>>
+    setexplain_create_datetime: Dispatch<SetStateAction<dayjs.Dayjs | null>>
+    setexplain_update_by: Dispatch<SetStateAction<string>>
+    setexplain_update_datetime: Dispatch<SetStateAction<dayjs.Dayjs>>
+
+    setapprove_status: Dispatch<SetStateAction<string>>
+    setapprove_detail: Dispatch<SetStateAction<string>>
+    setapprove_note: Dispatch<SetStateAction<string>>
+    setapprove_name: Dispatch<SetStateAction<string>>
+    setapprove_company_id: Dispatch<SetStateAction<number>>
+    setapprove_department_id: Dispatch<SetStateAction<number>>
+    setapprove_position: Dispatch<SetStateAction<string>>
+    setapprove_email: Dispatch<SetStateAction<string>>
+    setapprove_date: Dispatch<SetStateAction<dayjs.Dayjs>>
 };
 
 export const initialListComplaint: ListComplaintContextProps = {
@@ -285,6 +385,62 @@ export const initialListComplaint: ListComplaintContextProps = {
 
 
 
-    // setSelectedFile: () => { }
+    //--------Explaint-------
+    setdataToolUse: () => { },
+    setdataToolUse_Combobox: () => { },
+    setdataToolUseValue: () => { },
+    setdataDecision_Combobox: () => { },
+    setdataDecision: () => { },
+    setdataDecisionValue: () => { },
+    setToolOther: () => { },
+    setDecisionOther: () => { },
+    setdataApprove_Combobox: () => { },
+    setdataSectionapp: () => { },
+    setdataSectionappValue: () => { },
+    setdataQcapp: () => { },
+    setdataQcappValue: () => { },
 
+    setexplain_id: () => { },
+    setcomplaint_id: () => { },
+    setexplain_seq: () => { },
+    setobservation_analysis: () => { },
+    setroot_cause: () => { },
+    setcorrective_action: () => { },
+    setpreventive_action_plan: () => { },
+    setfollow_up_date: () => { },
+    setresponsible_name: () => { },
+    setresponsible_company_id: () => { },
+    setresponsible_department_id: () => { },
+    setresponsible_position: () => { },
+    setresponsible_email: () => { },
+    setresponsible_date: () => { },
+    setclose_status: () => { },
+    setclose_name: () => { },
+    setclose_company_id: () => { },
+    setclose_department_id: () => { },
+    setclose_position: () => { },
+    setclose_email: () => { },
+    setclose_date: () => { },
+    setreturn_detail: () => { },
+    setreturn_name: () => { },
+    setreturn_company_id: () => { },
+    setreturn_department_id: () => { },
+    setreturn_position: () => { },
+    setreturn_email: () => { },
+    setreturn_datetime: () => { },
+    setexplain_record_status: () => { },
+    setexplain_create_by: () => { },
+    setexplain_create_datetime: () => { },
+    setexplain_update_by: () => { },
+    setexplain_update_datetime: () => { },
+
+    setapprove_status: () => { },
+    setapprove_detail: () => { },
+    setapprove_note: () => { },
+    setapprove_name: () => { },
+    setapprove_company_id: () => { },
+    setapprove_department_id: () => { },
+    setapprove_position: () => { },
+    setapprove_email: () => { },
+    setapprove_date: () => { },
 };

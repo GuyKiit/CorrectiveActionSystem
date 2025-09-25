@@ -31,12 +31,13 @@ import {
   FormControlLabel,
   FormLabel,
   Grid2,
-  Stack,
+  Stack, AccordionDetails, Accordion, AccordionSummary, Typography,
   Dialog,
   DialogTitle,
   DialogContent,
+  Button,
 } from "@mui/material";
-import { Document, Page, pdfjs } from "react-pdf";
+// import { Document, Page, pdfjs } from "react-pdf";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import FullWidthTextField from "../../../components/MUI/FullWidthTextField";
 import AutocompleteComboBox from "../../../components/MUI/AutocompleteComboBox";
@@ -57,7 +58,9 @@ import { cleanAccessData } from "../../../service/initmain/initmain";
 import { useListComplaint } from "../core/ListComplaintContext";
 import { data } from "react-router-dom";
 import { ComplaintFile } from "./BrowseFileUpload";
-pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+
+// pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
 type Validate = {
   Product_Group: boolean;
@@ -110,6 +113,7 @@ interface ComplaintBody {
   validateText?: Validate;
   validateDetailText?: { [index: number]: detail };
   onBlocksChange?: (blocks: Block[]) => void;
+  handleOpenAdd?: () => void;
   onReportTypeChange?: (val: any) => void;
   onDateOfDetectionChange?: (val: any) => void;
   onDepartmentAreaChange?: (val: any) => void;
@@ -159,6 +163,7 @@ export default function ComplaintBody({
   validateText,
   onBlocksChange,
   validateDetailText,
+  handleOpenAdd,
   onReportTypeChange,
   onDateOfDetectionChange,
   onDepartmentAreaChange,
@@ -182,10 +187,19 @@ export default function ComplaintBody({
   const isActionEdit = action === "Edit";
   const isActionDelete = action === "Delete";
 
+
   const user = cleanAccessData("userSession");
 
   const [openConfirm, setOpenConfirm] = useState(false);
   const [deleteIndex, setDeleteIndex] = useState<number | null>(null);
+
+  // const handleConfirmDelete = () => {
+  //   if (deleteIndex !== null) {
+  //     handleRemoveFile(deleteIndex);
+  //     setDeleteIndex(null);
+  //   }
+  //   setOpenConfirm(false);
+  // };
 
   const {
     dataelement,
@@ -349,9 +363,7 @@ export default function ComplaintBody({
   const { setIsLoadingScreen } = useLayout();
 
   // Get Master Variables ======================================================
-  const [filteredComplaintType, setFilteredComplaintType] = useState<LovType[]>(
-    []
-  );
+  const [filteredComplaintType, setFilteredComplaintType] = useState<LovType[]>([]);
   const [filteredComplaintRs, setFilteredComplaintRs] = useState<LovType[]>([]);
   const [filteredpriority, setFilteredpriority] = useState<LovType[]>([]);
   const [filteredphoto, setFilteredphoto] = useState<LovType[]>([]);
@@ -397,6 +409,17 @@ export default function ComplaintBody({
   const [isDepartmentHidden, setisDepartmentHidden] = useState(true);
   const [isEmailHidden, setisEmailHidden] = useState(true);
   const [isPhoneHidden, setisPhoneHidden] = useState(true);
+
+  // สร้าง state สำหรับควบคุม Accordion
+  const [isMinimizedefaultOpen, setisMinimizeDefaultOpen] = useState(true);
+  const [isMinimizetypeOpen, setisMinimizeTypeOpen] = useState(true);
+  const [isMinimizersOpen, setisMinimizeRsOpen] = useState(true);
+  const [isMinimizedetailOpen, setisMinimizeDetailOpen] = useState(true);
+  const [isMinimizepriorityOpen, setisMinimizePriorityOpen] = useState(true);
+  const [isMinimizefileOpen, setisMinimizeFileOpen] = useState(true);
+  const [isMinimizerespondOpen, setisMinimizeRespondOpen] = useState(true);
+  const [isMinimizeexlistOpen, setisMinimizeExlistOpen] = useState(true);
+  const [isMinimizecloseOpen, setisMinimizeCloseOpen] = useState(true);
 
   // Function Handlers (On Change Event) ======================================================
   const handleReportTypeChange = (val: LovType | null) => {
@@ -493,7 +516,7 @@ export default function ComplaintBody({
         onComplaintTypeChange(newData);
       }
 
-      
+
       return newData;
     });
   };
@@ -573,6 +596,7 @@ export default function ComplaintBody({
     });
   };
   const handleCheckboxChangePriority = (item: LovType) => {
+    // setdatapriority((prev) => (prev?.id === item.id ? null : item));
     const newPriority = datapriority?.id === item.id ? null : item;
     setdatapriority(newPriority);
     
@@ -597,6 +621,8 @@ export default function ComplaintBody({
     setFileList(updatedList);
     setcomplaintFiles(updatedList);
   };
+
+
 
   const handleFileAttachmentTypeChange = (index: number, type: string) => {
     const updated = [...fileList];
@@ -721,7 +747,8 @@ export default function ComplaintBody({
       console.log(response, "response_Get");
       if (response && response.status === "success") {
         setIsLoadingScreen(false);
-        
+        const responseData: any = [];
+
         if (Array.isArray(response.data) && response.data.length > 0) {
           console.log(
             "################# FILE #######################:",
@@ -1143,86 +1170,86 @@ export default function ComplaintBody({
       {/* ====== Dynamic ฟอร์ม สำหรับเลือกประเภทเอกสาร ====== */}
       {isFormHidden && dataReportTypeValue && (
         <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>
-          <label className="sarabun-regular-datatable">
-            {dataReportTypeValue?.lov4}
-          </label>
-          <Divider sx={{ my: 1 }} />
-          <Grid container spacing={2}>
-            <Grid size={4} mt={2}>
-              <AutocompleteComboBox
-                value={respondent_company_id}
-                labelName={"โรงงาน (Factory)"}
-                options={dataset_company}
-                column="domain_name"
-                setvalue={(v) => setrespondent_company_id(v)}
-                bgcolorTextField={true}
-                readonly
-              />
-            </Grid>
-            <Grid size={4} mt={2}>
-              <FullWidthTextField
-                value={cas_number || "AUTO"}
-                labelName="CAS Number"
-                onchange={(e) => {
-                  setcas_number(e);
-                }}
-                readonly
-              />
-            </Grid>
-            <Grid size={4} mt={2}>
-              <DesktopDatePickers
-                labelName={"วันที่ออกเอกสาร (Document Issuance Date)"}
-                value={doc_date}
-                handleChange={(val: dayjs.Dayjs | null | undefined) => {
-                  if (val) setdoc_date(val); // ถ้า val เป็น null/undefined จะไม่เซ็ต
-                }}
-                bgcolorTextField={true}
-                readonly
-              />
-            </Grid>
-            <Paper
-              elevation={3}
-              sx={{
-                p: 3,
-                mt: 3,
-                width: "100%",
-                borderRadius: 3,
-                background: "linear-gradient(135deg, #fff5f5 0%, #ffffff 100%)",
-                border: "1px solid #ffcdd2",
-                boxShadow: "0 4px 12px rgba(244,67,54,0.1)",
-              }}
-            >
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  mb: 3,
-                  pb: 2,
-                  borderBottom: "2px solid #f44336",
-                }}
-              >
-                <Box
+                <label className="sarabun-regular-datatable">
+                  {dataReportTypeValue?.lov4}
+                </label>
+              <Divider sx={{ my: 1 }} />
+              <Grid container spacing={2}>
+                <Grid size={4} mt={2}>
+                  <AutocompleteComboBox
+                    value={respondent_company_id}
+                    labelName={"โรงงาน (Factory)"}
+                    options={dataset_company}
+                    column="domain_name"
+                    setvalue={(v) => setrespondent_company_id(v)}
+                    bgcolorTextField={true}
+                    readonly
+                  />
+                </Grid>
+                <Grid size={4} mt={2}>
+                  <FullWidthTextField
+                    value={cas_number || "AUTO"}
+                    labelName="CAS Number"
+                    onchange={(e) => {
+                      setcas_number(e);
+                    }}
+                    readonly
+                  />
+                </Grid>
+                <Grid size={4} mt={2}>
+                  <DesktopDatePickers
+                    labelName={"วันที่ออกเอกสาร (Document Issuance Date)"}
+                    value={doc_date}
+                    handleChange={(val: dayjs.Dayjs | null | undefined) => {
+                      if (val) setdoc_date(val); // ถ้า val เป็น null/undefined จะไม่เซ็ต
+                    }}
+                    bgcolorTextField={true}
+                    readonly
+                  />
+                </Grid>
+                <Paper
+                  elevation={3}
                   sx={{
-                    width: 6,
-                    height: 24,
-                    backgroundColor: "#f44336",
-                    borderRadius: 1,
-                    mr: 2,
-                  }}
-                />
-                <label
-                  className="sarabun-regular-datatable"
-                  style={{
-                    fontSize: "18px",
-                    fontWeight: "600",
-                    color: "#d32f2f",
-                    margin: 0,
+                    p: 3,
+                    mt: 3,
+                    width: "100%",
+                    borderRadius: 3,
+                    background: "linear-gradient(135deg, #fff5f5 0%, #ffffff 100%)",
+                    border: "1px solid #ffcdd2",
+                    boxShadow: "0 4px 12px rgba(244,67,54,0.1)",
                   }}
                 >
-                  แผนกผู้ถูกร้องเรียน (Respondent Department)
-                </label>
-              </Box>
-              <Grid container spacing={3}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      mb: 3,
+                      pb: 2,
+                      borderBottom: "2px solid #f44336",
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        width: 6,
+                        height: 24,
+                        backgroundColor: "#f44336",
+                        borderRadius: 1,
+                        mr: 2,
+                      }}
+                    />
+                    <label
+                      className="sarabun-regular-datatable"
+                      style={{
+                        fontSize: "18px",
+                        fontWeight: "600",
+                        color: "#d32f2f",
+                        margin: 0,
+                      }}
+                    >
+                      แผนกผู้ถูกร้องเรียน (Respondent Department)
+                    </label>
+                  </Box>
+                  <Grid container spacing={3}>
                 {/* <Grid size={4}>
                   <AutocompleteComboBox
                     value={respondent_domain_id}
@@ -1233,130 +1260,132 @@ export default function ComplaintBody({
                     readonly
                   />
                 </Grid> */}
-                <Grid size={4}>
-                  <DesktopDatePickers
-                    required="required"
-                    labelName={"วันที่พบปัญหา (Date of Detection)"}
-                    value={date_of_detection}
+                    <Grid size={4}>
+                      <DesktopDatePickers
+                        required="required"
+                        labelName={"วันที่พบปัญหา (Date of Detection)"}
+                        value={date_of_detection}
                     handleChange={(val) => {
                       setdate_of_detection(val ?? null);
                       if (onDateOfDetectionChange) {
                         onDateOfDetectionChange(val);
                       }
                     }}
-                    bgcolorTextField={action === "Add" ? false : true}
-                    readonly={isActionRead || isActionEdit || isActionDelete}
+                        bgcolorTextField={action === "Add" ? false : true}
+                        readonly={isActionRead || isActionEdit || isActionDelete}
                     Validate={validateText?.Date_of_Detection || false}
                     validateTextLable={validateText?.Date_of_Detection ? "กรุณาเลือกวันที่พบปัญหา" : ""}
-                  />
-                </Grid>
-                <Grid size={4}>
-                  <AutocompleteComboBox
-                    required="required"
-                    value={respondent_department_id}
-                    labelName={
-                      "แผนกที่พบปัญหา (Department / Area of Detection)"
-                    }
-                    options={dataset_department}
-                    column="itasset_department_name"
-                    setvalue={(e) => {
-                      console.log(e); // ดูค่าของ e ที่ถูกส่งมาจาก AutocompleteComboBox
-                      setrespondent_department_id(e);
+                      />
+                    </Grid>
+                    <Grid size={4}>
+                      <AutocompleteComboBox
+                        required="required"
+                        value={respondent_department_id}
+                        labelName={
+                          "แผนกที่พบปัญหา (Department / Area of Detection)"
+                        }
+                        options={dataset_department}
+                        column="itasset_department_name"
+                        setvalue={(e) => {
+                          console.log(e); // ดูค่าของ e ที่ถูกส่งมาจาก AutocompleteComboBox
+                          setrespondent_department_id(e);
                       if (onDepartmentAreaChange) {
                         onDepartmentAreaChange(e);
                       }
-                    }}
-                    bgcolorTextField={action === "Add" ? false : isActionEdit ? false : true}
-                    readonly={isActionRead || isActionDelete}
+                        }}
+                        bgcolorTextField={
+                          action === "Add" ? false : isActionEdit ? false : true
+                        }
+                        readonly={isActionRead || isActionDelete}
                     Validate={validateText?.Department_Area || false}
                     validateTextLable={validateText?.Department_Area ? "กรุณาเลือกแผนกที่พบปัญหา" : ""}
-                  />
-                </Grid>
-                <Grid size={4}>
-                  <FullWidthTextField
-                    required="required"
-                    value={product_name}
-                    labelName="ชื่อสินค้า (Product Name)"
+                      />
+                    </Grid>
+                    <Grid size={4}>
+                      <FullWidthTextField
+                        required="required"
+                        value={product_name}
+                        labelName="ชื่อสินค้า (Product Name)"
                     onchange={(e) => {
                       setproduct_name(e);
                       if (onProductNameChange) {
                           onProductNameChange(e);
                       }
                     }}
-                    readonly={isActionRead || isActionDelete}
+                        readonly={isActionRead || isActionDelete}
                     Validate={validateText?.Product_Name || false}
                     validateTextLable={validateText?.Product_Name ? "กรุณากรอกชื่อสินค้า" : ""}
-                  />
-                </Grid>
-                <Grid size={4}>
-                  <FullWidthTextField
-                    required="required"
-                    value={lot_no}
-                    labelName="Lot No./Bag No"
+                      />
+                    </Grid>
+                    <Grid size={4}>
+                      <FullWidthTextField
+                        required="required"
+                        value={lot_no}
+                        labelName="Lot No./Bag No"
                     onchange={(e) => {
                       setlot_no(e);
                         if (onLotNoChange){
                             onLotNoChange(e);
                         }
                       }} 
-                    readonly={isActionRead || isActionDelete}
+                        readonly={isActionRead || isActionDelete}
                     Validate={validateText?.Lot_No || false}
                     validateTextLable={validateText?.Lot_No ? "กรุณากรอก Lot No./Bag No" : ""}
-                  />
-                </Grid>
-                <Grid size={4}>
-                  <FullWidthTextField
-                    required="required"
-                    value={respondent_email}
-                    labelName="อีเมล (Email)"
+                      />
+                    </Grid>
+                    <Grid size={4}>
+                      <FullWidthTextField
+                        required="required"
+                        value={respondent_email}
+                        labelName="อีเมล (Email)"
                     onchange={(e) => {
                       setrespondent_email(e);
                       if (onEmailChange) {
                         onEmailChange(e);
                       }
                     }}
-                    readonly={isActionRead || isActionDelete}
+                        readonly={isActionRead || isActionDelete}
                     Validate={validateText?.Email || false}
                     validateTextLable={validateText?.Email ? "กรุณากรอกอีเมล" : ""}
-                  />
-                </Grid>
-              </Grid>
+                      />
+                    </Grid>
+                  </Grid>
 
-              {/* รายละเอียด Sub-section */}
-              <Box sx={{ mt: 4 }}>
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    mb: 3,
-                    pb: 1,
-                    borderBottom: "1px solid #ffcdd2",
-                  }}
-                >
-                  <Box
-                    sx={{
-                      width: 4,
-                      height: 16,
-                      backgroundColor: "#f44336",
-                      borderRadius: 0.5,
-                      mr: 1.5,
-                    }}
-                  />
-                  <label
-                    className="sarabun-regular-datatable"
-                    style={{
-                      fontSize: "16px",
-                      fontWeight: "500",
-                      color: "#d32f2f",
-                      margin: 0,
-                    }}
-                  >
-                    รายละเอียด
-                  </label>
-                </Box>
+                  {/* รายละเอียด Sub-section */}
+                  <Box sx={{ mt: 4 }}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        mb: 3,
+                        pb: 1,
+                        borderBottom: "1px solid #ffcdd2",
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          width: 4,
+                          height: 16,
+                          backgroundColor: "#f44336",
+                          borderRadius: 0.5,
+                          mr: 1.5,
+                        }}
+                      />
+                      <label
+                        className="sarabun-regular-datatable"
+                        style={{
+                          fontSize: "16px",
+                          fontWeight: "500",
+                          color: "#d32f2f",
+                          margin: 0,
+                        }}
+                      >
+                        รายละเอียด
+                      </label>
+                    </Box>
 
                 <Grid container spacing={2} sx={{ alignItems: "stretch" }}>
-                  {dataReportTypeValue && (
+                      {dataReportTypeValue && (
                     <Grid size={12} sx={{ display: "flex" }}>
                       <Paper
                         elevation={1}
@@ -1369,18 +1398,18 @@ export default function ComplaintBody({
                           flexDirection: "column",
                           minHeight: "400px",
                         }}
-                      >
+                            >
                         <label
-                          className="sarabun-regular-datatable"
+                                className="sarabun-regular-datatable"
                           style={{
                             fontSize: "18px",
                             fontWeight: "600",
                             color: "#333",
                             margin: 0,
                           }}
-                        >
+                              >
                           ประเภทข้อร้องเรียน (Type Of Complaint){" "}
-                          <span style={{ color: "red" }}> *</span>
+                                <span style={{ color: "red" }}> *</span>
                         </label>
                         {validateText?.Complaint_Type && (
                           <label className="fs-7 py-1 sarabun-regular-lable-validate" style={{ color: "red" }}>
@@ -1395,29 +1424,29 @@ export default function ComplaintBody({
                             flexDirection: "column",
                           }}
                         >
-                          <Grid container spacing={2}>
+                                <Grid container spacing={2}>
                             {(filteredComplaintType || []).map(
                               (item: LovType) => (
-                                <Grid size={3} key={item.id}>
-                                  <FullWidthCheckbox
-                                    labelName={item.lov1}
+                                    <Grid size={3} key={item.id}>
+                                      <FullWidthCheckbox
+                                        labelName={item.lov1}
                                     value={dataComplaintType.some(
                                       (c) => c.id === item.id
                                     )}
                                     onchange={() =>
                                       handleCheckboxChangeCT(item)
                                     }
-                                    readonly={isActionRead || isActionDelete}
-                                  />
-                                </Grid>
+                                        readonly={isActionRead || isActionDelete}
+                                      />
+                                    </Grid>
                               )
                             )}
-                          </Grid>
-                          <Box sx={{ mt: "auto", pt: 2 }}>
-                            {dataComplaintType.some((c) => c.lov2 === "Y") && (
-                              <FullWidthTextArea
-                                value={compTypeOther}
-                                labelName="Other:"
+                                </Grid>
+                                <Box sx={{ mt: "auto", pt: 2 }}>
+                                  {dataComplaintType.some((c) => c.lov2 === "Y") && (
+                                    <FullWidthTextArea
+                                      value={compTypeOther}
+                                      labelName="Other:"
                                 onchange={(e) => {
                                   setcompTypeOther(e);
                                   if(onOtherTypeChange){
@@ -1425,18 +1454,18 @@ export default function ComplaintBody({
                                   }
                             
                                 }}
-                                readonly={isActionRead || isActionDelete}
+                                      readonly={isActionRead || isActionDelete}
                                 Validate={validateText?.Other_Type || false}
                                 validateTextLable={validateText?.Other_Type ? "กรุณากรอกรายละเอียด" : ""}
-                              />
-                            )}
-                          </Box>
-                        </Box>
+                                    />
+                                  )}
+                                </Box>
+                              </Box>
                       </Paper>
-                    </Grid>
-                  )}
+                        </Grid>
+                      )}
 
-                  {!isRSHidden && dataReportTypeValue && (
+                      {!isRSHidden && dataReportTypeValue && (
                     <Grid size={12} sx={{ display: "flex" }}>
                       <Paper
                         elevation={1}
@@ -1449,18 +1478,18 @@ export default function ComplaintBody({
                           flexDirection: "column",
                           minHeight: "400px",
                         }}
-                      >
+                            >
                         <label
-                          className="sarabun-regular-datatable"
+                                className="sarabun-regular-datatable"
                           style={{
                             fontSize: "18px",
                             fontWeight: "600",
                             color: "#333",
                             margin: 0,
                           }}
-                        >
+                              >
                           มาตรฐานอ้างอิง (Reference Standard){" "}
-                          <span style={{ color: "red" }}> *</span>
+                                <span style={{ color: "red" }}> *</span>
                         </label>
                         {validateText?.Complaint_Rs && (
                           <label className="fs-7 py-1 sarabun-regular-lable-validate" style={{ color: "red" }}>
@@ -1475,83 +1504,84 @@ export default function ComplaintBody({
                             flexDirection: "column",
                           }}
                         >
-                          <Grid container spacing={2}>
-                            {filteredComplaintRs.map((item: LovType) => (
-                              <Grid size={3} key={item.id}>
-                                <FullWidthCheckbox
-                                  labelName={item.lov1}
+                                <Grid container spacing={2}>
+                                  {filteredComplaintRs.map((item: LovType) => (
+                                    <Grid size={3} key={item.id}>
+                                      <FullWidthCheckbox
+                                        labelName={item.lov1}
                                   value={dataComplaintRs.some(
                                     (rs) => rs.id === item.id
                                   )}
-                                   onchange={() => handleCheckboxChangeRS(item)}
-                                   readonly={isActionRead || isActionDelete}
-                                />
-                              </Grid>
-                            ))}
-                          </Grid>
-                          <Box sx={{ mt: "auto", pt: 2 }}>
+                                        onchange={() => handleCheckboxChangeRS(item)}
+                                        readonly={isActionRead || isActionDelete}
+                                      />
+                                    </Grid>
+                                  ))}
+                                </Grid>
+                                <Box sx={{ mt: "auto", pt: 2 }}>
                             {dataComplaintRs.some(
                               (rs) => rs.lov3 === "Other"
                             ) && (
-                              <FullWidthTextArea
-                                value={compRsOther}
-                                labelName="Other:"
+                                    <FullWidthTextArea
+                                      value={compRsOther}
+                                      labelName="Other:"
                                 onchange={(e) => {
                                   setcompRsOther(e);
                                   if(onOtherRsChange){
                                     onOtherRsChange(e);
                                   }
                                 }}
-                                readonly={isActionRead || isActionDelete}
+                                      readonly={isActionRead || isActionDelete}
                                 Validate={validateText?.Other_Rs || false}
                                 validateTextLable={validateText?.Other_Rs ? "กรุณากรอกรายละเอียด Other" : ""}
-                              />
-                            )}
+                                    />
+                                  )}
                             {dataComplaintRs.some(
                               (rs) => rs.lov3 === "Clause"
                             ) && (
-                              <FullWidthTextArea
-                                value={clauseOther}
-                                labelName="Clause:"
+                                    <FullWidthTextArea
+                                      value={clauseOther}
+                                      labelName="Clause:"
                                 onchange={(e) => {
                                   setclauseOther(e);
                                   if(onClauseChange){
                                     onClauseChange(e);
                                   }
                                 }}
-                                readonly={isActionRead || isActionDelete}
+                                      readonly={isActionRead || isActionDelete}
                                 Validate={validateText?.Clause_Rs || false}
                                 validateTextLable={validateText?.Clause_Rs ? "กรุณากรอกรายละเอียด Clause" : ""}
-                              />
-                            )}
-                          </Box>
-                        </Box>
+                                    />
+                                  )}
+                                </Box>
+                              </Box>
                       </Paper>
+                        </Grid>
+                      )}
                     </Grid>
-                  )}
-                </Grid>
-                {/* Priority Section */}
-                {dataReportTypeValue && (
+                    {/* Priority Section */}
+
+                    {dataReportTypeValue && (
                   <Box sx={{ mt: 3 }}>
                     <Paper
                       elevation={1}
-                      sx={{
+                        sx={{
                         p: 2,
-                        borderRadius: 2,
-                        backgroundColor: "#fafafa",
+                          borderRadius: 2,
+                          backgroundColor: "#fafafa",
                       }}
-                    >
+                        >
                       <label
-                        className="sarabun-regular-datatable"
+                            className="sarabun-regular-datatable"
                         style={{
                           fontSize: "18px",
                           fontWeight: "600",
                           color: "#333",
                           margin: 0,
                         }}
-                      >
+                          >
                         รายละเอียด (Detail){" "}
-                        <span style={{ color: "red" }}> *</span>
+                            <span style={{ color: "red" }}> *</span>
                       </label>
                       {/* {validateText?.Detail && (
                           <label className="fs-7 py-1 sarabun-regular-lable-validate" style={{ color: "red" }}>
@@ -1567,48 +1597,48 @@ export default function ComplaintBody({
                           alignItems: "flex-start",
                         }}
                       >
-                        {/* Response Date Field - positioned after Emergency option */}
-                        <Grid size={12}>
-                          <FullWidthTextArea
-                            value={detail}
-                            labelName=""
+                              {/* Response Date Field - positioned after Emergency option */}
+                              <Grid size={12}>
+                                <FullWidthTextArea
+                                  value={detail}
+                                  labelName=""
                             onchange={(e) => {
                               setdetail(e);
                               if(onDetailChange){
                                 onDetailChange(e);
                               }
                             }}
-                            readonly={isActionRead || isActionDelete}
+                                  readonly={isActionRead || isActionDelete}
                             Validate={validateText?.Detail || false}
                             validateTextLable={validateText?.Detail ? "กรุณากรอกรายละเอียด (Detail)" : ""}
-                          />
-                        </Grid>
-                      </Grid>
+                                />
+                              </Grid>
+                            </Grid>
                     </Paper>
-                  </Box>
-                )}
-                {/* Priority Section */}
-                {dataReportTypeValue && (
-                  <Box sx={{ mt: 3 }}>
+                          </Box>
+                    )}
+                    {/* Priority Section */}
+                    {dataReportTypeValue && (
+                      <Box sx={{ mt: 3 }}>
                     <Paper
                       elevation={1}
-                      sx={{
+                          sx={{
                         p: 2,
-                        borderRadius: 2,
-                        backgroundColor: "#fafafa",
+                            borderRadius: 2,
+                            backgroundColor: "#fafafa",
                       }}
-                    >
+                          >
                       <label
-                        className="sarabun-regular-datatable"
+                              className="sarabun-regular-datatable"
                         style={{
                           fontSize: "18px",
                           fontWeight: "600",
                           color: "#333",
                           margin: 0,
                         }}
-                      >
+                            >
                         ระดับความสำคัญ (Priority){" "}
-                        <span style={{ color: "red" }}> *</span>
+                              <span style={{ color: "red" }}> *</span>
                       </label>
                       {validateText?.Priority && (
                           <label className="fs-7 py-1 sarabun-regular-lable-validate" style={{ color: "red" }}>
@@ -1624,8 +1654,8 @@ export default function ComplaintBody({
                           alignItems: "flex-start",
                         }}
                       >
-                        {(filteredpriority || [])
-                          .sort((a, b) => {
+                              {(filteredpriority || [])
+                                .sort((a, b) => {
                             const order: { [key: string]: number } = {
                               Normal: 1,
                               Urgent: 2,
@@ -1635,14 +1665,14 @@ export default function ComplaintBody({
                               (order[a.lov_code] || 999) -
                               (order[b.lov_code] || 999)
                             );
-                          })
-                          .map((item: LovType) => (
-                            <Grid size={3} key={item.id}>
+                                })
+                                .map((item: LovType) => (
+                                  <Grid size={3} key={item.id}>
                               <Box
                                 sx={{
                                   border: "2px solid #e0e0e0",
-                                  borderRadius: 2,
-                                  p: 2,
+                                      borderRadius: 2,
+                                      p: 2,
                                   textAlign: "center",
                                   backgroundColor:
                                     datapriority?.id === item.id
@@ -1660,16 +1690,16 @@ export default function ComplaintBody({
                                   },
                                 }}
                               >
-                                <FormControlLabel
-                                  control={
-                                    <Radio
-                                      checked={datapriority?.id === item.id}
-                                      onChange={(e) => {
+                                      <FormControlLabel
+                                        control={
+                                          <Radio
+                                            checked={datapriority?.id === item.id}
+                                            onChange={(e) => {
                                         console.log("🎯 Priority radio clicked:", item);
-                                        setdatapriority(item);
-                                        setdatapriorityValue_Combobox(item.id);
+                                              setdatapriority(item);
+                                              setdatapriorityValue_Combobox(item.id);
                                         setpriority_level(item.id);
-                                        const days = Number(item.lov3 ?? 0);
+                                              const days = Number(item.lov3 ?? 0);
                                         priorityCalculateRespondDate(
                                           days,
                                           true
@@ -1692,16 +1722,16 @@ export default function ComplaintBody({
                                           "datapriorityValue_Combobox set to:",
                                           item.id
                                         );
-                                      }}
+                                            }}
                                       disabled={
                                         isActionRead ||
                                         isActionEdit ||
                                         isActionDelete
                                       }
                                       sx={{ color: "#ff9800" }}
-                                    />
-                                  }
-                                  label={
+                                          />
+                                        }
+                                        label={
                                     <Box sx={{ textAlign: "center" }}>
                                       <Box
                                         sx={{
@@ -1713,8 +1743,8 @@ export default function ComplaintBody({
                                               : "#666",
                                         }}
                                       >
-                                        {item.lov1} ({item.lov_code})
-                                      </Box>
+                                              {item.lov1} ({item.lov_code})
+                                            </Box>
                                       <Box
                                         sx={{
                                           fontSize: "12px",
@@ -1725,28 +1755,28 @@ export default function ComplaintBody({
                                           mt: 0.5,
                                         }}
                                       >
-                                        (ภายใน {item.lov3} วัน)
-                                      </Box>
-                                    </Box>
-                                  }
-                                  sx={{
-                                    width: "100%",
-                                    m: 0,
+                                              (ภายใน {item.lov3} วัน)
+                                            </Box>
+                                          </Box>
+                                        }
+                                        sx={{
+                                          width: "100%",
+                                          m: 0,
                                     flexDirection: "column",
                                     alignItems: "center",
-                                  }}
-                                />
-                              </Box>
-                            </Grid>
-                          ))}
+                                        }}
+                                      />
+                                    </Box>
+                                  </Grid>
+                                ))}
 
-                        {/* Response Date Field - positioned after Emergency option */}
-                        <Grid size={3}>
+                              {/* Response Date Field - positioned after Emergency option */}
+                              <Grid size={3}>
                           <Box
                             sx={{
                               border: "2px solid #e0e0e0",
-                              borderRadius: 2,
-                              p: 2,
+                                  borderRadius: 2,
+                                  p: 2,
                               textAlign: "center",
                               backgroundColor: "#ffffff",
                               borderColor: "#e0e0e0",
@@ -1764,40 +1794,40 @@ export default function ComplaintBody({
                                 mb: 3,
                               }}
                             >
-                              ตอบกลับภายในวันที่ (Response Date)
-                            </Box>
-                            <DesktopDatePickers
-                              labelName=""
-                              value={respond_date_within}
+                                    ตอบกลับภายในวันที่ (Response Date)
+                                  </Box>
+                                  <DesktopDatePickers
+                                    labelName=""
+                                    value={respond_date_within}
                               handleChange={(val) =>
                                 setrespond_date_within(val ?? null)
                               }
-                              bgcolorTextField={true}
-                              readonly
-                            />
-                          </Box>
-                        </Grid>
-                      </Grid>
+                                    bgcolorTextField={true}
+                                    readonly
+                                  />
+                                </Box>
+                              </Grid>
+                            </Grid>
                     </Paper>
+                      </Box>
+                    )}
                   </Box>
-                )}
-              </Box>
-            </Paper>
+                </Paper>
 
-            <Paper
-              elevation={3}
-              sx={{
-                p: 3,
-                mt: 3,
-                width: "100%",
-                borderRadius: 3,
-                background: "linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%)",
-                border: "1px solid #e0e0e0",
-                boxShadow: "0 4px 12px rgba(158,158,158,0.1)",
-              }}
-            >
+                <Paper
+                  elevation={3}
+                  sx={{
+                    p: 3,
+                    mt: 3,
+                    width: "100%",
+                    borderRadius: 3,
+                    background: "linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%)",
+                    border: "1px solid #e0e0e0",
+                    boxShadow: "0 4px 12px rgba(158,158,158,0.1)",
+                  }}
+                >
               <Box
-                sx={{
+                    sx={{
                   display: "flex",
                   alignItems: "center",
                   mb: 3,
@@ -1815,97 +1845,97 @@ export default function ComplaintBody({
                   }}
                 />
                 <label
-                  className="sarabun-regular-datatable"
+                        className="sarabun-regular-datatable"
                   style={{
                     fontSize: "18px",
                     fontWeight: "600",
                     color: "#616161",
                     margin: 0,
                   }}
-                >
-                  แนบไฟล์ (Attachments)
+                      >
+                        แนบไฟล์ (Attachments)
                 </label>
               </Box>
 
-              <Grid container spacing={2}>
-                {dataReportTypeValue && (
-                  <Grid size={12}>
-                    <BrowseFileUpload
-                      setFile={handleFileChange}
+                      <Grid container spacing={2}>
+                        {dataReportTypeValue && (
+                          <Grid size={12}>
+                            <BrowseFileUpload
+                              setFile={handleFileChange}
                       setFileName={() => {}}
-                      options={(filteredphoto || []).map((p: any) => ({
-                        id: p.id,
-                        lov1: p.lov1,
-                      }))}
-                      action={action}
-                    />
+                              options={(filteredphoto || []).map((p: any) => ({
+                                id: p.id,
+                                lov1: p.lov1,
+                              }))}
+                              action={action}
+                            />
 
-                    {/* Grouped display by attachment type - Full width boxes stacked vertically */}
-                    <Box sx={{ mt: 1 }}>
-                      {(filteredphoto || []).map((photoType: any) => {
-                        const items = fileList.filter(
-                          (f) => f.attachmentType === photoType.id
-                        );
-                        if (items.length === 0) return null;
-                        return (
-                          <Paper
-                            key={photoType.id}
-                            elevation={1}
-                            sx={{ p: 2, borderRadius: 2, mb: 2, width: "100%" }}
-                          >
-                            <label
-                              className="sarabun-regular-datatable"
-                              style={{ fontWeight: 600, fontSize: "16px" }}
-                            >
-                              {photoType.lov1}
-                            </label>
-                            <Divider sx={{ my: 1 }} />
-                            {items.map((item, idx) => (
-                              <Box
-                                key={idx}
-                                sx={{
-                                  p: 1.5,
-                                  border: "1px solid #e0e0e0",
-                                  borderRadius: 1,
-                                  mb: 1,
-                                  display: "flex",
-                                  justifyContent: "space-between",
-                                  alignItems: "center",
-                                  gap: 2,
-                                }}
-                              >
-                                <Box>
-                                  <div style={{ fontWeight: "bold" }}>
-                                    {item.file.name}
-                                  </div>
-                                  <div
-                                    style={{
-                                      fontSize: "15px",
-                                      color: "#484444ff",
-                                    }}
+                            {/* Grouped display by attachment type - Full width boxes stacked vertically */}
+                            <Box sx={{ mt: 1 }}>
+                              {(filteredphoto || []).map((photoType: any) => {
+                                const items = fileList.filter(
+                                  (f) => f.attachmentType === photoType.id
+                                );
+                                if (items.length === 0) return null;
+                                return (
+                                  <Paper
+                                    key={photoType.id}
+                                    elevation={1}
+                                    sx={{ p: 2, borderRadius: 2, mb: 2, width: "100%" }}
                                   >
-                                    {(item.file.size / (1024 * 1024)).toFixed(
-                                      2
-                                    )}{" "}
-                                    MB
-                                  </div>
-                                  {photoType.id === "TRR_AT_4" && (
-                                    <div
-                                      style={{
-                                        fontSize: "15px",
-                                        color: "#484444ff",
-                                        marginTop: "4px",
-                                      }}
+                                    <label
+                                      className="sarabun-regular-datatable"
+                                      style={{ fontWeight: 600, fontSize: "16px" }}
                                     >
-                                      รายละเอียด: {item.otherText}
-                                    </div>
-                                  )}
-                                </Box>
-                                <Box sx={{ display: "flex", gap: 1 }}>
-                                  {/* //ปุ่มลบไฟล์ */}
-                                  {(action == "Edit" || action == "Add") && (
-                                    <IconButton
-                                      color="error"
+                                      {photoType.lov1}
+                                    </label>
+                                    <Divider sx={{ my: 1 }} />
+                                    {items.map((item, idx) => (
+                                      <Box
+                                        key={idx}
+                                        sx={{
+                                          p: 1.5,
+                                          border: "1px solid #e0e0e0",
+                                          borderRadius: 1,
+                                          mb: 1,
+                                          display: "flex",
+                                          justifyContent: "space-between",
+                                          alignItems: "center",
+                                          gap: 2,
+                                        }}
+                                      >
+                                        <Box>
+                                          <div style={{ fontWeight: "bold" }}>
+                                            {item.file.name}
+                                          </div>
+                                          <div
+                                            style={{
+                                              fontSize: "15px",
+                                              color: "#484444ff",
+                                            }}
+                                          >
+                                            {(item.file.size / (1024 * 1024)).toFixed(
+                                              2
+                                            )}{" "}
+                                            MB
+                                          </div>
+                                          {photoType.id === "TRR_AT_4" && (
+                                            <div
+                                              style={{
+                                                fontSize: "15px",
+                                                color: "#484444ff",
+                                                marginTop: "4px",
+                                              }}
+                                            >
+                                              รายละเอียด: {item.otherText}
+                                            </div>
+                                          )}
+                                        </Box>
+                                        <Box sx={{ display: "flex", gap: 1 }}>
+                                          {/* //ปุ่มลบไฟล์ */}
+                                          {(action == "Edit" || action == "Add") && (
+                                            <IconButton
+                                              color="error"
                                       onClick={() => {
                                         // หา index ที่ถูกต้องใน fileList
                                         const actualIndex = fileList.findIndex(f => 
@@ -1922,15 +1952,15 @@ export default function ComplaintBody({
                                           handleRemoveFile(actualIndex);
                                         }
                                       }}
-                                    >
-                                      <DeleteIcon />
-                                    </IconButton>
-                                  )}
+                                            >
+                                              <DeleteIcon />
+                                            </IconButton>
+                                          )}
 
-                                  {/* //ปุ่มดูไฟล์ */}
+                                          {/* //ปุ่มดูไฟล์ */}
 
-                                  <IconButton
-                                    color="primary"
+                                          <IconButton
+                                            color="primary"
                                     onClick={() => {
                                       console.log("full_path:", item.full_path);
                                       console.log("file type:", typeof item.file);
@@ -1950,84 +1980,84 @@ export default function ComplaintBody({
                                         console.log("Cannot preview file - no full_path or File object");
                                       }
                                     }}
-                                  >
-                                    <VisibilityIcon />
-                                  </IconButton>
+                                          >
+                                            <VisibilityIcon />
+                                          </IconButton>
 
 
-                                  {/* //ปุ่มดาวน์โหลดไฟล์ */}
+                                          {/* //ปุ่มดาวน์โหลดไฟล์ */}
                                   {action === "Read" && (
-                                    <IconButton
-                                      color="primary"
-                                      onClick={async () => {
+                                              <IconButton
+                                                color="primary"
+                                                onClick={async () => {
                                         if (!item.full_path) return;
 
-                                        try {
-                                          const response = await fetch(
+                                                  try {
+                                                    const response = await fetch(
                                             item.full_path,
-                                            { method: "GET" }
-                                          );
-                                          const blob = await response.blob();
+                                                      { method: "GET" }
+                                                    );
+                                                    const blob = await response.blob();
                                           const url = URL.createObjectURL(blob);
 
-                                          const link =
-                                            document.createElement("a");
-                                          link.href = url;
-                                          link.setAttribute(
-                                            "download",
-                                            item.original_file_name ?? "file"
-                                          );
-                                          document.body.appendChild(link);
-                                          link.click();
-                                          document.body.removeChild(link);
+                                                    const link =
+                                                      document.createElement("a");
+                                                    link.href = url;
+                                                    link.setAttribute(
+                                                      "download",
+                                                      item.original_file_name ?? "file"
+                                                    );
+                                                    document.body.appendChild(link);
+                                                    link.click();
+                                                    document.body.removeChild(link);
 
-                                          URL.revokeObjectURL(url); // cleanup memory
-                                        } catch (err) {
-                                          console.error(
-                                            "Download failed:",
-                                            err
-                                          );
-                                        }
-                                      }}
-                                    >
-                                      <DownloadIcon />
-                                    </IconButton>
-                                  )}
-                                </Box>
-                              </Box>
-                            ))}
-                          </Paper>
-                        );
-                      })}
+                                                    URL.revokeObjectURL(url); // cleanup memory
+                                                  } catch (err) {
+                                                    console.error(
+                                                      "Download failed:",
+                                                      err
+                                                    );
+                                                  }
+                                                }}
+                                              >
+                                                <DownloadIcon />
+                                              </IconButton>
+                                            )}
+                                        </Box>
+                                      </Box>
+                                    ))}
+                                  </Paper>
+                                );
+                              })}
 
-                      {fileList.length === 0 && (
-                        <Paper
-                          elevation={0}
-                          sx={{ p: 2, textAlign: "center", color: "#999" }}
-                        >
-                          ยังไม่มีไฟล์ที่แนบ
-                        </Paper>
-                      )}
-                    </Box>
-                  </Grid>
-                )}
-              </Grid>
-            </Paper>
+                              {fileList.length === 0 && (
+                                <Paper
+                                  elevation={0}
+                                  sx={{ p: 2, textAlign: "center", color: "#999" }}
+                                >
+                                  ยังไม่มีไฟล์ที่แนบ
+                                </Paper>
+                              )}
+                            </Box>
+                          </Grid>
+                        )}
+                      </Grid>
+                </Paper>
 
             <Paper
               elevation={3}
               sx={{
-                p: 3,
-                mt: 3,
-                width: "100%",
-                borderRadius: 3,
+                  p: 3,
+                  mt: 3,
+                  width: "100%",
+                  borderRadius: 3,
                 background: "linear-gradient(135deg, #f0f8ff 0%, #ffffff 100%)",
                 border: "1px solid #bbdefb",
                 boxShadow: "0 4px 12px rgba(33,150,243,0.1)",
               }}
             >
               <Box
-                sx={{
+                        sx={{
                   display: "flex",
                   alignItems: "center",
                   mb: 3,
@@ -2037,51 +2067,51 @@ export default function ComplaintBody({
               >
                 <Box
                   sx={{
-                    width: 6,
-                    height: 24,
+                              width: 6,
+                              height: 24,
                     backgroundColor: "#2196f3",
-                    borderRadius: 1,
+                              borderRadius: 1,
                     mr: 2,
                   }}
                 />
                 <label
-                  className="sarabun-regular-datatable"
+                              className="sarabun-regular-datatable"
                   style={{
                     fontSize: "18px",
                     fontWeight: "600",
                     color: "#1976d2",
                     margin: 0,
                   }}
-                >
-                  แผนกผู้ทำการออกเอกสาร (Reporting Department)
+                            >
+                              แผนกผู้ทำการออกเอกสาร (Reporting Department)
                 </label>
-              </Box>
-              <Grid container spacing={3}>
-                <Grid size={4}>
-                  <FullWidthTextField
+                          </Box>
+                          <Grid container spacing={3}>
+                            <Grid size={4}>
+                              <FullWidthTextField
                     value={
                       action === "Add"
                         ? user[0]?.employee_username || "-"
                         : dataelement?.request_name || "-"
                     }
-                    labelName="ชื่อผู้ออกเอกสาร (Reported by)"
-                    onchange={(e) => setrequest_name(e.target.value)}
-                    readonly
-                  />
-                </Grid>
-                <Grid size={4}>
-                  <FullWidthTextField
+                                labelName="ชื่อผู้ออกเอกสาร (Reported by)"
+                                onchange={(e) => setrequest_name(e.target.value)}
+                                readonly
+                              />
+                            </Grid>
+                            <Grid size={4}>
+                              <FullWidthTextField
                     value={
                       action === "Add"
                         ? user[0]?.employee_position || "-"
                         : dataelement?.request_position || "-"
                     }
-                    labelName="ตำแหน่ง (Position)"
-                    onchange={(e) => setrequest_position(e.target.value)}
-                    readonly
-                  />
-                </Grid>
-                <Grid size={4}>
+                                labelName="ตำแหน่ง (Position)"
+                                onchange={(e) => setrequest_position(e.target.value)}
+                                readonly
+                              />
+                            </Grid>
+                            <Grid size={4}>
                   {/* <AutocompleteComboBox
                     required="required"
                     value={request_department_id}
@@ -2090,13 +2120,13 @@ export default function ComplaintBody({
                     column="itasset_department_name"
                     setvalue={setrequest_department_id}
                   /> */}
-                  <FullWidthTextField
+                              <FullWidthTextField
                     value={
                       action === "Add"
                         ? user[0]?.itasset_department_name || "-"
                         : dataelement?.request_department_id || "-"
                     }
-                    labelName="แผนก (Department)"
+                                labelName="แผนก (Department)"
                     onchange={(e) => {
                       // ถึง readonly แต่เผื่ออนาคตจะเปิดให้แก้
                       setrequest_department_id(
@@ -2105,46 +2135,46 @@ export default function ComplaintBody({
                           : dataelement?.request_department_id
                       );
                     }}
-                    readonly
-                  />
-                </Grid>
-                <Grid size={4}>
-                  <FullWidthTextField
+                                readonly
+                              />
+                            </Grid>
+                            <Grid size={4}>
+                              <FullWidthTextField
                     value={
                       action === "Add"
                         ? user[0]?.employee_email || "-"
                         : dataelement?.request_email || "-"
                     }
                     labelName="ตำแหน่ง (Position)"
-                    onchange={(e) => setrequest_email(e.target.value)}
-                    readonly
-                  />
-                </Grid>
-                <Grid size={4}>
-                  <FullWidthTextField
+                                onchange={(e) => setrequest_email(e.target.value)}
+                                readonly
+                              />
+                            </Grid>
+                            <Grid size={4}>
+                              <FullWidthTextField
                     value={
                       action === "Add"
                         ? user[0]?.employee_tel || "-"
                         : dataelement?.request_phone || "-"
                     }
                     labelName="ตำแหน่ง (Position)"
-                    onchange={(e) => setrequest_phone(e.target.value)}
-                    readonly
-                  />
-                </Grid>
-                <Grid size={4}>
-                  <AutocompleteComboBox
-                    value={request_company_id}
-                    labelName={"โรงงาน (Factory)"}
-                    options={dataset_company}
-                    column="domain_name"
-                    setvalue={(v) => setrequest_company_id(v)}
-                    bgcolorTextField={true}
-                    readonly
-                  />
-                </Grid>
+                                onchange={(e) => setrequest_phone(e.target.value)}
+                                readonly
+                              />
+                            </Grid>
+                            <Grid size={4}>
+                              <AutocompleteComboBox
+                                value={request_company_id}
+                                labelName={"โรงงาน (Factory)"}
+                                options={dataset_company}
+                                column="domain_name"
+                                setvalue={(v) => setrequest_company_id(v)}
+                                bgcolorTextField={true}
+                                readonly
+                              />
+                            </Grid>
                 {/* <Grid size={4}>
-                  <AutocompleteComboBox
+              <AutocompleteComboBox
                     value={request_domain_id}
                     labelName={"โดเมน (Domain)"}
                     options={dataset_domain}
@@ -2152,13 +2182,158 @@ export default function ComplaintBody({
                     setvalue={setrequest_domain_id}
                     readonly
                   />
-                </Grid> */}
-              </Grid>
-            </Paper>
+              </Grid> */}
+            </Grid>
+                  </Paper>
 
-            <Grid container spacing={2}></Grid>
-          </Grid>
+                  <Grid container spacing={2}></Grid>
+            </Grid>
+          </Paper>
+              )}
+              {isFormHidden && dataReportTypeValue && (
+        <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>
+          <Paper elevation={3} sx={{
+            p: 3,
+            mt: 3,
+            width: "100%",
+            borderRadius: 3,
+            background: 'linear-gradient(135deg, #fff8f0 0%, #ffffff 100%)',
+            border: '1px solid #ffe0b2',
+            boxShadow: '0 4px 12px rgba(255,152,0,0.1)'
+          }}>
+            <Grid container spacing={2}>
+              <Grid size={12}>
+                <Accordion expanded={isMinimizeexlistOpen}
+                  onChange={() => setisMinimizeExlistOpen(!isMinimizeexlistOpen)}
+                  sx={{
+                    width: '100%',
+                    borderRadius: 3,
+                    background: 'linear-gradient(135deg, #fff3e0 0%, #ffffff 100%)',
+                    border: '1px solid #ff9800',
+                    boxShadow: '0 4px 12px rgba(255,152,0,0.15)',
+                    mt: 3
+                  }}>
+                  <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls="reporting-dept-content"
+                    id="reporting-dept-header"
+                  >
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between", // ✅ ดันซ้าย-ขวา
+                        width: "100%", // ✅ กินเต็ม
+                      }}
+                    >
+                      {/* === ฝั่งซ้าย === */}
+                      <Box sx={{ display: "flex", alignItems: "center" }}>
+                        <Box
+                          sx={{
+                            width: 6,
+                            height: 24,
+                            backgroundColor: "#ff9800",
+                            borderRadius: 1,
+                            mr: 2,
+                          }}
+                        />
+                        <Typography
+                          className="sarabun-regular-datatable"
+                          sx={{ fontSize: 18, fontWeight: 600, color: "#000000" }}
+                        >
+                          รายการคำชี้แจง (Explain List)
+                        </Typography>
+                      </Box>
+
+                      {/* === ฝั่งขวา ปุ่ม Add === */}
+                      <Button
+                        variant="contained"
+                        size="small"
+                        sx={{
+                          backgroundColor: "#2e7d32",
+                          "&:hover": { backgroundColor: "#2e7d32" },
+                          borderRadius: 2,
+                          textTransform: "none",
+                        }}
+                        onClick={() => handleOpenAdd && handleOpenAdd()}
+                      >
+                        + เพิ่มคำชี้แจง
+                      </Button>
+                    </Box>
+                  </AccordionSummary>
+
+                  <AccordionDetails>
+                    <Divider sx={{ my: 1, borderBottom: '2px solid #ff9800' }} />
+                    <Grid container spacing={3}>
+
+
+                    </Grid>
+                  </AccordionDetails>
+                </Accordion>
+              </Grid>
+            </Grid>
+          </Paper>
         </Paper>
+
+      )}
+
+      {isFormHidden && dataReportTypeValue && (
+        <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>
+          <Paper elevation={3} sx={{
+            p: 3,
+            mt: 3,
+            width: "100%",
+            borderRadius: 3,
+            background: 'linear-gradient(135deg, #e0e0e0 0%, #f5f5f5 100%)',
+            border: '1px solid #e0e0e0',
+            boxShadow: '0 4px 12px rgba(158,158,158,0.1)'
+          }}>
+            <Grid container spacing={2}>
+              <Grid size={12}>
+                <Accordion expanded={isMinimizecloseOpen}
+                  onChange={() => setisMinimizeCloseOpen(!isMinimizecloseOpen)}
+                  sx={{
+                    width: '100%',
+                    borderRadius: 3,
+                    background: 'linear-gradient(135deg, #e0e0e0 0%, #f5f5f5 100%)',
+                    border: '1px solid #9e9e9e',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                    mt: 3
+                  }}>
+                  <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls="reporting-dept-content"
+                    id="reporting-dept-header"
+                  >
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      <Box sx={{
+                        width: 6,
+                        height: 24,
+                        backgroundColor: '#424242',
+                        borderRadius: 1,
+                        mr: 2
+                      }} />
+                      <Typography
+                        className="sarabun-regular-datatable"
+                        sx={{ fontSize: 18, fontWeight: 600, color: '#000000' }}
+                      >
+                        รายละเอียดการปิดรายการ (Close Detail)
+                      </Typography>
+                    </Box>
+                  </AccordionSummary>
+
+                  <AccordionDetails>
+                    <Divider sx={{ my: 1, borderBottom: '2px solid #424242' }} />
+                    <Grid container spacing={3}>
+
+                    </Grid>
+                  </AccordionDetails>
+                </Accordion>
+              </Grid>
+            </Grid>
+          </Paper>
+        </Paper>
+
       )}
     </Box>
   );

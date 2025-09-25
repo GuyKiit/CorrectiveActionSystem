@@ -30,7 +30,7 @@ export default function DataTable({ colum, rows, titlename, noDataname = "ไม
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [searchQuery, setSearchQuery] = React.useState("");
 
-  console.log('[DataTable] colum : ', colum);
+  // console.log('[DataTable] colum : ', colum);
   
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
