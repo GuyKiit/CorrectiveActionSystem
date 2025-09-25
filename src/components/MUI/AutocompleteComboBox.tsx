@@ -17,6 +17,8 @@ interface AutocompleteComboBox {
   setvalue?: (value: any) => void;
   Validate?: boolean;
   validateTextLable?: string;
+  error?: boolean;
+  id?: string;
 }
 
 export default function AutocompleteComboBox(props: AutocompleteComboBox) {

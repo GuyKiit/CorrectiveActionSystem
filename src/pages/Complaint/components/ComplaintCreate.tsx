@@ -57,11 +57,24 @@ import { cleanAccessData } from "../../../service/initmain/initmain";
 import { useListComplaint } from "../core/ListComplaintContext";
 import { data } from "react-router-dom";
 import { ComplaintFile } from "./BrowseFileUpload";
-
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
 type Validate = {
   Product_Group: boolean;
+  Report_Type: boolean;
+  Respondent_Department: boolean;
+  Date_of_Detection: boolean;
+  Department_Area: boolean;
+  Product_Name: boolean;
+  Lot_No: boolean;
+  Email: boolean;
+  Complaint_Type: boolean;
+  Other_Type:boolean;
+  Complaint_Rs: boolean;
+  Other_Rs:boolean;
+  Clause_Rs:boolean;
+  Detail: boolean;
+  Priority:boolean;
 };
 
 type detail = {
@@ -97,6 +110,22 @@ interface ComplaintBody {
   validateText?: Validate;
   validateDetailText?: { [index: number]: detail };
   onBlocksChange?: (blocks: Block[]) => void;
+  onReportTypeChange?: (val: any) => void;
+  onDateOfDetectionChange?: (val: any) => void;
+  onDepartmentAreaChange?: (val: any) => void;
+  onProductNameChange?: (val: any) => void;
+  onLotNoChange?: (val: any) => void;
+  onEmailChange?: (val: any) => void;
+
+  onComplaintTypeChange?: (val: any) => void;
+  onOtherTypeChange?: (val: any) => void;
+
+  onComplaintRsChange?: (val: any) => void;
+  onOtherRsChange?: (val: any) => void;
+  onClauseChange?: (val: any) => void;
+
+  onDetailChange?: (val: any) => void;
+  onPriorityChange?: (val: any) => void;
 }
 
 type LovType = {
@@ -119,6 +148,8 @@ type FileData = {
   otherText?: string;
   original_file_name?: string;
   img_url?: string;
+  full_path?: string;
+  id?: string;
 };
 
 export default function ComplaintBody({
@@ -128,6 +159,23 @@ export default function ComplaintBody({
   validateText,
   onBlocksChange,
   validateDetailText,
+  onReportTypeChange,
+  onDateOfDetectionChange,
+  onDepartmentAreaChange,
+  onProductNameChange,
+  onLotNoChange,
+  onEmailChange,
+
+  onComplaintTypeChange,
+  onOtherTypeChange,
+
+  onComplaintRsChange,
+  onOtherRsChange,
+  onClauseChange,
+
+
+  onDetailChange,
+  onPriorityChange,
 }: ComplaintBody) {
   const isActionRead = action === "Read";
   const isActionAdd = action === "Add";
@@ -138,14 +186,6 @@ export default function ComplaintBody({
 
   const [openConfirm, setOpenConfirm] = useState(false);
   const [deleteIndex, setDeleteIndex] = useState<number | null>(null);
-
-  // const handleConfirmDelete = () => {
-  //   if (deleteIndex !== null) {
-  //     handleRemoveFile(deleteIndex);
-  //     setDeleteIndex(null);
-  //   }
-  //   setOpenConfirm(false);
-  // };
 
   const {
     dataelement,
@@ -373,6 +413,11 @@ export default function ComplaintBody({
     }
     setdataReportTypeValue(val);
     console.log(dataReportTypeValue, "dataReportTypeValue");
+    
+    // Clear validation error when user selects a value
+    if (onReportTypeChange) {
+      onReportTypeChange(val);
+    }
 
     setrespondent_domain_id(dataset_company[0]);
     setrespondent_company_id(dataset_company[0]);
@@ -443,6 +488,12 @@ export default function ComplaintBody({
       setdataComplaintTypeValue_Combobox(reducedArray);
       console.log(newData, "newData");
 
+      // Clear validation error when user selects/deselects complaint type
+      if (onComplaintTypeChange) {
+        onComplaintTypeChange(newData);
+      }
+
+      
       return newData;
     });
   };
@@ -480,6 +531,14 @@ export default function ComplaintBody({
 
       setdataComplaintRsValue_Combobox(reducedArray);
 
+      // Clear validation error when user selects/deselects complaint rs
+      if (onComplaintRsChange) {
+        onComplaintRsChange(newData);
+      }
+
+
+
+
       return newData;
     });
   };
@@ -514,19 +573,30 @@ export default function ComplaintBody({
     });
   };
   const handleCheckboxChangePriority = (item: LovType) => {
-    setdatapriority((prev) => (prev?.id === item.id ? null : item));
+    const newPriority = datapriority?.id === item.id ? null : item;
+    setdatapriority(newPriority);
+    
+    // Set the priority value for the context
+    setdatapriorityValue_Combobox(newPriority?.id || "");
+    setpriority_level(newPriority?.id || "");
+
+    // Clear validation error when user selects/deselects priority
+    if (onPriorityChange) {
+      onPriorityChange(newPriority);
+    }
+    
+    console.log("🎯 Priority selected:", newPriority);
+    console.log("🎯 Priority ID:", newPriority?.id);
   };
 
   // รับ ComplaintFile[] จาก BrowseFileUpload
   const handleFileChange = (fileArray: ComplaintFile[]) => {
     if (!fileArray || fileArray.length === 0) return;
     const updatedList = [...fileList, ...fileArray];
-
+    console.log("ไฟล์ที่เพิ่ม:", updatedList);
     setFileList(updatedList);
     setcomplaintFiles(updatedList);
   };
-
-  
 
   const handleFileAttachmentTypeChange = (index: number, type: string) => {
     const updated = [...fileList];
@@ -592,18 +662,54 @@ export default function ComplaintBody({
     );
   };
 
-const handleRemoveFile = (index: number) => {
+  const handleRemoveFile = async (index: number) => {
+    const fileToRemove = fileList[index];
+    
+    // ถ้าเป็นไฟล์ที่มีอยู่แล้วในฐานข้อมูล (มี id)
+    if (fileToRemove && fileToRemove.id) {
+      try {
+        // เรียกใช้ endpoint ลบไฟล์จากฐานข้อมูล
+        const deletePayload = {
+          id: fileToRemove.id,
+          update_by: user[0]?.employee_username || ""
+        };
+        
+        console.log("🗑️ Deleting file from database:", deletePayload);
+        const response = await _POST(deletePayload, "/ComplaintFile/ComplaintFileEdit");
+        console.log("🗑️ Delete response:", response);
+        
+        if (response && response.status === "success") {
+          console.log("✅ File deleted from database successfully");
+        } else {
+          console.log("⚠️ Failed to delete file from database:", response);
+        }
+      } catch (error) {
+        console.error("❌ Error deleting file from database:", error);
+      }
+    }
+    
+    // ลบไฟล์จาก UI
     setFileList((prev) => {
       const updatedList = prev.filter((_, i) => i !== index);
+      // อัปเดต complaintFiles ใน context ด้วย
+      setcomplaintFiles(updatedList);
       return updatedList;
     });
   };
   useEffect(() => {
-  setcomplaintFiles(fileList); // sync
-}, [fileList]);
+    setcomplaintFiles(fileList); // sync
+  }, [fileList]);
 
   // READ - Get Complaints
   const ComplaintFile_Get = async () => {
+    // ตรวจสอบว่ามี dataelement?.id หรือไม่  ไม่error หากไม่มีไฟล์
+    if (!dataelement?.id) {
+      console.log("No complaint ID, skipping file fetch");
+      setFileList([]);
+      setcomplaintFiles([]);
+      return;
+    }
+
     setIsLoadingScreen(true);
     const dataset = {
       complaint_id: dataelement?.id,
@@ -615,9 +721,8 @@ const handleRemoveFile = (index: number) => {
       console.log(response, "response_Get");
       if (response && response.status === "success") {
         setIsLoadingScreen(false);
-        const responseData: any = [];
-
-        if (Array.isArray(response.data)) {
+        
+        if (Array.isArray(response.data) && response.data.length > 0) {
           console.log(
             "################# FILE #######################:",
             response.data
@@ -634,16 +739,31 @@ const handleRemoveFile = (index: number) => {
               otherText: file.other,
               original_file_name: file.user_file_name,
               img_url: file.img_url,
+              full_path: file.full_path,
+              id: file.id, // เพิ่ม id สำหรับการลบไฟล์
             })
           );
 
           setFileList(mappedFiles);
           setcomplaintFiles(mappedFiles);
+        } else {
+          // ไม่มีไฟล์
+          console.log("No files found");
+          setFileList([]);
+          setcomplaintFiles([]);
         }
-        console.log("mapped responseData:", responseData); // เช็คว่ามีกี่แถวหลัง map
+      } else {
+        // Response ไม่สำเร็จ
+        console.log("Failed to get files:", response);
+        setFileList([]);
+        setcomplaintFiles([]);
       }
     } catch (e) {
-      console.log("error");
+      console.log("Error getting files:", e);
+      setFileList([]);
+      setcomplaintFiles([]);
+    } finally {
+      setIsLoadingScreen(false);
     }
   };
 
@@ -1014,6 +1134,8 @@ const handleRemoveFile = (index: number) => {
                 ? true
                 : bgcolorTextField
             }
+            Validate={validateText?.Report_Type || false}
+            validateTextLable={validateText?.Report_Type ? "กรุณาเลือกประเภทรายงาน (Report Type)" : ""}
           />
         </Grid>
       </Grid>
@@ -1116,9 +1238,16 @@ const handleRemoveFile = (index: number) => {
                     required="required"
                     labelName={"วันที่พบปัญหา (Date of Detection)"}
                     value={date_of_detection}
-                    handleChange={(val) => setdate_of_detection(val ?? null)}
+                    handleChange={(val) => {
+                      setdate_of_detection(val ?? null);
+                      if (onDateOfDetectionChange) {
+                        onDateOfDetectionChange(val);
+                      }
+                    }}
                     bgcolorTextField={action === "Add" ? false : true}
                     readonly={isActionRead || isActionEdit || isActionDelete}
+                    Validate={validateText?.Date_of_Detection || false}
+                    validateTextLable={validateText?.Date_of_Detection ? "กรุณาเลือกวันที่พบปัญหา" : ""}
                   />
                 </Grid>
                 <Grid size={4}>
@@ -1133,11 +1262,14 @@ const handleRemoveFile = (index: number) => {
                     setvalue={(e) => {
                       console.log(e); // ดูค่าของ e ที่ถูกส่งมาจาก AutocompleteComboBox
                       setrespondent_department_id(e);
+                      if (onDepartmentAreaChange) {
+                        onDepartmentAreaChange(e);
+                      }
                     }}
-                    bgcolorTextField={
-                      action === "Add" ? false : isActionEdit ? false : true
-                    }
+                    bgcolorTextField={action === "Add" ? false : isActionEdit ? false : true}
                     readonly={isActionRead || isActionDelete}
+                    Validate={validateText?.Department_Area || false}
+                    validateTextLable={validateText?.Department_Area ? "กรุณาเลือกแผนกที่พบปัญหา" : ""}
                   />
                 </Grid>
                 <Grid size={4}>
@@ -1145,8 +1277,15 @@ const handleRemoveFile = (index: number) => {
                     required="required"
                     value={product_name}
                     labelName="ชื่อสินค้า (Product Name)"
-                    onchange={(e) => setproduct_name(e)}
+                    onchange={(e) => {
+                      setproduct_name(e);
+                      if (onProductNameChange) {
+                          onProductNameChange(e);
+                      }
+                    }}
                     readonly={isActionRead || isActionDelete}
+                    Validate={validateText?.Product_Name || false}
+                    validateTextLable={validateText?.Product_Name ? "กรุณากรอกชื่อสินค้า" : ""}
                   />
                 </Grid>
                 <Grid size={4}>
@@ -1154,8 +1293,15 @@ const handleRemoveFile = (index: number) => {
                     required="required"
                     value={lot_no}
                     labelName="Lot No./Bag No"
-                    onchange={(e) => setlot_no(e)}
+                    onchange={(e) => {
+                      setlot_no(e);
+                        if (onLotNoChange){
+                            onLotNoChange(e);
+                        }
+                      }} 
                     readonly={isActionRead || isActionDelete}
+                    Validate={validateText?.Lot_No || false}
+                    validateTextLable={validateText?.Lot_No ? "กรุณากรอก Lot No./Bag No" : ""}
                   />
                 </Grid>
                 <Grid size={4}>
@@ -1163,8 +1309,15 @@ const handleRemoveFile = (index: number) => {
                     required="required"
                     value={respondent_email}
                     labelName="อีเมล (Email)"
-                    onchange={(e) => setrespondent_email(e)}
+                    onchange={(e) => {
+                      setrespondent_email(e);
+                      if (onEmailChange) {
+                        onEmailChange(e);
+                      }
+                    }}
                     readonly={isActionRead || isActionDelete}
+                    Validate={validateText?.Email || false}
+                    validateTextLable={validateText?.Email ? "กรุณากรอกอีเมล" : ""}
                   />
                 </Grid>
               </Grid>
@@ -1229,6 +1382,11 @@ const handleRemoveFile = (index: number) => {
                           ประเภทข้อร้องเรียน (Type Of Complaint){" "}
                           <span style={{ color: "red" }}> *</span>
                         </label>
+                        {validateText?.Complaint_Type && (
+                          <label className="fs-7 py-1 sarabun-regular-lable-validate" style={{ color: "red" }}>
+                            กรุณาเลือกประเภทข้อร้องเรียน
+                          </label>
+                        )}
                         <Divider sx={{ my: 2 }} />
                         <Box
                           sx={{
@@ -1260,15 +1418,16 @@ const handleRemoveFile = (index: number) => {
                               <FullWidthTextArea
                                 value={compTypeOther}
                                 labelName="Other:"
-                                onchange={(e) => setcompTypeOther(e)}
-                                bgcolorTextField={
-                                  action === "Add"
-                                    ? false
-                                    : isActionEdit
-                                    ? false
-                                    : true
-                                }
+                                onchange={(e) => {
+                                  setcompTypeOther(e);
+                                  if(onOtherTypeChange){
+                                    onOtherTypeChange(e);
+                                  }
+                            
+                                }}
                                 readonly={isActionRead || isActionDelete}
+                                Validate={validateText?.Other_Type || false}
+                                validateTextLable={validateText?.Other_Type ? "กรุณากรอกรายละเอียด" : ""}
                               />
                             )}
                           </Box>
@@ -1303,6 +1462,11 @@ const handleRemoveFile = (index: number) => {
                           มาตรฐานอ้างอิง (Reference Standard){" "}
                           <span style={{ color: "red" }}> *</span>
                         </label>
+                        {validateText?.Complaint_Rs && (
+                          <label className="fs-7 py-1 sarabun-regular-lable-validate" style={{ color: "red" }}>
+                            กรุณาเลือกมาตรฐานอ้างอิง
+                          </label>
+                        )}
                         <Divider sx={{ my: 1 }} />
                         <Box
                           sx={{
@@ -1319,8 +1483,8 @@ const handleRemoveFile = (index: number) => {
                                   value={dataComplaintRs.some(
                                     (rs) => rs.id === item.id
                                   )}
-                                  onchange={() => handleCheckboxChangeRS(item)}
-                                  readonly={isActionRead || isActionDelete}
+                                   onchange={() => handleCheckboxChangeRS(item)}
+                                   readonly={isActionRead || isActionDelete}
                                 />
                               </Grid>
                             ))}
@@ -1332,15 +1496,15 @@ const handleRemoveFile = (index: number) => {
                               <FullWidthTextArea
                                 value={compRsOther}
                                 labelName="Other:"
-                                onchange={(e) => setcompRsOther(e)}
-                                bgcolorTextField={
-                                  action === "Add"
-                                    ? false
-                                    : isActionEdit
-                                    ? false
-                                    : true
-                                }
+                                onchange={(e) => {
+                                  setcompRsOther(e);
+                                  if(onOtherRsChange){
+                                    onOtherRsChange(e);
+                                  }
+                                }}
                                 readonly={isActionRead || isActionDelete}
+                                Validate={validateText?.Other_Rs || false}
+                                validateTextLable={validateText?.Other_Rs ? "กรุณากรอกรายละเอียด Other" : ""}
                               />
                             )}
                             {dataComplaintRs.some(
@@ -1349,15 +1513,15 @@ const handleRemoveFile = (index: number) => {
                               <FullWidthTextArea
                                 value={clauseOther}
                                 labelName="Clause:"
-                                onchange={(e) => setclauseOther(e)}
-                                bgcolorTextField={
-                                  action === "Add"
-                                    ? false
-                                    : isActionEdit
-                                    ? false
-                                    : true
-                                }
+                                onchange={(e) => {
+                                  setclauseOther(e);
+                                  if(onClauseChange){
+                                    onClauseChange(e);
+                                  }
+                                }}
                                 readonly={isActionRead || isActionDelete}
+                                Validate={validateText?.Clause_Rs || false}
+                                validateTextLable={validateText?.Clause_Rs ? "กรุณากรอกรายละเอียด Clause" : ""}
                               />
                             )}
                           </Box>
@@ -1389,6 +1553,11 @@ const handleRemoveFile = (index: number) => {
                         รายละเอียด (Detail){" "}
                         <span style={{ color: "red" }}> *</span>
                       </label>
+                      {/* {validateText?.Detail && (
+                          <label className="fs-7 py-1 sarabun-regular-lable-validate" style={{ color: "red" }}>
+                            กรุณากรอกรายละเอียด
+                          </label>
+                        )} */}
                       <Divider sx={{ my: 2 }} />
                       <Grid
                         container
@@ -1403,15 +1572,15 @@ const handleRemoveFile = (index: number) => {
                           <FullWidthTextArea
                             value={detail}
                             labelName=""
-                            onchange={(e) => setdetail(e)}
-                            bgcolorTextField={
-                              action === "Add"
-                                ? false
-                                : isActionEdit
-                                ? false
-                                : true
-                            }
+                            onchange={(e) => {
+                              setdetail(e);
+                              if(onDetailChange){
+                                onDetailChange(e);
+                              }
+                            }}
                             readonly={isActionRead || isActionDelete}
+                            Validate={validateText?.Detail || false}
+                            validateTextLable={validateText?.Detail ? "กรุณากรอกรายละเอียด (Detail)" : ""}
                           />
                         </Grid>
                       </Grid>
@@ -1441,8 +1610,13 @@ const handleRemoveFile = (index: number) => {
                         ระดับความสำคัญ (Priority){" "}
                         <span style={{ color: "red" }}> *</span>
                       </label>
-                      <Divider sx={{ my: 2 }} />
-                      <Grid
+                      {validateText?.Priority && (
+                          <label className="fs-7 py-1 sarabun-regular-lable-validate" style={{ color: "red" }}>
+                            กรุณาเลือกระดับความสำคัญ (Priority)
+                          </label>
+                        )}
+                        <Divider sx={{ my: 2 }} />
+                        <Grid
                         container
                         spacing={2}
                         sx={{
@@ -1491,15 +1665,19 @@ const handleRemoveFile = (index: number) => {
                                     <Radio
                                       checked={datapriority?.id === item.id}
                                       onChange={(e) => {
+                                        console.log("🎯 Priority radio clicked:", item);
                                         setdatapriority(item);
-                                        // console.log("Priority selected:", e);
-                                        console.log("Priority selected:", item);
                                         setdatapriorityValue_Combobox(item.id);
+                                        setpriority_level(item.id);
                                         const days = Number(item.lov3 ?? 0);
                                         priorityCalculateRespondDate(
                                           days,
                                           true
                                         );
+                                        // Clear validation error when user selects priority
+                                        if (onPriorityChange) {
+                                          onPriorityChange(item);
+                                        }
                                         console.log(
                                           "เลือก priority:",
                                           item.lov_code,
@@ -1508,7 +1686,11 @@ const handleRemoveFile = (index: number) => {
                                         );
                                         console.log(
                                           "เลือก datapriority?.id:",
-                                          datapriority?.id
+                                          item.id
+                                        );
+                                        console.log(
+                                          "datapriorityValue_Combobox set to:",
+                                          item.id
                                         );
                                       }}
                                       disabled={
@@ -1719,12 +1901,27 @@ const handleRemoveFile = (index: number) => {
                                     </div>
                                   )}
                                 </Box>
-                                <Box sx={{ display: "flex", gap: 1 }}>                              
+                                <Box sx={{ display: "flex", gap: 1 }}>
                                   {/* //ปุ่มลบไฟล์ */}
                                   {(action == "Edit" || action == "Add") && (
                                     <IconButton
                                       color="error"
-                                      onClick={() => handleRemoveFile(idx)}
+                                      onClick={() => {
+                                        // หา index ที่ถูกต้องใน fileList
+                                        const actualIndex = fileList.findIndex(f => 
+                                          f.file.name === item.file.name && 
+                                          f.attachmentType === item.attachmentType
+                                        );
+                                        console.log("🔍 Remove file debug:", {
+                                          itemName: item.file.name,
+                                          itemType: item.attachmentType,
+                                          actualIndex,
+                                          fileListLength: fileList.length
+                                        });
+                                        if (actualIndex !== -1) {
+                                          handleRemoveFile(actualIndex);
+                                        }
+                                      }}
                                     >
                                       <DeleteIcon />
                                     </IconButton>
@@ -1734,58 +1931,68 @@ const handleRemoveFile = (index: number) => {
 
                                   <IconButton
                                     color="primary"
-                                    onClick={() =>
-                                      (action === "Read" || action === "Delete" || action === "Edit")
-                                        ? window.open(item.img_url, "_blank")
-                                        : window.open(
-                                            URL.createObjectURL(item.file),
-                                            "_blank"
-                                          )
-                                    }
+                                    onClick={() => {
+                                      console.log("full_path:", item.full_path);
+                                      console.log("file type:", typeof item.file);
+                                      console.log("file instanceof File:", item.file instanceof File);
+
+                                      // ตรวจสอบว่าเป็นไฟล์ใหม่ (ไม่มี full_path) หรือไฟล์เก่า (มี full_path)
+                                      if (item.full_path) {
+                                        // ไฟล์เก่า - เปิดจาก NAS
+                                        window.open(item.full_path, "_blank");
+                                      } else if (item.file instanceof File) {
+                                        // ไฟล์ใหม่ - เปิดจาก File object
+                                        const fileUrl = URL.createObjectURL(item.file);
+                                        window.open(fileUrl, "_blank");
+                                        // Clean up URL after a delay to free memory
+                                        setTimeout(() => URL.revokeObjectURL(fileUrl), 1000);
+                                      } else {
+                                        console.log("Cannot preview file - no full_path or File object");
+                                      }
+                                    }}
                                   >
                                     <VisibilityIcon />
                                   </IconButton>
 
+
                                   {/* //ปุ่มดาวน์โหลดไฟล์ */}
-                                  {action === "Read" 
-                                     && (
-                                      <IconButton
-                                        color="primary"
-                                        onClick={async () => {
-                                          if (!item.img_url) return;
+                                  {action === "Read" && (
+                                    <IconButton
+                                      color="primary"
+                                      onClick={async () => {
+                                        if (!item.full_path) return;
 
-                                          try {
-                                            const response = await fetch(
-                                              item.img_url,
-                                              { method: "GET" }
-                                            );
-                                            const blob = await response.blob();
-                                            const url =
-                                              URL.createObjectURL(blob);
+                                        try {
+                                          const response = await fetch(
+                                            item.full_path,
+                                            { method: "GET" }
+                                          );
+                                          const blob = await response.blob();
+                                          const url = URL.createObjectURL(blob);
 
-                                            const link =
-                                              document.createElement("a");
-                                            link.href = url;
-                                            link.setAttribute(
-                                              "download",
-                                              item.original_file_name ?? "file"
-                                            );
-                                            document.body.appendChild(link);
-                                            link.click();
-                                            document.body.removeChild(link);
+                                          const link =
+                                            document.createElement("a");
+                                          link.href = url;
+                                          link.setAttribute(
+                                            "download",
+                                            item.original_file_name ?? "file"
+                                          );
+                                          document.body.appendChild(link);
+                                          link.click();
+                                          document.body.removeChild(link);
 
-                                            URL.revokeObjectURL(url); // cleanup memory
-                                          } catch (err) {
-                                            console.error(
-                                              "Download failed:",
-                                              err
-                                            );
-                                          }
-                                        }}
-                                      >
-                                        <DownloadIcon />
-                                      </IconButton>
-                                    )}
+                                          URL.revokeObjectURL(url); // cleanup memory
+                                        } catch (err) {
+                                          console.error(
+                                            "Download failed:",
+                                            err
+                                          );
+                                        }
+                                      }}
+                                    >
+                                      <DownloadIcon />
+                                    </IconButton>
+                                  )}
                                 </Box>
                               </Box>
                             ))}
