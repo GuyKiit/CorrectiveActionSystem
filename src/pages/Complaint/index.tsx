@@ -201,7 +201,7 @@ export default function Complaint() {
     return_from_status_id, return_from_status_datetime, dc_name,
     dc_company_id, dc_department_id, dc_position, dc_email,
     record_status, create_by, create_datetime, update_by, update_datetime,
-    ComplaintStatusID_Combobox, dataReportTypeValue, 
+    ComplaintStatusID_Combobox, dataReportTypeValue,
     dataComplaintTypeValue_Combobox,
     dataComplaintType_Combobox, dataComplaintRsValue_Combobox, dataComplaintRs_Combobox,
     dataphotoValue_Combobox, dataphoto_Combobox, datapriorityValue_Combobox, datastatus,
@@ -334,7 +334,7 @@ export default function Complaint() {
   const [filteredphoto, setFilteredphoto] = useState<LovType[]>([]);
   const [isRSHidden, setIsRSHidden] = React.useState(true);
   const [value, setValue] = React.useState(0);
-  
+
   // =====================================================================================================
   // UTILITY FUNCTIONS (from index.tsx and ComplaintRead.tsx)
   // =====================================================================================================
@@ -344,7 +344,7 @@ export default function Complaint() {
   const [dateOfDetectionError, setDateOfDetectionError] = useState(false);
   const [departmentAreaError, setDepartmentAreaError] = useState(false);
   const [productNameError, setProductNameError] = useState(false);
-  const [lotNoError,setLotNoError] = useState(false);
+  const [lotNoError, setLotNoError] = useState(false);
   const [emailError, setEmailError] = useState(false);
   const [complaintTypeError, setComplaintTypeError] = useState(false);
   const [otherTypeError, setOtherTypeError] = useState(false);
@@ -385,7 +385,7 @@ export default function Complaint() {
     setrequest_position("");
     setrequest_email("");
     setrequest_phone("");
-    
+
     // Clear ALL validation errors
     setReportTypeError(false);
     setRespondentDepartmentError(false);
@@ -656,7 +656,9 @@ export default function Complaint() {
   // Get Domain Data
   const CasDomainGet = async () => {
     try {
-      const dataset = {};
+      const dataset = {
+        company_id: user[0]?.itasset_company_id,
+      };
       const response = await _POST(dataset, "/Complaint/CasDomainGet");
       if (response && response.status === "success") {
         console.log(
@@ -665,10 +667,10 @@ export default function Complaint() {
         );
         if (Array.isArray(response.data)) {
           let domain = response.data.filter(
-            (item: any) => item.domain_id === "TRRGROUP.COM"
+            (item: any) => item.domain_id === user[0]?.employee_domain
           );
           if (domain) {
-            setdataset_domain(domain);
+            // setdataset_domain(domain);
             setdataset_company(domain);
           }
         }
@@ -682,8 +684,8 @@ export default function Complaint() {
   const CasDepartmentDomainGet = async () => {
     try {
       const dataset = {
-        domain_id: "TRRGROUP.COM",
-        company_id: "21",
+        domain_id: user[0]?.employee_domain,
+        company_id: user[0]?.itasset_company_id,
       };
       const response = await _POST(
         dataset,
@@ -694,7 +696,15 @@ export default function Complaint() {
           "❇️ Call [Complaint/CasDepartmentDomainGet] -> Department_Domain_Get :",
           response.data
         );
-        setdataset_department(response.data);
+        if (Array.isArray(response.data)) {
+          let department = response.data.filter(
+            (item: any) => item.department_id != user[0]?.itasset_department_id
+          );
+          if (department) {
+            // setdataset_domain(domain);
+            setdataset_department(department);
+          }
+        }
       }
     } catch (e) {
       console.log("error:", e);
@@ -775,8 +785,8 @@ export default function Complaint() {
       // product_name: TextNameSearch.product_name,
       // lot_no: TextNameSearch.lot_no,
     };
-    console.log("user_id: ",dataset);
-    
+    console.log("user_id: ", dataset);
+
 
     try {
       let response = await _POST(dataset, "/Complaint/ComplaintGet");
@@ -793,11 +803,11 @@ export default function Complaint() {
 
                   if (name === "View") {
                     handleOnclickMenuView(el);
-                  } 
+                  }
                   else if (name === "Edit") {
                     handleOnclickMenuEdit(el);
                   }
-                   else if (name === "Delete") {
+                  else if (name === "Delete") {
                     handleOnclickMenuDelete(el);
                   }
                 }}
@@ -805,8 +815,12 @@ export default function Complaint() {
             );
             el.ACTION = ACTION;
             console.log("el.acknowledge_flag", el.acknowledge_flag)
+            console.log(el.step_label)
             el.complaint_status_label = (
-              <BasicChips label={`${el.complaint_status_label}`} acknowledge={el.acknowledge_flag}></BasicChips>
+              <BasicChips label={`${el.complaint_status_label}`} acknowledge={el.acknowledge_flag} type="status"></BasicChips>
+            );
+            el.step_label = (
+              <BasicChips label={`${el.step_label}`}type="step"></BasicChips>
             );
             responseData.push(el);
           });
@@ -881,7 +895,7 @@ export default function Complaint() {
   };
 
   //validate
-  const validateBeforeAdd = () : boolean => {
+  const validateBeforeAdd = (): boolean => {
     let valid = true;
     // Clear ALL validation errors before validation
     setReportTypeError(false);
@@ -962,7 +976,7 @@ export default function Complaint() {
     // Validate Complaint Rs - ตรวจสอบตาม Report Type
     const reportTypeCode = dataReportTypeValue?.lov_code;
     console.log("🔍 Report Type Code:", reportTypeCode);
-    
+
     // เฉพาะ NCR เท่านั้นที่ต้อง validate Complaint Rs
     if (reportTypeCode === "NCR") {
       if (!dataComplaintRsValue_Combobox || dataComplaintRsValue_Combobox.length === 0) {
@@ -1017,6 +1031,8 @@ export default function Complaint() {
     console.log("🔍 Final validation result:", valid);
     return valid;
   }
+
+
 
 
   // CREATE -SaveDraft Add Complaint
@@ -1178,7 +1194,7 @@ export default function Complaint() {
     console.log("Departtttt", request_department_id?.itasset_department_id);
     console.log("🤍🤍dataComplaintTypeValue_Combobox", dataComplaintTypeValue_Combobox);
 
-    if(!validateBeforeAdd()){
+    if (!validateBeforeAdd()) {
       return;
     }
 
@@ -1360,9 +1376,9 @@ export default function Complaint() {
       : null;
 
     // สร้าง JSON payload
-    
+
     const complaintPayload = {
-      
+
       complaintModel: {
         id: dataelement?.id,
         report_type: dataReportTypeValue?.id,
@@ -1408,12 +1424,12 @@ export default function Complaint() {
         complaintType: complainttypeModel,
         complaintRs: complaintRsModel,
         // เพิ่ม complaintFile
-        
 
-        
-       complaintFile:
+
+
+        complaintFile:
           complaintFiles?.map((item: any, index: number) => {
-            return {        
+            return {
               id: item.id || undefined,
               cf_type: "Complaint",
               //complaint_id: tempid,
@@ -1430,10 +1446,10 @@ export default function Complaint() {
               create_datetime: new Date().toISOString(),
               remark: item.attachmentType === "TRR_AT_4" ? (item.otherText?.trim() || null) : null,
             };
-        },
-        ) || []
+          },
+          ) || []
       },
-      
+
       RunningModel: {
         code_group: dataReportTypeValue.lov_code,
         code_type: dataReportTypeValue.lov1 + "-" + getPaddingYear(),
@@ -1486,10 +1502,10 @@ export default function Complaint() {
       setIsLoadingScreen(false);
       handleClose();
       FullSweetalert({
-          title: 'Success',
-          text: `บันทึกข้อมูลสำเร็จ`,
-          icon: 'success'
-        });
+        title: 'Success',
+        text: `บันทึกข้อมูลสำเร็จ`,
+        icon: 'success'
+      });
       Complaint_Get();
     }
   };
@@ -1535,10 +1551,10 @@ export default function Complaint() {
       setIsLoadingScreen(false);
       handleClose();
       FullSweetalert({
-          title: 'Success',
-          text: `ลบข้อมูลสำเร็จ`,
-          icon: 'success'
-        });
+        title: 'Success',
+        text: `ลบข้อมูลสำเร็จ`,
+        icon: 'success'
+      });
       Complaint_Get();
     }
   };
@@ -2100,7 +2116,7 @@ export default function Complaint() {
             onBlocksChange={(data) => setComplaintBlocks(data)}
             validateDetailText={blockValidateErrors}
             handleOpenAdd={handleOpenAddList}
-            validateText={{ 
+            validateText={{
               Product_Group: false,
               Report_Type: reportTypeError,
               Respondent_Department: false,
@@ -2110,10 +2126,10 @@ export default function Complaint() {
               Lot_No: lotNoError,
               Email: emailError,
               Complaint_Type: complaintTypeError,
-              Other_Type:  otherTypeError,
+              Other_Type: otherTypeError,
               Complaint_Rs: complaintRsError,
               Other_Rs: otherRsError,
-              Clause_Rs : clauseRsError,
+              Clause_Rs: clauseRsError,
               Detail: detailError,
               Priority: priorityError,
             }}
@@ -2266,7 +2282,7 @@ export default function Complaint() {
       />
 
       {/* Dialog Sections */}
-      
+
       <FuncDialog
         open={openAddlist}
         dialogWidth="xl"
@@ -2280,7 +2296,7 @@ export default function Complaint() {
             action="Add"
             onBlocksChange={(data) => setComplaintBlocks(data)}
             validateDetailText={blockValidateErrors}
-            
+
           />
         }
       />

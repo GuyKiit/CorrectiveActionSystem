@@ -70,12 +70,16 @@ export default function DesktopDatePickers({
             textField: { 
               size: "small" ,
               error: Validate,
-              helperText: Validate ? validateTextLable : "",
-              required: required ? true : false,
+              
             } 
             }}
         />
       </LocalizationProvider>
+      {validateTextLable && (
+        <label className="fs-7 py-1 sarabun-regular-lable-validate" style={{ color: "red" }}>
+          {validateTextLable}
+        </label>
+      )}
     </div>
   );
 }

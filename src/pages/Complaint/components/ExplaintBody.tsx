@@ -972,7 +972,7 @@ export default function ExplaintBody({
                     value={responsible_department_id}
                     labelName={"แผนก (Department)"}
                     options={dataset_department}
-                    column="itasset_department_name"
+                    column="department_name"
                     setvalue={(e) => { setresponsible_department_id(e); }}
                     bgcolorTextField={action === "Add" ? false : isActionEdit ? false : true}
                     readonly={isActionRead || isActionDelete}
@@ -1592,7 +1592,7 @@ export default function ExplaintBody({
                       "แผนก (Department)"
                     }
                     options={dataset_department}
-                    column="itasset_department_name"
+                    column="department_name"
                     setvalue={(e) => {
                       // //console.log(e); // ดูค่าของ e ที่ถูกส่งมาจาก AutocompleteComboBox
                       setrespondent_department_id(e);
@@ -1889,7 +1889,7 @@ export default function ExplaintBody({
                       "แผนก (Department)"
                     }
                     options={dataset_department}
-                    column="itasset_department_name"
+                    column="department_name"
                     setvalue={(e) => {
                       // //console.log(e); // ดูค่าของ e ที่ถูกส่งมาจาก AutocompleteComboBox
                       setrespondent_department_id(e);

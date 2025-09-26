@@ -7,6 +7,7 @@ interface BasicChips {
   acknowledge?: boolean;
   backgroundColor?: string;
   borderColor?: string;
+  type?: "status" | "step";
 }
 
 const defaultColor = "#B3B3B3";
@@ -23,13 +24,24 @@ export default function BasicChips(props: BasicChips) {
     APPROVE_FU: "#E4CCFF",
     CLOSE: "#B3B3B3",
   };
+  const stepColorMap: Record<string, string> = {
+    EXPLAIN: "#00FF00",
+    COMPLAINT: "#FF6347"
+
+  };
 
   const getStatusColor = () => {
     // console.log("props.acknowledge",props.acknowledge);
     
     if (!props.label) return defaultColor;
-    return allColorMap[props.label];
-  };
+    if (props.type === "step") {
+    return stepColorMap[props.label] || defaultColor;
+  }
+
+  return allColorMap[props.label] || defaultColor;
+};
+  
+  
 
   const statusColor = getStatusColor();
 
