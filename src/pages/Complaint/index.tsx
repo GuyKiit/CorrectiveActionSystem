@@ -1037,8 +1037,9 @@ export default function Complaint() {
 
   // CREATE -SaveDraft Add Complaint
   const ComplaintSavedraftAdd = async () => {
-    console.log("Departtttt", request_department_id?.itasset_department_id);
-    console.log("Departtttt", request_department_id?.itasset_department_id);
+    // console.log("Departtttt", request_department_id?.department_id);
+    // console.log("Departtttt", request_department_id?.department_id);
+    console.log("respondent_department_id?.department_id", respondent_department_id?.department_id);
     console.log("🤍🤍dataComplaintTypeValue_Combobox", dataComplaintTypeValue_Combobox);
 
     const tempid = uuidv4();
@@ -1078,23 +1079,23 @@ export default function Complaint() {
             .format("YYYY-MM-DDTHH:mm:ss")
           : null,
         request_name: user[0]?.employee_username || "",
-        request_company_id: request_company_id?.itasset_company_id
-          ? Number(request_company_id.itasset_company_id)
-          : undefined,
+        request_company_id: request_company_id?.company_id,
+          // ? Number(request_company_id.company_id)
+          // : undefined,
         request_domain_id: user[0]?.employee_domain,
-        request_department_id: user[0]?.itasset_company_id || "",
+        request_department_id: user[0].department_id,
         request_position: user[0]?.employee_position || "",
         request_email: user[0]?.employee_email || "",
         request_phone: user[0]?.employee_tel || "",
         request_date: new Date().toISOString(),
-        respondent_company_id: respondent_company_id?.itasset_company_id
-          ? Number(respondent_company_id.itasset_company_id)
-          : undefined,
+        respondent_company_id: respondent_company_id?.company_id,
+          // ? Number(respondent_company_id.company_id)
+          // : undefined,
         respondent_domain_id: respondent_domain_id?.domain_id,
         respondent_department_id:
-          respondent_department_id?.itasset_department_id
-            ? Number(respondent_department_id.itasset_department_id)
-            : undefined,
+          respondent_department_id?.department_id,
+            // ? Number(respondent_department_id.department_id)
+            // : undefined,
         respondent_email: respondent_email,
         respondent_other_name: respondent_other_name,
         respondent_other_email: respondent_other_email,
@@ -1190,7 +1191,7 @@ export default function Complaint() {
 
   // CREATE - Add Complaint
   const ComplaintAdd = async () => {
-    console.log("Departtttt", request_department_id?.itasset_department_id);
+    console.log("Departtttt", request_department_id?.department_id);
     console.log("Departtttt", request_department_id?.itasset_department_id);
     console.log("🤍🤍dataComplaintTypeValue_Combobox", dataComplaintTypeValue_Combobox);
 
@@ -1235,8 +1236,8 @@ export default function Complaint() {
             .format("YYYY-MM-DDTHH:mm:ss")
           : null,
         request_name: user[0]?.employee_username || "",
-        request_company_id: request_company_id?.itasset_company_id
-          ? Number(request_company_id.itasset_company_id)
+        request_company_id: request_company_id?.company_id
+          ? Number(request_company_id.company_id)
           : undefined,
         request_domain_id: user[0]?.employee_domain,
         request_department_id: user[0]?.itasset_company_id || "",
@@ -1244,13 +1245,13 @@ export default function Complaint() {
         request_email: user[0]?.employee_email || "",
         request_phone: user[0]?.employee_tel || "",
         request_date: new Date().toISOString(),
-        respondent_company_id: respondent_company_id?.itasset_company_id
+        respondent_company_id: respondent_company_id?.company_id
           ? Number(respondent_company_id.itasset_company_id)
           : undefined,
         respondent_domain_id: respondent_domain_id?.domain_id,
         respondent_department_id:
-          respondent_department_id?.itasset_department_id
-            ? Number(respondent_department_id.itasset_department_id)
+          respondent_department_id?.department_id
+            ? Number(respondent_department_id.department_id)
             : undefined,
         respondent_email: respondent_email,
         respondent_other_name: respondent_other_name,
@@ -1400,8 +1401,8 @@ export default function Complaint() {
         request_date: new Date().toISOString(),
         respondent_company_id: dataelement?.respondent_company_id,
         respondent_domain_id: dataelement?.respondent_domain_id,
-        respondent_department_id: respondent_department_id?.itasset_department_id
-          ? Number(respondent_department_id.itasset_department_id)
+        respondent_department_id: respondent_department_id?.department_id
+          ? Number(respondent_department_id.department_id)
           : undefined,
         respondent_email: respondent_email,
         respondent_other_name: respondent_other_name,
@@ -1653,8 +1654,8 @@ export default function Complaint() {
             .format("YYYY-MM-DDTHH:mm:ss")
           : null,
         request_name: user[0]?.employee_username || "",
-        request_company_id: request_company_id?.itasset_company_id
-          ? Number(request_company_id.itasset_company_id)
+        request_company_id: request_company_id?.company_id
+          ? Number(request_company_id.company_id)
           : undefined,
         request_domain_id: request_domain_id?.domain_id,
         request_department_id: user[0]?.itasset_company_id || "",
@@ -1662,13 +1663,13 @@ export default function Complaint() {
         request_email: user[0]?.employee_email || "",
         request_phone: user[0]?.employee_tel || "",
         request_date: new Date().toISOString(),
-        respondent_company_id: respondent_company_id?.itasset_company_id
-          ? Number(respondent_company_id.itasset_company_id)
+        respondent_company_id: respondent_company_id?.company_id
+          ? Number(respondent_company_id.company_id)
           : undefined,
         respondent_domain_id: respondent_domain_id?.domain_id,
         respondent_department_id:
-          respondent_department_id?.itasset_department_id
-            ? Number(respondent_department_id.itasset_department_id)
+          respondent_department_id?.department_id
+            ? Number(respondent_department_id.department_id)
             : undefined,
         respondent_email: respondent_email,
         respondent_other_name: respondent_other_name,

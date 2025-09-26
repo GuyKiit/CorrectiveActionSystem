@@ -1294,11 +1294,11 @@ export default function ComplaintBody({
                         }
                         options={dataset_department}
                         column="department_name"
-                        setvalue={(e) => {
-                          console.log(e); // ดูค่าของ e ที่ถูกส่งมาจาก AutocompleteComboBox
-                          setrespondent_department_id(e);
+                        setvalue={(val) => {
+                          console.log("Selected value:", val);
+                          setrespondent_department_id(val);
                           if (onDepartmentAreaChange) {
-                            onDepartmentAreaChange(e);
+                            onDepartmentAreaChange(val);
                           }
                         }}
                         bgcolorTextField={
