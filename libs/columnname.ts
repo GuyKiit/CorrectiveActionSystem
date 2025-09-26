@@ -25,7 +25,7 @@ export const Complaint_headCells = [
         colWidth: 150,
     },
     {
-        columnName: 'action_compaint',
+        columnName: 'step_label',
         numeric: 'center',
         disablePadding: false,
         label: 'ขั้นตอน',

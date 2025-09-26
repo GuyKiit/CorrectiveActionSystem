@@ -774,6 +774,8 @@ export default function Complaint() {
       // product_name: TextNameSearch.product_name,
       // lot_no: TextNameSearch.lot_no,
     };
+    console.log("user_id: ",dataset);
+    
 
     try {
       let response = await _POST(dataset, "/Complaint/ComplaintGet");
