@@ -82,6 +82,7 @@ export default function AutocompleteComboBox(props: AutocompleteComboBox) {
                 fontFamily: "Sarabun",
                 "& .MuiOutlinedInput-notchedOutline": {
                   borderColor: props.Validate ? "#d50000" : "",
+                  
                 },
                 "&.Mui-focused": {
                   "& .MuiOutlinedInput-notchedOutline": {
@@ -96,6 +97,7 @@ export default function AutocompleteComboBox(props: AutocompleteComboBox) {
       {validateTextLable ? (
         <label
           htmlFor=""
+          //font colo
           className={`fs-7 py-1 sarabun-regular-lable-validate`}
         >
           {validateTextLable}

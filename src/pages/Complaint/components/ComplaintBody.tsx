@@ -189,7 +189,6 @@ export default function ComplaintBody({
 
 
   const user = cleanAccessData("userSession");
-
   const [openConfirm, setOpenConfirm] = useState(false);
   const [deleteIndex, setDeleteIndex] = useState<number | null>(null);
 
@@ -477,6 +476,8 @@ export default function ComplaintBody({
     setFileList([]);
     setcomplaintFiles([]);
   };
+
+  
 
   const handleCheckboxChangeCT = (item: LovType) => {
     console.log("💛💛item", item);
@@ -1397,8 +1398,11 @@ export default function ComplaintBody({
                           display: "flex",
                           flexDirection: "column",
                           minHeight: "400px",
+                          border: validateText?.Complaint_Type ?  "1px solid #f44336" : "1px solid #e0e0e0"
+                          //boxShadow: validateText?.Complaint_Type ? "0 0 10px rgba(244, 67, 54, 0.3)" : "0 1px 3px rgba(0,0,0,0.12)",
                         }}
                             >
+                              
                         <label
                                 className="sarabun-regular-datatable"
                           style={{
@@ -1477,6 +1481,7 @@ export default function ComplaintBody({
                           display: "flex",
                           flexDirection: "column",
                           minHeight: "400px",
+                          border: validateText?.Complaint_Rs ?  "1px solid #f44336" : "1px solid #e0e0e0"
                         }}
                             >
                         <label
@@ -1519,6 +1524,23 @@ export default function ComplaintBody({
                                   ))}
                                 </Grid>
                                 <Box sx={{ mt: "auto", pt: 2 }}>
+                                {dataComplaintRs.some(
+                              (rs) => rs.lov3 === "Clause"
+                            ) && (
+                                    <FullWidthTextArea
+                                      value={clauseOther}
+                                      labelName="Clause:"
+                                onchange={(e) => {
+                                  setclauseOther(e);
+                                  if(onClauseChange){
+                                    onClauseChange(e);
+                                  }
+                                }}
+                                      readonly={isActionRead || isActionDelete}
+                                Validate={validateText?.Clause_Rs || false}
+                                validateTextLable={validateText?.Clause_Rs ? "กรุณากรอกรายละเอียด Clause" : ""}
+                                    />
+                                  )}
                             {dataComplaintRs.some(
                               (rs) => rs.lov3 === "Other"
                             ) && (
@@ -1536,31 +1558,16 @@ export default function ComplaintBody({
                                 validateTextLable={validateText?.Other_Rs ? "กรุณากรอกรายละเอียด Other" : ""}
                                     />
                                   )}
-                            {dataComplaintRs.some(
-                              (rs) => rs.lov3 === "Clause"
-                            ) && (
-                                    <FullWidthTextArea
-                                      value={clauseOther}
-                                      labelName="Clause:"
-                                onchange={(e) => {
-                                  setclauseOther(e);
-                                  if(onClauseChange){
-                                    onClauseChange(e);
-                                  }
-                                }}
-                                      readonly={isActionRead || isActionDelete}
-                                Validate={validateText?.Clause_Rs || false}
-                                validateTextLable={validateText?.Clause_Rs ? "กรุณากรอกรายละเอียด Clause" : ""}
-                                    />
-                                  )}
+                            
                                 </Box>
                               </Box>
                       </Paper>
                         </Grid>
                       )}
                     </Grid>
-                    {/* Priority Section */}
 
+
+                    {/* Priority Section */}
                     {dataReportTypeValue && (
                   <Box sx={{ mt: 3 }}>
                     <Paper
@@ -1569,6 +1576,7 @@ export default function ComplaintBody({
                         p: 2,
                           borderRadius: 2,
                           backgroundColor: "#fafafa",
+                          border: validateText?.Detail ?  "1px solid #f44336" : "1px solid #e0e0e0"
                       }}
                         >
                       <label
@@ -1583,11 +1591,6 @@ export default function ComplaintBody({
                         รายละเอียด (Detail){" "}
                             <span style={{ color: "red" }}> *</span>
                       </label>
-                      {/* {validateText?.Detail && (
-                          <label className="fs-7 py-1 sarabun-regular-lable-validate" style={{ color: "red" }}>
-                            กรุณากรอกรายละเอียด
-                          </label>
-                        )} */}
                       <Divider sx={{ my: 2 }} />
                       <Grid
                         container
@@ -1626,6 +1629,7 @@ export default function ComplaintBody({
                         p: 2,
                             borderRadius: 2,
                             backgroundColor: "#fafafa",
+                            border: validateText?.Priority ?  "1px solid #f44336" : "1px solid #e0e0e0"
                       }}
                           >
                       <label
@@ -1639,12 +1643,14 @@ export default function ComplaintBody({
                             >
                         ระดับความสำคัญ (Priority){" "}
                               <span style={{ color: "red" }}> *</span>
-                      </label>
-                      {validateText?.Priority && (
-                          <label className="fs-7 py-1 sarabun-regular-lable-validate" style={{ color: "red" }}>
-                            กรุณาเลือกระดับความสำคัญ (Priority)
-                          </label>
-                        )}
+                        </label>
+                        {validateText?.Priority && (
+                            <Box sx={{ mt: 1 }}>
+                              <label className="fs-7 py-1 sarabun-regular-lable-validate" style={{ color: "red" }}>
+                                กรุณาเลือกระดับความสำคัญ (Priority)
+                              </label>
+                            </Box>
+                          )}
                         <Divider sx={{ my: 2 }} />
                         <Grid
                         container
