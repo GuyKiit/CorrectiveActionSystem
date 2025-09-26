@@ -683,6 +683,7 @@ export default function Complaint() {
     try {
       const dataset = {
         domain_id: "TRRGROUP.COM",
+        company_id: "21",
       };
       const response = await _POST(
         dataset,
