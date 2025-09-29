@@ -2120,7 +2120,7 @@ export default function ExplaintBody({
             </Paper>
           </Grid>
         </Paper>
-      )}
+      )} 
     </Box>
   );
 }

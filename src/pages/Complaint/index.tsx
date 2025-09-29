@@ -929,7 +929,7 @@ export default function Complaint() {
     }
 
     // Validate Department/Area of Detection
-    if (!respondent_department_id || !respondent_department_id.itasset_department_id) {
+    if (!respondent_department_id || !respondent_department_id.department_id) {
       setDepartmentAreaError(true);
       valid = false;
     }
@@ -1092,10 +1092,9 @@ export default function Complaint() {
           // ? Number(respondent_company_id.company_id)
           // : undefined,
         respondent_domain_id: respondent_domain_id?.domain_id,
-        respondent_department_id:
-          respondent_department_id?.department_id,
-            // ? Number(respondent_department_id.department_id)
-            // : undefined,
+        respondent_department_id: respondent_department_id?.department_id
+            ? Number(respondent_department_id.department_id)
+            : undefined,
         respondent_email: respondent_email,
         respondent_other_name: respondent_other_name,
         respondent_other_email: respondent_other_email,
@@ -1245,14 +1244,13 @@ export default function Complaint() {
         request_email: user[0]?.employee_email || "",
         request_phone: user[0]?.employee_tel || "",
         request_date: new Date().toISOString(),
-        respondent_company_id: respondent_company_id?.company_id
-          ? Number(respondent_company_id.itasset_company_id)
-          : undefined,
+        respondent_company_id: respondent_company_id?.company_id,
+          // ? Number(respondent_company_id.itasset_company_id)
+          // : undefined,
         respondent_domain_id: respondent_domain_id?.domain_id,
-        respondent_department_id:
-          respondent_department_id?.department_id
-            ? Number(respondent_department_id.department_id)
-            : undefined,
+        respondent_department_id:respondent_department_id?.department_id,
+            // ? Number(respondent_department_id.department_id)
+            // : undefined,
         respondent_email: respondent_email,
         respondent_other_name: respondent_other_name,
         respondent_other_email: respondent_other_email,
@@ -1401,9 +1399,9 @@ export default function Complaint() {
         request_date: new Date().toISOString(),
         respondent_company_id: dataelement?.respondent_company_id,
         respondent_domain_id: dataelement?.respondent_domain_id,
-        respondent_department_id: respondent_department_id?.department_id
-          ? Number(respondent_department_id.department_id)
-          : undefined,
+        respondent_department_id: respondent_department_id?.department_id,
+          // ? Number(respondent_department_id.department_id)
+          // : undefined,
         respondent_email: respondent_email,
         respondent_other_name: respondent_other_name,
         respondent_other_email: respondent_other_email,
@@ -1787,6 +1785,7 @@ export default function Complaint() {
 
   const handleOnclickMenuAdd = () => {
     resetForm();
+    setdataelement(null);
     setOpenAdd(true);
   };
 
@@ -2005,15 +2004,6 @@ export default function Complaint() {
               }
             />
           </Grid>
-          {/* <Grid size={4}>
-            <AutocompleteComboBox
-              value={datastatus}
-              labelName={"สถานะ (Status)"}
-              options={datastatus}
-              column="lov_code"
-              setvalue={(val) => setdatastatus(val)}
-            />
-          </Grid> */}
           <Grid size={4}>
 
             <AutocompleteComboBox
@@ -2033,16 +2023,22 @@ export default function Complaint() {
           </Grid>
           <Grid size={4}>
             <DesktopDatePickers
-              labelName={"ตอบกลับภายในวันที่ (Respond Within)"}
-              value={respondWithinSearch}
-              handleChange={setrespondWithinSearch}
-            />
-          </Grid>
-          <Grid size={4}>
-            <DesktopDatePickers
               labelName={"วันที่ออกเอกสาร (Document Issuance Date)"}
               value={documentDateSearch}
               handleChange={setdocumentDateSearch}
+            />
+          </Grid>
+          
+          <Grid size={4}>
+            <FullWidthTextField
+              value={TextNameSearch.product_name}
+              labelName={"ขั้นตอน (Action Step)"}
+              onchange={(value) =>
+                setTextNameSearch({
+                  ...TextNameSearch,
+                  ...{ product_name: value },
+                })
+              }
             />
           </Grid>
 

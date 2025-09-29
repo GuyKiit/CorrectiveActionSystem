@@ -12,7 +12,6 @@ export async function setValueMas(dataMas: any[], value: any, colname: any) {
     console.warn("setValueMas: dataMas is not array", dataMas);
     return undefined;
   }
-
   // filter array ตามค่า
   const valueMas = dataMas.filter((el: any) => el[colname] == value);
   console.log("setValueMas result:", valueMas);

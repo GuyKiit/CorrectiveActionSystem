@@ -470,7 +470,7 @@ export default function ComplaintBody({
 
     setrequest_name("");
     setrequest_position("");
-    setrequest_department_id(user);
+    setrequest_department_id(dataset_department[0]);
     setrequest_email("");
     setrequest_phone("");
     setrequest_domain_id(dataset_company[0]);
@@ -797,142 +797,146 @@ export default function ComplaintBody({
     }
   };
 
-  React.useEffect(() => {
-    const updateData = async () => {
-      // ถ้าไม่มี anything ที่จำเป็นก็ยังไม่ return ทันที — เราต้องการให้ logic พยายามทำงานเมื่อข้อมูลพร้อม
-      // 1) เตรียม newDataset จาก dataset_reporttype (ถ้ามี)
-      let newDataset: LovType[] | undefined = Array.isArray(dataset_reporttype)
-        ? dataset_reporttype
-        : undefined;
-
-      // ถ้ามี dataset_reporttype และ dataelement ให้เรียก setValueMas เพื่อ map ค่า (safe)
-      if (Array.isArray(dataset_reporttype) && dataelement) {
-        try {
-          const mapped = await setValueMas(
-            dataset_reporttype,
-            dataelement.report_type,
-            "id"
+ React.useEffect(() => {
+  const updateData = async () => {
+    try {
+      // ================================
+      // 1) Map ค่า default ของ report_type
+      // ================================
+      if (Array.isArray(dataset_reporttype) && dataelement?.report_type) {
+        const defaultVal =
+          // ลองหาแบบตรง id ก่อน
+          (await setValueMas(dataset_reporttype, dataelement.report_type, "id")) ||
+          // fallback: หาแบบ lov_code (กันกรณี backend ส่งค่า lov_code แทน id)
+          dataset_reporttype.find(
+            (item: LovType) =>
+              item.lov_code === dataelement.report_type ||
+              item.id === dataelement.report_type
           );
-          // mapped อาจเป็น undefined หรือ array — ให้ใช้ mapped ถ้ามีค่าที่แตกต่างจากเดิม
-          if (mapped && Array.isArray(mapped)) {
-            // ถ้า different -> update state
-            if (JSON.stringify(mapped) !== JSON.stringify(dataset_reporttype)) {
-              setdataset_reporttype(mapped);
-            }
-            newDataset = mapped;
-          } else {
-            // ถ้า mapped เป็น object เดียว ๆ (กรณีฟังก์ชันคืน object) — เราอยากให้ newDataset เป็น array
-            if (mapped && !Array.isArray(mapped)) {
-              newDataset = Array.isArray(dataset_reporttype)
-                ? dataset_reporttype
-                : [mapped];
-            }
-          }
-        } catch (err) {
-          console.error("setValueMas error:", err);
+
+        if (
+          defaultVal &&
+          (!dataReportTypeValue || dataReportTypeValue.id !== defaultVal.id)
+        ) {
+          setdataReportTypeValue(defaultVal);
         }
       }
 
-      // 2) ถ้า action === "Read" และมี dataelement.report_type ให้หา default จาก newDataset (ถ้ามี)
-      if (
-        (isActionRead || isActionEdit || isActionDelete) &&
-        dataelement?.report_type &&
-        Array.isArray(newDataset) &&
-        newDataset.length > 0
-      ) {
-        const defaultVal = newDataset.find(
-          (item: LovType) =>
-            // บางที dataelement.report_type อาจเก็บ lov_code หรือ id ขึ้นกับ backend — เช็คทั้งสอง
-            item.lov_code === dataelement.report_type ||
-            item.id === dataelement.report_type
+      // ================================
+      // 2) Map ค่า default ของ department
+      // ================================
+      if (Array.isArray(dataset_department) && dataelement?.respondent_department_id) {
+        const mappedDept = await setValueMas(
+          dataset_department,
+          dataelement.respondent_department_id,
+          "department_id"
         );
 
-        if (defaultVal) {
-          // ป้องกัน set ซ้ำ
-          if (
-            !dataReportTypeValue ||
-            dataReportTypeValue.id !== defaultVal.id
-          ) {
-            setdataReportTypeValue(defaultVal);
-          }
+        if (mappedDept) {
+          setrespondent_department_id(mappedDept); // ค่า default ของ Combobox
         }
       }
 
-      // 3) กรอง priority (จาก datapriority_Combobox)
+      
+
+       // ================================
+      // 3) Map ค่า default ของ company
+      // ================================
+      if (Array.isArray(dataset_company) && dataelement?.respondent_company_id) {
+        const mappedDept = await setValueMas(
+          dataset_company,
+          dataelement.respondent_company_id,
+          "company_id"
+        );
+
+        if (mappedDept) {
+          setrespondent_company_id(mappedDept); // ค่า default ของ Combobox
+        }
+      }
+
+      // ================================
+      // 4) Filter priority
+      // ================================
       if (Array.isArray(datapriority_Combobox)) {
         const newFilteredPriority = datapriority_Combobox.filter(
           (item: LovType) => item.lov_type === "priority_level"
         );
-        setFilteredpriority((prev: LovType[]) => {
-          if (JSON.stringify(prev) !== JSON.stringify(newFilteredPriority))
-            return newFilteredPriority;
-          return prev;
-        });
+
+        setFilteredpriority((prev) =>
+          JSON.stringify(prev) !== JSON.stringify(newFilteredPriority)
+            ? newFilteredPriority
+            : prev
+        );
       }
 
-      // 4) ถ้ามี dataReportTypeValue (จาก state หรือ เพิ่ง set ข้างบน) ให้กรอง complaint/attach/reference
-      const reportTypeToUse = dataReportTypeValue; // ใช้ state ปัจจุบัน (ซึ่งเราเพิ่งอาจจะ set)
-      if (reportTypeToUse) {
-        const val = reportTypeToUse;
+      // ================================
+      // 5) Filter Complaint/Attach/Reference ตาม reportType
+      // ================================
+      if (dataReportTypeValue) {
+        const val = dataReportTypeValue;
 
-        const newFilteredComplaintType = (
-          dataComplaintType_Combobox || []
-        ).filter(
+        // Complaint Type
+        const newComplaintType = (dataComplaintType_Combobox || []).filter(
           (item: LovType) =>
             item.lov_type === "complaint_type" && item.lov_code === val.id
         );
-        setFilteredComplaintType((prev: LovType[]) => {
-          if (JSON.stringify(prev) !== JSON.stringify(newFilteredComplaintType))
-            return newFilteredComplaintType;
-          return prev;
-        });
+        setFilteredComplaintType((prev) =>
+          JSON.stringify(prev) !== JSON.stringify(newComplaintType)
+            ? newComplaintType
+            : prev
+        );
 
-        const newFilteredPhoto = (dataphoto_Combobox || []).filter(
+        // Attach Type
+        const newPhoto = (dataphoto_Combobox || []).filter(
           (item: LovType) => item.lov_type === "attach_type"
         );
-        setFilteredphoto((prev: LovType[]) => {
-          if (JSON.stringify(prev) !== JSON.stringify(newFilteredPhoto))
-            return newFilteredPhoto;
-          return prev;
-        });
+        setFilteredphoto((prev) =>
+          JSON.stringify(prev) !== JSON.stringify(newPhoto) ? newPhoto : prev
+        );
 
+        // Reference Standard (เฉพาะ NCR)
         if (val.lov_code === "NCR") {
-          const newFilteredComplaintRs = (
-            dataComplaintRs_Combobox || []
-          ).filter(
+          const newComplaintRs = (dataComplaintRs_Combobox || []).filter(
             (item: LovType) =>
               item.lov_type === "reference_standard" && item.lov_code === val.id
           );
-          setFilteredComplaintRs((prev: LovType[]) => {
-            if (JSON.stringify(prev) !== JSON.stringify(newFilteredComplaintRs))
-              return newFilteredComplaintRs;
-            return prev;
-          });
+          setFilteredComplaintRs((prev) =>
+            JSON.stringify(prev) !== JSON.stringify(newComplaintRs)
+              ? newComplaintRs
+              : prev
+          );
         } else {
           setFilteredComplaintRs([]);
         }
       } else {
-        // ถ้ายังไม่มี reportType ก็ reset
+        // reset ถ้ายังไม่มีค่า reportType
         setFilteredComplaintType([]);
         setFilteredComplaintRs([]);
         setFilteredphoto([]);
-        // หมายเหตุ: filteredpriority เรา update ข้างบนแล้ว
       }
-    };
+    } catch (err) {
+      console.error("updateData error:", err);
+    }
+  };
 
-    updateData();
-    // dependency: ให้ trigger เมื่อสิ่งที่สำคัญเปลี่ยนจริง ๆ (action, property ที่เปลี่ยน, dataset ที่ load)
-  }, [
-    action,
-    dataelement?.report_type, // ใช้ property เพื่อให้ effect รันเมื่อ report_type เปลี่ยน
-    dataset_reporttype,
-    datapriority_Combobox,
-    dataComplaintType_Combobox,
-    dataComplaintRs_Combobox,
-    dataphoto_Combobox,
-    dataReportTypeValue, // เพราะเรใช้ state นี้ต่อใน effect (และต้องการให้ flow ใช้ค่าล่าสุด)
-  ]);
+  updateData();
+}, [
+  action,
+  dataelement?.report_type,
+  dataset_reporttype,
+  dataset_department,
+  dataset_company,
+  datapriority_Combobox,
+  dataComplaintType_Combobox,
+  dataComplaintRs_Combobox,
+  dataphoto_Combobox,
+  dataReportTypeValue,
+]);
 
+
+
+
+  //////////////////////// Complaint Read //////////////////////////
   React.useEffect(() => {
     console.log(
       dataelement,
@@ -958,35 +962,21 @@ export default function ComplaintBody({
     console.log("💚 dataComplaintRs_Combobox:", dataComplaintRs_Combobox);
     const rsData = setComplaintRs(dataelement?.complaintRs);
     console.log("💚 mapped rsData:", rsData);
+    console.log("dataelement", dataelement?.respondent_department_id);
+    console.log("dataset_department", dataset_department);
+    console.log("dataelement", dataelement?.respondent_company_id);
+    console.log("dataset_company", dataset_company);
 
     if (dataelement && action != "Add") {
-      setrespondent_company_id(
-        dataset_company.find(
-          (el: any) =>
-            el.itasset_company_id == String(dataelement.respondent_company_id)
-        )
-      );
+      // setrespondent_company_id(dataset_company.find((el: any) =>el.itasset_company_id == String(dataelement.respondent_company_id?.company_id)));
+      setrespondent_company_id(dataset_company.find((el: any) => String(el.itasset_company_id) === String(dataelement.respondent_company_id?.company_id)));
       setcas_number(dataelement?.cas_number || "");
-      setdoc_date(
-        dataelement?.doc_date
-          ? dayjs(dataelement.doc_date, "DD-MM-YYYY")
-          : dayjs()
-      );
+      setdoc_date(dataelement?.doc_date ? dayjs(dataelement.doc_date, "DD-MM-YYYY") : dayjs());
       setdate_of_detection(dayjs(dataelement?.date_of_detection));
-      setrespondent_department_id(
-        dataset_department.find(
-          (el: any) =>
-            el.itasset_department_id ==
-            String(dataelement.respondent_department_id)
-        )
-      );
-      setproduct_name(
-        dataelement?.product_name ? dataelement?.product_name : ""
-      );
+      setrespondent_department_id(dataset_department.find((el: any) => String(el.itasset_department_id) === String(dataelement.respondent_department_id?.department_id)));
+      setproduct_name(dataelement?.product_name ? dataelement?.product_name : "");
       setlot_no(dataelement?.lot_no ? dataelement?.lot_no : "");
-      setrespondent_email(
-        dataelement?.respondent_email ? dataelement?.respondent_email : ""
-      );
+      setrespondent_email(dataelement?.respondent_email ? dataelement?.respondent_email : "");
       setdataComplaintType(setComplaintType(dataelement?.complaintType));
       setcompTypeOther(dataelement?.other ? dataelement?.other : "");
       setdataComplaintRs(setComplaintRs(dataelement?.complaintRs));
@@ -994,34 +984,13 @@ export default function ComplaintBody({
       setclauseOther(dataelement?.clause ? dataelement?.clause : "");
       setdetail(dataelement?.detail ? dataelement?.detail : "");
       setpriority_level(setPriorityLevel(dataelement?.priority_level));
-      setrespond_date_within(
-        dataelement?.respond_date_within
-          ? dayjs(dataelement.respond_date_within, "DD-MM-YYYY")
-          : dayjs()
-      );
-      setrequest_name(
-        dataelement?.request_name ? dataelement?.request_name : ""
-      );
-      setrequest_position(
-        dataelement?.request_position ? dataelement?.request_position : ""
-      );
-      setrequest_department_id(
-        dataelement?.request_department_id
-          ? dataelement?.request_department_id
-          : ""
-      );
-      setrequest_email(
-        dataelement?.request_email ? dataelement?.request_email : ""
-      );
-      setrequest_phone(
-        dataelement?.request_phone ? dataelement?.request_phone : ""
-      );
-      setrequest_company_id(
-        dataset_company.find(
-          (el: any) =>
-            el.itasset_company_id == String(dataelement.request_company_id)
-        )
-      );
+      setrespond_date_within(dataelement?.respond_date_within ? dayjs(dataelement.respond_date_within, "DD-MM-YYYY") : dayjs());
+      setrequest_name(dataelement?.request_name ? dataelement?.request_name : "");
+      setrequest_position(dataelement?.request_position ? dataelement?.request_position : "");
+      setrequest_department_id(dataelement?.request_department_id ? dataelement?.request_department_id : "");
+      setrequest_email(dataelement?.request_email ? dataelement?.request_email : "");
+      setrequest_phone(dataelement?.request_phone ? dataelement?.request_phone : "");
+      setrequest_company_id(dataset_company.find((el: any) => String(el.itasset_company_id) == String(dataelement.request_company_id?.company_id)));
 
       // สมมติ LovType คือ { id: string; label: string }
 
@@ -1060,7 +1029,7 @@ export default function ComplaintBody({
         setIsRSHidden(true);
       }
     }
-  }, [dataset_reporttype]);
+  }, [dataset_reporttype, dataset_department, dataset_company]);
 
   React.useEffect(() => {
     // เฉพาะตอน Read เท่านั้น
@@ -1198,7 +1167,7 @@ export default function ComplaintBody({
                     value={respondent_company_id}
                     labelName={"โรงงาน (Factory)"}
                     options={dataset_company}
-                    column="domain_name"
+                    column="company_name"
                     setvalue={(v) => setrespondent_company_id(v)}
                     bgcolorTextField={true}
                     readonly
@@ -1295,7 +1264,7 @@ export default function ComplaintBody({
                         options={dataset_department}
                         column="department_name"
                         setvalue={(val) => {
-                          console.log("Selected value:", val);
+                          console.log("Selected value:", val, "respondent_department_id :", respondent_department_id);
                           setrespondent_department_id(val);
                           if (onDepartmentAreaChange) {
                             onDepartmentAreaChange(val);
@@ -2188,7 +2157,7 @@ export default function ComplaintBody({
                             value={request_company_id}
                             labelName={"โรงงาน (Factory)"}
                             options={dataset_company}
-                            column="domain_name"
+                            column="company_name"
                             setvalue={(v) => setrequest_company_id(v)}
                             bgcolorTextField={true}
                             readonly
