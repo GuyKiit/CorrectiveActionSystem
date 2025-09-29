@@ -16,17 +16,17 @@ const unread = "#FE97B0";
 export default function BasicChips(props: BasicChips) {
 
   const allColorMap: Record<string, string> = {
-    NEW: "#66bb6a",
-    SUBMIT: props.acknowledge ? "#B3B3B3" : "#FFE8A3",
-    EXPLAIN: "#FCA437",
-    APPROVE_SC: "#FE97B0",
-    APPROVE_QC: "#96F8E0",
-    APPROVE_FU: "#E4CCFF",
-    CLOSE: "#B3B3B3",
+    NEW: "#4A90E2",
+    SUBMIT: props.acknowledge ? "#E74C3C" : "#95A5A6",
+    EXPLAIN: "#F1C40F",
+    APPROVE_SC: "#A8E6A3",
+    APPROVE_QC: "#27AE60",
+    APPROVE_FU: "#1ABC9C",
+    CLOSE: "#95A5A6",
   };
   const stepColorMap: Record<string, string> = {
-    EXPLAIN: "#00FF00",
-    COMPLAINT: "#FF6347"
+    EXPLAIN: "#F1C40F",
+    COMPLAINT: "#4A90E2"
 
   };
 
