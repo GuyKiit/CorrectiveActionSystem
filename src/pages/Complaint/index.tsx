@@ -841,12 +841,16 @@ export default function Complaint() {
   const ListSearchGet = async () => {
     setIsLoadingScreen(true);
     const dataset = {
+      user_id: user[0]?.employee_username,
+      domain_id: user[0]?.employee_domain,
+      department_id: user[0]?.itasset_department_id,
+      company_id: user[0]?.itasset_company_id,
+
       report_code: TextNameSearch.report_code || null,
       cas_number: TextNameSearch.cas_number ? TextNameSearch.cas_number : null,
       product_name: TextNameSearch.product_name ? TextNameSearch.product_name : null,
       lot_no: TextNameSearch.lot_no ? TextNameSearch.lot_no : null,
-      status: TextNameSearch.datastatus || null,
-      respond_date_within: respondWithinSearch || null, // รีเซ็ตเป็น null ถ้าไม่ได้เลือก
+      complaint_status_label: TextNameSearch.datastatus || null,
       doc_date: documentDateSearch || null,
     }
     console.log("😍😍Search payload:", dataset);
@@ -1239,7 +1243,7 @@ export default function Complaint() {
           ? Number(request_company_id.company_id)
           : undefined,
         request_domain_id: user[0]?.employee_domain,
-        request_department_id: user[0]?.itasset_company_id || "",
+        request_department_id: user[0]?.itasset_department_id || "",
         request_position: user[0]?.employee_position || "",
         request_email: user[0]?.employee_email || "",
         request_phone: user[0]?.employee_tel || "",
@@ -2225,7 +2229,8 @@ export default function Complaint() {
       <FuncDialog
         open={openDelete}
         dialogWidth="xl"
-        openBottonHidden={false}
+        hideSaveDraft={true}
+        openBottonHidden={true}
         titlename={'Complaint // ลบข้อมูล'}
         handleClose={handleClose}
         handlefunction={ComplaintDelete}

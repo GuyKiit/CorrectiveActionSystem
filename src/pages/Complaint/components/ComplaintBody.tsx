@@ -2112,17 +2112,19 @@ export default function ComplaintBody({
                         <Grid size={4}>
                           <FullWidthTextField
                             value={
-                              action === "Add"
-                                ? user[0]?.itasset_department_name || "-"
-                                : dataelement?.request_department_id || "-"
+                              user[0]?.itasset_department_name || "-"
+                              // action === "Add"
+                              //   ? user[0]?.itasset_department_name || "-"
+                              //   : dataelement?.request_department_id || "-"
                             }
                             labelName="แผนก (Department)"
                             onchange={(e) => {
                               // ถึง readonly แต่เผื่ออนาคตจะเปิดให้แก้
                               setrequest_department_id(
-                                action === "Add"
-                                  ? user[0]?.itasset_department_id
-                                  : dataelement?.request_department_id
+                                user[0]?.itasset_department_id
+                                // action === "Add"
+                                //   ? user[0]?.itasset_department_id
+                                //   : dataelement?.request_department_id
                               );
                             }}
                             readonly
@@ -2135,7 +2137,7 @@ export default function ComplaintBody({
                                 ? user[0]?.employee_email || "-"
                                 : dataelement?.request_email || "-"
                             }
-                            labelName="ตำแหน่ง (Position)"
+                            labelName="อีเมล (Email)"
                             onchange={(e) => setrequest_email(e.target.value)}
                             readonly
                           />
@@ -2147,7 +2149,7 @@ export default function ComplaintBody({
                                 ? user[0]?.employee_tel || "-"
                                 : dataelement?.request_phone || "-"
                             }
-                            labelName="ตำแหน่ง (Position)"
+                            labelName="โทรศัพท์ (Phone)"
                             onchange={(e) => setrequest_phone(e.target.value)}
                             readonly
                           />

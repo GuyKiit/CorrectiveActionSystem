@@ -24,6 +24,7 @@ interface FuncDialog {
   titlename?: string;
   dialogWidth?: "xs" | "sm" | "md" | "lg" | "xl";
   openBottonHidden?: boolean;
+  hideSaveDraft?: boolean;
   colorBotton?: string;
   element?: React.ReactNode;
   modalWidth?: string | number;
@@ -76,7 +77,7 @@ export default function FuncDialog(props: FuncDialog) {
       <DialogActions sx={{ justifyContent: "space-between", margin: 2, px: 3, pb: 3 }}>
         {/* Left side - Save Draft */}
         <div>
-          {props.openBottonHidden && (
+          {!props.hideSaveDraft && props.openBottonHidden && (
             <FullWidthButton
               handleonClick={props.handlesavedraft ?? props.handleClose}
               labelName= "Save Draft"
