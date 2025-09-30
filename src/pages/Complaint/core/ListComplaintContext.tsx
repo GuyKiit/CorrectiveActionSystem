@@ -417,7 +417,9 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
     const [approve_date, setapprove_date] = useState<dayjs.Dayjs>(
         dayjs(initialListComplaint.approve_date)
     );
-
+    const [dataset_stepcomplaint, setdataset_stepcomplaint] = useState<any>(
+        initialListComplaint.dataset_stepcomplaint
+    );
 
     return (
         <ListComplaintContext.Provider
@@ -504,7 +506,7 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 dataset_department,
                 dataset_domain,
                 complaintFiles,
-
+                dataset_stepcomplaint,
 
                 //--------Explaint-------
                 dataTooluse,
@@ -644,7 +646,7 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 setdataset_department,
                 setdataset_domain,
                 setcomplaintFiles,
-
+                setdataset_stepcomplaint,
 
                 //--------Explaint-------
                 setdataToolUse,

@@ -219,7 +219,7 @@ export default function Complaint() {
     dataDecision,
     dataDecision_Combobox,
     dataApprove_Combobox,
-
+    dataset_stepcomplaint,
 
     // Setter Functions
     setComplaint_no, setno, setid, setreport_type, setcas_number, setdoc_date,
@@ -250,7 +250,8 @@ export default function Complaint() {
     setdataToolUse_Combobox,
     setdataDecision_Combobox,
     setdataApprove_Combobox,
-    setdataDecision
+    setdataDecision,
+    setdataset_stepcomplaint,
 
 
   } = useListComplaint();
@@ -303,6 +304,7 @@ export default function Complaint() {
     product_name: "",
     lot_no: "",
     datastatus: "",
+    dataset_stepcomplaint:"",
   });
 
   // Additional State Variables (from ComplaintRead.tsx)
@@ -566,7 +568,7 @@ export default function Complaint() {
       const dataset = {
         lov_group: "TRR.TRRGROUP.COM",
         lov_type:
-          "report_type,complaint_type,reference_standard,attach_type,complaint_status,tool_use,decision_disposition,approve_select",
+          "report_type,complaint_type,reference_standard,attach_type,complaint_status,tool_use,decision_disposition,approve_select,complaint_step",
       };
       const response = await _POST(dataset, "/Lov/LovGet");
 
@@ -593,6 +595,7 @@ export default function Complaint() {
         setdataToolUse_Combobox?.(grouped["tool_use"] || []);
         setdataDecision_Combobox?.(grouped["decision_disposition"] || []);
         setdataApprove_Combobox?.(grouped["approve_select"] || []);
+        setdataset_stepcomplaint?.(grouped["complaint_step"] || []);
       }
     } catch (e) {
       console.log("error:", e);
@@ -681,7 +684,8 @@ export default function Complaint() {
   };
 
   // Get Department Domain Data
-  const CasDepartmentDomainGet = async () => {
+  const CasDepartmentDomainGet = async (action?: string) => {
+    console.log("🐸 RECHECK DATA ACTION : ",action ,"🐸")
     try {
       const dataset = {
         domain_id: user[0]?.employee_domain,
@@ -696,15 +700,25 @@ export default function Complaint() {
           "❇️ Call [Complaint/CasDepartmentDomainGet] -> Department_Domain_Get :",
           response.data
         );
-        if (Array.isArray(response.data)) {
+
+        setdataset_department(response.data);
+
+        if (action == "Add") {
+
+          //================================================
           let department = response.data.filter(
             (item: any) => item.department_id != user[0]?.itasset_department_id
           );
-          if (department) {
-            // setdataset_domain(domain);
-            setdataset_department(department);
-          }
+          setdataset_department(department);
+          // if (department) {
+          //   // setdataset_domain(domain);
+          //   setdataset_department(department);
+          // }
+          //================================================
+
+
         }
+
       }
     } catch (e) {
       console.log("error:", e);
@@ -802,12 +816,18 @@ export default function Complaint() {
                   console.log("🎆 🎆 🎆 🎆 hadleOnclickMenu (name) :", name);
 
                   if (name === "View") {
+                    console.log("🦄🦄🦄🦄🦄🦄🦄🦄🦄 RECHECK DATA ACTION : ",name ,"🦄")
+                    CasDepartmentDomainGet("Read");
                     handleOnclickMenuView(el);
                   }
                   else if (name === "Edit") {
+                    console.log("🦄🦄🦄🦄🦄🦄🦄🦄🦄 RECHECK DATA ACTION : ",name ,"🦄")
+                    CasDepartmentDomainGet("Edit");
                     handleOnclickMenuEdit(el);
                   }
                   else if (name === "Delete") {
+                    console.log("🦄🦄🦄🦄🦄🦄🦄🦄🦄 RECHECK DATA ACTION : ",name ,"🦄")
+                    CasDepartmentDomainGet("Delete");
                     handleOnclickMenuDelete(el);
                   }
                 }}
@@ -871,10 +891,16 @@ export default function Complaint() {
                 hadleOnclickMenu={(name: any) => {
                   console.log("🎆 🎆 🎆 🎆 hadleOnclickMenu (name) :", name);
                   if (name === "View") {
+                    // console.log("🐸🐸🐸🐸🐸🐸🐸🐸🐸 RECHECK DATA ACTION : ",name ,"🐸")
+                    // CasDepartmentDomainGet("Read");
                     handleOnclickMenuView(el);
                   } else if (name === "Edit") {
+                    // console.log("🐸🐸🐸🐸🐸🐸🐸🐸🐸 RECHECK DATA ACTION : ",name ,"🐸")
+                    // CasDepartmentDomainGet("Edit");
                     handleOnclickMenuEdit(el);
                   } else if (name === "Delete") {
+                    // console.log("🐸🐸🐸🐸🐸🐸🐸🐸🐸 : ",name ,"🐸")
+                    // CasDepartmentDomainGet("Delete");
                     handleOnclickMenuDelete(el);
                   }
                 }}
@@ -882,8 +908,12 @@ export default function Complaint() {
             );
             el.ACTION = ACTION;
             console.log("el.acknowledge_flag", el.acknowledge_flag)
+            console.log(el.step_label)
             el.complaint_status_label = (
               <BasicChips label={`${el.complaint_status_label}`} acknowledge={el.acknowledge_flag}></BasicChips>
+            );
+            el.step_label = (
+              <BasicChips label={`${el.step_label}`}type="step"></BasicChips>
             );
             responseData.push(el);
           });
@@ -1087,7 +1117,7 @@ export default function Complaint() {
           // ? Number(request_company_id.company_id)
           // : undefined,
         request_domain_id: user[0]?.employee_domain,
-        request_department_id: user[0].department_id,
+        request_department_id: user[0].itasset_department_id,
         request_position: user[0]?.employee_position || "",
         request_email: user[0]?.employee_email || "",
         request_phone: user[0]?.employee_tel || "",
@@ -1096,9 +1126,9 @@ export default function Complaint() {
           // ? Number(respondent_company_id.company_id)
           // : undefined,
         respondent_domain_id: respondent_domain_id?.domain_id,
-        respondent_department_id: respondent_department_id?.department_id
-            ? Number(respondent_department_id.department_id)
-            : undefined,
+        respondent_department_id: respondent_department_id?.department_id,
+            // ? Number(respondent_department_id.department_id)
+            // : undefined,
         respondent_email: respondent_email,
         respondent_other_name: respondent_other_name,
         respondent_other_email: respondent_other_email,
@@ -1369,6 +1399,8 @@ export default function Complaint() {
     // console.log("🤍🤍dataComplaintTypeValue_Combobox", dataComplaintTypeValue_Combobox);
     console.log("ฟหกฟหกฟหกcomplaintFiles", complaintFiles);
     const tempid = uuidv4();
+
+    const tempComplaintStatus = splitByDot(user[0]?.employee_domain)
     // เตรียม Models
     const complainttypeModel = dataComplaintTypeValue_Combobox
       ? compTypeUpdateCompId(dataComplaintTypeValue_Combobox, tempid, compTypeOther)
@@ -1420,7 +1452,7 @@ export default function Complaint() {
             .format("YYYY-MM-DDTHH:mm:ss")
           : null,
         lot_no: lot_no,
-        complaint_status_id: "TRR_CS_SUBMIT",
+        complaint_status_id: tempComplaintStatus[0] +"_CS_SUBMIT",
         create_by: user[0]?.employee_username || '',
         update_by: user[0]?.employee_username || '',
         action_type: null,
@@ -1839,12 +1871,14 @@ export default function Complaint() {
     setdataphotoValue_Combobox("");
     setrespondWithinSearch(null);
     setdocumentDateSearch(null);
+    setdataset_stepcomplaint(null);
     setTextNameSearch({
       report_code: "",
       cas_number: "",
       product_name: "",
       lot_no: "",
       datastatus: "",
+      dataset_stepcomplaint:"",
     });
     Complaint_Get()
   };
@@ -1885,6 +1919,7 @@ export default function Complaint() {
     priority_Get();
     CasDomainGet();
     CasDepartmentDomainGet();
+
     // complaint_status_Get();
     // ToolUse_Get();
     // Decision_Get();
@@ -2034,13 +2069,17 @@ export default function Complaint() {
           </Grid>
           
           <Grid size={4}>
-            <FullWidthTextField
-              value={TextNameSearch.product_name}
-              labelName={"ขั้นตอน (Action Step)"}
-              onchange={(value) =>
+            <AutocompleteComboBox
+              value={dataset_stepcomplaint?.find(
+                (item: any) => item.id === TextNameSearch.dataset_stepcomplaint
+              ) || null}
+              labelName="ขั้นตอน (Action Step)"
+              options={dataset_stepcomplaint}
+              column="lov_code" // หรือชื่อ field ที่คุณต้องการแสดง
+              setvalue={(val) =>
                 setTextNameSearch({
                   ...TextNameSearch,
-                  ...{ product_name: value },
+                  dataset_stepcomplaint: val?.id || "", // เก็บแค่ id เป็น string
                 })
               }
             />
@@ -2089,7 +2128,10 @@ export default function Complaint() {
               variant="contained"
               hidden={menuFuncData?.find((item: auth_role_menu_func) => item?.func_name === "Add") ? false : true}
               color="success"
-              onClick={handleOnclickMenuAdd}
+              onClick={() => {
+                CasDepartmentDomainGet("Add");
+                handleOnclickMenuAdd();
+              }}
             >
               {menuFuncData?.find((item: auth_role_menu_func) => item?.func_name === "Add") ? "เพิ่มข้อมูล" : ""}
               <AddIcon sx={{}} />
