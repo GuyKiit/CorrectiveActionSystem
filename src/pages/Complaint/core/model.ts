@@ -90,6 +90,7 @@ export type ListComplaintContextProps = {
     dataset_company?: any
     dataset_department?: any
     dataset_domain?: any
+    dataset_stepcomplaint?: any
 
     //--------dataset-------
     complaintFiles?: any
@@ -237,6 +238,7 @@ export type ListComplaintContextProps = {
     setdataset_department: Dispatch<SetStateAction<any>>
     setdataset_domain: Dispatch<SetStateAction<any>>
     setcomplaintFiles: Dispatch<SetStateAction<any>>
+    setdataset_stepcomplaint: Dispatch<SetStateAction<any>>
 
 
     //--------Explaint-------
@@ -382,6 +384,7 @@ export const initialListComplaint: ListComplaintContextProps = {
     setdataset_department: () => { },
     setdataset_domain: () => { },
     setcomplaintFiles: () => { },
+    setdataset_stepcomplaint: () => { },
 
 
 

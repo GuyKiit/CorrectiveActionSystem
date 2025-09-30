@@ -1033,8 +1033,10 @@ export default function ComplaintBody({
 
   React.useEffect(() => {
     // เฉพาะตอน Read เท่านั้น
+
     if (action === "Read" || action === "Edit" || action === "Delete") {
       ComplaintFile_Get();
+
     }
   }, [action, dataelement]);
 
@@ -1276,7 +1278,7 @@ export default function ComplaintBody({
                         bgcolorTextField={
                           action === "Add" ? false : isActionEdit ? false : true
                         }
-                        readonly={isActionRead || isActionDelete}
+                        // readonly={isActionRead || isActionDelete}
                         Validate={validateText?.Department_Area || false}
                         validateTextLable={validateText?.Department_Area ? "กรุณาเลือกแผนกที่พบปัญหา" : ""}
                       />
