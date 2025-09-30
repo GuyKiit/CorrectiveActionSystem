@@ -25,6 +25,13 @@ export const Complaint_headCells = [
         colWidth: 150,
     },
     {
+        columnName: 'step_label',
+        numeric: 'center',
+        disablePadding: false,
+        label: 'ขั้นตอน',
+        colWidth: 150,
+    },
+    {
         columnName: 'report_code',
         numeric: 'center',
         disablePadding: true,

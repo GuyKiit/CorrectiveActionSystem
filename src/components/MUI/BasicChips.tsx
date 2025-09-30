@@ -5,8 +5,10 @@ import Stack from "@mui/material/Stack";
 interface BasicChips {
   label?: string;
   acknowledge?: boolean;
+  step?: string;
   backgroundColor?: string;
   borderColor?: string;
+  type?: "status" | "step";
 }
 
 const defaultColor = "#B3B3B3";
@@ -15,21 +17,32 @@ const unread = "#FE97B0";
 export default function BasicChips(props: BasicChips) {
 
   const allColorMap: Record<string, string> = {
-    NEW: "#66bb6a",
-    SUBMIT: props.acknowledge ? "#B3B3B3" : "#FFE8A3",
-    EXPLAIN: "#FCA437",
-    APPROVE_SC: "#FE97B0",
-    APPROVE_QC: "#96F8E0",
-    APPROVE_FU: "#E4CCFF",
-    CLOSE: "#B3B3B3",
+    NEW: "#7db6fa",
+    SUBMIT: props.acknowledge ? "#FF6B7A" : "#7db6fa",
+    EXPLAIN: "#F1C40F",
+    APPROVE_SC: "#A8E6A3",
+    APPROVE_QC: "#27AE60",
+    APPROVE_FU: "#1ABC9C",
+    CLOSE: "#95A5A6",
+  };
+  const stepColorMap: Record<string, string> = {
+    EXPLAIN: "#F1C40F",
+    COMPLAINT: "#7db6fa"
+
   };
 
   const getStatusColor = () => {
     // console.log("props.acknowledge",props.acknowledge);
     
     if (!props.label) return defaultColor;
-    return allColorMap[props.label];
-  };
+    if (props.type === "step") {
+    return stepColorMap[props.label] || defaultColor;
+  }
+
+  return allColorMap[props.label] || defaultColor;
+};
+  
+  
 
   const statusColor = getStatusColor();
 
@@ -42,7 +55,7 @@ export default function BasicChips(props: BasicChips) {
             variant="outlined"
             sx={{
               backgroundColor: props.backgroundColor || statusColor,
-              color: "#000000",
+              color: "#ffffff",
               borderColor: props.borderColor || statusColor,
             }}
           />

@@ -49,7 +49,7 @@ export default function DesktopDatePickers({
       >
         <DesktopDatePicker
           sx={{
-            width: "100%", size: "small", bgcolor: bgcolorTextField ? grey[200] : null,
+            width: "100%", size: "small", bgcolor: readonly ? grey[200] : grey[50],
             "& .MuiOutlinedInput-root": {
               fontFamily: "Sarabun",
               "& .MuiOutlinedInput-notchedOutline": {
@@ -57,7 +57,7 @@ export default function DesktopDatePickers({
               },
               "&.Mui-focused": {
                 "& .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "info.main",
+                  borderColor: Validate ? "#d50000" : "info.main",
                 },
               },
             },
@@ -66,14 +66,20 @@ export default function DesktopDatePickers({
           format={dateFormat}
           value={value ? value : null}
           onChange={(newValue) => handleChangeDate(newValue)}
-          slotProps={{ textField: { size: "small" } }}
+          slotProps={{ 
+            textField: { 
+              size: "small" ,
+              error: Validate,
+              
+            } 
+            }}
         />
       </LocalizationProvider>
-      {validateTextLable ? (
-          <label htmlFor="" className={`fs-7 py-1 sarabun-regular-lable-validate`}>
-            {validateTextLable}
-          </label>
-        ) : null}
+      {validateTextLable && (
+        <label className="fs-7 py-1 sarabun-regular-lable-validate" style={{ color: "red" }}>
+          {validateTextLable}
+        </label>
+      )}
     </div>
   );
 }

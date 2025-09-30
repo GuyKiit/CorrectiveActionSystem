@@ -151,7 +151,7 @@ export default function DataTable({ colum, rows, titlename, noDataname = "ไม
   }, [rows]);
 
   return (
-    <div className="block w-full p-6  border-gray-200 rounded-lg shadow-sm" style={{ border: "2px solid #F29739" }}>
+    <div className="block w-full p-6  border-gray-200 rounded-lg shadow-sm" style={{ border: "2px solid #39a2f2" }}>
       {/* <div className="text-2xl text-center flex-grow">
         {titlename}
       </div> */}
@@ -160,7 +160,7 @@ export default function DataTable({ colum, rows, titlename, noDataname = "ไม
           {titlename}
         </label>
       </div>
-      <Divider className="mb-5" sx={{ my: 0.1, borderColor: "#F29739" }} />
+      <Divider className="mb-5" sx={{ my: 0.1, borderColor: "#39a2f2" }} />
       <div className="flex px-5 pt-5 items-center justify-between w-full">
         <div className="flex items-center">
           {buttonElement}

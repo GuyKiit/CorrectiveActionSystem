@@ -8,6 +8,8 @@ export interface ComplaintFile {
   otherText?: string;
   original_file_name?: string;
   img_url?: string;
+  full_path?: string;
+  id?: string;
 }
 
 interface BrowseFileUploadProps {

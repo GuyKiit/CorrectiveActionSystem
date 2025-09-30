@@ -17,6 +17,8 @@ interface AutocompleteComboBox {
   setvalue?: (value: any) => void;
   Validate?: boolean;
   validateTextLable?: string;
+  error?: boolean;
+  id?: string;
 }
 
 export default function AutocompleteComboBox(props: AutocompleteComboBox) {
@@ -75,11 +77,12 @@ export default function AutocompleteComboBox(props: AutocompleteComboBox) {
             placeholder="กรุณาเลือก"
             size="small"
             sx={{
-              bgcolor: props.bgcolorTextField ? grey[200] : "",
+              bgcolor: props.bgcolorTextField ? grey[200] : grey[50],
               "& .MuiOutlinedInput-root": {
                 fontFamily: "Sarabun",
                 "& .MuiOutlinedInput-notchedOutline": {
                   borderColor: props.Validate ? "#d50000" : "",
+                  
                 },
                 "&.Mui-focused": {
                   "& .MuiOutlinedInput-notchedOutline": {
@@ -94,6 +97,7 @@ export default function AutocompleteComboBox(props: AutocompleteComboBox) {
       {validateTextLable ? (
         <label
           htmlFor=""
+          //font colo
           className={`fs-7 py-1 sarabun-regular-lable-validate`}
         >
           {validateTextLable}

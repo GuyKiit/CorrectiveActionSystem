@@ -24,7 +24,9 @@ interface FuncDialog {
   titlename?: string;
   dialogWidth?: "xs" | "sm" | "md" | "lg" | "xl";
   openBottonHidden?: boolean;
-  colorBotton?: string;
+  hideSaveDraft?: boolean;
+  buttonText?: string;
+  buttonColor?: string;
   element?: React.ReactNode;
   modalWidth?: string | number;
   modalHeight?: string | number;
@@ -76,12 +78,12 @@ export default function FuncDialog(props: FuncDialog) {
       <DialogActions sx={{ justifyContent: "space-between", margin: 2, px: 3, pb: 3 }}>
         {/* Left side - Save Draft */}
         <div>
-          {props.openBottonHidden && (
+          {!props.hideSaveDraft && props.openBottonHidden && (
             <FullWidthButton
               handleonClick={props.handlesavedraft ?? props.handleClose}
               labelName= "Save Draft"
               variant_text="contained"
-              colorname={props.colorBotton ?? "primary"}
+              colorname={props.buttonColor ?? "primary"}
             />
           )}
         </div>
@@ -92,16 +94,16 @@ export default function FuncDialog(props: FuncDialog) {
           {props.openBottonHidden && (
             <FullWidthButton
               handleonClick={props.handlefunction ?? props.handleClose}
-              labelName={props.titlename ?? "บันทึก"}
+              labelName={props.buttonText ?? "บันทึก"}
               variant_text="contained"
-              colorname={props.colorBotton ?? "primary"}
+              colorname={props.buttonColor ?? "primary"}
             />
           )}
           <FullWidthButton
             handleonClick={props.handleClose}
             labelName="Cancel"
-            variant_text="outlined"
-            colorname="inherit"
+            variant_text="contained"
+            colorname={"primary"}
           />
           
         </div>
