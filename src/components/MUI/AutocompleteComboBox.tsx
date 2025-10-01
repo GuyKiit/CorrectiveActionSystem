@@ -46,7 +46,7 @@ export default function AutocompleteComboBox(props: AutocompleteComboBox) {
       </label>
       <Autocomplete
         sx={{
-          bgcolor: bgcolorTextField ? grey[200] : null,
+          bgcolor: readonly ? grey[200] : grey[50],
           width: "100%",
         }}
         disablePortal
@@ -77,7 +77,7 @@ export default function AutocompleteComboBox(props: AutocompleteComboBox) {
             placeholder="กรุณาเลือก"
             size="small"
             sx={{
-              bgcolor: props.bgcolorTextField ? grey[200] : grey[50],
+              bgcolor: props.readonly ? grey[200] : grey[50],
               "& .MuiOutlinedInput-root": {
                 fontFamily: "Sarabun",
                 "& .MuiOutlinedInput-notchedOutline": {

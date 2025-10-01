@@ -1,14 +1,5 @@
-// Consolidated Complaint Management System
-// This file combines state management, variables, functions, and CRUD operations
-// from index.tsx and ComplaintRead.tsx for better organization
 import React, { useState, useMemo } from "react";
-import {
-  _GET,
-  _POST,
-  _POST_FORMDATA,
-  _POST_SYNC,
-  _POST_SYS_API,
-} from "../../service/mas";
+import { _GET, _POST, _POST_FORMDATA, _POST_SYNC, _POST_SYS_API } from "../../service/mas";
 import { _formatNumber, conCatDateTime } from "../../../libs/datacontrol";
 import { setValueMas } from "../../../libs/setvaluecallback";
 import dayjs from "dayjs";
@@ -26,7 +17,6 @@ import { useData } from "../../auth/core/DataContext";
 import { Complaint_headCells } from "../../../libs/columnname";
 import DataTable from "../../components/MUI/DataTable";
 import ComplaintBody from "./components/ComplaintBody";
-// import CompalintView from "./components/ComplaintRead";
 import { useListComplaint } from "./core/ListComplaintContext";
 import { v4 as uuidv4 } from "uuid";
 import { cleanAccessData } from "../../service/initmain/initmain";
@@ -43,7 +33,7 @@ import ExplaintBody from "./components/ExplaintBody";
 // import moments from "moment";
 
 // =====================================================================================================
-// TYPE DEFINITIONS (from index.tsx and ComplaintRead.tsx)
+// TYPE DEFINITIONS
 // =====================================================================================================
 export type Launch = {
   id: string;
@@ -97,23 +87,6 @@ interface Complaint {
   cas_number: string;
   product_name: string;
 }
-interface ComplaintCarData {
-  point_name: string;
-  value: number;
-}
-interface ComplaintServiceData {
-  service_name_TH: string;
-  amount: string;
-  contractor_name: number;
-}
-
-interface ComplaintImgData {
-  id: string;
-  file_name: string;
-  path: number;
-  location: string;
-}
-
 type Validate = {
   Product_Group: boolean;
   Report_Type: boolean;
@@ -131,7 +104,21 @@ type Validate = {
   Detail: boolean;
   Priority: boolean;
 };
-
+// interface ComplaintCarData {
+//   point_name: string;
+//   value: number;
+// }
+// interface ComplaintServiceData {
+//   service_name_TH: string;
+//   amount: string;
+//   contractor_name: number;
+// }
+// interface ComplaintImgData {
+//   id: string;
+//   file_name: string;
+//   path: number;
+//   location: string;
+// }
 type Block = {
   id: any;
   season: number;
@@ -169,12 +156,9 @@ type data_detail = {
   req_example?: any;
 };
 
-// =====================================================================================================
-// MAIN COMPLAINT COMPONENT
-// =====================================================================================================
 export default function Complaint() {
   // =====================================================================================================
-  // AUTHENTICATION & USER DATA (from index.tsx)
+  // AUTHENTICATION & USER DATA
   // =====================================================================================================
   const user = cleanAccessData("userSession");
   const { setIsLoadingScreen } = useLayout();
@@ -182,7 +166,7 @@ export default function Complaint() {
   const { Customer, ProductGroup, CustomerAddress } = useData();
 
   // =====================================================================================================
-  // CONTEXT VARIABLES (from useListComplaint hook)
+  // CONTEXT VARIABLES
   // =====================================================================================================
   const {
     // Main Complaint Fields
@@ -258,33 +242,43 @@ export default function Complaint() {
   // =====================================================================================================
   // LOCAL STATE VARIABLES (from index.tsx)
   // =====================================================================================================
-  const [selectDataTable, setSelectDataTable] = React.useState<any>([]);
+  
+  // Variable for Data Table
   const [datalist, setdatalist] = React.useState<any>([]);
-  const [openAdd, setOpenAdd] = React.useState(false);
-  const [statusMode, setstatusMode] = React.useState([]);
-  const [openSync, setOpenSync] = React.useState(false);
-  const [openView, setOpenView] = React.useState(false);
-  const [openEdit, setOpenEdit] = React.useState(false);
-  const [openDelete, setOpenDelete] = React.useState(false);
+  
+  // Variables for Dialogs and Modals
+  const [openComplaintAdd, setOpenComplaintAdd] = React.useState(false);
+  const [openComplaintView, setOpenComplaintView] = React.useState(false);
+  const [openComplaintEdit, setOpenComplaintEdit] = React.useState(false);
+  const [openComplaintDelete, setOpenComplaintDelete] = React.useState(false);
+  const [openExplain, setOpenExplain] = React.useState(false);
+  const [openExplainAdd, setOpenExplainAdd] = React.useState(false);
+  const [openExplainView, setOpenExplainView] = React.useState(false);
+  
   const [openUpLoad, setOpenUpload] = React.useState(false);
-  const [ComplaintBlocks, setComplaintBlocks] = useState<Block[]>([]);
+  
+  
+   const [ComplaintBlocks, setComplaintBlocks] = useState<Block[]>([]);
   const [blockValidateErrors, setBlockValidateErrors] = useState<{ [index: number]: data_detail }>({});
-  const [openSnackbar, setOpenSnackbar] = React.useState(false);
-  const [snackbarMessage, setSnackbarMessage] = React.useState("");
-  const [snackbarSeverity, setSnackbarSeverity] = React.useState<"success" | "error">("success");
   const [successCardOpen, setSuccessCardOpen] = React.useState(false);
   const [successCardMessage, setSuccessCardMessage] = React.useState("");
   const [openAddlist, setOpenAddlist] = React.useState(false);
+  
+  // const [openSync, setOpenSync] = React.useState(false);
+  // const [statusMode, setstatusMode] = React.useState([]);
+  // const [openSnackbar, setOpenSnackbar] = React.useState(false);
+  // const [snackbarMessage, setSnackbarMessage] = React.useState("");
+  // const [snackbarSeverity, setSnackbarSeverity] = React.useState<"success" | "error">("success");
+  // const [attach_type, setattach_type] = React.useState<any>([]);
+  // const [complaint_status, setcomplaint_status] = React.useState<any>([]);
+  // const [complaint_type, setcomplaint_type] = React.useState<any>([]);
+  // const [reference_standard, setreference_standard] = React.useState<any>([]);
+  // const [tool_use, settool_use] = React.useState<any>([]);
+  // const [decision_disposition, setdecision_disposition] = React.useState<any>([]);
 
   const handleOpenAddList = () => setOpenAddlist(true);
   const handleCloseAddlist = () => setOpenAddlist(false);
 
-  const [attach_type, setattach_type] = React.useState<any>([]);
-  const [complaint_status, setcomplaint_status] = React.useState<any>([]);
-  const [complaint_type, setcomplaint_type] = React.useState<any>([]);
-  const [reference_standard, setreference_standard] = React.useState<any>([]);
-  const [tool_use, settool_use] = React.useState<any>([]);
-  const [decision_disposition, setdecision_disposition] = React.useState<any>([]);
   // Date Search Variables (from index.tsx)
   const [respondWithinSearch, setrespondWithinSearch] = React.useState<
     dayjs.Dayjs | undefined | null
@@ -307,24 +301,14 @@ export default function Complaint() {
   });
 
   // Additional State Variables (from ComplaintRead.tsx)
-  const [ComplaintCarData, setComplaintCarData] = useState<
-    ComplaintCarData[] | null
-  >(null);
-  const [ComplaintServiceData, setComplaintServiceData] = useState<
-    ComplaintServiceData[] | null
-  >(null);
-  const [ComplaintImgData, setComplaintImgData] = useState<
-    ComplaintImgData[] | null
-  >(null);
+  // const [ComplaintCarData, setComplaintCarData] = useState<ComplaintCarData[] | null>(null);
+  // const [ComplaintServiceData, setComplaintServiceData] = useState<ComplaintServiceData[] | null>(null);
+  // const [ComplaintImgData, setComplaintImgData] = useState<ComplaintImgData[] | null>(null);
   const [open, setOpen] = React.useState(false);
-  const [selectedImage, setSelectedImage] = React.useState<string | null>(null);
-  const [imageLoading, setImageLoading] = React.useState(true);
-  const [startDueDate, setStartDueDate] = React.useState<
-    dayjs.Dayjs | undefined | null
-  >();
-  const [endDueDate, setEndDueDate] = React.useState<
-    dayjs.Dayjs | undefined | null
-  >();
+  // const [selectedImage, setSelectedImage] = React.useState<string | null>(null);
+  // const [imageLoading, setImageLoading] = React.useState(true);
+  // const [startDueDate, setStartDueDate] = React.useState<dayjs.Dayjs | undefined | null>();
+  // const [endDueDate, setEndDueDate] = React.useState<dayjs.Dayjs | undefined | null>();
   const [dataComplaintType, setdataComplaintType] = useState<LovType[]>([]);
   const [dataComplaintRs, setdataComplaintRs] = useState<LovType[]>([]);
   const [dataComplaintphoto, setdataComplaintphoto] = useState<LovType[]>([]);
@@ -431,7 +415,6 @@ export default function Complaint() {
     compTypeOther: string
   ) {
     const updatedData = dataComplaintTypeValue_Combobox.map((item: any) => {
-      console.log("🧡🧡item", item)
       return {
         ...item,
         complaint_id: complaintid,
@@ -449,7 +432,6 @@ export default function Complaint() {
     clauseOther: string
   ) {
     const updatedData = dataComplaintRsValue_Combobox.map((item: any) => {
-      console.log("💚💚item", item)
       return {
         ...item,
         complaint_id: complaintid,
@@ -481,14 +463,17 @@ export default function Complaint() {
     return paddingYear;
   }
 
-  // Update Complaint ID Functions (from index.tsx)
+  // =====================================================================================================
+  // UTILITY FUNCTIONS
+  // =====================================================================================================
+
+  // Update Complaint ID Functions
   function expToolUpdateCompId(
     dataTooluseValue: any,
     explain_id: string,
     ToolOther: string
   ) {
     const updatedData = dataTooluseValue.map((item: any) => {
-      console.log("🧡🧡item", item)
       return {
         ...item,
         explain_id: explain_id,
@@ -505,7 +490,6 @@ export default function Complaint() {
     ToolOther: string
   ) {
     const updatedData = dataDecisionValue.map((item: any) => {
-      console.log("🧡🧡item", item)
       return {
         ...item,
         explain_id: explain_id,
@@ -516,52 +500,13 @@ export default function Complaint() {
     return updatedData;
   }
 
-
   // =====================================================================================================
-  // API FUNCTIONS - DATA RETRIEVAL (from index.tsx)
+  // API FUNCTIONS - GET DATA MASTER
   // =====================================================================================================
 
-  // Get Report Types
-  // const ReportType_Get = async () => {
-  //   try {
-  //     const dataset = {
-  //       lov_group: "TRR.TRRGROUP.COM",
-  //       lov_type: "report_type",
-  //     };
-  //     const response = await _POST(dataset, "/Lov/LovGet");
-  //     if (response && response.status === "success") {
-  //       console.log("❇️ Call [Lov/LovGet] -> report_type :", response.data);
-  //       setdataset_reporttype(response.data);
-  //     }
-  //   } catch (e) {
-  //     console.log("error:", e);
-  //   }
-  // };
-
-  // Get Complaint Types
-  // const ComplaintType_Get = async () => {
-  //   try {
-  //     const dataset = {
-  //       lov_group: "TRR.TRRGROUP.COM",
-  //       lov_type: "complaint_type",
-  //     };
-  //     const response = await _POST(dataset, "/Lov/LovGet");
-  //     if (response && response.status === "success") {
-  //       console.log("❇️ Call [Lov/LovGet] -> complaint_type :", response.data);
-  //       setdataComplaintType_Combobox &&
-  //         setdataComplaintType_Combobox(response.data);
-  //     }
-  //   } catch (e) {
-  //     console.log("error:", e);
-  //   }
-  // };
-
-  // Get lovGet
+  // Function - Get LOV Master Data
   const LovAll_Get = async () => {
-    console.log(
-      "🕒 Call Function : [LovAll_Get] at",
-      // moments().format("YYYY-MM-DD HH:mm:ss")
-    );
+    console.log("🕒 Call Function : [LovAll_Get] at"); //moments().format("YYYY-MM-DD HH:mm:ss"
 
     try {
       const dataset = {
@@ -581,10 +526,6 @@ export default function Complaint() {
           return acc;
         }, {});
 
-        console.log("📌 Raw Data:", lovData);
-        console.log("📂 Grouped by lov_type:", grouped);
-        console.log("📂 datastatus:", (grouped["complaint_status"]));
-
         // ตัวอย่างการ set state
         setdataset_reporttype?.(grouped["report_type"] || []);
         setdataComplaintType_Combobox?.(grouped["complaint_type"] || []);
@@ -600,45 +541,8 @@ export default function Complaint() {
       console.log("error:", e);
     }
   };
-  // Get Complaint Reference Standards
-  // const ComplaintRs_Get = async () => {
-  //   try {
-  //     const dataset = {
-  //       lov_group: "TRR.TRRGROUP.COM",
-  //       lov_type: "reference_standard",
-  //     };
-  //     const response = await _POST(dataset, "/Lov/LovGet");
-  //     if (response && response.status === "success") {
-  //       console.log(
-  //         "❇️ Call [Lov/LovGet] -> reference_standard :",
-  //         response.data
-  //       );
-  //       setdataComplaintRs_Combobox &&
-  //         setdataComplaintRs_Combobox(response.data);
-  //     }
-  //   } catch (e) {
-  //     console.log("error:", e);
-  //   }
-  // };
 
-  // Get Photo Attachment Types
-  // const photo_Get = async () => {
-  //   try {
-  //     const dataset = {
-  //       lov_group: "TRR.TRRGROUP.COM",
-  //       lov_type: "attach_type",
-  //     };
-  //     const response = await _POST(dataset, "/Lov/LovGet");
-  //     if (response && response.status === "success") {
-  //       console.log("❇️ Call [Lov/LovGet] -> attach_type :", response.data);
-  //       setdataphoto_Combobox && setdataphoto_Combobox(response.data);
-  //     }
-  //   } catch (e) {
-  //     console.log("error:", e);
-  //   }
-  // };
-
-  // Get Priority Levels
+  // Function - Get Priority Levels
   const priority_Get = async () => {
     try {
       const dataset = {
@@ -655,8 +559,8 @@ export default function Complaint() {
     }
   };
 
-  // Get Domain Data
-  const CasDomainGet = async () => {
+  // Function - Get Domain
+  const DomainGet = async () => {
     try {
       const dataset = {
         company_id: user[0]?.itasset_company_id,
@@ -682,9 +586,8 @@ export default function Complaint() {
     }
   };
 
-  // Get Department Domain Data
-  const CasDepartmentDomainGet = async (action?: string) => {
-    console.log("🐸 RECHECK DATA ACTION : ",action ,"🐸")
+  // Function - Get Department Domain
+  const DepartmentDomainGet = async (action?: string) => {
     try {
       const dataset = {
         domain_id: user[0]?.employee_domain,
@@ -723,69 +626,12 @@ export default function Complaint() {
       console.log("error:", e);
     }
   };
-  // Get Complaint Status Data
-  // const complaint_status_Get = async () => {
-  //   try {
-  //     const dataset = {
-  //       lov_group: "TRR.TRRGROUP.COM",
-  //       lov_type: "complaint_status",
-  //     };
-  //     const response = await _POST(dataset, "/Lov/LovGet");
-  //     if (response && response.status === "success") {
-  //       console.log(
-  //         "❇️ Call [Lov/LovGet] -> complaint_status_Get :",
-  //         response.data
-  //       );
-  //       setdatastatus && setdatastatus(response.data);
-  //     }
-  //   } catch (e) {
-  //     console.log("error:", e);
-  //   }
-  // };
-
-  // Get Tool Use
-  // const ToolUse_Get = async () => {
-  //   try {
-  //     const dataset = {
-  //       lov_group: "TRR.TRRGROUP.COM",
-  //       lov_type: "tool_use",
-  //     };
-  //     const response = await _POST(dataset, "/Lov/LovGet");
-  //     if (response && response.status === "success") {
-  //       console.log("❇️ Call [Lov/LovGet] -> tool_use :", response.data);
-  //       setdataToolUse &&
-  //         setdataToolUse(response.data);
-  //     }
-  //   } catch (e) {
-  //     console.log("error:", e);
-  //   }
-  // };
-
-  // Get decision_disposition
-  // const Decision_Get = async () => {
-  //   try {
-  //     const dataset = {
-  //       lov_group: "TRR.TRRGROUP.COM",
-  //       lov_type: "decision_disposition",
-  //     };
-  //     const response = await _POST(dataset, "/Lov/LovGet");
-  //     if (response && response.status === "success") {
-  //       console.log("❇️ Call [Lov/LovGet] -> decision_disposition :", response.data);
-  //       setdataDecision &&
-  //         setdataDecision(response.data);
-  //     }
-  //   } catch (e) {
-  //     console.log("error:", e);
-  //   }
-  // };
-
-
 
   // =====================================================================================================
-  // API FUNCTIONS - CRUD OPERATIONS (from index.tsx)
+  // API FUNCTIONS - CRUD OPERATIONS
   // =====================================================================================================
 
-  // READ - Get Complaints
+  // Function - Get Complaints
   const Complaint_Get = async () => {
 
     setIsLoadingScreen(true)
@@ -809,25 +655,23 @@ export default function Complaint() {
         const responseData: any = [];
         if (Array.isArray(response.data)) {
           response.data.forEach((el: any) => {
+            console.log("💠💠💠💠💠💠💠💠💠💠 el", el, "💠💠💠💠💠💠💠💠💠💠");
             const ACTION = (
               <ActionManageCell
                 hadleOnclickMenu={(name: any) => {
                   console.log("🎆 🎆 🎆 🎆 hadleOnclickMenu (name) :", name);
 
                   if (name === "View") {
-                    console.log("🦄🦄🦄🦄🦄🦄🦄🦄🦄 RECHECK DATA ACTION : ",name ,"🦄")
-                    CasDepartmentDomainGet("Read");
-                    handleOnclickMenuView(el);
+                    DepartmentDomainGet("Read");
+                    handleOnclickComplaintView(el);
                   }
                   else if (name === "Edit") {
-                    console.log("🦄🦄🦄🦄🦄🦄🦄🦄🦄 RECHECK DATA ACTION : ",name ,"🦄")
-                    CasDepartmentDomainGet("Edit");
-                    handleOnclickMenuEdit(el);
+                    DepartmentDomainGet("Edit");
+                    handleOnclickComplaintEdit(el);
                   }
                   else if (name === "Delete") {
-                    console.log("🦄🦄🦄🦄🦄🦄🦄🦄🦄 RECHECK DATA ACTION : ",name ,"🦄")
-                    CasDepartmentDomainGet("Delete");
-                    handleOnclickMenuDelete(el);
+                    DepartmentDomainGet("Delete");
+                    handleOnclickComplaintDelete(el);
                   }
                 }}
               />
@@ -856,7 +700,7 @@ export default function Complaint() {
     }
   };
 
-  // READ - Search Complaints
+  // Function - Search Complaints
   const ListSearchGet = async () => {
     setIsLoadingScreen(true);
     const dataset = {
@@ -872,11 +716,6 @@ export default function Complaint() {
       complaint_status_label: TextNameSearch.datastatus || null,
       doc_date: documentDateSearch || null,
     }
-    console.log("😍😍Search payload:", dataset);
-    console.log("😍😍TextNameSearch:", TextNameSearch);
-    console.log("😍😍TextNameSearch.report_code:", TextNameSearch.report_code)
-    console.log("😍😍TextNameSearch.datastatus:", TextNameSearch.datastatus)
-    console.log("😍😍respondWithinSearch", respondWithinSearch)
     try {
       let response = await _POST(dataset, "/ListSearch/ListSearchGet");
       console.log(response, "response_Get");
@@ -890,17 +729,23 @@ export default function Complaint() {
                 hadleOnclickMenu={(name: any) => {
                   console.log("🎆 🎆 🎆 🎆 hadleOnclickMenu (name) :", name);
                   if (name === "View") {
-                    // console.log("🐸🐸🐸🐸🐸🐸🐸🐸🐸 RECHECK DATA ACTION : ",name ,"🐸")
-                    // CasDepartmentDomainGet("Read");
-                    handleOnclickMenuView(el);
+                    // DepartmentDomainGet("Read");
+                    handleOnclickComplaintView(el);
                   } else if (name === "Edit") {
-                    // console.log("🐸🐸🐸🐸🐸🐸🐸🐸🐸 RECHECK DATA ACTION : ",name ,"🐸")
-                    // CasDepartmentDomainGet("Edit");
-                    handleOnclickMenuEdit(el);
+                    // DepartmentDomainGet("Edit");
+                    handleOnclickComplaintEdit(el);
                   } else if (name === "Delete") {
-                    // console.log("🐸🐸🐸🐸🐸🐸🐸🐸🐸 : ",name ,"🐸")
-                    // CasDepartmentDomainGet("Delete");
-                    handleOnclickMenuDelete(el);
+                    // DepartmentDomainGet("Delete");
+                    handleOnclickComplaintDelete(el);
+                  } else if (name === "Explain") {
+                    // DepartmentDomainGet("Explain");
+                    handleOnclickExplain(el);
+                  } else if (name === "ExplainAdd") {
+                    // DepartmentDomainGet("Explain");
+                    handleOnclickExplainAdd(el);
+                  } else if (name === "ExplainView") {
+                    // DepartmentDomainGet("Explain");
+                    handleOnclickExplainView(el);
                   }
                 }}
               />
@@ -927,7 +772,7 @@ export default function Complaint() {
     }
   };
 
-  //validate
+  // Function - Validate before Add Complaint
   const validateBeforeAdd = (): boolean => {
     let valid = true;
     // Clear ALL validation errors before validation
@@ -1207,10 +1052,6 @@ if (!datapriorityValue_Combobox) {
 
   // CREATE -SaveDraft Add Complaint
   const ComplaintSavedraftAdd = async () => {
-    // console.log("Departtttt", request_department_id?.department_id);
-    // console.log("Departtttt", request_department_id?.department_id);
-    console.log("respondent_department_id?.department_id", respondent_department_id?.department_id);
-    console.log("🤍🤍dataComplaintTypeValue_Combobox", dataComplaintTypeValue_Combobox);
 
     const tempid = uuidv4();
 
@@ -1358,11 +1199,8 @@ if (!datapriorityValue_Combobox) {
     }
   };
 
-  // CREATE - Add Complaint
+  // Function - Add Complaint
   const ComplaintAdd = async () => {
-    console.log("Departtttt", request_department_id?.department_id);
-    console.log("Departtttt", request_department_id?.itasset_department_id);
-    console.log("🤍🤍dataComplaintTypeValue_Combobox", dataComplaintTypeValue_Combobox);
 
     if (!validateBeforeAdd()) {
       return;
@@ -1526,8 +1364,7 @@ if (!datapriorityValue_Combobox) {
     }
   };
 
-
-  // CREATE - Edit Complaint
+  // Function - Edit Complaint
   const ComplaintEdit = async () => {
 
     if(!validateBeforeEdit()){
@@ -1681,7 +1518,7 @@ if (!datapriorityValue_Combobox) {
     }
   };
 
-  // CREATE - Delete Complaint
+  // Function - Delete Complaint
   const ComplaintDelete = async () => {
     // สร้าง JSON payload
     const complaintPayload = {
@@ -1952,52 +1789,71 @@ if (!datapriorityValue_Combobox) {
 
   // Dialog Handlers
   const handleOnclickMenuSync = () => {
-    setOpenSync(true);
+    // setOpenSync(true);
   };
 
-  const handleOnclickMenuAdd = () => {
+  const handleOnclickComplaintAdd = () => {
     resetForm();
     setdataelement(null);
-    setOpenAdd(true);
+    setOpenComplaintAdd(true);
   };
 
-  const handleOnclickMenuView = (data: any) => {
+  const handleOnclickComplaintView = (data: any) => {
     resetForm();
     setdataelement(data); // ตั้งค่า dataelement ก่อน
-    setOpenView(true); // แล้วค่อยเปิด Dialog
+    setOpenComplaintView(true); // แล้วค่อยเปิด Dialog
   };
 
-  const handleOnclickMenuEdit = (data: any) => {
+  const handleOnclickComplaintEdit = (data: any) => {
     resetForm();
-    setOpenEdit(true);
+    setOpenComplaintEdit(true);
     setdataelement(data);
   };
 
-  const handleOnclickMenuDelete = (data: any) => {
+  const handleOnclickComplaintDelete = (data: any) => {
     resetForm();
-    setOpenDelete(true);
+    setOpenComplaintDelete(true);
     setdataelement(data);
   };
 
-  const handleOnclickMenuUpload = () => {
-    setOpenUpload(true);
+  // -------- Explain Dialog Handlers --------
+  const handleOnclickExplain = (data: any) => {
+    resetForm();
+    setOpenExplain(true);
+    setdataelement(data);
+  };
+  
+  const handleOnclickExplainAdd = (data: any) => {
+    resetForm();
+    setdataelement(null);
+    setOpenExplainAdd(true);
   };
 
-  const handleTableButtonClick = (func_name: string) => {
-    switch (func_name) {
-      case "Add":
-        handleOnclickMenuAdd();
-        break;
-      case "Upload":
-        handleOnclickMenuUpload();
-        break;
-      case "Print":
-        console.log("Print clicked");
-        break;
-      default:
-        console.warn("No handler for", func_name);
-    }
+  const handleOnclickExplainView = (data: any) => {
+    resetForm();
+    setOpenExplainView(true);
+    setdataelement(data);
   };
+
+  // const handleOnclickMenuUpload = () => {
+  //   setOpenUpload(true);
+  // };
+
+  // const handleTableButtonClick = (func_name: string) => {
+  //   switch (func_name) {
+  //     case "Add":
+  //       handleOnclickComplaintAdd();
+  //       break;
+  //     case "Upload":
+  //       handleOnclickMenuUpload();
+  //       break;
+  //     case "Print":
+  //       console.log("Print clicked");
+  //       break;
+  //     default:
+  //       console.warn("No handler for", func_name);
+  //   }
+  // };
 
   // Search Handlers
   const handleCloseSearch = () => {
@@ -2021,11 +1877,14 @@ if (!datapriorityValue_Combobox) {
 
   // Close Dialog Handler
   const handleClose = () => {
-    setOpenAdd(false);
-    setOpenSync(false);
-    setOpenView(false);
-    setOpenEdit(false);
-    setOpenDelete(false);
+    setOpenComplaintAdd(false);
+    // setOpenSync(false);
+    setOpenComplaintView(false);
+    setOpenComplaintEdit(false);
+    setOpenComplaintDelete(false);
+    setOpenExplain(false);
+    setOpenExplainAdd(false);
+    setOpenExplainView(false);
     setOpenUpload(false);
     resetForm();
   };
@@ -2053,8 +1912,8 @@ if (!datapriorityValue_Combobox) {
     // ComplaintRs_Get();
     // photo_Get();
     priority_Get();
-    CasDomainGet();
-    CasDepartmentDomainGet();
+    DomainGet();
+    DepartmentDomainGet();
 
     // complaint_status_Get();
     // ToolUse_Get();
@@ -2102,7 +1961,7 @@ if (!datapriorityValue_Combobox) {
   ]);
 
   // =====================================================================================================
-  // RENDER COMPONENT (from index.tsx)
+  // RETURN SECTION - RENDER COMPONENT
   // =====================================================================================================
 
   // #F29739
@@ -2269,8 +2128,8 @@ if (!datapriorityValue_Combobox) {
               hidden={menuFuncData?.find((item: auth_role_menu_func) => item?.func_name === "Add") ? false : true}
               color="success"
               onClick={() => {
-                CasDepartmentDomainGet("Add");
-                handleOnclickMenuAdd();
+                DepartmentDomainGet("Add");
+                handleOnclickComplaintAdd();
               }}
             >
               {menuFuncData?.find((item: auth_role_menu_func) => item?.func_name === "Add") ? "เพิ่มข้อมูล" : ""}
@@ -2285,7 +2144,7 @@ if (!datapriorityValue_Combobox) {
       {/* ---------------------------------------------------------------------- */}
 
       <FuncDialog
-        open={openAdd}
+        open={openComplaintAdd}
         dialogWidth="xl"
         openBottonHidden={true}
         titlename={"Complaint // เพิ่มข้อมูล"}
@@ -2297,7 +2156,7 @@ if (!datapriorityValue_Combobox) {
         element={
           <ComplaintBody
             action="Add"
-            onBlocksChange={(data) => setComplaintBlocks(data)}
+            // onBlocksChange={(data) => setComplaintBlocks(data)}
             validateDetailText={blockValidateErrors}
             handleOpenAdd={handleOpenAddList}
             validateText={{
@@ -2383,8 +2242,8 @@ if (!datapriorityValue_Combobox) {
         }
       />
 
-      <FuncDialog
-        open={openView}
+      {/* <FuncDialog
+        open={openComplaintView}
         dialogWidth="xl"
         openBottonHidden={false}
         titlename={"Complaint // ดูข้อมูล"}
@@ -2393,17 +2252,18 @@ if (!datapriorityValue_Combobox) {
         element={<ComplaintBody
           action="Read"
         />}
-      />
+      /> */}
 
 
       <FuncDialog
-        open={openEdit}
+        open={openComplaintEdit}
         dialogWidth="xl"
         openBottonHidden={true}
         titlename={'Complaint // แก้ไขข้อมูล'}
         buttonText={"Save & Submit"}
         handleClose={handleClose}
         handlefunction={ComplaintEdit}
+        handlesavedraft={ComplaintSavedraftAdd}
         buttonColor="success"
         element={<ComplaintBody
           action="Edit"
@@ -2493,7 +2353,7 @@ if (!datapriorityValue_Combobox) {
       />
 
       <FuncDialog
-        open={openDelete}
+        open={openComplaintDelete}
         dialogWidth="xl"
         hideSaveDraft={true}
         openBottonHidden={true}
@@ -2511,48 +2371,72 @@ if (!datapriorityValue_Combobox) {
       {/* ------------------------ Explain FuncDialog ------------------------ */}
       {/* ---------------------------------------------------------------------- */}
 
-      {/* {/* <FuncDialog
-        open={openView}
+      <FuncDialog
+        open={openComplaintView}
         dialogWidth="xl"
         openBottonHidden={false}
-        titlename={"ดูข้อมูล"}
+        titlename={"Explain // รายละเอียด"}
         handleClose={handleClose}
         buttonColor="success"
-        element={<ExplainBody
-          action="Read"
+        element={<ComplaintBody
+          action="Explain"
         />}
       />
 
+      <FuncDialog
+        open={openExplainAdd}
+        dialogWidth="xl"
+        openBottonHidden={false}
+        titlename={"Explain // เพิ่มข้อมูล"}
+        handleClose={handleClose}
+        buttonColor="success"
+        element={<ExplaintBody
+          action="ExplainAdd"
+        />}
+      />
 
       <FuncDialog
-        open={openEdit}
+        open={openExplainView}
+        dialogWidth="xl"
+        openBottonHidden={false}
+        titlename={"Explain // ดูข้อมูล"}
+        handleClose={handleClose}
+        buttonColor="success"
+        element={<ExplaintBody
+          action="ExplainRead"
+        />}
+      />
+
+{/* 
+      <FuncDialog
+        open={openExplainEdit}
         dialogWidth="xl"
         openBottonHidden={true}
-        titlename={'แก้ไขข้อมูล'}
+        titlename={'Explain // แก้ไขข้อมูล'}
         handleClose={handleClose}
         handlefunction={ComplaintEdit}
         buttonColor="success"
         element={<ComplaintBody
-          action="Edit"
+          action="Explain_Edit"
         />}
       />
 
       <FuncDialog
-        open={openDelete}
+        open={openExplainDelete}
         dialogWidth="xl"
         openBottonHidden={true}
-        titlename={'ลบข้อมูล'}
+        titlename={'Explain // ลบข้อมูล'}
         handleClose={handleClose}
         handlefunction={ComplaintDelete}
         buttonColor="success"
         element={<ComplaintBody
-          action="Delete"
+          action="Explain_Delete"
         />}
-      />
+      /> */}
 
       {/* Dialog Sections */}
 
-      <FuncDialog
+      {/* <FuncDialog
         open={openAddlist}
         dialogWidth="xl"
         openBottonHidden={true}
@@ -2563,12 +2447,14 @@ if (!datapriorityValue_Combobox) {
         element={
           <ExplaintBody
             action="Add"
-            onBlocksChange={(data) => setComplaintBlocks(data)}
+            // onBlocksChange={(data) => setComplaintBlocks(data)}
             validateDetailText={blockValidateErrors}
 
           />
         }
-      />
+      /> */}
+
+      {/* =================== Dialog Sections =================== */}
 
       <Grow in={successCardOpen} mountOnEnter unmountOnExit>
         <Card

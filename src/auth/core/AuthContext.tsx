@@ -148,8 +148,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const response = await login_auth_emp_get(initialValues);
       const { data } = response;
 
-      console.log("🔑 auth_role_profile : ",data?.data?.auth_role_profile);
-      console.log("🔑 auth_role_profile['employee_domain'] : ",data?.data?.auth_role_profile[0]?.employee_domain);
+      // console.log("🔑 auth_role_profile : ",data?.data?.auth_role_profile);
+      // console.log("🔑 auth_role_profile['employee_domain'] : ",data?.data?.auth_role_profile[0]?.employee_domain);
       
 
       if (data?.status === 'Success' && data?.data?.auth_role_profile) {
