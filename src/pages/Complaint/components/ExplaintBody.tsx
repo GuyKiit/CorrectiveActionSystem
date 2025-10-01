@@ -121,6 +121,7 @@ type FileData = {
   otherText?: string;
   original_file_name?: string;
   img_url?: string;
+  full_path?: string;
 };
 
 export default function ExplaintBody({
@@ -344,6 +345,7 @@ export default function ExplaintBody({
   const [isPAPHidden, setIsPAPHidden] = useState(true);
   const [isOBSAHidden, setIsOBSAHidden] = useState(true);
   const [isROOTHidden, setIsROOTHidden] = useState(true);
+  const [isApprovalHidden, setIsApprovalHidden] = useState(false); // ซ่อนข้อมูลผู้รับรอง
 
   const [isCasNumberHidden, setisCasNumberHidden] = useState(true);
   const [isFactoryHidden, setisFactoryHidden] = useState(true);
@@ -383,7 +385,7 @@ export default function ExplaintBody({
 
   // Function Handlers (On Change Event) ======================================================
   const handleReportTypeChange = (val: LovType | null) => {
-    console.log(": Step : 01 handleReportTypeChange", val);
+    console.log(": 😒Step : 01 handleReportTypeChange", val);
 
     const code = val?.lov_code || "";
 
@@ -434,6 +436,7 @@ export default function ExplaintBody({
     setdataDecision([]);
   };
 
+  // CheckBox Tool used
   const handleCheckboxChangeTU = (item: LovType) => {
 
     setdataToolUse((prev: LovType[] = []) => {
@@ -464,7 +467,7 @@ export default function ExplaintBody({
     });
   };
 
-
+  // Check Box DD
   const handleCheckboxChangeDD = (item: LovType) => {
     setdataDecision((prev: LovType[] = []) => {
       //console.log("💚💚item", item);
@@ -501,7 +504,6 @@ export default function ExplaintBody({
   const handleFileChange = (fileArray: ComplaintFile[]) => {
     if (!fileArray || fileArray.length === 0) return;
     const updatedList = [...fileList, ...fileArray];
-
     setFileList(updatedList);
     setcomplaintFiles(updatedList);
   };
@@ -532,6 +534,8 @@ export default function ExplaintBody({
     setcompRsOther("");
   };
 
+
+  // ลบไฟล์
   const handleRemoveFile = (index: number) => {
     setFileList((prev) => {
       const updatedList = prev.filter((_, i) => i !== index);
@@ -543,8 +547,16 @@ export default function ExplaintBody({
     setcomplaintFiles(fileList); // sync
   }, [fileList, filteredTooluse]);
 
-  // READ - Get Complaints
+  // Get File 
   const ComplaintFile_Get = async () => {
+    // ตรวจสอบว่ามี dataelement?.id หรือไม่  ไม่error หากไม่มีไฟล์
+    if (!dataelement?.id) {
+      console.log("No complaint ID, skipping file fetch");
+      setFileList([]);
+      setcomplaintFiles([]);
+      return;
+    }
+
     setIsLoadingScreen(true);
     const dataset = {
       complaint_id: dataelement?.id,
@@ -553,11 +565,16 @@ export default function ExplaintBody({
 
     try {
       let response = await _POST(dataset, "/ComplaintFile/ComplaintFileGet");
+      console.log(response, "response_Get");
       if (response && response.status === "success") {
         setIsLoadingScreen(false);
         const responseData: any = [];
 
-        if (Array.isArray(response.data)) {
+        if (Array.isArray(response.data) && response.data.length > 0) {
+          console.log(
+            "################# FILE #######################:",
+            response.data
+          ); // เช็คว่ามีกี่แถวจริง ๆ
 
           const mappedFiles: ComplaintFile[] = response.data.map(
             (file: any) => ({
@@ -570,17 +587,33 @@ export default function ExplaintBody({
               otherText: file.other,
               original_file_name: file.user_file_name,
               img_url: file.img_url,
+              full_path: file.full_path,
+              id: file.id, // เพิ่ม id สำหรับการลบไฟล์
             })
           );
 
           setFileList(mappedFiles);
           setcomplaintFiles(mappedFiles);
+        } else {
+          // ไม่มีไฟล์
+          console.log("No files found");
+          setFileList([]);
+          setcomplaintFiles([]);
         }
+      } else {
+        // Response ไม่สำเร็จ
+        console.log("Failed to get files:", response);
+        setFileList([]);
+        setcomplaintFiles([]);
       }
     } catch (e) {
+      console.log("Error getting files:", e);
+      setFileList([]);
+      setcomplaintFiles([]);
+    } finally {
+      setIsLoadingScreen(false);
     }
   };
-
 
 
 
@@ -736,8 +769,27 @@ export default function ExplaintBody({
 
 
   React.useEffect(() => {
-
     if (dataelement && action != "Add") {
+      
+      // ตั้งค่า isROOTHidden ตาม report_type ของข้อมูลที่โหลดมา
+      if (dataelement.report_type) {
+        const reportTypeObj = dataset_reporttype.find(
+          (item: LovType) => 
+            item.id === dataelement.report_type || 
+            item.lov_code === dataelement.report_type
+        );
+        
+        if (reportTypeObj) {
+          setIsROOTHidden(["OBS"].includes(reportTypeObj.lov_code));
+          setIsTUHidden(["NCR", "CAR", "CPAR"].includes(reportTypeObj.lov_code));
+          setIsOBSAHidden(["NCR", "CPAR", "CAR"].includes(reportTypeObj.lov_code));
+          setIsCAHidden(["NCR", "OBS"].includes(reportTypeObj.lov_code));
+          setIsPAPHidden(["NCR", "OBS", "CAR"].includes(reportTypeObj.lov_code));
+          setIsDDHidden(["CAR", "OBS", "CPAR"].includes(reportTypeObj.lov_code));
+          
+        }
+      }
+      
       setrespondent_company_id(
         dataset_company.find(
           (el: any) =>
@@ -816,8 +868,10 @@ export default function ExplaintBody({
     }
   }, [dataset_reporttype]);
 
+  
   React.useEffect(() => {
     // เฉพาะตอน Read เท่านั้น
+    
     if (action === "Read" || action === "Edit" || action === "Delete") {
       ComplaintFile_Get();
     }
@@ -882,7 +936,7 @@ export default function ExplaintBody({
       <Divider sx={{ my: 0.1, borderColor: "#F29739" }} />
       <Grid container spacing={2} mt={2}>
         <Grid size={6}>
-          <AutocompleteComboBox
+          {/* <AutocompleteComboBox
             required="required"
             value={dataReportTypeValue}
             labelName={"ประเภทรายงาน (Report Type)"}
@@ -892,7 +946,7 @@ export default function ExplaintBody({
             readonly={isActionRead ? true : isActionEdit ? true : isActionDelete ? true : readonlyTextField}
             bgcolorTextField={isActionRead ? true : isActionEdit ? true : isActionDelete ? true : bgcolorTextField}
 
-          />
+          /> */}
         </Grid>
       </Grid>
 
@@ -1160,6 +1214,7 @@ export default function ExplaintBody({
                       </Accordion>
                     </Grid>
                   )}
+
                 </Grid>
                 {!isOBSAHidden && dataReportTypeValue && (
                   <Accordion
@@ -1350,7 +1405,8 @@ export default function ExplaintBody({
                       className="sarabun-regular-datatable"
                       sx={{ fontSize: "18px", fontWeight: 600, color: "#333" }}
                     >
-                      แนบไฟล์ (Attachments)
+                      แนบเอกสารหรือรูปภาพประกอบเพิ่มเติม (Please attach any relevant documents or photos) 
+
                       <span style={{ color: "red" }}> *</span>
                     </Typography>
                   </AccordionSummary>
@@ -1373,108 +1429,133 @@ export default function ExplaintBody({
 
                           {/* Grouped display by attachment type - Full width boxes stacked vertically */}
                           <Box sx={{ mt: 1 }}>
-                            {(filteredphoto || []).map((photoType: any) => {
-                              const items = fileList.filter(
-                                (f) => f.attachmentType === photoType.id
-                              );
-                              if (items.length === 0) return null;
-                              return (
-                                <Paper
-                                  key={photoType.id}
-                                  elevation={1}
-                                  sx={{ p: 2, borderRadius: 2, mb: 2, width: "100%" }}
-                                >
-                                  <label
-                                    className="sarabun-regular-datatable"
-                                    style={{ fontWeight: 600, fontSize: "16px" }}
+                              {(filteredphoto || []).map((photoType: any) => {
+                                const items = fileList.filter(
+                                  (f) => f.attachmentType === photoType.id
+                                );
+                                if (items.length === 0) return null;
+                                return (
+                                  <Paper
+                                    key={photoType.id}
+                                    elevation={1}
+                                    sx={{ p: 2, borderRadius: 2, mb: 2, width: "100%" }}
                                   >
-                                    {photoType.lov1}
-                                  </label>
-                                  <Divider sx={{ my: 1 }} />
-                                  {items.map((item, idx) => (
-                                    <Box
-                                      key={idx}
-                                      sx={{
-                                        p: 1.5,
-                                        border: "1px solid #e0e0e0",
-                                        borderRadius: 1,
-                                        mb: 1,
-                                        display: "flex",
-                                        justifyContent: "space-between",
-                                        alignItems: "center",
-                                        gap: 2,
-                                      }}
+                                    <label
+                                      className="sarabun-regular-datatable"
+                                      style={{ fontWeight: 600, fontSize: "16px" }}
                                     >
-                                      <Box>
-                                        <div style={{ fontWeight: "bold" }}>
-                                          {item.file.name}
-                                        </div>
-                                        <div
-                                          style={{
-                                            fontSize: "15px",
-                                            color: "#484444ff",
-                                          }}
-                                        >
-                                          {(item.file.size / (1024 * 1024)).toFixed(
-                                            2
-                                          )}{" "}
-                                          MB
-                                        </div>
-                                        {photoType.id === "TRR_AT_4" && (
+                                      {photoType.lov1}
+                                    </label>
+                                    <Divider sx={{ my: 1 }} />
+                                    {items.map((item, idx) => (
+                                      <Box
+                                        key={idx}
+                                        sx={{
+                                          p: 1.5,
+                                          border: "1px solid #e0e0e0",
+                                          borderRadius: 1,
+                                          mb: 1,
+                                          display: "flex",
+                                          justifyContent: "space-between",
+                                          alignItems: "center",
+                                          gap: 2,
+                                        }}
+                                      >
+                                        <Box>
+                                          <div style={{ fontWeight: "bold" }}>
+                                            {item.file.name}
+                                          </div>
                                           <div
                                             style={{
                                               fontSize: "15px",
                                               color: "#484444ff",
-                                              marginTop: "4px",
                                             }}
                                           >
-                                            รายละเอียด: {item.otherText}
+                                            {(item.file.size / (1024 * 1024)).toFixed(
+                                              2
+                                            )}{" "}
+                                            MB
                                           </div>
-                                        )}
-                                      </Box>
-                                      <Box sx={{ display: "flex", gap: 1 }}>
-                                        {/* //ปุ่มลบไฟล์ */}
-                                        {(action == "Edit" || action == "Add") && (
+                                          {photoType.id === "TRR_AT_4" && (
+                                            <div
+                                              style={{
+                                                fontSize: "15px",
+                                                color: "#484444ff",
+                                                marginTop: "4px",
+                                              }}
+                                            >
+                                              รายละเอียด: {item.otherText}
+                                            </div>
+                                          )}
+                                        </Box>
+                                        <Box sx={{ display: "flex", gap: 1 }}>
+                                          {/* //ปุ่มลบไฟล์ */}
+                                          {(action == "Edit" || action == "Add") && (
+                                            <IconButton
+                                              color="error"
+                                              onClick={() => {
+                                                // หา index ที่ถูกต้องใน fileList
+                                                const actualIndex = fileList.findIndex(f =>
+                                                  f.file.name === item.file.name &&
+                                                  f.attachmentType === item.attachmentType
+                                                );
+                                                console.log("🔍 Remove file debug:", {
+                                                  itemName: item.file.name,
+                                                  itemType: item.attachmentType,
+                                                  actualIndex,
+                                                  fileListLength: fileList.length
+                                                });
+                                                if (actualIndex !== -1) {
+                                                  handleRemoveFile(actualIndex);
+                                                }
+                                              }}
+                                            >
+                                              <DeleteIcon />
+                                            </IconButton>
+                                          )}
+
+                                          {/* //ปุ่มดูไฟล์ */}
+
                                           <IconButton
-                                            color="error"
-                                            onClick={() => handleRemoveFile(idx)}
+                                            color="primary"
+                                            onClick={() => {
+                                              console.log("full_path:", item.full_path);
+                                              console.log("file type:", typeof item.file);
+                                              console.log("file instanceof File:", item.file instanceof File);
+
+                                              // ตรวจสอบว่าเป็นไฟล์ใหม่ (ไม่มี full_path) หรือไฟล์เก่า (มี full_path)
+                                              if (item.full_path) {
+                                                // ไฟล์เก่า - เปิดจาก NAS
+                                                window.open(item.full_path, "_blank");
+                                              } else if (item.file instanceof File) {
+                                                // ไฟล์ใหม่ - เปิดจาก File object
+                                                const fileUrl = URL.createObjectURL(item.file);
+                                                window.open(fileUrl, "_blank");
+                                                // Clean up URL after a delay to free memory
+                                                setTimeout(() => URL.revokeObjectURL(fileUrl), 1000);
+                                              } else {
+                                                console.log("Cannot preview file - no full_path or File object");
+                                              }
+                                            }}
                                           >
-                                            <DeleteIcon />
+                                            <VisibilityIcon />
                                           </IconButton>
-                                        )}
 
-                                        {/* //ปุ่มดูไฟล์ */}
 
-                                        <IconButton
-                                          color="primary"
-                                          onClick={() =>
-                                            (action === "Read" || action === "Delete" || action === "Edit")
-                                              ? window.open(item.img_url, "_blank")
-                                              : window.open(
-                                                URL.createObjectURL(item.file),
-                                                "_blank"
-                                              )
-                                          }
-                                        >
-                                          <VisibilityIcon />
-                                        </IconButton>
-
-                                        {/* //ปุ่มดาวน์โหลดไฟล์ */}
-                                        {action === "Read"
-                                          && (
+                                          {/* //ปุ่มดาวน์โหลดไฟล์ */}
+                                          {action === "Read" && (
                                             <IconButton
                                               color="primary"
                                               onClick={async () => {
-                                                if (!item.img_url) return;
+                                                if (!item.full_path) return;
 
                                                 try {
                                                   const response = await fetch(
-                                                    item.img_url,
+                                                    item.full_path,
                                                     { method: "GET" }
                                                   );
                                                   const blob = await response.blob();
-                                                  const url =
-                                                    URL.createObjectURL(blob);
+                                                  const url = URL.createObjectURL(blob);
 
                                                   const link =
                                                     document.createElement("a");
@@ -1489,32 +1570,32 @@ export default function ExplaintBody({
 
                                                   URL.revokeObjectURL(url); // cleanup memory
                                                 } catch (err) {
-                                                  // //console.error(
-                                                  //   "Download failed:",
-                                                  //   err
-                                                  // );
+                                                  console.error(
+                                                    "Download failed:",
+                                                    err
+                                                  );
                                                 }
                                               }}
                                             >
                                               <DownloadIcon />
                                             </IconButton>
                                           )}
+                                        </Box>
                                       </Box>
-                                    </Box>
-                                  ))}
-                                </Paper>
-                              );
-                            })}
+                                    ))}
+                                  </Paper>
+                                );
+                              })}
 
-                            {fileList.length === 0 && (
-                              <Paper
-                                elevation={0}
-                                sx={{ p: 2, textAlign: "center", color: "#999" }}
-                              >
-                                ยังไม่มีไฟล์ที่แนบ
-                              </Paper>
-                            )}
-                          </Box>
+                              {fileList.length === 0 && (
+                                <Paper
+                                  elevation={0}
+                                  sx={{ p: 2, textAlign: "center", color: "#999" }}
+                                >
+                                  ยังไม่มีไฟล์ที่แนบ
+                                </Paper>
+                              )}
+                            </Box>
                         </Grid>
                       }
                     </Grid>
@@ -1523,6 +1604,7 @@ export default function ExplaintBody({
               </Box>
             </Paper>
 
+            {/* //ส่วนของ Section Head */}
             <Paper
               elevation={3}
               sx={{
@@ -1565,6 +1647,7 @@ export default function ExplaintBody({
                   ข้อมูลผู้รับรอง (Section Head)
                 </label>
               </Box>
+              
               <Grid container spacing={3}>
                 <Grid size={4}>
                   <FullWidthTextField
@@ -1818,8 +1901,10 @@ export default function ExplaintBody({
                   </Grid>
                 )}
               </Grid>
-            </Paper>
+            </Paper> 
 
+
+            {/* //ส่วนของ QC */}
             <Paper
               elevation={3}
               sx={{
@@ -2117,7 +2202,8 @@ export default function ExplaintBody({
                   </Grid>
                 )}
               </Grid>
-            </Paper>
+            </Paper> 
+            
           </Grid>
         </Paper>
       )} 

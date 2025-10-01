@@ -1,7 +1,6 @@
 // Consolidated Complaint Management System
 // This file combines state management, variables, functions, and CRUD operations
 // from index.tsx and ComplaintRead.tsx for better organization
-
 import React, { useState, useMemo } from "react";
 import {
   _GET,
@@ -1007,7 +1006,7 @@ export default function Complaint() {
     }
 
 
-    // Validate Complaint Rs - ตรวจสอบตาม Report Type
+    // Validate Rs 
     const reportTypeCode = dataReportTypeValue?.lov_code;
     console.log("🔍 Report Type Code:", reportTypeCode);
 
@@ -1024,7 +1023,7 @@ export default function Complaint() {
       console.log("✅ Complaint Rs validation skipped for", reportTypeCode);
     }
 
-    // Validate Other Rs (if complaint rs has "Other" selected) - เฉพาะ NCR เท่านั้น
+    // Validate Other Rs 
     if (reportTypeCode === "NCR" && dataComplaintRsValue_Combobox && dataComplaintRsValue_Combobox.some((item: any) => item.isClause === "Other")) {
       if (!compRsOther || compRsOther.trim() === "") {
         console.log("❌ Other Rs validation failed for NCR");
@@ -1035,7 +1034,7 @@ export default function Complaint() {
       }
     }
 
-    // Validate Clause Rs (if complaint rs has "Clause" selected) - เฉพาะ NCR เท่านั้น
+    // Validate Clause Rs
     if (reportTypeCode === "NCR" && dataComplaintRsValue_Combobox && dataComplaintRsValue_Combobox.some((item: any) => item.isClause === "Clause")) {
       if (!clauseOther || clauseOther.trim() === "") {
         console.log("❌ Clause Rs validation failed for NCR");
@@ -1066,7 +1065,144 @@ export default function Complaint() {
     return valid;
   }
 
+  //validate Edit
+  const validateBeforeEdit = (): boolean => {
+    let valid = true;
+    setReportTypeError(false);
+    setRespondentDepartmentError(false);
+    setDateOfDetectionError(false);
+    setDepartmentAreaError(false);
+    setProductNameError(false);
+    setLotNoError(false);
+    setEmailError(false);
+    setComplaintTypeError(false);
+    setOtherTypeError(false);
+    setComplaintRsError(false);
+    setOtherRsError(false);
+    setClauseRsError(false);
+    setDetailError(false);
+    setPriorityError(false);
 
+    // Validate Report Type - ตรวจสอบก่อนและถ้าไม่มีให้ return false ทันที
+    if (!dataReportTypeValue || !dataReportTypeValue.id) {
+      console.log("❌ Report Type validation failed");
+      setReportTypeError(true);
+      document.getElementById("reportTypeField")?.focus();
+      return false; 
+    }
+    console.log("✅ Report Type validation passed");
+
+    // Validate Date of Detection
+    if (!date_of_detection) {
+      setDateOfDetectionError(true);
+      valid = false;
+    }
+
+    // Validate Department/Area of Detection
+    if (!respondent_department_id || !respondent_department_id.department_id) {
+      setDepartmentAreaError(true);
+      valid = false;
+    }
+
+    // Validate Product Name
+    if (!product_name || product_name.trim() === "") {
+      setProductNameError(true);
+      valid = false;
+    }
+
+    // Validate Lot no
+    if (!lot_no || lot_no.trim() === "") {
+      setLotNoError(true);
+      valid = false;
+    }
+
+    // Validate Email
+    if (!respondent_email || respondent_email.trim() === "") {
+      setEmailError(true);
+      valid = false;
+    }
+
+    // Validate Complaint Type
+    if (!dataComplaintTypeValue_Combobox || dataComplaintTypeValue_Combobox.length === 0) {
+      console.log("❌ Complaint Type validation failed");
+      setComplaintTypeError(true);
+      valid = false;
+    } else {
+      console.log("✅ Complaint Type validation passed");
+    }
+
+    // Validate Other Type (if complaint type has "Other" selected)
+    if (dataComplaintTypeValue_Combobox && dataComplaintTypeValue_Combobox.some((item: any) => item.isOther === "Y")) {
+      if (!compTypeOther || compTypeOther.trim() === "") {
+        console.log("❌ Other Type validation failed");
+        setOtherTypeError(true);
+        valid = false;
+      } else {
+        console.log("✅ Other Type validation passed");
+      }
+    }
+
+
+    // Validate Rs 
+    const reportTypeCode = dataReportTypeValue?.lov_code;
+    console.log("🔍 Report Type Code:", reportTypeCode);
+
+    // เฉพาะ NCR เท่านั้นที่ต้อง validate Complaint Rs
+    if (reportTypeCode === "NCR") {
+      if (!dataComplaintRsValue_Combobox || dataComplaintRsValue_Combobox.length === 0) {
+        console.log("❌ Complaint Rs validation failed for NCR");
+        setComplaintRsError(true);
+        valid = false;
+      } else {
+        console.log("✅ Complaint Rs validation passed for NCR");
+      }
+    } else {
+      console.log("✅ Complaint Rs validation skipped for", reportTypeCode);
+    }
+
+    // Validate Other Rs 
+    if (reportTypeCode === "NCR" && dataComplaintRsValue_Combobox && dataComplaintRsValue_Combobox.some((item: any) => item.isClause === "Other")) {
+      if (!compRsOther || compRsOther.trim() === "") {
+        console.log("❌ Other Rs validation failed for NCR");
+        setOtherRsError(true);
+        valid = false;
+      } else {
+        console.log("✅ Other Rs validation passed for NCR");
+      }
+    }
+
+    // Validate Clause Rs
+    if (reportTypeCode === "NCR" && dataComplaintRsValue_Combobox && dataComplaintRsValue_Combobox.some((item: any) => item.isClause === "Clause")) {
+      if (!clauseOther || clauseOther.trim() === "") {
+        console.log("❌ Clause Rs validation failed for NCR");
+        setClauseRsError(true);
+        valid = false;
+      } else {
+        console.log("✅ Clause Rs validation passed for NCR");
+      }
+    }
+
+    // Validate Detail
+    if (!detail || detail.trim() === "") {
+      setDetailError(true);
+      valid = false;
+    }
+
+// 
+if (!datapriorityValue_Combobox) {
+  // ถ้าไม่มีข้อมูลใหม่ ให้ใช้ข้อมูลเก่า
+  if (dataelement?.priority_level) {
+    //console.log("Using old priority data:", dataelement.priority_level);
+  } else {
+    setPriorityError(true);
+    valid = false;
+  }
+
+} else {
+ // console.log("✅ Priority validation passed");
+}
+    return valid;
+  }
 
 
   // CREATE -SaveDraft Add Complaint
@@ -1393,11 +1529,11 @@ export default function Complaint() {
 
   // CREATE - Edit Complaint
   const ComplaintEdit = async () => {
-    // console.log("Departtttt", dataelement?.request_domain_id);
-    // console.log("Departtttt", request_department_id?.itasset_department_id);
-    // console.log("Departtttt", request_department_id?.itasset_department_id);
-    // console.log("🤍🤍dataComplaintTypeValue_Combobox", dataComplaintTypeValue_Combobox);
-    console.log("ฟหกฟหกฟหกcomplaintFiles", complaintFiles);
+
+    if(!validateBeforeEdit()){
+      return;
+    }
+
     const tempid = uuidv4();
 
     const tempComplaintStatus = splitByDot(user[0]?.employee_domain)
@@ -1866,9 +2002,9 @@ export default function Complaint() {
   // Search Handlers
   const handleCloseSearch = () => {
     setdataReportTypeValue(null);
-    setdataComplaintTypeValue_Combobox("");
-    setdataComplaintRsValue_Combobox("");
-    setdataphotoValue_Combobox("");
+    setdataComplaintTypeValue_Combobox([]);
+    setdataComplaintRsValue_Combobox([]);
+    setdataphotoValue_Combobox([]);
     setrespondWithinSearch(null);
     setdocumentDateSearch(null);
     setdataset_stepcomplaint(null);
@@ -2271,6 +2407,88 @@ export default function Complaint() {
         buttonColor="success"
         element={<ComplaintBody
           action="Edit"
+          onBlocksChange={(data) => setComplaintBlocks(data)}
+            validateDetailText={blockValidateErrors}
+            handleOpenAdd={handleOpenAddList}
+            validateText={{
+              Product_Group: false,
+              Report_Type: reportTypeError,
+              Respondent_Department: false,
+              Date_of_Detection: dateOfDetectionError,
+              Department_Area: departmentAreaError,
+              Product_Name: productNameError,
+              Lot_No: lotNoError,
+              Email: emailError,
+              Complaint_Type: complaintTypeError,
+              Other_Type: otherTypeError,
+              Complaint_Rs: complaintRsError,
+              Other_Rs: otherRsError,
+              Clause_Rs: clauseRsError,
+              Detail: detailError,
+              Priority: priorityError,
+            }}
+            onReportTypeChange={(val) => {
+              setdataReportTypeValue(val);
+              setReportTypeError(false);
+              // Clear all validation errors when report type changes
+              setDateOfDetectionError(false);
+              setDepartmentAreaError(false);
+              setProductNameError(false);
+              setLotNoError(false);
+              setEmailError(false);
+              setComplaintTypeError(false);
+              setOtherTypeError(false);
+              setComplaintRsError(false);
+              setOtherRsError(false);
+              setClauseRsError(false);
+              setDetailError(false);
+              setPriorityError(false);
+            }}
+            onDateOfDetectionChange={(val) => {
+              setdate_of_detection(val);
+              setDateOfDetectionError(false);
+            }}
+            onDepartmentAreaChange={(val) => {
+              setrespondent_department_id(val);
+              setDepartmentAreaError(false);
+            }}
+            onProductNameChange={(val) => {
+              setproduct_name(val);
+              setProductNameError(false);
+            }}
+            onLotNoChange={(val) => {
+              setlot_no(val);
+              setLotNoError(false);
+            }}
+
+            onEmailChange={(val) => {
+              setrespondent_email(val);
+              setEmailError(false);
+            }}
+            onComplaintTypeChange={(val) => {
+              setComplaintTypeError(false);
+              setOtherTypeError(false);
+            }}
+            onOtherTypeChange={(val) => {
+              setOtherTypeError(false);
+            }}
+            onComplaintRsChange={(val) => {
+              setComplaintRsError(false);
+              setOtherRsError(false);
+              setClauseRsError(false);
+            }}
+            onOtherRsChange={(val) => {
+              setOtherRsError(false);
+            }}
+            onClauseChange={(val) => {
+              setClauseRsError(false);
+            }}
+            onDetailChange={(val) => {
+              setDetailError(false);
+            }}
+            onPriorityChange={(val) => {
+              setPriorityError(false);
+            }}
         />}
       />
 

@@ -452,10 +452,10 @@ export default function ComplaintBody({
     setproduct_name("");
     setlot_no("");
     setrespondent_email("");
-    setdataComplaintTypeValue_Combobox(null);
+    setdataComplaintTypeValue_Combobox([]);
     setdataComplaintType([]);
     setcompTypeOther("");
-    setdataComplaintRsValue_Combobox(null);
+    setdataComplaintRsValue_Combobox([]);
     setdataComplaintRs([]);
     setcompRsOther("");
     setclauseOther("");
@@ -463,7 +463,7 @@ export default function ComplaintBody({
     setdatapriorityValue_Combobox(null);
     setdatapriority(null);
     setrespond_date_within(null);
-    setdataphotoValue_Combobox(null);
+    setdataphotoValue_Combobox([]);
     setdataphoto([]);
     setotherText("");
     setphoTypeOther("");
@@ -568,6 +568,7 @@ export default function ComplaintBody({
       return newData;
     });
   };
+
   const handleCheckboxChangePhotoType = (item: LovType) => {
     setdataphoto((prev: LovType[] = []) => {
       let newData: LovType[];
@@ -598,6 +599,7 @@ export default function ComplaintBody({
       return newData;
     });
   };
+
   const handleCheckboxChangePriority = (item: LovType) => {
     // setdatapriority((prev) => (prev?.id === item.id ? null : item));
     const newPriority = datapriority?.id === item.id ? null : item;
@@ -620,7 +622,6 @@ export default function ComplaintBody({
   const handleFileChange = (fileArray: ComplaintFile[]) => {
     if (!fileArray || fileArray.length === 0) return;
     const updatedList = [...fileList, ...fileArray];
-    console.log("ไฟล์ที่เพิ่ม:", updatedList);
     setFileList(updatedList);
     setcomplaintFiles(updatedList);
   };
@@ -1389,7 +1390,6 @@ export default function ComplaintBody({
                               </Typography>
                             </AccordionSummary>
                             <AccordionDetails>
-
                               <Divider sx={{ my: 0 }} />
                               <Box
                                 sx={{
