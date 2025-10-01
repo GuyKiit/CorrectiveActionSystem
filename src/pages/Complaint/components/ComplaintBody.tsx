@@ -112,7 +112,7 @@ interface ComplaintBody {
   dataelement?: any;
   validateText?: Validate;
   validateDetailText?: { [index: number]: detail };
-  onBlocksChange?: (blocks: Block[]) => void;
+  // onBlocksChange?: (blocks: Block[]) => void;
   handleOpenAdd?: () => void;
   onReportTypeChange?: (val: any) => void;
   onDateOfDetectionChange?: (val: any) => void;
@@ -161,7 +161,7 @@ export default function ComplaintBody({
   readonlyTextField,
   bgcolorTextField,
   validateText,
-  onBlocksChange,
+  // onBlocksChange,
   validateDetailText,
   handleOpenAdd,
   onReportTypeChange,
@@ -1033,10 +1033,8 @@ export default function ComplaintBody({
 
   React.useEffect(() => {
     // เฉพาะตอน Read เท่านั้น
-
     if (action === "Read" || action === "Edit" || action === "Delete") {
       ComplaintFile_Get();
-
     }
   }, [action, dataelement]);
 
@@ -1278,7 +1276,7 @@ export default function ComplaintBody({
                         bgcolorTextField={
                           action === "Add" ? false : isActionEdit ? false : true
                         }
-                        // readonly={isActionRead || isActionDelete}
+                        readonly={isActionRead || isActionDelete}
                         Validate={validateText?.Department_Area || false}
                         validateTextLable={validateText?.Department_Area ? "กรุณาเลือกแผนกที่พบปัญหา" : ""}
                       />
@@ -1294,7 +1292,6 @@ export default function ComplaintBody({
                             onProductNameChange(e);
                           }
                         }}
-                        bgcolorTextField={true}
                         readonly={isActionRead || isActionDelete}
                         Validate={validateText?.Product_Name || false}
                         validateTextLable={validateText?.Product_Name ? "กรุณากรอกชื่อสินค้า" : ""}
@@ -2184,7 +2181,7 @@ export default function ComplaintBody({
 
         </Paper>
       )}
-      {isActionExplain && isActionClose && isFormHidden && dataReportTypeValue && (
+      {/* {isActionExplain || isActionClose && !isFormHidden && dataReportTypeValue && ( */}
         <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>
           <Paper elevation={3} sx={{
             p: 3,
@@ -2269,7 +2266,7 @@ export default function ComplaintBody({
           </Paper>
         </Paper>
 
-      )}
+      {/* )} */}
 
       {isActionClose && isFormHidden && dataReportTypeValue && (
         <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>
