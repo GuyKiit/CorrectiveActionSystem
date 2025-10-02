@@ -833,7 +833,7 @@ export default function ComplaintBody({
         );
 
         if (mappedDept) {
-          setrespondent_department_id(mappedDept); // ค่า default ของ Combobox
+         setrespondent_department_id(mappedDept); // ค่า default ของ Combobox
         }
       }
 
@@ -933,57 +933,27 @@ export default function ComplaintBody({
   dataReportTypeValue,
 ]);
 
-
-
-
   //////////////////////// Complaint Read //////////////////////////
   React.useEffect(() => {
-    console.log(
-      dataelement,
-      "55555555555555555555555555555",
-      filteredComplaintType
-    );
-    console.log(
-      dataelement,
-      "55555555555555555555555555555",
-      datapriority_Combobox
-    );
-    console.log(
-      dataelement?.priority_level,
-      "55555555555555555555555555555",
-      datapriority_Combobox
-    );
-    console.log("💥💥CasNumber:", dataelement?.cas_number);
-    console.log("isRSHidden", isRSHidden);
-    console.log("dataReportTypeValue", dataReportTypeValue);
-    console.log("dataComplaintRs", dataComplaintRs);
-    console.log("filteredComplaintRs", filteredComplaintRs);
-    console.log("💚 raw complaintRs from element:", dataelement?.complaintRs);
-    console.log("💚 dataComplaintRs_Combobox:", dataComplaintRs_Combobox);
-    const rsData = setComplaintRs(dataelement?.complaintRs);
-    console.log("💚 mapped rsData:", rsData);
-    console.log("dataelement", dataelement?.respondent_department_id);
-    console.log("dataset_department", dataset_department);
-    console.log("dataelement", dataelement?.respondent_company_id);
-    console.log("dataset_company", dataset_company);
+    console.log( "step: 5 เก็บข้อมูลเข้า ฺsetdataelement ใหม่ ", dataelement)  
 
     if (dataelement && action != "Add") {
       // setrespondent_company_id(dataset_company.find((el: any) =>el.itasset_company_id == String(dataelement.respondent_company_id?.company_id)));
-      setrespondent_company_id(dataset_company.find((el: any) => String(el.itasset_company_id) === String(dataelement.respondent_company_id?.company_id)));
+      // setrespondent_company_id(dataset_company.find((el: any) => String(el.itasset_company_id) === String(dataelement.respondent_company_id?.company_id)));
       setcas_number(dataelement?.cas_number || "");
       setdoc_date(dataelement?.doc_date ? dayjs(dataelement.doc_date, "DD-MM-YYYY") : dayjs());
       setdate_of_detection(dayjs(dataelement?.date_of_detection));
-      setrespondent_department_id(dataset_department.find((el: any) => String(el.itasset_department_id) === String(dataelement.respondent_department_id?.department_id)));
+      //setrespondent_department_id(dataset_department.find((el: any) => String(el.itasset_department_id) === String(dataelement.respondent_department_id?.department_id)));
       setproduct_name(dataelement?.product_name ? dataelement?.product_name : "");
       setlot_no(dataelement?.lot_no ? dataelement?.lot_no : "");
       setrespondent_email(dataelement?.respondent_email ? dataelement?.respondent_email : "");
       setdataComplaintType(setComplaintType(dataelement?.complaintType));
-      setcompTypeOther(dataelement?.other ? dataelement?.other : "");
+      // setcompTypeOther(dataelement?.other ? dataelement?.other : "");
       setdataComplaintRs(setComplaintRs(dataelement?.complaintRs));
-      setcompRsOther(dataelement?.other ? dataelement?.other : "");
-      setclauseOther(dataelement?.clause ? dataelement?.clause : "");
+      // setcompRsOther(dataelement?.other ? dataelement?.other : "");
+      // setclauseOther(dataelement?.clause ? dataelement?.clause : "");
       setdetail(dataelement?.detail ? dataelement?.detail : "");
-      setpriority_level(setPriorityLevel(dataelement?.priority_level));
+      // setpriority_level(setPriorityLevel(dataelement?.priority_level));
       setrespond_date_within(dataelement?.respond_date_within ? dayjs(dataelement.respond_date_within, "DD-MM-YYYY") : dayjs());
       setrequest_name(dataelement?.request_name ? dataelement?.request_name : "");
       setrequest_position(dataelement?.request_position ? dataelement?.request_position : "");
@@ -1002,7 +972,7 @@ export default function ComplaintBody({
       setcompTypeOther(otherCT?.other || "");
 
       const rs = setComplaintRs(dataelement?.complaintRs);
-      setdataComplaintRs(rs);
+      // setdataComplaintRs(rs);
 
       // // ⭐ กรองตาม report_type
       // const filteredRS = rsData.filter(el => el.report_type === dataelement.report_type);
@@ -1029,8 +999,8 @@ export default function ComplaintBody({
         setIsRSHidden(true);
       }
     }
-  }, [dataset_reporttype, dataset_department, dataset_company]);
-
+  }, [dataelement,dataset_reporttype, dataset_department, dataset_company]);
+  
   React.useEffect(() => {
     // เฉพาะตอน Read เท่านั้น
 
@@ -1278,7 +1248,7 @@ export default function ComplaintBody({
                         bgcolorTextField={
                           action === "Add" ? false : isActionEdit ? false : true
                         }
-                        // readonly={isActionRead || isActionDelete}
+                        readonly={isActionRead || isActionDelete}
                         Validate={validateText?.Department_Area || false}
                         validateTextLable={validateText?.Department_Area ? "กรุณาเลือกแผนกที่พบปัญหา" : ""}
                       />

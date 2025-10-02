@@ -32,6 +32,20 @@ export const Complaint_headCells = [
         colWidth: 150,
     },
     {
+        columnName: 'request_department_name',
+        numeric: 'center',
+        disablePadding: false,
+        label: 'แผนกต้นทาง',
+        colWidth: 150,
+    },
+    {
+        columnName: 'respondent_department_name',
+        numeric: 'center',
+        disablePadding: false,
+        label: 'แผนก ปลายทาง',
+        colWidth: 150,
+    },
+    {
         columnName: 'report_code',
         numeric: 'center',
         disablePadding: true,
