@@ -182,12 +182,13 @@ export default function ComplaintBody({
   onDetailChange,
   onPriorityChange,
 }: ComplaintBody) {
-  const isActionRead = action === "Read";
-  const isActionAdd = action === "Add";
+  const isActionRead = action === "Read" ;
+  const isActionAdd = action === "Add" ;
   const isActionEdit = action === "Edit";
   const isActionDelete = action === "Delete";
   const isActionExplain = action === "Explain";
   const isActionClose = action === "Close";
+  const isActionExplainAdd = action === "ExplainAdd" ;
 
 
   const user = cleanAccessData("userSession");
@@ -2378,7 +2379,7 @@ export default function ComplaintBody({
                           value={product_name}
                           labelName="บริษัท (Company)"
                           onchange={(e) => setproduct_name(e)}
-                          readonly={isActionRead || isActionDelete}
+                          readonly={isActionRead || isActionDelete }
                         />
                       </Grid>
                       <Grid size={4}>

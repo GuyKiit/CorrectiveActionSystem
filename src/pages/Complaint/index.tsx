@@ -1781,8 +1781,12 @@ if (!datapriorityValue_Combobox) {
   const handleOnclickExplainAdd = (data: any) => {
     resetForm();
     setOpenExplainAdd(true);
-    setdataelement(null);
-    setOpenExplainAdd(true);
+    // ใช้ข้อมูลที่ส่งมาจากหน้า Explain รายละเอียด
+    if (data) {
+      setdataelement(data);
+    } else {
+      setdataelement(null);
+    }
   };
 
   const handleOnclickExplainView = (data: any) => {
@@ -2196,7 +2200,7 @@ if (!datapriorityValue_Combobox) {
         }
       />
 
-      <FuncDialog
+      {/* <FuncDialog
         open={openComplaintView}
         dialogWidth="xl"
         openBottonHidden={false}
@@ -2206,7 +2210,7 @@ if (!datapriorityValue_Combobox) {
         element={<ExplaintBody
           action="Read"
         />}
-      />
+      /> */}
 
 
       <FuncDialog
@@ -2326,7 +2330,7 @@ if (!datapriorityValue_Combobox) {
       {/* ---------------------------------------------------------------------- */}
         {/* ------------------------ Explain FuncDialog ------------------------ */}
       {/* ---------------------------------------------------------------------- */}
-{/* 
+
       <FuncDialog
         open={openComplaintView}
         dialogWidth="xl"
@@ -2336,7 +2340,7 @@ if (!datapriorityValue_Combobox) {
         buttonColor="success"
         element={<ComplaintBody
           action="Explain"
-          handleOpenAdd={() => handleOnclickExplainAdd(null)}
+          handleOpenAdd={() => handleOnclickExplainAdd(dataelement)}
         />}
       />
 
@@ -2364,7 +2368,7 @@ if (!datapriorityValue_Combobox) {
         element={<ExplaintBody
           action="ExplainRead"
         />}
-      /> */}
+      />
 
 {/* 
       <FuncDialog

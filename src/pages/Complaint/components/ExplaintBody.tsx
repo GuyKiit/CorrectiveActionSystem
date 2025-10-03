@@ -133,12 +133,12 @@ export default function ExplaintBody({
   validateDetailText,
   handleOpenAdd,
 }: ExplaintBody) {
-  const isActionRead = action === "Read" || action === "ExplainRead" ;
-  const isActionAdd = action === "Add" || action === "ExplainAdd";;
+  const isActionRead = action === "Read" || action === "ExplainRead";
+  const isActionAdd = action === "Add" ;
   const isActionEdit = action === "Edit";
   const isActionDelete = action === "Delete";
   const isActionExplain = action === "Explain";
-
+  const isActionExplainAdd = action === "ExplainAdd";
 
 
   const user = cleanAccessData("userSession");
@@ -655,9 +655,9 @@ export default function ExplaintBody({
         }
       }
 
-      // 2) ถ้า action === "Read" และมี dataelement.report_type ให้หา default จาก newDataset (ถ้ามี)
+      // 2) ถ้า action === "Read" หรือ "Explain" และมี dataelement.report_type ให้หา default จาก newDataset (ถ้ามี)
       if (
-        (isActionRead || isActionEdit || isActionDelete) &&
+        (isActionRead || isActionEdit || isActionDelete || isActionExplain) &&
         dataelement?.report_type &&
         Array.isArray(newDataset) &&
         newDataset.length > 0
@@ -675,8 +675,11 @@ export default function ExplaintBody({
             !dataReportTypeValue ||
             dataReportTypeValue.id !== defaultVal.id
           ) {
+            console.log("🔍 ExplaintBody - Setting Report Type:", defaultVal);
             setdataReportTypeValue(defaultVal);
           }
+        } else {
+          console.log("🔍 ExplaintBody - No matching Report Type found for:", dataelement?.report_type);
         }
       }
       // 4) ถ้ามี dataReportTypeValue (จาก state หรือ เพิ่ง set ข้างบน) ให้กรอง complaint/attach/reference
@@ -771,7 +774,36 @@ export default function ExplaintBody({
 
 
   React.useEffect(() => {
-    if (dataelement && action != "Add") {
+    if (dataelement && action === "ExplainAdd") {
+      
+      // ดึงค่าจากหน้า Explain รายละเอียด มา set ในหน้า Explain เพิ่มข้อมูล
+      console.log("🔍 ExplaintBody - Setting responsible fields from respondent data:", dataelement);
+      
+      // Set ชื่อผู้ดำเนินการจากชื่อผู้ถูกร้องเรียน
+      setresponsible_name(dataelement?.request_name || "");
+      
+      // Set บริษัทจากบริษัทผู้ถูกร้องเรียน
+      const responsibleCompany = dataset_company.find(
+        (el: any) => String(el.itasset_company_id) === String(dataelement.respondent_company_id?.company_id)
+      );
+
+      if (responsibleCompany) {
+        setresponsible_company_id(responsibleCompany.company_name || "");
+      }
+      
+      // Set แผนกจากแผนกผู้ถูกร้องเรียน
+      const responsibleDept = dataset_department.find(
+        (el: any) => String(el.itasset_department_id) === String(dataelement.respondent_department_id?.department_id)
+      );
+      if (responsibleDept) {
+        setresponsible_department_id(responsibleDept);
+      }
+      
+      // Set ตำแหน่งจากตำแหน่งผู้ถูกร้องเรียน
+      setresponsible_position(dataelement?.request_position || "");
+      
+      // Set อีเมลจากอีเมลผู้ถูกร้องเรียน
+      setresponsible_email(dataelement?.respondent_email || dataelement?.request_email || "");
       
       // ตั้งค่า isROOTHidden ตาม report_type ของข้อมูลที่โหลดมา
       if (dataelement.report_type) {
@@ -798,6 +830,11 @@ export default function ExplaintBody({
             el.itasset_company_id == String(dataelement.respondent_company_id)
         )
       );
+
+      
+
+
+      
       setcas_number(dataelement?.cas_number || "");
       setdoc_date(
         dataelement?.doc_date
@@ -873,7 +910,6 @@ export default function ExplaintBody({
   
   React.useEffect(() => {
     // เฉพาะตอน Read เท่านั้น
-    
     if (action === "Read" || action === "Edit" || action === "Delete") {
       ComplaintFile_Get();
     }
@@ -1007,25 +1043,30 @@ export default function ExplaintBody({
                 <Grid size={4}>
                   <FullWidthTextField
                     required="required"
-                    value={responsible_name}
+                    value={
+                      action === "ExplainAdd"
+                        ? user[0]?.employee_username || "-"
+                        : dataelement?.request_name || "-"
+                    }
                     labelName="ชื่อผู้ดำเนินการ (Responsible Person)"
-                    onchange={(e) => setresponsible_name(e)}
-                    readonly={isActionRead || isActionDelete}
+                    onchange={(e) => setresponsible_name(e.target.value)}          
+                    readonly={isActionRead || isActionDelete || isActionExplainAdd}
                   />
                 </Grid>
                 <Grid size={4}>
                   <FullWidthTextField
                     required="required"
-                    value={responsible_company_id}
+                    value={ user[0]?.itasset_company_id || "-"}
                     labelName="บริษัท (Company)"
-                    onchange={(e) => setresponsible_company_id(e)}
-                    readonly={isActionRead || isActionDelete}
+                    onchange={(e) => setresponsible_company_id(
+                      user[0]?.itasset_company_id)}
+                    readonly={isActionRead || isActionDelete }
                   />
                 </Grid>
                 <Grid size={4}>
                   <AutocompleteComboBox
                     required="required"
-                    value={responsible_department_id}
+                    value={ user[0]?.itasset_department_name || "-"}
                     labelName={"แผนก (Department)"}
                     options={dataset_department}
                     column="department_name"
@@ -1037,19 +1078,25 @@ export default function ExplaintBody({
                 <Grid size={4}>
                   <FullWidthTextField
                     required="required"
-                    value={responsible_position}
+                    value={ action === "ExplainAdd"
+                      ? user[0]?.employee_position || "-"
+                      : dataelement?.request_position || "-"
+                    }
                     labelName="ตำแหน่ง (Position)"
-                    onchange={(e) => setresponsible_position(e)}
-                    readonly={isActionRead || isActionDelete}
+                    onchange={(e) => setrequest_position(e.target.value)}
+                    readonly={isActionRead || isActionDelete || isActionExplainAdd}
                   />
                 </Grid>
                 <Grid size={4}>
                   <FullWidthTextField
                     required="required"
-                    value={responsible_email}
+                    value={action === "ExplainAdd"
+                      ? user[0]?.employee_email || "-"
+                                : dataelement?.request_email || "-"
+                    }
                     labelName="อีเมล (Email)"
-                    onchange={(e) => setresponsible_email(e)}
-                    readonly={isActionRead || isActionDelete}
+                    onchange={(e) => setrequest_email(e.target.value)}
+                    readonly={isActionRead || isActionDelete || isActionExplainAdd}
                   />
                 </Grid>
                 <Grid size={4}>
@@ -1295,7 +1342,7 @@ export default function ExplaintBody({
                               value={root_cause}
                               labelName=""
                               onchange={(e) => setroot_cause(e)}
-                              bgcolorTextField={action === "Add" ? false : isActionEdit ? false : true}
+                              bgcolorTextField={action === "Add" ? false : isActionEdit ? false : isActionExplainAdd ? false: true }
                               readonly={isActionRead || isActionDelete}
                             />
 
@@ -1339,7 +1386,7 @@ export default function ExplaintBody({
                               value={corrective_action}
                               labelName=""
                               onchange={(e) => setcorrective_action(e)}
-                              bgcolorTextField={action === "Add" ? false : isActionEdit ? false : true}
+                              bgcolorTextField={action === "Add" ? false : isActionEdit ? false : isActionExplainAdd ? false: true }
                               readonly={isActionRead || isActionDelete}
                             />
 
@@ -1383,7 +1430,7 @@ export default function ExplaintBody({
                               value={preventive_action_plan}
                               labelName=""
                               onchange={(e) => setpreventive_action_plan(e)}
-                              bgcolorTextField={action === "Add" ? false : isActionEdit ? false : true}
+                              bgcolorTextField={action === "Add" ? false : isActionEdit ? false : isActionExplainAdd ? false: true }
                               readonly={isActionRead || isActionDelete}
                             />
 
@@ -1518,7 +1565,7 @@ export default function ExplaintBody({
                                         </Box>
                                         <Box sx={{ display: "flex", gap: 1 }}>
                                           {/* //ปุ่มลบไฟล์ */}
-                                          {(action == "Edit" || action == "Add" || isActionAdd) && (
+                                          {(action == "Edit" || action == "Add" || isActionAdd || isActionExplainAdd) && (
                                             <IconButton
                                               color="error"
                                               onClick={() => {
@@ -2231,7 +2278,6 @@ export default function ExplaintBody({
                 )}
               </Grid>
             </Paper> 
-            
             
           </Grid>
         </Paper>
