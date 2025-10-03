@@ -2242,7 +2242,7 @@ if (!datapriorityValue_Combobox) {
         }
       />
 
-      {/* <FuncDialog
+      <FuncDialog
         open={openComplaintView}
         dialogWidth="xl"
         openBottonHidden={false}
@@ -2252,7 +2252,7 @@ if (!datapriorityValue_Combobox) {
         element={<ComplaintBody
           action="Read"
         />}
-      /> */}
+      />
 
 
       <FuncDialog
@@ -2362,7 +2362,7 @@ if (!datapriorityValue_Combobox) {
         handleClose={handleClose}
         handlefunction={ComplaintDelete}
         buttonColor="error"
-        element={<ComplaintBody
+        element={<ExplaintBody
           action="Delete"
         />}
       />
@@ -2406,8 +2406,9 @@ if (!datapriorityValue_Combobox) {
           action="ExplainRead"
         />}
       />
+      
 
-{/* 
+      {/* 
       <FuncDialog
         open={openExplainEdit}
         dialogWidth="xl"
