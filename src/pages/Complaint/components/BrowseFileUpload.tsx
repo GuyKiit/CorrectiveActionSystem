@@ -44,6 +44,8 @@ export default function BrowseFileUpload({
 }: BrowseFileUploadProps) {
 
   const Read = action === "Read";
+  const isActionExplainAdd = action === "ExplainAdd";
+  const isActionExplain = action === "Explain";
   const inputFile = useRef<HTMLInputElement>(null);
   const [attachmentType, setAttachmentType] = useState<string>("");
   const [otherText, setOtherText] = useState<string>("");
@@ -88,7 +90,7 @@ export default function BrowseFileUpload({
       </label>
 
       {/*select ประเภทไฟล์ และ ปุ่มอัปโหลด */}
-      {(action == "Add" || action == "Edit") && (
+      {(action == "Add" || action == "Edit"  || isActionExplainAdd ) && (
         <>
           {/* Select + OtherText */}
           <div className="flex items-center gap-2 mb-2 w-full">

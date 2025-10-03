@@ -1034,7 +1034,7 @@ export default function ComplaintBody({
 
   React.useEffect(() => {
     // เฉพาะตอน Read เท่านั้น
-    if (action === "Read" || action === "Edit" || action === "Delete") {
+    if (action === "Read" || action === "Edit" || action === "Delete" || isActionExplain) {
       ComplaintFile_Get();
     }
   }, [action, dataelement]);
@@ -1125,6 +1125,11 @@ export default function ComplaintBody({
                   ? true
                   : isActionDelete
                     ? true
+                    : isActionDelete
+                     ? true
+                     : isActionExplain
+                     ? true
+
                     : readonlyTextField
             }
             bgcolorTextField={
@@ -1253,7 +1258,7 @@ export default function ComplaintBody({
                           }
                         }}
                         bgcolorTextField={action === "Add" ? false : true}
-                        readonly={isActionRead || isActionEdit || isActionDelete}
+                        readonly={isActionRead || isActionEdit || isActionDelete || isActionExplain }
                         Validate={validateText?.Date_of_Detection || false}
                         validateTextLable={validateText?.Date_of_Detection ? "กรุณาเลือกวันที่พบปัญหา" : ""}
                       />
@@ -1277,7 +1282,7 @@ export default function ComplaintBody({
                         bgcolorTextField={
                           action === "Add" ? false : isActionEdit ? false : true
                         }
-                        readonly={isActionRead || isActionDelete}
+                        readonly={isActionRead || isActionDelete || isActionExplain}
                         Validate={validateText?.Department_Area || false}
                         validateTextLable={validateText?.Department_Area ? "กรุณาเลือกแผนกที่พบปัญหา" : ""}
                       />
@@ -1293,7 +1298,7 @@ export default function ComplaintBody({
                             onProductNameChange(e);
                           }
                         }}
-                        readonly={isActionRead || isActionDelete}
+                        readonly={isActionRead || isActionDelete || isActionExplain}
                         Validate={validateText?.Product_Name || false}
                         validateTextLable={validateText?.Product_Name ? "กรุณากรอกชื่อสินค้า" : ""}
                       />
@@ -1310,7 +1315,7 @@ export default function ComplaintBody({
                           }
                         }}
                         bgcolorTextField={true}
-                        readonly={isActionRead || isActionDelete}
+                        readonly={isActionRead || isActionDelete || isActionExplain}
                         Validate={validateText?.Lot_No || false}
                         validateTextLable={validateText?.Lot_No ? "กรุณากรอก Lot No./Bag No" : ""}
                       />
@@ -1326,7 +1331,7 @@ export default function ComplaintBody({
                             onEmailChange(e);
                           }
                         }}
-                        readonly={isActionRead || isActionDelete}
+                        readonly={isActionRead || isActionDelete || isActionExplain}
                         Validate={validateText?.Email || false}
                         validateTextLable={validateText?.Email ? "กรุณากรอกอีเมล" : ""}
                       />
@@ -1407,7 +1412,7 @@ export default function ComplaintBody({
                                           onchange={() =>
                                             handleCheckboxChangeCT(item)
                                           }
-                                          readonly={isActionRead || isActionDelete}
+                                          readonly={isActionRead || isActionDelete || isActionExplain}
                                         />
                                       </Grid>
                                     )
@@ -1425,7 +1430,7 @@ export default function ComplaintBody({
                                         }
 
                                       }}
-                                      readonly={isActionRead || isActionDelete}
+                                      readonly={isActionRead || isActionDelete || isActionExplain}
                                       Validate={validateText?.Other_Type || false}
                                       validateTextLable={validateText?.Other_Type ? "กรุณากรอกรายละเอียด" : ""}
                                     />
@@ -1479,7 +1484,7 @@ export default function ComplaintBody({
                                           (rs) => rs.id === item.id
                                         )}
                                         onchange={() => handleCheckboxChangeRS(item)}
-                                        readonly={isActionRead || isActionDelete}
+                                        readonly={isActionRead || isActionDelete || isActionExplain}
                                       />
                                     </Grid>
                                   ))}
@@ -1497,7 +1502,7 @@ export default function ComplaintBody({
                                             onClauseChange(e);
                                           }
                                         }}
-                                        readonly={isActionRead || isActionDelete}
+                                        readonly={isActionRead || isActionDelete || isActionExplain}
                                         Validate={validateText?.Clause_Rs || false}
                                         validateTextLable={validateText?.Clause_Rs ? "กรุณากรอกรายละเอียด Clause" : ""}
                                       />
@@ -1514,7 +1519,7 @@ export default function ComplaintBody({
                                             onOtherRsChange(e);
                                           }
                                         }}
-                                        readonly={isActionRead || isActionDelete}
+                                        readonly={isActionRead || isActionDelete || isActionExplain}
                                         Validate={validateText?.Other_Rs || false}
                                         validateTextLable={validateText?.Other_Rs ? "กรุณากรอกรายละเอียด Other" : ""}
                                       />
@@ -1573,7 +1578,7 @@ export default function ComplaintBody({
                                       onDetailChange(e);
                                     }
                                   }}
-                                  readonly={isActionRead || isActionDelete}
+                                  readonly={isActionRead || isActionDelete || isActionExplain}
                                   Validate={validateText?.Detail || false}
                                   validateTextLable={validateText?.Detail ? "กรุณากรอกรายละเอียด (Detail)" : ""}
                                 />
@@ -1685,7 +1690,8 @@ export default function ComplaintBody({
                                             disabled={
                                               isActionRead ||
                                               isActionEdit ||
-                                              isActionDelete
+                                              isActionDelete ||
+                                              isActionExplain
                                             }
                                             sx={{ color: "#ff9800" }}
                                           />
@@ -1839,21 +1845,21 @@ export default function ComplaintBody({
                     </AccordionSummary>
                     <AccordionDetails sx={{ p: 3 }}>
 
-                      <Grid container spacing={2}>
-                        {dataReportTypeValue && (
-                          <Grid size={12}>
-                            <BrowseFileUpload
-                              setFile={handleFileChange}
-                              setFileName={() => { }}
-                              options={(filteredphoto || []).map((p: any) => ({
-                                id: p.id,
-                                lov1: p.lov1,
-                              }))}
-                              action={action}
-                            />
+                    <Grid container spacing={2}>
+                      {
+                        <Grid size={12}>
+                          <BrowseFileUpload
+                            setFile={handleFileChange}
+                            setFileName={() => { }}
+                            options={(filteredphoto || []).map((p: any) => ({
+                              id: p.id,
+                              lov1: p.lov1,
+                            }))}
+                            action={action}
+                          />
 
-                            {/* Grouped display by attachment type - Full width boxes stacked vertically */}
-                            <Box sx={{ mt: 1 }}>
+                          {/* Grouped display by attachment type - Full width boxes stacked vertically */}
+                          <Box sx={{ mt: 1 }}>
                               {(filteredphoto || []).map((photoType: any) => {
                                 const items = fileList.filter(
                                   (f) => f.attachmentType === photoType.id
@@ -1915,7 +1921,7 @@ export default function ComplaintBody({
                                         </Box>
                                         <Box sx={{ display: "flex", gap: 1 }}>
                                           {/* //ปุ่มลบไฟล์ */}
-                                          {(action == "Edit" || action == "Add") && (
+                                          {(action == "Edit" || action == "Add" ) && (
                                             <IconButton
                                               color="error"
                                               onClick={() => {
@@ -1968,7 +1974,7 @@ export default function ComplaintBody({
 
 
                                           {/* //ปุ่มดาวน์โหลดไฟล์ */}
-                                          {action === "Read" && (
+                                          {(action === "Read" || isActionExplain) && (
                                             <IconButton
                                               color="primary"
                                               onClick={async () => {
@@ -2021,9 +2027,9 @@ export default function ComplaintBody({
                                 </Paper>
                               )}
                             </Box>
-                          </Grid>
-                        )}
-                      </Grid>
+                        </Grid>
+                      }
+                    </Grid>
                     </AccordionDetails>
                   </Accordion>
                 </Paper>
