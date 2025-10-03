@@ -289,6 +289,12 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
     const [dataQcappValue, setdataQcappValue] = useState<any>(
         initialListComplaint.dataQcappValue
     );
+    const [dataFuapp, setdataFuapp] = useState<any>(
+        initialListComplaint.dataFuapp
+    );
+    const [dataFuappValue, setdataFuappValue] = useState<any>(
+        initialListComplaint.dataFuappValue
+    );
 
     const [explain_id, setexplain_id] = useState<any>(
         initialListComplaint.explain_id
@@ -522,6 +528,8 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 dataSectionappValue,
                 dataQcapp,
                 dataQcappValue,
+                dataFuapp,
+                dataFuappValue,
 
                 explain_id,
                 complaint_id,
@@ -662,6 +670,8 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 setdataSectionappValue,
                 setdataQcapp,
                 setdataQcappValue,
+                setdataFuapp,
+                setdataFuappValue,
 
                 setexplain_id,
                 setcomplaint_id,

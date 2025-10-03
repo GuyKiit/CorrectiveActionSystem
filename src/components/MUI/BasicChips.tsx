@@ -20,7 +20,7 @@ export default function BasicChips(props: BasicChips) {
     NEW: "#7db6fa",
     SUBMIT: props.acknowledge ? "#FF6B7A" : "#7db6fa",
     EXPLAIN: "#F1C40F",
-    APPROVE_SC: "#A8E6A3",
+    APPROVE_SC: "#85d47f",
     APPROVE_QC: "#27AE60",
     APPROVE_FU: "#1ABC9C",
     CLOSE: "#95A5A6",

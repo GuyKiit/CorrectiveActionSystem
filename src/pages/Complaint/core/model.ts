@@ -110,6 +110,8 @@ export type ListComplaintContextProps = {
     dataSectionappValue?: any
     dataQcapp?: any
     dataQcappValue?: any
+    dataFuapp?: any
+    dataFuappValue?: any
 
     explain_id?: string
     complaint_id?: string
@@ -255,6 +257,8 @@ export type ListComplaintContextProps = {
     setdataSectionappValue: Dispatch<SetStateAction<any>>
     setdataQcapp: Dispatch<SetStateAction<any>>
     setdataQcappValue: Dispatch<SetStateAction<any>>
+    setdataFuapp: Dispatch<SetStateAction<any>>
+    setdataFuappValue: Dispatch<SetStateAction<any>>
 
     setexplain_id: Dispatch<SetStateAction<string>>;
     setcomplaint_id: Dispatch<SetStateAction<string>>;
@@ -402,6 +406,8 @@ export const initialListComplaint: ListComplaintContextProps = {
     setdataSectionappValue: () => { },
     setdataQcapp: () => { },
     setdataQcappValue: () => { },
+    setdataFuapp: () => { },
+    setdataFuappValue: () => { },
 
     setexplain_id: () => { },
     setcomplaint_id: () => { },

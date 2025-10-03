@@ -21,10 +21,12 @@ interface FuncDialog {
   handleClose: () => void;
   handlefunction?: () => void;
   handlesavedraft?: () => void;
+  handlereject?: () => void;
   titlename?: string;
   dialogWidth?: "xs" | "sm" | "md" | "lg" | "xl";
   openBottonHidden?: boolean;
   hideSaveDraft?: boolean;
+  hideReject?: boolean;
   buttonText?: string;
   buttonColor?: string;
   element?: React.ReactNode;
@@ -40,8 +42,8 @@ export default function FuncDialog(props: FuncDialog) {
       onClose={props.handleClose}
       open={props.open}
       PaperProps={{
-        sx: { 
-          width: props.modalWidth || "95%", 
+        sx: {
+          width: props.modalWidth || "95%",
           maxWidth: props.modalWidth || "95%",
           height: props.modalHeight || "90vh",
           maxHeight: props.modalHeight || "90vh"
@@ -77,20 +79,30 @@ export default function FuncDialog(props: FuncDialog) {
       {/* Actions */}
       <DialogActions sx={{ justifyContent: "space-between", margin: 2, px: 3, pb: 3 }}>
         {/* Left side - Save Draft */}
-        <div>
+        <div style={{ display: "flex", gap: "8px" }}>
           {!props.hideSaveDraft && props.openBottonHidden && (
             <FullWidthButton
               handleonClick={props.handlesavedraft ?? props.handleClose}
-              labelName= "Save Draft"
+              labelName="Save Draft"
               variant_text="contained"
               colorname={props.buttonColor ?? "primary"}
             />
           )}
+
+          {!props.hideReject && props.openBottonHidden && (
+            <FullWidthButton
+              handleonClick={props.handlereject ?? props.handleClose}
+              labelName="Reject"
+              variant_text="contained"
+              colorname="error"
+            />
+          )}
         </div>
-        
+
+
         {/* Right side - Save and Submit, Cancel */}
         <div className="flex gap-3">
-          
+
           {props.openBottonHidden && (
             <FullWidthButton
               handleonClick={props.handlefunction ?? props.handleClose}
@@ -105,7 +117,7 @@ export default function FuncDialog(props: FuncDialog) {
             variant_text="contained"
             colorname={"primary"}
           />
-          
+
         </div>
       </DialogActions>
     </BootstrapDialog>
