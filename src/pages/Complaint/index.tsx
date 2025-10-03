@@ -520,6 +520,7 @@ export default function Complaint() {
 
       if (response && response.status === "success") {
         const lovData = response.data || [];
+        console.log("🔍 index.tsx - lovData:", lovData);
 
         // ✅ จัดกลุ่มตาม lov_type
         const grouped = lovData.reduce((acc: any, item: any) => {
@@ -527,12 +528,14 @@ export default function Complaint() {
           acc[item.lov_type].push(item);
           return acc;
         }, {});
+        console.log("🔍 index.tsx - grouped:", grouped);
 
         // ตัวอย่างการ set state
         setdataset_reporttype?.(grouped["report_type"] || []);
         setdataComplaintType_Combobox?.(grouped["complaint_type"] || []);
         setdataComplaintRs_Combobox?.(grouped["reference_standard"] || []);
         setdataphoto_Combobox?.(grouped["attach_type"] || []);
+        console.log("🔍 index.tsx - attach_type data:", grouped["attach_type"]);
         setdatastatus?.(grouped["complaint_status"] || []);
         setdataToolUse_Combobox?.(grouped["tool_use"] || []);
         setdataDecision_Combobox?.(grouped["decision_disposition"] || []);
@@ -759,12 +762,10 @@ export default function Complaint() {
 
     // Validate Report Type - ตรวจสอบก่อนและถ้าไม่มีให้ return false ทันที
     if (!dataReportTypeValue || !dataReportTypeValue.id) {
-      console.log("❌ Report Type validation failed");
       setReportTypeError(true);
       document.getElementById("reportTypeField")?.focus();
       return false; // หยุดการตรวจสอบส่วนอื่น
     }
-    console.log("✅ Report Type validation passed");
 
     // Validate Date of Detection
     if (!date_of_detection) {
@@ -798,21 +799,18 @@ export default function Complaint() {
 
     // Validate Complaint Type
     if (!dataComplaintTypeValue_Combobox || dataComplaintTypeValue_Combobox.length === 0) {
-      console.log("❌ Complaint Type validation failed");
       setComplaintTypeError(true);
       valid = false;
     } else {
-      console.log("✅ Complaint Type validation passed");
     }
 
     // Validate Other Type (if complaint type has "Other" selected)
     if (dataComplaintTypeValue_Combobox && dataComplaintTypeValue_Combobox.some((item: any) => item.isOther === "Y")) {
       if (!compTypeOther || compTypeOther.trim() === "") {
-        console.log("❌ Other Type validation failed");
         setOtherTypeError(true);
         valid = false;
       } else {
-        console.log("✅ Other Type validation passed");
+        //console.log("✅ Other Type validation passed");
       }
     }
 
@@ -824,35 +822,24 @@ export default function Complaint() {
     // เฉพาะ NCR เท่านั้นที่ต้อง validate Complaint Rs
     if (reportTypeCode === "NCR") {
       if (!dataComplaintRsValue_Combobox || dataComplaintRsValue_Combobox.length === 0) {
-        console.log("❌ Complaint Rs validation failed for NCR");
         setComplaintRsError(true);
         valid = false;
-      } else {
-        console.log("✅ Complaint Rs validation passed for NCR");
       }
-    } else {
-      console.log("✅ Complaint Rs validation skipped for", reportTypeCode);
     }
 
     // Validate Other Rs 
     if (reportTypeCode === "NCR" && dataComplaintRsValue_Combobox && dataComplaintRsValue_Combobox.some((item: any) => item.isClause === "Other")) {
       if (!compRsOther || compRsOther.trim() === "") {
-        console.log("❌ Other Rs validation failed for NCR");
         setOtherRsError(true);
         valid = false;
-      } else {
-        console.log("✅ Other Rs validation passed for NCR");
       }
     }
 
     // Validate Clause Rs
     if (reportTypeCode === "NCR" && dataComplaintRsValue_Combobox && dataComplaintRsValue_Combobox.some((item: any) => item.isClause === "Clause")) {
       if (!clauseOther || clauseOther.trim() === "") {
-        console.log("❌ Clause Rs validation failed for NCR");
         setClauseRsError(true);
         valid = false;
-      } else {
-        console.log("✅ Clause Rs validation passed for NCR");
       }
     }
 
@@ -863,16 +850,11 @@ export default function Complaint() {
     }
 
     // Validate Priority
-    console.log("🔍 Priority validation - datapriorityValue_Combobox:", datapriorityValue_Combobox);
     if (!datapriorityValue_Combobox || datapriorityValue_Combobox.trim() === "") {
-      console.log("❌ Priority validation failed");
       setPriorityError(true);
       valid = false;
-    } else {
-      console.log("✅ Priority validation passed");
-    }
+    } 
 
-    console.log("🔍 Final validation result:", valid);
     return valid;
   }
 
@@ -1798,6 +1780,7 @@ if (!datapriorityValue_Combobox) {
   
   const handleOnclickExplainAdd = (data: any) => {
     resetForm();
+    setOpenExplainAdd(true);
     setdataelement(null);
     setOpenExplainAdd(true);
   };
@@ -2263,7 +2246,6 @@ if (!datapriorityValue_Combobox) {
             onReportTypeChange={(val) => {
               setdataReportTypeValue(val);
               setReportTypeError(false);
-              // Clear all validation errors when report type changes
               setDateOfDetectionError(false);
               setDepartmentAreaError(false);
               setProductNameError(false);
@@ -2342,7 +2324,7 @@ if (!datapriorityValue_Combobox) {
       />
 
       {/* ---------------------------------------------------------------------- */}
-      {/* ------------------------ Explain FuncDialog ------------------------ */}
+        {/* ------------------------ Explain FuncDialog ------------------------ */}
       {/* ---------------------------------------------------------------------- */}
 {/* 
       <FuncDialog
@@ -2354,8 +2336,11 @@ if (!datapriorityValue_Combobox) {
         buttonColor="success"
         element={<ComplaintBody
           action="Explain"
+          handleOpenAdd={() => handleOnclickExplainAdd(null)}
         />}
       />
+
+
 
       <FuncDialog
         open={openExplainAdd}
