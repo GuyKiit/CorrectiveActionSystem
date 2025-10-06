@@ -421,11 +421,11 @@ export default function ComplaintBody({
 
   // สร้าง state สำหรับควบคุม Accordion
   const [isMinimizedefaultOpen, setisMinimizeDefaultOpen] = useState(true);
-  const [isMinimizetypeOpen, setisMinimizeTypeOpen] = useState(true);
-  const [isMinimizersOpen, setisMinimizeRsOpen] = useState(true);
-  const [isMinimizedetailOpen, setisMinimizeDetailOpen] = useState(true);
-  const [isMinimizepriorityOpen, setisMinimizePriorityOpen] = useState(true);
-  const [isMinimizefileOpen, setisMinimizeFileOpen] = useState(true);
+  const [isMinimizetypeOpen, setisMinimizeTypeOpen] = useState(action === "Explain" || action === "ApproveScAdd" ? false : true);
+  const [isMinimizersOpen, setisMinimizeRsOpen] = useState(action === "Explain" || action === "ApproveScAdd" ? false : true);
+  const [isMinimizedetailOpen, setisMinimizeDetailOpen] = useState(action === "Explain" || action === "ApproveScAdd" ? false : true);
+  const [isMinimizepriorityOpen, setisMinimizePriorityOpen] = useState(action === "Explain" || action === "ApproveScAdd" ? false : true);
+  const [isMinimizefileOpen, setisMinimizeFileOpen] = useState(action === "Explain" || action === "ApproveScAdd" ? false : true);
   const [isMinimizerespondOpen, setisMinimizeRespondOpen] = useState(true);
   const [isMinimizeexlistOpen, setisMinimizeExlistOpen] = useState(true);
   const [isMinimizecloseOpen, setisMinimizeCloseOpen] = useState(true);
@@ -1372,7 +1372,7 @@ export default function ComplaintBody({
                     </Box>
 
                     <Grid container spacing={2} sx={{ alignItems: "stretch" }}>
-                      {dataReportTypeValue && (
+                      {dataReportTypeValue && action !== "ApproveScAdd" && (
                         <Grid size={12} sx={{ display: "flex" }}>
                           <Accordion
                             expanded={isMinimizetypeOpen}
@@ -1430,6 +1430,7 @@ export default function ComplaintBody({
                                         }
 
                                       }}
+                                      bgcolorTextField={action === "Add" ? false : true}
                                       readonly={isActionRead || isActionDelete || isActionExplain}
                                       Validate={validateText?.Other_Type || false}
                                       validateTextLable={validateText?.Other_Type ? "กรุณากรอกรายละเอียด" : ""}
@@ -1502,6 +1503,7 @@ export default function ComplaintBody({
                                             onClauseChange(e);
                                           }
                                         }}
+                                        bgcolorTextField={action === "Add" ? false : true}
                                         readonly={isActionRead || isActionDelete || isActionExplain}
                                         Validate={validateText?.Clause_Rs || false}
                                         validateTextLable={validateText?.Clause_Rs ? "กรุณากรอกรายละเอียด Clause" : ""}
@@ -1519,6 +1521,7 @@ export default function ComplaintBody({
                                             onOtherRsChange(e);
                                           }
                                         }}
+                                        bgcolorTextField={action === "Add" ? false : true}
                                         readonly={isActionRead || isActionDelete || isActionExplain}
                                         Validate={validateText?.Other_Rs || false}
                                         validateTextLable={validateText?.Other_Rs ? "กรุณากรอกรายละเอียด Other" : ""}
@@ -1578,6 +1581,7 @@ export default function ComplaintBody({
                                       onDetailChange(e);
                                     }
                                   }}
+                                  bgcolorTextField={action === "Add" ? false : isActionEdit ? false : true}
                                   readonly={isActionRead || isActionDelete || isActionExplain}
                                   Validate={validateText?.Detail || false}
                                   validateTextLable={validateText?.Detail ? "กรุณากรอกรายละเอียด (Detail)" : ""}
@@ -2239,7 +2243,7 @@ export default function ComplaintBody({
                         sx={{ fontSize: 18, fontWeight: 600, color: "#000000" }}
                       >
                         รายการคำชี้แจง (Explain List)
-                      </Typography>
+                      </Typography>                 
                     </Box>
 
                     {/* === ฝั่งขวา ปุ่ม Add === */}
@@ -2263,6 +2267,101 @@ export default function ComplaintBody({
                   <Divider sx={{ my: 1, borderBottom: '2px solid #ff9800' }} />
                   <Grid container spacing={3}>
 
+
+
+                    {/* รายการคำชี้แจง      !!!!! แก้ FileList เป็น  Explain List*/} 
+                    <Grid size={12}>
+                      {fileList.length > 0 ? (
+                        <Box sx={{ mt: 2 }}>
+                          {fileList.map((item, index) => (
+                            <Paper
+                              key={index}
+                              elevation={2}
+                              sx={{
+                                p: 2,
+                                mb: 2,
+                                borderRadius: 2,
+                                border: "1px solid #e0e0e0",
+                                backgroundColor: "#fafafa",
+                                "&:hover": {
+                                  backgroundColor: "#f5f5f5",
+                                  boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
+                                }
+                              }}
+                            >
+                              <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                                <Box sx={{ flex: 1 }}>
+                                  <Typography
+                                    className="sarabun-regular-datatable"
+                                    sx={{ fontSize: "16px", fontWeight: 600, color: "#333", mb: 1 }}
+                                  >
+                                    #{index + 1} รายการคำชี้แจง
+                                  </Typography>
+                                  {/* <Typography
+                                    className="sarabun-regular-datatable"
+                                    sx={{ fontSize: "14px", color: "#666" }}
+                                  >
+                                    ไฟล์: {item.file?.name || "ไม่ระบุ"}
+                                  </Typography>
+                                  <Typography
+                                    className="sarabun-regular-datatable"
+                                    sx={{ fontSize: "12px", color: "#999", mt: 0.5 }}
+                                  >
+                                    ขนาด: {item.file?.size ? (item.file.size / (1024 * 1024)).toFixed(2) + " MB" : "ไม่ระบุ"}
+                                  </Typography> */}
+                                </Box>
+                                <Box sx={{ display: "flex", gap: 1 }}>
+                                  <IconButton
+                                    color="primary"
+                                    size="small"
+                                    onClick={() => {
+                                      if (item.file instanceof File) {
+                                        const fileUrl = URL.createObjectURL(item.file);
+                                        window.open(fileUrl, "_blank");
+                                        setTimeout(() => URL.revokeObjectURL(fileUrl), 1000);
+                                      }
+                                    }}
+                                  >
+                                    <VisibilityIcon />
+                                  </IconButton>
+                                  {/* <IconButton
+                                    color="error"
+                                    size="small"
+                                    onClick={() => {
+                                      if (handleRemoveFile) {
+                                        handleRemoveFile(index);
+                                      }
+                                    }}
+                                  >
+                                    <DeleteIcon />
+                                  </IconButton> */}
+                                </Box>
+                              </Box>
+                            </Paper>
+                          ))}
+                        </Box>
+                      ) : (
+                        <Paper
+                          elevation={0}
+                          sx={{
+                            p: 4,
+                            textAlign: "center",
+                            color: "#999",
+                            backgroundColor: "#f9f9f9",
+                            borderRadius: 2,
+                            border: "2px dashed #e0e0e0"
+                          }}
+                        >
+                          <Typography
+                            className="sarabun-regular-datatable"
+                            sx={{ fontSize: "16px", color: "#999" }}
+                          >
+                            ไม่พบรายการคำชี้แจง
+                          </Typography>
+                          
+                        </Paper>
+                      )}
+                    </Grid>
 
                   </Grid>
                 </AccordionDetails>

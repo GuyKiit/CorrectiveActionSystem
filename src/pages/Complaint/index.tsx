@@ -235,8 +235,10 @@ export default function Complaint() {
     setdataApprove_Combobox,
     setdataDecision,
     setdataset_stepcomplaint,
-
-
+    setroot_cause,
+    setobservation_analysis,
+    setcorrective_action,
+    setpreventive_action_plan,
   } = useListComplaint();
 
   // =====================================================================================================
@@ -254,6 +256,8 @@ export default function Complaint() {
   const [openExplain, setOpenExplain] = React.useState(false);
   const [openExplainAdd, setOpenExplainAdd] = React.useState(false);
   const [openExplainView, setOpenExplainView] = React.useState(false);
+
+  const [openExplainApproveSc, setOpenExplainApproveSc] = React.useState(false);
   
   const [openUpLoad, setOpenUpload] = React.useState(false);
   
@@ -372,6 +376,12 @@ export default function Complaint() {
     setrequest_position("");
     setrequest_email("");
     setrequest_phone("");
+
+    // เคลียร์ข้อมูล Root Cause และข้อมูล Explain
+    setroot_cause("");
+    setobservation_analysis("");
+    setcorrective_action("");
+    setpreventive_action_plan("");
 
     // Clear ALL validation errors
     setReportTypeError(false);
@@ -716,6 +726,10 @@ export default function Complaint() {
                   } else if (name === "ExplainView") {
                     // DepartmentDomainGet("Explain");
                     handleOnclickExplainView(el);
+                  }
+                  else if (name === "ExplainApproveSc") {
+                    // DepartmentDomainGet("Explain");
+                    handleOnclickExplainApproveSc(el);
                   }
                 }}
               />
@@ -1795,6 +1809,19 @@ if (!datapriorityValue_Combobox) {
     setdataelement(data);
   };
 
+  const handleOnclickExplainApproveSc = (data: any) => {
+    resetForm();
+    setOpenExplainApproveSc(true);
+    // ใช้ข้อมูลที่ส่งมาจากหน้า Explain รายละเอียด
+    if (data) {
+      setdataelement(data);
+    } else {
+      setdataelement(null);
+    }
+  };
+
+  
+
   // const handleOnclickMenuUpload = () => {
   //   setOpenUpload(true);
   // };
@@ -1846,6 +1873,7 @@ if (!datapriorityValue_Combobox) {
     setOpenExplain(false);
     setOpenExplainAdd(false);
     setOpenExplainView(false);
+    setOpenExplainApproveSc(false);
     setOpenUpload(false);
     resetForm();
   };
@@ -2331,7 +2359,7 @@ if (!datapriorityValue_Combobox) {
         {/* ------------------------ Explain FuncDialog ------------------------ */}
       {/* ---------------------------------------------------------------------- */}
 
-      <FuncDialog
+      {/* <FuncDialog
         open={openComplaintView}
         dialogWidth="xl"
         openBottonHidden={false}
@@ -2341,10 +2369,9 @@ if (!datapriorityValue_Combobox) {
         element={<ComplaintBody
           action="Explain"
           handleOpenAdd={() => handleOnclickExplainAdd(dataelement)}
+          //handleOpenAdd={() => handleOnclickExplainApproveSc(dataelement)}
         />}
-      />
-
-
+      /> */}
 
       <FuncDialog
         open={openExplainAdd}
@@ -2355,6 +2382,19 @@ if (!datapriorityValue_Combobox) {
         buttonColor="success"
         element={<ExplaintBody
           action="ExplainAdd"
+        />}
+      />
+
+      <FuncDialog
+        open={openComplaintView}
+        dialogWidth="xl"
+        openBottonHidden={false}
+        titlename={"Approve Section Head // รายละเอียด"}
+        handleClose={handleClose}
+        buttonColor="success"
+        element={<ComplaintBody
+          action="ApproveScAdd"
+          handleOpenAdd={() => handleOnclickExplainApproveSc(dataelement)}
         />}
       />
 
@@ -2416,6 +2456,19 @@ if (!datapriorityValue_Combobox) {
           />
         }
       /> */}
+
+      <FuncDialog
+         open={openExplainApproveSc}
+         dialogWidth="xl"
+         openBottonHidden={false}
+         titlename={"Approve Section Head // เพิ่มข้อมูล"}
+         handleClose={handleClose}
+         buttonColor="success"
+         element={<ExplaintBody
+           action="ApproveScAdd"
+           handleOpenAdd={() => handleOnclickExplainApproveSc(dataelement)}
+         />}
+       />
 
       {/* =================== Dialog Sections =================== */}
 

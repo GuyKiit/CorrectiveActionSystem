@@ -436,6 +436,8 @@ export default function ExplaintBody({
     setdataToolUseValue(null)
     setdataToolUse([]);
     setdataDecision([]);
+
+
   };
 
   // CheckBox Tool used
@@ -534,6 +536,7 @@ export default function ExplaintBody({
     setcompTypeOther("");
     setotherText("");
     setcompRsOther("");
+
   };
 
 
@@ -782,7 +785,7 @@ export default function ExplaintBody({
       // Set ชื่อผู้ดำเนินการจากชื่อผู้ถูกร้องเรียน
       setresponsible_name(dataelement?.request_name || "");
       
-      // Set บริษัทจากบริษัทผู้ถูกร้องเรียน
+      // Set บริษัทจากบริษัทผู้ถูกร้องเรียน!!
       const responsibleCompany = dataset_company.find(
         (el: any) => String(el.itasset_company_id) === String(dataelement.respondent_company_id?.company_id)
       );
@@ -1056,23 +1059,25 @@ export default function ExplaintBody({
                 <Grid size={4}>
                   <FullWidthTextField
                     required="required"
-                    value={ user[0]?.itasset_company_id || "-"}
+                    value={ action === "ExplainAdd"
+                      ? user[0]?.itasset_company_name || "-"
+                      : dataelement?.respondent_company_id || "-"
+                    }
                     labelName="บริษัท (Company)"
-                    onchange={(e) => setresponsible_company_id(
-                      user[0]?.itasset_company_id)}
-                    readonly={isActionRead || isActionDelete }
+                    onchange={(e) => setresponsible_company_id(e.target.value)}
+                    readonly={isActionRead || isActionDelete || isActionExplainAdd }
                   />
                 </Grid>
                 <Grid size={4}>
-                  <AutocompleteComboBox
+                  <FullWidthTextField
                     required="required"
-                    value={ user[0]?.itasset_department_name || "-"}
+                    value={ action === "ExplainAdd"
+                      ? user[0]?.itasset_department_name || "-"
+                      : dataelement?.respondent_department_id}
                     labelName={"แผนก (Department)"}
-                    options={dataset_department}
-                    column="department_name"
-                    setvalue={(e) => { setresponsible_department_id(e); }}
+                    onchange={(e) => { setresponsible_department_id(e.target.value)}}
                     bgcolorTextField={action === "Add" ? false : isActionEdit ? false : true}
-                    readonly={isActionRead || isActionDelete}
+                    readonly={isActionRead || isActionDelete || isActionExplainAdd}
                   />
                 </Grid>
                 <Grid size={4}>
@@ -1197,7 +1202,7 @@ export default function ExplaintBody({
                                   labelName="Other:"
                                   onchange={(e) => setToolOther(e)}
                                   bgcolorTextField={
-                                    action === "Add" ? false : isActionEdit ? false : true
+                                    action === "Add" ? false : isActionEdit ? false : isActionExplainAdd ? false : true
                                   }
                                   readonly={isActionRead || isActionDelete}
                                 />
@@ -1252,7 +1257,7 @@ export default function ExplaintBody({
                                   labelName="Other:"
                                   onchange={(e) => setDecisionOther(e)}
                                   bgcolorTextField={
-                                    action === "Add" ? false : isActionEdit ? false : true
+                                    action === "Add" ? false : isActionEdit ? false : isActionExplainAdd ? false : true
                                   }
                                   readonly={isActionRead || isActionDelete}
                                 />
@@ -1298,7 +1303,7 @@ export default function ExplaintBody({
                               value={observation_analysis}
                               labelName=""
                               onchange={(e) => setobservation_analysis(e)}
-                              bgcolorTextField={action === "Add" ? false : isActionEdit ? false : true}
+                              bgcolorTextField={action === "ExplainAdd" ? false : isActionEdit ? false : true}
                               readonly={isActionRead || isActionDelete}
                             />
 
@@ -1680,6 +1685,7 @@ export default function ExplaintBody({
             </Paper>
 
             {/* //ส่วนของ Section Head */}
+            {action === "ApproveScAdd" && (
             <Paper
               elevation={3}
               sx={{
@@ -1756,7 +1762,7 @@ export default function ExplaintBody({
                       setrespondent_department_id(e);
                     }}
                     bgcolorTextField={
-                      action === "Add" ? false : isActionEdit ? false : true
+                      action === "ApproveScAdd" ? false : isActionEdit ? false : true
                     }
                     readonly={isActionRead || isActionDelete}
                   />
@@ -1785,7 +1791,7 @@ export default function ExplaintBody({
                     labelName={"วันที่อนุมัติ (Date)"}
                     value={date_of_detection}
                     handleChange={(val) => setdate_of_detection(val ?? null)}
-                    bgcolorTextField={action === "Add" ? false : true}
+                    bgcolorTextField={action === "ApproveScAdd" ? false : true}
                     readonly={isActionRead || isActionEdit || isActionDelete}
                   />
                 </Grid>
@@ -1921,7 +1927,7 @@ export default function ExplaintBody({
                                   value={root_cause}
                                   labelName=""
                                   onchange={(e) => setroot_cause(e)}
-                                  bgcolorTextField={action === "Add" ? false : isActionEdit ? false : true}
+                                  bgcolorTextField={action === "ApproveScAdd" ? false : isActionEdit ? false : true}
                                   readonly={isActionRead || isActionDelete}
                                 />
                               </Grid>
@@ -1963,7 +1969,7 @@ export default function ExplaintBody({
                                   value={root_cause}
                                   labelName=""
                                   onchange={(e) => setroot_cause(e)}
-                                  bgcolorTextField={action === "Add" ? false : isActionEdit ? false : true}
+                                  bgcolorTextField={action === "ApproveScAdd" ? false : isActionEdit ? false : true}
                                   readonly={isActionRead || isActionDelete}
                                 />
 
@@ -1977,9 +1983,11 @@ export default function ExplaintBody({
                 )}
               </Grid>
             </Paper> 
+            )}
 
 
-            {/* //ส่วนของ QC */}
+            {/* //ส่วนของ QC - ซ่อนเมื่อ action เป็น ExplainAdd */}
+            {action === "ApproveQcAdd" && (
             <Paper
               elevation={3}
               sx={{
@@ -2055,7 +2063,7 @@ export default function ExplaintBody({
                       setrespondent_department_id(e);
                     }}
                     bgcolorTextField={
-                      action === "Add" ? false : isActionEdit ? false : true
+                      action === "ApproveQcAdd" ? false : isActionEdit ? false : true
                     }
                     readonly={isActionRead || isActionDelete}
                   />
@@ -2084,7 +2092,7 @@ export default function ExplaintBody({
                     labelName={"วันที่อนุมัติ (Date)"}
                     value={date_of_detection}
                     handleChange={(val) => setdate_of_detection(val ?? null)}
-                    bgcolorTextField={action === "Add" ? false : true}
+                    bgcolorTextField={action === "ApproveQcAdd" ? false : true}
                     readonly={isActionRead || isActionEdit || isActionDelete}
                   />
                 </Grid>
@@ -2221,7 +2229,7 @@ export default function ExplaintBody({
                                   value={root_cause}
                                   labelName=""
                                   onchange={(e) => setroot_cause(e)}
-                                  bgcolorTextField={action === "Add" ? false : isActionEdit ? false : true}
+                                  bgcolorTextField={action === "ApproveQcAdd" ? false : isActionEdit ? false : true}
                                   readonly={isActionRead || isActionDelete}
                                 />
 
@@ -2264,7 +2272,7 @@ export default function ExplaintBody({
                                   value={root_cause}
                                   labelName=""
                                   onchange={(e) => setroot_cause(e)}
-                                  bgcolorTextField={action === "Add" ? false : isActionEdit ? false : true}
+                                  bgcolorTextField={action === "ApproveQcAdd" ? false : isActionEdit ? false : true}
                                   readonly={isActionRead || isActionDelete}
                                 />
 
@@ -2278,6 +2286,7 @@ export default function ExplaintBody({
                 )}
               </Grid>
             </Paper> 
+            )}
             
           </Grid>
         </Paper>
