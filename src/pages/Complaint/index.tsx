@@ -185,11 +185,13 @@ export default function Complaint() {
     dc_company_id, dc_department_id, dc_position, dc_email,
     record_status, create_by, create_datetime, update_by, update_datetime,
     ComplaintStatusID_Combobox, dataReportTypeValue,
-    dataComplaintTypeValue_Combobox,
-    dataComplaintType_Combobox, dataComplaintRsValue_Combobox, dataComplaintRs_Combobox,
+    
+    dataComplaintTypeValue_Combobox,dataComplaintType_Combobox, 
+    dataComplaintRsValue_Combobox, dataComplaintRs_Combobox,
+
     dataphotoValue_Combobox, dataphoto_Combobox, datapriorityValue_Combobox, datastatus,
     datapriority_Combobox, datapriority, PriorityLevel, clauseOther, phoTypeOther,
-    complaintFiles, RunningModel, explain_id, approve_step, otherText,
+    complaintFiles, RunningModel, approve_step, otherText,
 
     // Dataset Variables
     dataset_reporttype,
@@ -197,11 +199,50 @@ export default function Complaint() {
     dataset_company,
     dataset_domain,
     dataset_stepcomplaint,
+
     //Explaint
-    dataTooluse,
-    dataDecision,
+    dataTooluseValue,
+    dataTooluse_Combobox,
+    ToolOther,
+
+    dataDecisionValue,
     dataDecision_Combobox,
+    DecisionOther,
+
     dataApprove_Combobox,
+    explain_id,
+    complaint_id,
+    explain_seq,
+    observation_analysis,
+    root_cause,
+    corrective_action,
+    preventive_action_plan,
+    follow_up_date,
+    responsible_name,
+    responsible_company_id,
+    responsible_department_id,
+    responsible_position,
+    responsible_email,
+    responsible_date,
+    close_status,
+    close_name,
+    close_company_id,
+    close_department_id,
+    close_position,
+    close_email,
+    close_date,
+    return_detail,
+    return_name,
+    return_company_id,
+    return_department_id,
+    return_position,
+    return_email,
+    return_datetime,
+    explain_record_status,
+    explain_create_by,
+    explain_create_datetime,
+    explain_update_by,
+    explain_update_datetime,
 
 
     // Setter Functions
@@ -499,14 +540,15 @@ export default function Complaint() {
   function expDecisionUpdateCompId(
     dataDecisionValue: any,
     explain_id: string,
-    ToolOther: string
+    DecisionOther: string
   ) {
     const updatedData = dataDecisionValue.map((item: any) => {
       return {
-        ...item,
+        explain_dd_id: item.explain_dd_id,
+        label: item.label,
+        isOther: item.isOther,
         explain_id: explain_id,
-        other: item.isOther === "Y" ? (ToolOther?.trim() || null) : null
-
+        other: item.isOther === "Y" ? (DecisionOther?.trim() || null) : null
       };
     });
     return updatedData;
@@ -634,9 +676,7 @@ export default function Complaint() {
           // }
           //================================================
 
-
         }
-
       }
     } catch (e) {
       console.log("error:", e);
@@ -868,7 +908,6 @@ export default function Complaint() {
       setPriorityError(true);
       valid = false;
     } 
-
     return valid;
   }
 
@@ -952,7 +991,6 @@ export default function Complaint() {
 
     // Validate Rs 
     const reportTypeCode = dataReportTypeValue?.lov_code;
-    console.log("🔍 Report Type Code:", reportTypeCode);
 
     // เฉพาะ NCR เท่านั้นที่ต้อง validate Complaint Rs
     if (reportTypeCode === "NCR") {
@@ -1200,6 +1238,7 @@ if (!datapriorityValue_Combobox) {
         id: tempid,
         report_type: dataReportTypeValue?.id,
         cas_number: cas_number,
+        cf_type: "Complain",
         date_of_detection: date_of_detection
           ? date_of_detection
             .hour(dayjs().hour())
@@ -1326,6 +1365,7 @@ if (!datapriorityValue_Combobox) {
       ListSearchGet();
     }
   };
+  
 
   // Function - Edit Complaint
   const ComplaintEdit = async () => {
@@ -1588,85 +1628,104 @@ if (!datapriorityValue_Combobox) {
   };
 
 
-  // CREATE - Add Complaint
+  // CREATE - Add Explain
   const ExplainAdd = async () => {
-
     const tempid = uuidv4();
-    // เตรียม Models
-    const complainttypeModel = dataComplaintTypeValue_Combobox
+
+    
+    //Function Split Domain (For using with Complaint Status)
+    const tempComplaintStatus = splitByDot(user[0]?.employee_domain)
+
+    // เตรียม Models สำหรับ Explain
+    
+    const ExplainTuModel = dataTooluseValue 
       ? expToolUpdateCompId(
-        dataComplaintTypeValue_Combobox,
+        dataTooluseValue,
         tempid,
-        compTypeOther
+        ToolOther
       )
       : null;
 
-    const complaintRsModel = dataComplaintRsValue_Combobox
+    const ExplainDdModel = dataDecisionValue 
       ? expDecisionUpdateCompId(
-        dataComplaintRsValue_Combobox,
+        dataDecisionValue,
         tempid,
-        compRsOther,
+        DecisionOther
       )
       : null;
 
-    // สร้าง JSON payload
-    const complaintPayload = {
-      complaintModel: {
+    // สร้าง JSON payload สำหรับ Explain
+    const explainPayload = {
+      ExplainModel: {
         id: tempid,
-        report_type: dataReportTypeValue?.id,
-        cas_number: cas_number,
-        date_of_detection: date_of_detection
-          ? date_of_detection
+        complaint_id: dataelement?.id , 
+        explain_seq: explain_seq || 1,
+        observation_analysis: observation_analysis,
+        root_cause: root_cause ,
+        corrective_action: corrective_action || "",
+        preventive_action_plan: preventive_action_plan ,
+        follow_up_date: follow_up_date
+          ? follow_up_date
             .hour(dayjs().hour())
             .minute(dayjs().minute())
             .second(dayjs().second())
             .format("YYYY-MM-DDTHH:mm:ss")
           : null,
-        request_name: user[0]?.employee_username || "",
-        request_company_id: request_company_id?.company_id
-          ? Number(request_company_id.company_id)
-          : undefined,
-        request_domain_id: request_domain_id?.domain_id,
-        request_department_id: user[0]?.itasset_company_id || "",
-        request_position: user[0]?.employee_position || "",
-        request_email: user[0]?.employee_email || "",
-        request_phone: user[0]?.employee_tel || "",
-        request_date: new Date().toISOString(),
-        respondent_company_id: respondent_company_id?.company_id
-          ? Number(respondent_company_id.company_id)
-          : undefined,
-        respondent_domain_id: respondent_domain_id?.domain_id,
-        respondent_department_id:
-          respondent_department_id?.department_id
-            ? Number(respondent_department_id.department_id)
-            : undefined,
-        respondent_email: respondent_email,
-        respondent_other_name: respondent_other_name,
-        respondent_other_email: respondent_other_email,
-        product_name: product_name,
-        detail: detail,
-        priority_level: datapriorityValue_Combobox,
-        respond_date_within: respond_date_within
-          ? respond_date_within
+        responsible_name: responsible_name || user[0]?.employee_username || "",
+        responsible_company_id: responsible_company_id?.company_id
+          ? Number(responsible_company_id.company_id)
+          : user[0]?.itasset_company_id || "",
+        responsible_department_id: responsible_department_id?.department_id
+          ? Number(responsible_department_id.department_id)
+          : user[0]?.itasset_department_id || "",
+        responsible_position: responsible_position || user[0]?.employee_position || "",
+        responsible_email: responsible_email || user[0]?.employee_email || "",
+        responsible_date: responsible_date
+          ? responsible_date
+            .hour(dayjs().hour())
+            .minute(dayjs().minute())
+            .second(dayjs().second())
+            .format("YYYY-MM-DDTHH:mm:ss")
+          : new Date().toISOString(),
+        close_status: close_status || null,
+        close_name: close_name || null,
+        close_company_id: close_company_id || null,
+        close_department_id: close_department_id || null,
+        close_position: close_position || null,
+        close_email: close_email || null,
+        close_date: close_date
+          ? close_date
             .hour(dayjs().hour())
             .minute(dayjs().minute())
             .second(dayjs().second())
             .format("YYYY-MM-DDTHH:mm:ss")
           : null,
-        lot_no: lot_no,
-        complaint_status_id: "TRR_CS_SUBMIT",
+        return_detail: return_detail || null,
+        return_name: return_name || null,
+        return_company_id: return_company_id || null,
+        return_department_id: return_department_id || null,
+        return_position: return_position || null,
+        return_email: return_email || null,
+        return_datetime: return_datetime
+          ? return_datetime
+            .hour(dayjs().hour())
+            .minute(dayjs().minute())
+            .second(dayjs().second())
+            .format("YYYY-MM-DDTHH:mm:ss")
+          : null,
+        cf_type: "Explain",
         create_by: user[0]?.employee_username || "",
-        action_type: null,
-        complaintType: complainttypeModel,
-        complaintRs: complaintRsModel,
-        // เพิ่ม complaintFile
-        complaintFile:
+      
+        ExplainTu: ExplainTuModel,
+        ExplainDd: ExplainDdModel,
+        // เพิ่ม ComplainFile
+        ComplaintFile:
           complaintFiles?.map((item: any, index: number) => {
             return {
-              cf_type: "Complaint",
-              complaint_id: tempid,
+              cf_type: "Explain",
+              explain_id: tempid,
               complaint_at_id: item.attachmentType,
-              other: item.otherText?.trim() || null,
+              other: item.attachmentType === "TRR_AT_4" ? (item.otherText?.trim() || null) : null,
               cf_file_seq: (index + 1).toString(),
               user_file_name: item.file.name,
               file_name: item.file.name,
@@ -1675,73 +1734,67 @@ if (!datapriorityValue_Combobox) {
               record_status: true,
               create_by: user[0]?.employee_username || "",
               create_datetime: new Date().toISOString(),
-              remark: item.otherText || null,
+              remark: item.attachmentType === "TRR_AT_4" ? (item.otherText?.trim() || null) : null,
             };
           }) || []
-
       },
 
-
-
-      RunningModel: {
-        code_group: dataReportTypeValue.lov_code,
-        code_type: dataReportTypeValue.lov1 + "-" + getPaddingYear(),
-        code_num: 1,
-      },
+      // RunningModel: {
+      //   code_group: dataReportTypeValue?.lov_code || "EXPLAIN",
+      //   code_type: (dataReportTypeValue?.lov1 || "EXPLAIN") + "-" + getPaddingYear(),
+      //   code_num: 1,
+      // },
+      // RunningModel: {
+      //   code_group: dataReportTypeValue.lov_code,
+      //   code_type: dataReportTypeValue.lov1 + "-" + getPaddingYear(),
+      //   code_num: 1,
+      // },
       CurrentAccessModel: {
         user_id: user[0]?.employee_username || "",
       },
     };
-    console.log("complaintFile:", complaintPayload.complaintModel.complaintFile);
+
 
     // สร้าง FormData
     const formData = new FormData();
-    formData.append("complaintPayloadJson", JSON.stringify(complaintPayload));
+    formData.append("explainPayloadJson", JSON.stringify(explainPayload));
 
     // แนบไฟล์จริง
     if (complaintFiles && complaintFiles.length > 0) {
       complaintFiles.forEach((fileItem: any) => {
-        formData.append("complaintFiles", fileItem.file);
+        formData.append("explainFiles", fileItem.file);
       });
     }
 
     console.log("📤 FormData prepared:", formData);
-    console.log("📤 complaintPayload:", complaintPayload);
-    console.log("📤 dataReportTypeValue.id:", dataReportTypeValue.id);
-    console.log(
-      "📤 dataReportTypeValue.lov_code:",
-      dataReportTypeValue.lov_code
-    );
-    console.log("📤 dataReportTypeValue.lov1:", dataReportTypeValue.lov1);
+    console.log("📤 explaintPayload:", explainPayload);
     setIsLoadingScreen(true);
 
     try {
       const response = await _POST_FORMDATA(
         formData,
-        "/Complaint/ComplaintAdd"
+        "/Explain/ExplainAdd"
       );
       if (response && response.status === "success") {
         FullSweetalert({
           title: 'Success',
-          text: `บันทึกข้อมูลสำเร็จ`,
+          text: `บันทึกข้อมูลชี้แจงสำเร็จ`,
           icon: 'success'
         });
-        console.log("✅ Complaint Add successfully:", response);
+        console.log("✅ Explain Add successfully:", response);
       } else {
         FullSweetalert({
           title: 'Failed',
-          text: `บันทึกไม่ข้อมูลสำเร็จ`,
+          text: `บันทึกข้อมูลชี้แจงไม่สำเร็จ`,
           icon: 'error'
         });
-        console.log("⚠️ Add failed:", response);
+        console.log("⚠️ Explain Add failed:", response);
       }
     } catch (error) {
-      console.error("Upload failed:", error);
+      console.error("Explain Upload failed:", error);
     } finally {
       setIsLoadingScreen(false);
       handleClose();
-
-      // Complaint_Get();
       ListSearchGet();
     }
   };
@@ -2359,7 +2412,7 @@ if (!datapriorityValue_Combobox) {
         {/* ------------------------ Explain FuncDialog ------------------------ */}
       {/* ---------------------------------------------------------------------- */}
 
-      {/* <FuncDialog
+      <FuncDialog
         open={openComplaintView}
         dialogWidth="xl"
         openBottonHidden={false}
@@ -2369,23 +2422,24 @@ if (!datapriorityValue_Combobox) {
         element={<ComplaintBody
           action="Explain"
           handleOpenAdd={() => handleOnclickExplainAdd(dataelement)}
-          //handleOpenAdd={() => handleOnclickExplainApproveSc(dataelement)}
         />}
-      /> */}
+      />
 
       <FuncDialog
         open={openExplainAdd}
         dialogWidth="xl"
-        openBottonHidden={false}
+        openBottonHidden={true}
         titlename={"Explain // เพิ่มข้อมูล"}
+        buttonText={"Save & Submit"}
         handleClose={handleClose}
+        handlefunction={ExplainAdd}
         buttonColor="success"
         element={<ExplaintBody
           action="ExplainAdd"
         />}
       />
 
-      <FuncDialog
+      {/* <FuncDialog
         open={openComplaintView}
         dialogWidth="xl"
         openBottonHidden={false}
@@ -2396,7 +2450,7 @@ if (!datapriorityValue_Combobox) {
           action="ApproveScAdd"
           handleOpenAdd={() => handleOnclickExplainApproveSc(dataelement)}
         />}
-      />
+      /> */}
 
       <FuncDialog
         open={openExplainView}

@@ -1148,7 +1148,7 @@ export default function ComplaintBody({
       </Grid>
 
       {/* ====== Dynamic ฟอร์ม สำหรับเลือกประเภทเอกสาร ====== */}
-      {isFormHidden && dataReportTypeValue && (
+      {isFormHidden && dataReportTypeValue  && (
         <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>
           <Accordion
             expanded={isMinimizedefaultOpen}

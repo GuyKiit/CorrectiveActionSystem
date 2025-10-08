@@ -179,9 +179,11 @@ export default function ExplaintBody({
     //Explaint
     dataTooluse,
     dataToolUse_Combobox,
-    dataTooluseValue,
+    dataTooluseValue_Combobox,
+
     dataDecision_Combobox,
-    dataDecisionValue,
+    dataDecisionValue_Combobox,
+
     dataSectionapp,
     dataApprove_Combobox,
     dataSectionappValue,
@@ -494,7 +496,6 @@ export default function ExplaintBody({
         explain_dd_id: dd.id,
         label: dd.lov1,
         isOther: dd.lov2,
-        isClause: dd.lov3,
       }));
 
       setdataDecisionValue(reducedArray);
@@ -777,7 +778,7 @@ export default function ExplaintBody({
 
 
   React.useEffect(() => {
-    if (dataelement && action === "ExplainAdd") {
+    if (dataelement && action === "ExplainAdd" ) {
       
       // ดึงค่าจากหน้า Explain รายละเอียด มา set ในหน้า Explain เพิ่มข้อมูล
       console.log("🔍 ExplaintBody - Setting responsible fields from respondent data:", dataelement);
@@ -992,7 +993,7 @@ export default function ExplaintBody({
       </Grid>
 
       {/* ====== Dynamic ฟอร์ม สำหรับเลือกประเภทเอกสาร ====== */}
-      {!isFormHidden  && ( 
+      {!isFormHidden  && action !== "ApproveScAdd" &&  ( 
         <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>
           <label className="sarabun-regular-datatable">
             {dataReportTypeValue?.lov4}
@@ -1047,7 +1048,7 @@ export default function ExplaintBody({
                   <FullWidthTextField
                     required="required"
                     value={
-                      action === "ExplainAdd"
+                      action === "ExplainAdd" 
                         ? user[0]?.employee_username || "-"
                         : dataelement?.request_name || "-"
                     }
@@ -1684,8 +1685,14 @@ export default function ExplaintBody({
               </Box>
             </Paper>
 
-            {/* //ส่วนของ Section Head */}
-            {action === "ApproveScAdd" && (
+            
+            
+          </Grid>
+        </Paper>
+      )} 
+
+      {/* //ส่วนของ Section Head */}
+      {action === "ApproveScAdd" && (
             <Paper
               elevation={3}
               sx={{
@@ -2287,10 +2294,6 @@ export default function ExplaintBody({
               </Grid>
             </Paper> 
             )}
-            
-          </Grid>
-        </Paper>
-      )} 
     </Box>
   );
 }

@@ -99,10 +99,12 @@ export type ListComplaintContextProps = {
     //--------Explaint-------
     dataTooluse?: any
     dataToolUse_Combobox?: any
+    dataTooluse_Combobox?: any
     dataTooluseValue?: any
+    dataTooluseValue_Combobox?: any
     dataDecision_Combobox?: any
-    dataDecision?: any
     dataDecisionValue?: any
+    dataDecisionValue_Combobox?: any
     ToolOther?: any
     DecisionOther?: any
     dataApprove_Combobox?: any
@@ -247,9 +249,11 @@ export type ListComplaintContextProps = {
     setdataToolUse: Dispatch<SetStateAction<any>>
     setdataToolUse_Combobox: Dispatch<SetStateAction<any>>
     setdataToolUseValue: Dispatch<SetStateAction<any>>
+    setdataToolUseValue_Combobox: Dispatch<SetStateAction<any>>
     setdataDecision_Combobox: Dispatch<SetStateAction<any>>
     setdataDecision: Dispatch<SetStateAction<any>>
     setdataDecisionValue: Dispatch<SetStateAction<any>>
+    setdataDecisionValue_Combobox: Dispatch<SetStateAction<any>>
     setToolOther: Dispatch<SetStateAction<any>>
     setDecisionOther: Dispatch<SetStateAction<any>>
     setdataApprove_Combobox: Dispatch<SetStateAction<any>>
@@ -396,9 +400,11 @@ export const initialListComplaint: ListComplaintContextProps = {
     setdataToolUse: () => { },
     setdataToolUse_Combobox: () => { },
     setdataToolUseValue: () => { },
+    setdataToolUseValue_Combobox: () => { },
     setdataDecision_Combobox: () => { },
     setdataDecision: () => { },
     setdataDecisionValue: () => { },
+    setdataDecisionValue_Combobox: () => { },
     setToolOther: () => { },
     setDecisionOther: () => { },
     setdataApprove_Combobox: () => { },
