@@ -6,8 +6,8 @@ export type Adds = undefined | null | boolean;
 
 export type ListComplaintContextProps = {  
     // data get ListSearchGet
-    dataelement : Launch | null
-    setdataelement: Dispatch<SetStateAction<Launch | null>>;
+    dataelement : any
+    setdataelement: Dispatch<SetStateAction<any>>;
 
     Complaint_no?: string
     no?: string
@@ -48,6 +48,7 @@ export type ListComplaintContextProps = {
     acknowledge_email?: string | null
     acknowledge_datetime?: dayjs.Dayjs
     complaint_status_id?: string
+    complaint_status_label?: string
     status_last_datetime?: dayjs.Dayjs
     return_from_status_id?: string
     return_from_status_datetime?: dayjs.Dayjs
@@ -91,6 +92,11 @@ export type ListComplaintContextProps = {
     dataset_department?: any
     dataset_domain?: any
     dataset_stepcomplaint?: any
+    dataset_complaintAction?: any
+    dataset_complaintActionNew?: any
+    dataset_complaintActionExplain?: any
+    dataset_complaintActionClose?: any
+    
 
     //--------dataset-------
     complaintFiles?: any
@@ -199,6 +205,7 @@ export type ListComplaintContextProps = {
     setacknowledge_email: Dispatch<SetStateAction<string | null>>;
     setacknowledge_datetime: Dispatch<SetStateAction<dayjs.Dayjs>>
     setcomplaint_status_id: Dispatch<SetStateAction<string>>;
+    setcomplaint_status_label: Dispatch<SetStateAction<string>>;
     setstatus_last_datetime: Dispatch<SetStateAction<dayjs.Dayjs>>
     setreturn_from_status_id: Dispatch<SetStateAction<string>>;
     setreturn_from_status_datetime: Dispatch<SetStateAction<dayjs.Dayjs>>
@@ -243,6 +250,10 @@ export type ListComplaintContextProps = {
     setdataset_domain: Dispatch<SetStateAction<any>>
     setcomplaintFiles: Dispatch<SetStateAction<any>>
     setdataset_stepcomplaint: Dispatch<SetStateAction<any>>
+    setdataset_complaintAction: Dispatch<SetStateAction<any>>
+    setdataset_complaintActionNew: Dispatch<SetStateAction<any>>
+    setdataset_complaintActionExplain: Dispatch<SetStateAction<any>>
+    setdataset_complaintActionClose: Dispatch<SetStateAction<any>>
 
 
     //--------Explaint-------
@@ -359,6 +370,7 @@ export const initialListComplaint: ListComplaintContextProps = {
     setacknowledge_email: () => { },
     setacknowledge_datetime: () => { },
     setcomplaint_status_id: () => { },
+    setcomplaint_status_label: () => { },
     setstatus_last_datetime: () => { },
     setreturn_from_status_id: () => { },
     setreturn_from_status_datetime: () => { },
@@ -393,6 +405,10 @@ export const initialListComplaint: ListComplaintContextProps = {
     setdataset_domain: () => { },
     setcomplaintFiles: () => { },
     setdataset_stepcomplaint: () => { },
+    setdataset_complaintAction: () => { },
+    setdataset_complaintActionNew: () => { },
+    setdataset_complaintActionExplain: () => { },
+    setdataset_complaintActionClose: () => { },
 
 
 

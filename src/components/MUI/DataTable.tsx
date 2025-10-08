@@ -243,6 +243,11 @@ export default function DataTable({ colum, rows, titlename, noDataname = "ไม
                 ))}
               </TableRow>
             </TableHead>
+
+
+
+
+            
             <TableBody>
               {visibleRows &&
                 visibleRows.map((row: any, index: number) => {
@@ -301,6 +306,11 @@ export default function DataTable({ colum, rows, titlename, noDataname = "ไม
                 </TableRow>
               )}
             </TableBody>
+
+
+
+
+
           </Table>
         </TableContainer>
         <div>

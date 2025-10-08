@@ -321,6 +321,9 @@ export default function ExplaintBody({
   const { Customer } = useData();
   const { setIsLoadingScreen } = useLayout();
 
+  // For On-Off Calling Function Log
+  const [isCallFuncLogOn] = useState(true);
+
   // Get Master Variables ======================================================
   const [filteredComplaintType, setFilteredComplaintType] = useState<LovType[]>([]);
   const [filteredComplaintRs, setFilteredComplaintRs] = useState<LovType[]>([]);
@@ -389,6 +392,7 @@ export default function ExplaintBody({
 
   // Function Handlers (On Change Event) ======================================================
   const handleReportTypeChange = (val: LovType | null) => {
+    if (true) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  handleReportTypeChange");
     console.log(": 😒Step : 01 handleReportTypeChange", val);
 
     const code = val?.lov_code || "";
@@ -444,6 +448,7 @@ export default function ExplaintBody({
 
   // CheckBox Tool used
   const handleCheckboxChangeTU = (item: LovType) => {
+    if (true) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  handleCheckboxChangeTU");
 
     setdataToolUse((prev: LovType[] = []) => {
       let newData: LovType[];
@@ -475,6 +480,8 @@ export default function ExplaintBody({
 
   // Check Box DD
   const handleCheckboxChangeDD = (item: LovType) => {
+    if (true) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  handleCheckboxChangeDD");
+
     setdataDecision((prev: LovType[] = []) => {
       //console.log("💚💚item", item);
       let newData: LovType[];
@@ -504,9 +511,10 @@ export default function ExplaintBody({
     });
   };
 
-
   // รับ ComplaintFile[] จาก BrowseFileUpload
   const handleFileChange = (fileArray: ComplaintFile[]) => {
+    if (true) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  handleFileChange");
+
     if (!fileArray || fileArray.length === 0) return;
     const updatedList = [...fileList, ...fileArray];
     setFileList(updatedList);
@@ -515,6 +523,8 @@ export default function ExplaintBody({
 
   // Functions (Initial, Calculation or ETC.) =================================================
   const resetForm = () => {
+    if (true) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  resetForm");
+
     setdataReportTypeValue("");
     setcas_number("");
     setproduct_name("");
@@ -540,9 +550,10 @@ export default function ExplaintBody({
 
   };
 
-
   // ลบไฟล์
   const handleRemoveFile = (index: number) => {
+    if (true) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  handleRemoveFile");
+
     setFileList((prev) => {
       const updatedList = prev.filter((_, i) => i !== index);
       return updatedList;
@@ -555,6 +566,8 @@ export default function ExplaintBody({
 
   // Get File 
   const ComplaintFile_Get = async () => {
+    if (true) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  ComplaintFile_Get");
+
     // ตรวจสอบว่ามี dataelement?.id หรือไม่  ไม่error หากไม่มีไฟล์
     if (!dataelement?.id) {
       console.log("No complaint ID, skipping file fetch");
@@ -620,8 +633,6 @@ export default function ExplaintBody({
       setIsLoadingScreen(false);
     }
   };
-
-
 
   React.useEffect(() => {
     const updateData = async () => {
@@ -776,7 +787,6 @@ export default function ExplaintBody({
     dataReportTypeValue, // เพราะเรใช้ state นี้ต่อใน effect (และต้องการให้ flow ใช้ค่าล่าสุด)
   ]);
 
-
   React.useEffect(() => {
     if (dataelement && action === "ExplainAdd" ) {
       
@@ -911,7 +921,6 @@ export default function ExplaintBody({
     }
   }, [dataset_reporttype]);
 
-  
   React.useEffect(() => {
     // เฉพาะตอน Read เท่านั้น
     if (action === "Read" || action === "Edit" || action === "Delete") {
@@ -920,6 +929,8 @@ export default function ExplaintBody({
   }, [action, dataelement]);
 
   const setExplainTU = (data: any) => {
+    if (true) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  setExplainTU");
+
     const newData: any[] = [];
     Array.isArray(data) &&
       data.forEach((el) => {
@@ -938,6 +949,8 @@ export default function ExplaintBody({
   };
 
   const setExplainDD = (data: any) => {
+    if (true) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  setExplainDD");
+
     const newData: any[] = [];
     Array.isArray(data) &&
       data.forEach((el) => {

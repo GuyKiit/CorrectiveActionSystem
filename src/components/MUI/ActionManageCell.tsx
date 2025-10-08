@@ -16,8 +16,11 @@ import { useAuth } from "../../auth/core/AuthContext";
 
 interface ActionManageCellProps {
   disabled?: boolean;
+  hiddenRead?: boolean;
   hiddenEdit?: boolean;
   hiddenDelete?: boolean;
+  hiddenExplain?: boolean;
+  hiddenClose?: boolean;
   chack_data?: 'Cutoff_Row' | 'CencalCutoff' | undefined;
   hadleOnclickMenu?: (value: string) => void;
 }
@@ -33,7 +36,7 @@ const ICONS_MAP: { [key: string]: ReactElement } = {
 };
 
 const ActionManageCell: React.FC<ActionManageCellProps> = (props) => {
-  const { disabled, chack_data, hadleOnclickMenu, hiddenEdit, hiddenDelete } = props;
+  const { disabled, chack_data, hadleOnclickMenu, hiddenRead, hiddenEdit, hiddenDelete, hiddenExplain, hiddenClose } = props;
   const { menuFuncData } = useAuth();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -62,8 +65,11 @@ const ActionManageCell: React.FC<ActionManageCellProps> = (props) => {
         }
       }}
       hidden={
-        (funcName === "EditShipment" && hiddenEdit) ||
-        (funcName === "Delete" && hiddenDelete)
+        (funcName === "View" && hiddenRead) ||         // Complaint
+        (funcName === "Edit" && hiddenRead) ||         // Complaint
+        (funcName === "Delete" && hiddenRead) ||       // Complaint
+        (funcName === "Detail" && hiddenExplain) ||    // Explain
+        (funcName === "Close" && hiddenClose)          // Close
       }
       // onMouseEnter={(e) => {
       //   if (hasSubMenu) {

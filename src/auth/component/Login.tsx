@@ -12,8 +12,9 @@ const LoginSection: React.FC = () => {
   const navigate = useNavigate();
   useEffect(() => {
     if (isAuthenticated) {
-      // navigate('/complaint');
-      navigate('/dashboard');
+      navigate('/complaint');
+      // navigate('/report');
+      // navigate('/departmentsetting');
     }
     //setErrorMessage("")
   }, [isAuthenticated, navigate]);

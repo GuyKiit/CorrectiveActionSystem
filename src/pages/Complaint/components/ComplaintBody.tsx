@@ -245,6 +245,7 @@ export default function ComplaintBody({
     acknowledge_email,
     acknowledge_datetime,
     complaint_status_id,
+    complaint_status_label,
     status_last_datetime,
     return_from_status_id,
     return_from_status_datetime,
@@ -323,6 +324,7 @@ export default function ComplaintBody({
     setacknowledge_email,
     setacknowledge_datetime,
     setcomplaint_status_id,
+    setcomplaint_status_label,
     setstatus_last_datetime,
     setreturn_from_status_id,
     setreturn_from_status_datetime,
@@ -370,6 +372,9 @@ export default function ComplaintBody({
   // Utility Variables ======================================================
   const { Customer } = useData();
   const { setIsLoadingScreen } = useLayout();
+
+  // For On-Off Calling Function Log
+  const [isCallFuncLogOn] = useState(true);
 
   // Get Master Variables ======================================================
   const [filteredComplaintType, setFilteredComplaintType] = useState<LovType[]>([]);
@@ -435,6 +440,8 @@ export default function ComplaintBody({
 
   // Function Handlers (On Change Event) ======================================================
   const handleReportTypeChange = (val: LovType | null) => {
+    if (true) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  handleReportTypeChange");
+    
     console.log(val, "valvalvalvalvalvalvalvalvalvalvalvalvalvalvalval");
 
     if (
@@ -490,9 +497,9 @@ export default function ComplaintBody({
     setcomplaintFiles([]);
   };
 
-
-
   const handleCheckboxChangeCT = (item: LovType) => {
+    if (true) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  handleCheckboxChangeCT");
+
     console.log("💛💛item", item);
 
     setdataComplaintType((prev: LovType[] = []) => {
@@ -536,6 +543,8 @@ export default function ComplaintBody({
   };
 
   const handleCheckboxChangeRS = (item: LovType) => {
+    if (true) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  handleCheckboxChangeRS");
+
     setdataComplaintRs((prev: LovType[] = []) => {
       console.log("💚💚item", item);
       let newData: LovType[];
@@ -581,6 +590,8 @@ export default function ComplaintBody({
   };
 
   const handleCheckboxChangePhotoType = (item: LovType) => {
+    if (true) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  handleCheckboxChangePhotoType");
+
     setdataphoto((prev: LovType[] = []) => {
       let newData: LovType[];
 
@@ -612,6 +623,8 @@ export default function ComplaintBody({
   };
 
   const handleCheckboxChangePriority = (item: LovType) => {
+    if (true) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  handleCheckboxChangePriority");
+
     // setdatapriority((prev) => (prev?.id === item.id ? null : item));
     const newPriority = datapriority?.id === item.id ? null : item;
     setdatapriority(newPriority);
@@ -631,15 +644,17 @@ export default function ComplaintBody({
 
   // รับ ComplaintFile[] จาก BrowseFileUpload
   const handleFileChange = (fileArray: ComplaintFile[]) => {
+    if (true) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  handleFileChange");
+
     if (!fileArray || fileArray.length === 0) return;
     const updatedList = [...fileList, ...fileArray];
     setFileList(updatedList);
     setcomplaintFiles(updatedList);
   };
 
-
-
   const handleFileAttachmentTypeChange = (index: number, type: string) => {
+    if (true) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  handleFileAttachmentTypeChange");
+
     const updated = [...fileList];
     updated[index] = {
       ...updated[index],
@@ -651,6 +666,8 @@ export default function ComplaintBody({
   };
 
   const handleFileOtherTextChange = (index: number, text: string) => {
+    if (true) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  handleFileOtherTextChange");
+
     const updated = [...fileList];
     updated[index] = { ...updated[index], otherText: text };
     setFileList(updated);
@@ -660,6 +677,8 @@ export default function ComplaintBody({
 
   // Functions (Initial, Calculation or ETC.) =================================================
   const resetForm = () => {
+    if (true) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  resetForm");
+
     setdataReportTypeValue("");
     setcas_number("");
     setproduct_name("");
@@ -688,6 +707,8 @@ export default function ComplaintBody({
     daysToAdd: number,
     checked: boolean
   ) => {
+    if (true) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  priorityCalculateRespondDate");
+
     if (checked) {
       const newDate = dayjs().add(daysToAdd, "day"); // use dayjs instead of Date
       setrespond_date_within(newDate);
@@ -697,6 +718,8 @@ export default function ComplaintBody({
   };
 
   const arraysAreEqual = (a: any[], b: any[]) => {
+    if (true) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  arraysAreEqual");
+
     if (a.length !== b.length) return false;
     return a.every(
       (item, index) => JSON.stringify(item) === JSON.stringify(b[index])
@@ -704,6 +727,8 @@ export default function ComplaintBody({
   };
 
   const handleRemoveFile = async (index: number) => {
+    if (true) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  handleRemoveFile");
+
     const fileToRemove = fileList[index];
 
     // ถ้าเป็นไฟล์ที่มีอยู่แล้วในฐานข้อมูล (มี id)
@@ -743,6 +768,8 @@ export default function ComplaintBody({
 
   // READ - Get Complaints
   const ComplaintFile_Get = async () => {
+    if (true) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  ComplaintFile_Get");
+
     // ตรวจสอบว่ามี dataelement?.id หรือไม่  ไม่error หากไม่มีไฟล์
     if (!dataelement?.id) {
       console.log("No complaint ID, skipping file fetch");
@@ -992,6 +1019,7 @@ export default function ComplaintBody({
       setrequest_email(dataelement?.request_email ? dataelement?.request_email : "");
       setrequest_phone(dataelement?.request_phone ? dataelement?.request_phone : "");
       setrequest_company_id(dataset_company.find((el: any) => String(el.itasset_company_id) == String(dataelement.request_company_id?.company_id)));
+      setcomplaint_status_label(dataelement?.complaint_status_label);
 
       // สมมติ LovType คือ { id: string; label: string }
 
@@ -1040,6 +1068,8 @@ export default function ComplaintBody({
   }, [action, dataelement]);
 
   const setComplaintType = (data: any) => {
+    if (true) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  setComplaintType");
+
     const newData: any[] = [];
     Array.isArray(data) &&
       data.forEach((el) => {
@@ -1058,6 +1088,8 @@ export default function ComplaintBody({
   };
 
   const setComplaintRs = (data: any) => {
+    if (true) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  setComplaintRs");
+
     const newData: any[] = [];
     Array.isArray(data) &&
       data.forEach((el) => {
@@ -1076,6 +1108,8 @@ export default function ComplaintBody({
     return newData;
   };
   const setPriorityLevel = (value: any) => {
+    if (true) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  setPriorityLevel");
+
     if (!value) return null;
 
     // หา object ที่ id ตรงกับค่าที่ DB ส่งมา
@@ -2191,7 +2225,8 @@ export default function ComplaintBody({
 
         </Paper>
       )}
-      {/* {isActionExplain || isActionClose && !isFormHidden && dataReportTypeValue && ( */}
+
+      {isActionClose || isActionExplain && dataReportTypeValue && (
       <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>
         <Paper elevation={3} sx={{
           p: 3,
@@ -2247,6 +2282,7 @@ export default function ComplaintBody({
                     </Box>
 
                     {/* === ฝั่งขวา ปุ่ม Add === */}
+                    {complaint_status_label == 'SUBMIT'} (
                     <Button
                       variant="contained"
                       size="small"
@@ -2260,6 +2296,7 @@ export default function ComplaintBody({
                     >
                       + เพิ่มคำชี้แจง
                     </Button>
+                    )
                   </Box>
                 </AccordionSummary>
 
@@ -2371,7 +2408,7 @@ export default function ComplaintBody({
         </Paper>
       </Paper>
 
-      {/* )} */}
+      )}
 
       {/* {isActionClose && isFormHidden && dataReportTypeValue && ( */}
       <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>

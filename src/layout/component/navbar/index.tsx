@@ -32,7 +32,7 @@ export default function Navbar({ isOpen, setIsOpen }: NavbarProps) {
     <>
       <nav className="fixed top-0 z-50 w-full" style={{ 
         background: 'white',
-        boxShadow: '0 4px 20px rgba(139, 69, 19, 0.3)',
+        boxShadow: '0 4px 20px rgba(168,168,168,0.3)',
         minHeight: '80px'
       }}>
         <div className="px-6 py-5 lg:px-8 lg:py-5">
