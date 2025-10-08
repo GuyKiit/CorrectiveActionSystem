@@ -1757,7 +1757,7 @@ if (!datapriorityValue_Combobox) {
         explain_seq: explain_seq || 1,
         observation_analysis: observation_analysis,
         root_cause: root_cause ,
-        corrective_action: corrective_action || "",
+        corrective_action: corrective_action ,
         preventive_action_plan: preventive_action_plan ,
         follow_up_date: follow_up_date
           ? follow_up_date
@@ -1782,12 +1782,12 @@ if (!datapriorityValue_Combobox) {
             .second(dayjs().second())
             .format("YYYY-MM-DDTHH:mm:ss")
           : new Date().toISOString(),
-        close_status: close_status || null,
-        close_name: close_name || null,
-        close_company_id: close_company_id || null,
-        close_department_id: close_department_id || null,
-        close_position: close_position || null,
-        close_email: close_email || null,
+        close_status: close_status ,
+        close_name: close_name ,
+        close_company_id: close_company_id ,
+        close_department_id: close_department_id ,
+        close_position: close_position ,
+        close_email: close_email ,
         close_date: close_date
           ? close_date
             .hour(dayjs().hour())
@@ -1795,12 +1795,12 @@ if (!datapriorityValue_Combobox) {
             .second(dayjs().second())
             .format("YYYY-MM-DDTHH:mm:ss")
           : null,
-        return_detail: return_detail || null,
-        return_name: return_name || null,
-        return_company_id: return_company_id || null,
-        return_department_id: return_department_id || null,
-        return_position: return_position || null,
-        return_email: return_email || null,
+        return_detail: return_detail ,
+        return_name: return_name ,
+        return_company_id: return_company_id ,
+        return_department_id: return_department_id ,
+        return_position: return_position ,
+        return_email: return_email ,
         return_datetime: return_datetime
           ? return_datetime
             .hour(dayjs().hour())

@@ -2138,7 +2138,7 @@ export default function ComplaintBody({
                         <Grid size={4}>
                           <FullWidthTextField
                             value={
-                              action === "Add"
+                              action === "Add" || isActionExplain
                                 ? user[0]?.employee_username || "-"
                                 : dataelement?.request_name || "-"
                             }
@@ -2150,7 +2150,7 @@ export default function ComplaintBody({
                         <Grid size={4}>
                           <FullWidthTextField
                             value={
-                              action === "Add"
+                              action === "Add" || isActionExplain
                                 ? user[0]?.employee_position || "-"
                                 : dataelement?.request_position || "-"
                             }
@@ -2183,7 +2183,7 @@ export default function ComplaintBody({
                         <Grid size={4}>
                           <FullWidthTextField
                             value={
-                              action === "Add"
+                              action === "Add" || isActionExplain
                                 ? user[0]?.employee_email || "-"
                                 : dataelement?.request_email || "-"
                             }
@@ -2195,7 +2195,7 @@ export default function ComplaintBody({
                         <Grid size={4}>
                           <FullWidthTextField
                             value={
-                              action === "Add"
+                              action === "Add" || isActionExplain
                                 ? user[0]?.employee_tel || "-"
                                 : dataelement?.request_phone || "-"
                             }
@@ -2226,7 +2226,7 @@ export default function ComplaintBody({
         </Paper>
       )}
 
-      {isActionClose || isActionExplain && dataReportTypeValue && (
+      {isActionClose ||isActionExplain && dataReportTypeValue && (
       <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>
         <Paper elevation={3} sx={{
           p: 3,
