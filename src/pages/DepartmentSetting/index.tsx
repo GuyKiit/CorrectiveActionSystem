@@ -14,10 +14,9 @@ import AddIcon from "@mui/icons-material/Add";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import DataTableCollapsible from "../../components/MUI/DataTableCollapsible";
 import { useData } from "../../auth/core/DataContext";
-import { Complaint_headCells } from "../../../libs/columnname";
+import { Complaint_headCells, Department_Setting_headCells } from "../../../libs/columnname";
 import DataTable from "../../components/MUI/DataTable";
-import ComplaintBody from "./components/ComplaintBody";
-import { useListComplaint } from "./core/ListComplaintContext";
+// import ComplaintBody from "./components/ComplaintBody";
 import { v4 as uuidv4 } from "uuid";
 import { cleanAccessData } from "../../service/initmain/initmain";
 import FuncDialog from "../../components/MUI/FullDialog";
@@ -29,7 +28,8 @@ import BasicChips from "../../components/MUI/BasicChips";
 import FullWidthButton from "../../components/MUI/FullWidthButton";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CloseIcon from '@mui/icons-material/CheckCircle';
-import ExplaintBody from "./components/ExplaintBody";
+import { useListComplaint } from "../Complaint/core/ListComplaintContext";
+// import ExplaintBody from "./components/ExplaintBody";
 
 // =====================================================================================================
 // TYPE DEFINITIONS
@@ -103,21 +103,6 @@ type Validate = {
   Detail: boolean;
   Priority: boolean;
 };
-// interface ComplaintCarData {
-//   point_name: string;
-//   value: number;
-// }
-// interface ComplaintServiceData {
-//   service_name_TH: string;
-//   amount: string;
-//   contractor_name: number;
-// }
-// interface ComplaintImgData {
-//   id: string;
-//   file_name: string;
-//   path: number;
-//   location: string;
-// }
 type Block = {
   id: any;
   season: number;
@@ -155,7 +140,8 @@ type data_detail = {
   req_example?: any;
 };
 
-export default function Complaint() {
+export default function DepartmentSetting() {
+
   // =====================================================================================================
   // AUTHENTICATION & USER DATA
   // =====================================================================================================
@@ -276,17 +262,6 @@ export default function Complaint() {
   const [successCardMessage, setSuccessCardMessage] = React.useState("");
   const [openAddlist, setOpenAddlist] = React.useState(false);
   
-  // const [openSync, setOpenSync] = React.useState(false);
-  // const [statusMode, setstatusMode] = React.useState([]);
-  // const [openSnackbar, setOpenSnackbar] = React.useState(false);
-  // const [snackbarMessage, setSnackbarMessage] = React.useState("");
-  // const [snackbarSeverity, setSnackbarSeverity] = React.useState<"success" | "error">("success");
-  // const [attach_type, setattach_type] = React.useState<any>([]);
-  // const [complaint_status, setcomplaint_status] = React.useState<any>([]);
-  // const [complaint_type, setcomplaint_type] = React.useState<any>([]);
-  // const [reference_standard, setreference_standard] = React.useState<any>([]);
-  // const [tool_use, settool_use] = React.useState<any>([]);
-  // const [decision_disposition, setdecision_disposition] = React.useState<any>([]);
 
   const handleOpenAddList = () => setOpenAddlist(true);
   const handleCloseAddlist = () => setOpenAddlist(false);
@@ -313,15 +288,7 @@ export default function Complaint() {
     request_department_id: ""
   });
 
-  // Additional State Variables (from ComplaintRead.tsx)
-  // const [ComplaintCarData, setComplaintCarData] = useState<ComplaintCarData[] | null>(null);
-  // const [ComplaintServiceData, setComplaintServiceData] = useState<ComplaintServiceData[] | null>(null);
-  // const [ComplaintImgData, setComplaintImgData] = useState<ComplaintImgData[] | null>(null);
   const [open, setOpen] = React.useState(false);
-  // const [selectedImage, setSelectedImage] = React.useState<string | null>(null);
-  // const [imageLoading, setImageLoading] = React.useState(true);
-  // const [startDueDate, setStartDueDate] = React.useState<dayjs.Dayjs | undefined | null>();
-  // const [endDueDate, setEndDueDate] = React.useState<dayjs.Dayjs | undefined | null>();
   const [dataComplaintType, setdataComplaintType] = useState<LovType[]>([]);
   const [dataComplaintRs, setdataComplaintRs] = useState<LovType[]>([]);
   const [dataComplaintphoto, setdataComplaintphoto] = useState<LovType[]>([]);
@@ -718,8 +685,6 @@ export default function Complaint() {
   // Function - Search Complaints
   const ListSearchGet = async () => {
     if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  ListSearchGet");
-    console.log("step:2 เรียกฟังก์ชั่น ListSearchGet ใหม่");
-    console.log("⭐️⭐️⭐️⭐️ CHECK DATA COMPLAINT ACTION : ", dataset_complaintAction, "⭐️⭐️⭐️");
 
     setIsLoadingScreen(true);
     const dataset = {
@@ -1624,224 +1589,6 @@ if (!datapriorityValue_Combobox) {
     }
   };
 
-  // READ - Preview Complaint (from ComplaintRead.tsx)
-  const previewComplaint = async () => {
-    if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  previewComplaint");
-
-    console.log(dataelement, "dataelement");
-    console.log("dataset_reporttype", dataset_reporttype);
-    console.log("NCR TEST", extractReportType("TRR_RT_NCR"));
-    console.log("OBS TEST", extractReportType("TRR_RT_OBS"));
-    console.log("CAR TEST", extractReportType("TRR_RT_CAR"));
-    console.log("CPAR TEST", extractReportType("TRR_RT_CPAR"));
-
-    if (dataelement) {
-      console.log("dataelement.report_type", dataelement.report_type);
-
-      // setIsRSHidden(extractReportType(dataelement.report_type) != "NCR" ? true : false);
-
-      // แปลง priority text → id ของ RadioGroup
-      const selectedPriority = datapriority_Combobox.find(
-        (item: any) =>
-          item.lov_code === dataelement.priority_level ||
-          item.lov1 === dataelement.priority_level
-      );
-      setdataPriority(selectedPriority?.id || "");
-
-      console.log("dataComplaintType_Combobox", dataComplaintType_Combobox);
-      console.log("dataelement?.complaint_type_id", dataelement?.complaintType);
-      console.log("dataelement?.complaint_type_id", dataelement?.complaintRs);
-      console.log("dataelement?.complaint_at_id", dataelement?.complaintPhoto);
-      console.log("dataelement?.priority_level", dataelement?.priority_level);
-
-      const data_ComplaintType = await setValueMas(
-        dataComplaintType_Combobox,
-        dataelement?.complaint_type_id,
-        "id"
-      );
-      const data_ComplaintRs = await setValueMas(
-        dataComplaintRs_Combobox,
-        dataelement?.complaint_type_id,
-        "id"
-      );
-      const data_ComplaintPhoto = await setValueMas(
-        dataphoto_Combobox,
-        dataelement?.complaint_at_id,
-        "id"
-      );
-      const data_Priority = await setValueMas(
-        datapriority_Combobox,
-        dataelement?.priority_level,
-        "id"
-      );
-
-      console.log("data_ComplaintType", data_ComplaintType);
-      console.log("data_ComplaintRs", data_ComplaintRs);
-      console.log("data_ComplaintPhoto", data_ComplaintPhoto);
-      console.log("data_Priority", data_Priority);
-      console.log(dataset_reporttype);
-    }
-  };
-
-  // CREATE - Add Complaint
-  const ExplainAdd = async () => {
-    if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  ExplainAdd");
-
-    const tempid = uuidv4();
-    // เตรียม Models
-    const complainttypeModel = dataComplaintTypeValue_Combobox
-      ? expToolUpdateCompId(
-        dataComplaintTypeValue_Combobox,
-        tempid,
-        compTypeOther
-      )
-      : null;
-
-    const complaintRsModel = dataComplaintRsValue_Combobox
-      ? expDecisionUpdateCompId(
-        dataComplaintRsValue_Combobox,
-        tempid,
-        compRsOther,
-      )
-      : null;
-
-    // สร้าง JSON payload
-    const complaintPayload = {
-      complaintModel: {
-        id: tempid,
-        report_type: dataReportTypeValue?.id,
-        cas_number: cas_number,
-        date_of_detection: date_of_detection
-          ? date_of_detection
-            .hour(dayjs().hour())
-            .minute(dayjs().minute())
-            .second(dayjs().second())
-            .format("YYYY-MM-DDTHH:mm:ss")
-          : null,
-        request_name: user[0]?.employee_username || "",
-        request_company_id: request_company_id?.company_id
-          ? Number(request_company_id.company_id)
-          : undefined,
-        request_domain_id: request_domain_id?.domain_id,
-        request_department_id: user[0]?.itasset_company_id || "",
-        request_position: user[0]?.employee_position || "",
-        request_email: user[0]?.employee_email || "",
-        request_phone: user[0]?.employee_tel || "",
-        request_date: new Date().toISOString(),
-        respondent_company_id: respondent_company_id?.company_id
-          ? Number(respondent_company_id.company_id)
-          : undefined,
-        respondent_domain_id: respondent_domain_id?.domain_id,
-        respondent_department_id:
-          respondent_department_id?.department_id
-            ? Number(respondent_department_id.department_id)
-            : undefined,
-        respondent_email: respondent_email,
-        respondent_other_name: respondent_other_name,
-        respondent_other_email: respondent_other_email,
-        product_name: product_name,
-        detail: detail,
-        priority_level: datapriorityValue_Combobox,
-        respond_date_within: respond_date_within
-          ? respond_date_within
-            .hour(dayjs().hour())
-            .minute(dayjs().minute())
-            .second(dayjs().second())
-            .format("YYYY-MM-DDTHH:mm:ss")
-          : null,
-        lot_no: lot_no,
-        complaint_status_id: "TRR_CS_SUBMIT",
-        create_by: user[0]?.employee_username || "",
-        action_type: null,
-        complaintType: complainttypeModel,
-        complaintRs: complaintRsModel,
-        // เพิ่ม complaintFile
-        complaintFile:
-          complaintFiles?.map((item: any, index: number) => {
-            return {
-              cf_type: "Complaint",
-              complaint_id: tempid,
-              complaint_at_id: item.attachmentType,
-              other: item.otherText?.trim() || null,
-              cf_file_seq: (index + 1).toString(),
-              user_file_name: item.file.name,
-              file_name: item.file.name,
-              file_type: item.file.type.split("/")[1] || "",
-              file_size: item.file.size.toString(),
-              record_status: true,
-              create_by: user[0]?.employee_username || "",
-              create_datetime: new Date().toISOString(),
-              remark: item.otherText || null,
-            };
-          }) || []
-
-      },
-
-
-
-      RunningModel: {
-        code_group: dataReportTypeValue.lov_code,
-        code_type: dataReportTypeValue.lov1 + "-" + getPaddingYear(),
-        code_num: 1,
-      },
-      CurrentAccessModel: {
-        user_id: user[0]?.employee_username || "",
-      },
-    };
-    console.log("complaintFile:", complaintPayload.complaintModel.complaintFile);
-
-    // สร้าง FormData
-    const formData = new FormData();
-    formData.append("complaintPayloadJson", JSON.stringify(complaintPayload));
-
-    // แนบไฟล์จริง
-    if (complaintFiles && complaintFiles.length > 0) {
-      complaintFiles.forEach((fileItem: any) => {
-        formData.append("complaintFiles", fileItem.file);
-      });
-    }
-
-    console.log("📤 FormData prepared:", formData);
-    console.log("📤 complaintPayload:", complaintPayload);
-    console.log("📤 dataReportTypeValue.id:", dataReportTypeValue.id);
-    console.log(
-      "📤 dataReportTypeValue.lov_code:",
-      dataReportTypeValue.lov_code
-    );
-    console.log("📤 dataReportTypeValue.lov1:", dataReportTypeValue.lov1);
-    setIsLoadingScreen(true);
-
-    try {
-      const response = await _POST_FORMDATA(
-        formData,
-        "/Complaint/ComplaintAdd"
-      );
-      if (response && response.status === "success") {
-        FullSweetalert({
-          title: 'Success',
-          text: `บันทึกข้อมูลสำเร็จ`,
-          icon: 'success'
-        });
-        console.log("✅ Complaint Add successfully:", response);
-      } else {
-        FullSweetalert({
-          title: 'Failed',
-          text: `บันทึกไม่ข้อมูลสำเร็จ`,
-          icon: 'error'
-        });
-        console.log("⚠️ Add failed:", response);
-      }
-    } catch (error) {
-      console.error("Upload failed:", error);
-    } finally {
-      setIsLoadingScreen(false);
-      handleClose();
-
-      // Complaint_Get();
-      ListSearchGet();
-    }
-  };
-
   // =====================================================================================================
   // EVENT HANDLERS (from index.tsx)
   // =====================================================================================================
@@ -2100,13 +1847,13 @@ if (!datapriorityValue_Combobox) {
           <label className="sarabun-regular-datatable">ค้นหา</label>
         </div>
         <Divider sx={{ my: 0.1, borderColor: "#39a2f2" }} />
-        <Grid container spacing={2} mt={2}>
-          <Grid size={4}>
+        <Grid container spacing={2} my={3}>
+          <Grid size={3}>
             <AutocompleteComboBox
               value={dataset_reporttype?.find(
                 (item: any) => item.id === TextNameSearch.report_code
               ) || null}
-              labelName="ประเภทเอกสาร (Report Type)"
+              labelName="ชื่อ (Username)"
               options={dataset_reporttype || []}
               column="lov_code"
               setvalue={(val) => {
@@ -2120,80 +1867,64 @@ if (!datapriorityValue_Combobox) {
               error={reportTypeError}
             />
           </Grid>
-          <Grid size={4}>
-            <FullWidthTextField
-              value={TextNameSearch.cas_number}
-              labelName={"CAS Number"}
-              onchange={(value) =>
-                setTextNameSearch({
-                  ...TextNameSearch,
-                  ...{ cas_number: value },
-                })
-              }
-            />
-          </Grid>
-          <Grid size={4}>
-            <FullWidthTextField
-              value={TextNameSearch.product_name}
-              labelName={"ชื่อสินค้า (Product Name)"}
-              onchange={(value) =>
-                setTextNameSearch({
-                  ...TextNameSearch,
-                  ...{ product_name: value },
-                })
-              }
-            />
-          </Grid>
-          <Grid size={4}>
-            <FullWidthTextField
-              value={TextNameSearch.lot_no}
-              labelName={"Lot No./Bag No"}
-              onchange={(value) =>
-                setTextNameSearch({ ...TextNameSearch, ...{ lot_no: value } })
-              }
-            />
-          </Grid>
-          <Grid size={4}>
-
+          <Grid size={3}>
             <AutocompleteComboBox
-              value={datastatus?.find(
-                (item: any) => item.id === TextNameSearch.datastatus
+              value={dataset_reporttype?.find(
+                (item: any) => item.id === TextNameSearch.report_code
               ) || null}
-              labelName="สถานะ (Status)"
-              options={datastatus}
-              column="lov_code" // หรือชื่อ field ที่คุณต้องการแสดง
-              setvalue={(val) =>
+              labelName="บริษัท (Company)"
+              options={dataset_reporttype || []}
+              column="lov_code"
+              setvalue={(val) => {
                 setTextNameSearch({
                   ...TextNameSearch,
-                  datastatus: val?.id || "", // เก็บแค่ id เป็น string
+                  report_code: val?.id || "", // เก็บแค่ id เป็น string
                 })
-              }
+                setdataReportTypeValue(val);
+                setReportTypeError(false);
+              }}
+              error={reportTypeError}
             />
           </Grid>
-          <Grid size={4}>
-            <DesktopDatePickers
-              labelName={"วันที่ออกเอกสาร (Document Issuance Date)"}
-              value={documentDateSearch}
-              handleChange={(val) => setdocumentDateSearch(val ?? null)}
-            />
-          </Grid>
-
-          <Grid size={4}>
+          <Grid size={3}>
             <AutocompleteComboBox
-              value={dataset_stepcomplaint?.find(
-                (item: any) => item.id === TextNameSearch.dataset_stepcomplaint
+              value={dataset_reporttype?.find(
+                (item: any) => item.id === TextNameSearch.report_code
               ) || null}
-              labelName="ขั้นตอน (Action Step)"
-              options={dataset_stepcomplaint}
-              column="lov_code" // หรือชื่อ field ที่คุณต้องการแสดง
-              setvalue={(val) =>
+              labelName="โดเมน (Domain)"
+              options={dataset_reporttype || []}
+              column="lov_code"
+              setvalue={(val) => {
                 setTextNameSearch({
                   ...TextNameSearch,
-                  dataset_stepcomplaint: val?.lov_code || "", // เก็บแค่ id เป็น string
+                  report_code: val?.id || "", // เก็บแค่ id เป็น string
                 })
-              }
+                setdataReportTypeValue(val);
+                setReportTypeError(false);
+              }}
+              error={reportTypeError}
             />
           </Grid>
+          <Grid size={3}>
+            <AutocompleteComboBox
+              value={dataset_reporttype?.find(
+                (item: any) => item.id === TextNameSearch.report_code
+              ) || null}
+              labelName="แผนก (Department)"
+              options={dataset_reporttype || []}
+              column="lov_code"
+              setvalue={(val) => {
+                setTextNameSearch({
+                  ...TextNameSearch,
+                  report_code: val?.id || "", // เก็บแค่ id เป็น string
+                })
+                setdataReportTypeValue(val);
+                setReportTypeError(false);
+              }}
+              error={reportTypeError}
+            />
+          </Grid>
+          
           
         </Grid>
 
@@ -2229,9 +1960,9 @@ if (!datapriorityValue_Combobox) {
 
       {/* Data Table Section */}
       <DataTable
-        colum={Complaint_headCells}
+        colum={Department_Setting_headCells}
         rows={datalist}
-        titlename={"ข้อมูล Complaint"}
+        titlename={"ข้อมูล Department"}
         buttonElement={
           <div className="flex gap-x-4">
             <Button
@@ -2254,7 +1985,7 @@ if (!datapriorityValue_Combobox) {
       {/* ------------------------ Complaint FuncDialog ------------------------ */}
       {/* ---------------------------------------------------------------------- */}
 
-      <FuncDialog
+      {/* <FuncDialog
         open={openComplaintAdd}
         dialogWidth="xl"
         openBottonHidden={true}
@@ -2352,250 +2083,7 @@ if (!datapriorityValue_Combobox) {
             }}
           />
         }
-      />
-
-      {/* <FuncDialog
-        open={openComplaintView}
-        dialogWidth="xl"
-        openBottonHidden={false}
-        titlename={"Complaint // ดูข้อมูล"}
-        handleClose={handleClose}
-        buttonColor="success"
-        element={<ComplaintBody
-          action="Read"
-        />}
       /> */}
-
-
-      <FuncDialog
-        open={openComplaintEdit}
-        dialogWidth="xl"
-        openBottonHidden={true}
-        hideReject={true}
-        titlename={'Complaint // แก้ไขข้อมูล'}
-        buttonText={"Save & Submit"}
-        handleClose={handleClose}
-        handlefunction={ComplaintEdit}
-        handlesavedraft={ComplaintSavedraftAdd}
-        hideSaveDraft={true}
-        buttonColor="success"
-        element={<ComplaintBody
-          action="Edit"
-          onBlocksChange={(data) => setComplaintBlocks(data)}
-            validateDetailText={blockValidateErrors}
-            handleOpenAdd={handleOpenAddList}
-            validateText={{
-              Product_Group: false,
-              Report_Type: reportTypeError,
-              Respondent_Department: false,
-              Date_of_Detection: dateOfDetectionError,
-              Department_Area: departmentAreaError,
-              Product_Name: productNameError,
-              Lot_No: lotNoError,
-              Email: emailError,
-              Complaint_Type: complaintTypeError,
-              Other_Type: otherTypeError,
-              Complaint_Rs: complaintRsError,
-              Other_Rs: otherRsError,
-              Clause_Rs: clauseRsError,
-              Detail: detailError,
-              Priority: priorityError,
-            }}
-            onReportTypeChange={(val) => {
-              setdataReportTypeValue(val);
-              setReportTypeError(false);
-              setDateOfDetectionError(false);
-              setDepartmentAreaError(false);
-              setProductNameError(false);
-              setLotNoError(false);
-              setEmailError(false);
-              setComplaintTypeError(false);
-              setOtherTypeError(false);
-              setComplaintRsError(false);
-              setOtherRsError(false);
-              setClauseRsError(false);
-              setDetailError(false);
-              setPriorityError(false);
-            }}
-            onDateOfDetectionChange={(val) => {
-              setdate_of_detection(val);
-              setDateOfDetectionError(false);
-            }}
-            onDepartmentAreaChange={(val) => {
-              setrespondent_department_id(val);
-              setDepartmentAreaError(false);
-            }}
-            onProductNameChange={(val) => {
-              setproduct_name(val);
-              setProductNameError(false);
-            }}
-            onLotNoChange={(val) => {
-              setlot_no(val);
-              setLotNoError(false);
-            }}
-
-            onEmailChange={(val) => {
-              setrespondent_email(val);
-              setEmailError(false);
-            }}
-            onComplaintTypeChange={(val) => {
-              setComplaintTypeError(false);
-              setOtherTypeError(false);
-            }}
-            onOtherTypeChange={(val) => {
-              setOtherTypeError(false);
-            }}
-            onComplaintRsChange={(val) => {
-              setComplaintRsError(false);
-              setOtherRsError(false);
-              setClauseRsError(false);
-            }}
-            onOtherRsChange={(val) => {
-              setOtherRsError(false);
-            }}
-            onClauseChange={(val) => {
-              setClauseRsError(false);
-            }}
-            onDetailChange={(val) => {
-              setDetailError(false);
-            }}
-            onPriorityChange={(val) => {
-              setPriorityError(false);
-            }}
-        />}
-      />
-
-      <FuncDialog
-        open={openComplaintDelete}
-        dialogWidth="xl"
-        hideSaveDraft={true}
-        openBottonHidden={true}
-        hideReject={true}
-        titlename={'Complaint // ลบข้อมูล'}
-        buttonText={"Delete"}
-        handleClose={handleClose}
-        handlefunction={ComplaintDelete}
-        buttonColor="error"
-        element={<ExplaintBody
-          action="Delete"
-        />}
-      />
-
-      {/* ---------------------------------------------------------------------- */}
-        {/* ------------------------ Explain FuncDialog ------------------------ */}
-      {/* ---------------------------------------------------------------------- */}
-
-      {/* <FuncDialog
-        open={openComplaintView}
-        dialogWidth="xl"
-        openBottonHidden={false}
-        titlename={"Explain // รายละเอียด"}
-        handleClose={handleClose}
-        buttonColor="success"
-        element={<ExplaintBody
-          action="Explain"
-          handleOpenAdd={() => handleOnclickExplainAdd(dataelement)}
-          //handleOpenAdd={() => handleOnclickExplainApproveSc(dataelement)}
-        />}
-      /> */}
-
-      <FuncDialog
-        open={openExplainAdd}
-        dialogWidth="xl"
-        openBottonHidden={false}
-        titlename={"Explain // เพิ่มข้อมูล"}
-        handleClose={handleClose}
-        buttonColor="success"
-        element={<ExplaintBody
-          action="ExplainAdd"
-        />}
-      />
-
-      <FuncDialog
-        open={openComplaintView}
-        dialogWidth="xl"
-        openBottonHidden={false}
-        titlename={"Approve Section Head // รายละเอียด"}
-        handleClose={handleClose}
-        buttonColor="success"
-        element={<ComplaintBody
-          action="ApproveScAdd"
-          handleOpenAdd={() => handleOnclickExplainApproveSc(dataelement)}
-        />}
-      />
-
-      <FuncDialog
-        open={openExplainView}
-        dialogWidth="xl"
-        openBottonHidden={false}
-        titlename={"Explain // ดูข้อมูล"}
-        handleClose={handleClose}
-        buttonColor="success"
-        element={<ExplaintBody
-          action="ExplainRead"
-        />}
-      />
-      
-
-      {/* 
-      <FuncDialog
-        open={openExplainEdit}
-        dialogWidth="xl"
-        openBottonHidden={true}
-        titlename={'Explain // แก้ไขข้อมูล'}
-        handleClose={handleClose}
-        handlefunction={ComplaintEdit}
-        buttonColor="success"
-        element={<ComplaintBody
-          action="Explain_Edit"
-        />}
-      />
-
-      <FuncDialog
-        open={openExplainDelete}
-        dialogWidth="xl"
-        openBottonHidden={true}
-        titlename={'Explain // ลบข้อมูล'}
-        handleClose={handleClose}
-        handlefunction={ComplaintDelete}
-        buttonColor="success"
-        element={<ComplaintBody
-          action="Explain_Delete"
-        />}
-      />
-
-      {/* Dialog Sections */}
-
-      {/* <FuncDialog
-        open={openAddlist}
-        dialogWidth="xl"
-        openBottonHidden={true}
-        titlename={"เพิ่มข้อมูล"}
-        handleClose={handleCloseAddlist}
-        handlefunction={ExplainAdd}
-        buttonColor="success"
-        element={
-          <ExplaintBody
-            action="Add"
-            // onBlocksChange={(data) => setComplaintBlocks(data)}
-            validateDetailText={blockValidateErrors}
-
-          />
-        }
-      /> */}
-
-      <FuncDialog
-         open={openExplainApproveSc}
-         dialogWidth="xl"
-         openBottonHidden={false}
-         titlename={"Approve Section Head // เพิ่มข้อมูล"}
-         handleClose={handleClose}
-         buttonColor="success"
-         element={<ExplaintBody
-           action="ApproveScAdd"
-           handleOpenAdd={() => handleOnclickExplainApproveSc(dataelement)}
-         />}
-       />
 
       {/* =================== Dialog Sections =================== */}
 

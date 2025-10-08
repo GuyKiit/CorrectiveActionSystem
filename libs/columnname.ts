@@ -103,3 +103,70 @@ export const Complaint_headCells = [
     },
 
 ]
+
+export const Department_Setting_headCells = [
+    {
+        columnName: 'ACTION',
+        numeric: 'center',
+        //disablePadding: true,
+        label: 'จัดการ',
+        //colWidth: 100
+    },
+    {
+        columnName: 'complaint_status_label',
+        numeric: 'center',
+        disablePadding: false,
+        label: 'ชื่อ',
+        colWidth: 150,
+    },
+    {
+        columnName: 'step_label',
+        numeric: 'center',
+        disablePadding: false,
+        label: 'บริษัท',
+        colWidth: 150,
+    },
+    {
+        columnName: 'request_department_name',
+        numeric: 'center',
+        disablePadding: false,
+        label: 'โดเมน',
+        colWidth: 150,
+    },
+    {
+        columnName: 'respondent_department_name',
+        numeric: 'center',
+        disablePadding: false,
+        label: 'แผนก',
+        colWidth: 150,
+    },
+    {
+        columnName: 'report_code',
+        numeric: 'center',
+        disablePadding: true,
+        label: 'สิทธิ์การอนุมัติ',
+        colWidth: 150,
+    },
+    {
+        columnName: 'cas_number',
+        numeric: 'center',
+        disablePadding: true,
+        label: 'อีเมล',
+        colWidth: 150
+    },
+    {
+        columnName: 'update_by',
+        numeric: 'center',
+        disablePadding: false,
+        label: 'แก้ไขโดย',
+        colWidth: 150
+    },
+    {
+        columnName: 'update_datetime',
+        numeric: 'center',
+        disablePadding: false,
+        label: 'วันที่แก้ไข',
+        colWidth: 200
+    },
+
+]

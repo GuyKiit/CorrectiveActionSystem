@@ -182,12 +182,13 @@ export default function ComplaintBody({
   onDetailChange,
   onPriorityChange,
 }: ComplaintBody) {
-  const isActionRead = action === "Read";
-  const isActionAdd = action === "Add";
+  const isActionRead = action === "Read" ;
+  const isActionAdd = action === "Add" ;
   const isActionEdit = action === "Edit";
   const isActionDelete = action === "Delete";
   const isActionExplain = action === "Explain";
   const isActionClose = action === "Close";
+  const isActionExplainAdd = action === "ExplainAdd" ;
 
 
   const user = cleanAccessData("userSession");
@@ -372,6 +373,9 @@ export default function ComplaintBody({
   const { Customer } = useData();
   const { setIsLoadingScreen } = useLayout();
 
+  // For On-Off Calling Function Log
+  const [isCallFuncLogOn] = useState(true);
+
   // Get Master Variables ======================================================
   const [filteredComplaintType, setFilteredComplaintType] = useState<LovType[]>([]);
   const [filteredComplaintRs, setFilteredComplaintRs] = useState<LovType[]>([]);
@@ -422,11 +426,11 @@ export default function ComplaintBody({
 
   // สร้าง state สำหรับควบคุม Accordion
   const [isMinimizedefaultOpen, setisMinimizeDefaultOpen] = useState(true);
-  const [isMinimizetypeOpen, setisMinimizeTypeOpen] = useState(true);
-  const [isMinimizersOpen, setisMinimizeRsOpen] = useState(true);
-  const [isMinimizedetailOpen, setisMinimizeDetailOpen] = useState(true);
-  const [isMinimizepriorityOpen, setisMinimizePriorityOpen] = useState(true);
-  const [isMinimizefileOpen, setisMinimizeFileOpen] = useState(true);
+  const [isMinimizetypeOpen, setisMinimizeTypeOpen] = useState(action === "Explain" || action === "ApproveScAdd" ? false : true);
+  const [isMinimizersOpen, setisMinimizeRsOpen] = useState(action === "Explain" || action === "ApproveScAdd" ? false : true);
+  const [isMinimizedetailOpen, setisMinimizeDetailOpen] = useState(action === "Explain" || action === "ApproveScAdd" ? false : true);
+  const [isMinimizepriorityOpen, setisMinimizePriorityOpen] = useState(action === "Explain" || action === "ApproveScAdd" ? false : true);
+  const [isMinimizefileOpen, setisMinimizeFileOpen] = useState(action === "Explain" || action === "ApproveScAdd" ? false : true);
   const [isMinimizerespondOpen, setisMinimizeRespondOpen] = useState(true);
   const [isMinimizeexlistOpen, setisMinimizeExlistOpen] = useState(true);
   const [isMinimizecloseOpen, setisMinimizeCloseOpen] = useState(true);
@@ -436,6 +440,8 @@ export default function ComplaintBody({
 
   // Function Handlers (On Change Event) ======================================================
   const handleReportTypeChange = (val: LovType | null) => {
+    if (true) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  handleReportTypeChange");
+    
     console.log(val, "valvalvalvalvalvalvalvalvalvalvalvalvalvalvalval");
 
     if (
@@ -491,9 +497,9 @@ export default function ComplaintBody({
     setcomplaintFiles([]);
   };
 
-
-
   const handleCheckboxChangeCT = (item: LovType) => {
+    if (true) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  handleCheckboxChangeCT");
+
     console.log("💛💛item", item);
 
     setdataComplaintType((prev: LovType[] = []) => {
@@ -537,6 +543,8 @@ export default function ComplaintBody({
   };
 
   const handleCheckboxChangeRS = (item: LovType) => {
+    if (true) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  handleCheckboxChangeRS");
+
     setdataComplaintRs((prev: LovType[] = []) => {
       console.log("💚💚item", item);
       let newData: LovType[];
@@ -582,6 +590,8 @@ export default function ComplaintBody({
   };
 
   const handleCheckboxChangePhotoType = (item: LovType) => {
+    if (true) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  handleCheckboxChangePhotoType");
+
     setdataphoto((prev: LovType[] = []) => {
       let newData: LovType[];
 
@@ -613,6 +623,8 @@ export default function ComplaintBody({
   };
 
   const handleCheckboxChangePriority = (item: LovType) => {
+    if (true) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  handleCheckboxChangePriority");
+
     // setdatapriority((prev) => (prev?.id === item.id ? null : item));
     const newPriority = datapriority?.id === item.id ? null : item;
     setdatapriority(newPriority);
@@ -632,15 +644,17 @@ export default function ComplaintBody({
 
   // รับ ComplaintFile[] จาก BrowseFileUpload
   const handleFileChange = (fileArray: ComplaintFile[]) => {
+    if (true) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  handleFileChange");
+
     if (!fileArray || fileArray.length === 0) return;
     const updatedList = [...fileList, ...fileArray];
     setFileList(updatedList);
     setcomplaintFiles(updatedList);
   };
 
-
-
   const handleFileAttachmentTypeChange = (index: number, type: string) => {
+    if (true) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  handleFileAttachmentTypeChange");
+
     const updated = [...fileList];
     updated[index] = {
       ...updated[index],
@@ -652,6 +666,8 @@ export default function ComplaintBody({
   };
 
   const handleFileOtherTextChange = (index: number, text: string) => {
+    if (true) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  handleFileOtherTextChange");
+
     const updated = [...fileList];
     updated[index] = { ...updated[index], otherText: text };
     setFileList(updated);
@@ -661,6 +677,8 @@ export default function ComplaintBody({
 
   // Functions (Initial, Calculation or ETC.) =================================================
   const resetForm = () => {
+    if (true) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  resetForm");
+
     setdataReportTypeValue("");
     setcas_number("");
     setproduct_name("");
@@ -689,6 +707,8 @@ export default function ComplaintBody({
     daysToAdd: number,
     checked: boolean
   ) => {
+    if (true) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  priorityCalculateRespondDate");
+
     if (checked) {
       const newDate = dayjs().add(daysToAdd, "day"); // use dayjs instead of Date
       setrespond_date_within(newDate);
@@ -698,6 +718,8 @@ export default function ComplaintBody({
   };
 
   const arraysAreEqual = (a: any[], b: any[]) => {
+    if (true) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  arraysAreEqual");
+
     if (a.length !== b.length) return false;
     return a.every(
       (item, index) => JSON.stringify(item) === JSON.stringify(b[index])
@@ -705,6 +727,8 @@ export default function ComplaintBody({
   };
 
   const handleRemoveFile = async (index: number) => {
+    if (true) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  handleRemoveFile");
+
     const fileToRemove = fileList[index];
 
     // ถ้าเป็นไฟล์ที่มีอยู่แล้วในฐานข้อมูล (มี id)
@@ -744,6 +768,8 @@ export default function ComplaintBody({
 
   // READ - Get Complaints
   const ComplaintFile_Get = async () => {
+    if (true) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  ComplaintFile_Get");
+
     // ตรวจสอบว่ามี dataelement?.id หรือไม่  ไม่error หากไม่มีไฟล์
     if (!dataelement?.id) {
       console.log("No complaint ID, skipping file fetch");
@@ -1042,6 +1068,8 @@ export default function ComplaintBody({
   }, [action, dataelement]);
 
   const setComplaintType = (data: any) => {
+    if (true) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  setComplaintType");
+
     const newData: any[] = [];
     Array.isArray(data) &&
       data.forEach((el) => {
@@ -1060,6 +1088,8 @@ export default function ComplaintBody({
   };
 
   const setComplaintRs = (data: any) => {
+    if (true) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  setComplaintRs");
+
     const newData: any[] = [];
     Array.isArray(data) &&
       data.forEach((el) => {
@@ -1078,6 +1108,8 @@ export default function ComplaintBody({
     return newData;
   };
   const setPriorityLevel = (value: any) => {
+    if (true) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  setPriorityLevel");
+
     if (!value) return null;
 
     // หา object ที่ id ตรงกับค่าที่ DB ส่งมา
@@ -1374,7 +1406,7 @@ export default function ComplaintBody({
                     </Box>
 
                     <Grid container spacing={2} sx={{ alignItems: "stretch" }}>
-                      {dataReportTypeValue && (
+                      {dataReportTypeValue && action !== "ApproveScAdd" && (
                         <Grid size={12} sx={{ display: "flex" }}>
                           <Accordion
                             expanded={isMinimizetypeOpen}
@@ -1432,6 +1464,7 @@ export default function ComplaintBody({
                                         }
 
                                       }}
+                                      bgcolorTextField={action === "Add" ? false : true}
                                       readonly={isActionRead || isActionDelete || isActionExplain}
                                       Validate={validateText?.Other_Type || false}
                                       validateTextLable={validateText?.Other_Type ? "กรุณากรอกรายละเอียด" : ""}
@@ -1504,6 +1537,7 @@ export default function ComplaintBody({
                                             onClauseChange(e);
                                           }
                                         }}
+                                        bgcolorTextField={action === "Add" ? false : true}
                                         readonly={isActionRead || isActionDelete || isActionExplain}
                                         Validate={validateText?.Clause_Rs || false}
                                         validateTextLable={validateText?.Clause_Rs ? "กรุณากรอกรายละเอียด Clause" : ""}
@@ -1521,6 +1555,7 @@ export default function ComplaintBody({
                                             onOtherRsChange(e);
                                           }
                                         }}
+                                        bgcolorTextField={action === "Add" ? false : true}
                                         readonly={isActionRead || isActionDelete || isActionExplain}
                                         Validate={validateText?.Other_Rs || false}
                                         validateTextLable={validateText?.Other_Rs ? "กรุณากรอกรายละเอียด Other" : ""}
@@ -1580,6 +1615,7 @@ export default function ComplaintBody({
                                       onDetailChange(e);
                                     }
                                   }}
+                                  bgcolorTextField={action === "Add" ? false : isActionEdit ? false : true}
                                   readonly={isActionRead || isActionDelete || isActionExplain}
                                   Validate={validateText?.Detail || false}
                                   validateTextLable={validateText?.Detail ? "กรุณากรอกรายละเอียด (Detail)" : ""}
@@ -2242,7 +2278,7 @@ export default function ComplaintBody({
                         sx={{ fontSize: 18, fontWeight: 600, color: "#000000" }}
                       >
                         รายการคำชี้แจง (Explain List)
-                      </Typography>
+                      </Typography>                 
                     </Box>
 
                     {/* === ฝั่งขวา ปุ่ม Add === */}
@@ -2268,6 +2304,101 @@ export default function ComplaintBody({
                   <Divider sx={{ my: 1, borderBottom: '2px solid #ff9800' }} />
                   <Grid container spacing={3}>
 
+
+
+                    {/* รายการคำชี้แจง      !!!!! แก้ FileList เป็น  Explain List*/} 
+                    <Grid size={12}>
+                      {fileList.length > 0 ? (
+                        <Box sx={{ mt: 2 }}>
+                          {fileList.map((item, index) => (
+                            <Paper
+                              key={index}
+                              elevation={2}
+                              sx={{
+                                p: 2,
+                                mb: 2,
+                                borderRadius: 2,
+                                border: "1px solid #e0e0e0",
+                                backgroundColor: "#fafafa",
+                                "&:hover": {
+                                  backgroundColor: "#f5f5f5",
+                                  boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
+                                }
+                              }}
+                            >
+                              <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                                <Box sx={{ flex: 1 }}>
+                                  <Typography
+                                    className="sarabun-regular-datatable"
+                                    sx={{ fontSize: "16px", fontWeight: 600, color: "#333", mb: 1 }}
+                                  >
+                                    #{index + 1} รายการคำชี้แจง
+                                  </Typography>
+                                  {/* <Typography
+                                    className="sarabun-regular-datatable"
+                                    sx={{ fontSize: "14px", color: "#666" }}
+                                  >
+                                    ไฟล์: {item.file?.name || "ไม่ระบุ"}
+                                  </Typography>
+                                  <Typography
+                                    className="sarabun-regular-datatable"
+                                    sx={{ fontSize: "12px", color: "#999", mt: 0.5 }}
+                                  >
+                                    ขนาด: {item.file?.size ? (item.file.size / (1024 * 1024)).toFixed(2) + " MB" : "ไม่ระบุ"}
+                                  </Typography> */}
+                                </Box>
+                                <Box sx={{ display: "flex", gap: 1 }}>
+                                  <IconButton
+                                    color="primary"
+                                    size="small"
+                                    onClick={() => {
+                                      if (item.file instanceof File) {
+                                        const fileUrl = URL.createObjectURL(item.file);
+                                        window.open(fileUrl, "_blank");
+                                        setTimeout(() => URL.revokeObjectURL(fileUrl), 1000);
+                                      }
+                                    }}
+                                  >
+                                    <VisibilityIcon />
+                                  </IconButton>
+                                  {/* <IconButton
+                                    color="error"
+                                    size="small"
+                                    onClick={() => {
+                                      if (handleRemoveFile) {
+                                        handleRemoveFile(index);
+                                      }
+                                    }}
+                                  >
+                                    <DeleteIcon />
+                                  </IconButton> */}
+                                </Box>
+                              </Box>
+                            </Paper>
+                          ))}
+                        </Box>
+                      ) : (
+                        <Paper
+                          elevation={0}
+                          sx={{
+                            p: 4,
+                            textAlign: "center",
+                            color: "#999",
+                            backgroundColor: "#f9f9f9",
+                            borderRadius: 2,
+                            border: "2px dashed #e0e0e0"
+                          }}
+                        >
+                          <Typography
+                            className="sarabun-regular-datatable"
+                            sx={{ fontSize: "16px", color: "#999" }}
+                          >
+                            ไม่พบรายการคำชี้แจง
+                          </Typography>
+                          
+                        </Paper>
+                      )}
+                    </Grid>
 
                   </Grid>
                 </AccordionDetails>
@@ -2384,7 +2515,7 @@ export default function ComplaintBody({
                           value={product_name}
                           labelName="บริษัท (Company)"
                           onchange={(e) => setproduct_name(e)}
-                          readonly={isActionRead || isActionDelete}
+                          readonly={isActionRead || isActionDelete }
                         />
                       </Grid>
                       <Grid size={4}>
