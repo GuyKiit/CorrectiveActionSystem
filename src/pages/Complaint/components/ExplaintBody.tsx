@@ -133,10 +133,12 @@ export default function ExplaintBody({
   validateDetailText,
   handleOpenAdd,
 }: ExplaintBody) {
-  const isActionRead = action === "Read";
-  const isActionAdd = action === "Add";
+  const isActionRead = action === "Read" || action === "ExplainRead" ;
+  const isActionAdd = action === "Add" || action === "ExplainAdd";;
   const isActionEdit = action === "Edit";
   const isActionDelete = action === "Delete";
+  const isActionExplain = action === "Explain";
+
 
 
   const user = cleanAccessData("userSession");
@@ -338,7 +340,7 @@ export default function ExplaintBody({
   const [request_department_id, setrequest_department_id] = React.useState<{ itasset_department_id: number; itasset_department_name: string; } | null>(null);
   const [dataDecision, setdataDecision] = useState<LovType[]>([]);
   // Hidden Variables ======================================================
-  const [isFormHidden, setIsFormHidden] = useState(true);
+  const [isFormHidden, setIsFormHidden] = useState(false);
   const [isDDHidden, setIsDDHidden] = useState(true);
   const [isTUHidden, setIsTUHidden] = useState(true);
   const [isCAHidden, setIsCAHidden] = useState(true);
@@ -951,7 +953,7 @@ export default function ExplaintBody({
       </Grid>
 
       {/* ====== Dynamic ฟอร์ม สำหรับเลือกประเภทเอกสาร ====== */}
-      {isFormHidden && dataReportTypeValue && (
+      {!isFormHidden  && ( 
         <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>
           <label className="sarabun-regular-datatable">
             {dataReportTypeValue?.lov4}
@@ -1392,27 +1394,53 @@ export default function ExplaintBody({
                   </Accordion>
                 )}
 
-                <Accordion expanded={isMinimizefileOpen}
-                  onChange={() => setisMinimizeFileOpen(!isMinimizefileOpen)}
-                  sx={{ borderRadius: 2, backgroundColor: "#fafafa", mt: 2 }}>
-                  <AccordionSummary
-                    expandIcon={<ExpandMoreIcon />}
-                    aria-controls="complaint-type-content"
-                    id="complaint-type-header"
+<Accordion
+                    expanded={isMinimizefileOpen}
+                    onChange={() => setisMinimizeFileOpen(!isMinimizefileOpen)}
+                    sx={{
+                      borderRadius: 3,
+                      background: "linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%)",
+                      border: "1px solid #e0e0e0",
+                      boxShadow: "0 4px 12px rgba(158,158,158,0.1)",
+                      mt: 3,
 
+                    }}
                   >
-                    <Typography
-                      className="sarabun-regular-datatable"
-                      sx={{ fontSize: "18px", fontWeight: 600, color: "#333" }}
+                    {/* 🔹 หัวข้อ */}
+                    <AccordionSummary
+                      expandIcon={<ExpandMoreIcon sx={{ color: "#616161" }} />}
+                      aria-controls="dept-content"
+                      id="dept-header"
+                      sx={{ px: 2 }}
                     >
-                      แนบเอกสารหรือรูปภาพประกอบเพิ่มเติม (Please attach any relevant documents or photos) 
-
-                      <span style={{ color: "red" }}> *</span>
-                    </Typography>
-                  </AccordionSummary>
-
-
-                  <AccordionDetails>
+                      <Box sx={{ flexGrow: 1 }}>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            pb: 2,
+                            borderBottom: "2px solid #616161", // ✅ เส้นเต็มเหมือนเดิม
+                          }}
+                        >
+                          <Box
+                            sx={{
+                              width: 6,
+                              height: 24,
+                              backgroundColor: "#616161",
+                              borderRadius: 1,
+                              mr: 2,
+                            }}
+                          />
+                          <Typography
+                            className="sarabun-regular-datatable"
+                            sx={{ fontSize: 18, fontWeight: 600, color: "#616161" }}
+                          >
+                            แนบไฟล์ (Attachments)
+                          </Typography>
+                        </Box>
+                      </Box>
+                    </AccordionSummary>
+                    <AccordionDetails sx={{ p: 3 }}>
 
                     <Grid container spacing={2}>
                       {
@@ -1490,7 +1518,7 @@ export default function ExplaintBody({
                                         </Box>
                                         <Box sx={{ display: "flex", gap: 1 }}>
                                           {/* //ปุ่มลบไฟล์ */}
-                                          {(action == "Edit" || action == "Add") && (
+                                          {(action == "Edit" || action == "Add" || isActionAdd) && (
                                             <IconButton
                                               color="error"
                                               onClick={() => {
@@ -1543,7 +1571,7 @@ export default function ExplaintBody({
 
 
                                           {/* //ปุ่มดาวน์โหลดไฟล์ */}
-                                          {action === "Read" && (
+                                          {(action === "Read" || isActionExplain) && (
                                             <IconButton
                                               color="primary"
                                               onClick={async () => {
@@ -1599,8 +1627,8 @@ export default function ExplaintBody({
                         </Grid>
                       }
                     </Grid>
-                  </AccordionDetails>
-                </Accordion>
+                    </AccordionDetails>
+                  </Accordion>
               </Box>
             </Paper>
 
@@ -2203,6 +2231,7 @@ export default function ExplaintBody({
                 )}
               </Grid>
             </Paper> 
+            
             
           </Grid>
         </Paper>

@@ -196,13 +196,18 @@ export default function Complaint() {
     dataset_department,
     dataset_company,
     dataset_domain,
+    dataset_stepcomplaint,
+    dataset_complaintAction,
+    dataset_complaintActionNew,
+    dataset_complaintActionExplain,
+    dataset_complaintActionClose,
 
     //Explaint
     dataTooluse,
     dataDecision,
     dataDecision_Combobox,
     dataApprove_Combobox,
-    dataset_stepcomplaint,
+
 
     // Setter Functions
     setComplaint_no, setno, setid, setreport_type, setcas_number, setdoc_date,
@@ -235,6 +240,10 @@ export default function Complaint() {
     setdataApprove_Combobox,
     setdataDecision,
     setdataset_stepcomplaint,
+    setdataset_complaintAction,
+    setdataset_complaintActionNew,
+    setdataset_complaintActionExplain,
+    setdataset_complaintActionClose,
 
 
   } = useListComplaint();
@@ -284,8 +293,8 @@ export default function Complaint() {
     dayjs.Dayjs | undefined | null
   >(dayjs().subtract(1, "month"));
   const [documentDateSearch, setdocumentDateSearch] = React.useState<
-    dayjs.Dayjs | undefined | null
-  >(dayjs().subtract(1, "month"));
+  dayjs.Dayjs | null
+>(null);
   const [endDateSearch, setEndDateSearch] = React.useState<
     dayjs.Dayjs | undefined | null
   >(dayjs().add(3, "month"));
@@ -297,7 +306,8 @@ export default function Complaint() {
     product_name: "",
     lot_no: "",
     datastatus: "",
-    dataset_stepcomplaint:"",
+    dataset_stepcomplaint: "",
+    request_department_id: ""
   });
 
   // Additional State Variables (from ComplaintRead.tsx)
@@ -345,6 +355,7 @@ export default function Complaint() {
     setdocumentDateSearch(null);
     setrespondWithinSearch(null);
     setEndDateSearch(null);
+    
   };
 
   // Reset Form Function (from index.tsx)
@@ -512,12 +523,13 @@ export default function Complaint() {
       const dataset = {
         lov_group: "TRR.TRRGROUP.COM",
         lov_type:
-          "report_type,complaint_type,reference_standard,attach_type,complaint_status,tool_use,decision_disposition,approve_select,complaint_step",
+          "report_type,complaint_type,reference_standard,attach_type,complaint_status,tool_use,decision_disposition,approve_select,complaint_step,complaint_action",
       };
       const response = await _POST(dataset, "/Lov/LovGet");
 
       if (response && response.status === "success") {
         const lovData = response.data || [];
+        console.log("🔍 index.tsx - lovData:", lovData);
 
         // ✅ จัดกลุ่มตาม lov_type
         const grouped = lovData.reduce((acc: any, item: any) => {
@@ -525,17 +537,29 @@ export default function Complaint() {
           acc[item.lov_type].push(item);
           return acc;
         }, {});
+        console.log("🔍 index.tsx - grouped:", grouped);
 
         // ตัวอย่างการ set state
         setdataset_reporttype?.(grouped["report_type"] || []);
         setdataComplaintType_Combobox?.(grouped["complaint_type"] || []);
         setdataComplaintRs_Combobox?.(grouped["reference_standard"] || []);
         setdataphoto_Combobox?.(grouped["attach_type"] || []);
+        console.log("🔍 index.tsx - attach_type data:", grouped["attach_type"]);
         setdatastatus?.(grouped["complaint_status"] || []);
         setdataToolUse_Combobox?.(grouped["tool_use"] || []);
         setdataDecision_Combobox?.(grouped["decision_disposition"] || []);
         setdataApprove_Combobox?.(grouped["approve_select"] || []);
         setdataset_stepcomplaint?.(grouped["complaint_step"] || []);
+        setdataset_complaintAction?.(grouped["complaint_action"] || []);
+
+        setdataset_complaintActionNew(grouped["complaint_action"].filter((item: any) => item.lov_code === 'ACTION_NEW'));
+        setdataset_complaintActionExplain(grouped["complaint_action"].filter((item: any) => item.lov_code === 'ACTION_EXPLAIN'));
+        setdataset_complaintActionClose(grouped["complaint_action"].filter((item: any) => item.lov_code === 'ACTION_CLOSE'));
+
+
+        console.log('⚠️⚠️⚠️⚠️ [grouped["complaint_action"]] :', grouped["complaint_action"])
+        
+
       }
     } catch (e) {
       console.log("error:", e);
@@ -588,6 +612,7 @@ export default function Complaint() {
 
   // Function - Get Department Domain
   const DepartmentDomainGet = async (action?: string) => {
+    console.log("🐸 RECHECK DATA ACTION : ",action ,"🐸")
     try {
       const dataset = {
         domain_id: user[0]?.employee_domain,
@@ -632,68 +657,27 @@ export default function Complaint() {
   // =====================================================================================================
 
   // Function - Get Complaints
-  const Complaint_Get = async () => {
-
+  const Complaint_Get = async (data: any) => {
+    console.log("Read step:4 เรียกฟังก์ชั่น Complaint_Get ใหม่ ");
+    console.log("Read step:4 ข้อมูลจาก ListSearchGet : ", data);
     setIsLoadingScreen(true)
     const dataset = {
+      id: data.id,
       user_id: user[0]?.employee_username,
       domain_id: user[0]?.employee_domain,
       department_id: user[0]?.itasset_department_id,
       company_id: user[0]?.itasset_company_id,
-      // cas_number: TextNameSearch.cas_number,
-      // product_name: TextNameSearch.product_name,
-      // lot_no: TextNameSearch.lot_no,
     };
-    console.log("user_id: ", dataset);
+    console.log("Read step:4 dataset: ", dataset);
 
 
     try {
       let response = await _POST(dataset, "/Complaint/ComplaintGet");
-      console.log(response, "response_Get");
+      console.log("Read step:4 ผลลัพธ์ : ", response);
+      console.log("Read step:4 Normalize ปรับค่าใหม่ : ", response.data[0],);
       if (response && response.status === "success") {
         setIsLoadingScreen(false);
-        const responseData: any = [];
-        if (Array.isArray(response.data)) {
-          response.data.forEach((el: any) => {
-            console.log("💠💠💠💠💠💠💠💠💠💠 el", el, "💠💠💠💠💠💠💠💠💠💠");
-            const ACTION = (
-              <ActionManageCell
-                hadleOnclickMenu={(name: any) => {
-                  console.log("🎆 🎆 🎆 🎆 hadleOnclickMenu (name) :", name);
-
-                  if (name === "View") {
-                    DepartmentDomainGet("Read");
-                    handleOnclickComplaintView(el);
-                  }
-                  else if (name === "Edit") {
-                    DepartmentDomainGet("Edit");
-                    handleOnclickComplaintEdit(el);
-                  }
-                  else if (name === "Delete") {
-                    DepartmentDomainGet("Delete");
-                    handleOnclickComplaintDelete(el);
-                  }
-                }}
-              />
-            );
-            el.ACTION = ACTION;
-            console.log("el.acknowledge_flag", el.acknowledge_flag)
-            console.log(el.step_label)
-            el.complaint_status_label = (
-              <BasicChips label={`${el.complaint_status_label}`} acknowledge={el.acknowledge_flag} step={el.step_label} type="status"></BasicChips>
-            );
-            el.step_label = (
-              <BasicChips label={`${el.step_label}`}type="step"></BasicChips>
-            );
-            responseData.push(el);
-          });
-        }
-        console.log(
-          "⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️",
-          responseData,
-          "⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️"
-        );
-        setdatalist(responseData);
+        setdataelement(response.data[0])
       }
     } catch (e) {
       console.log("error");
@@ -702,23 +686,33 @@ export default function Complaint() {
 
   // Function - Search Complaints
   const ListSearchGet = async () => {
+    console.log("step:2 เรียกฟังก์ชั่น ListSearchGet ใหม่");
+    console.log("⭐️⭐️⭐️⭐️ CHECK DATA COMPLAINT ACTION : ", dataset_complaintAction, "⭐️⭐️⭐️");
+
     setIsLoadingScreen(true);
     const dataset = {
       user_id: user[0]?.employee_username,
       domain_id: user[0]?.employee_domain,
       department_id: user[0]?.itasset_department_id,
       company_id: user[0]?.itasset_company_id,
-
-      report_code: TextNameSearch.report_code || null,
+      report_code: TextNameSearch.report_code ? TextNameSearch.report_code : null,
       cas_number: TextNameSearch.cas_number ? TextNameSearch.cas_number : null,
       product_name: TextNameSearch.product_name ? TextNameSearch.product_name : null,
       lot_no: TextNameSearch.lot_no ? TextNameSearch.lot_no : null,
-      complaint_status_label: TextNameSearch.datastatus || null,
-      doc_date: documentDateSearch || null,
+      complaint_status_label: TextNameSearch.datastatus ? TextNameSearch.datastatus : null,
+      doc_date: documentDateSearch ? documentDateSearch.format("DD-MM-YYYY") : null,
+      step_label: TextNameSearch.dataset_stepcomplaint ? TextNameSearch.dataset_stepcomplaint : null,
+      request_department_id: TextNameSearch.request_department_id ? TextNameSearch.request_department_id : null
     }
+
+    console.log('😡😡😡😡', dataset_complaintActionNew)
+    console.log('😡😡😡😡', dataset_complaintActionExplain)
+    console.log('😡😡😡😡', dataset_complaintActionClose)
+
+    console.log("step:2 dataset ก่อนส่ง API /ListSearch/ListSearchGet ", dataset);
     try {
       let response = await _POST(dataset, "/ListSearch/ListSearchGet");
-      console.log(response, "response_Get");
+      console.log("step:2 ผลลัพธ์ที่ได้จาก API /ListSearch/ListSearchGet ", response);
       if (response && response.status === "success") {
         setIsLoadingScreen(false);
         const responseData: any = [];
@@ -748,6 +742,53 @@ export default function Complaint() {
                     handleOnclickExplainView(el);
                   }
                 }}
+                // hiddenEdit={el.complaint_status_label == 'SUBMIT'}
+
+                //-----------------------------------------------------------------------
+                //-----------------------------------------------------------------------
+
+                // For Status [NEW]
+                hiddenRead={
+                  (dataset_complaintActionNew &&
+                    !dataset_complaintActionNew.some((mode: any) =>
+                      mode.lov1.split(",").includes(String(el.complaint_status_label))
+                    )) ?? false
+                }
+                hiddenEdit={
+                  (dataset_complaintActionNew &&
+                    !dataset_complaintActionNew.some((mode: any) =>
+                      mode.lov1.split(",").includes(String(el.complaint_status_label))
+                    )) ?? false
+                }
+                hiddenDelete={
+                  (dataset_complaintActionNew &&
+                    !dataset_complaintActionNew.some((mode: any) =>
+                      mode.lov1.split(",").includes(String(el.complaint_status_label))
+                    )) ?? false
+                }
+
+                //-----------------------------------------------------------------------
+                //-----------------------------------------------------------------------
+                
+                // For Status [SUBMIT, EXPLAIN, APPROVE]
+                hiddenExplain={
+                  (dataset_complaintActionExplain &&
+                    !dataset_complaintActionExplain.some((mode: any) =>
+                      mode.lov1.split(",").includes(String(el.complaint_status_label))
+                    )) ?? false
+                }
+
+                //-----------------------------------------------------------------------
+                //-----------------------------------------------------------------------
+                
+                // For Status [CLOSE]
+                hiddenClose={
+                  (dataset_complaintActionClose &&
+                    !dataset_complaintActionClose.some((mode: any) =>
+                      mode.lov1.split(",").includes(String(el.complaint_status_label))
+                    )) ?? false
+                }
+
               />
             );
             el.ACTION = ACTION;
@@ -757,14 +798,13 @@ export default function Complaint() {
               <BasicChips label={`${el.complaint_status_label}`} acknowledge={el.acknowledge_flag}></BasicChips>
             );
             el.step_label = (
-              <BasicChips label={`${el.step_label}`}type="step"></BasicChips>
+              <BasicChips label={`${el.step_label}`} type="step"></BasicChips>
             );
             responseData.push(el);
           });
         }
+        console.log("step:2 ข้อมูลก่อนเข้า ตาราง ", responseData);
         setdatalist(responseData);
-        console.log("raw response.data:", response.data); // เช็คว่ามีกี่แถวจริง ๆ\
-        console.log("mapped responseData:", responseData); // เช็คว่ามีกี่แถวหลัง map
       }
     } catch (e) {
       console.log("error");
@@ -793,12 +833,10 @@ export default function Complaint() {
 
     // Validate Report Type - ตรวจสอบก่อนและถ้าไม่มีให้ return false ทันที
     if (!dataReportTypeValue || !dataReportTypeValue.id) {
-      console.log("❌ Report Type validation failed");
       setReportTypeError(true);
       document.getElementById("reportTypeField")?.focus();
       return false; // หยุดการตรวจสอบส่วนอื่น
     }
-    console.log("✅ Report Type validation passed");
 
     // Validate Date of Detection
     if (!date_of_detection) {
@@ -832,21 +870,18 @@ export default function Complaint() {
 
     // Validate Complaint Type
     if (!dataComplaintTypeValue_Combobox || dataComplaintTypeValue_Combobox.length === 0) {
-      console.log("❌ Complaint Type validation failed");
       setComplaintTypeError(true);
       valid = false;
     } else {
-      console.log("✅ Complaint Type validation passed");
     }
 
     // Validate Other Type (if complaint type has "Other" selected)
     if (dataComplaintTypeValue_Combobox && dataComplaintTypeValue_Combobox.some((item: any) => item.isOther === "Y")) {
       if (!compTypeOther || compTypeOther.trim() === "") {
-        console.log("❌ Other Type validation failed");
         setOtherTypeError(true);
         valid = false;
       } else {
-        console.log("✅ Other Type validation passed");
+        //console.log("✅ Other Type validation passed");
       }
     }
 
@@ -858,35 +893,24 @@ export default function Complaint() {
     // เฉพาะ NCR เท่านั้นที่ต้อง validate Complaint Rs
     if (reportTypeCode === "NCR") {
       if (!dataComplaintRsValue_Combobox || dataComplaintRsValue_Combobox.length === 0) {
-        console.log("❌ Complaint Rs validation failed for NCR");
         setComplaintRsError(true);
         valid = false;
-      } else {
-        console.log("✅ Complaint Rs validation passed for NCR");
       }
-    } else {
-      console.log("✅ Complaint Rs validation skipped for", reportTypeCode);
     }
 
     // Validate Other Rs 
     if (reportTypeCode === "NCR" && dataComplaintRsValue_Combobox && dataComplaintRsValue_Combobox.some((item: any) => item.isClause === "Other")) {
       if (!compRsOther || compRsOther.trim() === "") {
-        console.log("❌ Other Rs validation failed for NCR");
         setOtherRsError(true);
         valid = false;
-      } else {
-        console.log("✅ Other Rs validation passed for NCR");
       }
     }
 
     // Validate Clause Rs
     if (reportTypeCode === "NCR" && dataComplaintRsValue_Combobox && dataComplaintRsValue_Combobox.some((item: any) => item.isClause === "Clause")) {
       if (!clauseOther || clauseOther.trim() === "") {
-        console.log("❌ Clause Rs validation failed for NCR");
         setClauseRsError(true);
         valid = false;
-      } else {
-        console.log("✅ Clause Rs validation passed for NCR");
       }
     }
 
@@ -897,16 +921,11 @@ export default function Complaint() {
     }
 
     // Validate Priority
-    console.log("🔍 Priority validation - datapriorityValue_Combobox:", datapriorityValue_Combobox);
     if (!datapriorityValue_Combobox || datapriorityValue_Combobox.trim() === "") {
-      console.log("❌ Priority validation failed");
       setPriorityError(true);
       valid = false;
-    } else {
-      console.log("✅ Priority validation passed");
-    }
+    } 
 
-    console.log("🔍 Final validation result:", valid);
     return valid;
   }
 
@@ -1067,6 +1086,8 @@ if (!datapriorityValue_Combobox) {
       )
       : null;
 
+      
+
     const complaintRsModel = dataComplaintRsValue_Combobox
       ? compRsUpdateCompId(
         dataComplaintRsValue_Combobox,
@@ -1091,8 +1112,8 @@ if (!datapriorityValue_Combobox) {
           : null,
         request_name: user[0]?.employee_username || "",
         request_company_id: request_company_id?.company_id,
-          // ? Number(request_company_id.company_id)
-          // : undefined,
+        // ? Number(request_company_id.company_id)
+        // : undefined,
         request_domain_id: user[0]?.employee_domain,
         request_department_id: user[0].itasset_department_id,
         request_position: user[0]?.employee_position || "",
@@ -1100,12 +1121,12 @@ if (!datapriorityValue_Combobox) {
         request_phone: user[0]?.employee_tel || "",
         request_date: new Date().toISOString(),
         respondent_company_id: respondent_company_id?.company_id,
-          // ? Number(respondent_company_id.company_id)
-          // : undefined,
+        // ? Number(respondent_company_id.company_id)
+        // : undefined,
         respondent_domain_id: respondent_domain_id?.domain_id,
         respondent_department_id: respondent_department_id?.department_id,
-            // ? Number(respondent_department_id.department_id)
-            // : undefined,
+        // ? Number(respondent_department_id.department_id)
+        // : undefined,
         respondent_email: respondent_email,
         respondent_other_name: respondent_other_name,
         respondent_other_email: respondent_other_email,
@@ -1195,7 +1216,8 @@ if (!datapriorityValue_Combobox) {
       setIsLoadingScreen(false);
       handleClose();
 
-      Complaint_Get();
+      // Complaint_Get();
+      ListSearchGet();
     }
   };
 
@@ -1243,9 +1265,9 @@ if (!datapriorityValue_Combobox) {
             .format("YYYY-MM-DDTHH:mm:ss")
           : null,
         request_name: user[0]?.employee_username || "",
-        request_company_id: request_company_id?.company_id
-          ? Number(request_company_id.company_id)
-          : undefined,
+        request_company_id: request_company_id?.company_id,
+          // ? Number(request_company_id.company_id)
+          // : undefined,
         request_domain_id: user[0]?.employee_domain,
         request_department_id: user[0]?.itasset_department_id || "",
         request_position: user[0]?.employee_position || "",
@@ -1253,12 +1275,12 @@ if (!datapriorityValue_Combobox) {
         request_phone: user[0]?.employee_tel || "",
         request_date: new Date().toISOString(),
         respondent_company_id: respondent_company_id?.company_id,
-          // ? Number(respondent_company_id.itasset_company_id)
-          // : undefined,
+        // ? Number(respondent_company_id.itasset_company_id)
+        // : undefined,
         respondent_domain_id: respondent_domain_id?.domain_id,
-        respondent_department_id:respondent_department_id?.department_id,
-            // ? Number(respondent_department_id.department_id)
-            // : undefined,
+        respondent_department_id: respondent_department_id?.department_id,
+        // ? Number(respondent_department_id.department_id)
+        // : undefined,
         respondent_email: respondent_email,
         respondent_other_name: respondent_other_name,
         respondent_other_email: respondent_other_email,
@@ -1299,9 +1321,6 @@ if (!datapriorityValue_Combobox) {
           }) || []
 
       },
-
-
-
       RunningModel: {
         code_group: dataReportTypeValue.lov_code,
         code_type: dataReportTypeValue.lov1 + "-" + getPaddingYear(),
@@ -1360,7 +1379,8 @@ if (!datapriorityValue_Combobox) {
       setIsLoadingScreen(false);
       handleClose();
 
-      Complaint_Get();
+      // Complaint_Get();
+      ListSearchGet();
     }
   };
 
@@ -1409,8 +1429,8 @@ if (!datapriorityValue_Combobox) {
         respondent_company_id: dataelement?.respondent_company_id,
         respondent_domain_id: dataelement?.respondent_domain_id,
         respondent_department_id: respondent_department_id?.department_id,
-          // ? Number(respondent_department_id.department_id)
-          // : undefined,
+        // ? Number(respondent_department_id.department_id)
+        // : undefined,
         respondent_email: respondent_email,
         respondent_other_name: respondent_other_name,
         respondent_other_email: respondent_other_email,
@@ -1425,16 +1445,13 @@ if (!datapriorityValue_Combobox) {
             .format("YYYY-MM-DDTHH:mm:ss")
           : null,
         lot_no: lot_no,
-        complaint_status_id: tempComplaintStatus[0] +"_CS_SUBMIT",
+        complaint_status_id: tempComplaintStatus[0] + "_CS_SUBMIT",
         create_by: user[0]?.employee_username || '',
         update_by: user[0]?.employee_username || '',
         action_type: null,
         complaintType: complainttypeModel,
         complaintRs: complaintRsModel,
         // เพิ่ม complaintFile
-
-
-
         complaintFile:
           complaintFiles?.map((item: any, index: number) => {
             return {
@@ -1514,7 +1531,8 @@ if (!datapriorityValue_Combobox) {
         text: `บันทึกข้อมูลสำเร็จ`,
         icon: 'success'
       });
-      Complaint_Get();
+      // Complaint_Get();
+      ListSearchGet();
     }
   };
 
@@ -1563,7 +1581,8 @@ if (!datapriorityValue_Combobox) {
         text: `ลบข้อมูลสำเร็จ`,
         icon: 'success'
       });
-      Complaint_Get();
+      // Complaint_Get();
+      ListSearchGet();
     }
   };
 
@@ -1779,7 +1798,8 @@ if (!datapriorityValue_Combobox) {
       setIsLoadingScreen(false);
       handleClose();
 
-      Complaint_Get();
+      // Complaint_Get();
+      ListSearchGet();
     }
   };
 
@@ -1799,21 +1819,27 @@ if (!datapriorityValue_Combobox) {
   };
 
   const handleOnclickComplaintView = (data: any) => {
+    console.log("Read step:3 เรียกฟังก์ชั่น ดูข้อมูล handleOnclickMenuView ");
+    console.log("Read step:3 ข้อมูลที่ได้จาก ListSearchGet ก่อนส่งเข้าฟังก์ชั่น Complaint_Get  ", data);
+    Complaint_Get(data);
     resetForm();
-    setdataelement(data); // ตั้งค่า dataelement ก่อน
     setOpenComplaintView(true); // แล้วค่อยเปิด Dialog
   };
 
   const handleOnclickComplaintEdit = (data: any) => {
+    console.log("Edit step:3 เรียกฟังก์ชั่น ดูข้อมูล handleOnclickMenuEdit ");
+    console.log("Edit step:3 ข้อมูลที่ได้จาก ListSearchGet ก่อนส่งเข้าฟังก์ชั่น Complaint_Get  ", data);
+    Complaint_Get(data);
     resetForm();
     setOpenComplaintEdit(true);
-    setdataelement(data);
   };
 
   const handleOnclickComplaintDelete = (data: any) => {
+    console.log("Delete step:3 เรียกฟังก์ชั่น ดูข้อมูล handleOnclickMenuDelete ");
+    console.log("Delete step:3 ข้อมูลที่ได้จาก ListSearchGet ก่อนส่งเข้าฟังก์ชั่น Complaint_Get  ", data);
+    Complaint_Get(data);
     resetForm();
     setOpenComplaintDelete(true);
-    setdataelement(data);
   };
 
   // -------- Explain Dialog Handlers --------
@@ -1825,6 +1851,7 @@ if (!datapriorityValue_Combobox) {
   
   const handleOnclickExplainAdd = (data: any) => {
     resetForm();
+    setOpenExplainAdd(true);
     setdataelement(null);
     setOpenExplainAdd(true);
   };
@@ -1863,16 +1890,17 @@ if (!datapriorityValue_Combobox) {
     setdataphotoValue_Combobox([]);
     setrespondWithinSearch(null);
     setdocumentDateSearch(null);
-    setdataset_stepcomplaint(null);
     setTextNameSearch({
       report_code: "",
       cas_number: "",
       product_name: "",
       lot_no: "",
       datastatus: "",
-      dataset_stepcomplaint:"",
+      dataset_stepcomplaint: "",
+      request_department_id: ""
     });
-    Complaint_Get()
+    // Complaint_Get()
+    // ListSearchGet();
   };
 
   // Close Dialog Handler
@@ -1903,10 +1931,12 @@ if (!datapriorityValue_Combobox) {
 
   // Initialize data on component mount
   React.useEffect(() => {
-
     resetSearchTable();
-    Complaint_Get();
+    
+    // Complaint_Get();
+    console.log("step:1 เรียกฟังก์ชั่น ListSearchGet();");
     LovAll_Get();
+    // ListSearchGet();
     // ReportType_Get();
     // ComplaintType_Get();
     // ComplaintRs_Get();
@@ -1919,6 +1949,12 @@ if (!datapriorityValue_Combobox) {
     // ToolUse_Get();
     // Decision_Get();
   }, []);
+
+  React.useEffect(() => {
+    if (dataset_complaintAction) {
+      ListSearchGet();
+    }
+  }, [dataset_complaintAction]);
 
 
   // Filter complaint types based on selected report type (from ComplaintRead.tsx)
@@ -1982,7 +2018,7 @@ if (!datapriorityValue_Combobox) {
         <div className="px-2 pt-2 pb-5">
           <label className="sarabun-regular-datatable">ค้นหา</label>
         </div>
-        <Divider sx={{ my: 0.1, borderColor: "#39a2f2" }} /> 
+        <Divider sx={{ my: 0.1, borderColor: "#39a2f2" }} />
         <Grid container spacing={2} mt={2}>
           <Grid size={4}>
             <AutocompleteComboBox
@@ -1991,13 +2027,7 @@ if (!datapriorityValue_Combobox) {
               ) || null}
               labelName="ประเภทเอกสาร (Report Type)"
               options={dataset_reporttype || []}
-              column="lov_code" // หรือชื่อ field ที่คุณต้องการแสดง
-              // setvalue={(val) =>
-              //   setTextNameSearch({
-              //     ...TextNameSearch,
-              //     report_code: val?.id || "", // เก็บแค่ id เป็น string
-              //   })
-              // }
+              column="lov_code"
               setvalue={(val) => {
                 setTextNameSearch({
                   ...TextNameSearch,
@@ -2063,10 +2093,10 @@ if (!datapriorityValue_Combobox) {
             <DesktopDatePickers
               labelName={"วันที่ออกเอกสาร (Document Issuance Date)"}
               value={documentDateSearch}
-              handleChange={setdocumentDateSearch}
+              handleChange={(val) => setdocumentDateSearch(val ?? null)}
             />
           </Grid>
-          
+
           <Grid size={4}>
             <AutocompleteComboBox
               value={dataset_stepcomplaint?.find(
@@ -2078,12 +2108,12 @@ if (!datapriorityValue_Combobox) {
               setvalue={(val) =>
                 setTextNameSearch({
                   ...TextNameSearch,
-                  dataset_stepcomplaint: val?.id || "", // เก็บแค่ id เป็น string
+                  dataset_stepcomplaint: val?.lov_code || "", // เก็บแค่ id เป็น string
                 })
               }
             />
           </Grid>
-
+          
         </Grid>
 
         {/* ======================================================================== */}
@@ -2147,6 +2177,7 @@ if (!datapriorityValue_Combobox) {
         open={openComplaintAdd}
         dialogWidth="xl"
         openBottonHidden={true}
+        hideReject={true}
         titlename={"Complaint // เพิ่มข้อมูล"}
         buttonText={"Save & Submit"}
         handleClose={handleClose}
@@ -2259,11 +2290,13 @@ if (!datapriorityValue_Combobox) {
         open={openComplaintEdit}
         dialogWidth="xl"
         openBottonHidden={true}
+        hideReject={true}
         titlename={'Complaint // แก้ไขข้อมูล'}
         buttonText={"Save & Submit"}
         handleClose={handleClose}
         handlefunction={ComplaintEdit}
         handlesavedraft={ComplaintSavedraftAdd}
+        hideSaveDraft={true}
         buttonColor="success"
         element={<ComplaintBody
           action="Edit"
@@ -2290,7 +2323,6 @@ if (!datapriorityValue_Combobox) {
             onReportTypeChange={(val) => {
               setdataReportTypeValue(val);
               setReportTypeError(false);
-              // Clear all validation errors when report type changes
               setDateOfDetectionError(false);
               setDepartmentAreaError(false);
               setProductNameError(false);
@@ -2357,6 +2389,7 @@ if (!datapriorityValue_Combobox) {
         dialogWidth="xl"
         hideSaveDraft={true}
         openBottonHidden={true}
+        hideReject={true}
         titlename={'Complaint // ลบข้อมูล'}
         buttonText={"Delete"}
         handleClose={handleClose}
@@ -2368,7 +2401,7 @@ if (!datapriorityValue_Combobox) {
       />
 
       {/* ---------------------------------------------------------------------- */}
-      {/* ------------------------ Explain FuncDialog ------------------------ */}
+        {/* ------------------------ Explain FuncDialog ------------------------ */}
       {/* ---------------------------------------------------------------------- */}
 
       <FuncDialog
@@ -2378,10 +2411,13 @@ if (!datapriorityValue_Combobox) {
         titlename={"Explain // รายละเอียด"}
         handleClose={handleClose}
         buttonColor="success"
-        element={<ComplaintBody
+        element={<ExplaintBody
           action="Explain"
+          handleOpenAdd={() => handleOnclickExplainAdd(null)}
         />}
       />
+
+
 
       <FuncDialog
         open={openExplainAdd}
@@ -2433,7 +2469,7 @@ if (!datapriorityValue_Combobox) {
         element={<ComplaintBody
           action="Explain_Delete"
         />}
-      /> */}
+      />
 
       {/* Dialog Sections */}
 

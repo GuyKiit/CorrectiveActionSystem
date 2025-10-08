@@ -8,7 +8,7 @@ type WithChildren = {
 }
 const ListComplaintContext = createContext<ListComplaintContextProps>(initialListComplaint);
 const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
-    const [dataelement, setdataelement] = React.useState<Launch | null>(initialListComplaint.dataelement);
+    const [dataelement, setdataelement] = React.useState<any>(initialListComplaint.dataelement);
     const [Complaint_no, setComplaint_no] = useState<any>(
         initialListComplaint.Complaint_no
     );
@@ -116,6 +116,9 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
     );
     const [complaint_status_id, setcomplaint_status_id] = useState<any>(
         initialListComplaint.complaint_status_id
+    );
+    const [complaint_status_label, setcomplaint_status_label] = useState<any>(
+        initialListComplaint.complaint_status_label
     );
     const [status_last_datetime, setstatus_last_datetime] = useState<dayjs.Dayjs>(
         dayjs(initialListComplaint.status_last_datetime)
@@ -289,6 +292,12 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
     const [dataQcappValue, setdataQcappValue] = useState<any>(
         initialListComplaint.dataQcappValue
     );
+    const [dataFuapp, setdataFuapp] = useState<any>(
+        initialListComplaint.dataFuapp
+    );
+    const [dataFuappValue, setdataFuappValue] = useState<any>(
+        initialListComplaint.dataFuappValue
+    );
 
     const [explain_id, setexplain_id] = useState<any>(
         initialListComplaint.explain_id
@@ -420,6 +429,18 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
     const [dataset_stepcomplaint, setdataset_stepcomplaint] = useState<any>(
         initialListComplaint.dataset_stepcomplaint
     );
+    const [dataset_complaintAction, setdataset_complaintAction] = useState<any>(
+        initialListComplaint.setdataset_complaintAction
+    );
+    const [dataset_complaintActionNew, setdataset_complaintActionNew] = useState<any>(
+        initialListComplaint.setdataset_complaintActionNew
+    );
+    const [dataset_complaintActionExplain, setdataset_complaintActionExplain] = useState<any>(
+        initialListComplaint.setdataset_complaintActionExplain
+    );
+    const [dataset_complaintActionClose, setdataset_complaintActionClose] = useState<any>(
+        initialListComplaint.setdataset_complaintActionClose
+    );
 
     return (
         <ListComplaintContext.Provider
@@ -471,6 +492,7 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 acknowledge_email,
                 acknowledge_datetime,
                 complaint_status_id,
+                complaint_status_label,
                 status_last_datetime,
                 return_from_status_id,
                 return_from_status_datetime,
@@ -507,6 +529,10 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 dataset_domain,
                 complaintFiles,
                 dataset_stepcomplaint,
+                dataset_complaintAction,
+                dataset_complaintActionNew,
+                dataset_complaintActionExplain,
+                dataset_complaintActionClose,
 
                 //--------Explaint-------
                 dataTooluse,
@@ -522,6 +548,8 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 dataSectionappValue,
                 dataQcapp,
                 dataQcappValue,
+                dataFuapp,
+                dataFuappValue,
 
                 explain_id,
                 complaint_id,
@@ -613,6 +641,7 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 setacknowledge_email,
                 setacknowledge_datetime,
                 setcomplaint_status_id,
+                setcomplaint_status_label,
                 setstatus_last_datetime,
                 setreturn_from_status_id,
                 setreturn_from_status_datetime,
@@ -647,6 +676,10 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 setdataset_domain,
                 setcomplaintFiles,
                 setdataset_stepcomplaint,
+                setdataset_complaintAction,
+                setdataset_complaintActionNew,
+                setdataset_complaintActionExplain,
+                setdataset_complaintActionClose,
 
                 //--------Explaint-------
                 setdataToolUse,
@@ -662,6 +695,8 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 setdataSectionappValue,
                 setdataQcapp,
                 setdataQcappValue,
+                setdataFuapp,
+                setdataFuappValue,
 
                 setexplain_id,
                 setcomplaint_id,
