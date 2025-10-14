@@ -315,6 +315,8 @@ export default function Complaint() {
   const [successCardOpen, setSuccessCardOpen] = React.useState(false);
   const [successCardMessage, setSuccessCardMessage] = React.useState("");
   const [openAddlist, setOpenAddlist] = React.useState(false);
+
+  const [explainList, setExplainList] = useState<any[]>([]);
   
   // const [openSync, setOpenSync] = React.useState(false);
   // const [statusMode, setstatusMode] = React.useState([]);
@@ -751,6 +753,46 @@ export default function Complaint() {
       }
     } catch (e) {
       console.log("error");
+    }
+  };
+
+  const Explain_Get = async () => {
+    if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  Explain_Get");
+  
+    if (!dataelement?.id) {
+      console.log("No complaint ID, skipping explain fetch");
+      return;
+    }
+  
+    setIsLoadingScreen(true);
+    const dataset = {
+      complaint_id: dataelement?.id,
+    };
+    console.log("🔍 ExplainGet dataset:", dataset);
+  
+    try {
+      let response = await _POST(dataset, "/Explain/ExplainGet");
+      console.log("🔍 ExplainGet full response:", response);
+      console.log("🔍 ExplainGet response data:", response?.data);
+      console.log("🔍 ExplainGet response length:", response?.data?.length);
+      
+      if (response && response.status === "success") {
+        setIsLoadingScreen(false);
+        setExplainList(response.data || []);
+        console.log("🔍 ExplainList set to:", response.data);
+        
+        // Debug each explain record
+        if (Array.isArray(response.data)) {
+          response.data.forEach((explain: any, index: number) => {
+            console.log(`🔍 Explain record ${index}:`, explain);
+            console.log(`🔍 Explain ${index} complaintType:`, explain.complaintType);
+            console.log(`🔍 Explain ${index} complaintRs:`, explain.complaintRs);
+          });
+        }
+      }
+    } catch (e) {
+      console.log("Explain_Get error:", e);
+      setIsLoadingScreen(false);
     }
   };
 
@@ -1727,11 +1769,11 @@ if (!datapriorityValue_Combobox) {
     if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  ExplainAdd");
     const tempid = uuidv4();
 
-    
     //Function Split Domain (For using with Complaint Status)
     const tempComplaintStatus = splitByDot(user[0]?.employee_domain)
 
     // เตรียม Models สำหรับ Explain
+    
     
     const ExplainTuModel = dataTooluseValue 
       ? expToolUpdateCompId(
@@ -1750,15 +1792,17 @@ if (!datapriorityValue_Combobox) {
       : null;
 
     // สร้าง JSON payload สำหรับ Explain
+    const nextSeq = (explainList?.length || 0) + 1;
+
     const explainPayload = {
-      ExplainModel: {
+      ExplainModel:  {
         id: tempid,
         complaint_id: dataelement?.id , 
-        explain_seq: explain_seq || 1,
-        observation_analysis: observation_analysis,
-        root_cause: root_cause ,
-        corrective_action: corrective_action ,
-        preventive_action_plan: preventive_action_plan ,
+        explain_seq: nextSeq,
+        observation_analysis: observation_analysis || null,
+        root_cause: root_cause || null,
+        corrective_action: corrective_action || null,
+        preventive_action_plan: preventive_action_plan || null,
         follow_up_date: follow_up_date
           ? follow_up_date
             .hour(dayjs().hour())
@@ -1766,15 +1810,15 @@ if (!datapriorityValue_Combobox) {
             .second(dayjs().second())
             .format("YYYY-MM-DDTHH:mm:ss")
           : null,
-        responsible_name: responsible_name || user[0]?.employee_username || "",
+        responsible_name: user[0]?.employee_username || "",
         responsible_company_id: responsible_company_id?.company_id
           ? Number(responsible_company_id.company_id)
           : user[0]?.itasset_company_id || "",
         responsible_department_id: responsible_department_id?.department_id
           ? Number(responsible_department_id.department_id)
           : user[0]?.itasset_department_id || "",
-        responsible_position: responsible_position || user[0]?.employee_position || "",
-        responsible_email: responsible_email || user[0]?.employee_email || "",
+        responsible_position: user[0]?.employee_position || "",
+        responsible_email: user[0]?.employee_email || "",
         responsible_date: responsible_date
           ? responsible_date
             .hour(dayjs().hour())
@@ -1782,12 +1826,12 @@ if (!datapriorityValue_Combobox) {
             .second(dayjs().second())
             .format("YYYY-MM-DDTHH:mm:ss")
           : new Date().toISOString(),
-        close_status: close_status ,
-        close_name: close_name ,
-        close_company_id: close_company_id ,
-        close_department_id: close_department_id ,
-        close_position: close_position ,
-        close_email: close_email ,
+        close_status: close_status || null,
+        close_name: close_name || null,
+        close_company_id: close_company_id || 0,
+        close_department_id: close_department_id || 0,
+        close_position: close_position || null,
+        close_email: close_email || null,
         close_date: close_date
           ? close_date
             .hour(dayjs().hour())
@@ -1795,12 +1839,12 @@ if (!datapriorityValue_Combobox) {
             .second(dayjs().second())
             .format("YYYY-MM-DDTHH:mm:ss")
           : null,
-        return_detail: return_detail ,
-        return_name: return_name ,
-        return_company_id: return_company_id ,
-        return_department_id: return_department_id ,
-        return_position: return_position ,
-        return_email: return_email ,
+        return_detail: return_detail || null,
+        return_name: return_name || null,
+        return_company_id: return_company_id || 0,
+        return_department_id: return_department_id || 0,
+        return_position: return_position || null,
+        return_email: return_email || null,
         return_datetime: return_datetime
           ? return_datetime
             .hour(dayjs().hour())
@@ -1913,14 +1957,31 @@ if (!datapriorityValue_Combobox) {
     setOpenComplaintAdd(true);
   };
 
-  const handleOnclickComplaintView = (data: any) => {
-    if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  handleOnclickComplaintView");
+  const handleOnclickComplaintView = async (data: any) => {
+    if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  Explaint_Get");
 
-    console.log("Read step:3 เรียกฟังก์ชั่น ดูข้อมูล handleOnclickMenuView ");
-    console.log("Read step:3 ข้อมูลที่ได้จาก ListSearchGet ก่อนส่งเข้าฟังก์ชั่น Complaint_Get  ", data);
-    Complaint_Get(data);
-    resetForm();
-    setOpenComplaintView(true); // แล้วค่อยเปิด Dialog
+    setIsLoadingScreen(true)
+    const dataset = {
+      id: data.id,
+      user_id: user[0]?.employee_username,
+      domain_id: user[0]?.employee_domain,
+      department_id: user[0]?.itasset_department_id,
+      company_id: user[0]?.itasset_company_id,
+    };
+    console.log("Read step:4 dataset: ", dataset);
+
+
+    try {
+      let response = await _POST(dataset, "/Explaint/ExplaintGet");
+      console.log("Read step:4 ผลลัพธ์ : ", response);
+      console.log("Read step:4 Normalize ปรับค่าใหม่ : ", response.data[0],);
+      if (response && response.status === "success") {
+        setIsLoadingScreen(false);
+        setdataelement(response.data[0])
+      }
+    } catch (e) {
+      console.log("error");
+    }
   };
 
   const handleOnclickComplaintEdit = (data: any) => {
@@ -1968,9 +2029,51 @@ if (!datapriorityValue_Combobox) {
   const handleOnclickExplainView = (data: any) => {
     if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  handleOnclickExplainView");
 
-    resetForm();
-    setOpenExplainView(true);
+    console.log("🔍 handleOnclickExplainView called with data:", data);
+    
+    // ตั้งค่า dataelement ก่อนเพื่อให้ useEffect ใน ExplaintBody ทำงานได้
     setdataelement(data);
+    
+    // ไม่ reset form ในโหมดดูข้อมูล เพื่อไม่ให้ dataReportTypeValue หาย
+    setOpenExplainView(true);
+
+    // ใช้ข้อมูลที่ส่งมาจากรายการ explain โดยตรง
+    if (data) {
+      console.log("🔍 Setting explain data for View:", data);
+      console.log("🔍 Explain data complaintType:", data.complaintType);
+      console.log("🔍 Explain data complaintRs:", data.complaintRs);
+      console.log("🔍 Explain data other:", data.other);
+      
+      // Set ข้อมูล explain ลงใน context
+      setobservation_analysis(data.observation_analysis || "");
+      setroot_cause(data.root_cause || "");
+      setcorrective_action(data.corrective_action || "");
+      setpreventive_action_plan(data.preventive_action_plan || "");
+      
+      // 🔧 เพิ่ม: ตั้งค่าการแสดง/ซ่อน sections ตาม report_type สำหรับ View mode
+      // ใช้ dataelement.report_type หรือ data.complaint.report_type ขึ้นกับโครงสร้างข้อมูล
+      const reportType = data.complaint?.report_type || data.report_type || dataelement?.report_type;
+      console.log("🔍 ExplainView - Setting visibility for report type:", reportType);
+      
+      if (reportType && dataset_reporttype) {
+        const reportTypeObj = dataset_reporttype.find(
+          (item: any) => 
+            item.id === reportType || 
+            item.lov_code === reportType
+        );
+        
+        if (reportTypeObj) {
+          console.log("🔍 ExplainView - Found report type object:", reportTypeObj);
+          // บังคับส่งข้อมูลไปให้ ExplaintBody ผ่าน dataelement 
+          const updatedDataElement = {
+            ...data,
+            report_type: reportTypeObj.lov_code,
+            _forceVisibilityUpdate: true // flag เพื่อบังคับ update visibility
+          };
+          setdataelement(updatedDataElement);
+        }
+      }
+    }
   };
 
   const handleOnclickExplainApproveSc = (data: any) => {
@@ -2320,7 +2423,6 @@ if (!datapriorityValue_Combobox) {
         element={
           <ComplaintBody
             action="Add"
-            // onBlocksChange={(data) => setComplaintBlocks(data)}
             validateDetailText={blockValidateErrors}
             handleOpenAdd={handleOpenAddList}
             validateText={{
@@ -2547,6 +2649,7 @@ if (!datapriorityValue_Combobox) {
         element={<ComplaintBody
           action="Explain"
           handleOpenAdd={() => handleOnclickExplainAdd(dataelement)}
+          handleOnclickExplainView={handleOnclickExplainView}
         />}
       />
 
@@ -2583,9 +2686,12 @@ if (!datapriorityValue_Combobox) {
         openBottonHidden={false}
         titlename={"Explain // ดูข้อมูล"}
         handleClose={handleClose}
+        handlefunction={Explain_Get}
         buttonColor="success"
         element={<ExplaintBody
-          action="ExplainRead"
+          action="ExplainAdd"
+          isViewMode={true}
+          //handleOnclickExplainView={handleOnclickExplainView}
         />}
       />
       

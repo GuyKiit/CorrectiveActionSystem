@@ -99,6 +99,8 @@ interface ExplaintBody {
   validateDetailText?: { [index: number]: detail };
   onBlocksChange?: (blocks: Block[]) => void;
   handleOpenAdd?: () => void;
+  handleOnclickExplainView?: (item: any) => void;
+  isViewMode?: boolean;
 }
 
 type LovType = {
@@ -132,13 +134,22 @@ export default function ExplaintBody({
   onBlocksChange,
   validateDetailText,
   handleOpenAdd,
+  handleOnclickExplainView,
+  isViewMode = false,
 }: ExplaintBody) {
-  const isActionRead = action === "Read" || action === "ExplainRead";
+  const isActionRead = action === "Read" || action === "ExplainRead" || isViewMode;
   const isActionAdd = action === "Add" ;
   const isActionEdit = action === "Edit";
   const isActionDelete = action === "Delete";
   const isActionExplain = action === "Explain";
   const isActionExplainAdd = action === "ExplainAdd";
+
+  // ตั้งค่า isROOTHidden เป็น false เมื่ออยู่ในโหมดดูข้อมูล
+  React.useEffect(() => {
+    if (action === "ExplainRead" || isViewMode) {
+      setIsROOTHidden(false);
+    }
+  }, [action, isViewMode]);
 
 
   const user = cleanAccessData("userSession");
@@ -351,7 +362,7 @@ export default function ExplaintBody({
   const [isCAHidden, setIsCAHidden] = useState(true);
   const [isPAPHidden, setIsPAPHidden] = useState(true);
   const [isOBSAHidden, setIsOBSAHidden] = useState(true);
-  const [isROOTHidden, setIsROOTHidden] = useState(true);
+  const [isROOTHidden, setIsROOTHidden] = useState(false);
   const [isApprovalHidden, setIsApprovalHidden] = useState(false); // ซ่อนข้อมูลผู้รับรอง
 
   const [isCasNumberHidden, setisCasNumberHidden] = useState(true);
@@ -388,6 +399,8 @@ export default function ExplaintBody({
   const [isMinimizeotappOpen, setisMinimizeOtappOpen] = useState(true);
   const [isMinimizedeapp2Open, setisMinimizeDeapp2Open] = useState(true);
   const [isMinimizeotapp2Open, setisMinimizeOtapp2Open] = useState(true);
+
+  
 
 
   // Function Handlers (On Change Event) ======================================================
@@ -788,7 +801,7 @@ export default function ExplaintBody({
   ]);
 
   React.useEffect(() => {
-    if (dataelement && action === "ExplainAdd" ) {
+    if (dataelement && action === "ExplainAdd" || action === "ExplainRead" || isViewMode ) {
       
       // ดึงค่าจากหน้า Explain รายละเอียด มา set ในหน้า Explain เพิ่มข้อมูล
       console.log("🔍 ExplaintBody - Setting responsible fields from respondent data:", dataelement);
@@ -818,6 +831,9 @@ export default function ExplaintBody({
       
       // Set อีเมลจากอีเมลผู้ถูกร้องเรียน
       setresponsible_email(dataelement?.respondent_email || dataelement?.request_email || "");
+      
+      // Set วันที่ชี้แจงเป็นวันปัจจุบัน
+      setresponsible_date(dayjs());
       
       // ตั้งค่า isROOTHidden ตาม report_type ของข้อมูลที่โหลดมา
       if (dataelement.report_type) {
@@ -870,9 +886,21 @@ export default function ExplaintBody({
       setrespondent_email(
         dataelement?.respondent_email ? dataelement?.respondent_email : ""
       );
-      setdataToolUse(setExplainTU(dataelement?.complaintType));
+      // 🔍 Debug Tools Used data loading
+      console.log("🔍 Loading Tools Used data from dataelement.complaintType:", dataelement?.complaintType);
+      const toolsUsedData = setExplainTU(dataelement?.complaintType);
+      console.log("🔍 Processed Tools Used data:", toolsUsedData);
+      setdataToolUse(toolsUsedData);
+      
+      console.log("🔍 Loading ToolOther from dataelement.other:", dataelement?.other);
       setToolOther(dataelement?.other ? dataelement?.other : "");
-      setdataDecision(setExplainDD(dataelement?.complaintRs));
+      
+      // 🔍 Debug Decision data loading
+      console.log("🔍 Loading Decision data from dataelement.complaintRs:", dataelement?.complaintRs);
+      const decisionData = setExplainDD(dataelement?.complaintRs);
+      console.log("🔍 Processed Decision data:", decisionData);
+      setdataDecision(decisionData);
+      
       setDecisionOther(dataelement?.other ? dataelement?.other : "");
       setdetail(dataelement?.detail ? dataelement?.detail : "");
       setrespond_date_within(
@@ -930,21 +958,34 @@ export default function ExplaintBody({
 
   const setExplainTU = (data: any) => {
     if (true) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  setExplainTU");
+    console.log("🔍 setExplainTU input data:", data);
+    console.log("🔍 dataToolUse_Combobox available:", dataToolUse_Combobox);
 
     const newData: any[] = [];
-    Array.isArray(data) &&
-      data.forEach((el) => {
+    if (Array.isArray(data)) {
+      data.forEach((el, index) => {
+        console.log(`🔍 Processing Tools Used item ${index}:`, el);
         const filter = dataToolUse_Combobox.find(
           (item: any) => item.id === el.explain_tu_id
         );
+        console.log(`🔍 Found matching tool for ${el.explain_tu_id}:`, filter);
 
         if (filter) {
-          newData.push({
+          const processedItem = {
             ...filter,
             other: el.other || "", // ⭐ เก็บค่าข้อความ Other มาด้วย
-          });
+          };
+          console.log(`🔍 Adding processed item:`, processedItem);
+          newData.push(processedItem);
+        } else {
+          console.warn(`🚫 No matching tool found for explain_tu_id: ${el.explain_tu_id}`);
         }
       });
+    } else {
+      console.warn("🚫 setExplainTU input data is not an array:", data);
+    }
+    
+    console.log("🔍 setExplainTU returning:", newData);
     return newData;
   };
 
@@ -1519,6 +1560,7 @@ export default function ExplaintBody({
                               lov1: p.lov1,
                             }))}
                             action={action}
+                            isViewMode={isViewMode}
                           />
 
                           {/* Grouped display by attachment type - Full width boxes stacked vertically */}
