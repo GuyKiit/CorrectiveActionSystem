@@ -108,6 +108,8 @@ export type ListComplaintContextProps = {
     dataTooluse_Combobox?: any
     dataTooluseValue?: any
     dataTooluseValue_Combobox?: any
+
+    dataDecision?: any
     dataDecision_Combobox?: any
     dataDecisionValue?: any
     dataDecisionValue_Combobox?: any

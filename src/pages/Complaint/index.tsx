@@ -618,6 +618,7 @@ export default function Complaint() {
         console.log("🔍 index.tsx - attach_type data:", grouped["attach_type"]);
         setdatastatus?.(grouped["complaint_status"] || []);
         setdataToolUse_Combobox?.(grouped["tool_use"] || []);
+       
         setdataDecision_Combobox?.(grouped["decision_disposition"] || []);
         setdataApprove_Combobox?.(grouped["approve_select"] || []);
         setdataset_stepcomplaint?.(grouped["complaint_step"] || []);
@@ -1574,7 +1575,6 @@ if (!datapriorityValue_Combobox) {
             return {
               id: item.id || undefined,
               cf_type: "Complaint",
-              //complaint_id: tempid,
               complaint_id: dataelement?.id,
               complaint_at_id: item.attachmentType,
               other: item.attachmentType === "TRR_AT_4" ? (item.otherText?.trim() || null) : null,
@@ -1767,13 +1767,28 @@ if (!datapriorityValue_Combobox) {
   // CREATE - Add Complaint
   const ExplainAdd = async () => {
     if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  ExplainAdd");
+    
+    //await Explain_Get();
+    
     const tempid = uuidv4();
 
     //Function Split Domain (For using with Complaint Status)
     const tempComplaintStatus = splitByDot(user[0]?.employee_domain)
 
-    // เตรียม Models สำหรับ Explain
-    
+    let currentExplainList: any[] = [];
+    if (dataelement?.id) {
+      try {
+        const dataset = {
+          complaint_id: dataelement?.id,
+        };
+        const response = await _POST(dataset, "/Explain/ExplainGet");
+        if (response && response.status === "success") {
+          currentExplainList = response.data || [];
+        }
+      } catch (error) {
+        console.error("Error fetching explain data:", error);
+      }
+    }
     
     const ExplainTuModel = dataTooluseValue 
       ? expToolUpdateCompId(
@@ -1792,7 +1807,15 @@ if (!datapriorityValue_Combobox) {
       : null;
 
     // สร้าง JSON payload สำหรับ Explain
-    const nextSeq = (explainList?.length || 0) + 1;
+    // Find the maximum explain_seq for current complaint and add 1
+    const maxExplainSeq = currentExplainList && currentExplainList.length > 0 
+      ? Math.max(...currentExplainList.map((item: any) => parseInt(item.explain_seq) || 0))
+      : 0;
+    const nextSeq = maxExplainSeq + 1;
+    
+    console.log('🔍 Current explainList:', explainList);
+    console.log('🔍 Max explain_seq found:', maxExplainSeq);
+    console.log('🔍 Next explain_seq will be:', nextSeq);
 
     const explainPayload = {
       ExplainModel:  {
@@ -1972,7 +1995,7 @@ if (!datapriorityValue_Combobox) {
 
 
     try {
-      let response = await _POST(dataset, "/Explaint/ExplaintGet");
+      let response = await _POST(dataset, "/Explain/ExplainGet");
       console.log("Read step:4 ผลลัพธ์ : ", response);
       console.log("Read step:4 Normalize ปรับค่าใหม่ : ", response.data[0],);
       if (response && response.status === "success") {
@@ -2072,9 +2095,33 @@ if (!datapriorityValue_Combobox) {
           };
           setdataelement(updatedDataElement);
         }
+        
       }
     }
   };
+
+  // const handleOnclickExplainView = async (data: any) => {
+  //   if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  Explaint_Get");
+
+  //   setIsLoadingScreen(true)
+  //   const dataset = {
+  //     id: data.id,
+  //   };
+  //   console.log("Read step:4 dataset: ", dataset);
+
+
+  //   try {
+  //     let response = await _POST(dataset, "/Explaint/ExplaintGet");
+  //     console.log("Read step:4 ผลลัพธ์ : ", response);
+  //     console.log("Read step:4 Normalize ปรับค่าใหม่ : ", response.data[0],);
+  //     if (response && response.status === "success") {
+  //       setIsLoadingScreen(false);
+  //       setdataelement(response.data[0])
+  //     }
+  //   } catch (e) {
+  //     console.log("error");
+  //   }
+  // };
 
   const handleOnclickExplainApproveSc = (data: any) => {
     if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  handleOnclickExplainApproveSc");
@@ -2667,19 +2714,6 @@ if (!datapriorityValue_Combobox) {
         />}
       />
 
-      {/* <FuncDialog
-        open={openComplaintView}
-        dialogWidth="xl"
-        openBottonHidden={false}
-        titlename={"Approve Section Head // รายละเอียด"}
-        handleClose={handleClose}
-        buttonColor="success"
-        element={<ComplaintBody
-          action="ApproveScAdd"
-          handleOpenAdd={() => handleOnclickExplainApproveSc(dataelement)}
-        />}
-      /> */}
-
       <FuncDialog
         open={openExplainView}
         dialogWidth="xl"
@@ -2691,7 +2725,6 @@ if (!datapriorityValue_Combobox) {
         element={<ExplaintBody
           action="ExplainAdd"
           isViewMode={true}
-          //handleOnclickExplainView={handleOnclickExplainView}
         />}
       />
       
@@ -2741,6 +2774,19 @@ if (!datapriorityValue_Combobox) {
 
           />
         }
+      /> */}
+
+      {/* <FuncDialog
+        open={openComplaintView}
+        dialogWidth="xl"
+        openBottonHidden={false}
+        titlename={"Approve Section Head // รายละเอียด"}
+        handleClose={handleClose}
+        buttonColor="success"
+        element={<ComplaintBody
+          action="ApproveScAdd"
+          handleOpenAdd={() => handleOnclickExplainApproveSc(dataelement)}
+        />}
       /> */}
 
       <FuncDialog
