@@ -7,6 +7,7 @@ import Report from '../pages/Report'
 import Home from '../pages/Home'
 import PageComplaint from '../pages/Complaint/PageComplaint'
 import DepartmentSetting from '../pages/DepartmentSetting'
+import { ListDepartmentSettingProvider } from '../pages/DepartmentSetting/core/ListDepartmentSettingContext'
 
 
 /**
@@ -31,7 +32,11 @@ export default function AppRoutes() {
             {/* <Route path='home' element={<Home />} /> */}
             <Route path='complaint' element={<PageComplaint/>} />
             <Route path='report' element={<Report/>} />
-            <Route path='departmentsetting' element={<DepartmentSetting/>} />
+            <Route path='departmentsetting' element={
+              <ListDepartmentSettingProvider>
+                <DepartmentSetting/>
+              </ListDepartmentSettingProvider>
+            } />
             {/* <Route path='profile' element={<div>Profile</div>} /> */}
             {/* <Route path='users/list' element={<div>Users list</div>} />
             <Route path='users/roles' element={<div>Users roles</div>} />
