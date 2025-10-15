@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, use } from "react";
 import { _GET, _POST, _POST_FORMDATA, _POST_SYNC, _POST_SYS_API } from "../../service/mas";
 import { _formatNumber, conCatDateTime } from "../../../libs/datacontrol";
 import { setValueMas } from "../../../libs/setvaluecallback";
@@ -28,7 +28,10 @@ import BasicChips from "../../components/MUI/BasicChips";
 import FullWidthButton from "../../components/MUI/FullWidthButton";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CloseIcon from '@mui/icons-material/CheckCircle';
-import { useListComplaint } from "../Complaint/core/ListComplaintContext";
+// import { useListComplaint } from "../Complaint/core/ListComplaintContext";
+import { useListDepartmentSetting } from "./core/ListDepartmentSettingContext";
+import DepartmentSettingBody from "./components/DepartmentSettingBody";
+import { data } from "react-router-dom";
 // import ExplaintBody from "./components/ExplaintBody";
 
 // =====================================================================================================
@@ -155,113 +158,64 @@ export default function DepartmentSetting() {
   // =====================================================================================================
   const {
     // Main Complaint Fields
-    dataelement, setdataelement,
-    Complaint_no, no, id, report_type, cas_number, doc_date, date_of_detection,
-    request_name, request_company_id, request_domain_id, request_department_id,
-    request_position, request_email, request_phone, request_date,
-    respondent_company_id, respondent_domain_id, respondent_department_id,
-    respondent_email, respondent_other_name, respondent_other_email,
-    product_name, detail, compTypeOther, compRsOther,
-    priority_level, respond_date_within, lot_no, user_file_name,
-    acknowledge_flag, acknowledge_name, acknowledge_company_id,
-    acknowledge_department_id, acknowledge_position, acknowledge_email,
-    acknowledge_datetime, complaint_status_id, status_last_datetime,
-    return_from_status_id, return_from_status_datetime, dc_name,
-    dc_company_id, dc_department_id, dc_position, dc_email,
-    record_status, create_by, create_datetime, update_by, update_datetime,
-    ComplaintStatusID_Combobox, dataReportTypeValue,
-    dataComplaintTypeValue_Combobox,
-    dataComplaintType_Combobox, dataComplaintRsValue_Combobox, dataComplaintRs_Combobox,
-    dataphotoValue_Combobox, dataphoto_Combobox, datapriorityValue_Combobox, datastatus,
-    datapriority_Combobox, datapriority, PriorityLevel, clauseOther, phoTypeOther,
-    complaintFiles, RunningModel, explain_id, approve_step, otherText,
-
-    // Dataset Variables
-    dataset_reporttype,
-    dataset_department,
-    dataset_company,
-    dataset_domain,
-    dataset_stepcomplaint,
-    dataset_complaintAction,
-    dataset_complaintActionNew,
-    dataset_complaintActionExplain,
-    dataset_complaintActionClose,
-
-    //Explaint
-    dataTooluse,
-    dataDecision,
-    dataDecision_Combobox,
-    dataApprove_Combobox,
-
+    dataelement,
+    dept_id,
+    domain_dept_id,
+    dept_email,
+    approve_id,
+    dept_setup_id,
+    step,
+    sectionApprove,
+    qcApprove,
 
     // Setter Functions
-    setComplaint_no, setno, setid, setreport_type, setcas_number, setdoc_date,
-    setdate_of_detection, setrequest_name, setrequest_company_id,
-    setrequest_domain_id, setrequest_department_id, setrequest_position,
-    setrequest_email, setrequest_phone, setuser_file_name, setrequest_date,
-    setrespondent_company_id, setrespondent_domain_id, setrespondent_department_id,
-    setrespondent_email, setrespondent_other_name, setrespondent_other_email,
-    setproduct_name, setdetail, setcomplaint_type_other,
-    setpriority_level, setrespond_date_within, setlot_no, setcompTypeOther,
-    setcompRsOther, setreference_standard_other, setacknowledge_flag,
-    setacknowledge_name, setacknowledge_company_id, setacknowledge_department_id,
-    setacknowledge_position, setacknowledge_email, setacknowledge_datetime,
-    setcomplaint_status_id, setstatus_last_datetime, setreturn_from_status_id,
-    setreturn_from_status_datetime, setdc_name, setdc_company_id,
-    setdc_department_id, setdc_position, setdc_email, setrecord_status,
-    setcreate_by, setcreate_datetime, setupdate_by, setupdate_datetime,
-    setComplaintStatusID_Combobox, setdataReportTypeValue, setdataComplaintType_Combobox,
-    setdataComplaintTypeValue_Combobox, setdataComplaintRs_Combobox, setdatastatus,
-    setdataComplaintRsValue_Combobox, setdataphoto_Combobox, setdataphotoValue_Combobox,
-    setdatapriorityValue_Combobox, setdatapriority_Combobox, setdatapriority,
-    setPriorityLevel, setclauseOther, setphoTypeOther, setdataset_reporttype,
-    setdataset_department, setdataset_company, setdataset_domain, setcomplaintFiles, setotherText,
+    setdataelement,
+    setdept_id,
+    setdomain_dept_id,
+    setdept_email,
+    setapprove_id,
+    setdept_setup_id,
+    setstep,
+    setsectionApprove,
+    setqcApprove,
+
+    //----------dataset---------
+    dataset_company, setdataset_company,
+    dataset_department, setdataset_department,
+    dataset_domain, setdataset_domain,
+    dataset_username, setdataset_username,
 
 
-    //set Explaint
-    setdataToolUse,
-    setdataToolUse_Combobox,
-    setdataDecision_Combobox,
-    setdataApprove_Combobox,
-    setdataDecision,
-    setdataset_stepcomplaint,
-    setdataset_complaintAction,
-    setdataset_complaintActionNew,
-    setdataset_complaintActionExplain,
-    setdataset_complaintActionClose,
-    setroot_cause,
-    setobservation_analysis,
-    setcorrective_action,
-    setpreventive_action_plan,
-  } = useListComplaint();
+
+  } = useListDepartmentSetting();
 
   // =====================================================================================================
   // LOCAL STATE VARIABLES (from index.tsx)
   // =====================================================================================================
-  
+
   // Variable for Data Table
   const [datalist, setdatalist] = React.useState<any>([]);
-  
+
   // Variables for Dialogs and Modals
-  const [openComplaintAdd, setOpenComplaintAdd] = React.useState(false);
-  const [openComplaintView, setOpenComplaintView] = React.useState(false);
-  const [openComplaintEdit, setOpenComplaintEdit] = React.useState(false);
-  const [openComplaintDelete, setOpenComplaintDelete] = React.useState(false);
+  const [openDepartmentSettingAdd, setOpenDepartmentSettingAdd] = React.useState(false);
+  const [openDepartmentSettingView, setOpenDepartmentSettingView] = React.useState(false);
+  const [openDepartmentSettingEdit, setOpenDepartmentSettingEdit] = React.useState(false);
+  const [openDepartmentSettingDelete, setOpenDepartmentSettingDelete] = React.useState(false);
   const [openExplain, setOpenExplain] = React.useState(false);
   const [openExplainAdd, setOpenExplainAdd] = React.useState(false);
   const [openExplainView, setOpenExplainView] = React.useState(false);
 
   const [openExplainApproveSc, setOpenExplainApproveSc] = React.useState(false);
-  
+
   const [openUpLoad, setOpenUpload] = React.useState(false);
-  
-  
-   const [ComplaintBlocks, setComplaintBlocks] = useState<Block[]>([]);
+
+
+  const [ComplaintBlocks, setComplaintBlocks] = useState<Block[]>([]);
   const [blockValidateErrors, setBlockValidateErrors] = useState<{ [index: number]: data_detail }>({});
   const [successCardOpen, setSuccessCardOpen] = React.useState(false);
   const [successCardMessage, setSuccessCardMessage] = React.useState("");
   const [openAddlist, setOpenAddlist] = React.useState(false);
-  
+
 
   const handleOpenAddList = () => setOpenAddlist(true);
   const handleCloseAddlist = () => setOpenAddlist(false);
@@ -271,21 +225,19 @@ export default function DepartmentSetting() {
     dayjs.Dayjs | undefined | null
   >(dayjs().subtract(1, "month"));
   const [documentDateSearch, setdocumentDateSearch] = React.useState<
-  dayjs.Dayjs | null
->(null);
+    dayjs.Dayjs | null
+  >(null);
   const [endDateSearch, setEndDateSearch] = React.useState<
     dayjs.Dayjs | undefined | null
   >(dayjs().add(3, "month"));
 
   // Search Variables (from index.tsx)
   const [TextNameSearch, setTextNameSearch] = React.useState({
-    report_code: "",
-    cas_number: "",
-    product_name: "",
-    lot_no: "",
-    datastatus: "",
-    dataset_stepcomplaint: "",
-    request_department_id: ""
+    dataset_username: "",
+    dataset_company: "",
+    dataset_domain: "",
+    dataset_department: "",
+    Email: "",
   });
 
   const [open, setOpen] = React.useState(false);
@@ -328,262 +280,223 @@ export default function DepartmentSetting() {
     setdocumentDateSearch(null);
     setrespondWithinSearch(null);
     setEndDateSearch(null);
-    
+
   };
 
   // Reset Form Function (from index.tsx)
   const resetForm = () => {
-    setdataReportTypeValue("");
-    setcas_number("");
-    setproduct_name("");
-    setlot_no("");
-    setrespondent_company_id(null);
-    setrespondent_domain_id("");
-    setrespondent_department_id(null);
-    setdate_of_detection(null);
-    setrespondent_email("");
-    setdetail("");
-    setdatapriority(null);
-    setcompTypeOther("");
-    setcompRsOther("");
-    setclauseOther("");
-    setrequest_name("");
-    setrequest_company_id(null);
-    setrequest_domain_id("");
-    setrequest_department_id(null);
-    setrequest_position("");
-    setrequest_email("");
-    setrequest_phone("");
-
-    // เคลียร์ข้อมูล Root Cause และข้อมูล Explain
-    setroot_cause("");
-    setobservation_analysis("");
-    setcorrective_action("");
-    setpreventive_action_plan("");
-
-    // Clear ALL validation errors
-    setReportTypeError(false);
-    setRespondentDepartmentError(false);
-    setDateOfDetectionError(false);
-    setDepartmentAreaError(false);
-    setProductNameError(false);
-    setLotNoError(false);
-    setEmailError(false);
-    setComplaintTypeError(false);
-    setOtherTypeError(false);
-    setComplaintRsError(false);
-    setOtherRsError(false);
-    setClauseRsError(false);
-    setDetailError(false);
-    setPriorityError(false);
+    setdomain_dept_id("");
+    setdept_email("");
+    setsectionApprove("");
+    setqcApprove("");
   };
 
   // Extract Report Type Function (from ComplaintRead.tsx)
-  const extractReportType = (code?: string): string => {
-    if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  extractReportType");
+  // const extractReportType = (code?: string): string => {
+  //   if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  extractReportType");
 
-    if (!code) return "";
-    const prefix = "TRR_RT_";
-    if (code.includes(prefix)) {
-      return code.split(prefix)[1].trim().toUpperCase();
-    }
-    const parts = code.split("_");
-    return (parts[parts.length - 1] || "").trim().toUpperCase();
-  };
+  //   if (!code) return "";
+  //   const prefix = "TRR_RT_";
+  //   if (code.includes(prefix)) {
+  //     return code.split(prefix)[1].trim().toUpperCase();
+  //   }
+  //   const parts = code.split("_");
+  //   return (parts[parts.length - 1] || "").trim().toUpperCase();
+  // };
 
   // Handle Change Functions (from ComplaintRead.tsx)
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-    if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  handleChange");
+    if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  handleChange");
 
     setValue(newValue);
   };
 
   const splitByDot = (str: any) => {
-    if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  splitByDot");
+    if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  splitByDot");
 
     return str.split('.');
   };
 
   // Update Complaint ID Functions (from index.tsx)
-  function compTypeUpdateCompId(
-    dataComplaintTypeValue_Combobox: any,
-    complaintid: string,
-    compTypeOther: string
-  ) {
-    if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  compTypeUpdateCompId");
+  // function compTypeUpdateCompId(
+  //   dataComplaintTypeValue_Combobox: any,
+  //   complaintid: string,
+  //   compTypeOther: string
+  // ) {
+  //   if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  compTypeUpdateCompId");
 
-    const updatedData = dataComplaintTypeValue_Combobox.map((item: any) => {
-      return {
-        ...item,
-        complaint_id: complaintid,
-        other: item.isOther === "Y" ? (compTypeOther?.trim() || null) : null
+  //   const updatedData = dataComplaintTypeValue_Combobox.map((item: any) => {
+  //     return {
+  //       ...item,
+  //       complaint_id: complaintid,
+  //       other: item.isOther === "Y" ? (compTypeOther?.trim() || null) : null
 
-      };
-    });
-    return updatedData;
-  }
+  //     };
+  //   });
+  //   return updatedData;
+  // }
 
-  function compRsUpdateCompId(
-    dataComplaintRsValue_Combobox: any,
-    complaintid: string,
-    compRsOther: string,
-    clauseOther: string
-  ) {
-    if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  compRsUpdateCompId");
+  // function compRsUpdateCompId(
+  //   dataComplaintRsValue_Combobox: any,
+  //   complaintid: string,
+  //   compRsOther: string,
+  //   clauseOther: string
+  // ) {
+  //   if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  compRsUpdateCompId");
 
-    const updatedData = dataComplaintRsValue_Combobox.map((item: any) => {
-      return {
-        ...item,
-        complaint_id: complaintid,
-        other: item.isClause === "Other" ? (compRsOther?.trim() || null) : null,
-        clause: item.isClause === "Clause" ? (clauseOther?.trim() || null) : null
-      };
-    });
-    return updatedData;
-  }
+  //   const updatedData = dataComplaintRsValue_Combobox.map((item: any) => {
+  //     return {
+  //       ...item,
+  //       complaint_id: complaintid,
+  //       other: item.isClause === "Other" ? (compRsOther?.trim() || null) : null,
+  //       clause: item.isClause === "Clause" ? (clauseOther?.trim() || null) : null
+  //     };
+  //   });
+  //   return updatedData;
+  // }
 
-  function compFileUpdateCompId(
-    dataphotoValue_Combobox: any,
-    complaintid: string,
-    phoTypeOther: string
-  ) {
-    if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  compFileUpdateCompId");
+  // function compFileUpdateCompId(
+  //   dataphotoValue_Combobox: any,
+  //   complaintid: string,
+  //   phoTypeOther: string
+  // ) {
+  //   if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  compFileUpdateCompId");
 
-    const updatedData = dataphotoValue_Combobox.map((item: any) => {
-      return {
-        ...item,
-        complaint_id: complaintid,
-        other: phoTypeOther != null && phoTypeOther != "" ? phoTypeOther : null,
-      };
-    });
-    return updatedData;
-  }
+  //   const updatedData = dataphotoValue_Combobox.map((item: any) => {
+  //     return {
+  //       ...item,
+  //       complaint_id: complaintid,
+  //       other: phoTypeOther != null && phoTypeOther != "" ? phoTypeOther : null,
+  //     };
+  //   });
+  //   return updatedData;
+  // }
 
-  function getPaddingYear() {
-    if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  getPaddingYear");
+  // function getPaddingYear() {
+  //   if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  getPaddingYear");
 
-    const paddingYear = String(new Date().getFullYear() % 100).padStart(2, '0');
+  //   const paddingYear = String(new Date().getFullYear() % 100).padStart(2, '0');
 
-    return paddingYear;
-  }
+  //   return paddingYear;
+  // }
 
   // =====================================================================================================
   // UTILITY FUNCTIONS
   // =====================================================================================================
 
   // Update Complaint ID Functions
-  function expToolUpdateCompId(
-    dataTooluseValue: any,
-    explain_id: string,
-    ToolOther: string
-  ) {
-    if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  expToolUpdateCompId");
+  // function expToolUpdateCompId(
+  //   dataTooluseValue: any,
+  //   explain_id: string,
+  //   ToolOther: string
+  // ) {
+  //   if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  expToolUpdateCompId");
 
-    const updatedData = dataTooluseValue.map((item: any) => {
-      return {
-        ...item,
-        explain_id: explain_id,
-        other: item.isOther === "Y" ? (ToolOther?.trim() || null) : null
+  //   const updatedData = dataTooluseValue.map((item: any) => {
+  //     return {
+  //       ...item,
+  //       explain_id: explain_id,
+  //       other: item.isOther === "Y" ? (ToolOther?.trim() || null) : null
 
-      };
-    });
-    return updatedData;
-  }
+  //     };
+  //   });
+  //   return updatedData;
+  // }
 
-  function expDecisionUpdateCompId(
-    dataDecisionValue: any,
-    explain_id: string,
-    ToolOther: string
-  ) {
-    if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  expDecisionUpdateCompId");
+  // function expDecisionUpdateCompId(
+  //   dataDecisionValue: any,
+  //   explain_id: string,
+  //   ToolOther: string
+  // ) {
+  //   if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  expDecisionUpdateCompId");
 
-    const updatedData = dataDecisionValue.map((item: any) => {
-      return {
-        ...item,
-        explain_id: explain_id,
-        other: item.isOther === "Y" ? (ToolOther?.trim() || null) : null
+  //   const updatedData = dataDecisionValue.map((item: any) => {
+  //     return {
+  //       ...item,
+  //       explain_id: explain_id,
+  //       other: item.isOther === "Y" ? (ToolOther?.trim() || null) : null
 
-      };
-    });
-    return updatedData;
-  }
+  //     };
+  //   });
+  //   return updatedData;
+  // }
 
   // =====================================================================================================
   // API FUNCTIONS - GET DATA MASTER
   // =====================================================================================================
 
-  // Function - Get LOV Master Data
-  const LovAll_Get = async () => {
-    if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  LovAll_Get");
+  // // Function - Get LOV Master Data
+  // const LovAll_Get = async () => {
+  //   if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  LovAll_Get");
 
-    try {
-      const dataset = {
-        lov_group: "TRR.TRRGROUP.COM",
-        lov_type:
-          "report_type,complaint_type,reference_standard,attach_type,complaint_status,tool_use,decision_disposition,approve_select,complaint_step,complaint_action",
-      };
-      const response = await _POST(dataset, "/Lov/LovGet");
+  //   try {
+  //     const dataset = {
+  //       lov_group: "TRR.TRRGROUP.COM",
+  //       lov_type:
+  //         "report_type,complaint_type,reference_standard,attach_type,complaint_status,tool_use,decision_disposition,approve_select,complaint_step,complaint_action",
+  //     };
+  //     const response = await _POST(dataset, "/Lov/LovGet");
 
-      if (response && response.status === "success") {
-        const lovData = response.data || [];
+  //     if (response && response.status === "success") {
+  //       const lovData = response.data || [];
 
-        // ✅ จัดกลุ่มตาม lov_type
-        const grouped = lovData.reduce((acc: any, item: any) => {
-          if (!acc[item.lov_type]) acc[item.lov_type] = [];
-          acc[item.lov_type].push(item);
-          return acc;
-        }, {});
+  //       // ✅ จัดกลุ่มตาม lov_type
+  //       const grouped = lovData.reduce((acc: any, item: any) => {
+  //         if (!acc[item.lov_type]) acc[item.lov_type] = [];
+  //         acc[item.lov_type].push(item);
+  //         return acc;
+  //       }, {});
 
-        // ตัวอย่างการ set state
-        setdataset_reporttype?.(grouped["report_type"] || []);
-        setdataComplaintType_Combobox?.(grouped["complaint_type"] || []);
-        setdataComplaintRs_Combobox?.(grouped["reference_standard"] || []);
-        setdataphoto_Combobox?.(grouped["attach_type"] || []);
-        console.log("🔍 index.tsx - attach_type data:", grouped["attach_type"]);
-        setdatastatus?.(grouped["complaint_status"] || []);
-        setdataToolUse_Combobox?.(grouped["tool_use"] || []);
-        setdataDecision_Combobox?.(grouped["decision_disposition"] || []);
-        setdataApprove_Combobox?.(grouped["approve_select"] || []);
-        setdataset_stepcomplaint?.(grouped["complaint_step"] || []);
-        setdataset_complaintAction?.(grouped["complaint_action"] || []);
+  //       // ตัวอย่างการ set state
+  //       setdataset_reporttype?.(grouped["report_type"] || []);
+  //       setdataComplaintType_Combobox?.(grouped["complaint_type"] || []);
+  //       setdataComplaintRs_Combobox?.(grouped["reference_standard"] || []);
+  //       setdataphoto_Combobox?.(grouped["attach_type"] || []);
+  //       console.log("🔍 index.tsx - attach_type data:", grouped["attach_type"]);
+  //       setdatastatus?.(grouped["complaint_status"] || []);
+  //       setdataToolUse_Combobox?.(grouped["tool_use"] || []);
+  //       setdataDecision_Combobox?.(grouped["decision_disposition"] || []);
+  //       setdataApprove_Combobox?.(grouped["approve_select"] || []);
+  //       setdataset_stepcomplaint?.(grouped["complaint_step"] || []);
+  //       setdataset_complaintAction?.(grouped["complaint_action"] || []);
 
-        setdataset_complaintActionNew(grouped["complaint_action"].filter((item: any) => item.lov_code === 'ACTION_NEW'));
-        setdataset_complaintActionExplain(grouped["complaint_action"].filter((item: any) => item.lov_code === 'ACTION_EXPLAIN'));
-        setdataset_complaintActionClose(grouped["complaint_action"].filter((item: any) => item.lov_code === 'ACTION_CLOSE'));
+  //       setdataset_complaintActionNew(grouped["complaint_action"].filter((item: any) => item.lov_code === 'ACTION_NEW'));
+  //       setdataset_complaintActionExplain(grouped["complaint_action"].filter((item: any) => item.lov_code === 'ACTION_EXPLAIN'));
+  //       setdataset_complaintActionClose(grouped["complaint_action"].filter((item: any) => item.lov_code === 'ACTION_CLOSE'));
 
 
-        console.log('⚠️⚠️⚠️⚠️ [grouped["complaint_action"]] :', grouped["complaint_action"])
-        
-        
+  //       console.log('⚠️⚠️⚠️⚠️ [grouped["complaint_action"]] :', grouped["complaint_action"])
 
-      }
-    } catch (e) {
-      console.log("error:", e);
-    }
-  };
 
-  // Function - Get Priority Levels
-  const priority_Get = async () => {
-    if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  priority_Get");
 
-    try {
-      const dataset = {
-        lov_group: "SYSTEM",
-        lov_type: "priority_level",
-      };
-      const response = await _POST(dataset, "/Lov/LovGet");
-      if (response && response.status === "success") {
-        // console.log("❇️ Call [Lov/LovGet] -> priority_level :", response.data);
-        setdatapriority_Combobox && setdatapriority_Combobox(response.data);
-      }
-    } catch (e) {
-      console.log("error:", e);
-    }
-  };
+  //     }
+  //   } catch (e) {
+  //     console.log("error:", e);
+  //   }
+  // };
+
+  // // Function - Get Priority Levels
+  // const priority_Get = async () => {
+  //   if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  priority_Get");
+
+  //   try {
+  //     const dataset = {
+  //       lov_group: "SYSTEM",
+  //       lov_type: "priority_level",
+  //     };
+  //     const response = await _POST(dataset, "/Lov/LovGet");
+  //     if (response && response.status === "success") {
+  //       // console.log("❇️ Call [Lov/LovGet] -> priority_level :", response.data);
+  //       setdatapriority_Combobox && setdatapriority_Combobox(response.data);
+  //     }
+  //   } catch (e) {
+  //     console.log("error:", e);
+  //   }
+  // };
 
   // Function - Get Domain
   const DomainGet = async () => {
-    if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  DomainGet");
+    if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  DomainGet");
 
     try {
       const dataset = {
@@ -591,15 +504,10 @@ export default function DepartmentSetting() {
       };
       const response = await _POST(dataset, "/Complaint/CasDomainGet");
       if (response && response.status === "success") {
-        // console.log("❇️ Call [Complaint/CasDomainGet] -> Domain_Get :",response.data);
+        console.log("❇️ Call [Complaint/CasDomainGet] -> Domain_Get :", response.data);
         if (Array.isArray(response.data)) {
-          let domain = response.data.filter(
-            (item: any) => item.domain_id === user[0]?.employee_domain
-          );
-          if (domain) {
-            // setdataset_domain(domain);
-            setdataset_company(domain);
-          }
+          // เอา filter ออก → ใช้ทุกตัว
+          setdataset_domain(response.data);
         }
       }
     } catch (e) {
@@ -609,8 +517,8 @@ export default function DepartmentSetting() {
 
   // Function - Get Department Domain
   const DepartmentDomainGet = async (action?: string) => {
-    if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  DepartmentDomainGet");
-    
+    if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  DepartmentDomainGet");
+
     try {
       const dataset = {
         domain_id: user[0]?.employee_domain,
@@ -650,27 +558,105 @@ export default function DepartmentSetting() {
     }
   };
 
+  // Function - Get Company
+  const CompanyGet = async (action?: string) => {
+    if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  CompanyGet");
+
+    try {
+      const dataset = {
+      };
+      const response = await _POST(
+        dataset,
+        "/Complaint/CasCompanyGet"
+      );
+      if (response && response.status === "success") {
+        console.log(
+          "❇️ Call [Complaint/CasCompanyGet] -> Company_Get :",
+          response.data
+        );
+        setdataset_company(response.data);
+
+        // if (action == "Add") {
+
+        //   //================================================
+        //   let company = response.data.filter(
+        //     (item: any) => item.company_id != user[0]?.itasset_company_id
+        //   );
+        //   setdataset_company(company);
+        //   // if (department) {
+        //   //   // setdataset_domain(domain);
+        //   //   setdataset_department(department);
+        //   // }
+        //   //================================================
+        // }
+      }
+    } catch (e) {
+      console.log("error:", e);
+    }
+  };
+
+  // Function - Get Username Domain
+  const UsernameGet = async (action?: string) => {
+    if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  CasUsernameGet");
+
+    try {
+      const dataset = {
+        domain_id: user[0]?.employee_domain,
+        company_id: user[0]?.itasset_company_id,
+        department_id: user[0]?.itasset_department_id,
+      };
+      const response = await _POST(
+        dataset,
+        "/Complaint/CasUsernameGet"
+      );
+      if (response && response.status === "success") {
+        console.log(
+          "❇️ Call [Complaint/CasUsernameGet] -> CasUsernameGet :",
+          response.data
+        );
+
+        setdataset_username(response.data);
+
+        if (action == "Add") {
+
+          //================================================
+          let department = response.data.filter(
+            (item: any) => item.department_id != user[0]?.itasset_department_id
+          );
+          setdataset_username(department);
+          // if (department) {
+          //   // setdataset_domain(domain);
+          //   setdataset_department(department);
+          // }
+          //================================================
+
+
+        }
+
+      }
+    } catch (e) {
+      console.log("error:", e);
+    }
+  };
+
+
   // =====================================================================================================
   // API FUNCTIONS - CRUD OPERATIONS
   // =====================================================================================================
 
   // Function - Get Complaints
-  const Complaint_Get = async (data: any) => {
-    if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  Complaint_Get");
+  const Dept_setup_Get = async (data: any) => {
+    if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  Dept_setup_Get");
 
     setIsLoadingScreen(true)
     const dataset = {
       id: data.id,
-      user_id: user[0]?.employee_username,
-      domain_id: user[0]?.employee_domain,
-      department_id: user[0]?.itasset_department_id,
-      company_id: user[0]?.itasset_company_id,
     };
     console.log("Read step:4 dataset: ", dataset);
 
 
     try {
-      let response = await _POST(dataset, "/Complaint/ComplaintGet");
+      let response = await _POST(dataset, "/DeptSetup/DeptSetupGet");
       console.log("Read step:4 ผลลัพธ์ : ", response);
       console.log("Read step:4 Normalize ปรับค่าใหม่ : ", response.data[0],);
       if (response && response.status === "success") {
@@ -683,29 +669,23 @@ export default function DepartmentSetting() {
   };
 
   // Function - Search Complaints
-  const ListSearchGet = async () => {
-    if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  ListSearchGet");
+  const DeptSearchGet = async () => {
+    if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  DeptSearchGet");
 
     setIsLoadingScreen(true);
     const dataset = {
-      user_id: user[0]?.employee_username,
-      domain_id: user[0]?.employee_domain,
-      department_id: user[0]?.itasset_department_id,
-      company_id: user[0]?.itasset_company_id,
-      report_code: TextNameSearch.report_code ? TextNameSearch.report_code : null,
-      cas_number: TextNameSearch.cas_number ? TextNameSearch.cas_number : null,
-      product_name: TextNameSearch.product_name ? TextNameSearch.product_name : null,
-      lot_no: TextNameSearch.lot_no ? TextNameSearch.lot_no : null,
-      complaint_status_label: TextNameSearch.datastatus ? TextNameSearch.datastatus : null,
-      doc_date: documentDateSearch ? documentDateSearch.format("DD-MM-YYYY") : null,
-      step_label: TextNameSearch.dataset_stepcomplaint ? TextNameSearch.dataset_stepcomplaint : null,
-      request_department_id: TextNameSearch.request_department_id ? TextNameSearch.request_department_id : null
+      // user_id: user[0]?.employee_username,
+      // domain_id: user[0]?.employee_domain,
+      // department_id: user[0]?.itasset_department_id,
+      // company_id: user[0]?.itasset_company_id,
+      dataset_username: TextNameSearch.dataset_username ? TextNameSearch.dataset_username : null,
+      dataset_department: TextNameSearch.dataset_department ? TextNameSearch.dataset_department : null,
     }
 
-    console.log("step:2 dataset ก่อนส่ง API /ListSearch/ListSearchGet ", dataset);
+    console.log("step:2 dataset ก่อนส่ง API /DeptSearch/DeptSearchGet ", dataset);
     try {
-      let response = await _POST(dataset, "/ListSearch/ListSearchGet");
-      console.log("step:2 ผลลัพธ์ที่ได้จาก API /ListSearch/ListSearchGet ", response);
+      let response = await _POST(dataset, "/DeptSearch/DeptSearchGet");
+      console.log("step:2 ผลลัพธ์ที่ได้จาก API /DeptSearch/DeptSearchGet ", response);
       if (response && response.status === "success") {
         setIsLoadingScreen(false);
         const responseData: any = [];
@@ -717,74 +697,63 @@ export default function DepartmentSetting() {
                   console.log("🎆 🎆 🎆 🎆 hadleOnclickMenu (name) :", name);
                   if (name === "View") {
                     // DepartmentDomainGet("Read");
-                    handleOnclickComplaintView(el);
+                    handleOnclickDepartmentSettingView(el);
                   } else if (name === "Edit") {
                     // DepartmentDomainGet("Edit");
-                    handleOnclickComplaintEdit(el);
+                    handleOnclickDepartmentSettingEdit(el);
                   } else if (name === "Delete") {
                     // DepartmentDomainGet("Delete");
-                    handleOnclickComplaintDelete(el);
+                    handleOnclickDepartmentSettingDelete(el);
                   } else if (name === "Explain") {
                     // DepartmentDomainGet("Explain");
-                    handleOnclickExplain(el);
-                  } else if (name === "ExplainAdd") {
-                    // DepartmentDomainGet("Explain");
-                    handleOnclickExplainAdd(el);
-                  } else if (name === "ExplainView") {
-                    // DepartmentDomainGet("Explain");
-                    handleOnclickExplainView(el);
-                  }
-                  else if (name === "ExplainApproveSc") {
-                    // DepartmentDomainGet("Explain");
-                    handleOnclickExplainApproveSc(el);
                   }
                 }}
-                // hiddenEdit={el.complaint_status_label == 'SUBMIT'}
+              // hiddenEdit={el.complaint_status_label == 'SUBMIT'}
 
-                //-----------------------------------------------------------------------
-                //-----------------------------------------------------------------------
+              //-----------------------------------------------------------------------
+              //-----------------------------------------------------------------------
 
-                // For Status [NEW]
-                hiddenRead={
-                  (dataset_complaintActionNew &&
-                    !dataset_complaintActionNew.some((mode: any) =>
-                      mode.lov1.split(",").includes(String(el.complaint_status_label))
-                    )) ?? false
-                }
-                hiddenEdit={
-                  (dataset_complaintActionNew &&
-                    !dataset_complaintActionNew.some((mode: any) =>
-                      mode.lov1.split(",").includes(String(el.complaint_status_label))
-                    )) ?? false
-                }
-                hiddenDelete={
-                  (dataset_complaintActionNew &&
-                    !dataset_complaintActionNew.some((mode: any) =>
-                      mode.lov1.split(",").includes(String(el.complaint_status_label))
-                    )) ?? false
-                }
+              // // For Status [NEW]
+              // hiddenRead={
+              //   (dataset_complaintActionNew &&
+              //     !dataset_complaintActionNew.some((mode: any) =>
+              //       mode.lov1.split(",").includes(String(el.complaint_status_label))
+              //     )) ?? false
+              // }
+              // hiddenEdit={
+              //   (dataset_complaintActionNew &&
+              //     !dataset_complaintActionNew.some((mode: any) =>
+              //       mode.lov1.split(",").includes(String(el.complaint_status_label))
+              //     )) ?? false
+              // }
+              // hiddenDelete={
+              //   (dataset_complaintActionNew &&
+              //     !dataset_complaintActionNew.some((mode: any) =>
+              //       mode.lov1.split(",").includes(String(el.complaint_status_label))
+              //     )) ?? false
+              // }
 
-                //-----------------------------------------------------------------------
-                //-----------------------------------------------------------------------
-                
-                // For Status [SUBMIT, EXPLAIN, APPROVE]
-                hiddenExplain={
-                  (dataset_complaintActionExplain &&
-                    !dataset_complaintActionExplain.some((mode: any) =>
-                      mode.lov1.split(",").includes(String(el.complaint_status_label))
-                    )) ?? false
-                }
+              // //-----------------------------------------------------------------------
+              // //-----------------------------------------------------------------------
 
-                //-----------------------------------------------------------------------
-                //-----------------------------------------------------------------------
-                
-                // For Status [CLOSE]
-                hiddenClose={
-                  (dataset_complaintActionClose &&
-                    !dataset_complaintActionClose.some((mode: any) =>
-                      mode.lov1.split(",").includes(String(el.complaint_status_label))
-                    )) ?? false
-                }
+              // // For Status [SUBMIT, EXPLAIN, APPROVE]
+              // hiddenExplain={
+              //   (dataset_complaintActionExplain &&
+              //     !dataset_complaintActionExplain.some((mode: any) =>
+              //       mode.lov1.split(",").includes(String(el.complaint_status_label))
+              //     )) ?? false
+              // }
+
+              // //-----------------------------------------------------------------------
+              // //-----------------------------------------------------------------------
+
+              // // For Status [CLOSE]
+              // hiddenClose={
+              //   (dataset_complaintActionClose &&
+              //     !dataset_complaintActionClose.some((mode: any) =>
+              //       mode.lov1.split(",").includes(String(el.complaint_status_label))
+              //     )) ?? false
+              // }
 
               />
             );
@@ -809,390 +778,311 @@ export default function DepartmentSetting() {
     }
   };
 
-  // Function - Validate before Add Complaint
-  const validateBeforeAdd = (): boolean => {
-    if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  validateBeforeAdd");
-    let valid = true;
-    // Clear ALL validation errors before validation
-    setReportTypeError(false);
-    setRespondentDepartmentError(false);
-    setDateOfDetectionError(false);
-    setDepartmentAreaError(false);
-    setProductNameError(false);
-    setLotNoError(false);
-    setEmailError(false);
-    setComplaintTypeError(false);
-    setOtherTypeError(false);
-    setComplaintRsError(false);
-    setOtherRsError(false);
-    setClauseRsError(false);
-    setDetailError(false);
-    setPriorityError(false);
+  //   // Function - Validate before Add Complaint
+  //   const validateBeforeAdd = (): boolean => {
+  //     if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  validateBeforeAdd");
+  //     let valid = true;
+  //     // Clear ALL validation errors before validation
+  //     setReportTypeError(false);
+  //     setRespondentDepartmentError(false);
+  //     setDateOfDetectionError(false);
+  //     setDepartmentAreaError(false);
+  //     setProductNameError(false);
+  //     setLotNoError(false);
+  //     setEmailError(false);
+  //     setComplaintTypeError(false);
+  //     setOtherTypeError(false);
+  //     setComplaintRsError(false);
+  //     setOtherRsError(false);
+  //     setClauseRsError(false);
+  //     setDetailError(false);
+  //     setPriorityError(false);
 
-    // Validate Report Type - ตรวจสอบก่อนและถ้าไม่มีให้ return false ทันที
-    if (!dataReportTypeValue || !dataReportTypeValue.id) {
-      setReportTypeError(true);
-      document.getElementById("reportTypeField")?.focus();
-      return false; // หยุดการตรวจสอบส่วนอื่น
-    }
+  //     // Validate Report Type - ตรวจสอบก่อนและถ้าไม่มีให้ return false ทันที
+  //     if (!dataReportTypeValue || !dataReportTypeValue.id) {
+  //       setReportTypeError(true);
+  //       document.getElementById("reportTypeField")?.focus();
+  //       return false; // หยุดการตรวจสอบส่วนอื่น
+  //     }
 
-    // Validate Date of Detection
-    if (!date_of_detection) {
-      setDateOfDetectionError(true);
-      valid = false;
-    }
+  //     // Validate Date of Detection
+  //     if (!date_of_detection) {
+  //       setDateOfDetectionError(true);
+  //       valid = false;
+  //     }
 
-    // Validate Department/Area of Detection
-    if (!respondent_department_id || !respondent_department_id.department_id) {
-      setDepartmentAreaError(true);
-      valid = false;
-    }
+  //     // Validate Department/Area of Detection
+  //     if (!respondent_department_id || !respondent_department_id.department_id) {
+  //       setDepartmentAreaError(true);
+  //       valid = false;
+  //     }
 
-    // Validate Product Name
-    if (!product_name || product_name.trim() === "") {
-      setProductNameError(true);
-      valid = false;
-    }
+  //     // Validate Product Name
+  //     if (!product_name || product_name.trim() === "") {
+  //       setProductNameError(true);
+  //       valid = false;
+  //     }
 
-    // Validate Lot no
-    if (!lot_no || lot_no.trim() === "") {
-      setLotNoError(true);
-      valid = false;
-    }
+  //     // Validate Lot no
+  //     if (!lot_no || lot_no.trim() === "") {
+  //       setLotNoError(true);
+  //       valid = false;
+  //     }
 
-    // Validate Email
-    if (!respondent_email || respondent_email.trim() === "") {
-      setEmailError(true);
-      valid = false;
-    }
+  //     // Validate Email
+  //     if (!respondent_email || respondent_email.trim() === "") {
+  //       setEmailError(true);
+  //       valid = false;
+  //     }
 
-    // Validate Complaint Type
-    if (!dataComplaintTypeValue_Combobox || dataComplaintTypeValue_Combobox.length === 0) {
-      setComplaintTypeError(true);
-      valid = false;
-    } else {
-    }
+  //     // Validate Complaint Type
+  //     if (!dataComplaintTypeValue_Combobox || dataComplaintTypeValue_Combobox.length === 0) {
+  //       setComplaintTypeError(true);
+  //       valid = false;
+  //     } else {
+  //     }
 
-    // Validate Other Type (if complaint type has "Other" selected)
-    if (dataComplaintTypeValue_Combobox && dataComplaintTypeValue_Combobox.some((item: any) => item.isOther === "Y")) {
-      if (!compTypeOther || compTypeOther.trim() === "") {
-        setOtherTypeError(true);
-        valid = false;
-      } else {
-        //console.log("✅ Other Type validation passed");
-      }
-    }
-
-
-    // Validate Rs 
-    const reportTypeCode = dataReportTypeValue?.lov_code;
-    console.log("🔍 Report Type Code:", reportTypeCode);
-
-    // เฉพาะ NCR เท่านั้นที่ต้อง validate Complaint Rs
-    if (reportTypeCode === "NCR") {
-      if (!dataComplaintRsValue_Combobox || dataComplaintRsValue_Combobox.length === 0) {
-        setComplaintRsError(true);
-        valid = false;
-      }
-    }
-
-    // Validate Other Rs 
-    if (reportTypeCode === "NCR" && dataComplaintRsValue_Combobox && dataComplaintRsValue_Combobox.some((item: any) => item.isClause === "Other")) {
-      if (!compRsOther || compRsOther.trim() === "") {
-        setOtherRsError(true);
-        valid = false;
-      }
-    }
-
-    // Validate Clause Rs
-    if (reportTypeCode === "NCR" && dataComplaintRsValue_Combobox && dataComplaintRsValue_Combobox.some((item: any) => item.isClause === "Clause")) {
-      if (!clauseOther || clauseOther.trim() === "") {
-        setClauseRsError(true);
-        valid = false;
-      }
-    }
-
-    // Validate Detail
-    if (!detail || detail.trim() === "") {
-      setDetailError(true);
-      valid = false;
-    }
-
-    // Validate Priority
-    if (!datapriorityValue_Combobox || datapriorityValue_Combobox.trim() === "") {
-      setPriorityError(true);
-      valid = false;
-    } 
-
-    return valid;
-  }
-
-  //validate Edit
-  const validateBeforeEdit = (): boolean => {
-    if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  validateBeforeEdit");
-    let valid = true;
-    setReportTypeError(false);
-    setRespondentDepartmentError(false);
-    setDateOfDetectionError(false);
-    setDepartmentAreaError(false);
-    setProductNameError(false);
-    setLotNoError(false);
-    setEmailError(false);
-    setComplaintTypeError(false);
-    setOtherTypeError(false);
-    setComplaintRsError(false);
-    setOtherRsError(false);
-    setClauseRsError(false);
-    setDetailError(false);
-    setPriorityError(false);
-
-    // Validate Report Type - ตรวจสอบก่อนและถ้าไม่มีให้ return false ทันที
-    if (!dataReportTypeValue || !dataReportTypeValue.id) {
-      console.log("❌ Report Type validation failed");
-      setReportTypeError(true);
-      document.getElementById("reportTypeField")?.focus();
-      return false; 
-    }
-    console.log("✅ Report Type validation passed");
-
-    // Validate Date of Detection
-    if (!date_of_detection) {
-      setDateOfDetectionError(true);
-      valid = false;
-    }
-
-    // Validate Department/Area of Detection
-    if (!respondent_department_id || !respondent_department_id.department_id) {
-      setDepartmentAreaError(true);
-      valid = false;
-    }
-
-    // Validate Product Name
-    if (!product_name || product_name.trim() === "") {
-      setProductNameError(true);
-      valid = false;
-    }
-
-    // Validate Lot no
-    if (!lot_no || lot_no.trim() === "") {
-      setLotNoError(true);
-      valid = false;
-    }
-
-    // Validate Email
-    if (!respondent_email || respondent_email.trim() === "") {
-      setEmailError(true);
-      valid = false;
-    }
-
-    // Validate Complaint Type
-    if (!dataComplaintTypeValue_Combobox || dataComplaintTypeValue_Combobox.length === 0) {
-      console.log("❌ Complaint Type validation failed");
-      setComplaintTypeError(true);
-      valid = false;
-    } else {
-      console.log("✅ Complaint Type validation passed");
-    }
-
-    // Validate Other Type (if complaint type has "Other" selected)
-    if (dataComplaintTypeValue_Combobox && dataComplaintTypeValue_Combobox.some((item: any) => item.isOther === "Y")) {
-      if (!compTypeOther || compTypeOther.trim() === "") {
-        console.log("❌ Other Type validation failed");
-        setOtherTypeError(true);
-        valid = false;
-      } else {
-        console.log("✅ Other Type validation passed");
-      }
-    }
+  //     // Validate Other Type (if complaint type has "Other" selected)
+  //     if (dataComplaintTypeValue_Combobox && dataComplaintTypeValue_Combobox.some((item: any) => item.isOther === "Y")) {
+  //       if (!compTypeOther || compTypeOther.trim() === "") {
+  //         setOtherTypeError(true);
+  //         valid = false;
+  //       } else {
+  //         //console.log("✅ Other Type validation passed");
+  //       }
+  //     }
 
 
-    // Validate Rs 
-    const reportTypeCode = dataReportTypeValue?.lov_code;
-    console.log("🔍 Report Type Code:", reportTypeCode);
+  //     // Validate Rs 
+  //     const reportTypeCode = dataReportTypeValue?.lov_code;
+  //     console.log("🔍 Report Type Code:", reportTypeCode);
 
-    // เฉพาะ NCR เท่านั้นที่ต้อง validate Complaint Rs
-    if (reportTypeCode === "NCR") {
-      if (!dataComplaintRsValue_Combobox || dataComplaintRsValue_Combobox.length === 0) {
-        console.log("❌ Complaint Rs validation failed for NCR");
-        setComplaintRsError(true);
-        valid = false;
-      } else {
-        console.log("✅ Complaint Rs validation passed for NCR");
-      }
-    } else {
-      console.log("✅ Complaint Rs validation skipped for", reportTypeCode);
-    }
+  //     // เฉพาะ NCR เท่านั้นที่ต้อง validate Complaint Rs
+  //     if (reportTypeCode === "NCR") {
+  //       if (!dataComplaintRsValue_Combobox || dataComplaintRsValue_Combobox.length === 0) {
+  //         setComplaintRsError(true);
+  //         valid = false;
+  //       }
+  //     }
 
-    // Validate Other Rs 
-    if (reportTypeCode === "NCR" && dataComplaintRsValue_Combobox && dataComplaintRsValue_Combobox.some((item: any) => item.isClause === "Other")) {
-      if (!compRsOther || compRsOther.trim() === "") {
-        console.log("❌ Other Rs validation failed for NCR");
-        setOtherRsError(true);
-        valid = false;
-      } else {
-        console.log("✅ Other Rs validation passed for NCR");
-      }
-    }
+  //     // Validate Other Rs 
+  //     if (reportTypeCode === "NCR" && dataComplaintRsValue_Combobox && dataComplaintRsValue_Combobox.some((item: any) => item.isClause === "Other")) {
+  //       if (!compRsOther || compRsOther.trim() === "") {
+  //         setOtherRsError(true);
+  //         valid = false;
+  //       }
+  //     }
 
-    // Validate Clause Rs
-    if (reportTypeCode === "NCR" && dataComplaintRsValue_Combobox && dataComplaintRsValue_Combobox.some((item: any) => item.isClause === "Clause")) {
-      if (!clauseOther || clauseOther.trim() === "") {
-        console.log("❌ Clause Rs validation failed for NCR");
-        setClauseRsError(true);
-        valid = false;
-      } else {
-        console.log("✅ Clause Rs validation passed for NCR");
-      }
-    }
+  //     // Validate Clause Rs
+  //     if (reportTypeCode === "NCR" && dataComplaintRsValue_Combobox && dataComplaintRsValue_Combobox.some((item: any) => item.isClause === "Clause")) {
+  //       if (!clauseOther || clauseOther.trim() === "") {
+  //         setClauseRsError(true);
+  //         valid = false;
+  //       }
+  //     }
 
-    // Validate Detail
-    if (!detail || detail.trim() === "") {
-      setDetailError(true);
-      valid = false;
-    }
+  //     // Validate Detail
+  //     if (!detail || detail.trim() === "") {
+  //       setDetailError(true);
+  //       valid = false;
+  //     }
 
-// 
-if (!datapriorityValue_Combobox) {
-  // ถ้าไม่มีข้อมูลใหม่ ให้ใช้ข้อมูลเก่า
-  if (dataelement?.priority_level) {
-    //console.log("Using old priority data:", dataelement.priority_level);
-  } else {
-    setPriorityError(true);
-    valid = false;
-  }
+  //     // Validate Priority
+  //     if (!datapriorityValue_Combobox || datapriorityValue_Combobox.trim() === "") {
+  //       setPriorityError(true);
+  //       valid = false;
+  //     } 
 
-} else {
- // console.log("✅ Priority validation passed");
-}
-    return valid;
-  }
+  //     return valid;
+  //   }
 
-  // CREATE -SaveDraft Add Complaint
-  const ComplaintSavedraftAdd = async () => {
-    if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  ComplaintSavedraftAdd");
+  //   //validate Edit
+  //   const validateBeforeEdit = (): boolean => {
+  //     if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  validateBeforeEdit");
+  //     let valid = true;
+  //     setReportTypeError(false);
+  //     setRespondentDepartmentError(false);
+  //     setDateOfDetectionError(false);
+  //     setDepartmentAreaError(false);
+  //     setProductNameError(false);
+  //     setLotNoError(false);
+  //     setEmailError(false);
+  //     setComplaintTypeError(false);
+  //     setOtherTypeError(false);
+  //     setComplaintRsError(false);
+  //     setOtherRsError(false);
+  //     setClauseRsError(false);
+  //     setDetailError(false);
+  //     setPriorityError(false);
+
+  //     // Validate Report Type - ตรวจสอบก่อนและถ้าไม่มีให้ return false ทันที
+  //     if (!dataReportTypeValue || !dataReportTypeValue.id) {
+  //       console.log("❌ Report Type validation failed");
+  //       setReportTypeError(true);
+  //       document.getElementById("reportTypeField")?.focus();
+  //       return false; 
+  //     }
+  //     console.log("✅ Report Type validation passed");
+
+  //     // Validate Date of Detection
+  //     if (!date_of_detection) {
+  //       setDateOfDetectionError(true);
+  //       valid = false;
+  //     }
+
+  //     // Validate Department/Area of Detection
+  //     if (!respondent_department_id || !respondent_department_id.department_id) {
+  //       setDepartmentAreaError(true);
+  //       valid = false;
+  //     }
+
+  //     // Validate Product Name
+  //     if (!product_name || product_name.trim() === "") {
+  //       setProductNameError(true);
+  //       valid = false;
+  //     }
+
+  //     // Validate Lot no
+  //     if (!lot_no || lot_no.trim() === "") {
+  //       setLotNoError(true);
+  //       valid = false;
+  //     }
+
+  //     // Validate Email
+  //     if (!respondent_email || respondent_email.trim() === "") {
+  //       setEmailError(true);
+  //       valid = false;
+  //     }
+
+  //     // Validate Complaint Type
+  //     if (!dataComplaintTypeValue_Combobox || dataComplaintTypeValue_Combobox.length === 0) {
+  //       console.log("❌ Complaint Type validation failed");
+  //       setComplaintTypeError(true);
+  //       valid = false;
+  //     } else {
+  //       console.log("✅ Complaint Type validation passed");
+  //     }
+
+  //     // Validate Other Type (if complaint type has "Other" selected)
+  //     if (dataComplaintTypeValue_Combobox && dataComplaintTypeValue_Combobox.some((item: any) => item.isOther === "Y")) {
+  //       if (!compTypeOther || compTypeOther.trim() === "") {
+  //         console.log("❌ Other Type validation failed");
+  //         setOtherTypeError(true);
+  //         valid = false;
+  //       } else {
+  //         console.log("✅ Other Type validation passed");
+  //       }
+  //     }
+
+
+  //     // Validate Rs 
+  //     const reportTypeCode = dataReportTypeValue?.lov_code;
+  //     console.log("🔍 Report Type Code:", reportTypeCode);
+
+  //     // เฉพาะ NCR เท่านั้นที่ต้อง validate Complaint Rs
+  //     if (reportTypeCode === "NCR") {
+  //       if (!dataComplaintRsValue_Combobox || dataComplaintRsValue_Combobox.length === 0) {
+  //         console.log("❌ Complaint Rs validation failed for NCR");
+  //         setComplaintRsError(true);
+  //         valid = false;
+  //       } else {
+  //         console.log("✅ Complaint Rs validation passed for NCR");
+  //       }
+  //     } else {
+  //       console.log("✅ Complaint Rs validation skipped for", reportTypeCode);
+  //     }
+
+  //     // Validate Other Rs 
+  //     if (reportTypeCode === "NCR" && dataComplaintRsValue_Combobox && dataComplaintRsValue_Combobox.some((item: any) => item.isClause === "Other")) {
+  //       if (!compRsOther || compRsOther.trim() === "") {
+  //         console.log("❌ Other Rs validation failed for NCR");
+  //         setOtherRsError(true);
+  //         valid = false;
+  //       } else {
+  //         console.log("✅ Other Rs validation passed for NCR");
+  //       }
+  //     }
+
+  //     // Validate Clause Rs
+  //     if (reportTypeCode === "NCR" && dataComplaintRsValue_Combobox && dataComplaintRsValue_Combobox.some((item: any) => item.isClause === "Clause")) {
+  //       if (!clauseOther || clauseOther.trim() === "") {
+  //         console.log("❌ Clause Rs validation failed for NCR");
+  //         setClauseRsError(true);
+  //         valid = false;
+  //       } else {
+  //         console.log("✅ Clause Rs validation passed for NCR");
+  //       }
+  //     }
+
+  //     // Validate Detail
+  //     if (!detail || detail.trim() === "") {
+  //       setDetailError(true);
+  //       valid = false;
+  //     }
+
+  // // 
+  // if (!datapriorityValue_Combobox) {
+  //   // ถ้าไม่มีข้อมูลใหม่ ให้ใช้ข้อมูลเก่า
+  //   if (dataelement?.priority_level) {
+  //     //console.log("Using old priority data:", dataelement.priority_level);
+  //   } else {
+  //     setPriorityError(true);
+  //     valid = false;
+  //   }
+
+  // } else {
+  //  // console.log("✅ Priority validation passed");
+  // }
+  //     return valid;
+  //   }
+
+
+
+  // Function - Add DepartmentSetting
+  const DepartmentSettingAdd = async () => {
+    if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  DepartmentSettingAdd");
+
+    // if (!validateBeforeAdd()) {
+    //   return;
+    // }
 
     const tempid = uuidv4();
 
-    //Function Split Domain (For using with Complaint Status)
-    const tempComplaintStatus = splitByDot(user[0]?.employee_domain)
 
     // เตรียม Models
-    const complainttypeModel = dataComplaintTypeValue_Combobox
-      ? compTypeUpdateCompId(
-        dataComplaintTypeValue_Combobox,
-        tempid,
-        compTypeOther
-      )
-      : null;
+    const DeptApproveSetup = [];
 
-      
-
-    const complaintRsModel = dataComplaintRsValue_Combobox
-      ? compRsUpdateCompId(
-        dataComplaintRsValue_Combobox,
-        tempid,
-        compRsOther,
-        clauseOther
-      )
-      : null;
-
-    // สร้าง JSON payload
-    const complaintPayload = {
-      complaintModel: {
-        id: tempid,
-        report_type: dataReportTypeValue?.id,
-        cas_number: cas_number,
-        date_of_detection: date_of_detection
-          ? date_of_detection
-            .hour(dayjs().hour())
-            .minute(dayjs().minute())
-            .second(dayjs().second())
-            .format("YYYY-MM-DDTHH:mm:ss")
-          : null,
-        request_name: user[0]?.employee_username || "",
-        request_company_id: request_company_id?.company_id,
-        // ? Number(request_company_id.company_id)
-        // : undefined,
-        request_domain_id: user[0]?.employee_domain,
-        request_department_id: user[0].itasset_department_id,
-        request_position: user[0]?.employee_position || "",
-        request_email: user[0]?.employee_email || "",
-        request_phone: user[0]?.employee_tel || "",
-        request_date: new Date().toISOString(),
-        respondent_company_id: respondent_company_id?.company_id,
-        // ? Number(respondent_company_id.company_id)
-        // : undefined,
-        respondent_domain_id: respondent_domain_id?.domain_id,
-        respondent_department_id: respondent_department_id?.department_id,
-        // ? Number(respondent_department_id.department_id)
-        // : undefined,
-        respondent_email: respondent_email,
-        respondent_other_name: respondent_other_name,
-        respondent_other_email: respondent_other_email,
-        product_name: product_name,
-        detail: detail,
-        priority_level: datapriorityValue_Combobox,
-        respond_date_within: respond_date_within
-          ? respond_date_within
-            .hour(dayjs().hour())
-            .minute(dayjs().minute())
-            .second(dayjs().second())
-            .format("YYYY-MM-DDTHH:mm:ss")
-          : null,
-        lot_no: lot_no,
-        complaint_status_id: tempComplaintStatus[0] + "_CS_NEW",
-        create_by: user[0]?.employee_username || "",
-        save_type: "save_draft",
-        complaintType: complainttypeModel,
-        complaintRs: complaintRsModel,
-        // เพิ่ม complaintFile
-        complaintFile:
-          complaintFiles?.map((item: any, index: number) => {
-            return {
-              cf_type: "Complaint",
-              complaint_id: tempid,
-              complaint_at_id: item.attachmentType,
-              other: item.otherText?.trim() || null,
-              cf_file_seq: (index + 1).toString(),
-              user_file_name: item.file.name,
-              file_name: item.file.name,
-              file_type: item.file.type.split("/")[1] || "",
-              file_size: item.file.size.toString(),
-              record_status: true,
-              create_by: user[0]?.employee_username || "",
-              create_datetime: new Date().toISOString(),
-              remark: item.otherText || null,
-            };
-          }) || []
-      },
-      RunningModel: {
-        code_group: dataReportTypeValue.lov_code,
-        code_type: dataReportTypeValue.lov1 + "-" + getPaddingYear(),
-        code_num: 1,
-      },
-      CurrentAccessModel: {
-        user_id: user[0]?.employee_username || "",
-      },
-    };
-
-    // สร้าง FormData
-    const formData = new FormData();
-    formData.append("complaintPayloadJson", JSON.stringify(complaintPayload));
-
-    // แนบไฟล์จริง
-    if (complaintFiles && complaintFiles.length > 0) {
-      complaintFiles.forEach((fileItem: any) => {
-        formData.append("complaintFiles", fileItem.file);
+    if (sectionApprove?.employee_username) {
+      DeptApproveSetup.push({
+        step: "1",
+        user_id: sectionApprove.employee_username,
       });
     }
 
-    console.log("📤 complaintPayloadSavedraft:", complaintPayload);
+    if (qcApprove?.employee_username) {
+      DeptApproveSetup.push({
+        step: "2",
+        user_id: qcApprove.employee_username,
+      });
+    }
+
+    // สร้าง JSON payload
+    const DeptSetupPayload = {
+
+      id: tempid,
+      domain_dept_id: domain_dept_id?.domain_dept_id,
+      dept_email: dept_email,
+      create_by: user[0]?.employee_username || "",
+      DeptApproveSetup: DeptApproveSetup,
+
+    };
+    console.log("📤 DeptSetupPayload:", DeptSetupPayload);
     setIsLoadingScreen(true);
 
     try {
-      const response = await _POST_FORMDATA(
-        formData,
-        "/Complaint/ComplaintAdd"
+      const response = await _POST(
+        DeptSetupPayload,
+        "/DeptSetup/DeptSetupAdd"
       );
       if (response && response.status === "success") {
         FullSweetalert({
@@ -1216,147 +1106,56 @@ if (!datapriorityValue_Combobox) {
       handleClose();
 
       // Complaint_Get();
-      ListSearchGet();
+      DeptSearchGet();
     }
   };
 
-  // Function - Add Complaint
-  const ComplaintAdd = async () => {
-    if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  ComplaintAdd");
+  // // Function - Edit DepartmentSetting
+  const DepartmentSettingEdit = async () => {
+    if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  DepartmentSettingEdit");
 
-    if (!validateBeforeAdd()) {
-      return;
-    }
+    // if (!validateBeforeAdd()) {
+    //   return;
+    // }
 
     const tempid = uuidv4();
 
-    //Function Split Domain (For using with Complaint Status)
-    const tempComplaintStatus = splitByDot(user[0]?.employee_domain)
 
     // เตรียม Models
-    const complainttypeModel = dataComplaintTypeValue_Combobox
-      ? compTypeUpdateCompId(
-        dataComplaintTypeValue_Combobox,
-        tempid,
-        compTypeOther
-      )
-      : null;
+    const DeptApproveSetup = [];
 
-    const complaintRsModel = dataComplaintRsValue_Combobox
-      ? compRsUpdateCompId(
-        dataComplaintRsValue_Combobox,
-        tempid,
-        compRsOther,
-        clauseOther
-      )
-      : null;
-
-    // สร้าง JSON payload
-    const complaintPayload = {
-      complaintModel: {
-        id: tempid,
-        report_type: dataReportTypeValue?.id,
-        cas_number: cas_number,
-        date_of_detection: date_of_detection
-          ? date_of_detection
-            .hour(dayjs().hour())
-            .minute(dayjs().minute())
-            .second(dayjs().second())
-            .format("YYYY-MM-DDTHH:mm:ss")
-          : null,
-        request_name: user[0]?.employee_username || "",
-        request_company_id: request_company_id?.company_id,
-          // ? Number(request_company_id.company_id)
-          // : undefined,
-        request_domain_id: user[0]?.employee_domain,
-        request_department_id: user[0]?.itasset_department_id || "",
-        request_position: user[0]?.employee_position || "",
-        request_email: user[0]?.employee_email || "",
-        request_phone: user[0]?.employee_tel || "",
-        request_date: new Date().toISOString(),
-        respondent_company_id: respondent_company_id?.company_id,
-        // ? Number(respondent_company_id.itasset_company_id)
-        // : undefined,
-        respondent_domain_id: respondent_domain_id?.domain_id,
-        respondent_department_id: respondent_department_id?.department_id,
-        // ? Number(respondent_department_id.department_id)
-        // : undefined,
-        respondent_email: respondent_email,
-        respondent_other_name: respondent_other_name,
-        respondent_other_email: respondent_other_email,
-        product_name: product_name,
-        detail: detail,
-        priority_level: datapriorityValue_Combobox,
-        respond_date_within: respond_date_within
-          ? respond_date_within
-            .hour(dayjs().hour())
-            .minute(dayjs().minute())
-            .second(dayjs().second())
-            .format("YYYY-MM-DDTHH:mm:ss")
-          : null,
-        lot_no: lot_no,
-        complaint_status_id: tempComplaintStatus[0] + "_CS_SUBMIT",
-        create_by: user[0]?.employee_username || "",
-        save_type: "save_submit",
-        complaintType: complainttypeModel,
-        complaintRs: complaintRsModel,
-        // เพิ่ม complaintFile
-        complaintFile:
-          complaintFiles?.map((item: any, index: number) => {
-            return {
-              cf_type: "Complaint",
-              complaint_id: tempid,
-              complaint_at_id: item.attachmentType,
-              other: item.attachmentType === "TRR_AT_4" ? (item.otherText?.trim() || null) : null,
-              cf_file_seq: (index + 1).toString(),
-              user_file_name: item.file.name,
-              file_name: item.file.name,
-              file_type: item.file.type.split("/")[1] || "",
-              file_size: item.file.size.toString(),
-              record_status: true,
-              create_by: user[0]?.employee_username || "",
-              create_datetime: new Date().toISOString(),
-              remark: item.attachmentType === "TRR_AT_4" ? (item.otherText?.trim() || null) : null,
-            };
-          }) || []
-
-      },
-      RunningModel: {
-        code_group: dataReportTypeValue.lov_code,
-        code_type: dataReportTypeValue.lov1 + "-" + getPaddingYear(),
-        code_num: 1,
-      },
-      CurrentAccessModel: {
-        user_id: user[0]?.employee_username || "",
-      },
-    };
-    console.log("complaintFile:", complaintPayload.complaintModel.complaintFile);
-
-    // สร้าง FormData
-    const formData = new FormData();
-    formData.append("complaintPayloadJson", JSON.stringify(complaintPayload));
-
-    // แนบไฟล์จริง
-    if (complaintFiles && complaintFiles.length > 0) {
-      complaintFiles.forEach((fileItem: any) => {
-        formData.append("complaintFiles", fileItem.file);
+    if (sectionApprove?.employee_username) {
+      DeptApproveSetup.push({
+        step: "1",
+        user_id: sectionApprove.employee_username,
       });
     }
 
-    console.log("📤 FormData prepared:", formData);
-    console.log("📤 complaintPayload:", complaintPayload);
-    console.log("📤 dataReportTypeValue.id:", dataReportTypeValue.id);
-    console.log(
-      "📤 dataReportTypeValue.lov_code:",
-      dataReportTypeValue.lov_code
-    );
-    console.log("📤 dataReportTypeValue.lov1:", dataReportTypeValue.lov1);
+    if (qcApprove?.employee_username) {
+      DeptApproveSetup.push({
+        step: "2",
+        user_id: qcApprove.employee_username,
+      });
+    }
+
+    // สร้าง JSON payload
+    const DeptSetupPayload = {
+
+      id: dataelement?.id,
+      domain_dept_id: dataelement?.domain_dept_id,
+      dept_email: dataelement?.dept_email,
+      create_by: user[0]?.employee_username || "",
+      update_by: user[0]?.employee_username || "",
+      DeptApproveSetup: DeptApproveSetup,
+
+    };
+    console.log("📤 DeptSetupPayload:", DeptSetupPayload);
     setIsLoadingScreen(true);
 
     try {
-      const response = await _POST_FORMDATA(
-        formData,
-        "/Complaint/ComplaintAdd"
+      const response = await _POST(
+        DeptSetupPayload,
+        "/DeptSetup/DeptSetupEdit"
       );
       if (response && response.status === "success") {
         FullSweetalert({
@@ -1380,185 +1179,28 @@ if (!datapriorityValue_Combobox) {
       handleClose();
 
       // Complaint_Get();
-      ListSearchGet();
+      DeptSearchGet();
     }
   };
 
-  // Function - Edit Complaint
-  const ComplaintEdit = async () => {
-    if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  ComplaintEdit");
-
-    if(!validateBeforeEdit()){
-      return;
-    }
-
-    const tempid = uuidv4();
-
-    const tempComplaintStatus = splitByDot(user[0]?.employee_domain)
-    // เตรียม Models
-    const complainttypeModel = dataComplaintTypeValue_Combobox
-      ? compTypeUpdateCompId(dataComplaintTypeValue_Combobox, tempid, compTypeOther)
-      : null;
-
-    const complaintRsModel = dataComplaintRsValue_Combobox
-      ? compRsUpdateCompId(dataComplaintRsValue_Combobox, tempid, compRsOther, clauseOther)
-      : null;
-
-    // สร้าง JSON payload
-
-    const complaintPayload = {
-
-      complaintModel: {
-        id: dataelement?.id,
-        report_type: dataReportTypeValue?.id,
-        cas_number: cas_number,
-        date_of_detection: date_of_detection
-          ? date_of_detection
-            .hour(dayjs().hour())
-            .minute(dayjs().minute())
-            .second(dayjs().second())
-            .format("YYYY-MM-DDTHH:mm:ss")
-          : null,
-        request_name: dataelement?.request_name,
-        request_company_id: dataelement?.request_company_id,
-        request_domain_id: dataelement?.request_domain_id,
-        request_department_id: dataelement?.request_department_id,
-        request_position: dataelement?.request_position,
-        request_email: dataelement?.request_email,
-        request_phone: dataelement?.request_phone,
-        request_date: new Date().toISOString(),
-        respondent_company_id: dataelement?.respondent_company_id,
-        respondent_domain_id: dataelement?.respondent_domain_id,
-        respondent_department_id: respondent_department_id?.department_id,
-        // ? Number(respondent_department_id.department_id)
-        // : undefined,
-        respondent_email: respondent_email,
-        respondent_other_name: respondent_other_name,
-        respondent_other_email: respondent_other_email,
-        product_name: product_name,
-        detail: detail,
-        priority_level: datapriority?.id ?? dataelement?.priority_level,
-        respond_date_within: respond_date_within
-          ? respond_date_within
-            .hour(dayjs().hour())
-            .minute(dayjs().minute())
-            .second(dayjs().second())
-            .format("YYYY-MM-DDTHH:mm:ss")
-          : null,
-        lot_no: lot_no,
-        complaint_status_id: tempComplaintStatus[0] + "_CS_SUBMIT",
-        create_by: user[0]?.employee_username || '',
-        update_by: user[0]?.employee_username || '',
-        action_type: null,
-        complaintType: complainttypeModel,
-        complaintRs: complaintRsModel,
-        // เพิ่ม complaintFile
-        complaintFile:
-          complaintFiles?.map((item: any, index: number) => {
-            return {
-              id: item.id || undefined,
-              cf_type: "Complaint",
-              //complaint_id: tempid,
-              complaint_id: dataelement?.id,
-              complaint_at_id: item.attachmentType,
-              other: item.attachmentType === "TRR_AT_4" ? (item.otherText?.trim() || null) : null,
-              cf_file_seq: (index + 1).toString(),
-              user_file_name: item.file.name,
-              file_name: item.file.name,
-              file_type: item.file.type,
-              file_size: item.file.size.toString(),
-              record_status: true,
-              create_by: user[0]?.employee_username || "",
-              create_datetime: new Date().toISOString(),
-              remark: item.attachmentType === "TRR_AT_4" ? (item.otherText?.trim() || null) : null,
-            };
-          },
-          ) || []
-      },
-
-      RunningModel: {
-        code_group: dataReportTypeValue.lov_code,
-        code_type: dataReportTypeValue.lov1 + "-" + getPaddingYear(),
-        code_num: 1,
-      },
-      CurrentAccessModel: {
-        user_id: user[0]?.employee_username || '',
-      }
-    };
-
-    // สร้าง FormData
-    const formData = new FormData();
-    formData.append("complaintPayloadJson", JSON.stringify(complaintPayload));
-
-    // แนบไฟล์จริง
-    if (complaintFiles && complaintFiles.length > 0) {
-      complaintFiles.forEach((fileItem: any) => {
-        formData.append("complaintFiles", fileItem.file);
-      });
-    }
-    console.log("🧡dataelement", dataelement);
-
-    console.log("💨💨💨 FormData prepared:", formData);
-    console.log("💨💨💨 complaintPayload:", complaintPayload);
-    console.log("💨💨💨 dataReportTypeValue.id:", dataReportTypeValue.id);
-    console.log("💨💨💨 dataReportTypeValue.lov_code:", dataReportTypeValue.lov_code);
-    console.log("💨💨💨 dataReportTypeValue.lov1:", dataReportTypeValue.lov1);
-    setIsLoadingScreen(true);
-
-    try {
-      const response = await _POST_FORMDATA(formData, "/Complaint/ComplaintEdit");
-      if (response && response.status === "success") {
-        FullSweetalert({
-          title: 'Success',
-          text: `บันทึกข้อมูลสำเร็จ`,
-          icon: 'success'
-        });
-        console.log("✅ Complaint edittt successfully:", response);
-      } else {
-        FullSweetalert({
-          title: 'Failed',
-          text: `บันทึกไม่ข้อมูลสำเร็จ`,
-          icon: 'error'
-        });
-        console.log("⚠️ Edit failed:", response);
-      }
-    } catch (error) {
-      console.error("Upload failed:", error);
-    } finally {
-      setIsLoadingScreen(false);
-      handleClose();
-      FullSweetalert({
-        title: 'Success',
-        text: `บันทึกข้อมูลสำเร็จ`,
-        icon: 'success'
-      });
-      // Complaint_Get();
-      ListSearchGet();
-    }
-  };
-
-  // Function - Delete Complaint
-  const ComplaintDelete = async () => {
+ // Function - Delete DepartmentSetting
+  const DepartmentSettingDelete = async () => {
     if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  ComplaintDelete");
 
     // สร้าง JSON payload
-    const complaintPayload = {
+    const DeptSetupPayload = {
       ComplaintModel: {
         id: dataelement?.id,
+        update_by: user[0]?.employee_username || '',
       },
-      CurrentAccessModel: {
-        user_id: user[0]?.employee_username || '',
-      }
+      
     };
 
-    console.log("📤 complaintPayload:", complaintPayload);
-    console.log("📤 dataReportTypeValue.id:", dataReportTypeValue.id);
-    console.log("📤 dataReportTypeValue.lov_code:", dataReportTypeValue.lov_code);
-    console.log("📤 dataReportTypeValue.lov1:", dataReportTypeValue.lov1);
+    console.log("📤 complaintPayload:", DeptSetupPayload);
     setIsLoadingScreen(true);
 
     try {
-      let response = await _POST(complaintPayload, "/Complaint/ComplaintDelete");
+      let response = await _POST(DeptSetupPayload, "/DeptSetup/DeptSetupDelete");
       if (response && response.status === "success") {
         FullSweetalert({
           title: 'Success',
@@ -1585,9 +1227,57 @@ if (!datapriorityValue_Combobox) {
         icon: 'success'
       });
       // Complaint_Get();
-      ListSearchGet();
+      DeptSearchGet();
     }
   };
+  // // Function - Delete Complaint
+  // const ComplaintDelete = async () => {
+  //   if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  ComplaintDelete");
+
+  //   // สร้าง JSON payload
+  //   const complaintPayload = {
+  //     ComplaintModel: {
+  //       id: dataelement?.id,
+  //     },
+  //     CurrentAccessModel: {
+  //       user_id: user[0]?.employee_username || '',
+  //     }
+  //   };
+
+  //   console.log("📤 complaintPayload:", complaintPayload);
+  //   setIsLoadingScreen(true);
+
+  //   try {
+  //     let response = await _POST(complaintPayload, "/Complaint/ComplaintDelete");
+  //     if (response && response.status === "success") {
+  //       FullSweetalert({
+  //         title: 'Success',
+  //         text: `บันทึกข้อมูลสำเร็จ`,
+  //         icon: 'success'
+  //       });
+  //       console.log("✅ Complaint edittt successfully:", response);
+  //     } else {
+  //       FullSweetalert({
+  //         title: 'Failed',
+  //         text: `บันทึกไม่ข้อมูลสำเร็จ`,
+  //         icon: 'error'
+  //       });
+  //       console.log("⚠️ Edit failed:", response);
+  //     }
+  //   } catch (error) {
+  //     console.error("Upload failed:", error);
+  //   } finally {
+  //     setIsLoadingScreen(false);
+  //     handleClose();
+  //     FullSweetalert({
+  //       title: 'Success',
+  //       text: `ลบข้อมูลสำเร็จ`,
+  //       icon: 'success'
+  //     });
+  //     // Complaint_Get();
+  //     DeptSearchGet();
+  //   }
+  // };
 
   // =====================================================================================================
   // EVENT HANDLERS (from index.tsx)
@@ -1595,163 +1285,78 @@ if (!datapriorityValue_Combobox) {
 
   // Dialog Handlers
   const handleOnclickMenuSync = () => {
-    if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  handleOnclickMenuSync");
+    if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  handleOnclickMenuSync");
 
     // setOpenSync(true);
   };
 
-  const handleOnclickComplaintAdd = () => {
-    if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  handleOnclickComplaintAdd");
+  const handleOnclickDepartmentSettingAdd = () => {
+    if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  handleOnclickDepartmentSettingAdd");
 
     resetForm();
     setdataelement(null);
-    setOpenComplaintAdd(true);
+    setOpenDepartmentSettingAdd(true);
   };
 
-  const handleOnclickComplaintView = (data: any) => {
-    if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  handleOnclickComplaintView");
+  const handleOnclickDepartmentSettingView = (data: any) => {
+    if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  handleOnclickDepartmentSettingView");
 
     console.log("Read step:3 เรียกฟังก์ชั่น ดูข้อมูล handleOnclickMenuView ");
-    console.log("Read step:3 ข้อมูลที่ได้จาก ListSearchGet ก่อนส่งเข้าฟังก์ชั่น Complaint_Get  ", data);
-    Complaint_Get(data);
+    console.log("Read step:3 ข้อมูลที่ได้จาก DeptSearchGet ก่อนส่งเข้าฟังก์ชั่น Complaint_Get  ", data);
+    Dept_setup_Get(data);
     resetForm();
-    setOpenComplaintView(true); // แล้วค่อยเปิด Dialog
+    setOpenDepartmentSettingView(true); // แล้วค่อยเปิด Dialog
   };
 
-  const handleOnclickComplaintEdit = (data: any) => {
-    if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  handleOnclickComplaintEdit");
+  const handleOnclickDepartmentSettingEdit = (data: any) => {
+    if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  handleOnclickDepartmentSettingEdit");
 
     console.log("Edit step:3 เรียกฟังก์ชั่น ดูข้อมูล handleOnclickMenuEdit ");
-    console.log("Edit step:3 ข้อมูลที่ได้จาก ListSearchGet ก่อนส่งเข้าฟังก์ชั่น Complaint_Get  ", data);
-    Complaint_Get(data);
+    console.log("Edit step:3 ข้อมูลที่ได้จาก DeptSearchGet ก่อนส่งเข้าฟังก์ชั่น Complaint_Get  ", data);
+    Dept_setup_Get(data);
     resetForm();
-    setOpenComplaintEdit(true);
+    setOpenDepartmentSettingEdit(true);
   };
 
-  const handleOnclickComplaintDelete = (data: any) => {
-    if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  handleOnclickComplaintDelete");
+  const handleOnclickDepartmentSettingDelete = (data: any) => {
+    if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  handleOnclickDepartmentSettingDelete");
 
     console.log("Delete step:3 เรียกฟังก์ชั่น ดูข้อมูล handleOnclickMenuDelete ");
-    console.log("Delete step:3 ข้อมูลที่ได้จาก ListSearchGet ก่อนส่งเข้าฟังก์ชั่น Complaint_Get  ", data);
-    Complaint_Get(data);
+    console.log("Delete step:3 ข้อมูลที่ได้จาก DeptSearchGet ก่อนส่งเข้าฟังก์ชั่น Complaint_Get  ", data);
+    Dept_setup_Get(data);
     resetForm();
-    setOpenComplaintDelete(true);
+    setOpenDepartmentSettingDelete(true);
   };
 
-  // -------- Explain Dialog Handlers --------
-  const handleOnclickExplain = (data: any) => {
-    if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  handleOnclickExplain");
-
-    resetForm();
-    setOpenExplain(true);
-    setdataelement(data);
-  };
-  
-  const handleOnclickExplainAdd = (data: any) => {
-    if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  handleOnclickExplainAdd");
-
-    resetForm();
-    setOpenExplainAdd(true);
-    // ใช้ข้อมูลที่ส่งมาจากหน้า Explain รายละเอียด
-    if (data) {
-      setdataelement(data);
-    } else {
-      setdataelement(null);
-    }
-  };
-
-  const handleOnclickExplainView = (data: any) => {
-    if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  handleOnclickExplainView");
-
-    resetForm();
-    setOpenExplainView(true);
-    setdataelement(data);
-  };
-
-  const handleOnclickExplainApproveSc = (data: any) => {
-    if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  handleOnclickExplainApproveSc");
-
-    resetForm();
-    setOpenExplainApproveSc(true);
-    // ใช้ข้อมูลที่ส่งมาจากหน้า Explain รายละเอียด
-    if (data) {
-      setdataelement(data);
-    } else {
-      setdataelement(null);
-    }
-  };
-
-  
-
-  // const handleOnclickMenuUpload = () => {
-  //   setOpenUpload(true);
-  // };
-
-  // const handleTableButtonClick = (func_name: string) => {
-  //   switch (func_name) {
-  //     case "Add":
-  //       handleOnclickComplaintAdd();
-  //       break;
-  //     case "Upload":
-  //       handleOnclickMenuUpload();
-  //       break;
-  //     case "Print":
-  //       console.log("Print clicked");
-  //       break;
-  //     default:
-  //       console.warn("No handler for", func_name);
-  //   }
-  // };
 
   // Search Handlers
   const handleCloseSearch = () => {
-    if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  handleCloseSearch");
-
-    setdataReportTypeValue(null);
-    setdataComplaintTypeValue_Combobox([]);
-    setdataComplaintRsValue_Combobox([]);
-    setdataphotoValue_Combobox([]);
-    setrespondWithinSearch(null);
-    setdocumentDateSearch(null);
+    if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  handleCloseSearch");
     setTextNameSearch({
-      report_code: "",
-      cas_number: "",
-      product_name: "",
-      lot_no: "",
-      datastatus: "",
-      dataset_stepcomplaint: "",
-      request_department_id: ""
+      dataset_username: "",
+      dataset_company: "",
+      dataset_department: "",
+      dataset_domain: "",
+      Email: "",
     });
     // Complaint_Get()
-    // ListSearchGet();
+    // DeptSearchGet();
   };
 
   // Close Dialog Handler
   const handleClose = () => {
-    if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  handleClose");
+    if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  handleClose");
 
-    setOpenComplaintAdd(false);
+    setOpenDepartmentSettingAdd(false);
     // setOpenSync(false);
-    setOpenComplaintView(false);
-    setOpenComplaintEdit(false);
-    setOpenComplaintDelete(false);
-    setOpenExplain(false);
-    setOpenExplainAdd(false);
-    setOpenExplainView(false);
-    setOpenExplainApproveSc(false);
+    setOpenDepartmentSettingView(false);
+    setOpenDepartmentSettingEdit(false);
+    setOpenDepartmentSettingDelete(false);
     setOpenUpload(false);
     resetForm();
   };
 
-  // Set Data Handler
-  const setData = (data: any) => {
-    if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  setData");
 
-    setcompTypeOther("");
-    setComplaint_no("");
-    setno("");
-    setcas_number("");
-  };
 
   // =====================================================================================================
   // USEEFFECT - INITIALIZATION (from index.tsx and ComplaintRead.tsx)
@@ -1760,70 +1365,15 @@ if (!datapriorityValue_Combobox) {
   // Initialize data on component mount
   React.useEffect(() => {
     resetSearchTable();
-    
-    // Complaint_Get();
-    console.log("step:1 เรียกฟังก์ชั่น ListSearchGet();");
-    LovAll_Get();
-    // ListSearchGet();
-    // ReportType_Get();
-    // ComplaintType_Get();
-    // ComplaintRs_Get();
-    // photo_Get();
-    priority_Get();
-    DomainGet();
+    console.log("step:1 เรียกฟังก์ชั่น DeptSearchGet();");
+    DeptSearchGet();
+    // DomainGet();
     DepartmentDomainGet();
-
-    // complaint_status_Get();
-    // ToolUse_Get();
-    // Decision_Get();
+    CompanyGet();
+    UsernameGet();
+    
+    console.log("#################### dataset_company", dataset_company);
   }, []);
-
-  React.useEffect(() => {
-    if (dataset_complaintAction) {
-      ListSearchGet();
-    }
-  }, [dataset_complaintAction]);
-
-
-  // Filter complaint types based on selected report type (from ComplaintRead.tsx)
-  React.useEffect(() => {
-    // previewComplaint();
-    if (!dataelement) return;
-
-    // กรอง complaint type
-    const filtered = (dataComplaintType_Combobox || []).filter(
-      (item: LovType) =>
-        item.lov_type === "complaint_type" &&
-        item.lov_code === dataelement?.report_type
-    );
-    const filteredRs = (dataComplaintRs_Combobox || []).filter(
-      (item: LovType) =>
-        item.lov_type === "reference_standard" &&
-        item.lov_code === dataelement?.report_type
-    );
-    const filteredpriority = (datapriority_Combobox || []).filter(
-      (item: LovType) => item.lov_type === "priority_level"
-    );
-    const filteredphoto = (dataphoto_Combobox || []).filter(
-      (item: LovType) => item.lov_type === "attach_type"
-    );
-
-    console.log("filtered", filtered);
-    setFilteredComplaintType(filtered);
-    console.log("filteredRS", filteredRs);
-    setFilteredComplaintRs(filteredRs);
-    console.log("filteredpriority", filteredpriority);
-    setFilteredpriority(filteredpriority);
-    console.log("filteredphoto", filteredphoto);
-    setFilteredphoto(filteredphoto);
-  }, [
-    dataComplaintType_Combobox,
-    dataComplaintRs_Combobox,
-    datapriority_Combobox,
-    dataphoto_Combobox,
-    dataelement,
-  ]);
-
   // =====================================================================================================
   // RETURN SECTION - RENDER COMPONENT
   // =====================================================================================================
@@ -1850,82 +1400,71 @@ if (!datapriorityValue_Combobox) {
         <Grid container spacing={2} my={3}>
           <Grid size={3}>
             <AutocompleteComboBox
-              value={dataset_reporttype?.find(
-                (item: any) => item.id === TextNameSearch.report_code
+              value={dataset_username?.find(
+                (item: any) => item.employee_username === TextNameSearch.dataset_username
               ) || null}
               labelName="ชื่อ (Username)"
-              options={dataset_reporttype || []}
-              column="lov_code"
+              options={dataset_username || []}
+              column="employee_username"
               setvalue={(val) => {
                 setTextNameSearch({
                   ...TextNameSearch,
-                  report_code: val?.id || "", // เก็บแค่ id เป็น string
+                  dataset_username: val?.employee_username || "", // เก็บแค่ id เป็น string
                 })
-                setdataReportTypeValue(val);
-                setReportTypeError(false);
               }}
-              error={reportTypeError}
             />
           </Grid>
           <Grid size={3}>
             <AutocompleteComboBox
-              value={dataset_reporttype?.find(
-                (item: any) => item.id === TextNameSearch.report_code
+              value={dataset_company?.find(
+                (item: any) => item.company_id === TextNameSearch.dataset_company
               ) || null}
               labelName="บริษัท (Company)"
-              options={dataset_reporttype || []}
-              column="lov_code"
+              options={dataset_company || []}
+              column="company_name"
               setvalue={(val) => {
                 setTextNameSearch({
+
                   ...TextNameSearch,
-                  report_code: val?.id || "", // เก็บแค่ id เป็น string
+                  dataset_company: val?.company_id || "", // เก็บแค่ id เป็น string
                 })
-                setdataReportTypeValue(val);
-                setReportTypeError(false);
               }}
-              error={reportTypeError}
             />
           </Grid>
           <Grid size={3}>
             <AutocompleteComboBox
-              value={dataset_reporttype?.find(
-                (item: any) => item.id === TextNameSearch.report_code
+              value={dataset_domain?.find(
+                (item: any) => item.domain_id === TextNameSearch.dataset_domain
               ) || null}
               labelName="โดเมน (Domain)"
-              options={dataset_reporttype || []}
-              column="lov_code"
+              options={dataset_domain || []}
+              column="domain_name"
               setvalue={(val) => {
                 setTextNameSearch({
                   ...TextNameSearch,
-                  report_code: val?.id || "", // เก็บแค่ id เป็น string
+                  dataset_domain: val?.domain_id || "", // เก็บแค่ id เป็น string
                 })
-                setdataReportTypeValue(val);
-                setReportTypeError(false);
               }}
-              error={reportTypeError}
             />
           </Grid>
           <Grid size={3}>
             <AutocompleteComboBox
-              value={dataset_reporttype?.find(
-                (item: any) => item.id === TextNameSearch.report_code
+              value={dataset_department?.find(
+                (item: any) => item.department_id === TextNameSearch.dataset_department
               ) || null}
               labelName="แผนก (Department)"
-              options={dataset_reporttype || []}
-              column="lov_code"
+              options={dataset_department || []}
+              column="department_name"
               setvalue={(val) => {
                 setTextNameSearch({
                   ...TextNameSearch,
-                  report_code: val?.id || "", // เก็บแค่ id เป็น string
+                  dataset_department: val?.department_id || "", // เก็บแค่ id เป็น string
                 })
-                setdataReportTypeValue(val);
-                setReportTypeError(false);
               }}
-              error={reportTypeError}
             />
           </Grid>
-          
-          
+
+
         </Grid>
 
         {/* ======================================================================== */}
@@ -1941,7 +1480,7 @@ if (!datapriorityValue_Combobox) {
           <Grid>
             <FullWidthButton
               labelName={"ค้นหา"}
-              handleonClick={ListSearchGet}
+              handleonClick={DeptSearchGet}
               variant_text="contained"
               colorname={"primary"}
             />
@@ -1971,7 +1510,7 @@ if (!datapriorityValue_Combobox) {
               color="success"
               onClick={() => {
                 DepartmentDomainGet("Add");
-                handleOnclickComplaintAdd();
+                handleOnclickDepartmentSettingAdd();
               }}
             >
               {menuFuncData?.find((item: auth_role_menu_func) => item?.func_name === "Add") ? "เพิ่มข้อมูล" : ""}
@@ -1982,108 +1521,233 @@ if (!datapriorityValue_Combobox) {
       />
 
       {/* ---------------------------------------------------------------------- */}
-      {/* ------------------------ Complaint FuncDialog ------------------------ */}
+      {/* --------------------- DepartmentSetting FuncDialog ------------------- */}
       {/* ---------------------------------------------------------------------- */}
-
-      {/* <FuncDialog
-        open={openComplaintAdd}
+      <FuncDialog
+        open={openDepartmentSettingView}
+        dialogWidth="xl"
+        openBottonHidden={false}
+        titlename={"Department // ดูข้อมูล"}
+        handleClose={handleClose}
+        buttonColor="success"
+        element={<DepartmentSettingBody
+          action="Read"
+        />}
+      />
+      <FuncDialog
+        open={openDepartmentSettingAdd}
         dialogWidth="xl"
         openBottonHidden={true}
         hideReject={true}
-        titlename={"Complaint // เพิ่มข้อมูล"}
+        hideSaveDraft={true}
+        titlename={"เพิ่มข้อมูลแผนก"}
         buttonText={"Save & Submit"}
         handleClose={handleClose}
-        handlefunction={ComplaintAdd}
-        handlesavedraft={ComplaintSavedraftAdd}
+        handlefunction={DepartmentSettingAdd}
         buttonColor="success"
         element={
-          <ComplaintBody
+          <DepartmentSettingBody
             action="Add"
-            // onBlocksChange={(data) => setComplaintBlocks(data)}
-            validateDetailText={blockValidateErrors}
-            handleOpenAdd={handleOpenAddList}
-            validateText={{
-              Product_Group: false,
-              Report_Type: reportTypeError,
-              Respondent_Department: false,
-              Date_of_Detection: dateOfDetectionError,
-              Department_Area: departmentAreaError,
-              Product_Name: productNameError,
-              Lot_No: lotNoError,
-              Email: emailError,
-              Complaint_Type: complaintTypeError,
-              Other_Type: otherTypeError,
-              Complaint_Rs: complaintRsError,
-              Other_Rs: otherRsError,
-              Clause_Rs: clauseRsError,
-              Detail: detailError,
-              Priority: priorityError,
-            }}
-            onReportTypeChange={(val) => {
-              setdataReportTypeValue(val);
-              setReportTypeError(false);
-              // Clear all validation errors when report type changes
-              setDateOfDetectionError(false);
-              setDepartmentAreaError(false);
-              setProductNameError(false);
-              setLotNoError(false);
-              setEmailError(false);
-              setComplaintTypeError(false);
-              setOtherTypeError(false);
-              setComplaintRsError(false);
-              setOtherRsError(false);
-              setClauseRsError(false);
-              setDetailError(false);
-              setPriorityError(false);
-            }}
-            onDateOfDetectionChange={(val) => {
-              setdate_of_detection(val);
-              setDateOfDetectionError(false);
-            }}
-            onDepartmentAreaChange={(val) => {
-              setrespondent_department_id(val);
-              setDepartmentAreaError(false);
-            }}
-            onProductNameChange={(val) => {
-              setproduct_name(val);
-              setProductNameError(false);
-            }}
-            onLotNoChange={(val) => {
-              setlot_no(val);
-              setLotNoError(false);
-            }}
+          //   // onBlocksChange={(data) => setComplaintBlocks(data)}
+          //   validateDetailText={blockValidateErrors}
+          //   handleOpenAdd={handleOpenAddList}
+          //   validateText={{
+          //     Product_Group: false,
+          //     Report_Type: reportTypeError,
+          //     Respondent_Department: false,
+          //     Date_of_Detection: dateOfDetectionError,
+          //     Department_Area: departmentAreaError,
+          //     Product_Name: productNameError,
+          //     Lot_No: lotNoError,
+          //     Email: emailError,
+          //     Complaint_Type: complaintTypeError,
+          //     Other_Type: otherTypeError,
+          //     Complaint_Rs: complaintRsError,
+          //     Other_Rs: otherRsError,
+          //     Clause_Rs: clauseRsError,
+          //     Detail: detailError,
+          //     Priority: priorityError,
+          //   }}
+          //   onReportTypeChange={(val) => {
+          //     setdataReportTypeValue(val);
+          //     setReportTypeError(false);
+          //     // Clear all validation errors when report type changes
+          //     setDateOfDetectionError(false);
+          //     setDepartmentAreaError(false);
+          //     setProductNameError(false);
+          //     setLotNoError(false);
+          //     setEmailError(false);
+          //     setComplaintTypeError(false);
+          //     setOtherTypeError(false);
+          //     setComplaintRsError(false);
+          //     setOtherRsError(false);
+          //     setClauseRsError(false);
+          //     setDetailError(false);
+          //     setPriorityError(false);
+          //   }}
+          //   onDateOfDetectionChange={(val) => {
+          //     setdate_of_detection(val);
+          //     setDateOfDetectionError(false);
+          //   }}
+          //   onDepartmentAreaChange={(val) => {
+          //     setrespondent_department_id(val);
+          //     setDepartmentAreaError(false);
+          //   }}
+          //   onProductNameChange={(val) => {
+          //     setproduct_name(val);
+          //     setProductNameError(false);
+          //   }}
+          //   onLotNoChange={(val) => {
+          //     setlot_no(val);
+          //     setLotNoError(false);
+          //   }}
 
-            onEmailChange={(val) => {
-              setrespondent_email(val);
-              setEmailError(false);
-            }}
-            onComplaintTypeChange={(val) => {
-              setComplaintTypeError(false);
-              setOtherTypeError(false);
-            }}
-            onOtherTypeChange={(val) => {
-              setOtherTypeError(false);
-            }}
-            onComplaintRsChange={(val) => {
-              setComplaintRsError(false);
-              setOtherRsError(false);
-              setClauseRsError(false);
-            }}
-            onOtherRsChange={(val) => {
-              setOtherRsError(false);
-            }}
-            onClauseChange={(val) => {
-              setClauseRsError(false);
-            }}
-            onDetailChange={(val) => {
-              setDetailError(false);
-            }}
-            onPriorityChange={(val) => {
-              setPriorityError(false);
-            }}
+          //   onEmailChange={(val) => {
+          //     setrespondent_email(val);
+          //     setEmailError(false);
+          //   }}
+          //   onComplaintTypeChange={(val) => {
+          //     setComplaintTypeError(false);
+          //     setOtherTypeError(false);
+          //   }}
+          //   onOtherTypeChange={(val) => {
+          //     setOtherTypeError(false);
+          //   }}
+          //   onComplaintRsChange={(val) => {
+          //     setComplaintRsError(false);
+          //     setOtherRsError(false);
+          //     setClauseRsError(false);
+          //   }}
+          //   onOtherRsChange={(val) => {
+          //     setOtherRsError(false);
+          //   }}
+          //   onClauseChange={(val) => {
+          //     setClauseRsError(false);
+          //   }}
+          //   onDetailChange={(val) => {
+          //     setDetailError(false);
+          //   }}
+          //   onPriorityChange={(val) => {
+          //     setPriorityError(false);
+          //   }}
           />
+
+
         }
-      /> */}
+      />
+
+      <FuncDialog
+        open={openDepartmentSettingEdit}
+        dialogWidth="xl"
+        openBottonHidden={true}
+        hideReject={true}
+        titlename={'DepartmentSetting // แก้ไขข้อมูล'}
+        buttonText={"Save & Submit"}
+        handleClose={handleClose}
+        handlefunction={DepartmentSettingEdit}
+        hideSaveDraft={true}
+        buttonColor="success"
+        element={<DepartmentSettingBody
+          action="Edit"
+        // onBlocksChange={(data) => setComplaintBlocks(data)}
+        //   validateDetailText={blockValidateErrors}
+        //   handleOpenAdd={handleOpenAddList}
+        //   validateText={{
+        //     Product_Group: false,
+        //     Report_Type: reportTypeError,
+        //     Respondent_Department: false,
+        //     Date_of_Detection: dateOfDetectionError,
+        //     Department_Area: departmentAreaError,
+        //     Product_Name: productNameError,
+        //     Lot_No: lotNoError,
+        //     Email: emailError,
+        //     Complaint_Type: complaintTypeError,
+        //     Other_Type: otherTypeError,
+        //     Complaint_Rs: complaintRsError,
+        //     Other_Rs: otherRsError,
+        //     Clause_Rs: clauseRsError,
+        //     Detail: detailError,
+        //     Priority: priorityError,
+        //   }}
+        //   onReportTypeChange={(val) => {
+        //     setdataReportTypeValue(val);
+        //     setReportTypeError(false);
+        //     setDateOfDetectionError(false);
+        //     setDepartmentAreaError(false);
+        //     setProductNameError(false);
+        //     setLotNoError(false);
+        //     setEmailError(false);
+        //     setComplaintTypeError(false);
+        //     setOtherTypeError(false);
+        //     setComplaintRsError(false);
+        //     setOtherRsError(false);
+        //     setClauseRsError(false);
+        //     setDetailError(false);
+        //     setPriorityError(false);
+        //   }}
+        //   onDateOfDetectionChange={(val) => {
+        //     setdate_of_detection(val);
+        //     setDateOfDetectionError(false);
+        //   }}
+        //   onDepartmentAreaChange={(val) => {
+        //     setrespondent_department_id(val);
+        //     setDepartmentAreaError(false);
+        //   }}
+        //   onProductNameChange={(val) => {
+        //     setproduct_name(val);
+        //     setProductNameError(false);
+        //   }}
+        //   onLotNoChange={(val) => {
+        //     setlot_no(val);
+        //     setLotNoError(false);
+        //   }}
+
+        //   onEmailChange={(val) => {
+        //     setrespondent_email(val);
+        //     setEmailError(false);
+        //   }}
+        //   onComplaintTypeChange={(val) => {
+        //     setComplaintTypeError(false);
+        //     setOtherTypeError(false);
+        //   }}
+        //   onOtherTypeChange={(val) => {
+        //     setOtherTypeError(false);
+        //   }}
+        //   onComplaintRsChange={(val) => {
+        //     setComplaintRsError(false);
+        //     setOtherRsError(false);
+        //     setClauseRsError(false);
+        //   }}
+        //   onOtherRsChange={(val) => {
+        //     setOtherRsError(false);
+        //   }}
+        //   onClauseChange={(val) => {
+        //     setClauseRsError(false);
+        //   }}
+        //   onDetailChange={(val) => {
+        //     setDetailError(false);
+        //   }}
+        //   onPriorityChange={(val) => {
+        //     setPriorityError(false);
+        //   }}
+        />}
+      />
+
+      <FuncDialog
+              open={openDepartmentSettingDelete}
+              dialogWidth="xl"
+              hideSaveDraft={true}
+              openBottonHidden={true}
+              hideReject={true}
+              titlename={'DepartmentSetting // ลบข้อมูล'}
+              buttonText={"Delete"}
+              handleClose={handleClose}
+              handlefunction={DepartmentSettingDelete}
+              buttonColor="error"
+              element={<DepartmentSettingBody
+                action="Delete"
+              />}
+            />
 
       {/* =================== Dialog Sections =================== */}
 

@@ -666,6 +666,11 @@ export default function Complaint() {
       const response = await _POST(dataset, "/Complaint/CasDomainGet");
       if (response && response.status === "success") {
         // console.log("❇️ Call [Complaint/CasDomainGet] -> Domain_Get :",response.data);
+
+        console.log(
+          "❇️ Call [Complaint/DomainGet] -> DomainGet :",
+          response.data
+        );
         if (Array.isArray(response.data)) {
           let domain = response.data.filter(
             (item: any) => item.domain_id === user[0]?.employee_domain
