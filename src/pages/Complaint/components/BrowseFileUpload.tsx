@@ -22,6 +22,7 @@ interface BrowseFileUploadProps {
   validate?: boolean;
   options?: Array<{ id: string; lov1: string }>;
   action?: string;
+  isViewMode?: boolean;
 }
 
 const allowedTypes = [
@@ -41,6 +42,7 @@ export default function BrowseFileUpload({
   validate,
   options = [],
   action = "Add",
+  isViewMode,
 }: BrowseFileUploadProps) {
 
   const Read = action === "Read";
@@ -90,7 +92,7 @@ export default function BrowseFileUpload({
       </label>
 
       {/*select ประเภทไฟล์ และ ปุ่มอัปโหลด */}
-      {(action == "Add" || action == "Edit"  || isActionExplainAdd ) && (
+      {(action == "Add" || action == "Edit"  || isActionExplainAdd ) && !isViewMode && (
         <>
           {/* Select + OtherText */}
           <div className="flex items-center gap-2 mb-2 w-full">

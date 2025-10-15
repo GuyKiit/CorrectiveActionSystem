@@ -10,6 +10,7 @@ import {
 } from "../../../../libs/datacontrol";
 import dayjs from "dayjs";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import DoneIcon from '@mui/icons-material/Done';
 import DownloadIcon from "@mui/icons-material/Download";
 import CloseIcon from "@mui/icons-material/Close";
 import {
@@ -113,7 +114,6 @@ interface ComplaintBody {
   validateText?: Validate;
   validateDetailText?: { [index: number]: detail };
   onBlocksChange?: (blocks: Block[]) => void;
-  handleOpenAdd?: () => void;
   onReportTypeChange?: (val: any) => void;
   onDateOfDetectionChange?: (val: any) => void;
   onDepartmentAreaChange?: (val: any) => void;
@@ -130,6 +130,10 @@ interface ComplaintBody {
 
   onDetailChange?: (val: any) => void;
   onPriorityChange?: (val: any) => void;
+
+
+  handleOpenAdd?: () => void;
+  handleOnclickExplainView?: (item: any) => void;
 }
 
 type LovType = {
@@ -163,7 +167,7 @@ export default function ComplaintBody({
   validateText,
   onBlocksChange,
   validateDetailText,
-  handleOpenAdd,
+
   onReportTypeChange,
   onDateOfDetectionChange,
   onDepartmentAreaChange,
@@ -181,6 +185,9 @@ export default function ComplaintBody({
 
   onDetailChange,
   onPriorityChange,
+
+  handleOpenAdd,
+  handleOnclickExplainView,
 }: ComplaintBody) {
   const isActionRead = action === "Read" ;
   const isActionAdd = action === "Add" ;
@@ -189,6 +196,9 @@ export default function ComplaintBody({
   const isActionExplain = action === "Explain";
   const isActionClose = action === "Close";
   const isActionExplainAdd = action === "ExplainAdd" ;
+  const isActionExplainRead = action === "ExplainRead" ;
+
+  const isActionExplainApproveScAdd = action === "ApproveScAdd" ;
 
 
   const user = cleanAccessData("userSession");
@@ -205,6 +215,7 @@ export default function ComplaintBody({
 
   const {
     dataelement,
+    setdataelement,
     Complaint_no,
     no,
     cas_number,
@@ -395,6 +406,7 @@ export default function ComplaintBody({
     [fileIndex: number]: string;
   }>({});
   const [fileList, setFileList] = useState<FileData[]>([]);
+  const [explainList, setExplainList] = useState<any[]>([]);
   const [request_department_id, setrequest_department_id] = React.useState<{
     itasset_department_id: number;
     itasset_department_name: string;
@@ -766,6 +778,62 @@ export default function ComplaintBody({
     setcomplaintFiles(fileList); // sync
   }, [fileList]);
 
+ // Function - Get Complaints
+ const Complaint_Get = async (data: any) => {
+  if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  Complaint_Get");
+
+  // setIsLoadingScreen(true)
+  const dataset = {
+    id: data.id,
+    user_id: user[0]?.employee_username,
+    domain_id: user[0]?.employee_domain,
+    department_id: user[0]?.itasset_department_id,
+    company_id: user[0]?.itasset_company_id,
+  };
+  console.log("Read step:4 dataset: ", dataset);
+
+
+  try {
+    let response = await _POST(dataset, "/Complaint/ComplaintGet");
+    console.log("Read step:4 ผลลัพธ์ : ", response);
+    console.log("Read step:4 Normalize ปรับค่าใหม่ : ", response.data[0],);
+    if (response && response.status === "success") {
+      setIsLoadingScreen(false);
+      setdataelement(response.data[0])
+    }
+  } catch (e) {
+    console.log("error");
+  }
+};
+
+// Function - Get Explain List
+const Explain_Get = async () => {
+  if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  Explain_Get");
+
+  if (!dataelement?.id) {
+    console.log("No complaint ID, skipping explain fetch");
+    return;
+  }
+
+  setIsLoadingScreen(true);
+  const dataset = {
+    complaint_id: dataelement?.id,
+  };
+
+  try {
+    let response = await _POST(dataset, "/Explain/ExplainGet");
+    console.log("Explain_Get response:", response);
+    if (response && response.status === "success") {
+      setIsLoadingScreen(false);
+      setExplainList(response.data || []);
+      console.log("Explain list:", response.data);
+    }
+  } catch (e) {
+    console.log("Explain_Get error:", e);
+    setIsLoadingScreen(false);
+  }
+};
+
   // READ - Get Complaints
   const ComplaintFile_Get = async () => {
     if (true) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  ComplaintFile_Get");
@@ -996,12 +1064,11 @@ export default function ComplaintBody({
     console.log("step: 5 เก็บข้อมูลเข้า ฺsetdataelement ใหม่ ", dataelement)
 
     if (dataelement && action != "Add") {
-      // setrespondent_company_id(dataset_company.find((el: any) =>el.itasset_company_id == String(dataelement.respondent_company_id?.company_id)));
-      // setrespondent_company_id(dataset_company.find((el: any) => String(el.itasset_company_id) === String(dataelement.respondent_company_id?.company_id)));
+      setrespondent_company_id(dataset_company.find((el: any) => String(el.itasset_company_id) === String(dataelement.respondent_company_id?.company_id)));
       setcas_number(dataelement?.cas_number || "");
       setdoc_date(dataelement?.doc_date ? dayjs(dataelement.doc_date, "DD-MM-YYYY") : dayjs());
       setdate_of_detection(dayjs(dataelement?.date_of_detection));
-      //setrespondent_department_id(dataset_department.find((el: any) => String(el.itasset_department_id) === String(dataelement.respondent_department_id?.department_id)));
+      setrespondent_department_id(dataset_department.find((el: any) => String(el.itasset_department_id) === String(dataelement.respondent_department_id?.department_id)));
       setproduct_name(dataelement?.product_name ? dataelement?.product_name : "");
       setlot_no(dataelement?.lot_no ? dataelement?.lot_no : "");
       setrespondent_email(dataelement?.respondent_email ? dataelement?.respondent_email : "");
@@ -1011,7 +1078,7 @@ export default function ComplaintBody({
       // setcompRsOther(dataelement?.other ? dataelement?.other : "");
       // setclauseOther(dataelement?.clause ? dataelement?.clause : "");
       setdetail(dataelement?.detail ? dataelement?.detail : "");
-      // setpriority_level(setPriorityLevel(dataelement?.priority_level));
+      setpriority_level(setPriorityLevel(dataelement?.priority_level));
       setrespond_date_within(dataelement?.respond_date_within ? dayjs(dataelement.respond_date_within, "DD-MM-YYYY") : dayjs());
       setrequest_name(dataelement?.request_name ? dataelement?.request_name : "");
       setrequest_position(dataelement?.request_position ? dataelement?.request_position : "");
@@ -1060,12 +1127,19 @@ export default function ComplaintBody({
     }
   }, [dataelement, dataset_reporttype, dataset_department, dataset_company]);
 
+
+  
   React.useEffect(() => {
     // เฉพาะตอน Read เท่านั้น
     if (action === "Read" || action === "Edit" || action === "Delete" || isActionExplain) {
+      if (dataelement?.id) {
+        Complaint_Get(dataelement);
+      }
       ComplaintFile_Get();
+      Explain_Get();
     }
-  }, [action, dataelement]);
+  }, [action, dataelement?.id]);
+
 
   const setComplaintType = (data: any) => {
     if (true) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  setComplaintType");
@@ -1369,6 +1443,16 @@ export default function ComplaintBody({
                         Validate={validateText?.Email || false}
                         validateTextLable={validateText?.Email ? "กรุณากรอกอีเมล" : ""}
                       />
+                      {/* <FullWidthTextField
+                    required="required"
+                    value={ isActionExplain
+                      ? user[0]?.employee_email || "-"
+                                : dataelement?.request_email || "-"
+                    }
+                    labelName="อีเมล (Email)"
+                    onchange={(e) => setrespondent_email(e)}
+                    readonly={isActionRead || isActionDelete || isActionExplainAdd || isActionExplain}
+                  /> */}
                     </Grid>
                   </Grid>
 
@@ -1446,7 +1530,7 @@ export default function ComplaintBody({
                                           onchange={() =>
                                             handleCheckboxChangeCT(item)
                                           }
-                                          readonly={isActionRead || isActionDelete || isActionExplain}
+                                          readonly={isActionRead || isActionDelete || isActionExplain }
                                         />
                                       </Grid>
                                     )
@@ -1573,7 +1657,6 @@ export default function ComplaintBody({
                         </Grid>
                       )}
                     </Grid>
-                    {/* Priority Section */}
 
                     {dataReportTypeValue && (
                       <Box sx={{ mt: 3 }}>
@@ -2138,7 +2221,7 @@ export default function ComplaintBody({
                         <Grid size={4}>
                           <FullWidthTextField
                             value={
-                              action === "Add" || isActionExplain
+                              action === "Add" || isActionAdd || isActionExplain
                                 ? user[0]?.employee_username || "-"
                                 : dataelement?.request_name || "-"
                             }
@@ -2282,21 +2365,29 @@ export default function ComplaintBody({
                     </Box>
 
                     {/* === ฝั่งขวา ปุ่ม Add === */}
-                    {complaint_status_label == 'SUBMIT'} (
-                    <Button
-                      variant="contained"
-                      size="small"
-                      sx={{
-                        backgroundColor: "#2e7d32",
-                        "&:hover": { backgroundColor: "#2e7d32" },
-                        borderRadius: 2,
-                        textTransform: "none",
-                      }}
-                      onClick={() => handleOpenAdd && handleOpenAdd()}
-                    >
-                      + เพิ่มคำชี้แจง
-                    </Button>
-                    )
+                    {complaint_status_label == 'SUBMIT' && (
+                      <Button
+                        variant="contained"
+                        size="small"
+                        sx={{
+                          backgroundColor: "#2e7d32",
+                          "&:hover": { backgroundColor: "#2e7d32",
+                            //transform: "translateY(-1px)",
+                            //boxShadow: "0 4px 8px rgba(0,0,0,0.2)"
+                          },
+                          borderRadius: 2,
+                          textTransform: "none",
+                          fontWeight: 600,
+                          px: 3,
+                          py: 1,
+                          transition: "all 0.2s ease-in-out",
+                          boxShadow: "0 2px 4px rgba(0,0,0,0.1)"
+                        }}
+                        onClick={() => handleOpenAdd && handleOpenAdd()}
+                      >
+                        + เพิ่มคำชี้แจง
+                      </Button>
+                    )}
                   </Box>
                 </AccordionSummary>
 
@@ -2306,11 +2397,14 @@ export default function ComplaintBody({
 
 
 
-                    {/* รายการคำชี้แจง      !!!!! แก้ FileList เป็น  Explain List*/} 
+                    {/* รายการคำชี้แจง (Explain List) */}
                     <Grid size={12}>
-                      {fileList.length > 0 ? (
+                      {explainList.length > 0 ? (
                         <Box sx={{ mt: 2 }}>
-                          {fileList.map((item, index) => (
+                          {explainList
+                            .sort((a, b) => new Date(a.create_datetime).getTime() - new Date(b.create_datetime).getTime())
+                            .reverse()
+                            .map((item, index) => (
                             <Paper
                               key={index}
                               elevation={2}
@@ -2332,46 +2426,31 @@ export default function ComplaintBody({
                                     className="sarabun-regular-datatable"
                                     sx={{ fontSize: "16px", fontWeight: 600, color: "#333", mb: 1 }}
                                   >
-                                    #{index + 1} รายการคำชี้แจง
-                                  </Typography>
-                                  {/* <Typography
-                                    className="sarabun-regular-datatable"
-                                    sx={{ fontSize: "14px", color: "#666" }}
-                                  >
-                                    ไฟล์: {item.file?.name || "ไม่ระบุ"}
+                                    #{ explainList.length - index} รายละเอียดการชี้แจง
                                   </Typography>
                                   <Typography
                                     className="sarabun-regular-datatable"
-                                    sx={{ fontSize: "12px", color: "#999", mt: 0.5 }}
+                                    sx={{ fontSize: "14px", color: "#666" }}
                                   >
-                                    ขนาด: {item.file?.size ? (item.file.size / (1024 * 1024)).toFixed(2) + " MB" : "ไม่ระบุ"}
-                                  </Typography> */}
+                                    สร้างเมื่อ: {item.create_datetime ? dayjs(item.create_datetime).format("DD/MM/YYYY HH:mm") : "-"}
+                                  </Typography>
                                 </Box>
+                                
                                 <Box sx={{ display: "flex", gap: 1 }}>
+                                {/* <IconButton
+                                    color="primary"
+                                    size="small"
+                                    onClick={() => handleOpenAdd && handleOpenAdd()}
+                                  >
+                                    <DoneIcon />
+                                  </IconButton> */}
                                   <IconButton
                                     color="primary"
                                     size="small"
-                                    onClick={() => {
-                                      if (item.file instanceof File) {
-                                        const fileUrl = URL.createObjectURL(item.file);
-                                        window.open(fileUrl, "_blank");
-                                        setTimeout(() => URL.revokeObjectURL(fileUrl), 1000);
-                                      }
-                                    }}
+                                    onClick={() => handleOnclickExplainView && handleOnclickExplainView(item)}
                                   >
                                     <VisibilityIcon />
                                   </IconButton>
-                                  {/* <IconButton
-                                    color="error"
-                                    size="small"
-                                    onClick={() => {
-                                      if (handleRemoveFile) {
-                                        handleRemoveFile(index);
-                                      }
-                                    }}
-                                  >
-                                    <DeleteIcon />
-                                  </IconButton> */}
                                 </Box>
                               </Box>
                             </Paper>
@@ -2395,7 +2474,6 @@ export default function ComplaintBody({
                           >
                             ไม่พบรายการคำชี้แจง
                           </Typography>
-                          
                         </Paper>
                       )}
                     </Grid>
@@ -2548,12 +2626,15 @@ export default function ComplaintBody({
                       </Grid>
                       <Grid size={4}>
                         <FullWidthTextField
-                          required="required"
-                          value={respondent_email}
-                          labelName="อีเมล (Email)"
-                          onchange={(e) => setrespondent_email(e)}
-                          readonly={isActionRead || isActionDelete}
-                        />
+                            value={
+                              action === "Add" || isActionExplain
+                                ? user[0]?.employee_email || "-"
+                                : dataelement?.request_email || "-"
+                            }
+                            labelName="อีเมล (Email)"
+                            onchange={(e) => setrequest_email(e.target.value)}
+                            readonly
+                          />
                       </Grid>
                       <Grid size={4}>
                         <DesktopDatePickers
