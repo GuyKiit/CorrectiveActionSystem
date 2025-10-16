@@ -24,3 +24,27 @@ export async function mas_DomainGet(company_id: number, setdataset_domain: (data
     }
 }
 
+export async function mas_DepartmentDomainGet(domain_dept_id: number, setdataset_department: (data: any) => void, user: any, isCallFuncLogOn: boolean) {
+    if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  DepartmentDomainGet");
+
+    try {
+      const dataset = {
+        domain_id: user[0]?.employee_domain,
+        company_id: user[0]?.itasset_company_id,
+      };
+      const response = await _POST(
+        dataset,
+        "/Complaint/CasDepartmentDomainGet"
+      );
+      if (response && response.status === "success") {
+        console.log(
+          "❇️ Call [Complaint/CasDepartmentDomainGet] -> Department_Domain_Get :",
+          response.data
+        );
+
+        setdataset_department(response.data);
+      }
+    } catch (e) {
+      console.log("error:", e);
+    }
+  };

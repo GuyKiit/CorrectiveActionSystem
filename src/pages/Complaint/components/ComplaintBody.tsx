@@ -189,16 +189,16 @@ export default function ComplaintBody({
   handleOpenAdd,
   handleOnclickExplainView,
 }: ComplaintBody) {
-  const isActionRead = action === "Read" ;
-  const isActionAdd = action === "Add" ;
+  const isActionRead = action === "Read";
+  const isActionAdd = action === "Add";
   const isActionEdit = action === "Edit";
   const isActionDelete = action === "Delete";
   const isActionExplain = action === "Explain";
   const isActionClose = action === "Close";
-  const isActionExplainAdd = action === "ExplainAdd" ;
-  const isActionExplainRead = action === "ExplainRead" ;
+  const isActionExplainAdd = action === "ExplainAdd";
+  const isActionExplainRead = action === "ExplainRead";
 
-  const isActionExplainApproveScAdd = action === "ApproveScAdd" ;
+  const isActionExplainApproveScAdd = action === "ApproveScAdd";
 
 
   const user = cleanAccessData("userSession");
@@ -452,8 +452,8 @@ export default function ComplaintBody({
 
   // Function Handlers (On Change Event) ======================================================
   const handleReportTypeChange = (val: LovType | null) => {
-    if (true) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  handleReportTypeChange");
-    
+    if (true) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  handleReportTypeChange");
+
     console.log(val, "valvalvalvalvalvalvalvalvalvalvalvalvalvalvalval");
 
     if (
@@ -510,7 +510,7 @@ export default function ComplaintBody({
   };
 
   const handleCheckboxChangeCT = (item: LovType) => {
-    if (true) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  handleCheckboxChangeCT");
+    if (true) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  handleCheckboxChangeCT");
 
     console.log("💛💛item", item);
 
@@ -555,7 +555,7 @@ export default function ComplaintBody({
   };
 
   const handleCheckboxChangeRS = (item: LovType) => {
-    if (true) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  handleCheckboxChangeRS");
+    if (true) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  handleCheckboxChangeRS");
 
     setdataComplaintRs((prev: LovType[] = []) => {
       console.log("💚💚item", item);
@@ -602,7 +602,7 @@ export default function ComplaintBody({
   };
 
   const handleCheckboxChangePhotoType = (item: LovType) => {
-    if (true) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  handleCheckboxChangePhotoType");
+    if (true) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  handleCheckboxChangePhotoType");
 
     setdataphoto((prev: LovType[] = []) => {
       let newData: LovType[];
@@ -635,7 +635,7 @@ export default function ComplaintBody({
   };
 
   const handleCheckboxChangePriority = (item: LovType) => {
-    if (true) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  handleCheckboxChangePriority");
+    if (true) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  handleCheckboxChangePriority");
 
     // setdatapriority((prev) => (prev?.id === item.id ? null : item));
     const newPriority = datapriority?.id === item.id ? null : item;
@@ -656,7 +656,7 @@ export default function ComplaintBody({
 
   // รับ ComplaintFile[] จาก BrowseFileUpload
   const handleFileChange = (fileArray: ComplaintFile[]) => {
-    if (true) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  handleFileChange");
+    if (true) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  handleFileChange");
 
     if (!fileArray || fileArray.length === 0) return;
     const updatedList = [...fileList, ...fileArray];
@@ -665,7 +665,7 @@ export default function ComplaintBody({
   };
 
   const handleFileAttachmentTypeChange = (index: number, type: string) => {
-    if (true) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  handleFileAttachmentTypeChange");
+    if (true) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  handleFileAttachmentTypeChange");
 
     const updated = [...fileList];
     updated[index] = {
@@ -678,7 +678,7 @@ export default function ComplaintBody({
   };
 
   const handleFileOtherTextChange = (index: number, text: string) => {
-    if (true) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  handleFileOtherTextChange");
+    if (true) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  handleFileOtherTextChange");
 
     const updated = [...fileList];
     updated[index] = { ...updated[index], otherText: text };
@@ -689,7 +689,7 @@ export default function ComplaintBody({
 
   // Functions (Initial, Calculation or ETC.) =================================================
   const resetForm = () => {
-    if (true) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  resetForm");
+    if (true) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  resetForm");
 
     setdataReportTypeValue("");
     setcas_number("");
@@ -719,7 +719,7 @@ export default function ComplaintBody({
     daysToAdd: number,
     checked: boolean
   ) => {
-    if (true) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  priorityCalculateRespondDate");
+    if (true) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  priorityCalculateRespondDate");
 
     if (checked) {
       const newDate = dayjs().add(daysToAdd, "day"); // use dayjs instead of Date
@@ -730,7 +730,7 @@ export default function ComplaintBody({
   };
 
   const arraysAreEqual = (a: any[], b: any[]) => {
-    if (true) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  arraysAreEqual");
+    if (true) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  arraysAreEqual");
 
     if (a.length !== b.length) return false;
     return a.every(
@@ -739,7 +739,7 @@ export default function ComplaintBody({
   };
 
   const handleRemoveFile = async (index: number) => {
-    if (true) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  handleRemoveFile");
+    if (true) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  handleRemoveFile");
 
     const fileToRemove = fileList[index];
 
@@ -778,65 +778,65 @@ export default function ComplaintBody({
     setcomplaintFiles(fileList); // sync
   }, [fileList]);
 
- // Function - Get Complaints
- const Complaint_Get = async (data: any) => {
-  if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  Complaint_Get");
+  // Function - Get Complaints
+  const Complaint_Get = async (data: any) => {
+    if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  Complaint_Get");
 
-  // setIsLoadingScreen(true)
-  const dataset = {
-    id: data.id,
-    user_id: user[0]?.employee_username,
-    domain_id: user[0]?.employee_domain,
-    department_id: user[0]?.itasset_department_id,
-    company_id: user[0]?.itasset_company_id,
-  };
-  console.log("Read step:4 dataset: ", dataset);
+    // setIsLoadingScreen(true)
+    const dataset = {
+      id: data.id,
+      user_id: user[0]?.employee_username,
+      domain_id: user[0]?.employee_domain,
+      department_id: user[0]?.itasset_department_id,
+      company_id: user[0]?.itasset_company_id,
+    };
+    console.log("Read step:4 dataset: ", dataset);
 
 
-  try {
-    let response = await _POST(dataset, "/Complaint/ComplaintGet");
-    console.log("Read step:4 ผลลัพธ์ : ", response);
-    console.log("Read step:4 Normalize ปรับค่าใหม่ : ", response.data[0],);
-    if (response && response.status === "success") {
-      setIsLoadingScreen(false);
-      setdataelement(response.data[0])
+    try {
+      let response = await _POST(dataset, "/Complaint/ComplaintGet");
+      console.log("Read step:4 ผลลัพธ์ : ", response);
+      console.log("Read step:4 Normalize ปรับค่าใหม่ : ", response.data[0],);
+      if (response && response.status === "success") {
+        setIsLoadingScreen(false);
+        setdataelement(response.data[0])
+      }
+    } catch (e) {
+      console.log("error");
     }
-  } catch (e) {
-    console.log("error");
-  }
-};
-
-// Function - Get Explain List
-const Explain_Get = async () => {
-  if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  Explain_Get");
-
-  if (!dataelement?.id) {
-    console.log("No complaint ID, skipping explain fetch");
-    return;
-  }
-
-  setIsLoadingScreen(true);
-  const dataset = {
-    complaint_id: dataelement?.id,
   };
 
-  try {
-    let response = await _POST(dataset, "/Explain/ExplainGet");
-    console.log("Explain_Get response:", response);
-    if (response && response.status === "success") {
-      setIsLoadingScreen(false);
-      setExplainList(response.data || []);
-      console.log("Explain list:", response.data);
+  // Function - Get Explain List
+  const ExplainGet = async () => {
+    if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  ExplainGet");
+
+    if (!dataelement?.id) {
+      console.log("No complaint ID, skipping explain fetch");
+      return;
     }
-  } catch (e) {
-    console.log("Explain_Get error:", e);
-    setIsLoadingScreen(false);
-  }
-};
+
+    setIsLoadingScreen(true);
+    const dataset = {
+      complaint_id: dataelement?.id,
+    };
+
+    try {
+      let response = await _POST(dataset, "/Explain/ExplainGet");
+      console.log("ExplainGet response:", response);
+      if (response && response.status === "success") {
+        setIsLoadingScreen(false);
+        setExplainList(response.data || []);
+        console.log("Explain list:", response.data);
+      }
+    } catch (e) {
+      console.log("ExplainGet error:", e);
+      setIsLoadingScreen(false);
+    }
+  };
 
   // READ - Get Complaints
   const ComplaintFile_Get = async () => {
-    if (true) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  ComplaintFile_Get");
+    if (true) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  ComplaintFile_Get");
 
     // ตรวจสอบว่ามี dataelement?.id หรือไม่  ไม่error หากไม่มีไฟล์
     if (!dataelement?.id) {
@@ -928,22 +928,38 @@ const Explain_Get = async () => {
             setdataReportTypeValue(defaultVal);
           }
         }
-        
+
         // ================================
         // 2) Map ค่า default ของ department
         // ================================
-        if (Array.isArray(dataset_department) && dataelement?.respondent_department_id?.department_id) {
+        // if (Array.isArray(dataset_department) && dataelement?.respondent_department_id?.department_id) {
+        //   const mappedDept = await setValueMas(
+        //     dataset_department,
+        //     dataelement.respondent_department_id,
+        //     "department_id"
+        //   );
+
+        //   if (mappedDept) {
+        //     setrespondent_department_id(mappedDept); // ค่า default ของ Combobox
+        //   }
+        // }
+        if (Array.isArray(dataset_department) && dataelement?.respondent_department_id) {
+          console.log("🗺️ Looking for department with ID:", dataelement.respondent_department_id);
+          console.log("🗺️ Available departments:", dataset_department);
+
           const mappedDept = await setValueMas(
             dataset_department,
             dataelement.respondent_department_id,
             "department_id"
           );
 
+          console.log("🗺️ Mapped department result:", mappedDept);
           if (mappedDept) {
             setrespondent_department_id(mappedDept); // ค่า default ของ Combobox
+          } else {
+            console.warn("⚠️ No department found for ID:", dataelement.respondent_department_id);
           }
         }
-
 
 
         // ================================
@@ -976,27 +992,27 @@ const Explain_Get = async () => {
           );
         }
 
-        
+
 
         // ================================
         // 5) Filter Complaint/Attach/Reference ตาม reportType
         // ================================
         if (dataReportTypeValue) {
           const newFilteredFuApprove = (
-          dataApprove_Combobox || []
-        ).filter(
-          (item: LovType) =>
-            item.lov_type === "approve_select"
-        );
-        setFilteredFuApprove((prev: LovType[]) => {
-          if (JSON.stringify(prev) !== JSON.stringify(newFilteredFuApprove))
-            return newFilteredFuApprove;
-          return prev;
-        });
+            dataApprove_Combobox || []
+          ).filter(
+            (item: LovType) =>
+              item.lov_type === "approve_select"
+          );
+          setFilteredFuApprove((prev: LovType[]) => {
+            if (JSON.stringify(prev) !== JSON.stringify(newFilteredFuApprove))
+              return newFilteredFuApprove;
+            return prev;
+          });
           const val = dataReportTypeValue;
 
 
-         
+
           // Complaint Type
           const newComplaintType = (dataComplaintType_Combobox || []).filter(
             (item: LovType) =>
@@ -1015,7 +1031,7 @@ const Explain_Get = async () => {
           setFilteredphoto((prev) =>
             JSON.stringify(prev) !== JSON.stringify(newPhoto) ? newPhoto : prev
           );
-          
+
 
           // Reference Standard (เฉพาะ NCR)
           if (val.lov_code === "NCR") {
@@ -1042,9 +1058,9 @@ const Explain_Get = async () => {
         console.error("updateData error:", err);
       }
     };
-    
+
     console.log("😒😒dataset_department", dataset_department);
-    
+
     updateData();
   }, [
     action,
@@ -1069,7 +1085,20 @@ const Explain_Get = async () => {
       setcas_number(dataelement?.cas_number || "");
       setdoc_date(dataelement?.doc_date ? dayjs(dataelement.doc_date, "DD-MM-YYYY") : dayjs());
       setdate_of_detection(dayjs(dataelement?.date_of_detection));
-      // setrespondent_department_id(dataset_department.find((el: any) => String(el.itasset_department_id) === String(dataelement.respondent_department_id?.department_id)));
+      
+      // Map respondent_department_id
+      console.log("🔍 Department mapping debug:", {
+        respondent_department_id: dataelement.respondent_department_id,
+        dataset_department_sample: dataset_department?.[0]
+      });
+      
+      const foundDept = dataset_department.find((el: any) => {
+        return String(el.department_id) === String(dataelement.respondent_department_id);
+      });
+      
+      console.log("🎯 Found department:", foundDept);
+      setrespondent_department_id(foundDept || null);
+      
       setproduct_name(dataelement?.product_name ? dataelement?.product_name : "");
       setlot_no(dataelement?.lot_no ? dataelement?.lot_no : "");
       setrespondent_email(dataelement?.respondent_email ? dataelement?.respondent_email : "");
@@ -1129,7 +1158,7 @@ const Explain_Get = async () => {
   }, [dataelement, dataset_reporttype, dataset_department, dataset_company]);
 
 
-  
+
   React.useEffect(() => {
     // เฉพาะตอน Read เท่านั้น
     if (action === "Read" || action === "Edit" || action === "Delete" || isActionExplain) {
@@ -1137,13 +1166,13 @@ const Explain_Get = async () => {
         Complaint_Get(dataelement);
       }
       ComplaintFile_Get();
-      Explain_Get();
+      ExplainGet();
     }
   }, [action, dataelement?.id]);
 
 
   const setComplaintType = (data: any) => {
-    if (true) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  setComplaintType");
+    if (true) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  setComplaintType");
 
     const newData: any[] = [];
     Array.isArray(data) &&
@@ -1163,7 +1192,7 @@ const Explain_Get = async () => {
   };
 
   const setComplaintRs = (data: any) => {
-    if (true) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  setComplaintRs");
+    if (true) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  setComplaintRs");
 
     const newData: any[] = [];
     Array.isArray(data) &&
@@ -1183,7 +1212,7 @@ const Explain_Get = async () => {
     return newData;
   };
   const setPriorityLevel = (value: any) => {
-    if (true) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  setPriorityLevel");
+    if (true) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  setPriorityLevel");
 
     if (!value) return null;
 
@@ -1235,11 +1264,11 @@ const Explain_Get = async () => {
                   : isActionDelete
                     ? true
                     : isActionDelete
-                     ? true
-                     : isActionExplain
-                     ? true
+                      ? true
+                      : isActionExplain
+                        ? true
 
-                    : readonlyTextField
+                        : readonlyTextField
             }
             bgcolorTextField={
               isActionRead
@@ -1257,7 +1286,7 @@ const Explain_Get = async () => {
       </Grid>
 
       {/* ====== Dynamic ฟอร์ม สำหรับเลือกประเภทเอกสาร ====== */}
-      {isFormHidden && dataReportTypeValue  && (
+      {isFormHidden && dataReportTypeValue && (
         <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>
           <Accordion
             expanded={isMinimizedefaultOpen}
@@ -1367,7 +1396,7 @@ const Explain_Get = async () => {
                           }
                         }}
                         bgcolorTextField={action === "Add" ? false : true}
-                        readonly={isActionRead || isActionEdit || isActionDelete || isActionExplain }
+                        readonly={isActionRead || isActionEdit || isActionDelete || isActionExplain}
                         Validate={validateText?.Date_of_Detection || false}
                         validateTextLable={validateText?.Date_of_Detection ? "กรุณาเลือกวันที่พบปัญหา" : ""}
                       />
@@ -1531,7 +1560,7 @@ const Explain_Get = async () => {
                                           onchange={() =>
                                             handleCheckboxChangeCT(item)
                                           }
-                                          readonly={isActionRead || isActionDelete || isActionExplain }
+                                          readonly={isActionRead || isActionDelete || isActionExplain}
                                         />
                                       </Grid>
                                     )
@@ -1967,21 +1996,21 @@ const Explain_Get = async () => {
                     </AccordionSummary>
                     <AccordionDetails sx={{ p: 3 }}>
 
-                    <Grid container spacing={2}>
-                      {
-                        <Grid size={12}>
-                          <BrowseFileUpload
-                            setFile={handleFileChange}
-                            setFileName={() => { }}
-                            options={(filteredphoto || []).map((p: any) => ({
-                              id: p.id,
-                              lov1: p.lov1,
-                            }))}
-                            action={action}
-                          />
+                      <Grid container spacing={2}>
+                        {
+                          <Grid size={12}>
+                            <BrowseFileUpload
+                              setFile={handleFileChange}
+                              setFileName={() => { }}
+                              options={(filteredphoto || []).map((p: any) => ({
+                                id: p.id,
+                                lov1: p.lov1,
+                              }))}
+                              action={action}
+                            />
 
-                          {/* Grouped display by attachment type - Full width boxes stacked vertically */}
-                          <Box sx={{ mt: 1 }}>
+                            {/* Grouped display by attachment type - Full width boxes stacked vertically */}
+                            <Box sx={{ mt: 1 }}>
                               {(filteredphoto || []).map((photoType: any) => {
                                 const items = fileList.filter(
                                   (f) => f.attachmentType === photoType.id
@@ -2043,7 +2072,7 @@ const Explain_Get = async () => {
                                         </Box>
                                         <Box sx={{ display: "flex", gap: 1 }}>
                                           {/* //ปุ่มลบไฟล์ */}
-                                          {(action == "Edit" || action == "Add" ) && (
+                                          {(action == "Edit" || action == "Add") && (
                                             <IconButton
                                               color="error"
                                               onClick={() => {
@@ -2149,9 +2178,9 @@ const Explain_Get = async () => {
                                 </Paper>
                               )}
                             </Box>
-                        </Grid>
-                      }
-                    </Grid>
+                          </Grid>
+                        }
+                      </Grid>
                     </AccordionDetails>
                   </Accordion>
                 </Paper>
@@ -2310,184 +2339,185 @@ const Explain_Get = async () => {
         </Paper>
       )}
 
-      {isActionClose ||isActionExplain && dataReportTypeValue && (
-      <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>
-        <Paper elevation={3} sx={{
-          p: 3,
-          mt: 3,
-          width: "100%",
-          borderRadius: 3,
-          background: 'linear-gradient(135deg, #fff8f0 0%, #ffffff 100%)',
-          border: '1px solid #ffe0b2',
-          boxShadow: '0 4px 12px rgba(255,152,0,0.1)'
-        }}>
-          <Grid container spacing={2}>
-            <Grid size={12}>
-              <Accordion expanded={isMinimizeexlistOpen}
-                onChange={() => setisMinimizeExlistOpen(!isMinimizeexlistOpen)}
-                sx={{
-                  width: '100%',
-                  borderRadius: 3,
-                  background: 'linear-gradient(135deg, #fff3e0 0%, #ffffff 100%)',
-                  border: '1px solid #ff9800',
-                  boxShadow: '0 4px 12px rgba(255,152,0,0.15)',
-                  mt: 3
-                }}>
-                <AccordionSummary
-                  expandIcon={<ExpandMoreIcon />}
-                  aria-controls="reporting-dept-content"
-                  id="reporting-dept-header"
-                >
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between", // ✅ ดันซ้าย-ขวา
-                      width: "100%", // ✅ กินเต็ม
-                    }}
+      {isActionClose || isActionExplain && dataReportTypeValue && (
+        <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>
+          <Paper elevation={3} sx={{
+            p: 3,
+            mt: 3,
+            width: "100%",
+            borderRadius: 3,
+            background: 'linear-gradient(135deg, #fff8f0 0%, #ffffff 100%)',
+            border: '1px solid #ffe0b2',
+            boxShadow: '0 4px 12px rgba(255,152,0,0.1)'
+          }}>
+            <Grid container spacing={2}>
+              <Grid size={12}>
+                <Accordion expanded={isMinimizeexlistOpen}
+                  onChange={() => setisMinimizeExlistOpen(!isMinimizeexlistOpen)}
+                  sx={{
+                    width: '100%',
+                    borderRadius: 3,
+                    background: 'linear-gradient(135deg, #fff3e0 0%, #ffffff 100%)',
+                    border: '1px solid #ff9800',
+                    boxShadow: '0 4px 12px rgba(255,152,0,0.15)',
+                    mt: 3
+                  }}>
+                  <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls="reporting-dept-content"
+                    id="reporting-dept-header"
                   >
-                    {/* === ฝั่งซ้าย === */}
-                    <Box sx={{ display: "flex", alignItems: "center" }}>
-                      <Box
-                        sx={{
-                          width: 6,
-                          height: 24,
-                          backgroundColor: "#ff9800",
-                          borderRadius: 1,
-                          mr: 2,
-                        }}
-                      />
-                      <Typography
-                        className="sarabun-regular-datatable"
-                        sx={{ fontSize: 18, fontWeight: 600, color: "#000000" }}
-                      >
-                        รายการคำชี้แจง (Explain List)
-                      </Typography>                 
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between", // ✅ ดันซ้าย-ขวา
+                        width: "100%", // ✅ กินเต็ม
+                      }}
+                    >
+                      {/* === ฝั่งซ้าย === */}
+                      <Box sx={{ display: "flex", alignItems: "center" }}>
+                        <Box
+                          sx={{
+                            width: 6,
+                            height: 24,
+                            backgroundColor: "#ff9800",
+                            borderRadius: 1,
+                            mr: 2,
+                          }}
+                        />
+                        <Typography
+                          className="sarabun-regular-datatable"
+                          sx={{ fontSize: 18, fontWeight: 600, color: "#000000" }}
+                        >
+                          รายการคำชี้แจง (Explain List)
+                        </Typography>
+                      </Box>
+
+                      {/* === ฝั่งขวา ปุ่ม Add === */}
+                      {complaint_status_label == 'SUBMIT' && (
+                        <Button
+                          variant="contained"
+                          size="small"
+                          sx={{
+                            backgroundColor: "#2e7d32",
+                            "&:hover": {
+                              backgroundColor: "#2e7d32",
+                              //transform: "translateY(-1px)",
+                              //boxShadow: "0 4px 8px rgba(0,0,0,0.2)"
+                            },
+                            borderRadius: 2,
+                            textTransform: "none",
+                            fontWeight: 600,
+                            px: 3,
+                            py: 1,
+                            transition: "all 0.2s ease-in-out",
+                            boxShadow: "0 2px 4px rgba(0,0,0,0.1)"
+                          }}
+                          onClick={() => handleOpenAdd && handleOpenAdd()}
+                        >
+                          + เพิ่มคำชี้แจง
+                        </Button>
+                      )}
                     </Box>
+                  </AccordionSummary>
 
-                    {/* === ฝั่งขวา ปุ่ม Add === */}
-                    {complaint_status_label == 'SUBMIT' && (
-                      <Button
-                        variant="contained"
-                        size="small"
-                        sx={{
-                          backgroundColor: "#2e7d32",
-                          "&:hover": { backgroundColor: "#2e7d32",
-                            //transform: "translateY(-1px)",
-                            //boxShadow: "0 4px 8px rgba(0,0,0,0.2)"
-                          },
-                          borderRadius: 2,
-                          textTransform: "none",
-                          fontWeight: 600,
-                          px: 3,
-                          py: 1,
-                          transition: "all 0.2s ease-in-out",
-                          boxShadow: "0 2px 4px rgba(0,0,0,0.1)"
-                        }}
-                        onClick={() => handleOpenAdd && handleOpenAdd()}
-                      >
-                        + เพิ่มคำชี้แจง
-                      </Button>
-                    )}
-                  </Box>
-                </AccordionSummary>
-
-                <AccordionDetails>
-                  <Divider sx={{ my: 1, borderBottom: '2px solid #ff9800' }} />
-                  <Grid container spacing={3}>
+                  <AccordionDetails>
+                    <Divider sx={{ my: 1, borderBottom: '2px solid #ff9800' }} />
+                    <Grid container spacing={3}>
 
 
 
-                    {/* รายการคำชี้แจง (Explain List) */}
-                    <Grid size={12}>
-                      {explainList.length > 0 ? (
-                        <Box sx={{ mt: 2 }}>
-                          {explainList
-                            .sort((a, b) => new Date(a.create_datetime).getTime() - new Date(b.create_datetime).getTime())
-                            .reverse()
-                            .map((item, index) => (
-                            <Paper
-                              key={index}
-                              elevation={2}
-                              sx={{
-                                p: 2,
-                                mb: 2,
-                                borderRadius: 2,
-                                border: "1px solid #e0e0e0",
-                                backgroundColor: "#fafafa",
-                                "&:hover": {
-                                  backgroundColor: "#f5f5f5",
-                                  boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
-                                }
-                              }}
-                            >
-                              <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                                <Box sx={{ flex: 1 }}>
-                                  <Typography
-                                    className="sarabun-regular-datatable"
-                                    sx={{ fontSize: "16px", fontWeight: 600, color: "#333", mb: 1 }}
-                                  >
-                                    #{ explainList.length - index} รายละเอียดการชี้แจง
-                                  </Typography>
-                                  <Typography
-                                    className="sarabun-regular-datatable"
-                                    sx={{ fontSize: "14px", color: "#666" }}
-                                  >
-                                    สร้างเมื่อ: {item.create_datetime ? dayjs(item.create_datetime).format("DD/MM/YYYY HH:mm") : "-"}
-                                  </Typography>
-                                </Box>
-                                
-                                <Box sx={{ display: "flex", gap: 1 }}>
-                                {/* <IconButton
+                      {/* รายการคำชี้แจง (Explain List) */}
+                      <Grid size={12}>
+                        {explainList.length > 0 ? (
+                          <Box sx={{ mt: 2 }}>
+                            {explainList
+                              .sort((a, b) => new Date(a.create_datetime).getTime() - new Date(b.create_datetime).getTime())
+                              .reverse()
+                              .map((item, index) => (
+                                <Paper
+                                  key={index}
+                                  elevation={2}
+                                  sx={{
+                                    p: 2,
+                                    mb: 2,
+                                    borderRadius: 2,
+                                    border: "1px solid #e0e0e0",
+                                    backgroundColor: "#fafafa",
+                                    "&:hover": {
+                                      backgroundColor: "#f5f5f5",
+                                      boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
+                                    }
+                                  }}
+                                >
+                                  <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                                    <Box sx={{ flex: 1 }}>
+                                      <Typography
+                                        className="sarabun-regular-datatable"
+                                        sx={{ fontSize: "16px", fontWeight: 600, color: "#333", mb: 1 }}
+                                      >
+                                        #{explainList.length - index} รายละเอียดการชี้แจง
+                                      </Typography>
+                                      <Typography
+                                        className="sarabun-regular-datatable"
+                                        sx={{ fontSize: "14px", color: "#666" }}
+                                      >
+                                        สร้างเมื่อ: {item.create_datetime ? dayjs(item.create_datetime).format("DD/MM/YYYY HH:mm") : "-"}
+                                      </Typography>
+                                    </Box>
+
+                                    <Box sx={{ display: "flex", gap: 1 }}>
+                                      {/* <IconButton
                                     color="primary"
                                     size="small"
                                     onClick={() => handleOpenAdd && handleOpenAdd()}
                                   >
                                     <DoneIcon />
                                   </IconButton> */}
-                                  <IconButton
-                                    color="primary"
-                                    size="small"
-                                    onClick={() => handleOnclickExplainView && handleOnclickExplainView(item)}
-                                  >
-                                    <VisibilityIcon />
-                                  </IconButton>
-                                </Box>
-                              </Box>
-                            </Paper>
-                          ))}
-                        </Box>
-                      ) : (
-                        <Paper
-                          elevation={0}
-                          sx={{
-                            p: 4,
-                            textAlign: "center",
-                            color: "#999",
-                            backgroundColor: "#f9f9f9",
-                            borderRadius: 2,
-                            border: "2px dashed #e0e0e0"
-                          }}
-                        >
-                          <Typography
-                            className="sarabun-regular-datatable"
-                            sx={{ fontSize: "16px", color: "#999" }}
+                                      <IconButton
+                                        color="primary"
+                                        size="small"
+                                        onClick={() => handleOnclickExplainView && handleOnclickExplainView(item)}
+                                      >
+                                        <VisibilityIcon />
+                                      </IconButton>
+                                    </Box>
+                                  </Box>
+                                </Paper>
+                              ))}
+                          </Box>
+                        ) : (
+                          <Paper
+                            elevation={0}
+                            sx={{
+                              p: 4,
+                              textAlign: "center",
+                              color: "#999",
+                              backgroundColor: "#f9f9f9",
+                              borderRadius: 2,
+                              border: "2px dashed #e0e0e0"
+                            }}
                           >
-                            ไม่พบรายการคำชี้แจง
-                          </Typography>
-                        </Paper>
-                      )}
-                    </Grid>
+                            <Typography
+                              className="sarabun-regular-datatable"
+                              sx={{ fontSize: "16px", color: "#999" }}
+                            >
+                              ไม่พบรายการคำชี้แจง
+                            </Typography>
+                          </Paper>
+                        )}
+                      </Grid>
 
-                  </Grid>
-                </AccordionDetails>
-              </Accordion>
+                    </Grid>
+                  </AccordionDetails>
+                </Accordion>
+              </Grid>
             </Grid>
-          </Grid>
+          </Paper>
         </Paper>
-      </Paper>
       )}
-      
+
     </Box>
   );
 }

@@ -536,21 +536,19 @@ export default function DepartmentSetting() {
 
         setdataset_department(response.data);
 
-        if (action == "Add") {
+        // if (action == "Add") {
 
-          //================================================
-          let department = response.data.filter(
-            (item: any) => item.department_id != user[0]?.itasset_department_id
-          );
-          setdataset_department(department);
-          // if (department) {
-          //   // setdataset_domain(domain);
-          //   setdataset_department(department);
-          // }
-          //================================================
-
-
-        }
+        //   //================================================
+        //   let department = response.data.filter(
+        //     (item: any) => item.department_id != user[0]?.itasset_department_id
+        //   );
+        //   setdataset_department(department);
+        //   // if (department) {
+        //   //   // setdataset_domain(domain);
+        //   //   setdataset_department(department);
+        //   // }
+        //   //================================================
+        // }
 
       }
     } catch (e) {
@@ -647,6 +645,8 @@ export default function DepartmentSetting() {
   // Function - Get Complaints
   const Dept_setup_Get = async (data: any) => {
     if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  Dept_setup_Get");
+    console.log("😥",data);
+    
 
     setIsLoadingScreen(true)
     const dataset = {
@@ -684,8 +684,8 @@ export default function DepartmentSetting() {
 
     console.log("step:2 dataset ก่อนส่ง API /DeptSearch/DeptSearchGet ", dataset);
     try {
-      let response = await _POST(dataset, "/DeptSearch/DeptSearchGet");
-      console.log("step:2 ผลลัพธ์ที่ได้จาก API /DeptSearch/DeptSearchGet ", response);
+      let response = await _POST(dataset, "/DeptSetup/DeptSetupGet");
+      console.log("step:2 ผลลัพธ์ที่ได้จาก API /DeptSetup/DeptSetupGet ", response);
       if (response && response.status === "success") {
         setIsLoadingScreen(false);
         const responseData: any = [];
@@ -697,6 +697,8 @@ export default function DepartmentSetting() {
                   console.log("🎆 🎆 🎆 🎆 hadleOnclickMenu (name) :", name);
                   if (name === "View") {
                     // DepartmentDomainGet("Read");
+                    console.log("e😀l",el);
+                    
                     handleOnclickDepartmentSettingView(el);
                   } else if (name === "Edit") {
                     // DepartmentDomainGet("Edit");
@@ -1142,7 +1144,7 @@ export default function DepartmentSetting() {
     const DeptSetupPayload = {
 
       id: dataelement?.id,
-      domain_dept_id: dataelement?.domain_dept_id,
+      domain_dept_id: domain_dept_id?.domain_dept_id,
       dept_email: dataelement?.dept_email,
       create_by: user[0]?.employee_username || "",
       update_by: user[0]?.employee_username || "",
@@ -1189,14 +1191,14 @@ export default function DepartmentSetting() {
 
     // สร้าง JSON payload
     const DeptSetupPayload = {
-      ComplaintModel: {
+      
         id: dataelement?.id,
         update_by: user[0]?.employee_username || '',
-      },
+      
       
     };
 
-    console.log("📤 complaintPayload:", DeptSetupPayload);
+    console.log("📤 DeptSetupPayload:", DeptSetupPayload);
     setIsLoadingScreen(true);
 
     try {
@@ -1207,14 +1209,14 @@ export default function DepartmentSetting() {
           text: `บันทึกข้อมูลสำเร็จ`,
           icon: 'success'
         });
-        console.log("✅ Complaint edittt successfully:", response);
+        console.log("✅ Complaint Delete successfully:", response);
       } else {
         FullSweetalert({
           title: 'Failed',
           text: `บันทึกไม่ข้อมูลสำเร็จ`,
           icon: 'error'
         });
-        console.log("⚠️ Edit failed:", response);
+        console.log("⚠️ Delete failed:", response);
       }
     } catch (error) {
       console.error("Upload failed:", error);

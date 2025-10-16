@@ -57,7 +57,7 @@ import { cleanAccessData } from "../../../service/initmain/initmain";
 import { data } from "react-router-dom";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useListDepartmentSetting } from "../core/ListDepartmentSettingContext";
-import { mas_DomainGet } from "../../../service/mas/lov";
+import {  mas_DomainGet } from "../../../service/mas/lov";
 
 // pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
@@ -225,6 +225,14 @@ export default function DepartmentSettingBody({
       }
 
     };
+    //  const handleDomainChange = (value: any) => {
+    //   console.log('####### Onchange Company Value [event] : ', value);
+
+    //   if (value != null) {
+    //     mas_DepartmentDomainGet(value.domain_dept_id, setdataset_department, user, isCallFuncLogOn);
+    //   }
+
+    // };
 
     // Functions (Initial, Calculation or ETC.) =================================================
     const resetForm = () => {
@@ -268,6 +276,7 @@ export default function DepartmentSettingBody({
                 // 1) Map ค่า default ของ department
                 // ================================
                 if (Array.isArray(dataset_department) && dataelement?.domain_dept_id) {
+                    console.log("👀👀 : ", dataelement);
                     console.log("🗺️ Looking for department with ID:", dataelement.domain_dept_id);
                     console.log("🗺️ Available departments:", dataset_department);
 
@@ -377,6 +386,7 @@ export default function DepartmentSettingBody({
 
         if (dataelement && action != "Add") {
             // department mapping จะทำใน useEffect แรกแล้ว (บรรทัด 255-268)
+            setdept_company(dataelement?.dept_company ? dataelement?.dept_company : "");
             setdept_email(dataelement?.dept_email ? dataelement?.dept_email : "");
             setstep(dataelement?.step ? dataelement?.step : "");
             // setsectionApprove(dataelement?.sectionApprove ? dataelement?.sectionApprove : "");

@@ -195,8 +195,7 @@ export default function ExplaintBody({
     //Explaint
     dataTooluse,
     dataToolUse_Combobox,
-    dataTooluseValue_Combobox,
-
+    dataToolUseValue_Combobox,
     dataDecision_Combobox,
     dataDecisionValue_Combobox,
 

@@ -263,13 +263,16 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
         initialListComplaint.dataTooluseValue
     );
     const [dataToolUseValue_Combobox, setdataToolUseValue_Combobox] = useState<any>(
-        initialListComplaint.dataTooluseValue_Combobox
+        initialListComplaint.dataToolUseValue_Combobox
     );
     const [ToolOther, setToolOther] = useState<any>(
         initialListComplaint.ToolOther
     );
     const [dataDecision_Combobox, setdataDecision_Combobox] = useState<any>(
         initialListComplaint.dataDecision_Combobox
+    );
+    const [dataDecisionValue_Combobox, setdataDecisionValue_Combobox] = useState<any>(
+        initialListComplaint.dataDecisionValue_Combobox
     );
     const [dataDecision, setdataDecision] = useState<any>(
         initialListComplaint.dataDecision
@@ -544,6 +547,7 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 dataToolUseValue_Combobox,
                 dataDecision,
                 dataDecision_Combobox,
+                dataDecisionValue_Combobox,
                 dataDecisionValue,
                 ToolOther,
                 DecisionOther,
@@ -692,6 +696,7 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 setdataToolUseValue,
                 setdataToolUseValue_Combobox,
                 setdataDecision_Combobox,
+                setdataDecisionValue_Combobox,
                 setdataDecision,
                 setdataDecisionValue,
                 setToolOther,
