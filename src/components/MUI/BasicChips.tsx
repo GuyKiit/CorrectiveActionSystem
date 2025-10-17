@@ -18,7 +18,7 @@ export default function BasicChips(props: BasicChips) {
 
   const allColorMap: Record<string, string> = {
     NEW: "#7db6fa",
-    SUBMIT: props.acknowledge ? "#FF6B7A" : "#7db6fa",
+    SUBMIT: props.acknowledge ? "#7db6fa" : "#FF6B7A",
     EXPLAIN: "#F1C40F",
     APPROVE_SC: "#85d47f",
     APPROVE_QC: "#27AE60",

@@ -35,15 +35,25 @@ export type ListDepartmentSettingContextProps = {
     setdept_domain: Dispatch<SetStateAction<string>>;
 
     //--------dataset-------
-    dataset_company?: any
-    dataset_department?: any
-    dataset_domain?: any
-    dataset_username?: any
+    company?: any
+    department?: any
+    domain?: any
+    username?: any
 
-    setdataset_company: Dispatch<SetStateAction<any>>;
-    setdataset_department: Dispatch<SetStateAction<any>>;
-    setdataset_domain: Dispatch<SetStateAction<any>>;
-    setdataset_username: Dispatch<SetStateAction<any>>;
+    company_search?: any
+    department_search?: any
+    domain_search?: any
+    username_search?: any
+
+    set_company: Dispatch<SetStateAction<any>>;
+    set_department: Dispatch<SetStateAction<any>>;
+    set_domain: Dispatch<SetStateAction<any>>;
+    set_username: Dispatch<SetStateAction<any>>;
+
+    set_company_search: Dispatch<SetStateAction<any>>;
+    set_department_search: Dispatch<SetStateAction<any>>;
+    set_domain_search: Dispatch<SetStateAction<any>>;
+    set_username_search: Dispatch<SetStateAction<any>>;
 
 };
 
@@ -63,17 +73,17 @@ export const initialListDepartmentSetting: ListDepartmentSettingContextProps = {
 
     setdept_company: () => { },
     setdept_domain: () => { },
+
     //--------dataset-------
-    setdataset_company: () => { },
-    setdataset_department: () => { },
-    setdataset_domain: () => { },
-    setdataset_username: () => { },
-    // setcomplaintFiles: () => { },
-    // setdataset_stepcomplaint: () => { },
-    // setdataset_complaintAction: () => { },
-    // setdataset_complaintActionNew: () => { },
-    // setdataset_complaintActionExplain: () => { },
-    // setdataset_complaintActionClose: () => { },
+    set_company: () => { },
+    set_department: () => { },
+    set_domain: () => { },
+    set_username: () => { },
+
+    set_company_search: () => { },
+    set_department_search: () => { },
+    set_domain_search: () => { },
+    set_username_search: () => { },
 
 
 

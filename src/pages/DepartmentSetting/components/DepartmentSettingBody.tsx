@@ -57,7 +57,7 @@ import { cleanAccessData } from "../../../service/initmain/initmain";
 import { data } from "react-router-dom";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useListDepartmentSetting } from "../core/ListDepartmentSettingContext";
-import { mas_DomainGet } from "../../../service/mas/lov";
+import {  mas_DepartmentDomainGet, mas_DomainGet, mas_UsernameGet } from "../../../service/mas/lov";
 
 // pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
@@ -172,10 +172,10 @@ export default function DepartmentSettingBody({
         setdept_domain,
 
         //---------dataset-------------
-        dataset_username, setdataset_username,
-        dataset_company, setdataset_company,
-        dataset_department, setdataset_department,
-        dataset_domain, setdataset_domain
+        username, set_username,
+        company, set_company,
+        department, set_department,
+        domain, set_domain
 
     } = useListDepartmentSetting();
 
@@ -219,12 +219,50 @@ export default function DepartmentSettingBody({
     // Event Handlers =========================================================
     const handleCompanyChange = (value: any) => {
       console.log('####### Onchange Company Value [event] : ', value);
+        console.log("@@@@@@@@@@@@First",domain);
+        
+        
+      if (value != null) {
+        mas_DomainGet(value.company_id, set_domain, user, isCallFuncLogOn);
+      } else {
+        set_domain([]);
+        set_department([]);
+        set_username([]);
+        setdept_domain("");
+        setdomain_dept_id(null);
+        setsectionApprove(null);
+        setqcApprove(null);
+      }
+      console.log("@@@@@@@@@@@@second",domain);
+    };
+     const handleDomainChange = (value: any) => {
+      console.log('####### Onchange Domain Value [event] : ', value);
 
       if (value != null) {
-        mas_DomainGet(value.company_id, setdataset_domain, user, isCallFuncLogOn);
+        mas_DepartmentDomainGet(value, set_department, isCallFuncLogOn);
+      } else {
+        set_department([]);
+        set_username([]);
+        setdomain_dept_id(null);
+        setsectionApprove(null);
+        setqcApprove(null);
       }
 
     };
+
+    const handleDepartmentChange = (value: any) => {
+      console.log('####### Onchange Department Value [event] : ', value);
+
+      if (value != null) {
+        mas_UsernameGet(value, set_username, isCallFuncLogOn);
+      }else {
+        set_username([]);
+        setsectionApprove(null);
+        setqcApprove(null);
+      }
+
+    };
+    //========================================================================================
 
     // Functions (Initial, Calculation or ETC.) =================================================
     const resetForm = () => {
@@ -261,18 +299,19 @@ export default function DepartmentSettingBody({
     React.useEffect(() => {
         const updateData = async () => {
             try {
-                console.log("👀 dataset_username:", dataset_username);
+                console.log("👀 username:", username);
                 console.log("👀 dataelement.sectionApprove:", dataelement?.sectionApprove);
 
                 // ================================
                 // 1) Map ค่า default ของ department
                 // ================================
-                if (Array.isArray(dataset_department) && dataelement?.domain_dept_id) {
+                if (Array.isArray(department) && dataelement?.domain_dept_id) {
+                    console.log("👀👀 : ", dataelement);
                     console.log("🗺️ Looking for department with ID:", dataelement.domain_dept_id);
-                    console.log("🗺️ Available departments:", dataset_department);
+                    console.log("🗺️ Available departments:", department);
 
                     const mappedDept = await setValueMas(
-                        dataset_department,
+                        department,
                         dataelement.domain_dept_id,
                         "domain_dept_id"
                     );
@@ -288,7 +327,7 @@ export default function DepartmentSettingBody({
                 // 2) Map ค่า default ของ sectionApprove
                 // ================================
 
-                if (Array.isArray(dataset_username) && Array.isArray(dataelement?.deptApproveSetup)) {
+                if (Array.isArray(username) && Array.isArray(dataelement?.deptApproveSetup)) {
                     // -------------------------------
                     // Step 1 → sectionApprove
                     // -------------------------------
@@ -296,7 +335,7 @@ export default function DepartmentSettingBody({
                         (x: any) => String(x.step) === "1"
                     )?.user_id;
 
-                    const mappedSectionApprove = dataset_username.find(
+                    const mappedSectionApprove = username.find(
                         (el: any) => String(el.employee_username) === String(step1UserId)
                     );
 
@@ -310,7 +349,7 @@ export default function DepartmentSettingBody({
                         (x: any) => String(x.step) === "2"
                     )?.user_id;
 
-                    const mappedQcApprove = dataset_username.find(
+                    const mappedQcApprove = username.find(
                         (el: any) => String(el.employee_username) === String(step2UserId)
                     );
 
@@ -322,12 +361,13 @@ export default function DepartmentSettingBody({
                 // ================================
                 // 4) Map ค่า default ของ domain
                 // ================================
-                if (Array.isArray(dataset_domain) && dataelement?.dept_domain) {
+                 console.log("😼 Looking for department with ID:", dataelement.dept_domain);
+                if (Array.isArray(domain) && dataelement?.dept_domain) {
                     console.log("😼 Looking for department with ID:", dataelement.dept_domain);
-                    console.log("😼 Available departments:", dataset_domain);
+                    console.log("😼 Available departments:", domain);
 
                     const mappedDept = await setValueMas(
-                        dataset_domain,
+                        domain,
                         dataelement.dept_domain,
                         "domain_id"
                     );
@@ -341,9 +381,9 @@ export default function DepartmentSettingBody({
                 // ================================
                 // 3) Map ค่า default ของ company
                 // ================================
-                if (Array.isArray(dataset_company) && dataelement?.dept_company) {
+                if (Array.isArray(company) && dataelement?.dept_company) {
                     const mappedDept = await setValueMas(
-                        dataset_company,
+                        company,
                         dataelement.dept_company,
                         "company_id"
                     );
@@ -356,40 +396,43 @@ export default function DepartmentSettingBody({
                 console.error("updateData error:", err);
             }
         };
-        console.log("dataset_company", dataset_company);
-        console.log("dataset_domain", dataset_domain);
-        console.log("dataset_department", dataset_department);
-        updateData();
+        console.log("company", company);
+        console.log("domain", domain);
+        console.log("department", department);
+
+        if (isActionRead) updateData();
+        
     }, [
 
         action,
         dataelement,
-        dataset_username,
-        dataset_department,
-        dataset_company,
-        dataset_domain
+        username,
+        department,
+        company,
+        domain
 
     ]);
 
-    ////////////////////// Complaint Read //////////////////////////
+    ////////////////////// DepartmentSetting Read //////////////////////////
     React.useEffect(() => {
         console.log("step: 5 เก็บข้อมูลเข้า ฺsetdataelement ใหม่ ", dataelement)
 
         if (dataelement && action != "Add") {
             // department mapping จะทำใน useEffect แรกแล้ว (บรรทัด 255-268)
+            // setdept_company(dataelement?.dept_company ? dataelement?.dept_company : "");
             setdept_email(dataelement?.dept_email ? dataelement?.dept_email : "");
             setstep(dataelement?.step ? dataelement?.step : "");
             // setsectionApprove(dataelement?.sectionApprove ? dataelement?.sectionApprove : "");
             setqcApprove(dataelement?.qcApprove ? dataelement?.qcApprove : "");
         }
-    }, [dataelement, dataset_department, dataset_username, dataset_company]);
+    }, [dataelement, department, username, company]);
 
     React.useEffect(() => {
-        console.log("🧩 useEffect triggered: dataset_company or dataelement changed");
-        console.log("🧩🧩🧩 dataset_company:", dataset_company, "🧩🧩🧩");
-        console.log("🧩🧩🧩dept_company:", dataset_username);
+        console.log("🧩 useEffect triggered: company or dataelement changed");
+        console.log("🧩🧩🧩 company:", company, "🧩🧩🧩");
+        console.log("🧩🧩🧩dept_company:", username);
         console.log("dataelement:", dataelement);
-    }, [dataset_company, dataelement]);
+    }, [company, dataelement]);
 
     return (
         <Box
@@ -459,12 +502,16 @@ export default function DepartmentSettingBody({
                                 labelName={
                                     "บริษัท (Company)"
                                 }
-                                options={dataset_company}
+                                options={company}
                                 column="company_name"
                                 setvalue={(val) => {
                                     console.log("Company selected:", val?.company_name);
                                     handleCompanyChange(val);
+                                    
+                                    
                                     setdept_company(val);
+                                    console.log("cccccc",val);
+                                    
                                 }}
                                 readonly={isActionRead || isActionDelete || isActionExplain}
                             />
@@ -476,16 +523,19 @@ export default function DepartmentSettingBody({
                                 labelName={
                                     "โดเมน (Domain)"
                                 }
-                                options={dataset_domain}
+                                options={domain}
                                 column="domain_name"
                                 setvalue={(val) => {
                                     console.log("Domain selected:", val?.domain_name);
+                                    handleDomainChange(val);
                                     setdept_domain(val);
+                                    console.log("😋dddddd", val);
+                                    
                                 }}
                                 bgcolorTextField={
-                                    action === "Add" ? false : isActionEdit ? false : true
+                                    isActionAdd ? false : isActionEdit ? false : true
                                 }
-                                readonly={isActionRead || isActionDelete}
+                                readonly={isActionRead || isActionDelete || !dept_company}
                             />
                         </Grid>
 
@@ -496,18 +546,20 @@ export default function DepartmentSettingBody({
                                 labelName={
                                     "แผนก (Department)"
                                 }
-                                options={dataset_department}
+                                options={department}
                                 column="department_name"
                                 setvalue={(val) => {
                                     console.log("Department selected:", val?.department_name);
                                     console.log("Department selected:", val?.department_id);
                                     console.log("Department selected:", val?.domain_dept_id);
+                                    handleDepartmentChange(val);
                                     setdomain_dept_id(val);
+                                    console.log("😋aaaaaa", val);
                                 }}
                                 bgcolorTextField={
-                                    action === "Add" ? false : isActionEdit ? false : true
+                                    isActionAdd ? false : isActionEdit ? false : true
                                 }
-                                readonly={isActionRead || isActionDelete}
+                                readonly={isActionRead || isActionDelete || !dept_domain}
                             />
                         </Grid>
                         <Grid size={12}>
@@ -587,7 +639,7 @@ export default function DepartmentSettingBody({
                                 labelName={
                                     "ชื่อ (Username)"
                                 }
-                                options={dataset_username}
+                                options={username}
                                 column="employee_username"
                                 setvalue={(val) => {
                                     console.log("Username selected:", val?.employee_username);
@@ -596,7 +648,7 @@ export default function DepartmentSettingBody({
                                 bgcolorTextField={
                                     action === "Add" ? false : isActionEdit ? false : true
                                 }
-                                readonly={isActionRead || isActionDelete}
+                                readonly={isActionRead || isActionDelete || !domain_dept_id}
                             />
                         </Grid>
                         <Grid size={3}>
@@ -616,7 +668,7 @@ export default function DepartmentSettingBody({
                                 labelName={
                                     "ชื่อ (Username)"
                                 }
-                                options={dataset_username}
+                                options={username}
                                 column="employee_username"
                                 setvalue={(val) => {
                                     console.log("Username selected:", val?.employee_username);
@@ -625,7 +677,7 @@ export default function DepartmentSettingBody({
                                 bgcolorTextField={
                                     action === "Add" ? false : isActionEdit ? false : true
                                 }
-                                readonly={isActionRead || isActionDelete}
+                                readonly={isActionRead || isActionDelete || !domain_dept_id}
                             />
                         </Grid>
 

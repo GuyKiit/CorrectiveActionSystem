@@ -4,19 +4,57 @@ import dayjs from "dayjs";
 
 //===========================================================================================================
 
-export async function mas_DomainGet(company_id: number, setdataset_domain: (data: any) => void, user: any, isCallFuncLogOn: boolean) {
+  // Function - Get Company
+  export async function mas_CompanyGet(company_id: number, set_company: (data: any) => void, user: any, isCallFuncLogOn: boolean) {
+    if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  CompanyGet");
+
+    try {
+      const dataset = {
+      };
+      const response = await _POST(
+        dataset,
+        "/Complaint/CasCompanyGet"
+      );
+      if (response && response.status === "success") {
+        console.log(
+          "❇️ Call [Complaint/CasCompanyGet] -> Company_Get :",
+          response.data
+        );
+        set_company(response.data);
+
+        // if (action == "Add") {
+
+        //   //================================================
+        //   let company = response.data.filter(
+        //     (item: any) => item.company_id != user[0]?.itasset_company_id
+        //   );
+        //   set_company_search(company);
+        //   // if (department) {
+        //   //   // set_domain_search(domain);
+        //   //   set_department_search(department);
+        //   // }
+        //   //================================================
+        // }
+      }
+    } catch (e) {
+      console.log("error:", e);
+    }
+  };
+
+
+export async function mas_DomainGet(company_id: number, set_domain: (data: any) => void, user: any, isCallFuncLogOn: boolean) {
     if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  DomainGet");
 
     try {
       const dataset = {
-        company_id: user[0]?.itasset_company_id,
+        company_id: company_id,
       };
       const response = await _POST(dataset, "/Complaint/CasDomainGet");
       if (response && response.status === "success") {
         console.log("❇️ Call [Complaint/CasDomainGet] -> Domain_Get :", response.data);
         if (Array.isArray(response.data)) {
           // เอา filter ออก → ใช้ทุกตัว
-          setdataset_domain(response.data);
+          set_domain(response.data);
         }
       }
     } catch (e) {
@@ -24,3 +62,60 @@ export async function mas_DomainGet(company_id: number, setdataset_domain: (data
     }
 }
 
+export async function mas_DepartmentDomainGet(value: any, set_department: (data: any) => void, isCallFuncLogOn: boolean) {
+    if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  DepartmentDomainGet");
+
+    try {
+      const dataset = {
+        domain_id: value.domain_id,
+        company_id: value.company_id,
+      };
+      const response = await _POST(
+        dataset,
+        "/Complaint/CasDepartmentDomainGet"
+      );
+      if (response && response.status === "success") {
+        console.log(
+          "❇️ Call [Complaint/CasDepartmentDomainGet] -> Department_Domain_Get :",
+          response.data
+        );
+        if (Array.isArray(response.data)) {
+          // เอา filter ออก → ใช้ทุกตัว
+          set_department(response.data);
+        }
+
+      }
+    } catch (e) {
+      console.log("error:", e);
+    }
+  };
+
+
+   // Function - Get Username Domain
+    export async function mas_UsernameGet (value: any, set_username: (data: any) => void,  isCallFuncLogOn: boolean) {
+      if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  CasUsernameGet");
+  
+      try {
+        const dataset = {
+          domain_id: value.domain_id,
+          company_id: value.company_id,
+          department_id: value.department_id,
+        };
+        const response = await _POST(
+          dataset,
+          "/Complaint/CasUsernameGet"
+        );
+        if (response && response.status === "success") {
+          console.log(
+            "❇️ Call [Complaint/CasUsernameGet] -> CasUsernameGet :",
+            response.data
+          );
+  
+          set_username(response.data);
+  
+        }
+      } catch (e) {
+        console.log("error:", e);
+      }
+    };
+  
