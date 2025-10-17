@@ -597,7 +597,7 @@ export default function Complaint() {
 
     try {
       const dataset = {
-        lov_group: "TRR.TRRGROUP.COM",
+        lov_group: "21",
         lov_type:
           "report_type,complaint_type,reference_standard,attach_type,complaint_status,tool_use,decision_disposition,approve_select,complaint_step,complaint_action",
       };

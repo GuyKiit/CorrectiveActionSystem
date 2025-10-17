@@ -120,7 +120,7 @@ export const Department_Setting_headCells = [
         colWidth: 150,
     },
     {
-        columnName: 'itasset_company_name',
+        columnName: 'company_name',
         numeric: 'center',
         disablePadding: false,
         label: 'บริษัท',

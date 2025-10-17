@@ -32,6 +32,7 @@ import CloseIcon from '@mui/icons-material/CheckCircle';
 import { useListDepartmentSetting } from "./core/ListDepartmentSettingContext";
 import DepartmentSettingBody from "./components/DepartmentSettingBody";
 import { data } from "react-router-dom";
+import { mas_CompanyGet } from "../../service/mas/lov";
 // import ExplaintBody from "./components/ExplaintBody";
 
 // =====================================================================================================
@@ -178,13 +179,19 @@ export default function DepartmentSetting() {
     setstep,
     setsectionApprove,
     setqcApprove,
+    setdept_company,
+    setdept_domain,
 
     //----------dataset---------
-    dataset_company, setdataset_company,
-    dataset_department, setdataset_department,
-    dataset_domain, setdataset_domain,
-    dataset_username, setdataset_username,
+    company_search, set_company_search,
+    department_search, set_department_search,
+    domain_search, set_domain_search,
+    username_search, set_username_search,
 
+    company, set_company,
+    department, set_department,
+    domain, set_domain,
+    username, set_username,
 
 
   } = useListDepartmentSetting();
@@ -233,10 +240,10 @@ export default function DepartmentSetting() {
 
   // Search Variables (from index.tsx)
   const [TextNameSearch, setTextNameSearch] = React.useState({
-    dataset_username: "",
-    dataset_company: "",
-    dataset_domain: "",
-    dataset_department: "",
+    username_search: "",
+    company_search: "",
+    domain_search: "",
+    department_search: "",
     Email: "",
   });
 
@@ -285,6 +292,8 @@ export default function DepartmentSetting() {
 
   // Reset Form Function (from index.tsx)
   const resetForm = () => {
+    setdept_company("");
+    setdept_domain("");
     setdomain_dept_id("");
     setdept_email("");
     setsectionApprove("");
@@ -507,7 +516,7 @@ export default function DepartmentSetting() {
         console.log("❇️ Call [Complaint/CasDomainGet] -> Domain_Get :", response.data);
         if (Array.isArray(response.data)) {
           // เอา filter ออก → ใช้ทุกตัว
-          setdataset_domain(response.data);
+          set_domain_search(response.data);
         }
       }
     } catch (e) {
@@ -534,7 +543,7 @@ export default function DepartmentSetting() {
           response.data
         );
 
-        setdataset_department(response.data);
+        set_department_search(response.data);
 
         // if (action == "Add") {
 
@@ -542,10 +551,10 @@ export default function DepartmentSetting() {
         //   let department = response.data.filter(
         //     (item: any) => item.department_id != user[0]?.itasset_department_id
         //   );
-        //   setdataset_department(department);
+        //   set_department_search(department);
         //   // if (department) {
-        //   //   // setdataset_domain(domain);
-        //   //   setdataset_department(department);
+        //   //   // set_domain_search(domain);
+        //   //   set_department_search(department);
         //   // }
         //   //================================================
         // }
@@ -572,7 +581,7 @@ export default function DepartmentSetting() {
           "❇️ Call [Complaint/CasCompanyGet] -> Company_Get :",
           response.data
         );
-        setdataset_company(response.data);
+        set_company_search(response.data);
 
         // if (action == "Add") {
 
@@ -580,10 +589,10 @@ export default function DepartmentSetting() {
         //   let company = response.data.filter(
         //     (item: any) => item.company_id != user[0]?.itasset_company_id
         //   );
-        //   setdataset_company(company);
+        //   set_company_search(company);
         //   // if (department) {
-        //   //   // setdataset_domain(domain);
-        //   //   setdataset_department(department);
+        //   //   // set_domain_search(domain);
+        //   //   set_department_search(department);
         //   // }
         //   //================================================
         // }
@@ -613,23 +622,23 @@ export default function DepartmentSetting() {
           response.data
         );
 
-        setdataset_username(response.data);
+        set_username_search(response.data);
 
-        if (action == "Add") {
+        // if (action == "Add") {
 
-          //================================================
-          let department = response.data.filter(
-            (item: any) => item.department_id != user[0]?.itasset_department_id
-          );
-          setdataset_username(department);
-          // if (department) {
-          //   // setdataset_domain(domain);
-          //   setdataset_department(department);
-          // }
-          //================================================
+        //   //================================================
+        //   let department = response.data.filter(
+        //     (item: any) => item.department_id != user[0]?.itasset_department_id
+        //   );
+        //   set_username_search(department);
+        //   // if (department) {
+        //   //   // set_domain_search(domain);
+        //   //   set_department_search(department);
+        //   // }
+        //   //================================================
 
 
-        }
+        // }
 
       }
     } catch (e) {
@@ -678,8 +687,8 @@ export default function DepartmentSetting() {
       // domain_id: user[0]?.employee_domain,
       // department_id: user[0]?.itasset_department_id,
       // company_id: user[0]?.itasset_company_id,
-      dataset_username: TextNameSearch.dataset_username ? TextNameSearch.dataset_username : null,
-      dataset_department: TextNameSearch.dataset_department ? TextNameSearch.dataset_department : null,
+      username_search: TextNameSearch.username_search ? TextNameSearch.username_search : null,
+      department_search: TextNameSearch.department_search ? TextNameSearch.department_search : null,
     }
 
     console.log("step:2 dataset ก่อนส่ง API /DeptSearch/DeptSearchGet ", dataset);
@@ -1335,10 +1344,10 @@ export default function DepartmentSetting() {
   const handleCloseSearch = () => {
     if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  handleCloseSearch");
     setTextNameSearch({
-      dataset_username: "",
-      dataset_company: "",
-      dataset_department: "",
-      dataset_domain: "",
+      username_search: "",
+      company_search: "",
+      department_search: "",
+      domain_search: "",
       Email: "",
     });
     // Complaint_Get()
@@ -1369,12 +1378,13 @@ export default function DepartmentSetting() {
     resetSearchTable();
     console.log("step:1 เรียกฟังก์ชั่น DeptSearchGet();");
     DeptSearchGet();
-    // DomainGet();
+    DomainGet();
     DepartmentDomainGet();
     CompanyGet();
     UsernameGet();
+    mas_CompanyGet(0, set_company, user, isCallFuncLogOn);
     
-    console.log("#################### dataset_company", dataset_company);
+    console.log("#################### company_search", company_search);
   }, []);
   // =====================================================================================================
   // RETURN SECTION - RENDER COMPONENT
@@ -1402,65 +1412,65 @@ export default function DepartmentSetting() {
         <Grid container spacing={2} my={3}>
           <Grid size={3}>
             <AutocompleteComboBox
-              value={dataset_username?.find(
-                (item: any) => item.employee_username === TextNameSearch.dataset_username
+              value={username_search?.find(
+                (item: any) => item.employee_username === TextNameSearch.username_search
               ) || null}
               labelName="ชื่อ (Username)"
-              options={dataset_username || []}
+              options={username_search || []}
               column="employee_username"
               setvalue={(val) => {
                 setTextNameSearch({
                   ...TextNameSearch,
-                  dataset_username: val?.employee_username || "", // เก็บแค่ id เป็น string
+                  username_search: val?.employee_username || "", // เก็บแค่ id เป็น string
                 })
               }}
             />
           </Grid>
           <Grid size={3}>
             <AutocompleteComboBox
-              value={dataset_company?.find(
-                (item: any) => item.company_id === TextNameSearch.dataset_company
+              value={company_search?.find(
+                (item: any) => item.company_id === TextNameSearch.company_search
               ) || null}
               labelName="บริษัท (Company)"
-              options={dataset_company || []}
+              options={company_search || []}
               column="company_name"
               setvalue={(val) => {
                 setTextNameSearch({
 
                   ...TextNameSearch,
-                  dataset_company: val?.company_id || "", // เก็บแค่ id เป็น string
+                  company_search: val?.company_id || "", // เก็บแค่ id เป็น string
                 })
               }}
             />
           </Grid>
           <Grid size={3}>
             <AutocompleteComboBox
-              value={dataset_domain?.find(
-                (item: any) => item.domain_id === TextNameSearch.dataset_domain
+              value={domain_search?.find(
+                (item: any) => item.domain_id === TextNameSearch.domain_search
               ) || null}
               labelName="โดเมน (Domain)"
-              options={dataset_domain || []}
+              options={domain_search || []}
               column="domain_name"
               setvalue={(val) => {
                 setTextNameSearch({
                   ...TextNameSearch,
-                  dataset_domain: val?.domain_id || "", // เก็บแค่ id เป็น string
+                  domain_search: val?.domain_id || "", // เก็บแค่ id เป็น string
                 })
               }}
             />
           </Grid>
           <Grid size={3}>
             <AutocompleteComboBox
-              value={dataset_department?.find(
-                (item: any) => item.department_id === TextNameSearch.dataset_department
+              value={department_search?.find(
+                (item: any) => item.department_id === TextNameSearch.department_search
               ) || null}
               labelName="แผนก (Department)"
-              options={dataset_department || []}
+              options={department_search || []}
               column="department_name"
               setvalue={(val) => {
                 setTextNameSearch({
                   ...TextNameSearch,
-                  dataset_department: val?.department_id || "", // เก็บแค่ id เป็น string
+                  department_search: val?.department_id || "", // เก็บแค่ id เป็น string
                 })
               }}
             />
@@ -1511,7 +1521,7 @@ export default function DepartmentSetting() {
               hidden={menuFuncData?.find((item: auth_role_menu_func) => item?.func_name === "Add") ? false : true}
               color="success"
               onClick={() => {
-                DepartmentDomainGet("Add");
+                // DepartmentDomainGet("Add");
                 handleOnclickDepartmentSettingAdd();
               }}
             >

@@ -42,17 +42,29 @@ const ListDepartmentSettingProvider: FC<WithChildren> = ({ children }) => {
     );
     
     //-----------dataset-------------
-    const [dataset_company, setdataset_company] = useState<any>(
-        initialListDepartmentSetting.dataset_company
+    const [company, set_company] = useState<any>(
+        initialListDepartmentSetting.company
     );
-    const [dataset_department, setdataset_department] = useState<any>(
-        initialListDepartmentSetting.dataset_department
+    const [department, set_department] = useState<any>(
+        initialListDepartmentSetting.department
     );
-    const [dataset_domain, setdataset_domain] = useState<any>(
-        initialListDepartmentSetting.dataset_domain
+    const [domain, set_domain] = useState<any>(
+        initialListDepartmentSetting.domain
     );
-    const [dataset_username, setdataset_username] = useState<any>(
-        initialListDepartmentSetting.dataset_username
+    const [username, set_username] = useState<any>(
+        initialListDepartmentSetting.username
+    );
+    const [company_search, set_company_search] = useState<any>(
+        initialListDepartmentSetting.company_search
+    );
+    const [department_search, set_department_search] = useState<any>(
+        initialListDepartmentSetting.department_search
+    );
+    const [domain_search, set_domain_search] = useState<any>(
+        initialListDepartmentSetting.domain_search
+    );
+    const [username_search, set_username_search] = useState<any>(
+        initialListDepartmentSetting.username_search
     );
     
 
@@ -87,14 +99,25 @@ const ListDepartmentSettingProvider: FC<WithChildren> = ({ children }) => {
                 
 
                 //-----------dataset-------------
-                dataset_company,
-                dataset_department,
-                dataset_domain,
-                dataset_username,
-                setdataset_company,
-                setdataset_department,
-                setdataset_domain,
-                setdataset_username,
+                company,
+                department,
+                domain,
+                username,
+
+                company_search,
+                department_search,
+                domain_search,
+                username_search,
+
+                set_company,
+                set_department,
+                set_domain,
+                set_username,
+
+                set_company_search,
+                set_department_search,
+                set_domain_search,
+                set_username_search,
             }}
         >
             {children}
