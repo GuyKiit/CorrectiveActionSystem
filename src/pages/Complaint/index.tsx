@@ -249,6 +249,7 @@ export default function Complaint() {
     explain_create_datetime,
     explain_update_by,
     explain_update_datetime,
+    
 
 
     // Setter Functions
@@ -278,9 +279,14 @@ export default function Complaint() {
     //set Explaint
     setdataToolUse,
     setdataToolUse_Combobox,
+    setToolOther,
     setdataDecision_Combobox,
     setdataApprove_Combobox,
     setdataDecision,
+    setresponsible_date,
+    setfollow_up_date,
+
+    
     setdataset_stepcomplaint,
     setdataset_complaintAction,
     setdataset_complaintActionNew,
@@ -320,7 +326,8 @@ export default function Complaint() {
   const [openAddlist, setOpenAddlist] = React.useState(false);
 
   const [explainList, setExplainList] = useState<any[]>([]);
-
+  const [approveSelectionCode, setApproveSelectionCode] = useState<string | null>(null);
+  
   // const [openSync, setOpenSync] = React.useState(false);
   // const [statusMode, setstatusMode] = React.useState([]);
   // const [openSnackbar, setOpenSnackbar] = React.useState(false);
@@ -436,11 +443,17 @@ export default function Complaint() {
     setrequest_email("");
     setrequest_phone("");
 
-    // เคลียร์ข้อมูล Root Cause และข้อมูล Explain
+    // เคลียร์ข้อมูล  Explain
     setroot_cause("");
     setobservation_analysis("");
     setcorrective_action("");
     setpreventive_action_plan("");
+    setdataToolUse([]); 
+    setToolOther("");
+
+    setresponsible_date(null);
+    setfollow_up_date(null);
+
 
     // Clear ALL validation errors
     setReportTypeError(false);
@@ -457,6 +470,7 @@ export default function Complaint() {
     setClauseRsError(false);
     setDetailError(false);
     setPriorityError(false);
+
   };
 
   // Extract Report Type Function (from ComplaintRead.tsx)
@@ -1041,44 +1055,38 @@ export default function Complaint() {
       return false; // หยุดการตรวจสอบส่วนอื่น
     }
 
-    // Validate Date of Detection
     if (!date_of_detection) {
       setDateOfDetectionError(true);
       valid = false;
     }
 
-    // Validate Department/Area of Detection
     if (!respondent_department_id || !respondent_department_id.department_id) {
       setDepartmentAreaError(true);
       valid = false;
     }
 
-    // Validate Product Name
     if (!product_name || product_name.trim() === "") {
       setProductNameError(true);
       valid = false;
     }
 
-    // Validate Lot no
     if (!lot_no || lot_no.trim() === "") {
       setLotNoError(true);
       valid = false;
     }
 
-    // Validate Email
     if (!respondent_email || respondent_email.trim() === "") {
       setEmailError(true);
       valid = false;
     }
 
-    // Validate Complaint Type
+  
     if (!dataComplaintTypeValue_Combobox || dataComplaintTypeValue_Combobox.length === 0) {
       setComplaintTypeError(true);
       valid = false;
     } else {
     }
 
-    // Validate Other Type (if complaint type has "Other" selected)
     if (dataComplaintTypeValue_Combobox && dataComplaintTypeValue_Combobox.some((item: any) => item.isOther === "Y")) {
       if (!compTypeOther || compTypeOther.trim() === "") {
         setOtherTypeError(true);
@@ -1088,8 +1096,6 @@ export default function Complaint() {
       }
     }
 
-
-    // Validate Rs 
     const reportTypeCode = dataReportTypeValue?.lov_code;
     console.log("🔍 Report Type Code:", reportTypeCode);
 
@@ -1863,11 +1869,27 @@ export default function Complaint() {
     //Function Split Domain (For using with Complaint Status)
     const tempComplaintStatus = splitByDot(user[0]?.employee_domain)
 
+    // Helper: resolve the real complaint id from current context (complaint or explain)
+    const resolveComplaintId = () => {
+      const el: any = dataelement || {};
+      // prefer explicit complaint_id if available (object or primitive)
+      if (el.complaint_id) {
+        if (typeof el.complaint_id === 'object') return el.complaint_id.id ?? el.complaint_id;
+        return el.complaint_id;
+      }
+      // sometimes nested as complaint.id
+      if (el.complaint && el.complaint.id) return el.complaint.id;
+      // fallback to current id (when dataelement is the complaint row)
+      return el.id;
+    };
+
+    const complaintRootId = resolveComplaintId();
+
     let currentExplainList: any[] = [];
-    if (dataelement?.id) {
+    if (complaintRootId) {
       try {
         const dataset = {
-          complaint_id: dataelement?.id,
+          complaint_id: complaintRootId,
         };
         const response = await _POST(dataset, "/Explain/ExplainGet");
         if (response && response.status === "success") {
@@ -1908,7 +1930,7 @@ export default function Complaint() {
     const explainPayload = {
       ExplainModel: {
         id: tempid,
-        complaint_id: dataelement?.id,
+        complaint_id: complaintRootId,
         explain_seq: nextSeq,
         observation_analysis: observation_analysis || null,
         root_cause: root_cause || null,
@@ -1965,7 +1987,8 @@ export default function Complaint() {
           : null,
         cf_type: "Explain",
         create_by: user[0]?.employee_username || "",
-
+        domain_id: user[0]?.employee_domain || "",
+      
         ExplainTu: ExplainTuModel,
         ExplainDd: ExplainDdModel,
         // เพิ่ม ComplainFile
@@ -1973,8 +1996,9 @@ export default function Complaint() {
           complaintFiles?.map((item: any, index: number) => {
             return {
               cf_type: "Explain",
-              explain_id: tempid,
+              complaint_id: complaintRootId,
               complaint_at_id: item.attachmentType,
+              explain_id: tempid,
               other: item.attachmentType === "TRR_AT_4" ? (item.otherText?.trim() || null) : null,
               cf_file_seq: (index + 1).toString(),
               user_file_name: item.file.name,
@@ -1999,10 +2023,13 @@ export default function Complaint() {
       //   code_type: dataReportTypeValue.lov1 + "-" + getPaddingYear(),
       //   code_num: 1,
       // },
+
       CurrentAccessModel: {
         user_id: user[0]?.employee_username || "",
       },
     };
+    console.log("📦 explainPayload.ExplainModel.ComplaintFile:", explainPayload.ExplainModel.ComplaintFile);
+
 
 
     // สร้าง FormData
@@ -2108,7 +2135,10 @@ export default function Complaint() {
   };
 
   const handleOnclickExplainAdd = (data: any) => {
-    if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  handleOnclickExplainAdd");
+    if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  handleOnclickExplainAdd");
+
+      
+
 
     resetForm();
     setOpenExplainAdd(true);
@@ -2269,6 +2299,7 @@ export default function Complaint() {
     setOpenExplainView(false);
     setOpenExplainApproveSc(false);
     setOpenUpload(false);
+    setApproveSelectionCode(null); // รีเซ็ตค่าเมื่อปิด Dialog
     resetForm();
   };
 
@@ -2849,6 +2880,7 @@ export default function Complaint() {
         buttonText={"Save & Submit"}
         handleClose={handleClose}
         handlefunction={ExplainAdd}
+        hideSaveDraft={true}
         buttonColor="success"
         element={<ExplaintBody
           action="ExplainAdd"
@@ -2864,8 +2896,8 @@ export default function Complaint() {
         handlefunction={ExplainGet}
         buttonColor="success"
         element={<ExplaintBody
-          action="ExplainAdd"
-          isViewMode={true}
+          action="ExplainRead"
+          //isViewMode={true}
         />}
       />
 
@@ -2931,17 +2963,24 @@ export default function Complaint() {
       /> */}
 
       <FuncDialog
-        open={openExplainApproveSc}
-        dialogWidth="xl"
-        openBottonHidden={false}
-        titlename={"Approve Section Head // เพิ่มข้อมูล"}
-        handleClose={handleClose}
-        buttonColor="success"
-        element={<ExplaintBody
-          action="ApproveScAdd"
-          handleOpenAdd={() => handleOnclickExplainApproveSc(dataelement)}
-        />}
-      />
+         open={openExplainApproveSc}
+         dialogWidth="xl"
+         openBottonHidden={true}
+         hideSaveDraft
+         hideReject={approveSelectionCode === "APPROVE"} // ซ่อนปุ่ม Reject ถ้าเลือก Approve
+         hideSaveSubmit={approveSelectionCode === "ADD" || approveSelectionCode === "REJECT"} 
+         titlename={"Approve Section Head // เพิ่มข้อมูล"}
+         buttonText={"Approve"}
+         handleClose={handleClose}
+         buttonColor="success"
+         element={<ExplaintBody
+           action="ApproveScAdd"
+           handleOpenAdd={() => handleOnclickExplainApproveSc(dataelement)}
+           onApproveChange={(value) => {
+             setApproveSelectionCode(value?.lov_code ?? null);
+           }}
+         />}
+       />
 
       {/* =================== Dialog Sections =================== */}
 
@@ -2973,4 +3012,3 @@ export default function Complaint() {
     </>
   );
 }
-

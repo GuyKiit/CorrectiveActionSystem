@@ -1,6 +1,7 @@
 import React, { ChangeEvent, useRef, useState, useEffect } from "react";
 import { MenuItem, Select, TextField } from "@mui/material";
 import DriveFolderUploadIcon from "@mui/icons-material/DriveFolderUpload";
+import Swal from "sweetalert2";
 
 export interface ComplaintFile {
   file: File;
@@ -58,6 +59,24 @@ export default function BrowseFileUpload({
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files || event.target.files.length === 0) return;
     const fileObj = event.target.files[0];
+    const sizeInMB = fileObj.size / (1024 * 1024);
+    if (sizeInMB > 5) {
+    Swal.fire({
+      icon: "error",
+      title: "ไฟล์มีขนาดใหญ่เกินไป!",
+      text: `ไฟล์ ${fileObj.name} มีขนาด ${sizeInMB.toFixed(2)} MB (จำกัดไม่เกิน 5 MB)`,
+      confirmButtonColor: "#d33",
+      confirmButtonText: "ตกลง",
+      target: (event.target.closest('.MuiDialog-root') as HTMLElement) || 'body'
+    }).then(() => {
+      setAttachmentType("");
+      setOtherText("");
+    });
+    
+    event.target.value = ""; // ล้างค่า input เพื่อให้เลือกไฟล์ใหม่ได้
+    return;
+  }
+
     setSelectedFile(fileObj);
     setFileName(fileObj.name);
     event.target.value = "";

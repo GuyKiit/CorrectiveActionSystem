@@ -104,6 +104,7 @@ interface ExplaintBody {
   onBlocksChange?: (blocks: Block[]) => void;
   handleOpenAdd?: () => void;
   handleOnclickExplainView?: (item: any) => void;
+  onApproveChange?: (value: LovType | null) => void;
   isViewMode?: boolean;
 }
 
@@ -139,6 +140,7 @@ export default function ExplaintBody({
   validateDetailText,
   handleOpenAdd,
   handleOnclickExplainView,
+  onApproveChange,
   isViewMode = false,
 }: ExplaintBody) {
   const isActionRead =
@@ -149,7 +151,8 @@ export default function ExplaintBody({
   const isActionExplain = action === "Explain";
   const isActionExplainAdd = action === "ExplainAdd";
   const isActionExplainApproveScAdd = action === "ApproveScAdd";
-
+  const isActionExplainRead = action === "ExplainRead";
+  
   // ตั้งค่า isROOTHidden เป็น false เมื่ออยู่ในโหมดดูข้อมูล
   React.useEffect(() => {
     if (action === "ExplainRead" || isViewMode) {
@@ -380,7 +383,7 @@ export default function ExplaintBody({
   const [isPAPHidden, setIsPAPHidden] = useState(true);
   const [isOBSAHidden, setIsOBSAHidden] = useState(true);
   const [isROOTHidden, setIsROOTHidden] = useState(false);
-  const [isApprovalHidden, setIsApprovalHidden] = useState(false); // ซ่อนข้อมูลผู้รับรอง
+  const [isApprovalHidden, setIsApprovalHidden] = useState(false); 
 
   const [isCasNumberHidden, setisCasNumberHidden] = useState(true);
   const [isFactoryHidden, setisFactoryHidden] = useState(true);
@@ -481,6 +484,9 @@ export default function ExplaintBody({
     setdataToolUseValue(null);
     setdataToolUse([]);
     setdataDecision([]);
+
+    setresponsible_date(null);
+    setfollow_up_date(null);
   };
 
   // CheckBox Tool used
@@ -520,26 +526,17 @@ export default function ExplaintBody({
     });
   };
 
-  // Function to set visibility based on report type
   const setVisibilityByReportType = (reportTypeCode: string) => {
-    console.log("🔍 Setting visibility for report type:", reportTypeCode);
-
-    // Tools Used: ซ่อนสำหรับ OBS เท่านั้น (แสดงสำหรับ NCR, CAR, CPAR)
     setIsTUHidden(["OBS"].includes(reportTypeCode));
 
-    // Decision on Disposition: แสดงสำหรับ NCR เท่านั้น (ซ่อนสำหรับ OBS, CAR, CPAR)
     setIsDDHidden(["OBS", "CAR", "CPAR"].includes(reportTypeCode));
 
-    // Root Cause: แสดงสำหรับ NCR, CAR, CPAR (ซ่อนสำหรับ OBS)
     setIsROOTHidden(["OBS"].includes(reportTypeCode));
 
-    // Corrective Action: แสดงสำหรับ CAR, CPAR เท่านั้น (ซ่อนสำหรับ NCR, OBS)
     setIsCAHidden(["NCR", "OBS"].includes(reportTypeCode));
 
-    // Preventive Action Plan: แสดงสำหรับ CPAR เท่านั้น (ซ่อนสำหรับ NCR, OBS, CAR)
     setIsPAPHidden(["NCR", "OBS", "CAR"].includes(reportTypeCode));
 
-    // Observation Analysis: แสดงสำหรับ OBS เท่านั้น (ซ่อนสำหรับ NCR, CAR, CPAR)
     setIsOBSAHidden(["NCR", "CAR", "CPAR"].includes(reportTypeCode));
   };
 
@@ -697,8 +694,8 @@ export default function ExplaintBody({
 
     setIsLoadingScreen(true);
     const dataset = {
-      id: dataelement?.id,
-      cf_type: "Complaint",
+      explain_id: dataelement?.id,
+      cf_type: "Explain",
     };
 
     try {
@@ -786,6 +783,34 @@ export default function ExplaintBody({
           }
         } catch (err) {
           console.error("setValueMas error:", err);
+        }
+      }
+      //==============================================================
+
+      if (
+        Array.isArray(dataset_department) &&
+        dataelement?.responsible_department_id
+      ) {
+        console.log(
+          "🗺️ Looking for department with ID:",
+          dataelement.responsible_department_id
+        );
+        console.log("🗺️ Available departments:", dataset_department);
+
+        const mappedDept = await setValueMas(
+          dataset_department,
+          dataelement.responsible_department_id,
+          "department_id"
+        );
+
+        console.log("🗺️ Mapped department result:", mappedDept);
+        if (mappedDept) {
+          setresponsible_department_id(mappedDept); // ค่า default ของ Combobox
+        } else {
+          console.warn(
+            "⚠️ No department found for ID:",
+            dataelement.responsible_department_id
+          );
         }
       }
 
@@ -915,23 +940,19 @@ export default function ExplaintBody({
     dataphoto_Combobox,
     dataApprove_Combobox,
     dataReportTypeValue, // เพราะเรใช้ state นี้ต่อใน effect (และต้องการให้ flow ใช้ค่าล่าสุด)
+    dataset_department,
   ]);
 
   React.useEffect(() => {
     console.log("step: 5 เก็บข้อมูลเข้า ฺsetdataelement ใหม่ ", dataelement);
-    console.log("🔍 Debug dataelement structure:", {
-      responsible_company_id: dataelement?.responsible_company_id,
-      responsible_department_id: dataelement?.responsible_department_id,
-      ToolUse: dataelement?.ToolUse,
-      Decision: dataelement?.Decision,
-    });
-
     if (
       dataelement &&
       (action === "ExplainAdd" || action === "ExplainRead" || isViewMode)
     ) {
       // Set basic information
-      setresponsible_name(dataelement?.request_name || "");
+      setresponsible_name(
+        dataelement?.responsible_name || dataelement?.request_name || ""
+      );
 
       // Set company with null checks
       if (dataelement?.responsible_company_id) {
@@ -950,20 +971,21 @@ export default function ExplaintBody({
       }
 
       // Set department with null checks
-      if (dataelement?.responsible_department_id) {
-        const department = dataset_department?.find(
-          (el: any) =>
-            String(el.itasset_department_id) ===
-            String(
-              typeof dataelement.responsible_department_id === "object"
-                ? dataelement.responsible_department_id?.department_id
-                : dataelement.responsible_department_id
-            )
-        );
-        if (department) {
-          setresponsible_department_id(department);
-        }
-      }
+      // if (dataelement?.responsible_department_id) {
+      //   const department = dataset_department?.find(
+      //     (el: any) =>
+      //       String(el.itasset_department_id) ===
+      //       String(
+      //         typeof dataelement.responsible_department_id === "object"
+      //           ? dataelement.responsible_department_id?.department_id
+      //           : dataelement.responsible_department_id
+      //       )
+      //   );
+      //   if (department) {
+      //     setresponsible_department_id(department);
+      //   }
+      // }
+      // setresponsible_department_id(dataelement?.responsible_department_id ? dataelement?.responsible_department_id : "");
 
       // Set other fields with proper null checks
       setresponsible_position(dataelement?.responsible_position || "");
@@ -992,16 +1014,16 @@ export default function ExplaintBody({
         );
 
         if (reportTypeObj) {
-          console.log(
-            "🔍 Setting visibility for loaded data with report type:",
-            reportTypeObj.lov_code
-          );
           setVisibilityByReportType(reportTypeObj.lov_code);
         }
       }
 
       // Process ToolUse data - wait until combobox loaded
-      if (dataelement?.ToolUse || dataelement?.tooluse || dataelement?.explainTu) {
+      if (
+        dataelement?.ToolUse ||
+        dataelement?.tooluse ||
+        dataelement?.explainTu
+      ) {
         const isComboReady =
           Array.isArray(dataToolUse_Combobox) &&
           dataToolUse_Combobox.length > 0;
@@ -1065,6 +1087,7 @@ export default function ExplaintBody({
     dataDecision_Combobox,
     dataTooluse,
     dataDecision,
+    dataset_department,
   ]);
 
   // Debug useEffect for dataTooluseCheckbox state changes
@@ -1074,11 +1097,9 @@ export default function ExplaintBody({
 
   React.useEffect(() => {
     // Call file fetch for complaint actions only, not for explain actions
-    if (action === "Read" || action === "Edit" || action === "Delete") {
+    if (action === "ExplainRead") {
       ComplaintFile_Get();
     }
-    // For explain actions, we don't need to fetch complaint files
-    // If needed, create a separate ExplainFile_Get function
   }, [action, dataelement]);
 
   const setExplainTU = (data: any) => {
@@ -1097,7 +1118,9 @@ export default function ExplaintBody({
         console.log(`🔍 Processing Tools Used item ${index}:`, el);
         // Support multiple possible key names from API: explain_tu_id, tool_use_id, id
         const targetId =
-          (el && (el.explain_tu_id || el.tool_use_id || el.tooluse_id || el.id)) ?? null;
+          (el &&
+            (el.explain_tu_id || el.tool_use_id || el.tooluse_id || el.id)) ??
+          null;
 
         const filter = dataToolUse_Combobox.find(
           (item: any) => String(item.id) === String(targetId)
@@ -1112,9 +1135,7 @@ export default function ExplaintBody({
           console.log(`🔍 Adding processed item:`, processedItem);
           newData.push(processedItem);
         } else {
-          console.warn(
-            `🚫 No matching tool found for targetId: ${targetId}`
-          );
+          console.warn(`🚫 No matching tool found for targetId: ${targetId}`);
         }
       });
     } else {
@@ -1244,7 +1265,9 @@ export default function ExplaintBody({
                     value={
                       action === "ExplainAdd"
                         ? user[0]?.employee_username || "-"
-                        : dataelement?.request_name || "-"
+                        : responsible_name ||
+                          dataelement?.responsible_name ||
+                          "-"
                     }
                     labelName="ชื่อผู้ดำเนินการ (Responsible Person)"
                     onchange={(e) => setresponsible_name(e.target.value)}
@@ -1257,9 +1280,9 @@ export default function ExplaintBody({
                   <FullWidthTextField
                     required="required"
                     value={
-                      action === "ExplainAdd"
-                        ? user[0]?.itasset_company_name || "-"
-                        : dataelement?.respondent_company_id || "-"
+                      // action === "ExplainAdd"
+                      user[0]?.itasset_company_name || "-"
+                      // : (responsible_company_id as any)?.itasset_company_name || "-"
                     }
                     labelName="บริษัท (Company)"
                     onchange={(e) => setresponsible_company_id(e.target.value)}
@@ -1267,24 +1290,22 @@ export default function ExplaintBody({
                       isActionRead || isActionDelete || isActionExplainAdd
                     }
                   />
+                  
                 </Grid>
                 <Grid size={4}>
                   <FullWidthTextField
                     required="required"
+                    labelName="แผนก (Department)"
                     value={
-                      action === "ExplainAdd"
-                        ? user[0]?.itasset_department_name || "-"
-                        : dataelement?.respondent_department_id
-                    }
-                    labelName={"แผนก (Department)"}
-                    onchange={(e) => {
-                      setresponsible_department_id(e.target.value);
-                    }}
-                    bgcolorTextField={
-                      action === "Add" ? false : isActionEdit ? false : true
+                      (responsible_department_id as any)?.department_name ||
+                      user[0]?.itasset_department_name ||
+                      "-"
                     }
                     readonly={
                       isActionRead || isActionDelete || isActionExplainAdd
+                    }
+                    bgcolorTextField={
+                      action === "Add" ? false : isActionEdit ? false : true
                     }
                   />
                 </Grid>
@@ -1294,7 +1315,9 @@ export default function ExplaintBody({
                     value={
                       action === "ExplainAdd"
                         ? user[0]?.employee_position || "-"
-                        : dataelement?.request_position || "-"
+                        : responsible_position ||
+                          dataelement?.responsible_position ||
+                          "-"
                     }
                     labelName="ตำแหน่ง (Position)"
                     onchange={(e) => setrequest_position(e.target.value)}
@@ -1309,7 +1332,9 @@ export default function ExplaintBody({
                     value={
                       action === "ExplainAdd"
                         ? user[0]?.employee_email || "-"
-                        : dataelement?.request_email || "-"
+                        : responsible_email ||
+                          dataelement?.responsible_email ||
+                          "-"
                     }
                     labelName="อีเมล (Email)"
                     onchange={(e) => setrequest_email(e.target.value)}
@@ -1324,9 +1349,11 @@ export default function ExplaintBody({
                     labelName={"วันที่ชี้แจง (Date)"}
                     value={responsible_date}
                     handleChange={(val) => setresponsible_date(val ?? null)}
-                    bgcolorTextField={action === "Add" ? false : true}
-                    readonly
+                    bgcolorTextField={action === "ExplainAdd" ? false : true}
+                    readonly={isActionExplainRead }
                   />
+
+                 
                 </Grid>
                 <Grid size={4}>
                   <DesktopDatePickers
@@ -1422,7 +1449,7 @@ export default function ExplaintBody({
                                     onchange={() =>
                                       handleCheckboxChangeTU(item)
                                     }
-                                    readonly={isActionRead || isActionDelete }
+                                    readonly={isActionRead || isActionDelete}
                                   />
                                 </Grid>
                               ))}
@@ -1436,11 +1463,9 @@ export default function ExplaintBody({
                                   labelName="Other:"
                                   onchange={(e) => setToolOther(e)}
                                   bgcolorTextField={
-                                    action === "Add"
+                                    action === "ExplainAdd"
                                       ? false
                                       : isActionEdit
-                                      ? false
-                                      : isActionExplainAdd
                                       ? false
                                       : true
                                   }
@@ -2188,12 +2213,8 @@ export default function ExplaintBody({
                 value={date_of_detection}
                 handleChange={(val) => setdate_of_detection(val ?? null)}
                 bgcolorTextField={action === "ApproveScAdd" ? false : true}
-                readonly={
-                  isActionRead ||
-                  isActionEdit ||
-                  isActionDelete ||
-                  isActionExplainApproveScAdd
-                }
+                
+                
               />
             </Grid>
           </Grid>
@@ -2268,46 +2289,47 @@ export default function ExplaintBody({
                       {/* ✅ ใช้ RadioGroup แทน Checkbox */}
                       <RadioGroup
                         row
-                        value={dataFuapp?.id || ""} // เก็บ id ของที่เลือก
+                        value={dataFuapp?.id || ""}
                         onChange={(e) => {
                           const selectedId = e.target.value;
                           const selectedItem = (filteredFuApprove || []).find(
                             (item) => item.id === selectedId
                           );
+                          if (onApproveChange) {
+                            onApproveChange(selectedItem || null);
+                          }
                           setdataFuapp(
                             selectedItem ? { ...selectedItem } : null
-                          ); // เก็บแค่ 1 ค่า
+                          );
                         }}
                       >
-                        <Grid container spacing={2}>
-                          {(filteredFuApprove || []).map((item: LovType) => (
-                            <Grid key={item.id}>
-                              <FormControlLabel
-                                value={item.id}
-                                control={<Radio />}
-                                label={item.lov1}
-                                disabled={isActionRead || isActionDelete}
-                                sx={{
-                                  m: 2,
-                                  px: 2,
-                                  py: 1,
-                                  borderRadius: 2,
-                                  border:
-                                    dataFuapp?.id === item.id
-                                      ? "2px solid #4caf50"
-                                      : "none",
-                                  bgcolor:
-                                    dataFuapp?.id === item.id
-                                      ? "#d0f0c0"
-                                      : "#f5f5f5", // ✅ เขียวพาสเทลถ้าเลือก, เทาอ่อนถ้ายังไม่เลือก
-                                  "&:hover": {
-                                    bgcolor: "#c8e6c9", // สี hover
-                                  },
-                                }}
-                              />
-                            </Grid>
-                          ))}
-                        </Grid>
+                        {/* ให้ radio อยู่บรรทัดเดียวกัน */}
+                        {(filteredFuApprove || []).map((item: LovType) => (
+                          <FormControlLabel
+                            key={item.id}
+                            value={item.id}
+                            control={<Radio />}
+                            label={item.lov1}
+                            disabled={isActionRead || isActionDelete}
+                            sx={{
+                              m: 1,
+                              px: 1,
+                              py: 1,
+                              borderRadius: 2,
+                              border:
+                                dataFuapp?.id === item.id
+                                  ? "2px solid #4caf50"
+                                  : "none",
+                              bgcolor:
+                                dataFuapp?.id === item.id
+                                  ? "#d0f0c0"
+                                  : "#f5f5f5",
+                              "&:hover": {
+                                bgcolor: "#c8e6c9",
+                              },
+                            }}
+                          />
+                        ))}
                       </RadioGroup>
                     </Box>
                   </AccordionDetails>
@@ -2787,7 +2809,6 @@ export default function ExplaintBody({
         </Paper>
       )}
 
-
       {/* ///////   ส่วนของ Close Complaint ///////  */}
       {isActionExplainApproveScAdd && isFormHidden && (
         <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>
@@ -3216,7 +3237,6 @@ export default function ExplaintBody({
           </Paper>
         </Paper>
       )}
-
     </Box>
   );
 }

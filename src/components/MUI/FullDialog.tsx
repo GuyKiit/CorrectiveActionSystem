@@ -27,6 +27,7 @@ interface FuncDialog {
   openBottonHidden?: boolean;
   hideSaveDraft?: boolean;
   hideReject?: boolean;
+  hideSaveSubmit?: boolean;
   buttonText?: string;
   buttonColor?: string;
   element?: React.ReactNode;
@@ -103,20 +104,23 @@ export default function FuncDialog(props: FuncDialog) {
         {/* Right side - Save and Submit, Cancel */}
         <div className="flex gap-3">
 
-          {props.openBottonHidden && (
+          {!props.hideSaveSubmit && props.openBottonHidden && (
             <FullWidthButton
               handleonClick={props.handlefunction ?? props.handleClose}
-              labelName={props.buttonText ?? "บันทึก"}
+              labelName={props.buttonText ?? "SAVE & SUBMIT"}
               variant_text="contained"
               colorname={props.buttonColor ?? "primary"}
             />
           )}
+
           <FullWidthButton
             handleonClick={props.handleClose}
             labelName="Cancel"
             variant_text="contained"
             colorname={"primary"}
           />
+
+          
 
         </div>
       </DialogActions>

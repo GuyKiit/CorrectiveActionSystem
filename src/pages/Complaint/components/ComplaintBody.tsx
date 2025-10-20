@@ -910,10 +910,11 @@ export default function ComplaintBody({
     }
 
     setIsLoadingScreen(true);
-    const dataset = {
+    const dataset = 
+    {
       complaint_id: dataelement?.id,
       cf_type: "Complaint",
-    };
+    };    
 
     try {
       let response = await _POST(dataset, "/ComplaintFile/ComplaintFileGet");
@@ -1220,7 +1221,7 @@ export default function ComplaintBody({
 
   React.useEffect(() => {
     // เฉพาะตอน Read เท่านั้น
-    if (action === "Read" || action === "Edit" || action === "Delete" || isActionExplain) {
+    if (action === "Read" || action === "Edit" || action === "Delete" || isActionExplain ) {
       if (dataelement?.id) {
         Complaint_Get(dataelement);
       }
