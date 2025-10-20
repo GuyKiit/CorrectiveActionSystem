@@ -240,6 +240,15 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
     const [dataset_domain, setdataset_domain] = useState<any>(
         initialListComplaint.dataset_domain
     );
+    const [dataset_domainrelate, setdataset_domainrelate] = useState<any>(
+        initialListComplaint.dataset_domainrelate
+    );
+    const [dataset_activeCompany, setdataset_activeCompany] = useState<any>(
+        initialListComplaint.dataset_activeCompany
+    );
+    const [dataset_roleAdmin, setdataset_roleAdmin] = useState<any>(
+        initialListComplaint.dataset_roleAdmin
+    );
 
     const [dataComplaintTypeValue_Combobox, setdataComplaintTypeValue_Combobox] =
         useState<any[]>([]); // รับ array ของอะไรก็ได้
@@ -447,6 +456,21 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
     const [dataset_complaintActionClose, setdataset_complaintActionClose] = useState<any>(
         initialListComplaint.setdataset_complaintActionClose
     );
+    const [domainrelate, set_domainrelate] = useState<any>(
+        initialListComplaint.domainrelate
+    );
+    const [domainrelate_search, set_domainrelate_search] = useState<any>(
+        initialListComplaint.domainrelate_search
+    );
+    const [departmentrelate, set_departmentrelate] = useState<any>(
+        initialListComplaint.departmentrelate
+    );
+    const [departmentrelate_search, set_departmentrelate_search] = useState<any>(
+        initialListComplaint.departmentrelate_search
+    );
+    const [department, set_department] = useState<any>(
+        initialListComplaint.department
+    );
 
     return (
         <ListComplaintContext.Provider
@@ -533,12 +557,20 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 dataset_company,
                 dataset_department,
                 dataset_domain,
+                dataset_domainrelate,
                 complaintFiles,
                 dataset_stepcomplaint,
                 dataset_complaintAction,
                 dataset_complaintActionNew,
                 dataset_complaintActionExplain,
                 dataset_complaintActionClose,
+                dataset_activeCompany,
+                dataset_roleAdmin,
+                domainrelate,
+                domainrelate_search,
+                departmentrelate,
+                departmentrelate_search,
+                department,
 
                 //--------Explaint-------
                 dataTooluse,
@@ -676,19 +708,27 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 setdatastatus,
                 setPriorityLevel,
                 setdataComplaintTypeValue_Combobox,
-                
+
 
                 //--------dataset-------
                 setdataset_reporttype,
                 setdataset_company,
                 setdataset_department,
                 setdataset_domain,
+                setdataset_domainrelate,
                 setcomplaintFiles,
                 setdataset_stepcomplaint,
                 setdataset_complaintAction,
                 setdataset_complaintActionNew,
                 setdataset_complaintActionExplain,
                 setdataset_complaintActionClose,
+                setdataset_activeCompany,
+                setdataset_roleAdmin,
+                set_domainrelate,
+                set_domainrelate_search,
+                set_departmentrelate,
+                set_departmentrelate_search,
+                set_department,
 
                 //--------Explaint-------
                 setdataToolUse,

@@ -39,21 +39,25 @@ export type ListDepartmentSettingContextProps = {
     department?: any
     domain?: any
     username?: any
+    
 
     company_search?: any
     department_search?: any
     domain_search?: any
     username_search?: any
+    
 
     set_company: Dispatch<SetStateAction<any>>;
     set_department: Dispatch<SetStateAction<any>>;
     set_domain: Dispatch<SetStateAction<any>>;
     set_username: Dispatch<SetStateAction<any>>;
+    
 
     set_company_search: Dispatch<SetStateAction<any>>;
     set_department_search: Dispatch<SetStateAction<any>>;
     set_domain_search: Dispatch<SetStateAction<any>>;
     set_username_search: Dispatch<SetStateAction<any>>;
+    
 
 };
 
@@ -79,12 +83,13 @@ export const initialListDepartmentSetting: ListDepartmentSettingContextProps = {
     set_department: () => { },
     set_domain: () => { },
     set_username: () => { },
+    
 
     set_company_search: () => { },
     set_department_search: () => { },
     set_domain_search: () => { },
     set_username_search: () => { },
-
+    
 
 
 

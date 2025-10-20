@@ -197,11 +197,14 @@ export default function Complaint() {
     dataset_department,
     dataset_company,
     dataset_domain,
+    dataset_domainrelate,
     dataset_stepcomplaint,
     dataset_complaintAction,
     dataset_complaintActionNew,
     dataset_complaintActionExplain,
     dataset_complaintActionClose,
+    dataset_activeCompany,
+    dataset_roleAdmin,
 
     //Explaint
     dataTooluseValue,
@@ -268,8 +271,8 @@ export default function Complaint() {
     setdataComplaintTypeValue_Combobox, setdataComplaintRs_Combobox, setdatastatus,
     setdataComplaintRsValue_Combobox, setdataphoto_Combobox, setdataphotoValue_Combobox,
     setdatapriorityValue_Combobox, setdatapriority_Combobox, setdatapriority,
-    setPriorityLevel, setclauseOther, setphoTypeOther, setdataset_reporttype,
-    setdataset_department, setdataset_company, setdataset_domain, setcomplaintFiles, setotherText,
+    setPriorityLevel, setclauseOther, setphoTypeOther, setdataset_reporttype,setdataset_activeCompany,setdataset_roleAdmin,
+    setdataset_department, setdataset_company, setdataset_domain,setdataset_domainrelate, setcomplaintFiles, setotherText,
 
 
     //set Explaint
@@ -597,14 +600,15 @@ export default function Complaint() {
 
     try {
       const dataset = {
-        lov_group: "21",
+        lov_group: "21,VARIABLE_CONSTANT",
         lov_type:
-          "report_type,complaint_type,reference_standard,attach_type,complaint_status,tool_use,decision_disposition,approve_select,complaint_step,complaint_action",
+          "report_type,complaint_type,reference_standard,attach_type,complaint_status,tool_use,decision_disposition,approve_select,complaint_step,complaint_action,active_company,role_admin",
       };
       const response = await _POST(dataset, "/Lov/LovGet");
 
       if (response && response.status === "success") {
         const lovData = response.data || [];
+        console.log("❇️❇️❇️❇️❇️❇️❇️ Call [Lov/LovGet] -> LovAll_Get :", response.data);
 
         // ✅ จัดกลุ่มตาม lov_type
         const grouped = lovData.reduce((acc: any, item: any) => {
@@ -621,18 +625,20 @@ export default function Complaint() {
         console.log("🔍 index.tsx - attach_type data:", grouped["attach_type"]);
         setdatastatus?.(grouped["complaint_status"] || []);
         setdataToolUse_Combobox?.(grouped["tool_use"] || []);
-
         setdataDecision_Combobox?.(grouped["decision_disposition"] || []);
         setdataApprove_Combobox?.(grouped["approve_select"] || []);
         setdataset_stepcomplaint?.(grouped["complaint_step"] || []);
         setdataset_complaintAction?.(grouped["complaint_action"] || []);
+        setdataset_activeCompany?.(grouped["active_company"] || []);
+        setdataset_roleAdmin?.(grouped["role_admin"] || []);
 
         setdataset_complaintActionNew(grouped["complaint_action"].filter((item: any) => item.lov_code === 'ACTION_NEW'));
         setdataset_complaintActionExplain(grouped["complaint_action"].filter((item: any) => item.lov_code === 'ACTION_EXPLAIN'));
         setdataset_complaintActionClose(grouped["complaint_action"].filter((item: any) => item.lov_code === 'ACTION_CLOSE'));
+        
 
-
-        console.log('⚠️⚠️⚠️⚠️ [grouped["complaint_action"]] :', grouped["complaint_action"])
+        console.log('⚠️⚠️⚠️⚠️ [grouped["active_company"]] :', grouped["active_company"])
+        console.log('⚠️⚠️⚠️⚠️ [grouped["role_admin"]] :', grouped["role_admin"])
 
 
 
@@ -672,6 +678,7 @@ export default function Complaint() {
       const response = await _POST(dataset, "/Complaint/CasDomainGet");
       if (response && response.status === "success") {
         // console.log("❇️ Call [Complaint/CasDomainGet] -> Domain_Get :",response.data);
+        
 
         console.log(
           "❇️ Call [Complaint/DomainGet] -> DomainGet :",
@@ -691,42 +698,76 @@ export default function Complaint() {
       console.log("error:", e);
     }
   };
-  // Function - Get Company
-  const CompanyGet = async (action?: string) => {
-    if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  CompanyGet");
+
+  // Function - Get DomainRelate
+  const DomainRelateGet = async () => {
+    if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  DomainRelateGet");
 
     try {
       const dataset = {
+        domain: user[0]?.employee_domain,
+        company_id: user[0]?.itasset_company_id,
       };
-      const response = await _POST(
-        dataset,
-        "/Complaint/CasCompanyGet"
-      );
+      const response = await _POST(dataset, "/Complaint/CasDomainRelateGet");
       if (response && response.status === "success") {
+        // console.log("❇️ Call [Complaint/CasDomainGet] -> DomainRelateGet :",response.data);
+        
+
         console.log(
-          "❇️ Call [Complaint/CasCompanyGet] -> Company_Get :",
+          "❇️ Call [Complaint/DomainRelateGet] -> DomainRelateGet :",
           response.data
         );
-        setdataset_company(response.data);
-
-        // if (action == "Add") {
-
-        //   //================================================
-        //   let company = response.data.filter(
-        //     (item: any) => item.company_id != user[0]?.itasset_company_id
-        //   );
-        //   setdataset_company(company);
-        //   // if (department) {
-        //   //   // setdataset_domain(domain);
-        //   //   setdataset_department(department);
-        //   // }
-        //   //================================================
-        // }
+        if (Array.isArray(response.data)) {
+          // let domain = response.data.filter(
+          //   (item: any) => item.domain_id === user[0]?.employee_domain
+          // );
+          setdataset_domainrelate(response.data);
+         
+        }
       }
     } catch (e) {
       console.log("error:", e);
     }
   };
+  // Function - Get Company
+  const CompanyGet = async (action?: string) => {
+  if (isCallFuncLogOn)
+    console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  CompanyGet");
+
+  try {
+    const response = await _POST({}, "/Complaint/CasCompanyGet");
+
+    if (response && response.status === "success") {
+      console.log("❇️ Call [Complaint/CasCompanyGet] -> Company_Get :", response.data);
+
+      const activeCompany = dataset_activeCompany; // จาก LovAll_Get
+
+      console.log("🧩 activeCompany sample:", activeCompany?.[0]);
+      console.log("🧩 company sample:", response.data?.[0]);
+
+      if (activeCompany?.length > 0) {
+        const active = activeCompany[0]?.lov1 || "";
+
+        const activeid = active.split(",").map((id: string) => id.trim());
+
+        console.log("✅ activeid:", activeid);
+
+         // ✅ filter บริษัทตาม company_id
+        const filteredCompany = response.data.filter((company: any) =>
+          activeid.includes(company.company_id.toString())
+        );
+
+        console.log("⚙️ [filteredCompany]:", filteredCompany);
+        setdataset_company(filteredCompany);
+      } else {
+        console.log("⚠️ activeCompany ยังไม่มีค่า ใช้ company ทั้งหมดแทน");
+        setdataset_company(response.data);
+      }
+    }
+  } catch (e) {
+    console.log("error:", e);
+  }
+};
 
   // Function - Get Department Domain
   const DepartmentDomainGet = async (action?: string) => {
@@ -734,7 +775,7 @@ export default function Complaint() {
 
     try {
       const dataset = {
-        domain_id: user[0]?.employee_domain,
+        domain_id: respondent_domain_id.domain_id,
         company_id: user[0]?.itasset_company_id,
       };
       const response = await _POST(
@@ -2258,8 +2299,9 @@ export default function Complaint() {
     // ComplaintRs_Get();
     // photo_Get();
     priority_Get();
-    DomainGet();
-    DepartmentDomainGet();
+    // DomainGet();
+    DomainRelateGet();
+    // DepartmentDomainGet();
     CompanyGet();
 
     // complaint_status_Get();
@@ -2268,11 +2310,19 @@ export default function Complaint() {
   }, []);
 
   React.useEffect(() => {
+  if (dataset_activeCompany) {
+    console.log("🔁 activeCompany พร้อมแล้ว → เรียก CompanyGet()");
+    CompanyGet();
+  }
+}, [dataset_activeCompany]);
+
+  React.useEffect(() => {
     if (dataset_complaintAction) {
       ListSearchGet();
     }
   }, [dataset_complaintAction]);
 
+  
 
   // Filter complaint types based on selected report type (from ComplaintRead.tsx)
   React.useEffect(() => {
@@ -2358,7 +2408,7 @@ export default function Complaint() {
                   dataset_company: val?.company_id || "", // เก็บแค่ id เป็น string
                 })
               }}
-              readonly
+              // readonly
             />
           </Grid>
           <Grid size={4}>

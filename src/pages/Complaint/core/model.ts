@@ -91,11 +91,19 @@ export type ListComplaintContextProps = {
     dataset_company?: any
     dataset_department?: any
     dataset_domain?: any
+    dataset_domainrelate?: any
     dataset_stepcomplaint?: any
     dataset_complaintAction?: any
     dataset_complaintActionNew?: any
     dataset_complaintActionExplain?: any
     dataset_complaintActionClose?: any
+    dataset_activeCompany?: any
+    dataset_roleAdmin?: any
+    domainrelate?: any
+    domainrelate_search?: any
+    departmentrelate?: any
+    departmentrelate_search?: any
+    department?: any
     
 
     //--------dataset-------
@@ -250,12 +258,20 @@ export type ListComplaintContextProps = {
     setdataset_company: Dispatch<SetStateAction<any>>
     setdataset_department: Dispatch<SetStateAction<any>>
     setdataset_domain: Dispatch<SetStateAction<any>>
+    setdataset_domainrelate: Dispatch<SetStateAction<any>>
     setcomplaintFiles: Dispatch<SetStateAction<any>>
     setdataset_stepcomplaint: Dispatch<SetStateAction<any>>
     setdataset_complaintAction: Dispatch<SetStateAction<any>>
     setdataset_complaintActionNew: Dispatch<SetStateAction<any>>
     setdataset_complaintActionExplain: Dispatch<SetStateAction<any>>
     setdataset_complaintActionClose: Dispatch<SetStateAction<any>>
+    setdataset_activeCompany: Dispatch<SetStateAction<any>>
+    setdataset_roleAdmin: Dispatch<SetStateAction<any>>
+    set_domainrelate: Dispatch<SetStateAction<any>>;
+    set_domainrelate_search: Dispatch<SetStateAction<any>>;
+    set_departmentrelate: Dispatch<SetStateAction<any>>;
+    set_departmentrelate_search: Dispatch<SetStateAction<any>>;
+    set_department: Dispatch<SetStateAction<any>>;
 
 
     //--------Explaint-------
@@ -405,13 +421,20 @@ export const initialListComplaint: ListComplaintContextProps = {
     setdataset_company: () => { },
     setdataset_department: () => { },
     setdataset_domain: () => { },
+    setdataset_domainrelate: () => { },
     setcomplaintFiles: () => { },
     setdataset_stepcomplaint: () => { },
     setdataset_complaintAction: () => { },
     setdataset_complaintActionNew: () => { },
     setdataset_complaintActionExplain: () => { },
     setdataset_complaintActionClose: () => { },
-
+    setdataset_activeCompany: () => { },
+    setdataset_roleAdmin: () => { },
+    set_domainrelate: () => { },
+    set_domainrelate_search: () => { },
+    set_departmentrelate: () => { },
+    set_departmentrelate_search: () => { },
+    set_department: () => { },
 
 
     //--------Explaint-------
