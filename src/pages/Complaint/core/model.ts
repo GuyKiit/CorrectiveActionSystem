@@ -162,7 +162,7 @@ export type ListComplaintContextProps = {
     approve_note?: string
     approve_name?: string
     approve_company_id?: number
-    approve_department_id?: number
+    approve_department_id?: any
     approve_position?: string
     approve_email?: string
     approve_date?: dayjs.Dayjs
@@ -316,10 +316,10 @@ export type ListComplaintContextProps = {
     setapprove_note: Dispatch<SetStateAction<string>>
     setapprove_name: Dispatch<SetStateAction<string>>
     setapprove_company_id: Dispatch<SetStateAction<number>>
-    setapprove_department_id: Dispatch<SetStateAction<number>>
+    setapprove_department_id: Dispatch<SetStateAction<any>>
     setapprove_position: Dispatch<SetStateAction<string>>
     setapprove_email: Dispatch<SetStateAction<string>>
-    setapprove_date: Dispatch<SetStateAction<dayjs.Dayjs>>
+    setapprove_date: Dispatch<SetStateAction<dayjs.Dayjs | null>>
 };
 
 export const initialListComplaint: ListComplaintContextProps = {
@@ -472,7 +472,7 @@ export const initialListComplaint: ListComplaintContextProps = {
     setapprove_note: () => { },
     setapprove_name: () => { },
     setapprove_company_id: () => { },
-    setapprove_department_id: () => { },
+    setapprove_department_id: () => {},
     setapprove_position: () => { },
     setapprove_email: () => { },
     setapprove_date: () => { },

@@ -151,8 +151,9 @@ export default function ExplaintBody({
   const isActionExplain = action === "Explain";
   const isActionExplainAdd = action === "ExplainAdd";
   const isActionExplainApproveScAdd = action === "ApproveScAdd";
+  const isActionExplainApproveQcAdd = action === "ApproveQcAdd";
   const isActionExplainRead = action === "ExplainRead";
-  
+
   // ตั้งค่า isROOTHidden เป็น false เมื่ออยู่ในโหมดดูข้อมูล
   React.useEffect(() => {
     if (action === "ExplainRead" || isViewMode) {
@@ -240,8 +241,13 @@ export default function ExplaintBody({
     explain_create_datetime,
     explain_update_by,
     explain_update_datetime,
-
     dataFuapp,
+    approve_name,
+    approve_company_id,
+    approve_department_id,
+    approve_position,
+    approve_email,
+    approve_date,
 
     setcas_number,
     setdoc_date,
@@ -324,6 +330,12 @@ export default function ExplaintBody({
     setexplain_create_datetime,
     setexplain_update_by,
     setexplain_update_datetime,
+    setapprove_name,
+    setapprove_company_id,
+    setapprove_department_id,
+    setapprove_position,
+    setapprove_email,
+    setapprove_date,
 
     setdataFuapp,
   } = useListComplaint();
@@ -383,7 +395,7 @@ export default function ExplaintBody({
   const [isPAPHidden, setIsPAPHidden] = useState(true);
   const [isOBSAHidden, setIsOBSAHidden] = useState(true);
   const [isROOTHidden, setIsROOTHidden] = useState(false);
-  const [isApprovalHidden, setIsApprovalHidden] = useState(false); 
+  const [isApprovalHidden, setIsApprovalHidden] = useState(false);
 
   const [isCasNumberHidden, setisCasNumberHidden] = useState(true);
   const [isFactoryHidden, setisFactoryHidden] = useState(true);
@@ -752,6 +764,54 @@ export default function ExplaintBody({
 
   React.useEffect(() => {
     const updateData = async () => {
+      // ================================
+      // Map ค่า default ของ company
+      // ================================
+      if (
+        Array.isArray(dataset_company) &&
+        dataelement?.respondent_company_id
+      ) {
+        const mappedCompany = await setValueMas(
+          dataset_company,
+          dataelement.respondent_company_id,
+          "company_id"
+        );
+
+        if (mappedCompany) {
+          setrespondent_company_id(mappedCompany); // ค่า default ของ Combobox
+        }
+      }
+
+      // ================================
+      // Map ค่า default ของ department
+      // ================================
+      if (
+        Array.isArray(dataset_department) &&
+        dataelement?.respondent_department_id
+      ) {
+        console.log(
+          "🗺️ Looking for department with ID:",
+          dataelement.respondent_department_id
+        );
+        console.log("🗺️ Available departments:", dataset_department);
+
+        const mappedDept = await setValueMas(
+          dataset_department,
+          dataelement.respondent_department_id,
+          "department_id"
+        );
+
+        console.log("🗺️ Mapped department result:", mappedDept);
+        if (mappedDept) {
+          setrespondent_department_id(mappedDept); // ค่า default ของ Combobox
+        } else {
+          console.warn(
+            "⚠️ No department found for ID:",
+            dataelement.respondent_department_id
+          );
+        }
+      }
+
       // ถ้าไม่มี anything ที่จำเป็นก็ยังไม่ return ทันที — เราต้องการให้ logic พยายามทำงานเมื่อข้อมูลพร้อม
       // 1) เตรียม newDataset จาก dataset_reporttype (ถ้ามี)
       let newDataset: LovType[] | undefined = Array.isArray(dataset_reporttype)
@@ -941,6 +1001,78 @@ export default function ExplaintBody({
     dataApprove_Combobox,
     dataReportTypeValue, // เพราะเรใช้ state นี้ต่อใน effect (และต้องการให้ flow ใช้ค่าล่าสุด)
     dataset_department,
+    dataset_company,
+  ]);
+
+  // Set ค่า Approve info ตอน Add
+  React.useEffect(() => {
+    if (!user?.[0]) return; // รอ user โหลดก่อน
+
+    const uidCompanyId = String(user[0].itasset_company_id ?? "");
+    const uidDeptId = String(user[0].itasset_department_id ?? "");
+
+    // helper เพื่อหาจาก dataset ที่อาจมีคีย์ต่างกัน (itasset_company_id / company_id)
+    const findCompany = (id: string) =>
+      (Array.isArray(dataset_company) ? dataset_company : []).find(
+        (c: any) =>
+          String(c.itasset_company_id ?? c.company_id ?? "") === String(id)
+      );
+    const findDepartment = (id: string) =>
+      (Array.isArray(dataset_department) ? dataset_department : []).find(
+        (d: any) =>
+          String(d.itasset_department_id ?? d.department_id ?? "") ===
+          String(id)
+      );
+
+    if (isActionExplainApproveScAdd) {
+      setapprove_name(user[0].employee_username || "");
+      setapprove_position(user[0].employee_position || "");
+      setapprove_email(user[0].employee_email || "");
+      setapprove_date(null);
+
+      const userCompany = findCompany(uidCompanyId);
+      if (userCompany) setapprove_company_id(userCompany);
+
+      const userDept = findDepartment(uidDeptId);
+      if (userDept) setapprove_department_id(userDept);
+    } else if (dataelement) {
+      setapprove_name(dataelement.approve_name || "");
+      setapprove_position(dataelement.approve_position || "");
+      setapprove_email(dataelement.approve_email || "");
+      setapprove_date(
+        dataelement.approve_date ? dayjs(dataelement.approve_date) : null
+      );
+
+      // ถ้า dataelement มี company/department ให้แมปกับ dataset (ถ้า available)
+      if (dataelement.approve_company_id && Array.isArray(dataset_company)) {
+        const compId =
+          typeof dataelement.approve_company_id === "object"
+            ? String(dataelement.approve_company_id.company_id ?? "")
+            : String(dataelement.approve_company_id);
+        const matched = findCompany(compId);
+        if (matched) setapprove_company_id(matched);
+        else setapprove_company_id(dataelement.approve_company_id);
+      }
+
+      if (
+        dataelement.approve_department_id &&
+        Array.isArray(dataset_department)
+      ) {
+        const deptId =
+          typeof dataelement.approve_department_id === "object"
+            ? String(dataelement.approve_department_id.department_id ?? "")
+            : String(dataelement.approve_department_id);
+        const matchedD = findDepartment(deptId);
+        if (matchedD) setapprove_department_id(matchedD);
+        else setapprove_department_id(dataelement.approve_department_id);
+      }
+    }
+  }, [
+    isActionExplainApproveScAdd,
+    user,
+    dataset_company,
+    dataset_department,
+    dataelement,
   ]);
 
   React.useEffect(() => {
@@ -1209,7 +1341,7 @@ export default function ExplaintBody({
       </Grid>
 
       {/* ====== Dynamic ฟอร์ม สำหรับเลือกประเภทเอกสาร ====== */}
-      {!isFormHidden && action !== "ApproveScAdd" && (
+      {!isFormHidden && (isActionExplainApproveScAdd || isActionExplainApproveQcAdd) && (
         <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>
           <label className="sarabun-regular-datatable">
             {dataReportTypeValue?.lov4}
@@ -1263,7 +1395,7 @@ export default function ExplaintBody({
                   <FullWidthTextField
                     required="required"
                     value={
-                      action === "ExplainAdd"
+                      isActionExplainAdd
                         ? user[0]?.employee_username || "-"
                         : responsible_name ||
                           dataelement?.responsible_name ||
@@ -1290,7 +1422,6 @@ export default function ExplaintBody({
                       isActionRead || isActionDelete || isActionExplainAdd
                     }
                   />
-                  
                 </Grid>
                 <Grid size={4}>
                   <FullWidthTextField
@@ -1305,7 +1436,7 @@ export default function ExplaintBody({
                       isActionRead || isActionDelete || isActionExplainAdd
                     }
                     bgcolorTextField={
-                      action === "Add" ? false : isActionEdit ? false : true
+                      isActionAdd ? false : isActionEdit ? false : true
                     }
                   />
                 </Grid>
@@ -1313,7 +1444,7 @@ export default function ExplaintBody({
                   <FullWidthTextField
                     required="required"
                     value={
-                      action === "ExplainAdd"
+                      isActionExplainAdd
                         ? user[0]?.employee_position || "-"
                         : responsible_position ||
                           dataelement?.responsible_position ||
@@ -1330,7 +1461,7 @@ export default function ExplaintBody({
                   <FullWidthTextField
                     required="required"
                     value={
-                      action === "ExplainAdd"
+                      isActionExplainAdd
                         ? user[0]?.employee_email || "-"
                         : responsible_email ||
                           dataelement?.responsible_email ||
@@ -1349,11 +1480,9 @@ export default function ExplaintBody({
                     labelName={"วันที่ชี้แจง (Date)"}
                     value={responsible_date}
                     handleChange={(val) => setresponsible_date(val ?? null)}
-                    bgcolorTextField={action === "ExplainAdd" ? false : true}
-                    readonly={isActionExplainRead }
+                    bgcolorTextField={isActionExplainAdd ? false : true}
+                    readonly={isActionExplainRead}
                   />
-
-                 
                 </Grid>
                 <Grid size={4}>
                   <DesktopDatePickers
@@ -1361,7 +1490,7 @@ export default function ExplaintBody({
                     labelName={"กำหนดวันตรวจติดตามผลวันที่ (Follow-up Date)"}
                     value={follow_up_date}
                     handleChange={(val) => setfollow_up_date(val ?? null)}
-                    bgcolorTextField={action === "Add" ? false : true}
+                    bgcolorTextField={isActionAdd ? false : true}
                     readonly={isActionRead || isActionEdit || isActionDelete}
                   />
                 </Grid>
@@ -1463,7 +1592,7 @@ export default function ExplaintBody({
                                   labelName="Other:"
                                   onchange={(e) => setToolOther(e)}
                                   bgcolorTextField={
-                                    action === "ExplainAdd"
+                                    isActionExplainAdd
                                       ? false
                                       : isActionEdit
                                       ? false
@@ -1540,7 +1669,7 @@ export default function ExplaintBody({
                                   labelName="Other:"
                                   onchange={(e) => setDecisionOther(e)}
                                   bgcolorTextField={
-                                    action === "Add"
+                                    isActionAdd
                                       ? false
                                       : isActionEdit
                                       ? false
@@ -1606,7 +1735,7 @@ export default function ExplaintBody({
                               labelName=""
                               onchange={(e) => setobservation_analysis(e)}
                               bgcolorTextField={
-                                action === "ExplainAdd"
+                                isActionExplainAdd
                                   ? false
                                   : isActionEdit
                                   ? false
@@ -1667,7 +1796,7 @@ export default function ExplaintBody({
                               labelName=""
                               onchange={(e) => setroot_cause(e)}
                               bgcolorTextField={
-                                action === "Add"
+                                isActionAdd
                                   ? false
                                   : isActionEdit
                                   ? false
@@ -1730,7 +1859,7 @@ export default function ExplaintBody({
                               labelName=""
                               onchange={(e) => setcorrective_action(e)}
                               bgcolorTextField={
-                                action === "Add"
+                                isActionAdd
                                   ? false
                                   : isActionEdit
                                   ? false
@@ -1794,7 +1923,7 @@ export default function ExplaintBody({
                               labelName=""
                               onchange={(e) => setpreventive_action_plan(e)}
                               bgcolorTextField={
-                                action === "Add"
+                                isActionAdd
                                   ? false
                                   : isActionEdit
                                   ? false
@@ -1948,8 +2077,8 @@ export default function ExplaintBody({
                                       </Box>
                                       <Box sx={{ display: "flex", gap: 1 }}>
                                         {/* //ปุ่มลบไฟล์ */}
-                                        {(action == "Edit" ||
-                                          action == "Add" ||
+                                        {(isActionEdit ||
+                                          isActionAdd ||
                                           isActionAdd ||
                                           isActionExplainAdd) && (
                                           <IconButton
@@ -2032,47 +2161,51 @@ export default function ExplaintBody({
                                         </IconButton>
 
                                         {/* //ปุ่มดาวน์โหลดไฟล์ */}
-                                        {(action === "Read" ||
-                                          isActionExplain) && (
-                                          <IconButton
-                                            color="primary"
-                                            onClick={async () => {
-                                              if (!item.full_path) return;
+                                        {(isActionRead || isActionExplain) &&
+                                          isActionExplain && (
+                                            <IconButton
+                                              color="primary"
+                                              onClick={async () => {
+                                                if (!item.full_path) return;
 
-                                              try {
-                                                const response = await fetch(
-                                                  item.full_path,
-                                                  { method: "GET" }
-                                                );
-                                                const blob =
-                                                  await response.blob();
-                                                const url =
-                                                  URL.createObjectURL(blob);
+                                                try {
+                                                  const response = await fetch(
+                                                    item.full_path,
+                                                    { method: "GET" }
+                                                  );
+                                                  const blob =
+                                                    await response.blob();
+                                                  const url =
+                                                    URL.createObjectURL(blob);
 
-                                                const link =
-                                                  document.createElement("a");
-                                                link.href = url;
-                                                link.setAttribute(
-                                                  "download",
-                                                  item.original_file_name ??
-                                                    "file"
-                                                );
-                                                document.body.appendChild(link);
-                                                link.click();
-                                                document.body.removeChild(link);
+                                                  const link =
+                                                    document.createElement("a");
+                                                  link.href = url;
+                                                  link.setAttribute(
+                                                    "download",
+                                                    item.original_file_name ??
+                                                      "file"
+                                                  );
+                                                  document.body.appendChild(
+                                                    link
+                                                  );
+                                                  link.click();
+                                                  document.body.removeChild(
+                                                    link
+                                                  );
 
-                                                URL.revokeObjectURL(url); // cleanup memory
-                                              } catch (err) {
-                                                console.error(
-                                                  "Download failed:",
-                                                  err
-                                                );
-                                              }
-                                            }}
-                                          >
-                                            <DownloadIcon />
-                                          </IconButton>
-                                        )}
+                                                  URL.revokeObjectURL(url); // cleanup memory
+                                                } catch (err) {
+                                                  console.error(
+                                                    "Download failed:",
+                                                    err
+                                                  );
+                                                }
+                                              }}
+                                            >
+                                              <DownloadIcon />
+                                            </IconButton>
+                                          )}
                                       </Box>
                                     </Box>
                                   ))}
@@ -2105,7 +2238,7 @@ export default function ExplaintBody({
       )}
 
       {/* //ส่วนของ Section Head */}
-      {isActionExplainApproveScAdd && (
+      {(isActionExplainApproveScAdd || isActionExplainApproveQcAdd) && (
         <Paper
           elevation={3}
           sx={{
@@ -2153,68 +2286,59 @@ export default function ExplaintBody({
             <Grid size={4}>
               <FullWidthTextField
                 required="required"
-                value={product_name}
-                labelName="ชื่อผู้ดำเนินการ (Responsible Person)"
-                onchange={(e) => setproduct_name(e)}
-                readonly={isActionRead || isActionDelete}
-              />
-            </Grid>
-            <Grid size={4}>
-              <FullWidthTextField
-                required="required"
-                value={product_name}
-                labelName="บริษัท (Company)"
-                onchange={(e) => setproduct_name(e)}
-                readonly={isActionRead || isActionDelete}
+                value={approve_name}
+                labelName="ชื่อผู้อนุมัติ (Approved by)"
+                readonly
               />
             </Grid>
             <Grid size={4}>
               <AutocompleteComboBox
                 required="required"
-                value={respondent_department_id}
+                value={approve_company_id}
+                labelName={"บริษัท (Company)"}
+                options={dataset_company}
+                column="company_name"
+                setvalue={(v) => setapprove_company_id(v)}
+                bgcolorTextField={true}
+                readonly
+              />
+            </Grid>
+            <Grid size={4}>
+              <AutocompleteComboBox
+                required="required"
+                value={approve_department_id}
                 labelName={"แผนก (Department)"}
                 options={dataset_department}
                 column="department_name"
-                setvalue={(e) => {
-                  setrespondent_department_id(e);
-                }}
-                bgcolorTextField={
-                  action === "ApproveScAdd"
-                    ? false
-                    : isActionEdit
-                    ? false
-                    : true
-                }
-                readonly={isActionRead || isActionDelete}
+                setvalue={(v) => setapprove_department_id(v)}
+                bgcolorTextField={true}
+                readonly
               />
             </Grid>
             <Grid size={4}>
               <FullWidthTextField
                 required="required"
-                value={product_name}
-                labelName="แผนก (Position)"
-                onchange={(e) => setproduct_name(e)}
-                readonly={isActionRead || isActionDelete}
+                value={approve_position}
+                labelName="ตำแหน่ง (Position)"
+                readonly
               />
             </Grid>
             <Grid size={4}>
               <FullWidthTextField
                 required="required"
-                value={respondent_email}
+                value={approve_email}
                 labelName="อีเมล (Email)"
-                onchange={(e) => setrespondent_email(e)}
-                readonly={isActionRead || isActionDelete}
+                readonly
               />
             </Grid>
             <Grid size={4}>
               <DesktopDatePickers
                 required="required"
                 labelName={"วันที่อนุมัติ (Date)"}
-                value={date_of_detection}
-                handleChange={(val) => setdate_of_detection(val ?? null)}
+                value={approve_date}
+                handleChange={(val) => setapprove_date(val ?? null)}
                 bgcolorTextField={action === "ApproveScAdd" ? false : true}
-                
-                
+                readonly={action !== "ApproveScAdd"}
               />
             </Grid>
           </Grid>
@@ -2310,7 +2434,7 @@ export default function ExplaintBody({
                             value={item.id}
                             control={<Radio />}
                             label={item.lov1}
-                            disabled={isActionRead || isActionDelete}
+                            disabled={isActionRead || isActionDelete || isActionExplainApproveQcAdd}
                             sx={{
                               m: 1,
                               px: 1,
@@ -2455,7 +2579,7 @@ export default function ExplaintBody({
       )}
 
       {/* ///////   ส่วนของ QC  /////// */}
-      {action === "ApproveQcAdd" && (
+      {isActionExplainApproveQcAdd && (
         <Paper
           elevation={3}
           sx={{

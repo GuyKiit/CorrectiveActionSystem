@@ -4,7 +4,7 @@ import { grey } from "@mui/material/colors";
 
 
 interface AutocompleteComboBox {
-  value?: string;
+  value?: any;
   labelName: string;
   required?: string;
   disabled?: boolean;

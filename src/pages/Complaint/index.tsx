@@ -312,6 +312,7 @@ export default function Complaint() {
   const [openExplainView, setOpenExplainView] = React.useState(false);
 
   const [openExplainApproveSc, setOpenExplainApproveSc] = React.useState(false);
+  const [openExplainApproveQc, setOpenExplainApproveQc] = React.useState(false);
 
   const [openUpLoad, setOpenUpload] = React.useState(false);
 
@@ -2198,6 +2199,19 @@ export default function Complaint() {
     }
   };
 
+  const handleOnclickExplainApproveQc = (data: any) => {
+    if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  handleOnclickExplainApproveQc");
+
+    resetForm();
+    setOpenExplainApproveQc(true);
+    // ใช้ข้อมูลที่ส่งมาจากหน้า Explain รายละเอียด
+    if (data) {
+      setdataelement(data);
+    } else {
+      setdataelement(null);
+    }
+  };
+
 
 
   // const handleOnclickMenuUpload = () => {
@@ -2259,6 +2273,7 @@ export default function Complaint() {
     setOpenExplainAdd(false);
     setOpenExplainView(false);
     setOpenExplainApproveSc(false);
+    setOpenExplainApproveQc(false);
     setOpenUpload(false);
     setApproveSelectionCode(null); // รีเซ็ตค่าเมื่อปิด Dialog
     resetForm();
@@ -2566,7 +2581,8 @@ export default function Complaint() {
               color="success"
               onClick={() => {
                 DepartmentDomainGet("Add");
-                handleOnclickComplaintAdd();
+                //handleOnclickComplaintAdd();
+                handleOnclickExplainApproveQc();
               }}
             >
               {menuFuncData?.find((item: auth_role_menu_func) => item?.func_name === "Add") ? "เพิ่มข้อมูล" : ""}
@@ -2928,6 +2944,26 @@ export default function Complaint() {
          element={<ExplaintBody
            action="ApproveScAdd"
            handleOpenAdd={() => handleOnclickExplainApproveSc(dataelement)}
+           onApproveChange={(value) => {
+             setApproveSelectionCode(value?.lov_code ?? null);
+           }}
+         />}
+       />
+
+       <FuncDialog
+         open={openExplainApproveQc}
+         dialogWidth="xl"
+         openBottonHidden={true}
+         hideSaveDraft
+         hideReject={approveSelectionCode === "APPROVE"} // ซ่อนปุ่ม Reject ถ้าเลือก Approve
+         hideSaveSubmit={approveSelectionCode === "ADD" || approveSelectionCode === "REJECT"} 
+         titlename={"Approve QC // เพิ่มข้อมูล"}
+         buttonText={"Approve"}
+         handleClose={handleClose}
+         buttonColor="success"
+         element={<ExplaintBody
+           action="ApproveQcAdd"
+           handleOpenAdd={() => handleOnclickExplainApproveQc(dataelement)}
            onApproveChange={(value) => {
              setApproveSelectionCode(value?.lov_code ?? null);
            }}
