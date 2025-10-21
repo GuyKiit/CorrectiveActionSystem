@@ -39,6 +39,9 @@ export type ListDepartmentSettingContextProps = {
     department?: any
     domain?: any
     username?: any
+    dataset_activeCompany?: any
+    dataset_roleAdmin?: any
+    datastatus?: any
     
 
     company_search?: any
@@ -51,6 +54,9 @@ export type ListDepartmentSettingContextProps = {
     set_department: Dispatch<SetStateAction<any>>;
     set_domain: Dispatch<SetStateAction<any>>;
     set_username: Dispatch<SetStateAction<any>>;
+    setdataset_activeCompany: Dispatch<SetStateAction<any>>;
+    setdataset_roleAdmin: Dispatch<SetStateAction<any>>;
+    setdatastatus: Dispatch<SetStateAction<any>>;
     
 
     set_company_search: Dispatch<SetStateAction<any>>;
@@ -83,6 +89,9 @@ export const initialListDepartmentSetting: ListDepartmentSettingContextProps = {
     set_department: () => { },
     set_domain: () => { },
     set_username: () => { },
+    setdataset_activeCompany: () => { },
+    setdataset_roleAdmin: () => { },
+    setdatastatus: () => { },
     
 
     set_company_search: () => { },

@@ -21,20 +21,6 @@ import dayjs from "dayjs";
           response.data
         );
         set_company(response.data);
-
-        // if (action == "Add") {
-
-        //   //================================================
-        //   let company = response.data.filter(
-        //     (item: any) => item.company_id != user[0]?.itasset_company_id
-        //   );
-        //   set_company_search(company);
-        //   // if (department) {
-        //   //   // set_domain_search(domain);
-        //   //   set_department_search(department);
-        //   // }
-        //   //================================================
-        // }
       }
     } catch (e) {
       console.log("error:", e);

@@ -30,6 +30,7 @@ import FullWidthButton from "../../components/MUI/FullWidthButton";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CloseIcon from '@mui/icons-material/CheckCircle';
 import ExplaintBody from "./components/ExplaintBody";
+import { mas_DepartmentGet_Complaint, mas_DomainRelateGet } from "../../service/mas/lov";
 
 // =====================================================================================================
 // TYPE DEFINITIONS
@@ -190,7 +191,7 @@ export default function Complaint() {
 
     dataphotoValue_Combobox, dataphoto_Combobox, datapriorityValue_Combobox, datastatus,
     datapriority_Combobox, datapriority, PriorityLevel, clauseOther, phoTypeOther,
-    complaintFiles, RunningModel, approve_step, otherText,
+    complaintFiles, RunningModel, approve_step, otherText,domainrelate,
 
     // Dataset Variables
     dataset_reporttype,
@@ -274,7 +275,7 @@ export default function Complaint() {
     setdatapriorityValue_Combobox, setdatapriority_Combobox, setdatapriority,
     setPriorityLevel, setclauseOther, setphoTypeOther, setdataset_reporttype,setdataset_activeCompany,setdataset_roleAdmin,
     setdataset_department, setdataset_company, setdataset_domain,setdataset_domainrelate, setcomplaintFiles, setotherText,
-
+    set_domainrelate,
 
     //set Explaint
     setdataToolUse,
@@ -357,7 +358,7 @@ export default function Complaint() {
   // Search Variables (from index.tsx)
   const [TextNameSearch, setTextNameSearch] = React.useState({
     dataset_company: "",
-    dataset_domain: "",
+    dataset_domainrelate: "",
     dataset_department: "",
     report_code: "",
     cas_number: "",
@@ -409,7 +410,39 @@ export default function Complaint() {
 
   // For On-Off Calling Function Log
   const [isCallFuncLogOn] = useState(true);
+// Event Handlers =========================================================
+  const handleCompanyChange = (value: any) => {
+    console.log('####### Onchange Company Value [event] : ', value);
+    console.log("@@@@@@@@@@@@First", dataset_domainrelate);
+    console.log("Render check respondent_domain_id:", respondent_domain_id);
 
+
+    if (value != null) {
+      mas_DomainRelateGet(value, set_domainrelate, isCallFuncLogOn);
+    } else {
+      
+      setrespondent_domain_id(null);
+    }
+    console.log("@@@@@@@@@@@@second", dataset_domainrelate);
+  };
+
+const handleDomainChange = (value: any) => {
+    console.log('####### Onchange Domain Value [event] : ', value);
+    console.log("@@@@@@@@@@@@First", dataset_domainrelate);
+    
+
+
+    if (value != null) {
+      console.log("😎😎", value);
+
+      mas_DepartmentGet_Complaint(value, setdataset_department, isCallFuncLogOn, user);
+    } else {
+      
+      setdataset_department([]);
+      setrespondent_department_id(null);
+    }
+    console.log("@@@@@@@@@@@@second", domainrelate);
+  };
 
   // Reset Form Function (from index.tsx)
   const resetSearchTable = () => {
@@ -897,9 +930,9 @@ export default function Complaint() {
   };
 
   // Function - Search Complaints
-  const ListSearchGet = async () => {
-    if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  ListSearchGet");
-    console.log("step:2 เรียกฟังก์ชั่น ListSearchGet ใหม่");
+  const ComplaintGet = async () => {
+    if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  ComplaintGet");
+    console.log("step:2 เรียกฟังก์ชั่น ComplaintGet ใหม่");
     console.log("⭐️⭐️⭐️⭐️ CHECK DATA COMPLAINT ACTION : ", dataset_complaintAction, "⭐️⭐️⭐️");
 
     setIsLoadingScreen(true);
@@ -907,10 +940,10 @@ export default function Complaint() {
       user_id: user[0]?.employee_username,
       domain_id: user[0]?.employee_domain,
       department_id: user[0]?.itasset_department_id,
-      company_id: user[0]?.itasset_company_id,
-      respondent_company_id:TextNameSearch.dataset_company || user[0]?.itasset_company_id || null,
-      respondent_domain_id: TextNameSearch.dataset_domain ? TextNameSearch.dataset_domain : null,
-      respondent_department_id: TextNameSearch.dataset_department ? TextNameSearch.dataset_department : null,
+      company_id: user[0]?.itasset_company_id,    //@param Fixed
+      
+      domain: TextNameSearch.dataset_domainrelate ? TextNameSearch.dataset_domainrelate : null,
+      department: TextNameSearch.dataset_department ? TextNameSearch.dataset_department : null,
       report_code: TextNameSearch.report_code ? TextNameSearch.report_code : null,
       cas_number: TextNameSearch.cas_number ? TextNameSearch.cas_number : null,
       product_name: TextNameSearch.product_name ? TextNameSearch.product_name : null,
@@ -918,13 +951,12 @@ export default function Complaint() {
       complaint_status_label: TextNameSearch.datastatus ? TextNameSearch.datastatus : null,
       doc_date: documentDateSearch ? documentDateSearch.format("DD-MM-YYYY") : null,
       step_label: TextNameSearch.dataset_stepcomplaint ? TextNameSearch.dataset_stepcomplaint : null,
-      // request_department_id: TextNameSearch.request_department_id ? TextNameSearch.request_department_id : null
     }
 
-    console.log("step:2 dataset ก่อนส่ง API /ListSearch/ListSearchGet ", dataset);
+    console.log("step:2 dataset ก่อนส่ง API /Complaint/ComplaintGet ", dataset);
     try {
-      let response = await _POST(dataset, "/ListSearch/ListSearchGet");
-      console.log("step:2 ผลลัพธ์ที่ได้จาก API /ListSearch/ListSearchGet ", response);
+      let response = await _POST(dataset, "/Complaint/ComplaintGet");
+      console.log("step:2 ผลลัพธ์ที่ได้จาก API /Complaint/ComplaintGet ", response);
       if (response && response.status === "success") {
         setIsLoadingScreen(false);
         const responseData: any = [];
@@ -934,6 +966,7 @@ export default function Complaint() {
               <ActionManageCell
                 hadleOnclickMenu={(name: any) => {
                   console.log("🎆 🎆 🎆 🎆 hadleOnclickMenu (name) :", name);
+                  
                   if (name === "View") {
                     // DepartmentDomainGet("Read");
                     handleOnclickComplaintView(el);
@@ -962,6 +995,8 @@ export default function Complaint() {
 
                 //-----------------------------------------------------------------------
                 //-----------------------------------------------------------------------
+
+                
 
                 // For Status [NEW]
                 hiddenRead={
@@ -1009,6 +1044,8 @@ export default function Complaint() {
             );
             el.ACTION = ACTION;
             console.log("el.acknowledge_flag", el.acknowledge_flag)
+            console.log("🎆 🎆 🎆 🎆 hadleOnclickMenu (el) :", el);
+            console.log("🎆 🎆 🎆 🎆 complaint_status_label:", el.complaint_status_label);
             console.log(el.step_label)
             el.complaint_status_label = (
               <BasicChips label={`${el.complaint_status_label}`} acknowledge={el.acknowledge_flag}></BasicChips>
@@ -1425,7 +1462,7 @@ export default function Complaint() {
       handleClose();
 
       // Complaint_Get();
-      ListSearchGet();
+      ComplaintGet();
     }
   };
 
@@ -1590,7 +1627,7 @@ export default function Complaint() {
       handleClose();
 
       // Complaint_Get();
-      ListSearchGet();
+      ComplaintGet();
     }
   };
 
@@ -1743,7 +1780,7 @@ export default function Complaint() {
         icon: 'success'
       });
       // Complaint_Get();
-      ListSearchGet();
+      ComplaintGet();
     }
   };
 
@@ -1795,7 +1832,7 @@ export default function Complaint() {
         icon: 'success'
       });
       // Complaint_Get();
-      ListSearchGet();
+      ComplaintGet();
     }
   };
 
@@ -2072,7 +2109,7 @@ export default function Complaint() {
     } finally {
       setIsLoadingScreen(false);
       handleClose();
-      ListSearchGet();
+      ComplaintGet();
     }
   };
 
@@ -2271,7 +2308,7 @@ export default function Complaint() {
     setdocumentDateSearch(null);
     setTextNameSearch({
       dataset_company: "",
-      dataset_domain: "",
+      dataset_domainrelate: "",
       dataset_department: "",
       report_code: "",
       cas_number: "",
@@ -2322,7 +2359,7 @@ export default function Complaint() {
     resetSearchTable();
 
     // Complaint_Get();
-    console.log("step:1 เรียกฟังก์ชั่น ListSearchGet();");
+    console.log("step:1 เรียกฟังก์ชั่น ComplaintGet();");
     LovAll_Get();
     // ListSearchGet();
     // ReportType_Get();
@@ -2349,7 +2386,7 @@ export default function Complaint() {
 
   React.useEffect(() => {
     if (dataset_complaintAction) {
-      ListSearchGet();
+      ComplaintGet();
     }
   }, [dataset_complaintAction]);
 
@@ -2434,26 +2471,29 @@ export default function Complaint() {
               options={dataset_company || []}
               column="company_name"
               setvalue={(val) => {
+                handleCompanyChange(val);
                 setTextNameSearch({
                   ...TextNameSearch,
                   dataset_company: val?.company_id || "", // เก็บแค่ id เป็น string
                 })
               }}
-              // readonly
+              readonly
             />
           </Grid>
           <Grid size={4}>
             <AutocompleteComboBox
-              value={dataset_domain?.find(
-                (item: any) => item.domain_id === TextNameSearch.dataset_domain
+              value={
+                dataset_domainrelate?.find(
+                (item: any) => item.domain_id === TextNameSearch.dataset_domainrelate
               ) || null}
               labelName="โดเมน (Domain)"
-              options={dataset_domain || []}
-              column="domain_id"
+              options={dataset_domainrelate || []}
+              column="domain_name"
               setvalue={(val) => {
+                handleDomainChange(val);
                 setTextNameSearch({
                   ...TextNameSearch,
-                  dataset_domain: val?.domain_id || "", // เก็บแค่ id เป็น string
+                  dataset_domainrelate: val?.domain_id || "", // เก็บแค่ id เป็น string
                 })
               }}
             />
@@ -2472,6 +2512,7 @@ export default function Complaint() {
                   dataset_department: val?.department_id || "", // เก็บแค่ id เป็น string
                 })
               }}
+              readonly={!TextNameSearch.dataset_domainrelate}
             />
           </Grid>
 
@@ -2584,7 +2625,7 @@ export default function Complaint() {
           <Grid>
             <FullWidthButton
               labelName={"ค้นหา"}
-              handleonClick={ListSearchGet}
+              handleonClick={ComplaintGet}
               variant_text="contained"
               colorname={"primary"}
             />

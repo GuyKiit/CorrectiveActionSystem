@@ -57,7 +57,7 @@ import { cleanAccessData } from "../../../service/initmain/initmain";
 import { data } from "react-router-dom";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useListDepartmentSetting } from "../core/ListDepartmentSettingContext";
-import {  mas_DepartmentDomainGet, mas_DomainGet, mas_UsernameGet } from "../../../service/mas/lov";
+import { mas_DepartmentDomainGet, mas_DomainGet, mas_UsernameGet } from "../../../service/mas/lov";
 
 // pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
@@ -156,8 +156,8 @@ export default function DepartmentSettingBody({
         sectionApprove,
         qcApprove,
 
-        dept_company,
-        dept_domain,
+        // dept_company,
+        // dept_domain,
 
         setdataelement,
         setdept_id,
@@ -168,14 +168,15 @@ export default function DepartmentSettingBody({
         setsectionApprove,
         setqcApprove,
 
-        setdept_company,
-        setdept_domain,
+        // setdept_company,
+        // setdept_domain,
 
         //---------dataset-------------
         username, set_username,
         company, set_company,
         department, set_department,
-        domain, set_domain
+        domain, set_domain,
+        datastatus, setdatastatus,
 
     } = useListDepartmentSetting();
 
@@ -215,52 +216,67 @@ export default function DepartmentSettingBody({
     const [fileList, setFileList] = useState<FileData[]>([]);
     const [request_department_id, setrequest_department_id] = React.useState<{ itasset_department_id: number; itasset_department_name: string; } | null>(null);
     const [dataDecision, setdataDecision] = useState<LovType[]>([]);
+    const [dept_domain, setdept_domain] = useState<any>(null);
+    const [dept_company, setdept_company] = useState<any>(null);
 
     // Event Handlers =========================================================
     const handleCompanyChange = (value: any) => {
-      console.log('####### Onchange Company Value [event] : ', value);
-        console.log("@@@@@@@@@@@@First",domain);
-        
-        
-      if (value != null) {
-        mas_DomainGet(value.company_id, set_domain, user, isCallFuncLogOn);
-      } else {
-        set_domain([]);
-        set_department([]);
-        set_username([]);
-        setdept_domain("");
-        setdomain_dept_id(null);
-        setsectionApprove(null);
-        setqcApprove(null);
-      }
-      console.log("@@@@@@@@@@@@second",domain);
+        console.log('####### Onchange Company Value [event] : ', value);
+        console.log("@@@@@@@@@@@@First", domain);
+
+
+        if (value != null) {
+            mas_DomainGet(value.company_id, set_domain, user, isCallFuncLogOn);
+        } else {
+            set_domain([]);
+            set_department([]);
+            set_username([]);
+            setdept_domain("");
+            setdomain_dept_id(null);
+            setsectionApprove(null);
+            setqcApprove(null);
+        }
+        console.log("@@@@@@@@@@@@second", domain);
     };
-     const handleDomainChange = (value: any) => {
-      console.log('####### Onchange Domain Value [event] : ', value);
+    const handleDomainChange = (value: any) => {
+        console.log('####### Onchange Company Value [event] : ', value);
+        console.log('####### Onchange Domain Value [event] : ', value);
 
-      if (value != null) {
-        mas_DepartmentDomainGet(value, set_department, isCallFuncLogOn);
-      } else {
-        set_department([]);
-        set_username([]);
-        setdomain_dept_id(null);
-        setsectionApprove(null);
-        setqcApprove(null);
-      }
+        if (value != null) {
+            const dataset = {
+                domain_id: dept_domain?.domain_id || value.domain_id,
+                company_id: dept_company?.company_id || value.company_id,
+            };
+
+            mas_DepartmentDomainGet(value, set_department, isCallFuncLogOn);
+            mas_UsernameGet(dataset, set_username, isCallFuncLogOn);
+        } else {
+            set_department([]);
+            set_username([]);
+            setdomain_dept_id(null);
+            setsectionApprove(null);
+            setqcApprove(null);
+        }
 
     };
 
-    const handleDepartmentChange = (value: any) => {
-      console.log('####### Onchange Department Value [event] : ', value);
+    const handleDepartmentChange = (val: any) => {
+        console.log('####### Onchange Department Value [event] : ', val);
 
-      if (value != null) {
-        mas_UsernameGet(value, set_username, isCallFuncLogOn);
-      }else {
-        set_username([]);
-        setsectionApprove(null);
-        setqcApprove(null);
-      }
+        if (val != null) {
+            const dataset = {
+                domain_id: dept_domain?.domain_id || val.domain_id,
+                company_id: dept_company?.company_id || val.company_id,
+                department_id: val.department_id, // ✅ ต้องมีอันนี้ด้วย
+            };
 
+            console.log("😋 ส่งค่าไป UsernameGet :", dataset);
+
+        } else {
+            set_username([]);
+            setsectionApprove(null);
+            setqcApprove(null);
+        }
     };
     //========================================================================================
 
@@ -361,7 +377,7 @@ export default function DepartmentSettingBody({
                 // ================================
                 // 4) Map ค่า default ของ domain
                 // ================================
-                 console.log("😼 Looking for department with ID:", dataelement.dept_domain);
+                console.log("😼 Looking for department with ID:", dataelement.dept_domain);
                 if (Array.isArray(domain) && dataelement?.dept_domain) {
                     console.log("😼 Looking for department with ID:", dataelement.dept_domain);
                     console.log("😼 Available departments:", domain);
@@ -401,7 +417,7 @@ export default function DepartmentSettingBody({
         console.log("department", department);
 
         if (isActionRead) updateData();
-        
+
     }, [
 
         action,
@@ -433,6 +449,11 @@ export default function DepartmentSettingBody({
         console.log("🧩🧩🧩dept_company:", username);
         console.log("dataelement:", dataelement);
     }, [company, dataelement]);
+
+    const FilteredData = datastatus.filter((val: any) => val['lov_code'] == 'APPROVE');
+    console.log("FilteredData:", FilteredData);
+
+    const approveRows = FilteredData
 
     return (
         <Box
@@ -507,11 +528,11 @@ export default function DepartmentSettingBody({
                                 setvalue={(val) => {
                                     console.log("Company selected:", val?.company_name);
                                     handleCompanyChange(val);
-                                    
-                                    
+
+
                                     setdept_company(val);
-                                    console.log("cccccc",val);
-                                    
+                                    console.log("cccccc", val);
+
                                 }}
                                 readonly={isActionRead || isActionDelete || isActionExplain}
                             />
@@ -530,7 +551,7 @@ export default function DepartmentSettingBody({
                                     handleDomainChange(val);
                                     setdept_domain(val);
                                     console.log("😋dddddd", val);
-                                    
+
                                 }}
                                 bgcolorTextField={
                                     isActionAdd ? false : isActionEdit ? false : true
@@ -621,67 +642,80 @@ export default function DepartmentSettingBody({
                             รายละเอียดผู้อนุมัติ
                         </label>
                     </Box>
-                    <Grid container spacing={3}>
-                        <Grid size={3}>
-                            <FullWidthTextField
-                                required="required"
-                                value={1}
-                                labelName="ลำดับ (No.)"
-                                onchange={(e) => setstep(e)}
-                                readonly
-                                textAlignTextField="center"
-                            />
-                        </Grid>
-                        <Grid size={9}>
-                            <AutocompleteComboBox
-                                required="required"
-                                value={sectionApprove}
-                                labelName={
-                                    "ชื่อ (Username)"
-                                }
-                                options={username}
-                                column="employee_username"
-                                setvalue={(val) => {
-                                    console.log("Username selected:", val?.employee_username);
-                                    setsectionApprove(val);
-                                }}
-                                bgcolorTextField={
-                                    action === "Add" ? false : isActionEdit ? false : true
-                                }
-                                readonly={isActionRead || isActionDelete || !domain_dept_id}
-                            />
-                        </Grid>
-                        <Grid size={3}>
-                            <FullWidthTextField
-                                required="required"
-                                value={2}
-                                labelName="ลำดับ (No.)"
-                                onchange={(e) => setstep(e)}
-                                readonly
-                                textAlignTextField="center"
-                            />
-                        </Grid>
-                        <Grid size={9}>
-                            <AutocompleteComboBox
-                                required="required"
-                                value={qcApprove}
-                                labelName={
-                                    "ชื่อ (Username)"
-                                }
-                                options={username}
-                                column="employee_username"
-                                setvalue={(val) => {
-                                    console.log("Username selected:", val?.employee_username);
-                                    setqcApprove(val);
-                                }}
-                                bgcolorTextField={
-                                    action === "Add" ? false : isActionEdit ? false : true
-                                }
-                                readonly={isActionRead || isActionDelete || !domain_dept_id}
-                            />
-                        </Grid>
 
-                    </Grid>
+                    {/* ============================ Approve List ================================== */}
+
+                    {approveRows.length > 0 ? (
+
+                        // Master Element
+                        approveRows.map((row: any, rowIndex: number) => (
+                            <Grid container spacing={3} paddingTop={3}>
+                                <Grid size={2}>
+                                    <FullWidthTextField
+                                        required="required"
+                                        value={approveRows[rowIndex]['lov3']}
+                                        labelName="ลำดับ (No.)"
+                                        onchange={(e) => setstep(e)}
+                                        readonly
+                                        textAlignTextField="center"
+                                    />
+                                </Grid>
+                                <Grid size={3}>
+                                    <FullWidthTextField
+                                        required="required"
+                                        value={approveRows[rowIndex]['lov6']}
+                                        labelName="ตำแหน่ง (Role)"
+                                        onchange={(e) => setstep(e)}
+                                        readonly
+                                        textAlignTextField="center"
+                                    />
+                                </Grid>
+                                <Grid size={7}>
+                                    <AutocompleteComboBox
+                                        required="required"
+                                        value={sectionApprove}
+                                        labelName={
+                                            "ชื่อ (Username)"
+                                        }
+                                        options={username}
+                                        column="employee_username"
+                                        setvalue={(val) => {
+                                            console.log("Username selected:", val?.employee_username);
+                                            setsectionApprove(val);
+                                        }}
+                                        bgcolorTextField={
+                                            action === "Add" ? false : isActionEdit ? false : true
+                                        }
+                                        readonly={isActionRead || isActionDelete || !dept_domain}
+                                    />
+                                </Grid>
+                            </Grid>
+                        ))
+
+                    ) : (
+                        <Paper
+                            elevation={0}
+                            sx={{
+                                p: 4,
+                                textAlign: "center",
+                                color: "#999",
+                                backgroundColor: "#f9f9f9",
+                                borderRadius: 2,
+                                border: "2px dashed #e0e0e0"
+                            }}
+                        >
+                            <Typography
+                                className="sarabun-regular-datatable"
+                                sx={{ fontSize: "16px", color: "#999" }}
+                            >
+                                ไม่พบลำดับผู้อนุมัติ
+                            </Typography>
+                        </Paper>
+                    )}
+
+                    {/* ============================ Approve List ================================== */}
+
+
                 </Paper>
             </Grid>
         </Box >

@@ -60,7 +60,7 @@ import { useListComplaint } from "../core/ListComplaintContext";
 import { data } from "react-router-dom";
 import { ComplaintFile } from "./BrowseFileUpload";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { mas_DepartmentDomainGet, mas_DepartmentGet_Complaint, mas_DomainRelateGet } from "../../../service/mas/lov";
+import {  mas_DepartmentGet_Complaint, mas_DomainRelateGet } from "../../../service/mas/lov";
 
 // pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
@@ -463,39 +463,35 @@ export default function ComplaintBody({
   // Event Handlers =========================================================
   const handleCompanyChange = (value: any) => {
     console.log('####### Onchange Company Value [event] : ', value);
-    console.log("@@@@@@@@@@@@First", domainrelate);
+    console.log("@@@@@@@@@@@@First", dataset_domainrelate);
+    console.log("Render check respondent_domain_id:", respondent_domain_id);
 
 
     if (value != null) {
       mas_DomainRelateGet(value, set_domainrelate, isCallFuncLogOn);
     } else {
-      // set_domain([]);
-      // set_department([]);
-      // set_username([]);
-      // setdept_domain("");
-      // setdomain_dept_id(null);
-      // setsectionApprove(null);
-      // setqcApprove(null);
+      
+      setrespondent_domain_id(null);
     }
-    console.log("@@@@@@@@@@@@second", domainrelate);
+    console.log("@@@@@@@@@@@@second", dataset_domainrelate);
   };
 
-   const handleDomainChange = (value: any) => {
+  const handleDomainChange = (value: any) => {
     console.log('####### Onchange Domain Value [event] : ', value);
+    console.log("@@@@@@@@@@@@First", dataset_domainrelate);
+    
+
 
     if (value != null) {
-      console.log("😎😎",value);
-      
-      mas_DepartmentGet_Complaint(value, setdataset_department, isCallFuncLogOn, user[0]);
-    } else {
-      setdataset_department([]);
-      // set_department([]);
-      // set_username([]);
-      // setdomain_dept_id(null);
-      // setsectionApprove(null);
-      // setqcApprove(null);
-    }
+      console.log("😎😎", value);
 
+      mas_DepartmentGet_Complaint(value, setdataset_department, isCallFuncLogOn, user);
+    } else {
+      
+      setdataset_department([]);
+      setrespondent_department_id(null);
+    }
+    console.log("@@@@@@@@@@@@second", domainrelate);
   };
 
 
@@ -527,16 +523,28 @@ export default function ComplaintBody({
     setrespondent_company_id(dataset_company[0]);
 
     if (Array.isArray(dataset_company)) {
-          const mappedCompany = await setValueMas(
-            dataset_company,
-            user[0]?.itasset_company_id,
-            "company_id"
-          );
+      const mappedCompany = await setValueMas(
+        dataset_company,
+        user[0]?.itasset_company_id,
+        "company_id"
+      );
 
-          if (mappedCompany) {
-            setrespondent_company_id(mappedCompany); // ค่า default ของ Combobox
-          }
-        }
+      if (mappedCompany) {
+        setrespondent_company_id(mappedCompany); // ค่า default ของ Combobox
+      }
+    }
+
+    if (Array.isArray(dataset_company)) {
+      const mappedCompany = await setValueMas(
+        dataset_company,
+        user[0]?.itasset_company_id,
+        "company_id"
+      );
+
+      if (mappedCompany) {
+        setrequest_company_id(mappedCompany); // ค่า default ของ Combobox
+      }
+    }
 
     setcas_number("");
 
@@ -563,11 +571,12 @@ export default function ComplaintBody({
 
     setrequest_name("");
     setrequest_position("");
+    setrespondent_domain_id("");
     // setrequest_department_id(dataset_department[0]);
     setrequest_email("");
     setrequest_phone("");
     setrequest_domain_id(dataset_company[0]);
-    setrequest_company_id(dataset_company[0]);
+    // setrequest_company_id(dataset_company[0]);
     setFileList([]);
     setcomplaintFiles([]);
   };
@@ -910,11 +919,11 @@ export default function ComplaintBody({
     }
 
     setIsLoadingScreen(true);
-    const dataset = 
+    const dataset =
     {
       complaint_id: dataelement?.id,
       cf_type: "Complaint",
-    };    
+    };
 
     try {
       let response = await _POST(dataset, "/ComplaintFile/ComplaintFileGet");
@@ -1011,7 +1020,7 @@ export default function ComplaintBody({
           console.log("🗺️ Looking for department with ID:", dataelement.respondent_department_id);
           console.log("🗺️ Available departments:", dataset_department);
 
-          const mappedDept = await setValueMas(dataset_department,dataelement.respondent_department_id,"department_id");
+          const mappedDept = await setValueMas(dataset_department, dataelement.respondent_department_id, "department_id");
 
           console.log("🗺️ Mapped department result:", mappedDept);
           if (mappedDept) {
@@ -1139,6 +1148,7 @@ export default function ComplaintBody({
   //////////////////////// Complaint Read //////////////////////////
   React.useEffect(() => {
     console.log("step: 5 เก็บข้อมูลเข้า ฺsetdataelement ใหม่ ", dataelement)
+    
 
     if (dataelement && action != "Add") {
       setrespondent_company_id(dataset_company.find((el: any) => String(el.itasset_company_id) === String(dataelement.respondent_company_id?.company_id)));
@@ -1152,13 +1162,13 @@ export default function ComplaintBody({
         dataset_department_sample: dataset_department?.[0]
       });
 
-      const foundDept = dataset_department.find((el: any) => {
-        return String(el.department_id) === String(dataelement.respondent_department_id);
-      });
+      // const foundDept = dataset_department.find((el: any) => {
+      //   return String(el.department_id) === String(dataelement.respondent_department_id);
+      // });
 
-      console.log("🎯 Found department:", foundDept);
-      setrespondent_department_id(foundDept || null);
-
+      // console.log("🎯 Found department:", foundDept);
+      // setrespondent_department_id(foundDept || null);
+      
       setproduct_name(dataelement?.product_name ? dataelement?.product_name : "");
       setlot_no(dataelement?.lot_no ? dataelement?.lot_no : "");
       setrespondent_email(dataelement?.respondent_email ? dataelement?.respondent_email : "");
@@ -1221,7 +1231,7 @@ export default function ComplaintBody({
 
   React.useEffect(() => {
     // เฉพาะตอน Read เท่านั้น
-    if (action === "Read" || action === "Edit" || action === "Delete" || isActionExplain ) {
+    if (action === "Read" || action === "Edit" || action === "Delete" || isActionExplain) {
       if (dataelement?.id) {
         Complaint_Get(dataelement);
       }
@@ -1385,7 +1395,7 @@ export default function ComplaintBody({
 
                     }}
                     bgcolorTextField={true}
-                  readonly
+                    readonly
                   />
                 </Grid>
                 <Grid size={3} mt={2}>
@@ -1396,6 +1406,7 @@ export default function ComplaintBody({
                     column="domain_name"
                     // setvalue={(v) => setrespondent_company_id(v)}
                     setvalue={(val) => {
+                      
                       console.log("Domain selected:", val?.domain_name);
                       console.log("Domain selected:", val?.domain_id);
                       console.log("😍val:", val);
@@ -1500,7 +1511,7 @@ export default function ComplaintBody({
                         labelName={
                           "แผนกที่พบปัญหา (Department / Area of Detection)"
                         }
-                        options={dataset_department}
+                        options={dataset_department || []}
                         column="department_name"
                         setvalue={(val) => {
                           console.log("Selected value:", val, "respondent_department_id :", respondent_department_id);

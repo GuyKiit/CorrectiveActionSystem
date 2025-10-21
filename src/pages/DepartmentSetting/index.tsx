@@ -192,7 +192,9 @@ export default function DepartmentSetting() {
     department, set_department,
     domain, set_domain,
     username, set_username,
-
+    dataset_activeCompany,setdataset_activeCompany,
+    dataset_roleAdmin, setdataset_roleAdmin,
+    datastatus, setdatastatus,
 
   } = useListDepartmentSetting();
 
@@ -300,18 +302,7 @@ export default function DepartmentSetting() {
     setqcApprove("");
   };
 
-  // Extract Report Type Function (from ComplaintRead.tsx)
-  // const extractReportType = (code?: string): string => {
-  //   if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  extractReportType");
 
-  //   if (!code) return "";
-  //   const prefix = "TRR_RT_";
-  //   if (code.includes(prefix)) {
-  //     return code.split(prefix)[1].trim().toUpperCase();
-  //   }
-  //   const parts = code.split("_");
-  //   return (parts[parts.length - 1] || "").trim().toUpperCase();
-  // };
 
   // Handle Change Functions (from ComplaintRead.tsx)
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -326,182 +317,54 @@ export default function DepartmentSetting() {
     return str.split('.');
   };
 
-  // Update Complaint ID Functions (from index.tsx)
-  // function compTypeUpdateCompId(
-  //   dataComplaintTypeValue_Combobox: any,
-  //   complaintid: string,
-  //   compTypeOther: string
-  // ) {
-  //   if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  compTypeUpdateCompId");
 
-  //   const updatedData = dataComplaintTypeValue_Combobox.map((item: any) => {
-  //     return {
-  //       ...item,
-  //       complaint_id: complaintid,
-  //       other: item.isOther === "Y" ? (compTypeOther?.trim() || null) : null
-
-  //     };
-  //   });
-  //   return updatedData;
-  // }
-
-  // function compRsUpdateCompId(
-  //   dataComplaintRsValue_Combobox: any,
-  //   complaintid: string,
-  //   compRsOther: string,
-  //   clauseOther: string
-  // ) {
-  //   if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  compRsUpdateCompId");
-
-  //   const updatedData = dataComplaintRsValue_Combobox.map((item: any) => {
-  //     return {
-  //       ...item,
-  //       complaint_id: complaintid,
-  //       other: item.isClause === "Other" ? (compRsOther?.trim() || null) : null,
-  //       clause: item.isClause === "Clause" ? (clauseOther?.trim() || null) : null
-  //     };
-  //   });
-  //   return updatedData;
-  // }
-
-  // function compFileUpdateCompId(
-  //   dataphotoValue_Combobox: any,
-  //   complaintid: string,
-  //   phoTypeOther: string
-  // ) {
-  //   if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  compFileUpdateCompId");
-
-  //   const updatedData = dataphotoValue_Combobox.map((item: any) => {
-  //     return {
-  //       ...item,
-  //       complaint_id: complaintid,
-  //       other: phoTypeOther != null && phoTypeOther != "" ? phoTypeOther : null,
-  //     };
-  //   });
-  //   return updatedData;
-  // }
-
-  // function getPaddingYear() {
-  //   if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  getPaddingYear");
-
-  //   const paddingYear = String(new Date().getFullYear() % 100).padStart(2, '0');
-
-  //   return paddingYear;
-  // }
-
-  // =====================================================================================================
-  // UTILITY FUNCTIONS
-  // =====================================================================================================
-
-  // Update Complaint ID Functions
-  // function expToolUpdateCompId(
-  //   dataTooluseValue: any,
-  //   explain_id: string,
-  //   ToolOther: string
-  // ) {
-  //   if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  expToolUpdateCompId");
-
-  //   const updatedData = dataTooluseValue.map((item: any) => {
-  //     return {
-  //       ...item,
-  //       explain_id: explain_id,
-  //       other: item.isOther === "Y" ? (ToolOther?.trim() || null) : null
-
-  //     };
-  //   });
-  //   return updatedData;
-  // }
-
-  // function expDecisionUpdateCompId(
-  //   dataDecisionValue: any,
-  //   explain_id: string,
-  //   ToolOther: string
-  // ) {
-  //   if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  expDecisionUpdateCompId");
-
-  //   const updatedData = dataDecisionValue.map((item: any) => {
-  //     return {
-  //       ...item,
-  //       explain_id: explain_id,
-  //       other: item.isOther === "Y" ? (ToolOther?.trim() || null) : null
-
-  //     };
-  //   });
-  //   return updatedData;
-  // }
 
   // =====================================================================================================
   // API FUNCTIONS - GET DATA MASTER
   // =====================================================================================================
 
-  // // Function - Get LOV Master Data
-  // const LovAll_Get = async () => {
-  //   if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  LovAll_Get");
+  // Function - Get LOV Master Data
+  const LovAll_Get = async () => {
+    if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  LovAll_Get");
 
-  //   try {
-  //     const dataset = {
-  //       lov_group: "TRR.TRRGROUP.COM",
-  //       lov_type:
-  //         "report_type,complaint_type,reference_standard,attach_type,complaint_status,tool_use,decision_disposition,approve_select,complaint_step,complaint_action",
-  //     };
-  //     const response = await _POST(dataset, "/Lov/LovGet");
+    try {
+      const dataset = {
+        lov_group: user[0]?.itasset_company_id + ",VARIABLE_CONSTANT",
+        lov_type:
+          "active_company,role_admin,complaint_status",
+      };
+      const response = await _POST(dataset, "/Lov/LovGet");
 
-  //     if (response && response.status === "success") {
-  //       const lovData = response.data || [];
+      if (response && response.status === "success") {
+        const lovData = response.data || [];
+        console.log("❇️❇️❇️❇️❇️❇️❇️ Call [Lov/LovGet] -> LovAll_Get :", response.data);
 
-  //       // ✅ จัดกลุ่มตาม lov_type
-  //       const grouped = lovData.reduce((acc: any, item: any) => {
-  //         if (!acc[item.lov_type]) acc[item.lov_type] = [];
-  //         acc[item.lov_type].push(item);
-  //         return acc;
-  //       }, {});
+        // ✅ จัดกลุ่มตาม lov_type
+        const grouped = lovData.reduce((acc: any, item: any) => {
+          if (!acc[item.lov_type]) acc[item.lov_type] = [];
+          acc[item.lov_type].push(item);
+          return acc;
+        }, {});
 
-  //       // ตัวอย่างการ set state
-  //       setdataset_reporttype?.(grouped["report_type"] || []);
-  //       setdataComplaintType_Combobox?.(grouped["complaint_type"] || []);
-  //       setdataComplaintRs_Combobox?.(grouped["reference_standard"] || []);
-  //       setdataphoto_Combobox?.(grouped["attach_type"] || []);
-  //       console.log("🔍 index.tsx - attach_type data:", grouped["attach_type"]);
-  //       setdatastatus?.(grouped["complaint_status"] || []);
-  //       setdataToolUse_Combobox?.(grouped["tool_use"] || []);
-  //       setdataDecision_Combobox?.(grouped["decision_disposition"] || []);
-  //       setdataApprove_Combobox?.(grouped["approve_select"] || []);
-  //       setdataset_stepcomplaint?.(grouped["complaint_step"] || []);
-  //       setdataset_complaintAction?.(grouped["complaint_action"] || []);
+        // ตัวอย่างการ set state
 
-  //       setdataset_complaintActionNew(grouped["complaint_action"].filter((item: any) => item.lov_code === 'ACTION_NEW'));
-  //       setdataset_complaintActionExplain(grouped["complaint_action"].filter((item: any) => item.lov_code === 'ACTION_EXPLAIN'));
-  //       setdataset_complaintActionClose(grouped["complaint_action"].filter((item: any) => item.lov_code === 'ACTION_CLOSE'));
-
-
-  //       console.log('⚠️⚠️⚠️⚠️ [grouped["complaint_action"]] :', grouped["complaint_action"])
+        setdataset_activeCompany?.(grouped["active_company"] || []);
+        setdataset_roleAdmin?.(grouped["role_admin"] || []);
+        setdatastatus?.(grouped["complaint_status"] || []);
 
 
 
-  //     }
-  //   } catch (e) {
-  //     console.log("error:", e);
-  //   }
-  // };
+        console.log('⚠️⚠️⚠️⚠️ [grouped["active_company"]] :', grouped["active_company"])
+        console.log('⚠️⚠️⚠️⚠️ [grouped["role_admin"]] :', grouped["role_admin"])
+        console.log('⚠️⚠️⚠️⚠️ [grouped["complaint_status"]] :', grouped["complaint_status"])
 
-  // // Function - Get Priority Levels
-  // const priority_Get = async () => {
-  //   if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  priority_Get");
 
-  //   try {
-  //     const dataset = {
-  //       lov_group: "SYSTEM",
-  //       lov_type: "priority_level",
-  //     };
-  //     const response = await _POST(dataset, "/Lov/LovGet");
-  //     if (response && response.status === "success") {
-  //       // console.log("❇️ Call [Lov/LovGet] -> priority_level :", response.data);
-  //       setdatapriority_Combobox && setdatapriority_Combobox(response.data);
-  //     }
-  //   } catch (e) {
-  //     console.log("error:", e);
-  //   }
-  // };
+
+      }
+    } catch (e) {
+      console.log("error:", e);
+    }
+  };
 
   // Function - Get Domain
   const DomainGet = async () => {
@@ -565,42 +428,69 @@ export default function DepartmentSetting() {
     }
   };
 
-  // Function - Get Company
+  // // Function - Get Company
+  // const CompanyGet = async (action?: string) => {
+  //   if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  CompanyGet");
+
+  //   try {
+  //     const dataset = {
+  //     };
+  //     const response = await _POST(
+  //       dataset,
+  //       "/Complaint/CasCompanyGet"
+  //     );
+  //     if (response && response.status === "success") {
+  //       console.log(
+  //         "❇️ Call [Complaint/CasCompanyGet] -> Company_Get :",
+  //         response.data
+  //       );
+  //       set_company_search(response.data);
+  //     }
+  //   } catch (e) {
+  //     console.log("error:", e);
+  //   }
+  // };
+
   const CompanyGet = async (action?: string) => {
-    if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  CompanyGet");
+    if (isCallFuncLogOn)
+      console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  CompanyGet");
 
     try {
-      const dataset = {
-      };
-      const response = await _POST(
-        dataset,
-        "/Complaint/CasCompanyGet"
-      );
+      const response = await _POST({}, "/Complaint/CasCompanyGet");
+
       if (response && response.status === "success") {
-        console.log(
-          "❇️ Call [Complaint/CasCompanyGet] -> Company_Get :",
-          response.data
-        );
-        set_company_search(response.data);
+        console.log("❇️ Call [Complaint/CasCompanyGet] -> Company_Get :", response.data);
 
-        // if (action == "Add") {
+        const activeCompany = dataset_activeCompany; // จาก LovAll_Get
 
-        //   //================================================
-        //   let company = response.data.filter(
-        //     (item: any) => item.company_id != user[0]?.itasset_company_id
-        //   );
-        //   set_company_search(company);
-        //   // if (department) {
-        //   //   // set_domain_search(domain);
-        //   //   set_department_search(department);
-        //   // }
-        //   //================================================
-        // }
+        console.log("🧩 activeCompany sample:", activeCompany?.[0]);
+        console.log("🧩 company sample:", response.data?.[0]);
+
+        if (activeCompany?.length > 0) {
+          const active = activeCompany[0]?.lov1 || "";
+
+          const activeid = active.split(",").map((id: string) => id.trim());
+
+          console.log("✅ activeid:", activeid);
+
+          // ✅ filter บริษัทตาม company_id
+          const filteredCompany = response.data.filter((company: any) =>
+            activeid.includes(company.company_id.toString())
+          );
+
+          console.log("⚙️ [filteredCompany]:", filteredCompany);
+          set_company(filteredCompany);
+        } else {
+          console.log("⚠️ activeCompany ยังไม่มีค่า ใช้ company ทั้งหมดแทน");
+          set_company(response.data);
+        }
       }
     } catch (e) {
       console.log("error:", e);
     }
   };
+
+
 
   // Function - Get Username Domain
   const UsernameGet = async (action?: string) => {
@@ -623,23 +513,6 @@ export default function DepartmentSetting() {
         );
 
         set_username_search(response.data);
-
-        // if (action == "Add") {
-
-        //   //================================================
-        //   let department = response.data.filter(
-        //     (item: any) => item.department_id != user[0]?.itasset_department_id
-        //   );
-        //   set_username_search(department);
-        //   // if (department) {
-        //   //   // set_domain_search(domain);
-        //   //   set_department_search(department);
-        //   // }
-        //   //================================================
-
-
-        // }
-
       }
     } catch (e) {
       console.log("error:", e);
@@ -654,8 +527,8 @@ export default function DepartmentSetting() {
   // Function - Get Complaints
   const Dept_setup_Get = async (data: any) => {
     if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  Dept_setup_Get");
-    console.log("😥",data);
-    
+    console.log("😥", data);
+
 
     setIsLoadingScreen(true)
     const dataset = {
@@ -706,8 +579,8 @@ export default function DepartmentSetting() {
                   console.log("🎆 🎆 🎆 🎆 hadleOnclickMenu (name) :", name);
                   if (name === "View") {
                     // DepartmentDomainGet("Read");
-                    console.log("e😀l",el);
-                    
+                    console.log("e😀l", el);
+
                     handleOnclickDepartmentSettingView(el);
                   } else if (name === "Edit") {
                     // DepartmentDomainGet("Edit");
@@ -1194,17 +1067,17 @@ export default function DepartmentSetting() {
     }
   };
 
- // Function - Delete DepartmentSetting
+  // Function - Delete DepartmentSetting
   const DepartmentSettingDelete = async () => {
-    if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  ComplaintDelete");
+    if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  ComplaintDelete");
 
     // สร้าง JSON payload
     const DeptSetupPayload = {
-      
-        id: dataelement?.id,
-        update_by: user[0]?.employee_username || '',
-      
-      
+
+      id: dataelement?.id,
+      update_by: user[0]?.employee_username || '',
+
+
     };
 
     console.log("📤 DeptSetupPayload:", DeptSetupPayload);
@@ -1375,6 +1248,7 @@ export default function DepartmentSetting() {
 
   // Initialize data on component mount
   React.useEffect(() => {
+    LovAll_Get();
     resetSearchTable();
     console.log("step:1 เรียกฟังก์ชั่น DeptSearchGet();");
     DeptSearchGet();
@@ -1382,10 +1256,17 @@ export default function DepartmentSetting() {
     DepartmentDomainGet();
     CompanyGet();
     UsernameGet();
-    mas_CompanyGet(0, set_company, user, isCallFuncLogOn);
-    
+    // mas_CompanyGet(0, set_company, user, isCallFuncLogOn);
+
     console.log("#################### company_search", company_search);
   }, []);
+
+  React.useEffect(() => {
+    if (dataset_activeCompany) {
+      console.log("🔁 activeCompany พร้อมแล้ว → เรียก CompanyGet()");
+      CompanyGet();
+    }
+  }, [dataset_activeCompany]);
   // =====================================================================================================
   // RETURN SECTION - RENDER COMPONENT
   // =====================================================================================================
@@ -1428,11 +1309,11 @@ export default function DepartmentSetting() {
           </Grid>
           <Grid size={3}>
             <AutocompleteComboBox
-              value={company_search?.find(
+              value={company?.find(
                 (item: any) => item.company_id === TextNameSearch.company_search
               ) || null}
               labelName="บริษัท (Company)"
-              options={company_search || []}
+              options={company || []}
               column="company_name"
               setvalue={(val) => {
                 setTextNameSearch({
@@ -1746,20 +1627,20 @@ export default function DepartmentSetting() {
       />
 
       <FuncDialog
-              open={openDepartmentSettingDelete}
-              dialogWidth="xl"
-              hideSaveDraft={true}
-              openBottonHidden={true}
-              hideReject={true}
-              titlename={'DepartmentSetting // ลบข้อมูล'}
-              buttonText={"Delete"}
-              handleClose={handleClose}
-              handlefunction={DepartmentSettingDelete}
-              buttonColor="error"
-              element={<DepartmentSettingBody
-                action="Delete"
-              />}
-            />
+        open={openDepartmentSettingDelete}
+        dialogWidth="xl"
+        hideSaveDraft={true}
+        openBottonHidden={true}
+        hideReject={true}
+        titlename={'DepartmentSetting // ลบข้อมูล'}
+        buttonText={"Delete"}
+        handleClose={handleClose}
+        handlefunction={DepartmentSettingDelete}
+        buttonColor="error"
+        element={<DepartmentSettingBody
+          action="Delete"
+        />}
+      />
 
       {/* =================== Dialog Sections =================== */}
 
