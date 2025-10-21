@@ -277,11 +277,16 @@ export default function Complaint() {
     setdataToolUse,
     setdataToolUse_Combobox,
     setToolOther,
+    setapprove_detail,
+    setapprove_note,
+    setdataFuapp,
     setdataDecision_Combobox,
     setdataApprove_Combobox,
     setdataDecision,
     setresponsible_date,
     setfollow_up_date,
+
+    setapprove_date,
 
     
     setdataset_stepcomplaint,
@@ -448,11 +453,15 @@ export default function Complaint() {
     setpreventive_action_plan("");
     setdataToolUse([]); 
     setToolOther("");
-
     setresponsible_date(null);
     setfollow_up_date(null);
 
-
+    // เคลียร์ข้อมูล Approve
+    setdataFuapp(null);
+    setapprove_date(null);
+    setapprove_detail("");
+    setapprove_note("");
+    
     // Clear ALL validation errors
     setReportTypeError(false);
     setRespondentDepartmentError(false);
@@ -468,7 +477,6 @@ export default function Complaint() {
     setClauseRsError(false);
     setDetailError(false);
     setPriorityError(false);
-
   };
 
   // Extract Report Type Function (from ComplaintRead.tsx)
@@ -2276,6 +2284,7 @@ export default function Complaint() {
     setOpenExplainApproveQc(false);
     setOpenUpload(false);
     setApproveSelectionCode(null); // รีเซ็ตค่าเมื่อปิด Dialog
+    //setdataFuapp(null); // รีเซ็ตค่า Approve ที่เลือกไว้
     resetForm();
   };
 
@@ -2581,8 +2590,8 @@ export default function Complaint() {
               color="success"
               onClick={() => {
                 DepartmentDomainGet("Add");
-                //handleOnclickComplaintAdd();
-                handleOnclickExplainApproveQc();
+                handleOnclickComplaintAdd();
+                //handleOnclickExplainApproveSc();
               }}
             >
               {menuFuncData?.find((item: auth_role_menu_func) => item?.func_name === "Add") ? "เพิ่มข้อมูล" : ""}

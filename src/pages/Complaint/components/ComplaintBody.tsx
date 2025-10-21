@@ -1306,6 +1306,7 @@ export default function ComplaintBody({
                 <span style={{ color: "red" }}> *</span>
               </Typography>
             </AccordionSummary>
+            
             <AccordionDetails>
               <Divider sx={{ my: 1 }} />
               <Grid container spacing={2}>
@@ -2252,9 +2253,7 @@ export default function ComplaintBody({
                         <Grid size={4}>
                           <FullWidthTextField
                             value={
-                              action === "Add" || isActionAdd || isActionExplain
-                                ? user[0]?.employee_username || "-"
-                                : dataelement?.request_name || "-"
+                              isActionAdd ? user[0]?.employee_username || "-" : dataelement?.request_name || "-"
                             }
                             labelName="ชื่อผู้ออกเอกสาร (Reported by)"
                             onchange={(e) => setrequest_name(e.target.value)}
@@ -2264,9 +2263,7 @@ export default function ComplaintBody({
                         <Grid size={4}>
                           <FullWidthTextField
                             value={
-                              action === "Add" || isActionExplain
-                                ? user[0]?.employee_position || "-"
-                                : dataelement?.request_position || "-"
+                              isActionAdd ? user[0]?.employee_position || "-" : dataelement?.request_position || "-"
                             }
                             labelName="ตำแหน่ง (Position)"
                             onchange={(e) => setrequest_position(e.target.value)}
@@ -2276,10 +2273,7 @@ export default function ComplaintBody({
                         <Grid size={4}>
                           <FullWidthTextField
                             value={
-                              user[0]?.itasset_department_name || "-"
-                              // action === "Add"
-                              //   ? user[0]?.itasset_department_name || "-"
-                              //   : dataelement?.request_department_id || "-"
+                              isActionAdd ? user[0]?.itasset_department_name || "-" : dataelement?.request_department_name || "-"
                             }
                             labelName="แผนก (Department)"
                             onchange={(e) => {
@@ -2297,9 +2291,7 @@ export default function ComplaintBody({
                         <Grid size={4}>
                           <FullWidthTextField
                             value={
-                              action === "Add" || isActionExplain
-                                ? user[0]?.employee_email || "-"
-                                : dataelement?.request_email || "-"
+                              isActionAdd ? user[0]?.employee_email || "-" : dataelement?.request_email || "-"
                             }
                             labelName="อีเมล (Email)"
                             onchange={(e) => setrequest_email(e.target.value)}
@@ -2309,9 +2301,7 @@ export default function ComplaintBody({
                         <Grid size={4}>
                           <FullWidthTextField
                             value={
-                              action === "Add" || isActionExplain
-                                ? user[0]?.employee_tel || "-"
-                                : dataelement?.request_phone || "-"
+                              isActionAdd ? user[0]?.employee_tel || "-" : dataelement?.request_phone || "-"
                             }
                             labelName="โทรศัพท์ (Phone)"
                             onchange={(e) => setrequest_phone(e.target.value)}
@@ -2469,13 +2459,7 @@ export default function ComplaintBody({
                                     </Box>
 
                                     <Box sx={{ display: "flex", gap: 1 }}>
-                                      {/* <IconButton
-                                    color="primary"
-                                    size="small"
-                                    onClick={() => handleOpenAdd && handleOpenAdd()}
-                                  >
-                                    <DoneIcon />
-                                  </IconButton> */}
+
                                       <IconButton
                                         color="primary"
                                         size="small"
@@ -2518,6 +2502,8 @@ export default function ComplaintBody({
           </Paper>
         </Paper>
       )}
+
+      
 
     </Box>
   );
