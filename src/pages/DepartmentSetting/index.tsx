@@ -32,7 +32,7 @@ import CloseIcon from '@mui/icons-material/CheckCircle';
 import { useListDepartmentSetting } from "./core/ListDepartmentSettingContext";
 import DepartmentSettingBody from "./components/DepartmentSettingBody";
 import { data } from "react-router-dom";
-import { mas_CompanyGet } from "../../service/mas/lov";
+import { mas_CompanyGet, mas_DepartmentDomainGet, mas_DomainGet, mas_UsernameGet } from "../../service/mas/lov";
 // import ExplaintBody from "./components/ExplaintBody";
 
 // =====================================================================================================
@@ -183,16 +183,16 @@ export default function DepartmentSetting() {
     setdept_domain,
 
     //----------dataset---------
-    company_search, set_company_search,
+    // company_search, set_company_search,
     department_search, set_department_search,
-    domain_search, set_domain_search,
+    // domain_search, set_domain_search,
     username_search, set_username_search,
 
     company, set_company,
     department, set_department,
     domain, set_domain,
     username, set_username,
-    dataset_activeCompany,setdataset_activeCompany,
+    dataset_activeCompany, setdataset_activeCompany,
     dataset_roleAdmin, setdataset_roleAdmin,
     datastatus, setdatastatus,
 
@@ -260,7 +260,8 @@ export default function DepartmentSetting() {
   const [filteredphoto, setFilteredphoto] = useState<LovType[]>([]);
   const [isRSHidden, setIsRSHidden] = React.useState(true);
   const [value, setValue] = React.useState(0);
-
+  const [domain_search, setdomain_search] = useState<any>(null);
+  const [company_search, setcompany_search] = useState<any>(null);
   // =====================================================================================================
   // UTILITY FUNCTIONS (from index.tsx and ComplaintRead.tsx)
   // =====================================================================================================
@@ -304,6 +305,55 @@ export default function DepartmentSetting() {
 
 
 
+  // Event Handlers =========================================================
+  const handleCompanyChange = (value: any) => {
+    console.log('####### Onchange Company Value [event] : ', value);
+    console.log("@@@@@@@@@@@@First", domain);
+
+
+    if (value != null) {
+      mas_DomainGet(value.company_id, set_domain, user, isCallFuncLogOn);
+    } else {
+      set_domain([]);
+      set_department([]);
+      set_username([]);
+      setdept_domain("");
+      setdomain_dept_id(null);
+      setsectionApprove(null);
+      setqcApprove(null);
+      setTextNameSearch({
+            ...TextNameSearch,
+            company_search: "",
+            domain_search: "",
+            department_search: "",
+        });
+    }
+    console.log("@@@@@@@@@@@@second", domain);
+  };
+  const handleDomainChange = (value: any) => {
+    console.log('####### Onchange Company Value [event] : ', value);
+    console.log('####### Onchange Domain Value [event] : ', value);
+
+    if (value != null) {
+      const dataset = {
+        domain_id: domain_search?.domain_id || value.domain_id,
+        company_id: company_search?.company_id || value.company_id,
+      };
+
+      mas_DepartmentDomainGet(value, set_department, isCallFuncLogOn);
+      mas_UsernameGet(dataset, set_username, isCallFuncLogOn);
+    } else {
+      set_department([]);
+      set_username([]);
+      setdomain_dept_id(null);
+      setTextNameSearch({
+            ...TextNameSearch,
+            domain_search: "",
+            department_search: "",
+        });
+    }
+
+  };
   // Handle Change Functions (from ComplaintRead.tsx)
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  handleChange");
@@ -367,25 +417,25 @@ export default function DepartmentSetting() {
   };
 
   // Function - Get Domain
-  const DomainGet = async () => {
-    if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  DomainGet");
+  // const DomainGet = async () => {
+  //   if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  DomainGet");
 
-    try {
-      const dataset = {
-        company_id: user[0]?.itasset_company_id,
-      };
-      const response = await _POST(dataset, "/Complaint/CasDomainGet");
-      if (response && response.status === "success") {
-        console.log("❇️ Call [Complaint/CasDomainGet] -> Domain_Get :", response.data);
-        if (Array.isArray(response.data)) {
-          // เอา filter ออก → ใช้ทุกตัว
-          set_domain_search(response.data);
-        }
-      }
-    } catch (e) {
-      console.log("error:", e);
-    }
-  };
+  //   try {
+  //     const dataset = {
+  //       company_id: user[0]?.itasset_company_id,
+  //     };
+  //     const response = await _POST(dataset, "/Complaint/CasDomainGet");
+  //     if (response && response.status === "success") {
+  //       console.log("❇️ Call [Complaint/CasDomainGet] -> Domain_Get :", response.data);
+  //       if (Array.isArray(response.data)) {
+  //         // เอา filter ออก → ใช้ทุกตัว
+  //         set_domain_search(response.data);
+  //       }
+  //     }
+  //   } catch (e) {
+  //     console.log("error:", e);
+  //   }
+  // };
 
   // Function - Get Department Domain
   const DepartmentDomainGet = async (action?: string) => {
@@ -551,7 +601,7 @@ export default function DepartmentSetting() {
   };
 
   // Function - Search Complaints
-  const DeptSearchGet = async () => {
+  const DeptSetupGet = async () => {
     if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  DeptSearchGet");
 
     setIsLoadingScreen(true);
@@ -561,6 +611,8 @@ export default function DepartmentSetting() {
       // department_id: user[0]?.itasset_department_id,
       // company_id: user[0]?.itasset_company_id,
       username_search: TextNameSearch.username_search ? TextNameSearch.username_search : null,
+      company_search: TextNameSearch.company_search ? TextNameSearch.company_search : null,
+      domain_search: TextNameSearch.domain_search ? TextNameSearch.domain_search : null,
       department_search: TextNameSearch.department_search ? TextNameSearch.department_search : null,
     }
 
@@ -990,7 +1042,7 @@ export default function DepartmentSetting() {
       handleClose();
 
       // Complaint_Get();
-      DeptSearchGet();
+      DeptSetupGet();
     }
   };
 
@@ -1063,7 +1115,7 @@ export default function DepartmentSetting() {
       handleClose();
 
       // Complaint_Get();
-      DeptSearchGet();
+      DeptSetupGet();
     }
   };
 
@@ -1111,7 +1163,7 @@ export default function DepartmentSetting() {
         icon: 'success'
       });
       // Complaint_Get();
-      DeptSearchGet();
+      DeptSetupGet();
     }
   };
   // // Function - Delete Complaint
@@ -1251,12 +1303,11 @@ export default function DepartmentSetting() {
     LovAll_Get();
     resetSearchTable();
     console.log("step:1 เรียกฟังก์ชั่น DeptSearchGet();");
-    DeptSearchGet();
-    DomainGet();
-    DepartmentDomainGet();
-    CompanyGet();
+    DeptSetupGet();
+    // DomainGet();
+    // DepartmentDomainGet();
+    // CompanyGet();
     UsernameGet();
-    // mas_CompanyGet(0, set_company, user, isCallFuncLogOn);
 
     console.log("#################### company_search", company_search);
   }, []);
@@ -1316,6 +1367,7 @@ export default function DepartmentSetting() {
               options={company || []}
               column="company_name"
               setvalue={(val) => {
+                handleCompanyChange(val);
                 setTextNameSearch({
 
                   ...TextNameSearch,
@@ -1326,34 +1378,37 @@ export default function DepartmentSetting() {
           </Grid>
           <Grid size={3}>
             <AutocompleteComboBox
-              value={domain_search?.find(
+              value={domain?.find(
                 (item: any) => item.domain_id === TextNameSearch.domain_search
               ) || null}
               labelName="โดเมน (Domain)"
-              options={domain_search || []}
+              options={domain || []}
               column="domain_name"
               setvalue={(val) => {
+                handleDomainChange(val);
                 setTextNameSearch({
                   ...TextNameSearch,
                   domain_search: val?.domain_id || "", // เก็บแค่ id เป็น string
                 })
               }}
+              readonly = {!TextNameSearch.company_search}
             />
           </Grid>
           <Grid size={3}>
             <AutocompleteComboBox
-              value={department_search?.find(
-                (item: any) => item.department_id === TextNameSearch.department_search
+              value={department?.find(
+                (item: any) => item.domain_dept_id === TextNameSearch.department_search
               ) || null}
               labelName="แผนก (Department)"
-              options={department_search || []}
+              options={department}
               column="department_name"
               setvalue={(val) => {
                 setTextNameSearch({
                   ...TextNameSearch,
-                  department_search: val?.department_id || "", // เก็บแค่ id เป็น string
+                  department_search: val?.domain_dept_id || "", // เก็บแค่ id เป็น string
                 })
               }}
+              readonly = {!TextNameSearch.domain_search}
             />
           </Grid>
 
@@ -1373,7 +1428,7 @@ export default function DepartmentSetting() {
           <Grid>
             <FullWidthButton
               labelName={"ค้นหา"}
-              handleonClick={DeptSearchGet}
+              handleonClick={DeptSetupGet}
               variant_text="contained"
               colorname={"primary"}
             />

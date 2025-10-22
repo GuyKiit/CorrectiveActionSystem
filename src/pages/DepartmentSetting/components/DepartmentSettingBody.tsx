@@ -318,21 +318,61 @@ export default function DepartmentSettingBody({
                 console.log("👀 username:", username);
                 console.log("👀 dataelement.sectionApprove:", dataelement?.sectionApprove);
 
-                // ================================
-                // 1) Map ค่า default ของ department
-                // ================================
-                if (Array.isArray(department) && dataelement?.domain_dept_id) {
-                    console.log("👀👀 : ", dataelement);
-                    console.log("🗺️ Looking for department with ID:", dataelement.domain_dept_id);
-                    console.log("🗺️ Available departments:", department);
 
+                // ================================
+                // 1) Map ค่า default ของ company
+                // ================================
+                if (Array.isArray(company) && dataelement?.company_id) {
+                    const mappedDept = await setValueMas(
+                        company,
+                        dataelement.company_id,
+                        "company_id"
+                    );
+
+                    if (mappedDept) {
+                        setdept_company(mappedDept); // ค่า default ของ Combobox
+                    }
+                }
+
+                // ================================
+                // 2) Map ค่า default ของ domain
+                // ================================
+                if (dataelement?.domain_id) {
+                    mas_DomainGet(dataelement?.company_id, set_domain, user, isCallFuncLogOn);
+                }
+
+                if (Array.isArray(domain) && dataelement?.domain_id) {
+
+                    const mappedDept = await setValueMas(
+                        domain,
+                        dataelement.domain_id,
+                        "domain_id"
+                    );
+                    if (mappedDept) {
+                        setdept_domain(mappedDept); // ค่า default ของ Combobox
+                    } else {
+                        console.warn("⚠️😼 No department found for ID:", dataelement.domain_id);
+                    }
+                }
+
+                // ================================
+                // 3) Map ค่า default ของ department
+                // ================================
+
+                var tempDepartmentValue = {
+                    company_id: dataelement?.company_id,
+                    domain_id: dataelement?.domain_id,
+                };
+
+                mas_DepartmentDomainGet(tempDepartmentValue, set_department, isCallFuncLogOn);
+
+                if (Array.isArray(department) && dataelement?.domain_dept_id) {
                     const mappedDept = await setValueMas(
                         department,
                         dataelement.domain_dept_id,
                         "domain_dept_id"
                     );
 
-                    console.log("🗺️ Mapped department result:", mappedDept);
                     if (mappedDept) {
                         setdomain_dept_id(mappedDept); // ค่า default ของ Combobox
                     } else {
@@ -374,40 +414,8 @@ export default function DepartmentSettingBody({
                 }
 
 
-                // ================================
-                // 4) Map ค่า default ของ domain
-                // ================================
-                console.log("😼 Looking for department with ID:", dataelement.dept_domain);
-                if (Array.isArray(domain) && dataelement?.dept_domain) {
-                    console.log("😼 Looking for department with ID:", dataelement.dept_domain);
-                    console.log("😼 Available departments:", domain);
 
-                    const mappedDept = await setValueMas(
-                        domain,
-                        dataelement.dept_domain,
-                        "domain_id"
-                    );
-                    console.log("😼 Mapped department result:", mappedDept);
-                    if (mappedDept) {
-                        setdept_domain(mappedDept); // ค่า default ของ Combobox
-                    } else {
-                        console.warn("⚠️😼 No department found for ID:", dataelement.dept_domain);
-                    }
-                }
-                // ================================
-                // 3) Map ค่า default ของ company
-                // ================================
-                if (Array.isArray(company) && dataelement?.dept_company) {
-                    const mappedDept = await setValueMas(
-                        company,
-                        dataelement.dept_company,
-                        "company_id"
-                    );
 
-                    if (mappedDept) {
-                        setdept_company(mappedDept); // ค่า default ของ Combobox
-                    }
-                }
             } catch (err) {
                 console.error("updateData error:", err);
             }
@@ -434,6 +442,8 @@ export default function DepartmentSettingBody({
         console.log("step: 5 เก็บข้อมูลเข้า ฺsetdataelement ใหม่ ", dataelement)
 
         if (dataelement && action != "Add") {
+            console.log("🧩🧩🧩🧩🧩🧩🧩🧩 dataelement?.dept_company", dataelement?.company_id);
+            console.log("🧩🧩🧩🧩🧩🧩🧩🧩 dataelement?.dept_company", dataelement?.domain_id);
             // department mapping จะทำใน useEffect แรกแล้ว (บรรทัด 255-268)
             // setdept_company(dataelement?.dept_company ? dataelement?.dept_company : "");
             setdept_email(dataelement?.dept_email ? dataelement?.dept_email : "");
@@ -673,7 +683,8 @@ export default function DepartmentSettingBody({
                                 <Grid size={7}>
                                     <AutocompleteComboBox
                                         required="required"
-                                        value={sectionApprove}
+                                        value={approveRows[rowIndex]['lov3'] === '1' ? sectionApprove
+                                            : approveRows[rowIndex]['lov3'] === '2' ? qcApprove : null}
                                         labelName={
                                             "ชื่อ (Username)"
                                         }
@@ -681,7 +692,11 @@ export default function DepartmentSettingBody({
                                         column="employee_username"
                                         setvalue={(val) => {
                                             console.log("Username selected:", val?.employee_username);
-                                            setsectionApprove(val);
+                                            if (approveRows[rowIndex]['lov3'] === '1') {
+                                                setsectionApprove(val);
+                                            } else if (approveRows[rowIndex]['lov3'] === '2') {
+                                                setqcApprove(val);
+                                            }
                                         }}
                                         bgcolorTextField={
                                             action === "Add" ? false : isActionEdit ? false : true
