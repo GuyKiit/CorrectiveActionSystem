@@ -191,6 +191,7 @@ export default function Complaint() {
     dataphotoValue_Combobox, dataphoto_Combobox, datapriorityValue_Combobox, datastatus,
     datapriority_Combobox, datapriority, PriorityLevel, clauseOther, phoTypeOther,
     complaintFiles, RunningModel, approve_step, otherText,
+    dataapproveValue_Combobox,
 
     // Dataset Variables
     dataset_reporttype,
@@ -246,7 +247,14 @@ export default function Complaint() {
     explain_create_datetime,
     explain_update_by,
     explain_update_datetime,
-    
+    approve_status,
+    approve_detail,
+    approve_note,
+    approve_name,
+    approve_company_id,
+    approve_department_id,
+    apprvove_position,
+    approve_email,
 
 
     // Setter Functions
@@ -277,8 +285,6 @@ export default function Complaint() {
     setdataToolUse,
     setdataToolUse_Combobox,
     setToolOther,
-    setapprove_detail,
-    setapprove_note,
     setdataFuapp,
     setdataDecision_Combobox,
     setdataApprove_Combobox,
@@ -286,9 +292,7 @@ export default function Complaint() {
     setresponsible_date,
     setfollow_up_date,
 
-    setapprove_date,
 
-    
     setdataset_stepcomplaint,
     setdataset_complaintAction,
     setdataset_complaintActionNew,
@@ -298,6 +302,18 @@ export default function Complaint() {
     setobservation_analysis,
     setcorrective_action,
     setpreventive_action_plan,
+
+
+    //set Approve
+    setapprove_date,
+    setapprove_status,
+    setapprove_detail,
+    setapprove_note,
+    setapprove_name,
+    approve_date,
+    setapprove_company_id,
+    setapprove_department_id,
+    setapprove_email,
   } = useListComplaint();
 
   // =====================================================================================================
@@ -1982,18 +1998,6 @@ export default function Complaint() {
             };
           }) || []
       },
-
-      // RunningModel: {
-      //   code_group: dataReportTypeValue?.lov_code || "EXPLAIN",
-      //   code_type: (dataReportTypeValue?.lov1 || "EXPLAIN") + "-" + getPaddingYear(),
-      //   code_num: 1,
-      // },
-      // RunningModel: {
-      //   code_group: dataReportTypeValue.lov_code,
-      //   code_type: dataReportTypeValue.lov1 + "-" + getPaddingYear(),
-      //   code_num: 1,
-      // },
-
       CurrentAccessModel: {
         user_id: user[0]?.employee_username || "",
       },
@@ -2039,6 +2043,106 @@ export default function Complaint() {
       }
     } catch (error) {
       console.error("Explain Upload failed:", error);
+    } finally {
+      setIsLoadingScreen(false);
+      handleClose();
+      ListSearchGet();
+    }
+  };
+
+  // CREATE - Add Complaint
+  const ApproveScAdd = async () => {
+    if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  ExplainAdd");
+
+    const tempid = uuidv4();
+
+    //Function Split Domain (For using with Complaint Status)
+    const tempComplaintStatus = splitByDot(user[0]?.employee_domain)
+
+    // Helper: resolve the real complaint id from current context (complaint or explain)
+    const resolveExplainId = () => {
+      const el: any = dataelement || {};
+      // prefer explicit complaint_id if available (object or primitive)
+      if (el.explain_id) {
+        if (typeof el.explain_id === 'object') return el.explain_id.id ?? el.explain_id;
+        return el.explain_id;
+      }
+      // sometimes nested as complaint.id
+      if (el.explain && el.explain.id) return el.explain.id;
+      // fallback to current id (when dataelement is the complaint row)
+      return el.id;
+    };
+
+    const explainRootId = resolveExplainId();
+
+    // สร้าง JSON payload สำหรับ ApproveSc
+    // ใช้ข้อมูล approveList จาก dataelement ที่มีอยู่แล้ว
+    const currentApproveList = dataelement?.approveList || [];
+    const maxApproveSeq = currentApproveList.length > 0
+      ? Math.max(...currentApproveList.map((item: any) => parseInt(item.approve_seq, 10) || 0))
+      : 0;
+    const nextSeq = maxApproveSeq + 1;
+
+    const approvePayload = {
+      ExplaintApproveModel: {
+        id: tempid,
+        explain_id: dataelement?.id, // ใช้ id จาก dataelement โดยตรง
+        approve_seq: nextSeq,
+        complaint_status_id: tempComplaintStatus[0] + "_APPROVE_SC",
+        approve_status: approveSelectionCode,
+        approve_detail: approve_detail || null,
+        approve_note: approve_note || null,
+        approve_name: user[0]?.employee_username || "",
+        approve_company_id: approve_company_id?.company_id
+          ? Number(approve_company_id.company_id)
+          : user[0]?.itasset_company_id || "",
+        approve_department_id: approve_department_id?.department_id
+          ? Number(approve_department_id.department_id)
+          : user[0]?.itasset_department_id || "",
+        approve_position: user[0]?.employee_position || "",
+        approve_email: user[0]?.employee_email || "",
+        approve_date: approve_date
+          ? approve_date
+            .hour(dayjs().hour())
+            .minute(dayjs().minute())
+            .second(dayjs().second())
+            .format("YYYY-MM-DDTHH:mm:ss")
+          : new Date().toISOString(),
+        create_by: user[0]?.employee_username || "",
+        domain_id: user[0]?.employee_domain || "", 
+      },
+      CurrentAccessModel: {
+        user_id: user[0]?.employee_username || "",
+      },
+    };
+    console.log("📦 explainPayload.ExplainModel.ComplaintFile:", approvePayload.ExplaintApproveModel);
+
+    console.log("📤 explaintPayload:", approvePayload);
+    setIsLoadingScreen(true);
+
+    try {
+      // เปลี่ยนจาก _POST_FORMDATA เป็น _POST และส่ง approvePayload โดยตรง
+      const response = await _POST(
+        approvePayload.ExplaintApproveModel, // ส่งเฉพาะ Model ที่ Backend ต้องการ
+        "/ExplaintApprove/ExplaintApproveAdd"
+      );
+      if (response && response.status === "success") {
+        FullSweetalert({
+          title: 'Success',
+          text: `บันทึกข้อมูลชี้แจงสำเร็จ`,
+          icon: 'success'
+        });
+        console.log("✅ Explain Add successfully:", response);
+      } else {
+        FullSweetalert({
+          title: 'Failed',
+          text: `บันทึกข้อมูลชี้แจงไม่สำเร็จ`,
+          icon: 'error'
+        });
+        console.log("⚠️ Approve Add failed:", response);
+      }
+    } catch (error) {
+      console.error("Approve Upload failed:", error);
     } finally {
       setIsLoadingScreen(false);
       handleClose();
@@ -2107,10 +2211,8 @@ export default function Complaint() {
   const handleOnclickExplainAdd = (data: any) => {
     if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  handleOnclickExplainAdd");
 
-      
-
-
     resetForm();
+    setresponsible_date(dayjs()); // ตั้งค่าวันที่ชี้แจงเป็นวันปัจจุบัน
     setOpenExplainAdd(true);
     // ใช้ข้อมูลที่ส่งมาจากหน้า Explain รายละเอียด
     if (data) {
@@ -2171,33 +2273,11 @@ export default function Complaint() {
     }
   };
 
-  // const handleOnclickExplainView = async (data: any) => {
-  //   if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  Explaint_Get");
-
-  //   setIsLoadingScreen(true)
-  //   const dataset = {
-  //     id: data.id,
-  //   };
-  //   console.log("Read step:4 dataset: ", dataset);
-
-
-  //   try {
-  //     let response = await _POST(dataset, "/Explaint/ExplaintGet");
-  //     console.log("Read step:4 ผลลัพธ์ : ", response);
-  //     console.log("Read step:4 Normalize ปรับค่าใหม่ : ", response.data[0],);
-  //     if (response && response.status === "success") {
-  //       setIsLoadingScreen(false);
-  //       setdataelement(response.data[0])
-  //     }
-  //   } catch (e) {
-  //     console.log("error");
-  //   }
-  // };
-
   const handleOnclickExplainApproveSc = (data: any) => {
     if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  handleOnclickExplainApproveSc");
 
     resetForm();
+    setapprove_date(dayjs());
     setOpenExplainApproveSc(true);
     // ใช้ข้อมูลที่ส่งมาจากหน้า Explain รายละเอียด
     if (data) {
@@ -2846,6 +2926,8 @@ export default function Complaint() {
           action="Explain"
           handleOpenAdd={() => handleOnclickExplainAdd(dataelement)}
           handleOnclickExplainView={handleOnclickExplainView}
+          handleOnclickExplainApproveSc={handleOnclickExplainApproveSc}
+
         />}
       />
 
@@ -2948,6 +3030,7 @@ export default function Complaint() {
          hideSaveSubmit={approveSelectionCode === "ADD" || approveSelectionCode === "REJECT"} 
          titlename={"Approve Section Head // เพิ่มข้อมูล"}
          buttonText={"Approve"}
+         handlefunction={ApproveScAdd}
          handleClose={handleClose}
          buttonColor="success"
          element={<ExplaintBody

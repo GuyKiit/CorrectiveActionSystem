@@ -134,6 +134,7 @@ interface ComplaintBody {
 
   handleOpenAdd?: () => void;
   handleOnclickExplainView?: (item: any) => void;
+  handleOnclickExplainApproveSc?: (item: any) => void;
 }
 
 type LovType = {
@@ -188,6 +189,7 @@ export default function ComplaintBody({
 
   handleOpenAdd,
   handleOnclickExplainView,
+  handleOnclickExplainApproveSc,
 }: ComplaintBody) {
   const isActionRead = action === "Read";
   const isActionAdd = action === "Add";
@@ -634,25 +636,7 @@ export default function ComplaintBody({
     });
   };
 
-  const handleCheckboxChangePriority = (item: LovType) => {
-    if (true) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  handleCheckboxChangePriority");
-
-    // setdatapriority((prev) => (prev?.id === item.id ? null : item));
-    const newPriority = datapriority?.id === item.id ? null : item;
-    setdatapriority(newPriority);
-
-    // Set the priority value for the context
-    setdatapriorityValue_Combobox(newPriority?.id || "");
-    setpriority_level(newPriority?.id || "");
-
-    // Clear validation error when user selects/deselects priority
-    if (onPriorityChange) {
-      onPriorityChange(newPriority);
-    }
-
-    console.log("🎯 Priority selected:", newPriority);
-    console.log("🎯 Priority ID:", newPriority?.id);
-  };
+ 
 
   // รับ ComplaintFile[] จาก BrowseFileUpload
   const handleFileChange = (fileArray: ComplaintFile[]) => {
@@ -2460,13 +2444,48 @@ export default function ComplaintBody({
 
                                     <Box sx={{ display: "flex", gap: 1 }}>
 
-                                      <IconButton
-                                        color="primary"
-                                        size="small"
-                                        onClick={() => handleOnclickExplainView && handleOnclickExplainView(item)}
-                                      >
-                                        <VisibilityIcon />
-                                      </IconButton>
+                                      <Box sx={{ display: 'flex', gap: 1.5 }}>
+                                        {/* ปุ่มอนุมัติ */}
+                                        <Button
+                                          variant="contained"
+                                          size="medium"
+                                          onClick={() => handleOnclickExplainApproveSc && handleOnclickExplainApproveSc(item)}
+                                          sx={{
+                                            backgroundColor: '#45bc4bff', 
+                                            color: '#FFFFFF',
+                                            '&:hover': { backgroundColor: '#1b5e20' },
+                                            textTransform: 'none',
+                                            fontWeight: 600,
+                                            borderRadius: 2,
+                                            px: 4,
+                                          }}
+                                        >
+                                          อนุมัติ
+                                        </Button>
+
+                                        {/* ปุ่มดูข้อมูล */}
+                                        <Button
+                                          variant="contained"
+                                          size="medium"
+                                          onClick={() =>
+                                            handleOnclickExplainView &&
+                                            handleOnclickExplainView(item)
+                                          }
+                                          sx={{
+                                            backgroundColor: "#7e828cff", 
+                                            color: "#FFFFFF",
+                                            "&:hover": {
+                                              backgroundColor: "#4B5563",
+                                            },
+                                            textTransform: "none",
+                                            fontWeight: 600,
+                                            borderRadius: 2,
+                                            px: 4,
+                                          }}
+                                        >
+                                          ดูข้อมูล
+                                        </Button>
+                                      </Box>
                                     </Box>
                                   </Box>
                                 </Paper>

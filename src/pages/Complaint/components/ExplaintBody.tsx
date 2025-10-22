@@ -104,6 +104,7 @@ interface ExplaintBody {
   onBlocksChange?: (blocks: Block[]) => void;
   handleOpenAdd?: () => void;
   handleOnclickExplainView?: (item: any) => void;
+  handleOnclickExplainApproveSc?: (item: any) => void;
   onApproveChange?: (value: LovType | null) => void;
   isViewMode?: boolean;
 }
@@ -140,6 +141,7 @@ export default function ExplaintBody({
   validateDetailText,
   handleOpenAdd,
   handleOnclickExplainView,
+  handleOnclickExplainApproveSc,
   onApproveChange,
   isViewMode = false,
 }: ExplaintBody) {
@@ -1103,23 +1105,6 @@ export default function ExplaintBody({
         }
       }
 
-      // Set department with null checks
-      // if (dataelement?.responsible_department_id) {
-      //   const department = dataset_department?.find(
-      //     (el: any) =>
-      //       String(el.itasset_department_id) ===
-      //       String(
-      //         typeof dataelement.responsible_department_id === "object"
-      //           ? dataelement.responsible_department_id?.department_id
-      //           : dataelement.responsible_department_id
-      //       )
-      //   );
-      //   if (department) {
-      //     setresponsible_department_id(department);
-      //   }
-      // }
-      // setresponsible_department_id(dataelement?.responsible_department_id ? dataelement?.responsible_department_id : "");
-
       // Set other fields with proper null checks
       setresponsible_position(dataelement?.responsible_position || "");
       setresponsible_email(dataelement?.responsible_email || "");
@@ -1338,9 +1323,7 @@ export default function ExplaintBody({
       {/* ====== Dynamic ฟอร์ม สำหรับเลือกประเภทเอกสาร ====== */}
       {!isFormHidden &&
         (isActionExplainAdd ||
-          isActionExplainRead ||
-          isActionExplainApproveScAdd ||
-          isActionExplainApproveQcAdd) && (
+          isActionExplainRead ) && (
           <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>
             <label className="sarabun-regular-datatable">
               {dataReportTypeValue?.lov4}
@@ -1479,11 +1462,7 @@ export default function ExplaintBody({
                       value={responsible_date}
                       handleChange={(val) => setresponsible_date(val ?? null)}
                       bgcolorTextField={isActionExplainAdd ? false : true}
-                      readonly={
-                        isActionExplainRead ||
-                        isActionExplainApproveScAdd ||
-                        isActionExplainApproveQcAdd
-                      }
+                      readonly
                     />
                   </Grid>
                   <Grid size={4}>
@@ -2183,8 +2162,7 @@ export default function ExplaintBody({
                                           </IconButton>
 
                                           {/* //ปุ่มดาวน์โหลดไฟล์ */}
-                                          {(isActionRead || isActionExplain) &&
-                                            isActionExplain && (
+                                          { isActionExplainRead && (
                                               <IconButton
                                                 color="primary"
                                                 onClick={async () => {
@@ -2374,7 +2352,7 @@ export default function ExplaintBody({
                     value={approve_date}
                     handleChange={(val) => setapprove_date(val ?? null)}
                     bgcolorTextField={action === "ApproveScAdd" ? false : true}
-                    readonly={action !== "ApproveScAdd"}
+                    readonly
                   />
                 </Grid>
               </Grid>
@@ -2722,7 +2700,7 @@ export default function ExplaintBody({
                 value={approve_date}
                 handleChange={(val) => setapprove_date(val ?? null)}
                 bgcolorTextField={isActionExplainApproveQcAdd ? false : true}
-                readonly={action !== "ApproveQcAdd"}
+                readonly
               />
             </Grid>
           </Grid>

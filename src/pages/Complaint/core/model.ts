@@ -157,15 +157,19 @@ export type ListComplaintContextProps = {
     explain_update_by?: string
     explain_update_datetime?: dayjs.Dayjs
 
+    //--------Approve-------
+    approve_seq?: number
     approve_status?: string
     approve_detail?: string
     approve_note?: string
     approve_name?: string
-    approve_company_id?: number
+    approve_company_id?: any
     approve_department_id?: any
     approve_position?: string
     approve_email?: string
     approve_date?: dayjs.Dayjs
+    apprvove_position?: string
+    dataapproveValue_Combobox?: any
 
 
     setComplaint_no: Dispatch<SetStateAction<string>>;
