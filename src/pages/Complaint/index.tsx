@@ -30,6 +30,7 @@ import FullWidthButton from "../../components/MUI/FullWidthButton";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CloseIcon from '@mui/icons-material/CheckCircle';
 import ExplaintBody from "./components/ExplaintBody";
+import { mas_DepartmentGet_Complaint, mas_DomainRelateGet } from "../../service/mas/lov";
 
 // =====================================================================================================
 // TYPE DEFINITIONS
@@ -190,7 +191,7 @@ export default function Complaint() {
 
     dataphotoValue_Combobox, dataphoto_Combobox, datapriorityValue_Combobox, datastatus,
     datapriority_Combobox, datapriority, PriorityLevel, clauseOther, phoTypeOther,
-    complaintFiles, RunningModel, approve_step, otherText,
+    complaintFiles, RunningModel, approve_step, otherText,domainrelate,
     dataapproveValue_Combobox,
 
     // Dataset Variables
@@ -198,11 +199,14 @@ export default function Complaint() {
     dataset_department,
     dataset_company,
     dataset_domain,
+    dataset_domainrelate,
     dataset_stepcomplaint,
     dataset_complaintAction,
     dataset_complaintActionNew,
     dataset_complaintActionExplain,
     dataset_complaintActionClose,
+    dataset_activeCompany,
+    dataset_roleAdmin,
 
     //Explaint
     dataTooluseValue,
@@ -277,9 +281,9 @@ export default function Complaint() {
     setdataComplaintTypeValue_Combobox, setdataComplaintRs_Combobox, setdatastatus,
     setdataComplaintRsValue_Combobox, setdataphoto_Combobox, setdataphotoValue_Combobox,
     setdatapriorityValue_Combobox, setdatapriority_Combobox, setdatapriority,
-    setPriorityLevel, setclauseOther, setphoTypeOther, setdataset_reporttype,
-    setdataset_department, setdataset_company, setdataset_domain, setcomplaintFiles, setotherText,
-    
+    setPriorityLevel, setclauseOther, setphoTypeOther, setdataset_reporttype,setdataset_activeCompany,setdataset_roleAdmin,
+    setdataset_department, setdataset_company, setdataset_domain,setdataset_domainrelate, setcomplaintFiles, setotherText,
+    set_domainrelate,
 
     //set Explaint
     setdataToolUse,
@@ -376,7 +380,7 @@ export default function Complaint() {
   // Search Variables (from index.tsx)
   const [TextNameSearch, setTextNameSearch] = React.useState({
     dataset_company: "",
-    dataset_domain: "",
+    dataset_domainrelate: "",
     dataset_department: "",
     report_code: "",
     cas_number: "",
@@ -428,7 +432,39 @@ export default function Complaint() {
 
   // For On-Off Calling Function Log
   const [isCallFuncLogOn] = useState(true);
+// Event Handlers =========================================================
+  const handleCompanyChange = (value: any) => {
+    console.log('####### Onchange Company Value [event] : ', value);
+    console.log("@@@@@@@@@@@@First", dataset_domainrelate);
+    console.log("Render check respondent_domain_id:", respondent_domain_id);
 
+
+    if (value != null) {
+      mas_DomainRelateGet(value, set_domainrelate, isCallFuncLogOn);
+    } else {
+      
+      setrespondent_domain_id(null);
+    }
+    console.log("@@@@@@@@@@@@second", dataset_domainrelate);
+  };
+
+const handleDomainChange = (value: any) => {
+    console.log('####### Onchange Domain Value [event] : ', value);
+    console.log("@@@@@@@@@@@@First", dataset_domainrelate);
+    
+
+
+    if (value != null) {
+      console.log("😎😎", value);
+
+      mas_DepartmentGet_Complaint(value, setdataset_department, isCallFuncLogOn, user);
+    } else {
+      
+      setdataset_department([]);
+      setrespondent_department_id(null);
+    }
+    console.log("@@@@@@@@@@@@second", domainrelate);
+  };
 
   // Reset Form Function (from index.tsx)
   const resetSearchTable = () => {
@@ -636,15 +672,15 @@ export default function Complaint() {
 
     try {
       const dataset = {
-        //lov_group: "TRR.TRRGROUP.COM",
-        lov_group: "21",
+        lov_group: "21,VARIABLE_CONSTANT",
         lov_type:
-          "report_type,complaint_type,reference_standard,attach_type,complaint_status,tool_use,decision_disposition,approve_select,complaint_step,complaint_action",
+          "report_type,complaint_type,reference_standard,attach_type,complaint_status,tool_use,decision_disposition,approve_select,complaint_step,complaint_action,active_company,role_admin",
       };
       const response = await _POST(dataset, "/Lov/LovGet");
 
       if (response && response.status === "success") {
         const lovData = response.data || [];
+        console.log("❇️❇️❇️❇️❇️❇️❇️ Call [Lov/LovGet] -> LovAll_Get :", response.data);
 
         // ✅ จัดกลุ่มตาม lov_type
         const grouped = lovData.reduce((acc: any, item: any) => {
@@ -661,19 +697,20 @@ export default function Complaint() {
         console.log("🔍 index.tsx - attach_type data:", grouped["attach_type"]);
         setdatastatus?.(grouped["complaint_status"] || []);
         setdataToolUse_Combobox?.(grouped["tool_use"] || []);
-
         setdataDecision_Combobox?.(grouped["decision_disposition"] || []);
         setdataApprove_Combobox?.(grouped["approve_select"] || []);
         setdataset_stepcomplaint?.(grouped["complaint_step"] || []);
         setdataset_complaintAction?.(grouped["complaint_action"] || []);
+        setdataset_activeCompany?.(grouped["active_company"] || []);
+        setdataset_roleAdmin?.(grouped["role_admin"] || []);
 
         setdataset_complaintActionNew(grouped["complaint_action"].filter((item: any) => item.lov_code === 'ACTION_NEW'));
         setdataset_complaintActionExplain(grouped["complaint_action"].filter((item: any) => item.lov_code === 'ACTION_EXPLAIN'));
         setdataset_complaintActionClose(grouped["complaint_action"].filter((item: any) => item.lov_code === 'ACTION_CLOSE'));
+        
 
-        //setdataset_reporttype?.(grouped["active_company"] || []);
-
-        console.log('⚠️⚠️⚠️⚠️ [grouped["complaint_action"]] :', grouped["complaint_action"])
+        console.log('⚠️⚠️⚠️⚠️ [grouped["active_company"]] :', grouped["active_company"])
+        console.log('⚠️⚠️⚠️⚠️ [grouped["role_admin"]] :', grouped["role_admin"])
 
 
 
@@ -713,6 +750,7 @@ export default function Complaint() {
       const response = await _POST(dataset, "/Complaint/CasDomainGet");
       if (response && response.status === "success") {
         // console.log("❇️ Call [Complaint/CasDomainGet] -> Domain_Get :",response.data);
+        
 
         console.log(
           "❇️ Call [Complaint/DomainGet] -> DomainGet :",
@@ -732,42 +770,76 @@ export default function Complaint() {
       console.log("error:", e);
     }
   };
-  // Function - Get Company
-  const CompanyGet = async (action?: string) => {
-    if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  CompanyGet");
+
+  // Function - Get DomainRelate
+  const DomainRelateGet = async () => {
+    if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  DomainRelateGet");
 
     try {
       const dataset = {
+        domain: user[0]?.employee_domain,
+        company_id: user[0]?.itasset_company_id,
       };
-      const response = await _POST(
-        dataset,
-        "/Complaint/CasCompanyGet"
-      );
+      const response = await _POST(dataset, "/Complaint/CasDomainRelateGet");
       if (response && response.status === "success") {
+        // console.log("❇️ Call [Complaint/CasDomainGet] -> DomainRelateGet :",response.data);
+        
+
         console.log(
-          "❇️ Call [Complaint/CasCompanyGet] -> Company_Get :",
+          "❇️ Call [Complaint/DomainRelateGet] -> DomainRelateGet :",
           response.data
         );
-        setdataset_company(response.data);
-
-        // if (action == "Add") {
-
-        //   //================================================
-        //   let company = response.data.filter(
-        //     (item: any) => item.company_id != user[0]?.itasset_company_id
-        //   );
-        //   setdataset_company(company);
-        //   // if (department) {
-        //   //   // setdataset_domain(domain);
-        //   //   setdataset_department(department);
-        //   // }
-        //   //================================================
-        // }
+        if (Array.isArray(response.data)) {
+          // let domain = response.data.filter(
+          //   (item: any) => item.domain_id === user[0]?.employee_domain
+          // );
+          setdataset_domainrelate(response.data);
+         
+        }
       }
     } catch (e) {
       console.log("error:", e);
     }
   };
+  // Function - Get Company
+  const CompanyGet = async (action?: string) => {
+  if (isCallFuncLogOn)
+    console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  CompanyGet");
+
+  try {
+    const response = await _POST({}, "/Complaint/CasCompanyGet");
+
+    if (response && response.status === "success") {
+      console.log("❇️ Call [Complaint/CasCompanyGet] -> Company_Get :", response.data);
+
+      const activeCompany = dataset_activeCompany; // จาก LovAll_Get
+
+      console.log("🧩 activeCompany sample:", activeCompany?.[0]);
+      console.log("🧩 company sample:", response.data?.[0]);
+
+      if (activeCompany?.length > 0) {
+        const active = activeCompany[0]?.lov1 || "";
+
+        const activeid = active.split(",").map((id: string) => id.trim());
+
+        console.log("✅ activeid:", activeid);
+
+         // ✅ filter บริษัทตาม company_id
+        const filteredCompany = response.data.filter((company: any) =>
+          activeid.includes(company.company_id.toString())
+        );
+
+        console.log("⚙️ [filteredCompany]:", filteredCompany);
+        setdataset_company(filteredCompany);
+      } else {
+        console.log("⚠️ activeCompany ยังไม่มีค่า ใช้ company ทั้งหมดแทน");
+        setdataset_company(response.data);
+      }
+    }
+  } catch (e) {
+    console.log("error:", e);
+  }
+};
 
   // Function - Get Department Domain
   const DepartmentDomainGet = async (action?: string) => {
@@ -775,7 +847,7 @@ export default function Complaint() {
 
     try {
       const dataset = {
-        domain_id: user[0]?.employee_domain,
+        domain_id: respondent_domain_id.domain_id,
         company_id: user[0]?.itasset_company_id,
       };
       const response = await _POST(
@@ -883,9 +955,9 @@ export default function Complaint() {
   };
 
   // Function - Search Complaints
-  const ListSearchGet = async () => {
-    if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  ListSearchGet");
-    console.log("step:2 เรียกฟังก์ชั่น ListSearchGet ใหม่");
+  const ComplaintGet = async () => {
+    if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  ComplaintGet");
+    console.log("step:2 เรียกฟังก์ชั่น ComplaintGet ใหม่");
     console.log("⭐️⭐️⭐️⭐️ CHECK DATA COMPLAINT ACTION : ", dataset_complaintAction, "⭐️⭐️⭐️");
 
     setIsLoadingScreen(true);
@@ -893,10 +965,10 @@ export default function Complaint() {
       user_id: user[0]?.employee_username,
       domain_id: user[0]?.employee_domain,
       department_id: user[0]?.itasset_department_id,
-      company_id: user[0]?.itasset_company_id,
-      respondent_company_id:TextNameSearch.dataset_company || user[0]?.itasset_company_id || null,
-      respondent_domain_id: TextNameSearch.dataset_domain ? TextNameSearch.dataset_domain : null,
-      respondent_department_id: TextNameSearch.dataset_department ? TextNameSearch.dataset_department : null,
+      company_id: user[0]?.itasset_company_id,    //@param Fixed
+      
+      domain: TextNameSearch.dataset_domainrelate ? TextNameSearch.dataset_domainrelate : null,
+      department: TextNameSearch.dataset_department ? TextNameSearch.dataset_department : null,
       report_code: TextNameSearch.report_code ? TextNameSearch.report_code : null,
       cas_number: TextNameSearch.cas_number ? TextNameSearch.cas_number : null,
       product_name: TextNameSearch.product_name ? TextNameSearch.product_name : null,
@@ -904,13 +976,12 @@ export default function Complaint() {
       complaint_status_label: TextNameSearch.datastatus ? TextNameSearch.datastatus : null,
       doc_date: documentDateSearch ? documentDateSearch.format("DD-MM-YYYY") : null,
       step_label: TextNameSearch.dataset_stepcomplaint ? TextNameSearch.dataset_stepcomplaint : null,
-      // request_department_id: TextNameSearch.request_department_id ? TextNameSearch.request_department_id : null
     }
 
-    console.log("step:2 dataset ก่อนส่ง API /ListSearch/ListSearchGet ", dataset);
+    console.log("step:2 dataset ก่อนส่ง API /Complaint/ComplaintGet ", dataset);
     try {
-      let response = await _POST(dataset, "/ListSearch/ListSearchGet");
-      console.log("step:2 ผลลัพธ์ที่ได้จาก API /ListSearch/ListSearchGet ", response);
+      let response = await _POST(dataset, "/Complaint/ComplaintGet");
+      console.log("step:2 ผลลัพธ์ที่ได้จาก API /Complaint/ComplaintGet ", response);
       if (response && response.status === "success") {
         setIsLoadingScreen(false);
         const responseData: any = [];
@@ -920,6 +991,7 @@ export default function Complaint() {
               <ActionManageCell
                 hadleOnclickMenu={(name: any) => {
                   console.log("🎆 🎆 🎆 🎆 hadleOnclickMenu (name) :", name);
+                  
                   if (name === "View") {
                     // DepartmentDomainGet("Read");
                     handleOnclickComplaintView(el);
@@ -948,6 +1020,8 @@ export default function Complaint() {
 
                 //-----------------------------------------------------------------------
                 //-----------------------------------------------------------------------
+
+                
 
                 // For Status [NEW]
                 hiddenRead={
@@ -995,6 +1069,8 @@ export default function Complaint() {
             );
             el.ACTION = ACTION;
             console.log("el.acknowledge_flag", el.acknowledge_flag)
+            console.log("🎆 🎆 🎆 🎆 hadleOnclickMenu (el) :", el);
+            console.log("🎆 🎆 🎆 🎆 complaint_status_label:", el.complaint_status_label);
             console.log(el.step_label)
             el.complaint_status_label = (
               <BasicChips label={`${el.complaint_status_label}`} acknowledge={el.acknowledge_flag}></BasicChips>
@@ -1411,7 +1487,7 @@ export default function Complaint() {
       handleClose();
 
       // Complaint_Get();
-      ListSearchGet();
+      ComplaintGet();
     }
   };
 
@@ -1576,7 +1652,7 @@ export default function Complaint() {
       handleClose();
 
       // Complaint_Get();
-      ListSearchGet();
+      ComplaintGet();
     }
   };
 
@@ -1729,7 +1805,7 @@ export default function Complaint() {
         icon: 'success'
       });
       // Complaint_Get();
-      ListSearchGet();
+      ComplaintGet();
     }
   };
 
@@ -1781,7 +1857,7 @@ export default function Complaint() {
         icon: 'success'
       });
       // Complaint_Get();
-      ListSearchGet();
+      ComplaintGet();
     }
   };
 
@@ -2046,7 +2122,7 @@ export default function Complaint() {
     } finally {
       setIsLoadingScreen(false);
       handleClose();
-      ListSearchGet();
+      ComplaintGet();
     }
   };
 
@@ -2146,9 +2222,109 @@ export default function Complaint() {
     } finally {
       setIsLoadingScreen(false);
       handleClose();
-      ListSearchGet();
+      ComplaintGet();
     }
   };
+
+  // CREATE - Add Complaint
+  // const ApproveScAdd = async () => {
+  //   if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  ExplainAdd");
+
+  //   const tempid = uuidv4();
+
+  //   //Function Split Domain (For using with Complaint Status)
+  //   const tempComplaintStatus = splitByDot(user[0]?.employee_domain)
+
+  //   // Helper: resolve the real complaint id from current context (complaint or explain)
+  //   const resolveExplainId = () => {
+  //     const el: any = dataelement || {};
+  //     // prefer explicit complaint_id if available (object or primitive)
+  //     if (el.explain_id) {
+  //       if (typeof el.explain_id === 'object') return el.explain_id.id ?? el.explain_id;
+  //       return el.explain_id;
+  //     }
+  //     // sometimes nested as complaint.id
+  //     if (el.explain && el.explain.id) return el.explain.id;
+  //     // fallback to current id (when dataelement is the complaint row)
+  //     return el.id;
+  //   };
+
+  //   const explainRootId = resolveExplainId();
+
+  //   // สร้าง JSON payload สำหรับ ApproveSc
+  //   // ใช้ข้อมูล approveList จาก dataelement ที่มีอยู่แล้ว
+  //   const currentApproveList = dataelement?.approveList || [];
+  //   const maxApproveSeq = currentApproveList.length > 0
+  //     ? Math.max(...currentApproveList.map((item: any) => parseInt(item.approve_seq, 10) || 0))
+  //     : 0;
+  //   const nextSeq = maxApproveSeq + 1;
+
+  //   const approvePayload = {
+  //     ExplaintApproveModel: {
+  //       id: tempid,
+  //       explain_id: dataelement?.id, // ใช้ id จาก dataelement โดยตรง
+  //       approve_seq: nextSeq,
+  //       complaint_status_id: tempComplaintStatus[0] + "_APPROVE_SC",
+  //       approve_status: approveSelectionCode,
+  //       approve_detail: approve_detail || null,
+  //       approve_note: approve_note || null,
+  //       approve_name: user[0]?.employee_username || "",
+  //       approve_company_id: approve_company_id?.company_id
+  //         ? Number(approve_company_id.company_id)
+  //         : user[0]?.itasset_company_id || "",
+  //       approve_department_id: approve_department_id?.department_id
+  //         ? Number(approve_department_id.department_id)
+  //         : user[0]?.itasset_department_id || "",
+  //       approve_position: user[0]?.employee_position || "",
+  //       approve_email: user[0]?.employee_email || "",
+  //       approve_date: approve_date
+  //         ? approve_date
+  //           .hour(dayjs().hour())
+  //           .minute(dayjs().minute())
+  //           .second(dayjs().second())
+  //           .format("YYYY-MM-DDTHH:mm:ss")
+  //         : new Date().toISOString(),
+  //       create_by: user[0]?.employee_username || "",
+  //       domain_id: user[0]?.employee_domain || "", 
+  //     },
+  //     CurrentAccessModel: {
+  //       user_id: user[0]?.employee_username || "",
+  //     },
+  //   };
+  //   console.log("📦 explainPayload.ExplainModel.ComplaintFile:", approvePayload.ExplaintApproveModel);
+
+  //   console.log("📤 explaintPayload:", approvePayload);
+  //   setIsLoadingScreen(true);
+
+  //   try {
+  //     // เปลี่ยนจาก _POST_FORMDATA เป็น _POST และส่ง approvePayload โดยตรง
+  //     const response = await _POST(
+  //       approvePayload.ExplaintApproveModel, // ส่งเฉพาะ Model ที่ Backend ต้องการ
+  //       "/ExplaintApprove/ExplaintApproveAdd"
+  //     );
+  //     if (response && response.status === "success") {
+  //       FullSweetalert({
+  //         title: 'Success',
+  //         text: `บันทึกข้อมูลชี้แจงสำเร็จ`,
+  //         icon: 'success'
+  //       });
+  //       console.log("✅ Explain Add successfully:", response);
+  //     } else {
+  //       FullSweetalert({
+  //         title: 'Failed',
+  //         text: `บันทึกข้อมูลชี้แจงไม่สำเร็จ`,
+  //         icon: 'error'
+  //       });
+  //       console.log("⚠️ Approve Add failed:", response);
+  //     }
+  //   } catch (error) {
+  //     console.error("Approve Upload failed:", error);
+  //   } finally {
+  //     setIsLoadingScreen(false);
+  //     handleClose();
+  //     ListSearchGet();
+  //   }
+  // };
 
   // =====================================================================================================
   // EVENT HANDLERS (from index.tsx)
@@ -2334,7 +2510,7 @@ export default function Complaint() {
     setdocumentDateSearch(null);
     setTextNameSearch({
       dataset_company: "",
-      dataset_domain: "",
+      dataset_domainrelate: "",
       dataset_department: "",
       report_code: "",
       cas_number: "",
@@ -2387,7 +2563,7 @@ export default function Complaint() {
     resetSearchTable();
 
     // Complaint_Get();
-    console.log("step:1 เรียกฟังก์ชั่น ListSearchGet();");
+    console.log("step:1 เรียกฟังก์ชั่น ComplaintGet();");
     LovAll_Get();
     // ListSearchGet();
     // ReportType_Get();
@@ -2395,8 +2571,9 @@ export default function Complaint() {
     // ComplaintRs_Get();
     // photo_Get();
     priority_Get();
-    DomainGet();
-    DepartmentDomainGet();
+    // DomainGet();
+    DomainRelateGet();
+    // DepartmentDomainGet();
     CompanyGet();
 
     // complaint_status_Get();
@@ -2405,11 +2582,19 @@ export default function Complaint() {
   }, []);
 
   React.useEffect(() => {
+  if (dataset_activeCompany) {
+    console.log("🔁 activeCompany พร้อมแล้ว → เรียก CompanyGet()");
+    CompanyGet();
+  }
+}, [dataset_activeCompany]);
+
+  React.useEffect(() => {
     if (dataset_complaintAction) {
-      ListSearchGet();
+      ComplaintGet();
     }
   }, [dataset_complaintAction]);
 
+  
 
   // Filter complaint types based on selected report type (from ComplaintRead.tsx)
   React.useEffect(() => {
@@ -2490,26 +2675,29 @@ export default function Complaint() {
               options={dataset_company || []}
               column="company_name"
               setvalue={(val) => {
+                handleCompanyChange(val);
                 setTextNameSearch({
                   ...TextNameSearch,
                   dataset_company: val?.company_id || "", // เก็บแค่ id เป็น string
                 })
               }}
-              //readonly
+              readonly
             />
           </Grid>
           <Grid size={4}>
             <AutocompleteComboBox
-              value={dataset_domain?.find(
-                (item: any) => item.domain_id === TextNameSearch.dataset_domain
+              value={
+                dataset_domainrelate?.find(
+                (item: any) => item.domain_id === TextNameSearch.dataset_domainrelate
               ) || null}
               labelName="โดเมน (Domain)"
-              options={dataset_domain || []}
-              column="domain_id"
+              options={dataset_domainrelate || []}
+              column="domain_name"
               setvalue={(val) => {
+                handleDomainChange(val);
                 setTextNameSearch({
                   ...TextNameSearch,
-                  dataset_domain: val?.domain_id || "", // เก็บแค่ id เป็น string
+                  dataset_domainrelate: val?.domain_id || "", // เก็บแค่ id เป็น string
                 })
               }}
             />
@@ -2528,6 +2716,7 @@ export default function Complaint() {
                   dataset_department: val?.department_id || "", // เก็บแค่ id เป็น string
                 })
               }}
+              readonly={!TextNameSearch.dataset_domainrelate}
             />
           </Grid>
 
@@ -2640,7 +2829,7 @@ export default function Complaint() {
           <Grid>
             <FullWidthButton
               labelName={"ค้นหา"}
-              handleonClick={ListSearchGet}
+              handleonClick={ComplaintGet}
               variant_text="contained"
               colorname={"primary"}
             />

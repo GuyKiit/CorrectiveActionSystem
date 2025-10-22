@@ -21,20 +21,6 @@ import dayjs from "dayjs";
           response.data
         );
         set_company(response.data);
-
-        // if (action == "Add") {
-
-        //   //================================================
-        //   let company = response.data.filter(
-        //     (item: any) => item.company_id != user[0]?.itasset_company_id
-        //   );
-        //   set_company_search(company);
-        //   // if (department) {
-        //   //   // set_domain_search(domain);
-        //   //   set_department_search(department);
-        //   // }
-        //   //================================================
-        // }
       }
     } catch (e) {
       console.log("error:", e);
@@ -62,6 +48,36 @@ export async function mas_DomainGet(company_id: number, set_domain: (data: any) 
     }
 }
 
+ // Function - Get DomainRelate
+  export async function mas_DomainRelateGet(value: any, set_domainrelate: (data: any) => void, isCallFuncLogOn: boolean) {
+    if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  DomainRelateGet");
+
+    try {
+      const dataset = {
+        domain: value.domain,
+        company_id: value.company_id,
+      };
+      const response = await _POST(dataset, "/Complaint/CasDomainRelateGet");
+      if (response && response.status === "success") {
+        // console.log("❇️ Call [Complaint/CasDomainGet] -> DomainRelateGet :",response.data);
+        
+
+        console.log(
+          "❇️ Call [Complaint/DomainRelateGet] -> DomainRelateGet :",
+          response.data
+        );
+        if (Array.isArray(response.data)) {
+        
+            set_domainrelate(response.data);
+            // setdataset_company(domain);
+          
+        }
+      }
+    } catch (e) {
+      console.log("error:", e);
+    }
+  };
+
 export async function mas_DepartmentDomainGet(value: any, set_department: (data: any) => void, isCallFuncLogOn: boolean) {
     if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  DepartmentDomainGet");
 
@@ -83,7 +99,39 @@ export async function mas_DepartmentDomainGet(value: any, set_department: (data:
           // เอา filter ออก → ใช้ทุกตัว
           set_department(response.data);
         }
+        
+ 
+      }
+    } catch (e) {
+      console.log("error:", e);
+    }
+  };
 
+
+export async function mas_DepartmentGet_Complaint(value: any, setdataset_department: (data: any) => void, isCallFuncLogOn: boolean, user:any) {
+    if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  DepartmentDomainGet");
+
+    try {
+      const dataset = {
+        domain_id: value.domain_id,
+        company_id: user[0]?.itasset_company_id,
+        // company_id: value.company_id,
+      };
+      const response = await _POST(
+        dataset,
+        "/Complaint/CasDepartmentDomainGet"
+      );
+      if (response && response.status === "success") {
+        console.log(
+          "❇️❇️❇️❇️❇️❇️❇️❇️ Call [Complaint/CasDepartmentDomainGet] -> Department_Domain_Get :",
+          response.data
+        );
+        if (Array.isArray(response.data)) {
+          // เอา filter ออก → ใช้ทุกตัว
+          setdataset_department(response.data);
+        }
+        
+ 
       }
     } catch (e) {
       console.log("error:", e);
