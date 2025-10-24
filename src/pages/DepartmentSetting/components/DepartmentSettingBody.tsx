@@ -153,8 +153,8 @@ export default function DepartmentSettingBody({
         dept_email,
         approve_id,
         step,
-        sectionApprove,
-        qcApprove,
+        // sectionApprove,
+        // qcApprove,
 
         // dept_company,
         // dept_domain,
@@ -165,8 +165,8 @@ export default function DepartmentSettingBody({
         setdept_email,
         setapprove_id,
         setstep,
-        setsectionApprove,
-        setqcApprove,
+        // setsectionApprove,
+        // setqcApprove,
 
         // setdept_company,
         // setdept_domain,
@@ -218,6 +218,8 @@ export default function DepartmentSettingBody({
     const [dataDecision, setdataDecision] = useState<LovType[]>([]);
     const [dept_domain, setdept_domain] = useState<any>(null);
     const [dept_company, setdept_company] = useState<any>(null);
+    const [sectionApprove, setsectionApprove] = useState<any>(null);
+    const [qcApprove ,   setqcApprove] = useState<any>(null);
 
     // Event Handlers =========================================================
     const handleCompanyChange = (value: any) => {
@@ -383,36 +385,31 @@ export default function DepartmentSettingBody({
                 // 2) Map ค่า default ของ sectionApprove
                 // ================================
 
-                if (Array.isArray(username) && Array.isArray(dataelement?.deptApproveSetup)) {
-                    // -------------------------------
-                    // Step 1 → sectionApprove
-                    // -------------------------------
-                    const step1UserId = dataelement.deptApproveSetup.find(
-                        (x: any) => String(x.step) === "1"
-                    )?.user_id;
+                
 
-                    const mappedSectionApprove = username.find(
-                        (el: any) => String(el.employee_username) === String(step1UserId)
+
+                var tempUsernameValue = {
+                    company_id: dataelement?.company_id,
+                    domain_id: dataelement?.domain_id,
+                    department_id: dataelement?.domain_dept_id,
+                };
+
+                mas_UsernameGet(tempUsernameValue, set_username, isCallFuncLogOn);
+
+                if (Array.isArray(username) && dataelement?.sectionApprove) {
+                    const mappedDept = await setValueMas(
+                        username,
+                        dataelement.sectionApprove,
+                        "employee_username"
                     );
 
-                    console.log("🗺️ Step 1 mapped sectionApprove:", mappedSectionApprove);
-                    if (mappedSectionApprove) setsectionApprove(mappedSectionApprove);
-
-                    // ------------------------------- 
-                    // Step 2 → qcApprove
-                    // -------------------------------
-                    const step2UserId = dataelement.deptApproveSetup.find(
-                        (x: any) => String(x.step) === "2"
-                    )?.user_id;
-
-                    const mappedQcApprove = username.find(
-                        (el: any) => String(el.employee_username) === String(step2UserId)
-                    );
-
-                    console.log("🗺️ Step 2 mapped qcApprove:", mappedQcApprove);
-                    if (mappedQcApprove) setqcApprove(mappedQcApprove);
+                    if (mappedDept) {
+                        setsectionApprove(mappedDept); // ค่า default ของ Combobox
+                        setqcApprove(mappedDept); // ค่า default ของ Combobox
+                    } else {
+                        console.warn("⚠️ No department found for ID:", dataelement.sectionApprove);
+                    }
                 }
-
 
 
 
@@ -430,10 +427,10 @@ export default function DepartmentSettingBody({
 
         action,
         dataelement,
-        username,
         department,
         company,
-        domain
+        domain,
+        username,
 
     ]);
 

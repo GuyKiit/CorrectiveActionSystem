@@ -104,6 +104,7 @@ export type ListComplaintContextProps = {
     departmentrelate?: any
     departmentrelate_search?: any
     department?: any
+    domain?: any
     
 
     //--------dataset-------
@@ -272,6 +273,7 @@ export type ListComplaintContextProps = {
     set_departmentrelate: Dispatch<SetStateAction<any>>;
     set_departmentrelate_search: Dispatch<SetStateAction<any>>;
     set_department: Dispatch<SetStateAction<any>>;
+    set_domain: Dispatch<SetStateAction<any>>;
 
 
     //--------Explaint-------
@@ -435,6 +437,7 @@ export const initialListComplaint: ListComplaintContextProps = {
     set_departmentrelate: () => { },
     set_departmentrelate_search: () => { },
     set_department: () => { },
+    set_domain: () => { },
 
 
     //--------Explaint-------

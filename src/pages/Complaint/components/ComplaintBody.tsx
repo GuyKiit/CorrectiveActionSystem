@@ -60,7 +60,7 @@ import { useListComplaint } from "../core/ListComplaintContext";
 import { data } from "react-router-dom";
 import { ComplaintFile } from "./BrowseFileUpload";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import {  mas_DepartmentGet_Complaint, mas_DomainRelateGet } from "../../../service/mas/lov";
+import { mas_DepartmentGet_Complaint, mas_DomainGet, mas_DomainRelateGet } from "../../../service/mas/lov";
 
 // pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
@@ -295,6 +295,7 @@ export default function ComplaintBody({
     domainrelate,
     departmentrelate,
     department,
+    domain,
 
 
     setComplaint_no,
@@ -378,6 +379,7 @@ export default function ComplaintBody({
     set_domainrelate,
     set_departmentrelate,
     set_department,
+    set_domain,
   } = useListComplaint();
 
   const [previewFile, setPreviewFile] = useState<File | null>(null);
@@ -470,7 +472,7 @@ export default function ComplaintBody({
     if (value != null) {
       mas_DomainRelateGet(value, set_domainrelate, isCallFuncLogOn);
     } else {
-      
+
       setrespondent_domain_id(null);
     }
     console.log("@@@@@@@@@@@@second", dataset_domainrelate);
@@ -479,7 +481,7 @@ export default function ComplaintBody({
   const handleDomainChange = (value: any) => {
     console.log('####### Onchange Domain Value [event] : ', value);
     console.log("@@@@@@@@@@@@First", dataset_domainrelate);
-    
+
 
 
     if (value != null) {
@@ -487,7 +489,7 @@ export default function ComplaintBody({
 
       mas_DepartmentGet_Complaint(value, setdataset_department, isCallFuncLogOn, user);
     } else {
-      
+
       setdataset_department([]);
       setrespondent_department_id(null);
     }
@@ -1040,14 +1042,92 @@ export default function ComplaintBody({
             dataelement.respondent_company_id,
             "company_id"
           );
-
+          console.log("🔍 Mapping company:", {
+            target: dataelement.respondent_company_id,
+            dataset: dataset_company.map(c => c.company_id),
+          });
           if (mappedDept) {
             setrespondent_company_id(mappedDept); // ค่า default ของ Combobox
+            setrequest_company_id(mappedDept); // ค่า default ของ Combobox
           }
         }
 
+
         // ================================
-        // 4) Filter priority
+        // 4) Map ค่า default ของ domain
+        // ================================
+        // ✅ โหลด domain ที่เกี่ยวข้องกับบริษัทนั้น
+        if (dataelement?.respondent_company_id) {
+          await mas_DomainRelateGet(
+            {
+              domain: dataelement?.respondent_domain_id ?? null,
+              company_id: dataelement.respondent_company_id,
+            },
+            set_domain,
+            isCallFuncLogOn
+          );
+        }
+
+        // ✅ ตั้งค่า default ของ domain ที่เลือกไว้
+        if (Array.isArray(domain) && dataelement?.respondent_domain_id) {
+          const mappedDomain = await setValueMas(
+            domain,
+            dataelement.respondent_domain_id,
+            "domain_id"
+          );
+
+          if (mappedDomain) {
+            setrespondent_domain_id(mappedDomain);
+          }
+        }
+
+
+        // ================================
+        //  กรณี Add → ไม่มี dataelement
+        // ================================
+        else {
+          console.log("🧭 Mode: Add");
+
+          // ✅ ใช้ company จาก profile
+          if (user?.[0]?.itasset_company_id) {
+            await mas_DomainGet(
+              user[0].itasset_company_id,
+              set_domain,
+              user,
+              isCallFuncLogOn
+            );
+          }
+        }
+
+
+        // ================================
+        // 3) Map ค่า default ของ department
+        // ================================
+
+        // var tempDepartmentValue = {
+        //   company_id: dataelement?.company_id,
+        //   domain_id: dataelement?.domain_id,
+        // };
+
+        // mas_DepartmentDomainGet(tempDepartmentValue, set_department, isCallFuncLogOn);
+
+        // if (Array.isArray(department) && dataelement?.domain_dept_id) {
+        //   const mappedDept = await setValueMas(
+        //     department,
+        //     dataelement.domain_dept_id,
+        //     "domain_dept_id"
+        //   );
+
+        //   if (mappedDept) {
+        //     setdomain_dept_id(mappedDept); // ค่า default ของ Combobox
+        //   } else {
+        //     console.warn("⚠️ No department found for ID:", dataelement.domain_dept_id);
+        //   }
+        // }
+
+
+        // ================================
+        // 6) Filter priority
         // ================================
         if (Array.isArray(datapriority_Combobox)) {
           const newFilteredPriority = datapriority_Combobox.filter(
@@ -1064,7 +1144,7 @@ export default function ComplaintBody({
 
 
         // ================================
-        // 5) Filter Complaint/Attach/Reference ตาม reportType
+        // 7) Filter Complaint/Attach/Reference ตาม reportType
         // ================================
         if (dataReportTypeValue) {
           const newFilteredFuApprove = (
@@ -1143,15 +1223,17 @@ export default function ComplaintBody({
     dataphoto_Combobox,
     dataReportTypeValue,
     dataApprove_Combobox,
+    dataelement?.respondent_company_id,
+    domain,
   ]);
 
   //////////////////////// Complaint Read //////////////////////////
   React.useEffect(() => {
     console.log("step: 5 เก็บข้อมูลเข้า ฺsetdataelement ใหม่ ", dataelement)
-    
+
 
     if (dataelement && action != "Add") {
-      setrespondent_company_id(dataset_company.find((el: any) => String(el.itasset_company_id) === String(dataelement.respondent_company_id?.company_id)));
+      // setrespondent_company_id(dataset_company.find((el: any) => String(el.itasset_company_id) === String(dataelement.respondent_company_id?.company_id)));
       setcas_number(dataelement?.cas_number || "");
       setdoc_date(dataelement?.doc_date ? dayjs(dataelement.doc_date, "DD-MM-YYYY") : dayjs());
       setdate_of_detection(dayjs(dataelement?.date_of_detection));
@@ -1168,7 +1250,7 @@ export default function ComplaintBody({
 
       // console.log("🎯 Found department:", foundDept);
       // setrespondent_department_id(foundDept || null);
-      
+
       setproduct_name(dataelement?.product_name ? dataelement?.product_name : "");
       setlot_no(dataelement?.lot_no ? dataelement?.lot_no : "");
       setrespondent_email(dataelement?.respondent_email ? dataelement?.respondent_email : "");
@@ -1185,7 +1267,7 @@ export default function ComplaintBody({
       setrequest_department_id(dataelement?.request_department_id ? dataelement?.request_department_id : "");
       setrequest_email(dataelement?.request_email ? dataelement?.request_email : "");
       setrequest_phone(dataelement?.request_phone ? dataelement?.request_phone : "");
-      setrequest_company_id(dataset_company.find((el: any) => String(el.itasset_company_id) == String(dataelement.request_company_id?.company_id)));
+      // setrequest_company_id(dataset_company.find((el: any) => String(el.itasset_company_id) == String(dataelement.request_company_id?.company_id)));
       setcomplaint_status_label(dataelement?.complaint_status_label);
 
       // สมมติ LovType คือ { id: string; label: string }
@@ -1402,11 +1484,11 @@ export default function ComplaintBody({
                   <AutocompleteComboBox
                     value={respondent_domain_id}
                     labelName={"โดเมน (Domain)"}
-                    options={dataset_domainrelate}
+                    options={domain}
                     column="domain_name"
                     // setvalue={(v) => setrespondent_company_id(v)}
                     setvalue={(val) => {
-                      
+
                       console.log("Domain selected:", val?.domain_name);
                       console.log("Domain selected:", val?.domain_id);
                       console.log("😍val:", val);
@@ -1419,7 +1501,7 @@ export default function ComplaintBody({
                     }}
 
                     bgcolorTextField={true}
-                  // readonly
+                    readonly={isActionRead || isActionDelete || isActionExplain}
                   />
                 </Grid>
                 <Grid size={3} mt={2}>

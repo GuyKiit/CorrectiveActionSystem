@@ -471,6 +471,9 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
     const [department, set_department] = useState<any>(
         initialListComplaint.department
     );
+    const [domain, set_domain] = useState<any>(
+        initialListComplaint.domain
+    );
 
     return (
         <ListComplaintContext.Provider
@@ -571,6 +574,7 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 departmentrelate,
                 departmentrelate_search,
                 department,
+                domain,
 
                 //--------Explaint-------
                 dataTooluse,
@@ -729,6 +733,7 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 set_departmentrelate,
                 set_departmentrelate_search,
                 set_department,
+                set_domain,
 
                 //--------Explaint-------
                 setdataToolUse,

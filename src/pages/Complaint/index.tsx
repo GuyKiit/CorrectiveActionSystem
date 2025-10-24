@@ -649,7 +649,7 @@ const handleDomainChange = (value: any) => {
       const dataset = {
         lov_group: "21,VARIABLE_CONSTANT",
         lov_type:
-          "report_type,complaint_type,reference_standard,attach_type,complaint_status,tool_use,decision_disposition,approve_select,complaint_step,complaint_action,active_company,role_admin",
+          "report_type,complaint_type,reference_standard,priority_level,attach_type,complaint_status,tool_use,decision_disposition,approve_select,complaint_step,complaint_action,active_company,role_admin",
       };
       const response = await _POST(dataset, "/Lov/LovGet");
 
@@ -668,7 +668,8 @@ const handleDomainChange = (value: any) => {
         setdataset_reporttype?.(grouped["report_type"] || []);
         setdataComplaintType_Combobox?.(grouped["complaint_type"] || []);
         setdataComplaintRs_Combobox?.(grouped["reference_standard"] || []);
-        setdataphoto_Combobox?.(grouped["attach_type"] || []);
+        setdataComplaintRs_Combobox?.(grouped["reference_standard"] || []);
+        setdatapriority_Combobox?.(grouped["priority_level"] || []);
         console.log("🔍 index.tsx - attach_type data:", grouped["attach_type"]);
         setdatastatus?.(grouped["complaint_status"] || []);
         setdataToolUse_Combobox?.(grouped["tool_use"] || []);
@@ -696,23 +697,23 @@ const handleDomainChange = (value: any) => {
   };
 
   // Function - Get Priority Levels
-  const priority_Get = async () => {
-    if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  priority_Get");
+  // const priority_Get = async () => {
+  //   if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  priority_Get");
 
-    try {
-      const dataset = {
-        lov_group: "SYSTEM",
-        lov_type: "priority_level",
-      };
-      const response = await _POST(dataset, "/Lov/LovGet");
-      if (response && response.status === "success") {
-        // console.log("❇️ Call [Lov/LovGet] -> priority_level :", response.data);
-        setdatapriority_Combobox && setdatapriority_Combobox(response.data);
-      }
-    } catch (e) {
-      console.log("error:", e);
-    }
-  };
+  //   try {
+  //     const dataset = {
+  //       lov_group: "21",
+  //       lov_type: "priority_level",
+  //     };
+  //     const response = await _POST(dataset, "/Lov/LovGet");
+  //     if (response && response.status === "success") {
+  //       // console.log("❇️ Call [Lov/LovGet] -> priority_level :", response.data);
+  //       setdatapriority_Combobox && setdatapriority_Combobox(response.data);
+  //     }
+  //   } catch (e) {
+  //     console.log("error:", e);
+  //   }
+  // };
 
   // Function - Get Domain
   const DomainGet = async () => {
@@ -746,6 +747,45 @@ const handleDomainChange = (value: any) => {
     }
   };
 
+  // Function - Get Company
+  const CompanyGet = async (action?: string) => {
+  if (isCallFuncLogOn)
+    console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  CompanyGet");
+
+  try {
+    const response = await _POST({}, "/Complaint/CasCompanyGet");
+
+    if (response && response.status === "success") {
+      console.log("❇️ Call [Complaint/CasCompanyGet] -> Company_Get :", response.data);
+
+      const activeCompany = dataset_activeCompany; // จาก LovAll_Get
+
+      console.log("🧩 activeCompany sample:", activeCompany);
+      console.log("🧩 company sample:", response.data);
+
+      if (activeCompany?.length > 0) {
+        const active = activeCompany[0]?.lov1 || "";
+
+        const activeid = active.split(",").map((id: string) => id.trim());
+
+        console.log("✅ activeid:", activeid);
+
+         // ✅ filter บริษัทตาม company_id
+        const filteredCompany = response.data.filter((company: any) =>
+          activeid.includes(company.company_id.toString())
+        );
+
+        console.log("⚙️ [filteredCompany]:", filteredCompany);
+        setdataset_company(filteredCompany);
+      } else {
+        console.log("⚠️ activeCompany ยังไม่มีค่า ใช้ company ทั้งหมดแทน");
+        setdataset_company(response.data);
+      }
+    }
+  } catch (e) {
+    console.log("error:", e);
+  }
+};
   // Function - Get DomainRelate
   const DomainRelateGet = async () => {
     if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  DomainRelateGet");
@@ -776,45 +816,7 @@ const handleDomainChange = (value: any) => {
       console.log("error:", e);
     }
   };
-  // Function - Get Company
-  const CompanyGet = async (action?: string) => {
-  if (isCallFuncLogOn)
-    console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  CompanyGet");
-
-  try {
-    const response = await _POST({}, "/Complaint/CasCompanyGet");
-
-    if (response && response.status === "success") {
-      console.log("❇️ Call [Complaint/CasCompanyGet] -> Company_Get :", response.data);
-
-      const activeCompany = dataset_activeCompany; // จาก LovAll_Get
-
-      console.log("🧩 activeCompany sample:", activeCompany?.[0]);
-      console.log("🧩 company sample:", response.data?.[0]);
-
-      if (activeCompany?.length > 0) {
-        const active = activeCompany[0]?.lov1 || "";
-
-        const activeid = active.split(",").map((id: string) => id.trim());
-
-        console.log("✅ activeid:", activeid);
-
-         // ✅ filter บริษัทตาม company_id
-        const filteredCompany = response.data.filter((company: any) =>
-          activeid.includes(company.company_id.toString())
-        );
-
-        console.log("⚙️ [filteredCompany]:", filteredCompany);
-        setdataset_company(filteredCompany);
-      } else {
-        console.log("⚠️ activeCompany ยังไม่มีค่า ใช้ company ทั้งหมดแทน");
-        setdataset_company(response.data);
-      }
-    }
-  } catch (e) {
-    console.log("error:", e);
-  }
-};
+  
 
   // Function - Get Department Domain
   const DepartmentDomainGet = async (action?: string) => {
@@ -2366,11 +2368,11 @@ const handleDomainChange = (value: any) => {
     // ComplaintType_Get();
     // ComplaintRs_Get();
     // photo_Get();
-    priority_Get();
+    // priority_Get();
     // DomainGet();
     DomainRelateGet();
     // DepartmentDomainGet();
-    CompanyGet();
+    // CompanyGet();
 
     // complaint_status_Get();
     // ToolUse_Get();
