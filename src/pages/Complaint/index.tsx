@@ -208,6 +208,10 @@ export default function Complaint() {
     dataset_activeCompany,
     dataset_roleAdmin,
 
+    dataset_complaintActionApproveSC, 
+    dataset_complaintActionApproveQC,
+    
+
     //Explaint
     dataTooluseValue,
     dataTooluse_Combobox,
@@ -283,7 +287,9 @@ export default function Complaint() {
     setdatapriorityValue_Combobox, setdatapriority_Combobox, setdatapriority,
     setPriorityLevel, setclauseOther, setphoTypeOther, setdataset_reporttype,setdataset_activeCompany,setdataset_roleAdmin,
     setdataset_department, setdataset_company, setdataset_domain,setdataset_domainrelate, setcomplaintFiles, setotherText,
-    set_domainrelate,
+    set_domainrelate, 
+    setdataset_complaintActionApproveSC, setdataset_complaintActionApproveQC,
+    
 
     //set Explaint
     setdataToolUse,
@@ -333,6 +339,8 @@ export default function Complaint() {
   const [openComplaintEdit, setOpenComplaintEdit] = React.useState(false);
   const [openComplaintDelete, setOpenComplaintDelete] = React.useState(false);
   const [openExplain, setOpenExplain] = React.useState(false);
+  const [openApproveSC, setOpenApproveSC] = React.useState(false);
+  const [openApproveQC, setOpenApproveQC] = React.useState(false);
   const [openExplainAdd, setOpenExplainAdd] = React.useState(false);
   const [openExplainView, setOpenExplainView] = React.useState(false);
 
@@ -349,6 +357,7 @@ export default function Complaint() {
   const [openAddlist, setOpenAddlist] = React.useState(false);
 
   const [explainList, setExplainList] = useState<any[]>([]);
+  const [currentExplainForApproval, setCurrentExplainForApproval] = useState<any>(null);
   const [approveSelectionCode, setApproveSelectionCode] = useState<string | null>(null);
   
   // const [openSync, setOpenSync] = React.useState(false);
@@ -726,7 +735,7 @@ const handleDomainChange = (value: any) => {
 
     try {
       const dataset = {
-        lov_group: "SYSTEM",
+        lov_group: "21",
         lov_type: "priority_level",
       };
       const response = await _POST(dataset, "/Lov/LovGet");
@@ -1001,19 +1010,19 @@ const handleDomainChange = (value: any) => {
                   } else if (name === "Delete") {
                     // DepartmentDomainGet("Delete");
                     handleOnclickComplaintDelete(el);
-                  } else if (name === "Detail") {
+                  } else if (name === "Explain") {
                     // DepartmentDomainGet("Explain");
-                    handleOnclickExplain(el);
-                  } else if (name === "ExplainAdd") {
-                    // DepartmentDomainGet("Explain");
-                    handleOnclickExplainAdd(el);
-                  } else if (name === "ExplainView") {
-                    // DepartmentDomainGet("Explain");
-                    handleOnclickExplainView(el);
+                    handleOnclickExplain(el);            
                   }
-                  else if (name === "ExplainApproveSc") {
-                    // DepartmentDomainGet("Explain");
-                    handleOnclickExplainApproveSc(el);
+                  // else if (name === "ExplainApproveSc") {
+                  //   // DepartmentDomainGet("Explain");
+                  //   handleOnclickExplainApproveSc(el);
+                  // }
+                  else if (name === "ApproveSC") {
+                    handleOnclickApproveSC(el);
+                  }
+                  else if (name === "ApproveQC") {
+                    handleOnclickApproveQC(el);
                   }
                 }}
                 // hiddenEdit={el.complaint_status_label == 'SUBMIT'}
@@ -1022,6 +1031,48 @@ const handleDomainChange = (value: any) => {
                 //-----------------------------------------------------------------------
 
                 
+
+                // // For Status [NEW]
+                // hiddenRead={
+                //   (dataset_complaintActionNew &&
+                //     !dataset_complaintActionNew.some((mode: any) =>
+                //       mode.lov1.split(",").includes(String(el.complaint_status_label))
+                //     )) ?? false
+                // }
+                // hiddenEdit={
+                //   (dataset_complaintActionNew &&
+                //     !dataset_complaintActionNew.some((mode: any) =>
+                //       mode.lov1.split(",").includes(String(el.complaint_status_label))
+                //     )) ?? false
+                // }
+                // hiddenDelete={
+                //   (dataset_complaintActionNew &&
+                //     !dataset_complaintActionNew.some((mode: any) =>
+                //       mode.lov1.split(",").includes(String(el.complaint_status_label))
+                //     )) ?? false
+                // }
+
+                // //-----------------------------------------------------------------------
+                // //-----------------------------------------------------------------------
+
+                // // For Status [SUBMIT, EXPLAIN, APPROVE]
+                // hiddenExplain={
+                //   (dataset_complaintActionExplain &&
+                //     !dataset_complaintActionExplain.some((mode: any) =>
+                //       mode.lov1.split(",").includes(String(el.complaint_status_label))
+                //     )) ?? false
+                // }
+
+                // //-----------------------------------------------------------------------
+                // //-----------------------------------------------------------------------
+
+                // // For Status [CLOSE]
+                // hiddenClose={
+                //   (dataset_complaintActionClose &&
+                //     !dataset_complaintActionClose.some((mode: any) =>
+                //       mode.lov1.split(",").includes(String(el.complaint_status_label))
+                //     )) ?? false
+                // }
 
                 // For Status [NEW]
                 hiddenRead={
@@ -1046,7 +1097,7 @@ const handleDomainChange = (value: any) => {
                 //-----------------------------------------------------------------------
                 //-----------------------------------------------------------------------
 
-                // For Status [SUBMIT, EXPLAIN, APPROVE]
+                // For Status [SUBMIT]
                 hiddenExplain={
                   (dataset_complaintActionExplain &&
                     !dataset_complaintActionExplain.some((mode: any) =>
@@ -1057,7 +1108,29 @@ const handleDomainChange = (value: any) => {
                 //-----------------------------------------------------------------------
                 //-----------------------------------------------------------------------
 
-                // For Status [CLOSE]
+                // For Status [EXPLAIN]
+                hiddenApproveSC={
+                  (dataset_complaintActionApproveSC &&
+                    !dataset_complaintActionApproveSC.some((mode: any) =>
+                      mode.lov1.split(",").includes(String(el.complaint_status_label))
+                    ) && splitNextStepName(el.approve_step)) ?? false
+                }
+
+                // -----------------------------------------------------------------------
+                // -----------------------------------------------------------------------
+
+                // For Status [APPROVE SC]
+                hiddenApproveQC={
+                  (dataset_complaintActionApproveQC &&
+                    !dataset_complaintActionApproveQC.some((mode: any) =>
+                      mode.lov1.split(",").includes(String(el.complaint_status_label))
+                    ) && splitNextStepName(el.approve_step) ) ?? false
+                }
+
+                //-----------------------------------------------------------------------
+                //-----------------------------------------------------------------------
+
+                // For Status [APPROVE QC]
                 hiddenClose={
                   (dataset_complaintActionClose &&
                     !dataset_complaintActionClose.some((mode: any) =>
@@ -1088,6 +1161,11 @@ const handleDomainChange = (value: any) => {
       console.log("error");
 
     }
+  };
+
+  const splitNextStepName = (str: string) => {
+    const parts = str.split('_');
+    return parts.length >= 3 ? parts.slice(2).join('_') : str;
   };
 
   // Function - Validate before Add Complaint
@@ -2153,16 +2231,16 @@ const handleDomainChange = (value: any) => {
 
     // สร้าง JSON payload สำหรับ ApproveSc
     // ใช้ข้อมูล approveList จาก dataelement ที่มีอยู่แล้ว
-    const currentApproveList = dataelement?.approveList || [];
+    const currentApproveList = currentExplainForApproval?.approveList || [];
     const maxApproveSeq = currentApproveList.length > 0
       ? Math.max(...currentApproveList.map((item: any) => parseInt(item.approve_seq, 10) || 0))
       : 0;
-    const nextSeq = maxApproveSeq + 1;
+    const nextSeq = maxApproveSeq + 1; 
 
     const approvePayload = {
       ExplaintApproveModel: {
         id: tempid,
-        explain_id: dataelement?.id, // ใช้ id จาก dataelement โดยตรง
+        explain_id: currentExplainForApproval?.id, 
         approve_seq: nextSeq,
         complaint_status_id: tempComplaintStatus[0] + "_APPROVE_SC",
         approve_status: approveSelectionCode,
@@ -2191,7 +2269,7 @@ const handleDomainChange = (value: any) => {
         user_id: user[0]?.employee_username || "",
       },
     };
-    console.log("📦 explainPayload.ExplainModel.ComplaintFile:", approvePayload.ExplaintApproveModel);
+    console.log("📦 approvePayload:", approvePayload.ExplaintApproveModel);
 
     console.log("📤 explaintPayload:", approvePayload);
     setIsLoadingScreen(true);
@@ -2205,14 +2283,14 @@ const handleDomainChange = (value: any) => {
       if (response && response.status === "success") {
         FullSweetalert({
           title: 'Success',
-          text: `บันทึกข้อมูลชี้แจงสำเร็จ`,
+          text: `บันทึกการอนุมัติสำเร็จ`,
           icon: 'success'
         });
         console.log("✅ Explain Add successfully:", response);
       } else {
         FullSweetalert({
           title: 'Failed',
-          text: `บันทึกข้อมูลชี้แจงไม่สำเร็จ`,
+          text: `บันทึกการอนุมัติไม่สำเร็จ`,
           icon: 'error'
         });
         console.log("⚠️ Approve Add failed:", response);
@@ -2226,105 +2304,7 @@ const handleDomainChange = (value: any) => {
     }
   };
 
-  // CREATE - Add Complaint
-  // const ApproveScAdd = async () => {
-  //   if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  ExplainAdd");
-
-  //   const tempid = uuidv4();
-
-  //   //Function Split Domain (For using with Complaint Status)
-  //   const tempComplaintStatus = splitByDot(user[0]?.employee_domain)
-
-  //   // Helper: resolve the real complaint id from current context (complaint or explain)
-  //   const resolveExplainId = () => {
-  //     const el: any = dataelement || {};
-  //     // prefer explicit complaint_id if available (object or primitive)
-  //     if (el.explain_id) {
-  //       if (typeof el.explain_id === 'object') return el.explain_id.id ?? el.explain_id;
-  //       return el.explain_id;
-  //     }
-  //     // sometimes nested as complaint.id
-  //     if (el.explain && el.explain.id) return el.explain.id;
-  //     // fallback to current id (when dataelement is the complaint row)
-  //     return el.id;
-  //   };
-
-  //   const explainRootId = resolveExplainId();
-
-  //   // สร้าง JSON payload สำหรับ ApproveSc
-  //   // ใช้ข้อมูล approveList จาก dataelement ที่มีอยู่แล้ว
-  //   const currentApproveList = dataelement?.approveList || [];
-  //   const maxApproveSeq = currentApproveList.length > 0
-  //     ? Math.max(...currentApproveList.map((item: any) => parseInt(item.approve_seq, 10) || 0))
-  //     : 0;
-  //   const nextSeq = maxApproveSeq + 1;
-
-  //   const approvePayload = {
-  //     ExplaintApproveModel: {
-  //       id: tempid,
-  //       explain_id: dataelement?.id, // ใช้ id จาก dataelement โดยตรง
-  //       approve_seq: nextSeq,
-  //       complaint_status_id: tempComplaintStatus[0] + "_APPROVE_SC",
-  //       approve_status: approveSelectionCode,
-  //       approve_detail: approve_detail || null,
-  //       approve_note: approve_note || null,
-  //       approve_name: user[0]?.employee_username || "",
-  //       approve_company_id: approve_company_id?.company_id
-  //         ? Number(approve_company_id.company_id)
-  //         : user[0]?.itasset_company_id || "",
-  //       approve_department_id: approve_department_id?.department_id
-  //         ? Number(approve_department_id.department_id)
-  //         : user[0]?.itasset_department_id || "",
-  //       approve_position: user[0]?.employee_position || "",
-  //       approve_email: user[0]?.employee_email || "",
-  //       approve_date: approve_date
-  //         ? approve_date
-  //           .hour(dayjs().hour())
-  //           .minute(dayjs().minute())
-  //           .second(dayjs().second())
-  //           .format("YYYY-MM-DDTHH:mm:ss")
-  //         : new Date().toISOString(),
-  //       create_by: user[0]?.employee_username || "",
-  //       domain_id: user[0]?.employee_domain || "", 
-  //     },
-  //     CurrentAccessModel: {
-  //       user_id: user[0]?.employee_username || "",
-  //     },
-  //   };
-  //   console.log("📦 explainPayload.ExplainModel.ComplaintFile:", approvePayload.ExplaintApproveModel);
-
-  //   console.log("📤 explaintPayload:", approvePayload);
-  //   setIsLoadingScreen(true);
-
-  //   try {
-  //     // เปลี่ยนจาก _POST_FORMDATA เป็น _POST และส่ง approvePayload โดยตรง
-  //     const response = await _POST(
-  //       approvePayload.ExplaintApproveModel, // ส่งเฉพาะ Model ที่ Backend ต้องการ
-  //       "/ExplaintApprove/ExplaintApproveAdd"
-  //     );
-  //     if (response && response.status === "success") {
-  //       FullSweetalert({
-  //         title: 'Success',
-  //         text: `บันทึกข้อมูลชี้แจงสำเร็จ`,
-  //         icon: 'success'
-  //       });
-  //       console.log("✅ Explain Add successfully:", response);
-  //     } else {
-  //       FullSweetalert({
-  //         title: 'Failed',
-  //         text: `บันทึกข้อมูลชี้แจงไม่สำเร็จ`,
-  //         icon: 'error'
-  //       });
-  //       console.log("⚠️ Approve Add failed:", response);
-  //     }
-  //   } catch (error) {
-  //     console.error("Approve Upload failed:", error);
-  //   } finally {
-  //     setIsLoadingScreen(false);
-  //     handleClose();
-  //     ListSearchGet();
-  //   }
-  // };
+  
 
   // =====================================================================================================
   // EVENT HANDLERS (from index.tsx)
@@ -2381,6 +2361,22 @@ const handleDomainChange = (value: any) => {
 
     resetForm();
     setOpenExplain(true);
+    setdataelement(data);
+  };
+
+  const handleOnclickApproveSC = (data: any) => {
+    if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  handleOnclickApproveSC");
+
+    resetForm();
+    setOpenApproveSC(true);
+    setdataelement(data);
+  };
+
+  const handleOnclickApproveQC = (data: any) => {
+    if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  handleOnclickApproveQC");
+
+    resetForm();
+    setOpenApproveQC(true);
     setdataelement(data);
   };
 
@@ -2452,15 +2448,10 @@ const handleDomainChange = (value: any) => {
   const handleOnclickExplainApproveSc = (data: any) => {
     if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  handleOnclickExplainApproveSc");
 
+    setCurrentExplainForApproval(data); // ✅ เก็บข้อมูล explain ที่จะอนุมัติไว้ใน state ใหม่
     resetForm();
     setapprove_date(dayjs());
     setOpenExplainApproveSc(true);
-    // ใช้ข้อมูลที่ส่งมาจากหน้า Explain รายละเอียด
-    if (data) {
-      setdataelement(data);
-    } else {
-      setdataelement(null);
-    }
   };
 
   const handleOnclickExplainApproveQc = (data: any) => {
@@ -2534,6 +2525,8 @@ const handleDomainChange = (value: any) => {
     setOpenComplaintEdit(false);
     setOpenComplaintDelete(false);
     setOpenExplain(false);
+    setOpenApproveSC(false);
+    setOpenApproveQC(false);
     setOpenExplainAdd(false);
     setOpenExplainView(false);
     setOpenExplainApproveSc(false);
@@ -2860,7 +2853,6 @@ const handleDomainChange = (value: any) => {
               onClick={() => {
                 DepartmentDomainGet("Add");
                 handleOnclickComplaintAdd();
-                //handleOnclickExplainApproveSc();
               }}
             >
               {menuFuncData?.find((item: auth_role_menu_func) => item?.func_name === "Add") ? "เพิ่มข้อมูล" : ""}
@@ -3115,8 +3107,22 @@ const handleDomainChange = (value: any) => {
           action="Explain"
           handleOpenAdd={() => handleOnclickExplainAdd(dataelement)}
           handleOnclickExplainView={handleOnclickExplainView}
-          handleOnclickExplainApproveSc={handleOnclickExplainApproveSc}
+          //handleOnclickExplainApproveSc={handleOnclickExplainApproveSc}
 
+        />}
+      />
+      <FuncDialog
+        open={openApproveSC}
+        dialogWidth="xl"
+        openBottonHidden={false}
+        titlename={"Explain // รายละเอียด"}
+        handleClose={handleClose}
+        buttonColor="success"
+        element={<ComplaintBody
+          action="ApproveSC"
+          handleOpenAdd={() => handleOnclickExplainAdd(dataelement)}
+          handleOnclickExplainView={handleOnclickExplainView}
+          //handleOnclickExplainApproveSc={handleOnclickExplainApproveSc}
         />}
       />
 
@@ -3220,6 +3226,7 @@ const handleDomainChange = (value: any) => {
          titlename={"Approve Section Head // เพิ่มข้อมูล"}
          buttonText={"Approve"}
          handlefunction={ApproveScAdd}
+         handlereject={ApproveScAdd}
          handleClose={handleClose}
          buttonColor="success"
          element={<ExplaintBody
@@ -3240,6 +3247,7 @@ const handleDomainChange = (value: any) => {
          hideSaveSubmit={approveSelectionCode === "ADD" || approveSelectionCode === "REJECT"} 
          titlename={"Approve QC // เพิ่มข้อมูล"}
          buttonText={"Approve"}
+         handlereject={ApproveScAdd}
          handleClose={handleClose}
          buttonColor="success"
          element={<ExplaintBody

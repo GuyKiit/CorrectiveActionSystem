@@ -198,11 +198,8 @@ export default function ComplaintBody({
   const isActionDelete = action === "Delete";
   const isActionExplain = action === "Explain";
   const isActionClose = action === "Close";
-  const isActionExplainAdd = action === "ExplainAdd";
-  const isActionExplainRead = action === "ExplainRead";
-
-  const isActionExplainApproveScAdd = action === "ApproveScAdd";
-
+  const isActionExplainApproveSc = action === "ApproveSC";
+  const isActionExplainApproveQc = action === "ApproveQC";
 
   const user = cleanAccessData("userSession");
   const [openConfirm, setOpenConfirm] = useState(false);
@@ -1215,7 +1212,8 @@ export default function ComplaintBody({
 
   React.useEffect(() => {
     // เฉพาะตอน Read เท่านั้น
-    if (action === "Read" || action === "Edit" || action === "Delete" || isActionExplain) {
+    //if (action === "Read" || action === "Edit" || action === "Delete" || isActionExplain) {
+    if (!isActionAdd) {
       if (dataelement?.id) {
         Complaint_Get(dataelement);
       }
@@ -1310,29 +1308,30 @@ export default function ComplaintBody({
             options={dataset_reporttype} // <-- แก้ตรงนี้
             column="lov_code"
             setvalue={handleReportTypeChange}
-            readonly={
-              isActionRead
-                ? true
-                : isActionEdit
-                  ? true
-                  : isActionDelete
-                    ? true
-                    : isActionDelete
-                      ? true
-                      : isActionExplain
-                        ? true
-
-                        : readonlyTextField
-            }
-            bgcolorTextField={
-              isActionRead
-                ? true
-                : isActionEdit
-                  ? true
-                  : isActionDelete
-                    ? true
-                    : bgcolorTextField
-            }
+            // readonly={
+            //   isActionRead
+            //     ? true
+            //     : isActionEdit
+            //       ? true
+            //       : isActionDelete
+            //         ? true
+            //         : isActionDelete
+            //           ? true
+            //           : isActionExplain
+            //             ? true
+            //             : readonlyTextField
+            // }
+            readonly={!isActionAdd}
+            // bgcolorTextField={
+            //   isActionRead
+            //     ? true
+            //     : isActionEdit
+            //       ? true
+            //       : isActionDelete
+            //         ? true
+            //         : bgcolorTextField
+            // }
+            bgcolorTextField={!isActionAdd}
             Validate={validateText?.Report_Type || false}
             validateTextLable={validateText?.Report_Type ? "กรุณาเลือกประเภทรายงาน (Report Type)" : ""}
           />
@@ -1468,7 +1467,7 @@ export default function ComplaintBody({
                         margin: 0,
                       }}
                     >
-                      แผนกผู้ถูกร้องเรียน (Respondent Department)
+                      แผนกผู้ถูกร้องเรียน (Respondent Department) + {action}
                     </label>
                   </Box>
                   <Grid container spacing={3}>
@@ -1484,7 +1483,8 @@ export default function ComplaintBody({
                           }
                         }}
                         bgcolorTextField={action === "Add" ? false : true}
-                        readonly={isActionRead || isActionEdit || isActionDelete || isActionExplain}
+                        //readonly={isActionRead || isActionEdit || isActionDelete || isActionExplain}
+                        readonly={!isActionAdd}
                         Validate={validateText?.Date_of_Detection || false}
                         validateTextLable={validateText?.Date_of_Detection ? "กรุณาเลือกวันที่พบปัญหา" : ""}
                       />
@@ -1524,7 +1524,8 @@ export default function ComplaintBody({
                             onProductNameChange(e);
                           }
                         }}
-                        readonly={isActionRead || isActionDelete || isActionExplain}
+                        //readonly={isActionRead || isActionDelete || isActionExplain}
+                        readonly={!isActionAdd || !isActionEdit}
                         Validate={validateText?.Product_Name || false}
                         validateTextLable={validateText?.Product_Name ? "กรุณากรอกชื่อสินค้า" : ""}
                       />
@@ -1541,7 +1542,8 @@ export default function ComplaintBody({
                           }
                         }}
                         bgcolorTextField={true}
-                        readonly={isActionRead || isActionDelete || isActionExplain}
+                        //readonly={isActionRead || isActionDelete || isActionExplain}
+                        readonly={!isActionAdd || !isActionEdit}
                         Validate={validateText?.Lot_No || false}
                         validateTextLable={validateText?.Lot_No ? "กรุณากรอก Lot No./Bag No" : ""}
                       />
@@ -1557,7 +1559,8 @@ export default function ComplaintBody({
                             onEmailChange(e);
                           }
                         }}
-                        readonly={isActionRead || isActionDelete || isActionExplain}
+                        //readonly={isActionRead || isActionDelete || isActionExplain}
+                        readonly={!isActionAdd || !isActionEdit}
                         Validate={validateText?.Email || false}
                         validateTextLable={validateText?.Email ? "กรุณากรอกอีเมล" : ""}
                       />
@@ -1648,7 +1651,8 @@ export default function ComplaintBody({
                                           onchange={() =>
                                             handleCheckboxChangeCT(item)
                                           }
-                                          readonly={isActionRead || isActionDelete || isActionExplain}
+                                          //readonly={isActionRead || isActionDelete || isActionExplain}
+                                          readonly={!isActionAdd || !isActionEdit}
                                         />
                                       </Grid>
                                     )
@@ -1667,7 +1671,8 @@ export default function ComplaintBody({
 
                                       }}
                                       bgcolorTextField={action === "Add" ? false : true}
-                                      readonly={isActionRead || isActionDelete || isActionExplain}
+                                      //readonly={isActionRead || isActionDelete || isActionExplain}
+                                      readonly={!isActionAdd || !isActionEdit}
                                       Validate={validateText?.Other_Type || false}
                                       validateTextLable={validateText?.Other_Type ? "กรุณากรอกรายละเอียด" : ""}
                                     />
@@ -1721,7 +1726,8 @@ export default function ComplaintBody({
                                           (rs) => rs.id === item.id
                                         )}
                                         onchange={() => handleCheckboxChangeRS(item)}
-                                        readonly={isActionRead || isActionDelete || isActionExplain}
+                                        //readonly={isActionRead || isActionDelete || isActionExplain}
+                                        readonly={!isActionAdd || !isActionEdit}
                                       />
                                     </Grid>
                                   ))}
@@ -1740,7 +1746,8 @@ export default function ComplaintBody({
                                           }
                                         }}
                                         bgcolorTextField={action === "Add" ? false : true}
-                                        readonly={isActionRead || isActionDelete || isActionExplain}
+                                        //readonly={isActionRead || isActionDelete || isActionExplain}
+                                        readonly={!isActionAdd || !isActionEdit}
                                         Validate={validateText?.Clause_Rs || false}
                                         validateTextLable={validateText?.Clause_Rs ? "กรุณากรอกรายละเอียด Clause" : ""}
                                       />
@@ -1758,7 +1765,8 @@ export default function ComplaintBody({
                                           }
                                         }}
                                         bgcolorTextField={action === "Add" ? false : true}
-                                        readonly={isActionRead || isActionDelete || isActionExplain}
+                                        //readonly={isActionRead || isActionDelete || isActionExplain}
+                                        readonly={!isActionAdd || !isActionEdit}
                                         Validate={validateText?.Other_Rs || false}
                                         validateTextLable={validateText?.Other_Rs ? "กรุณากรอกรายละเอียด Other" : ""}
                                       />
@@ -1817,7 +1825,8 @@ export default function ComplaintBody({
                                     }
                                   }}
                                   bgcolorTextField={action === "Add" ? false : isActionEdit ? false : true}
-                                  readonly={isActionRead || isActionDelete || isActionExplain}
+                                  //readonly={isActionRead || isActionDelete || isActionExplain}
+                                  readonly={!isActionAdd || !isActionEdit}
                                   Validate={validateText?.Detail || false}
                                   validateTextLable={validateText?.Detail ? "กรุณากรอกรายละเอียด (Detail)" : ""}
                                 />
@@ -1926,12 +1935,13 @@ export default function ComplaintBody({
                                                 item.id
                                               );
                                             }}
-                                            disabled={
-                                              isActionRead ||
-                                              isActionEdit ||
-                                              isActionDelete ||
-                                              isActionExplain
-                                            }
+                                            // disabled={
+                                            //   isActionRead ||
+                                            //   isActionEdit ||
+                                            //   isActionDelete ||
+                                            //   isActionExplain
+                                            // }
+                                            disabled={!isActionAdd}
                                             sx={{ color: "#ff9800" }}
                                           />
                                         }
@@ -2213,7 +2223,8 @@ export default function ComplaintBody({
 
 
                                           {/* //ปุ่มดาวน์โหลดไฟล์ */}
-                                          {(action === "Read" || isActionExplain) && (
+                                          {/* {(action === "Read" || isActionExplain) && ( */}
+                                          { !isActionAdd && (
                                             <IconButton
                                               color="primary"
                                               onClick={async () => {
@@ -2416,7 +2427,8 @@ export default function ComplaintBody({
         </Paper>
       )}
 
-      {isActionClose || isActionExplain && dataReportTypeValue && (
+      {/* {isActionClose || isActionExplain || isActionExplainApproveSc || isActionExplainApproveQc && dataReportTypeValue && ( */}
+      {!isActionAdd && !isActionRead && !isActionEdit && !isActionDelete && dataReportTypeValue && (
         <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>
           <Paper elevation={3} sx={{
             p: 3,
@@ -2472,16 +2484,17 @@ export default function ComplaintBody({
                       </Box>
 
                       {/* === ฝั่งขวา ปุ่ม Add === */}
-                      {complaint_status_label == 'SUBMIT' && (
+                      {complaint_status_label == 'SUBMIT' &&  
+                       user[0] && dataelement &&
+                       String(user[0].itasset_department_id) === String(dataelement.respondent_department_id) && 
+                      (
                         <Button
                           variant="contained"
                           size="small"
                           sx={{
-                            backgroundColor: "#2e7d32",
+                            backgroundColor: "#2b72d7ff",
                             "&:hover": {
-                              backgroundColor: "#2e7d32",
-                              //transform: "translateY(-1px)",
-                              //boxShadow: "0 4px 8px rgba(0,0,0,0.2)"
+                              backgroundColor: "#1657b1ff",
                             },
                             borderRadius: 2,
                             textTransform: "none",
@@ -2564,6 +2577,24 @@ export default function ComplaintBody({
                                         >
                                           อนุมัติ
                                         </Button>
+                                        {item.step_label === "EXPLAIN" && (
+                                          <Button
+                                            variant="contained"
+                                            size="medium"
+                                            onClick={() => handleOnclickExplainApproveSc && handleOnclickExplainApproveSc(item)}
+                                            sx={{
+                                              backgroundColor: '#45bc4bff',
+                                              color: '#FFFFFF',
+                                              '&:hover': { backgroundColor: '#1b5e20' },
+                                              textTransform: 'none',
+                                              fontWeight: 600,
+                                              borderRadius: 2,
+                                              px: 4,
+                                            }}
+                                          >
+                                            อนุมัติ
+                                          </Button>
+                                        )}
 
                                         {/* ปุ่มดูข้อมูล */}
                                         <Button
