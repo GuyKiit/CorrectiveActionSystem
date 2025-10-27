@@ -1,5 +1,5 @@
-import React, { useState, useMemo, use } from "react";
-import { _GET, _POST, _POST_FORMDATA, _POST_SYNC, _POST_SYS_API } from "../../service/mas";
+import React, { useState, useMemo, use, useEffect } from "react";
+import { _GET, _POST, _POST_FORMDATA, _POST_SYS_API } from "../../service/mas";
 import { _formatNumber, conCatDateTime } from "../../../libs/datacontrol";
 import { setValueMas } from "../../../libs/setvaluecallback";
 import dayjs from "dayjs";
@@ -32,7 +32,7 @@ import CloseIcon from '@mui/icons-material/CheckCircle';
 import { useListDepartmentSetting } from "./core/ListDepartmentSettingContext";
 import DepartmentSettingBody from "./components/DepartmentSettingBody";
 import { data } from "react-router-dom";
-import { mas_CompanyGet, mas_DepartmentDomainGet, mas_DomainGet, mas_UsernameGet } from "../../service/mas/lov";
+import { mas_CompanyGet, mas_DepartmentDomainGet, mas_DepartmentDomainGetAll, mas_DomainGet, mas_DomainGetAll, mas_UsernameGetAll } from "../../service/mas/lov";
 // import ExplaintBody from "./components/ExplaintBody";
 
 // =====================================================================================================
@@ -196,6 +196,14 @@ export default function DepartmentSetting() {
     dataset_roleAdmin, setdataset_roleAdmin,
     datastatus, setdatastatus,
 
+    //====================================
+    //--------GetMaster(All)-------
+    master_domain, setmaster_domain,
+    master_department, setmaster_department,
+    master_user, setmaster_user
+    //====================================
+
+
   } = useListDepartmentSetting();
 
   // =====================================================================================================
@@ -213,22 +221,15 @@ export default function DepartmentSetting() {
   const [openExplain, setOpenExplain] = React.useState(false);
   const [openExplainAdd, setOpenExplainAdd] = React.useState(false);
   const [openExplainView, setOpenExplainView] = React.useState(false);
-
   const [openExplainApproveSc, setOpenExplainApproveSc] = React.useState(false);
-
   const [openUpLoad, setOpenUpload] = React.useState(false);
-
-
   const [ComplaintBlocks, setComplaintBlocks] = useState<Block[]>([]);
   const [blockValidateErrors, setBlockValidateErrors] = useState<{ [index: number]: data_detail }>({});
   const [successCardOpen, setSuccessCardOpen] = React.useState(false);
   const [successCardMessage, setSuccessCardMessage] = React.useState("");
   const [openAddlist, setOpenAddlist] = React.useState(false);
-
-
   const handleOpenAddList = () => setOpenAddlist(true);
   const handleCloseAddlist = () => setOpenAddlist(false);
-
   // Date Search Variables (from index.tsx)
   const [respondWithinSearch, setrespondWithinSearch] = React.useState<
     dayjs.Dayjs | undefined | null
@@ -239,7 +240,6 @@ export default function DepartmentSetting() {
   const [endDateSearch, setEndDateSearch] = React.useState<
     dayjs.Dayjs | undefined | null
   >(dayjs().add(3, "month"));
-
   // Search Variables (from index.tsx)
   const [TextNameSearch, setTextNameSearch] = React.useState({
     username_search: "",
@@ -248,7 +248,6 @@ export default function DepartmentSetting() {
     department_search: "",
     Email: "",
   });
-
   const [open, setOpen] = React.useState(false);
   const [dataComplaintType, setdataComplaintType] = useState<LovType[]>([]);
   const [dataComplaintRs, setdataComplaintRs] = useState<LovType[]>([]);
@@ -284,7 +283,6 @@ export default function DepartmentSetting() {
   // For On-Off Calling Function Log
   const [isCallFuncLogOn] = useState(true);
 
-
   // Reset Form Function (from index.tsx)
   const resetSearchTable = () => {
     setdocumentDateSearch(null);
@@ -302,8 +300,6 @@ export default function DepartmentSetting() {
     setsectionApprove("");
     setqcApprove("");
   };
-
-
 
   // Event Handlers =========================================================
   const handleCompanyChange = (value: any) => {
@@ -341,7 +337,7 @@ export default function DepartmentSetting() {
       };
 
       mas_DepartmentDomainGet(value, set_department, isCallFuncLogOn);
-      mas_UsernameGet(dataset, set_username, isCallFuncLogOn);
+      // mas_UsernameGetAll(setmaster_user, isCallFuncLogOn);
     } else {
       set_department([]);
       set_username([]);
@@ -977,7 +973,9 @@ export default function DepartmentSetting() {
   // Function - Add DepartmentSetting
   const DepartmentSettingAdd = async () => {
     if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  DepartmentSettingAdd");
-
+    console.log("👀 sectionApprove:", sectionApprove);
+    console.log("👀 qcApprove:", qcApprove);
+    console.log("👀 sectionApprove at Add:", sectionApprove);
     // if (!validateBeforeAdd()) {
     //   return;
     // }
@@ -1054,33 +1052,33 @@ export default function DepartmentSetting() {
     //   return;
     // }
 
-    
+
     // เตรียม Models
     const DeptApproveSetup = [];
 
     if (sectionApprove?.employee_username) {
-    DeptApproveSetup.push({
-      step: "1",
-      user_id: sectionApprove.employee_username, // ใช้ state ปัจจุบัน
-    });
-  }
+      DeptApproveSetup.push({
+        step: "1",
+        user_id: sectionApprove.employee_username, // ใช้ state ปัจจุบัน
+      });
+    }
 
-  if (qcApprove?.employee_username) {
-    DeptApproveSetup.push({
-      step: "2",
-      user_id: qcApprove.employee_username, // ใช้ state ปัจจุบัน
-    });
-  }
+    if (qcApprove?.employee_username) {
+      DeptApproveSetup.push({
+        step: "2",
+        user_id: qcApprove.employee_username, // ใช้ state ปัจจุบัน
+      });
+    }
 
-  const DeptSetupPayload = {
-    id: dataelement?.id,
-    // company : dataelement?.company ,
-    domain_dept_id:  dataelement?.domain_dept_id,
-    dept_email:  dataelement?.dept_email,
-    create_by: user[0]?.employee_username,
-    update_by: user[0]?.employee_username ,
-    DeptApproveSetup: DeptApproveSetup,
-  };
+    const DeptSetupPayload = {
+      id: dataelement?.id,
+      // company : dataelement?.company ,
+      domain_dept_id: dataelement?.domain_dept_id,
+      dept_email: dataelement?.dept_email,
+      create_by: user[0]?.employee_username,
+      update_by: user[0]?.employee_username,
+      DeptApproveSetup: DeptApproveSetup,
+    };
     console.log("📤 DeptSetupPayload:", DeptSetupPayload);
     setIsLoadingScreen(true);
 
@@ -1216,6 +1214,7 @@ export default function DepartmentSetting() {
   // =====================================================================================================
 
   // Dialog Handlers
+  
   const handleOnclickMenuSync = () => {
     if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  handleOnclickMenuSync");
 
@@ -1235,8 +1234,8 @@ export default function DepartmentSetting() {
 
     console.log("Read step:3 เรียกฟังก์ชั่น ดูข้อมูล handleOnclickMenuView ");
     console.log("Read step:3 ข้อมูลที่ได้จาก DeptSearchGet ก่อนส่งเข้าฟังก์ชั่น Complaint_Get  ", data);
-    Dept_setup_Get(data);
     resetForm();
+    Dept_setup_Get(data);
     setOpenDepartmentSettingView(true); // แล้วค่อยเปิด Dialog
   };
 
@@ -1245,8 +1244,8 @@ export default function DepartmentSetting() {
 
     console.log("Edit step:3 เรียกฟังก์ชั่น ดูข้อมูล handleOnclickMenuEdit ");
     console.log("Edit step:3 ข้อมูลที่ได้จาก DeptSearchGet ก่อนส่งเข้าฟังก์ชั่น Complaint_Get  ", data);
-    Dept_setup_Get(data);
     resetForm();
+    Dept_setup_Get(data);
     setOpenDepartmentSettingEdit(true);
   };
 
@@ -1255,8 +1254,8 @@ export default function DepartmentSetting() {
 
     console.log("Delete step:3 เรียกฟังก์ชั่น ดูข้อมูล handleOnclickMenuDelete ");
     console.log("Delete step:3 ข้อมูลที่ได้จาก DeptSearchGet ก่อนส่งเข้าฟังก์ชั่น Complaint_Get  ", data);
-    Dept_setup_Get(data);
     resetForm();
+    Dept_setup_Get(data);
     setOpenDepartmentSettingDelete(true);
   };
 
@@ -1294,19 +1293,57 @@ export default function DepartmentSetting() {
   // USEEFFECT - INITIALIZATION (from index.tsx and ComplaintRead.tsx)
   // =====================================================================================================
 
-  // Initialize data on component mount
-  React.useEffect(() => {
-    LovAll_Get();
-    resetSearchTable();
-    console.log("step:1 เรียกฟังก์ชั่น DeptSearchGet();");
-    DeptSetupGet();
-    // DomainGet();
-    // DepartmentDomainGet();
-    // CompanyGet();
-    UsernameGet();
+  //   // Initialize data on component mount
+  //   useEffect(() => {
+  //   const fetchData = async () => {
+  //     console.log("useEffect start");
 
-    console.log("#################### company_search", company_search);
+  //     await LovAll_Get();
+  //     resetSearchTable();
+  //     await DeptSetupGet();
+  //     await UsernameGet();
+  //     await mas_DomainGetAll(setmaster_domain, isCallFuncLogOn);
+  //     await mas_DepartmentDomainGetAll(setmaster_department, isCallFuncLogOn);
+  //     await mas_UsernameGetAll(setmaster_user, isCallFuncLogOn);
+
+  //     console.log("#################### master_domain", master_domain);
+  //     console.log("#################### master_department", master_department);
+  //     console.log("#################### master_user", master_user);
+
+  //     Checkdata(); // ตอนนี้ state ถูกอัปเดตแล้ว
+  //     console.log("Checkdata done");
+  //   };
+
+  //   fetchData();
+  // }, []);
+
+  // Initialize data on component mount
+  const effectRan = React.useRef(false); // ป้องกัน run ซ้ำใน dev mode
+
+  React.useEffect(() => {
+    if (effectRan.current) return;
+    effectRan.current = true;
+
+    const fetchData = async () => {
+      try {
+        console.log("useEffect start");
+        await LovAll_Get();                     // ไม่มี signal
+        await resetSearchTable();
+        await DeptSetupGet();
+        await UsernameGet();
+        await mas_DomainGetAll(setmaster_domain, isCallFuncLogOn);
+        await mas_DepartmentDomainGetAll(setmaster_department, isCallFuncLogOn);
+        await mas_UsernameGetAll(setmaster_user, isCallFuncLogOn);        
+        console.log("useEffect done");
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchData();
   }, []);
+
+
 
   React.useEffect(() => {
     if (dataset_activeCompany) {

@@ -20,6 +20,17 @@ export type ListDepartmentSettingContextProps = {
 
     dept_company?: string
     dept_domain?: string
+
+    //============================================
+    //--------GetMaster(All)-------
+    master_domain?: any
+    master_department?: any
+    master_user?: any
+
+    setmaster_domain: Dispatch<SetStateAction<any>>;
+    setmaster_department: Dispatch<SetStateAction<any>>;
+    setmaster_user: Dispatch<SetStateAction<any>>;
+    //============================================
     
 
     setdept_id: Dispatch<SetStateAction<string>>;
@@ -33,6 +44,8 @@ export type ListDepartmentSettingContextProps = {
 
     setdept_company: Dispatch<SetStateAction<string>>;
     setdept_domain: Dispatch<SetStateAction<string>>;
+
+   
 
     //--------dataset-------
     company?: any
@@ -99,7 +112,12 @@ export const initialListDepartmentSetting: ListDepartmentSettingContextProps = {
     set_domain_search: () => { },
     set_username_search: () => { },
     
-
+    //============================================
+    //--------GetMaster(All)-------
+    setmaster_domain: () => { },
+    setmaster_department: () => { },
+    setmaster_user: () => { },
+    //============================================
 
 
 };

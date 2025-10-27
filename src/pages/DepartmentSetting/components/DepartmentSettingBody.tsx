@@ -57,7 +57,7 @@ import { cleanAccessData } from "../../../service/initmain/initmain";
 import { data } from "react-router-dom";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useListDepartmentSetting } from "../core/ListDepartmentSettingContext";
-import { mas_DepartmentDomainGet, mas_DomainGet, mas_UsernameGet } from "../../../service/mas/lov";
+import { mas_DepartmentDomainGet, mas_DomainGet } from "../../../service/mas/lov";
 
 // pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
@@ -153,8 +153,8 @@ export default function DepartmentSettingBody({
         dept_email,
         approve_id,
         step,
-        // sectionApprove,
-        // qcApprove,
+        sectionApprove,
+        qcApprove,
 
         // dept_company,
         // dept_domain,
@@ -165,8 +165,8 @@ export default function DepartmentSettingBody({
         setdept_email,
         setapprove_id,
         setstep,
-        // setsectionApprove,
-        // setqcApprove,
+        setsectionApprove,
+        setqcApprove,
 
         // setdept_company,
         // setdept_domain,
@@ -177,6 +177,12 @@ export default function DepartmentSettingBody({
         department, set_department,
         domain, set_domain,
         datastatus, setdatastatus,
+        //====================================
+        //--------GetMaster(All)-------
+        master_domain, setmaster_domain,
+        master_department, setmaster_department,
+        master_user, setmaster_user
+        //====================================
 
     } = useListDepartmentSetting();
 
@@ -218,8 +224,8 @@ export default function DepartmentSettingBody({
     const [dataDecision, setdataDecision] = useState<LovType[]>([]);
     const [dept_domain, setdept_domain] = useState<any>(null);
     const [dept_company, setdept_company] = useState<any>(null);
-    const [sectionApprove, setsectionApprove] = useState<any>(null);
-    const [qcApprove ,   setqcApprove] = useState<any>(null);
+    // const [sectionApprove, setsectionApprove] = useState<any>(null);
+    // const [qcApprove, setqcApprove] = useState<any>(null);
 
     // Event Handlers =========================================================
     const handleCompanyChange = (value: any) => {
@@ -240,6 +246,9 @@ export default function DepartmentSettingBody({
         }
         console.log("@@@@@@@@@@@@second", domain);
     };
+
+    //==============================================================================
+
     const handleDomainChange = (value: any) => {
         console.log('####### Onchange Company Value [event] : ', value);
         console.log('####### Onchange Domain Value [event] : ', value);
@@ -251,7 +260,17 @@ export default function DepartmentSettingBody({
             };
 
             mas_DepartmentDomainGet(value, set_department, isCallFuncLogOn);
-            mas_UsernameGet(dataset, set_username, isCallFuncLogOn);
+
+            console.log("####### dept_domain :", dept_domain);
+
+            // 1️⃣ กรองเฉพาะ approve rows
+            const FilterUser = master_user.filter((val: any) => val['domain_id'] === value.domain_id && val['itasset_company_id'] === value.company_id);
+            console.log("####### FilterUser:", FilterUser);
+            console.log("####### master_user :", master_user);
+
+            set_username(FilterUser)
+
+            // mas_UsernameGet(dataset, set_username, isCallFuncLogOn);
         } else {
             set_department([]);
             set_username([]);
@@ -261,6 +280,15 @@ export default function DepartmentSettingBody({
         }
 
     };
+
+    React.useEffect(() => {
+        console.log("dept_domain :", dept_domain);
+        console.log("username username username username :", username);
+
+
+    }, [dept_domain, username]);
+
+
 
     const handleDepartmentChange = (val: any) => {
         console.log('####### Onchange Department Value [event] : ', val);
@@ -314,102 +342,196 @@ export default function DepartmentSettingBody({
     // ลบไฟล์
 
 
+    // React.useEffect(() => {
+    //     const updateData = async () => {
+    //         try {
+    //             // console.log("👀 username:", username);
+    //             console.log("👀 dataelement:", dataelement);
+    //             // console.log("👀 dataelement.sectionApprove:", dataelement?.sectionApprove);
+
+    //             // ================================
+    //             // 1) Map ค่า default ของ company
+    //             // ================================
+    //             if (Array.isArray(company) && dataelement?.company_id) {
+    //                 const mappedDept = await setValueMas(
+    //                     company,
+    //                     dataelement.company_id,
+    //                     "company_id"
+    //                 );
+
+    //                 if (mappedDept) {
+    //                     setdept_company(mappedDept); // ค่า default ของ Combobox
+    //                 }
+    //             }
+
+    //             // ================================
+    //             // 2) Map ค่า default ของ domain
+    //             // ================================
+    //             // if (dataelement?.domain_id) {
+    //             mas_DomainGet(dataelement?.company_id, set_domain, user, isCallFuncLogOn);
+    //             // }
+
+    //             if (Array.isArray(domain) && dataelement?.domain_id) {
+
+    //                 const mappedDept = await setValueMas(
+    //                     domain,
+    //                     dataelement.domain_id,
+    //                     "domain_id"
+    //                 );
+    //                 if (mappedDept) {
+    //                     setdept_domain(mappedDept); // ค่า default ของ Combobox
+    //                 } else {
+    //                     console.warn("⚠️😼 No department found for ID:", dataelement.domain_id);
+    //                 }
+    //             }
+
+    //             // ================================
+    //             // 3) Map ค่า default ของ department
+    //             // ================================
+
+    //             var tempDepartmentValue = {
+    //                 company_id: dataelement?.company_id,
+    //                 domain_id: dataelement?.domain_id,
+    //             };
+
+    //             if (dataelement?.domain_dept_id) {
+    //                 mas_DepartmentDomainGet(tempDepartmentValue, set_department, isCallFuncLogOn);
+    //             }
+
+    //             if (Array.isArray(department) && dataelement?.domain_dept_id) {
+    //                 const mappedDept = await setValueMas(
+    //                     department,
+    //                     dataelement.domain_dept_id,
+    //                     "domain_dept_id"
+    //                 );
+
+    //                 if (mappedDept) {
+    //                     setdomain_dept_id(mappedDept); // ค่า default ของ Combobox
+    //                 } else {
+    //                     console.warn("⚠️ No department found for ID:", dataelement.domain_dept_id);
+    //                 }
+    //             }
+    //             // ================================
+    //             // 2) Map ค่า default ของ sectionApprove
+    //             // ================================
+    //             var tempUsernameValue = {
+    //                 company_id: dataelement?.company_id,
+    //                 domain_id: dataelement?.domain_id,
+    //                 department_id: dataelement?.domain_dept_id,
+    //             };
+
+    //             mas_UsernameGet(tempUsernameValue, set_username, isCallFuncLogOn);
+
+    //             if (Array.isArray(username) && dataelement?.sectionApprove) {
+    //                 const mappedDept = await setValueMas(
+    //                     username,
+    //                     dataelement.sectionApprove,
+    //                     "employee_username"
+    //                 );
+
+    //                 if (mappedDept) {
+    //                     setsectionApprove(mappedDept); // ค่า default ของ Combobox
+    //                     setqcApprove(mappedDept); // ค่า default ของ Combobox
+    //                 } else {
+    //                     console.warn("⚠️ No department found for ID:", dataelement.sectionApprove);
+    //                 }
+    //             }
+
+    //         } catch (err) {
+    //             console.error("updateData error:", err);
+    //         }
+    //     };
+    //     console.log("company", company);
+    //     console.log("domain", domain);
+    //     console.log("department", department);
+
+    //     if (!isActionAdd) updateData();
+
+    // }, [
+
+    //     action,
+    //     dataelement,
+    //     // department,
+    //     // company,
+    //     // domain,
+    //     // username,
+
+    // ]);
     React.useEffect(() => {
         const updateData = async () => {
             try {
-                console.log("👀 username:", username);
-                console.log("👀 dataelement.sectionApprove:", dataelement?.sectionApprove);
+                if (!dataelement) return;
 
-
-                // ================================
-                // 1) Map ค่า default ของ company
-                // ================================
+                console.log("👀 dataelement:", dataelement);
+                console.log("👀 company:", company)
+                console.log("👀 mappedCompany:", dataelement?.company_id)
+                // 1️⃣ Map Company
                 if (Array.isArray(company) && dataelement?.company_id) {
-                    const mappedDept = await setValueMas(
-                        company,
-                        dataelement.company_id,
-                        "company_id"
-                    );
+                    const mappedCompany = await setValueMas(company, dataelement.company_id, "company_id");
+                    console.log("mappedCompany:", mappedCompany)
+                    if (mappedCompany) setdept_company(mappedCompany);
+                }
 
-                    if (mappedDept) {
-                        setdept_company(mappedDept); // ค่า default ของ Combobox
+                // 2️⃣ Map Domain จาก master_domain
+                // if (Array.isArray(master_domain) && dataelement?.domain_id) {
+                //     const mappedDomain = await setValueMas(master_domain, dataelement.domain_id, "domain_id");
+                //     if (mappedDomain) setdept_domain(mappedDomain);
+                // }
+
+                // 3️⃣ Map Department จาก master_department
+                if (Array.isArray(master_department) && dataelement?.domain_dept_id) {
+                    const mappedDept = await setValueMas(master_department, dataelement.domain_dept_id, "domain_dept_id");
+                    if (mappedDept) setdomain_dept_id(mappedDept);
+                }
+
+                // ตรวจสอบ array
+                console.log("🤣master_user1:", master_user);
+                console.log("🤣dataelement:", dataelement);
+                console.log("🤣dataelement?.deptApproveSetup:", dataelement?.deptApproveSetup);
+
+                if (Array.isArray(master_user) && Array.isArray(dataelement?.deptApproveSetup)) {
+
+                    // 1️⃣ กรองเฉพาะ approve rows
+                    const approveRows = datastatus.filter((val: any) => val['lov_code'] === 'APPROVE');
+                    console.log("approveRows:", approveRows);
+
+                    // 2️⃣ สร้าง map ของ step → deptApproveSetup
+                    const stepMap: Record<string, any[]> = {};
+                    dataelement.deptApproveSetup.forEach((d: any) => {
+                        if (!stepMap[d.step]) stepMap[d.step] = [];
+                        stepMap[d.step].push(d);
+                    });
+                    console.log("stepMap:", stepMap);
+
+                    // 3️⃣ map user โดยไม่แยก set ทีละตัว
+                    const mappedStates: Record<string, any[]> = {}; // stepKey -> array ของ user
+
+                    for (const row of approveRows) {
+                        const stepKey = row.lov3; // ใช้ lov3 เป็น key
+                        const stepData = stepMap[stepKey] || [];
+
+                        console.log("🧩 stepKey:", stepKey, "stepData:", stepData);
+
+                        if (stepData.length > 0) {
+                            // ✅ ส่ง array ของ user_id ทั้งหมดใน step นั้น
+                            const userIds = stepData.map((s: any) => s.user_id);
+                            const mapped = await setValueMas(master_user, userIds, "user_id");
+
+                            console.log(`✅ mapped for step ${stepKey}:`, mapped);
+                            mappedStates[stepKey] = mapped;
+                        } else {
+                            mappedStates[stepKey] = [];
+                            console.log(`⚠️ No data for step ${stepKey}`);
+                        }
                     }
+
+                    console.log("🎯 mappedStates ready:", mappedStates);
+
+                    // 4️⃣ set ค่าไว้ใน state เดียว เช่น approveUsers
+                    // setApproveUsers(mappedStates);
                 }
 
-                // ================================
-                // 2) Map ค่า default ของ domain
-                // ================================
-                if (dataelement?.domain_id) {
-                    mas_DomainGet(dataelement?.company_id, set_domain, user, isCallFuncLogOn);
-                }
 
-                if (Array.isArray(domain) && dataelement?.domain_id) {
-
-                    const mappedDept = await setValueMas(
-                        domain,
-                        dataelement.domain_id,
-                        "domain_id"
-                    );
-                    if (mappedDept) {
-                        setdept_domain(mappedDept); // ค่า default ของ Combobox
-                    } else {
-                        console.warn("⚠️😼 No department found for ID:", dataelement.domain_id);
-                    }
-                }
-
-                // ================================
-                // 3) Map ค่า default ของ department
-                // ================================
-
-                var tempDepartmentValue = {
-                    company_id: dataelement?.company_id,
-                    domain_id: dataelement?.domain_id,
-                };
-
-                mas_DepartmentDomainGet(tempDepartmentValue, set_department, isCallFuncLogOn);
-
-                if (Array.isArray(department) && dataelement?.domain_dept_id) {
-                    const mappedDept = await setValueMas(
-                        department,
-                        dataelement.domain_dept_id,
-                        "domain_dept_id"
-                    );
-
-                    if (mappedDept) {
-                        setdomain_dept_id(mappedDept); // ค่า default ของ Combobox
-                    } else {
-                        console.warn("⚠️ No department found for ID:", dataelement.domain_dept_id);
-                    }
-                }
-                // ================================
-                // 2) Map ค่า default ของ sectionApprove
-                // ================================
-
-                
-
-
-                var tempUsernameValue = {
-                    company_id: dataelement?.company_id,
-                    domain_id: dataelement?.domain_id,
-                    department_id: dataelement?.domain_dept_id,
-                };
-
-                mas_UsernameGet(tempUsernameValue, set_username, isCallFuncLogOn);
-
-                if (Array.isArray(username) && dataelement?.sectionApprove) {
-                    const mappedDept = await setValueMas(
-                        username,
-                        dataelement.sectionApprove,
-                        "employee_username"
-                    );
-
-                    if (mappedDept) {
-                        setsectionApprove(mappedDept); // ค่า default ของ Combobox
-                        setqcApprove(mappedDept); // ค่า default ของ Combobox
-                    } else {
-                        console.warn("⚠️ No department found for ID:", dataelement.sectionApprove);
-                    }
-                }
 
 
 
@@ -417,45 +539,60 @@ export default function DepartmentSettingBody({
                 console.error("updateData error:", err);
             }
         };
-        console.log("company", company);
-        console.log("domain", domain);
-        console.log("department", department);
 
-        if (isActionRead) updateData();
+        // เรียกเฉพาะตอน View / Edit
+        if (!isActionAdd && dataelement) updateData();
+    }, [action, dataelement, company, master_domain, master_department, master_user]);
 
-    }, [
+    //    React.useEffect(() => {
+    //   if (!dataelement || !Array.isArray(master_user)) return;
 
-        action,
-        dataelement,
-        department,
-        company,
-        domain,
-        username,
+    //   console.log("👀 master_user:", master_user);
+    //   console.log("🎯 dataelement.sectionApprove:", dataelement.sectionApprove);
+    //   console.log("🎯 dataelement.qcApprove:", dataelement.qcApprove);
 
-    ]);
+    //   // Map sectionApprove
+    //   if (dataelement.sectionApprove) {
+    //     const userObj = master_user.find(
+    //       (u: any) => u.employee_username === dataelement.sectionApprove
+    //     );
+    //     if (userObj) setsectionApprove(userObj);
+    //   }
+
+    //   // Map qcApprove
+    //   if (dataelement.qcApprove) {
+    //     const qcObj = master_user.find(
+    //       (u: any) => u.employee_username === dataelement.qcApprove
+    //     );
+    //     if (qcObj) setqcApprove(qcObj);
+    //   }
+    // }, [dataelement, master_user]);
+
 
     ////////////////////// DepartmentSetting Read //////////////////////////
     React.useEffect(() => {
-        console.log("step: 5 เก็บข้อมูลเข้า ฺsetdataelement ใหม่ ", dataelement)
+        console.log("step: 5 เก็บข้อมูลเข้า ฺsetdataelement ใหม่ ")
 
         if (dataelement && action != "Add") {
             console.log("🧩🧩🧩🧩🧩🧩🧩🧩 dataelement?.dept_company", dataelement?.company_id);
             console.log("🧩🧩🧩🧩🧩🧩🧩🧩 dataelement?.dept_company", dataelement?.domain_id);
+            console.log("👀 ตัวอย่าง master_user[0]:", dataelement?.sectionApprove);
+
             // department mapping จะทำใน useEffect แรกแล้ว (บรรทัด 255-268)
             // setdept_company(dataelement?.dept_company ? dataelement?.dept_company : "");
             setdept_email(dataelement?.dept_email ? dataelement?.dept_email : "");
             setstep(dataelement?.step ? dataelement?.step : "");
             // setsectionApprove(dataelement?.sectionApprove ? dataelement?.sectionApprove : "");
-            setqcApprove(dataelement?.qcApprove ? dataelement?.qcApprove : "");
+            // setqcApprove(dataelement?.qcApprove ? dataelement?.qcApprove : "");
         }
     }, [dataelement, department, username, company]);
 
-    React.useEffect(() => {
-        console.log("🧩 useEffect triggered: company or dataelement changed");
-        console.log("🧩🧩🧩 company:", company, "🧩🧩🧩");
-        console.log("🧩🧩🧩dept_company:", username);
-        console.log("dataelement:", dataelement);
-    }, [company, dataelement]);
+    // React.useEffect(() => {
+    //     console.log("🧩 useEffect triggered: company or dataelement changed");
+    //     console.log("🧩🧩🧩 company:", company, "🧩🧩🧩");
+    //     console.log("🧩🧩🧩dept_company:", username);
+    //     console.log("dataelement:", dataelement);
+    // }, [company, dataelement]);
 
     const FilteredData = datastatus.filter((val: any) => val['lov_code'] == 'APPROVE');
     console.log("FilteredData:", FilteredData);
@@ -541,7 +678,7 @@ export default function DepartmentSettingBody({
                                     console.log("cccccc", val);
 
                                 }}
-                                readonly={isActionRead || isActionDelete || isActionExplain}
+                                readonly={isActionRead || isActionDelete}
                             />
                         </Grid>
                         <Grid size={4}>
@@ -555,8 +692,8 @@ export default function DepartmentSettingBody({
                                 column="domain_name"
                                 setvalue={(val) => {
                                     console.log("Domain selected:", val?.domain_name);
-                                    handleDomainChange(val);
                                     setdept_domain(val);
+                                    handleDomainChange(val);
                                     console.log("😋dddddd", val);
 
                                 }}
@@ -651,59 +788,73 @@ export default function DepartmentSettingBody({
                     </Box>
 
                     {/* ============================ Approve List ================================== */}
+                    {console.log("📏 approveRows.length:", approveRows?.length)}
+                    {console.log("👀 username:", username)}
+                    {console.log("✅ fullname_th list:", username?.map((u: any) => u.fullname_th))}
+                    {console.log("✅ fullname_en list:", username?.map((u: any) => u.fullname_en))}
 
                     {approveRows.length > 0 ? (
+                        approveRows.map((row: any) => {
+                            const stepKey = row['lov3']; // lov3 คือ step
+                            // Map step → state dynamically
+                            const valueMap: Record<string, any> = {
+                                "1": sectionApprove,
+                                "2": qcApprove,
+                                // ถ้ามี step เพิ่มเติม ให้เพิ่มที่นี่
+                            };
+                            const setValueMap: Record<string, Function> = {
+                                "1": setsectionApprove,
+                                "2": setqcApprove,
+                                // เพิ่ม step ใหม่ตามต้องการ
+                            };
 
-                        // Master Element
-                        approveRows.map((row: any, rowIndex: number) => (
-                            <Grid container spacing={3} paddingTop={3}>
-                                <Grid size={2}>
-                                    <FullWidthTextField
-                                        required="required"
-                                        value={approveRows[rowIndex]['lov3']}
-                                        labelName="ลำดับ (No.)"
-                                        onchange={(e) => setstep(e)}
-                                        readonly
-                                        textAlignTextField="center"
-                                    />
-                                </Grid>
-                                <Grid size={3}>
-                                    <FullWidthTextField
-                                        required="required"
-                                        value={approveRows[rowIndex]['lov6']}
-                                        labelName="ตำแหน่ง (Role)"
-                                        onchange={(e) => setstep(e)}
-                                        readonly
-                                        textAlignTextField="center"
-                                    />
-                                </Grid>
-                                <Grid size={7}>
-                                    <AutocompleteComboBox
-                                        required="required"
-                                        value={approveRows[rowIndex]['lov3'] === '1' ? sectionApprove
-                                            : approveRows[rowIndex]['lov3'] === '2' ? qcApprove : null}
-                                        labelName={
-                                            "ชื่อ (Username)"
-                                        }
-                                        options={username}
-                                        column="employee_username"
-                                        setvalue={(val) => {
-                                            console.log("Username selected:", val?.employee_username);
-                                            if (approveRows[rowIndex]['lov3'] === '1') {
-                                                setsectionApprove(val);
-                                            } else if (approveRows[rowIndex]['lov3'] === '2') {
-                                                setqcApprove(val);
+                            return (
+                                <Grid container spacing={3} paddingTop={3} key={uuidv4()}>
+                                    <Grid size={2}>
+                                        <FullWidthTextField
+                                            required="required"
+                                            value={row['lov3']}
+                                            labelName="ลำดับ (No.)"
+                                            readonly
+                                            textAlignTextField="center"
+                                        />
+                                    </Grid>
+                                    <Grid size={3}>
+                                        <FullWidthTextField
+                                            required="required"
+                                            value={row['lov6']}
+                                            labelName="ตำแหน่ง (Role)"
+                                            readonly
+                                            textAlignTextField="center"
+                                        />
+                                    </Grid>
+                                    <Grid size={7}>
+                                        <AutocompleteComboBox
+                                            required="required"
+                                            value={valueMap[stepKey] || null}
+                                            labelName="ชื่อ (Username)"
+                                            options={
+                                                Array.isArray(username)
+                                                    ? username.map((u) => ({
+                                                        ...u,
+                                                        display_name: u.employee_username
+                                                            ? `${u.fullname_th || u.fullname_en || ""} (${u.employee_username})`
+                                                            : `${u.fullname_th || u.fullname_en || ""}`,
+                                                    }))
+                                                    : []
                                             }
-                                        }}
-                                        bgcolorTextField={
-                                            action === "Add" ? false : isActionEdit ? false : true
-                                        }
-                                        readonly={isActionRead || isActionDelete || !dept_domain}
-                                    />
-                                </Grid>
-                            </Grid>
-                        ))
+                                            column="display_name"
+                                            setvalue={(val) => setValueMap[stepKey]?.(val)}
+                                            bgcolorTextField={action === "Add" ? false : isActionEdit ? false : true}
+                                            readonly={isActionRead || isActionDelete || !dept_domain}
+                                        />
 
+
+
+                                    </Grid>
+                                </Grid>
+                            );
+                        })
                     ) : (
                         <Paper
                             elevation={0}
@@ -713,17 +864,15 @@ export default function DepartmentSettingBody({
                                 color: "#999",
                                 backgroundColor: "#f9f9f9",
                                 borderRadius: 2,
-                                border: "2px dashed #e0e0e0"
+                                border: "2px dashed #e0e0e0",
                             }}
                         >
-                            <Typography
-                                className="sarabun-regular-datatable"
-                                sx={{ fontSize: "16px", color: "#999" }}
-                            >
+                            <Typography sx={{ fontSize: "16px", color: "#999" }}>
                                 ไม่พบลำดับผู้อนุมัติ
                             </Typography>
                         </Paper>
                     )}
+
 
                     {/* ============================ Approve List ================================== */}
 
