@@ -322,11 +322,11 @@ export default function DepartmentSetting() {
       setsectionApprove(null);
       setqcApprove(null);
       setTextNameSearch({
-            ...TextNameSearch,
-            company_search: "",
-            domain_search: "",
-            department_search: "",
-        });
+        ...TextNameSearch,
+        company_search: "",
+        domain_search: "",
+        department_search: "",
+      });
     }
     console.log("@@@@@@@@@@@@second", domain);
   };
@@ -347,10 +347,10 @@ export default function DepartmentSetting() {
       set_username([]);
       setdomain_dept_id(null);
       setTextNameSearch({
-            ...TextNameSearch,
-            domain_search: "",
-            department_search: "",
-        });
+        ...TextNameSearch,
+        domain_search: "",
+        department_search: "",
+      });
     }
 
   };
@@ -1054,37 +1054,33 @@ export default function DepartmentSetting() {
     //   return;
     // }
 
-    const tempid = uuidv4();
-
-
+    
     // เตรียม Models
     const DeptApproveSetup = [];
 
     if (sectionApprove?.employee_username) {
-      DeptApproveSetup.push({
-        step: "1",
-        user_id: sectionApprove.employee_username,
-      });
-    }
+    DeptApproveSetup.push({
+      step: "1",
+      user_id: sectionApprove.employee_username, // ใช้ state ปัจจุบัน
+    });
+  }
 
-    if (qcApprove?.employee_username) {
-      DeptApproveSetup.push({
-        step: "2",
-        user_id: qcApprove.employee_username,
-      });
-    }
+  if (qcApprove?.employee_username) {
+    DeptApproveSetup.push({
+      step: "2",
+      user_id: qcApprove.employee_username, // ใช้ state ปัจจุบัน
+    });
+  }
 
-    // สร้าง JSON payload
-    const DeptSetupPayload = {
-
-      id: dataelement?.id,
-      domain_dept_id: domain_dept_id?.domain_dept_id,
-      dept_email: dataelement?.dept_email,
-      create_by: user[0]?.employee_username || "",
-      update_by: user[0]?.employee_username || "",
-      DeptApproveSetup: DeptApproveSetup,
-
-    };
+  const DeptSetupPayload = {
+    id: dataelement?.id,
+    // company : dataelement?.company ,
+    domain_dept_id:  dataelement?.domain_dept_id,
+    dept_email:  dataelement?.dept_email,
+    create_by: user[0]?.employee_username,
+    update_by: user[0]?.employee_username ,
+    DeptApproveSetup: DeptApproveSetup,
+  };
     console.log("📤 DeptSetupPayload:", DeptSetupPayload);
     setIsLoadingScreen(true);
 
@@ -1391,7 +1387,7 @@ export default function DepartmentSetting() {
                   domain_search: val?.domain_id || "", // เก็บแค่ id เป็น string
                 })
               }}
-              readonly = {!TextNameSearch.company_search}
+              readonly={!TextNameSearch.company_search}
             />
           </Grid>
           <Grid size={3}>
@@ -1408,7 +1404,7 @@ export default function DepartmentSetting() {
                   department_search: val?.domain_dept_id || "", // เก็บแค่ id เป็น string
                 })
               }}
-              readonly = {!TextNameSearch.domain_search}
+              readonly={!TextNameSearch.domain_search}
             />
           </Grid>
 

@@ -42,10 +42,12 @@ export default function BrowseFileUpload({
   required,
   validate,
   options = [],
-  action = "Add",
+  action,
   isViewMode,
 }: BrowseFileUploadProps) {
 
+  const isActionAdd = action === "Add";
+  const isActionEdit = action === "Edit";
   const Read = action === "Read";
   const isActionExplainAdd = action === "ExplainAdd";
   const isActionExplain = action === "Explain";
@@ -111,7 +113,7 @@ export default function BrowseFileUpload({
       </label>
 
       {/*select ประเภทไฟล์ และ ปุ่มอัปโหลด */}
-      {(action == "Add" || action == "Edit"  || isActionExplainAdd ) && !isViewMode && (
+      {(isActionAdd || isActionEdit  || isActionExplainAdd ) && !isViewMode && (
         <>
           {/* Select + OtherText */}
           <div className="flex items-center gap-2 mb-2 w-full">

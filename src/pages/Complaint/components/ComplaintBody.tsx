@@ -10,7 +10,7 @@ import {
 } from "../../../../libs/datacontrol";
 import dayjs from "dayjs";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import DoneIcon from '@mui/icons-material/Done';
+import DoneIcon from "@mui/icons-material/Done";
 import DownloadIcon from "@mui/icons-material/Download";
 import CloseIcon from "@mui/icons-material/Close";
 import {
@@ -32,7 +32,11 @@ import {
   FormControlLabel,
   FormLabel,
   Grid2,
-  Stack, AccordionDetails, Accordion, AccordionSummary, Typography,
+  Stack,
+  AccordionDetails,
+  Accordion,
+  AccordionSummary,
+  Typography,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -60,9 +64,11 @@ import { useListComplaint } from "../core/ListComplaintContext";
 import { data } from "react-router-dom";
 import { ComplaintFile } from "./BrowseFileUpload";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import {  mas_DepartmentGet_Complaint, mas_DomainRelateGet } from "../../../service/mas/lov";
-
-// pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
+import {
+  mas_DepartmentGet_Complaint,
+  mas_DomainGet,
+  mas_DomainRelateGet,
+} from "../../../service/mas/lov";
 
 type Validate = {
   Product_Group: boolean;
@@ -111,6 +117,7 @@ interface ComplaintBody {
   readonlyTextField?: boolean;
   bgcolorTextField?: boolean;
   disableComBoBox?: boolean;
+  isAcknowledge?: boolean;
   dataelement?: any;
   validateText?: Validate;
   validateDetailText?: { [index: number]: detail };
@@ -131,7 +138,6 @@ interface ComplaintBody {
 
   onDetailChange?: (val: any) => void;
   onPriorityChange?: (val: any) => void;
-
 
   handleOpenAdd?: () => void;
   handleOnclickExplainView?: (item: any) => void;
@@ -166,6 +172,7 @@ export default function ComplaintBody({
   action,
   readonlyTextField,
   bgcolorTextField,
+  isAcknowledge,
   validateText,
   onBlocksChange,
   validateDetailText,
@@ -183,7 +190,6 @@ export default function ComplaintBody({
   onComplaintRsChange,
   onOtherRsChange,
   onClauseChange,
-
 
   onDetailChange,
   onPriorityChange,
@@ -294,7 +300,7 @@ export default function ComplaintBody({
     domainrelate,
     departmentrelate,
     department,
-
+    domain,
 
     setComplaint_no,
     setno,
@@ -377,6 +383,7 @@ export default function ComplaintBody({
     set_domainrelate,
     set_departmentrelate,
     set_department,
+    set_domain,
   } = useListComplaint();
 
   const [previewFile, setPreviewFile] = useState<File | null>(null);
@@ -396,7 +403,9 @@ export default function ComplaintBody({
   const [isCallFuncLogOn] = useState(true);
 
   // Get Master Variables ======================================================
-  const [filteredComplaintType, setFilteredComplaintType] = useState<LovType[]>([]);
+  const [filteredComplaintType, setFilteredComplaintType] = useState<LovType[]>(
+    []
+  );
   const [filteredComplaintRs, setFilteredComplaintRs] = useState<LovType[]>([]);
   const [filteredpriority, setFilteredpriority] = useState<LovType[]>([]);
   const [filteredphoto, setFilteredphoto] = useState<LovType[]>([]);
@@ -446,11 +455,21 @@ export default function ComplaintBody({
 
   // สร้าง state สำหรับควบคุม Accordion
   const [isMinimizedefaultOpen, setisMinimizeDefaultOpen] = useState(true);
-  const [isMinimizetypeOpen, setisMinimizeTypeOpen] = useState(action === "Explain" || action === "ApproveScAdd" ? false : true);
-  const [isMinimizersOpen, setisMinimizeRsOpen] = useState(action === "Explain" || action === "ApproveScAdd" ? false : true);
-  const [isMinimizedetailOpen, setisMinimizeDetailOpen] = useState(action === "Explain" || action === "ApproveScAdd" ? false : true);
-  const [isMinimizepriorityOpen, setisMinimizePriorityOpen] = useState(action === "Explain" || action === "ApproveScAdd" ? false : true);
-  const [isMinimizefileOpen, setisMinimizeFileOpen] = useState(action === "Explain" || action === "ApproveScAdd" ? false : true);
+  const [isMinimizetypeOpen, setisMinimizeTypeOpen] = useState(
+    action === "Explain" || action === "ApproveScAdd" ? false : true
+  );
+  const [isMinimizersOpen, setisMinimizeRsOpen] = useState(
+    action === "Explain" || action === "ApproveScAdd" ? false : true
+  );
+  const [isMinimizedetailOpen, setisMinimizeDetailOpen] = useState(
+    action === "Explain" || action === "ApproveScAdd" ? false : true
+  );
+  const [isMinimizepriorityOpen, setisMinimizePriorityOpen] = useState(
+    action === "Explain" || action === "ApproveScAdd" ? false : true
+  );
+  const [isMinimizefileOpen, setisMinimizeFileOpen] = useState(
+    action === "Explain" || action === "ApproveScAdd" ? false : true
+  );
   const [isMinimizerespondOpen, setisMinimizeRespondOpen] = useState(true);
   const [isMinimizeexlistOpen, setisMinimizeExlistOpen] = useState(true);
   const [isMinimizecloseOpen, setisMinimizeCloseOpen] = useState(true);
@@ -458,46 +477,64 @@ export default function ComplaintBody({
   const [isMinimizedeapp2Open, setisMinimizeDeapp2Open] = useState(true);
   const [isMinimizeotapp2Open, setisMinimizeOtapp2Open] = useState(true);
 
-
-  // Event Handlers =========================================================
-  const handleCompanyChange = (value: any) => {
-    console.log('####### Onchange Company Value [event] : ', value);
+  // Check Acknowledge flag =========================================================
+  const updateAcknowledgeFlag = (value: any) => {
+    console.log("####### Onchange Company Value [event] : ", value);
     console.log("@@@@@@@@@@@@First", dataset_domainrelate);
     console.log("Render check respondent_domain_id:", respondent_domain_id);
-
 
     if (value != null) {
       mas_DomainRelateGet(value, set_domainrelate, isCallFuncLogOn);
     } else {
-      
       setrespondent_domain_id(null);
     }
     console.log("@@@@@@@@@@@@second", dataset_domainrelate);
   };
 
-  const handleDomainChange = (value: any) => {
-    console.log('####### Onchange Domain Value [event] : ', value);
+  // Event Handlers =========================================================
+  const handleCompanyChange = (value: any) => {
+    console.log("####### Onchange Company Value [event] : ", value);
     console.log("@@@@@@@@@@@@First", dataset_domainrelate);
-    
+    console.log("Render check respondent_domain_id:", respondent_domain_id);
 
+    if (value != null) {
+      mas_DomainRelateGet(value, set_domainrelate, isCallFuncLogOn);
+    } else {
+      setrespondent_domain_id(null);
+    }
+    console.log("@@@@@@@@@@@@second", dataset_domainrelate);
+  };
+
+  // isAcknowledge
+
+  const handleDomainChange = (value: any) => {
+    console.log("####### Onchange Domain Value [event] : ", value);
+    console.log("@@@@@@@@@@@@First", dataset_domainrelate);
 
     if (value != null) {
       console.log("😎😎", value);
 
-      mas_DepartmentGet_Complaint(value, setdataset_department, isCallFuncLogOn, user);
+      mas_DepartmentGet_Complaint(
+        value,
+        setdataset_department,
+        isCallFuncLogOn,
+        user
+      );
     } else {
-      
       setdataset_department([]);
       setrespondent_department_id(null);
     }
     console.log("@@@@@@@@@@@@second", domainrelate);
   };
 
-
-
   // Function Handlers (On Change Event) ======================================================
   const handleReportTypeChange = async (val: LovType | null) => {
-    if (true) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  handleReportTypeChange");
+    if (true)
+      console.log(
+        "🕑 ",
+        dayjs().format("HH:mm:ss.SSS"),
+        " [Calling Function]  :  handleReportTypeChange"
+      );
 
     console.log(val, "valvalvalvalvalvalvalvalvalvalvalvalvalvalvalval");
 
@@ -581,7 +618,12 @@ export default function ComplaintBody({
   };
 
   const handleCheckboxChangeCT = (item: LovType) => {
-    if (true) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  handleCheckboxChangeCT");
+    if (true)
+      console.log(
+        "🕑 ",
+        dayjs().format("HH:mm:ss.SSS"),
+        " [Calling Function]  :  handleCheckboxChangeCT"
+      );
 
     console.log("💛💛item", item);
 
@@ -620,13 +662,17 @@ export default function ComplaintBody({
         onComplaintTypeChange(newData);
       }
 
-
       return newData;
     });
   };
 
   const handleCheckboxChangeRS = (item: LovType) => {
-    if (true) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  handleCheckboxChangeRS");
+    if (true)
+      console.log(
+        "🕑 ",
+        dayjs().format("HH:mm:ss.SSS"),
+        " [Calling Function]  :  handleCheckboxChangeRS"
+      );
 
     setdataComplaintRs((prev: LovType[] = []) => {
       console.log("💚💚item", item);
@@ -665,15 +711,17 @@ export default function ComplaintBody({
         onComplaintRsChange(newData);
       }
 
-
-
-
       return newData;
     });
   };
 
   const handleCheckboxChangePhotoType = (item: LovType) => {
-    if (true) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  handleCheckboxChangePhotoType");
+    if (true)
+      console.log(
+        "🕑 ",
+        dayjs().format("HH:mm:ss.SSS"),
+        " [Calling Function]  :  handleCheckboxChangePhotoType"
+      );
 
     setdataphoto((prev: LovType[] = []) => {
       let newData: LovType[];
@@ -705,11 +753,14 @@ export default function ComplaintBody({
     });
   };
 
- 
-
   // รับ ComplaintFile[] จาก BrowseFileUpload
   const handleFileChange = (fileArray: ComplaintFile[]) => {
-    if (true) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  handleFileChange");
+    if (true)
+      console.log(
+        "🕑 ",
+        dayjs().format("HH:mm:ss.SSS"),
+        " [Calling Function]  :  handleFileChange"
+      );
 
     if (!fileArray || fileArray.length === 0) return;
     const updatedList = [...fileList, ...fileArray];
@@ -718,7 +769,12 @@ export default function ComplaintBody({
   };
 
   const handleFileAttachmentTypeChange = (index: number, type: string) => {
-    if (true) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  handleFileAttachmentTypeChange");
+    if (true)
+      console.log(
+        "🕑 ",
+        dayjs().format("HH:mm:ss.SSS"),
+        " [Calling Function]  :  handleFileAttachmentTypeChange"
+      );
 
     const updated = [...fileList];
     updated[index] = {
@@ -731,7 +787,12 @@ export default function ComplaintBody({
   };
 
   const handleFileOtherTextChange = (index: number, text: string) => {
-    if (true) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  handleFileOtherTextChange");
+    if (true)
+      console.log(
+        "🕑 ",
+        dayjs().format("HH:mm:ss.SSS"),
+        " [Calling Function]  :  handleFileOtherTextChange"
+      );
 
     const updated = [...fileList];
     updated[index] = { ...updated[index], otherText: text };
@@ -742,7 +803,12 @@ export default function ComplaintBody({
 
   // Functions (Initial, Calculation or ETC.) =================================================
   const resetForm = () => {
-    if (true) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  resetForm");
+    if (true)
+      console.log(
+        "🕑 ",
+        dayjs().format("HH:mm:ss.SSS"),
+        " [Calling Function]  :  resetForm"
+      );
 
     setdataReportTypeValue("");
     setcas_number("");
@@ -772,7 +838,12 @@ export default function ComplaintBody({
     daysToAdd: number,
     checked: boolean
   ) => {
-    if (true) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  priorityCalculateRespondDate");
+    if (true)
+      console.log(
+        "🕑 ",
+        dayjs().format("HH:mm:ss.SSS"),
+        " [Calling Function]  :  priorityCalculateRespondDate"
+      );
 
     if (checked) {
       const newDate = dayjs().add(daysToAdd, "day"); // use dayjs instead of Date
@@ -783,7 +854,12 @@ export default function ComplaintBody({
   };
 
   const arraysAreEqual = (a: any[], b: any[]) => {
-    if (true) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  arraysAreEqual");
+    if (true)
+      console.log(
+        "🕑 ",
+        dayjs().format("HH:mm:ss.SSS"),
+        " [Calling Function]  :  arraysAreEqual"
+      );
 
     if (a.length !== b.length) return false;
     return a.every(
@@ -792,7 +868,12 @@ export default function ComplaintBody({
   };
 
   const handleRemoveFile = async (index: number) => {
-    if (true) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  handleRemoveFile");
+    if (true)
+      console.log(
+        "🕑 ",
+        dayjs().format("HH:mm:ss.SSS"),
+        " [Calling Function]  :  handleRemoveFile"
+      );
 
     const fileToRemove = fileList[index];
 
@@ -802,11 +883,14 @@ export default function ComplaintBody({
         // เรียกใช้ endpoint ลบไฟล์จากฐานข้อมูล
         const deletePayload = {
           id: fileToRemove.id,
-          update_by: user[0]?.employee_username || ""
+          update_by: user[0]?.employee_username || "",
         };
 
         console.log("🗑️ Deleting file from database:", deletePayload);
-        const response = await _POST(deletePayload, "/ComplaintFile/ComplaintFileEdit");
+        const response = await _POST(
+          deletePayload,
+          "/ComplaintFile/ComplaintFileEdit"
+        );
         console.log("🗑️ Delete response:", response);
 
         if (response && response.status === "success") {
@@ -833,7 +917,12 @@ export default function ComplaintBody({
 
   // Function - Get Complaints
   const Complaint_Get = async (data: any) => {
-    if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  Complaint_Get");
+    if (isCallFuncLogOn)
+      console.log(
+        "🕑 ",
+        dayjs().format("HH:mm:ss.SSS"),
+        " [Calling Function]  :  Complaint_Get"
+      );
 
     // setIsLoadingScreen(true)
     const dataset = {
@@ -845,14 +934,13 @@ export default function ComplaintBody({
     };
     console.log("Read step:4 dataset: ", dataset);
 
-
     try {
       let response = await _POST(dataset, "/Complaint/ComplaintGet");
       console.log("Read step:4 ผลลัพธ์ : ", response);
-      console.log("Read step:4 Normalize ปรับค่าใหม่ : ", response.data[0],);
+      console.log("Read step:4 Normalize ปรับค่าใหม่ : ", response.data[0]);
       if (response && response.status === "success") {
         setIsLoadingScreen(false);
-        setdataelement(response.data[0])
+        setdataelement(response.data[0]);
       }
     } catch (e) {
       console.log("error");
@@ -861,7 +949,12 @@ export default function ComplaintBody({
 
   // Function - Get Explain List
   const ExplainGet = async () => {
-    if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  ExplainGet");
+    if (isCallFuncLogOn)
+      console.log(
+        "🕑 ",
+        dayjs().format("HH:mm:ss.SSS"),
+        " [Calling Function]  :  ExplainGet"
+      );
 
     if (!dataelement?.id) {
       console.log("No complaint ID, skipping explain fetch");
@@ -889,7 +982,12 @@ export default function ComplaintBody({
 
   // READ - Get Complaints
   const ComplaintFile_Get = async () => {
-    if (true) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  ComplaintFile_Get");
+    if (true)
+      console.log(
+        "🕑 ",
+        dayjs().format("HH:mm:ss.SSS"),
+        " [Calling Function]  :  ComplaintFile_Get"
+      );
 
     // ตรวจสอบว่ามี dataelement?.id หรือไม่  ไม่error หากไม่มีไฟล์
     if (!dataelement?.id) {
@@ -900,8 +998,7 @@ export default function ComplaintBody({
     }
 
     setIsLoadingScreen(true);
-    const dataset =
-    {
+    const dataset = {
       complaint_id: dataelement?.id,
       cf_type: "Complaint",
     };
@@ -967,7 +1064,11 @@ export default function ComplaintBody({
         if (Array.isArray(dataset_reporttype) && dataelement?.report_type) {
           const defaultVal =
             // ลองหาแบบตรง id ก่อน
-            (await setValueMas(dataset_reporttype, dataelement.report_type, "id")) ||
+            (await setValueMas(
+              dataset_reporttype,
+              dataelement.report_type,
+              "id"
+            )) ||
             // fallback: หาแบบ lov_code (กันกรณี backend ส่งค่า lov_code แทน id)
             dataset_reporttype.find(
               (item: LovType) =>
@@ -997,38 +1098,127 @@ export default function ComplaintBody({
         //     setrespondent_department_id(mappedDept); // ค่า default ของ Combobox
         //   }
         // }
-        if (Array.isArray(dataset_department) && dataelement?.respondent_department_id) {
-          console.log("🗺️ Looking for department with ID:", dataelement.respondent_department_id);
+        if (
+          Array.isArray(dataset_department) &&
+          dataelement?.respondent_department_id
+        ) {
+          console.log(
+            "🗺️ Looking for department with ID:",
+            dataelement.respondent_department_id
+          );
           console.log("🗺️ Available departments:", dataset_department);
 
-          const mappedDept = await setValueMas(dataset_department, dataelement.respondent_department_id, "department_id");
+          const mappedDept = await setValueMas(
+            dataset_department,
+            dataelement.respondent_department_id,
+            "department_id"
+          );
 
           console.log("🗺️ Mapped department result:", mappedDept);
           if (mappedDept) {
             setrespondent_department_id(mappedDept); // ค่า default ของ Combobox
           } else {
-            console.warn("⚠️ No department found for ID:", dataelement.respondent_department_id);
+            console.warn(
+              "⚠️ No department found for ID:",
+              dataelement.respondent_department_id
+            );
           }
         }
-
 
         // ================================
         // 3) Map ค่า default ของ company
         // ================================
-        if (Array.isArray(dataset_company) && dataelement?.respondent_company_id) {
+        if (
+          Array.isArray(dataset_company) &&
+          dataelement?.respondent_company_id
+        ) {
           const mappedDept = await setValueMas(
             dataset_company,
             dataelement.respondent_company_id,
             "company_id"
           );
-
+          console.log("🔍 Mapping company:", {
+            target: dataelement.respondent_company_id,
+            dataset: dataset_company.map((c) => c.company_id),
+          });
           if (mappedDept) {
             setrespondent_company_id(mappedDept); // ค่า default ของ Combobox
+            setrequest_company_id(mappedDept); // ค่า default ของ Combobox
           }
         }
 
         // ================================
-        // 4) Filter priority
+        // 4) Map ค่า default ของ domain
+        // ================================
+        // ✅ โหลด domain ที่เกี่ยวข้องกับบริษัทนั้น
+        if (dataelement?.respondent_company_id) {
+          await mas_DomainRelateGet(
+            {
+              domain: dataelement?.respondent_domain_id ?? null,
+              company_id: dataelement.respondent_company_id,
+            },
+            set_domain,
+            isCallFuncLogOn
+          );
+        }
+
+        // ✅ ตั้งค่า default ของ domain ที่เลือกไว้
+        if (Array.isArray(domain) && dataelement?.respondent_domain_id) {
+          const mappedDomain = await setValueMas(
+            domain,
+            dataelement.respondent_domain_id,
+            "domain_id"
+          );
+
+          if (mappedDomain) {
+            setrespondent_domain_id(mappedDomain);
+          }
+        }
+
+        // ================================
+        //  กรณี Add → ไม่มี dataelement
+        // ================================
+        else {
+          console.log("🧭 Mode: Add");
+
+          // ✅ ใช้ company จาก profile
+          if (user?.[0]?.itasset_company_id) {
+            await mas_DomainGet(
+              user[0].itasset_company_id,
+              set_domain,
+              user,
+              isCallFuncLogOn
+            );
+          }
+        }
+
+        // ================================
+        // 3) Map ค่า default ของ department
+        // ================================
+
+        // var tempDepartmentValue = {
+        //   company_id: dataelement?.company_id,
+        //   domain_id: dataelement?.domain_id,
+        // };
+
+        // mas_DepartmentDomainGet(tempDepartmentValue, set_department, isCallFuncLogOn);
+
+        // if (Array.isArray(department) && dataelement?.domain_dept_id) {
+        //   const mappedDept = await setValueMas(
+        //     department,
+        //     dataelement.domain_dept_id,
+        //     "domain_dept_id"
+        //   );
+
+        //   if (mappedDept) {
+        //     setdomain_dept_id(mappedDept); // ค่า default ของ Combobox
+        //   } else {
+        //     console.warn("⚠️ No department found for ID:", dataelement.domain_dept_id);
+        //   }
+        // }
+
+        // ================================
+        // 6) Filter priority
         // ================================
         if (Array.isArray(datapriority_Combobox)) {
           const newFilteredPriority = datapriority_Combobox.filter(
@@ -1042,17 +1232,12 @@ export default function ComplaintBody({
           );
         }
 
-
-
         // ================================
-        // 5) Filter Complaint/Attach/Reference ตาม reportType
+        // 7) Filter Complaint/Attach/Reference ตาม reportType
         // ================================
         if (dataReportTypeValue) {
-          const newFilteredFuApprove = (
-            dataApprove_Combobox || []
-          ).filter(
-            (item: LovType) =>
-              item.lov_type === "approve_select"
+          const newFilteredFuApprove = (dataApprove_Combobox || []).filter(
+            (item: LovType) => item.lov_type === "approve_select"
           );
           setFilteredFuApprove((prev: LovType[]) => {
             if (JSON.stringify(prev) !== JSON.stringify(newFilteredFuApprove))
@@ -1060,8 +1245,6 @@ export default function ComplaintBody({
             return prev;
           });
           const val = dataReportTypeValue;
-
-
 
           // Complaint Type
           const newComplaintType = (dataComplaintType_Combobox || []).filter(
@@ -1082,12 +1265,12 @@ export default function ComplaintBody({
             JSON.stringify(prev) !== JSON.stringify(newPhoto) ? newPhoto : prev
           );
 
-
           // Reference Standard (เฉพาะ NCR)
           if (val.lov_code === "NCR") {
             const newComplaintRs = (dataComplaintRs_Combobox || []).filter(
               (item: LovType) =>
-                item.lov_type === "reference_standard" && item.lov_code === val.id
+                item.lov_type === "reference_standard" &&
+                item.lov_code === val.id
             );
             setFilteredComplaintRs((prev) =>
               JSON.stringify(prev) !== JSON.stringify(newComplaintRs)
@@ -1124,23 +1307,29 @@ export default function ComplaintBody({
     dataphoto_Combobox,
     dataReportTypeValue,
     dataApprove_Combobox,
+    dataelement,
+    dataelement?.respondent_company_id,
+    domain,
   ]);
 
   //////////////////////// Complaint Read //////////////////////////
   React.useEffect(() => {
-    console.log("step: 5 เก็บข้อมูลเข้า ฺsetdataelement ใหม่ ", dataelement)
-    
+    console.log("step: 5 เก็บข้อมูลเข้า ฺsetdataelement ใหม่ ", dataelement);
 
     if (dataelement && action != "Add") {
-      setrespondent_company_id(dataset_company.find((el: any) => String(el.itasset_company_id) === String(dataelement.respondent_company_id?.company_id)));
+      // setrespondent_company_id(dataset_company.find((el: any) => String(el.itasset_company_id) === String(dataelement.respondent_company_id?.company_id)));
       setcas_number(dataelement?.cas_number || "");
-      setdoc_date(dataelement?.doc_date ? dayjs(dataelement.doc_date, "DD-MM-YYYY") : dayjs());
+      setdoc_date(
+        dataelement?.doc_date
+          ? dayjs(dataelement.doc_date, "DD-MM-YYYY")
+          : dayjs()
+      );
       setdate_of_detection(dayjs(dataelement?.date_of_detection));
 
       // Map respondent_department_id
       console.log("🔍 Department mapping debug:", {
         respondent_department_id: dataelement.respondent_department_id,
-        dataset_department_sample: dataset_department?.[0]
+        dataset_department_sample: dataset_department?.[0],
       });
 
       // const foundDept = dataset_department.find((el: any) => {
@@ -1149,10 +1338,14 @@ export default function ComplaintBody({
 
       // console.log("🎯 Found department:", foundDept);
       // setrespondent_department_id(foundDept || null);
-      
-      setproduct_name(dataelement?.product_name ? dataelement?.product_name : "");
+
+      setproduct_name(
+        dataelement?.product_name ? dataelement?.product_name : ""
+      );
       setlot_no(dataelement?.lot_no ? dataelement?.lot_no : "");
-      setrespondent_email(dataelement?.respondent_email ? dataelement?.respondent_email : "");
+      setrespondent_email(
+        dataelement?.respondent_email ? dataelement?.respondent_email : ""
+      );
       setdataComplaintType(setComplaintType(dataelement?.complaintType));
       // setcompTypeOther(dataelement?.other ? dataelement?.other : "");
       setdataComplaintRs(setComplaintRs(dataelement?.complaintRs));
@@ -1160,13 +1353,29 @@ export default function ComplaintBody({
       // setclauseOther(dataelement?.clause ? dataelement?.clause : "");
       setdetail(dataelement?.detail ? dataelement?.detail : "");
       setpriority_level(setPriorityLevel(dataelement?.priority_level));
-      setrespond_date_within(dataelement?.respond_date_within ? dayjs(dataelement.respond_date_within, "DD-MM-YYYY") : dayjs());
-      setrequest_name(dataelement?.request_name ? dataelement?.request_name : "");
-      setrequest_position(dataelement?.request_position ? dataelement?.request_position : "");
-      setrequest_department_id(dataelement?.request_department_id ? dataelement?.request_department_id : "");
-      setrequest_email(dataelement?.request_email ? dataelement?.request_email : "");
-      setrequest_phone(dataelement?.request_phone ? dataelement?.request_phone : "");
-      setrequest_company_id(dataset_company.find((el: any) => String(el.itasset_company_id) == String(dataelement.request_company_id?.company_id)));
+      setrespond_date_within(
+        dataelement?.respond_date_within
+          ? dayjs(dataelement.respond_date_within, "DD-MM-YYYY")
+          : dayjs()
+      );
+      setrequest_name(
+        dataelement?.request_name ? dataelement?.request_name : ""
+      );
+      setrequest_position(
+        dataelement?.request_position ? dataelement?.request_position : ""
+      );
+      setrequest_department_id(
+        dataelement?.request_department_id
+          ? dataelement?.request_department_id
+          : ""
+      );
+      setrequest_email(
+        dataelement?.request_email ? dataelement?.request_email : ""
+      );
+      setrequest_phone(
+        dataelement?.request_phone ? dataelement?.request_phone : ""
+      );
+      // setrequest_company_id(dataset_company.find((el: any) => String(el.itasset_company_id) == String(dataelement.request_company_id?.company_id)));
       setcomplaint_status_label(dataelement?.complaint_status_label);
 
       // สมมติ LovType คือ { id: string; label: string }
@@ -1208,8 +1417,6 @@ export default function ComplaintBody({
     }
   }, [dataelement, dataset_reporttype, dataset_department, dataset_company]);
 
-
-
   React.useEffect(() => {
     // เฉพาะตอน Read เท่านั้น
     //if (action === "Read" || action === "Edit" || action === "Delete" || isActionExplain) {
@@ -1217,14 +1424,22 @@ export default function ComplaintBody({
       if (dataelement?.id) {
         Complaint_Get(dataelement);
       }
+      if (dataelement?.acknowledge_flag == 0) {
+        console.log("acknowledge_flag",dataelement?.acknowledge_flag)
+        //Complaint_Get(dataelement);
+      }
       ComplaintFile_Get();
       ExplainGet();
-    }
+    }updateAcknowledgeFlag
   }, [action, dataelement?.id]);
 
-
   const setComplaintType = (data: any) => {
-    if (true) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  setComplaintType");
+    if (true)
+      console.log(
+        "🕑 ",
+        dayjs().format("HH:mm:ss.SSS"),
+        " [Calling Function]  :  setComplaintType"
+      );
 
     const newData: any[] = [];
     Array.isArray(data) &&
@@ -1244,7 +1459,12 @@ export default function ComplaintBody({
   };
 
   const setComplaintRs = (data: any) => {
-    if (true) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  setComplaintRs");
+    if (true)
+      console.log(
+        "🕑 ",
+        dayjs().format("HH:mm:ss.SSS"),
+        " [Calling Function]  :  setComplaintRs"
+      );
 
     const newData: any[] = [];
     Array.isArray(data) &&
@@ -1264,7 +1484,12 @@ export default function ComplaintBody({
     return newData;
   };
   const setPriorityLevel = (value: any) => {
-    if (true) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  setPriorityLevel");
+    if (true)
+      console.log(
+        "🕑 ",
+        dayjs().format("HH:mm:ss.SSS"),
+        " [Calling Function]  :  setPriorityLevel"
+      );
 
     if (!value) return null;
 
@@ -1333,7 +1558,11 @@ export default function ComplaintBody({
             // }
             bgcolorTextField={!isActionAdd}
             Validate={validateText?.Report_Type || false}
-            validateTextLable={validateText?.Report_Type ? "กรุณาเลือกประเภทรายงาน (Report Type)" : ""}
+            validateTextLable={
+              validateText?.Report_Type
+                ? "กรุณาเลือกประเภทรายงาน (Report Type)"
+                : ""
+            }
           />
         </Grid>
       </Grid>
@@ -1344,7 +1573,8 @@ export default function ComplaintBody({
           <Accordion
             expanded={isMinimizedefaultOpen}
             onChange={() => setisMinimizeDefaultOpen(!isMinimizedefaultOpen)}
-            sx={{ borderRadius: 2, backgroundColor: "#fafafa" }}>
+            sx={{ borderRadius: 2, backgroundColor: "#fafafa" }}
+          >
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls="reference-standard-content"
@@ -1358,7 +1588,7 @@ export default function ComplaintBody({
                 <span style={{ color: "red" }}> *</span>
               </Typography>
             </AccordionSummary>
-            
+
             <AccordionDetails>
               <Divider sx={{ my: 1 }} />
               <Grid container spacing={2}>
@@ -1373,10 +1603,8 @@ export default function ComplaintBody({
                       console.log("Company selected:", val?.company_name);
                       handleCompanyChange(val);
 
-
                       setrespondent_company_id(val);
                       console.log("cccccc", val);
-
                     }}
                     bgcolorTextField={true}
                     readonly
@@ -1386,24 +1614,20 @@ export default function ComplaintBody({
                   <AutocompleteComboBox
                     value={respondent_domain_id}
                     labelName={"โดเมน (Domain)"}
-                    options={dataset_domainrelate}
+                    options={domain}
                     column="domain_name"
                     // setvalue={(v) => setrespondent_company_id(v)}
                     setvalue={(val) => {
-                      
                       console.log("Domain selected:", val?.domain_name);
                       console.log("Domain selected:", val?.domain_id);
                       console.log("😍val:", val);
                       handleDomainChange(val);
 
-
                       setrespondent_domain_id(val);
                       console.log("cccccc", val);
-
                     }}
-
                     bgcolorTextField={true}
-                  // readonly
+                    readonly={isActionRead || isActionDelete || isActionExplain}
                   />
                 </Grid>
                 <Grid size={3} mt={2}>
@@ -1486,7 +1710,11 @@ export default function ComplaintBody({
                         //readonly={isActionRead || isActionEdit || isActionDelete || isActionExplain}
                         readonly={!isActionAdd}
                         Validate={validateText?.Date_of_Detection || false}
-                        validateTextLable={validateText?.Date_of_Detection ? "กรุณาเลือกวันที่พบปัญหา" : ""}
+                        validateTextLable={
+                          validateText?.Date_of_Detection
+                            ? "กรุณาเลือกวันที่พบปัญหา"
+                            : ""
+                        }
                       />
                     </Grid>
                     <Grid size={4}>
@@ -1499,7 +1727,12 @@ export default function ComplaintBody({
                         options={dataset_department || []}
                         column="department_name"
                         setvalue={(val) => {
-                          console.log("Selected value:", val, "respondent_department_id :", respondent_department_id);
+                          console.log(
+                            "Selected value:",
+                            val,
+                            "respondent_department_id :",
+                            respondent_department_id
+                          );
                           setrespondent_department_id(val);
                           if (onDepartmentAreaChange) {
                             onDepartmentAreaChange(val);
@@ -1508,9 +1741,13 @@ export default function ComplaintBody({
                         bgcolorTextField={
                           action === "Add" ? false : isActionEdit ? false : true
                         }
-                        readonly={isActionRead || isActionDelete || isActionExplain || !respondent_domain_id}
+                        readonly={!isActionAdd || !respondent_domain_id}
                         Validate={validateText?.Department_Area || false}
-                        validateTextLable={validateText?.Department_Area ? "กรุณาเลือกแผนกที่พบปัญหา" : ""}
+                        validateTextLable={
+                          validateText?.Department_Area
+                            ? "กรุณาเลือกแผนกที่พบปัญหา"
+                            : ""
+                        }
                       />
                     </Grid>
                     <Grid size={4}>
@@ -1525,9 +1762,13 @@ export default function ComplaintBody({
                           }
                         }}
                         //readonly={isActionRead || isActionDelete || isActionExplain}
-                        readonly={!isActionAdd || !isActionEdit}
+                        readonly={!isActionAdd && !isActionEdit}
                         Validate={validateText?.Product_Name || false}
-                        validateTextLable={validateText?.Product_Name ? "กรุณากรอกชื่อสินค้า" : ""}
+                        validateTextLable={
+                          validateText?.Product_Name
+                            ? "กรุณากรอกชื่อสินค้า"
+                            : ""
+                        }
                       />
                     </Grid>
                     <Grid size={4}>
@@ -1543,9 +1784,11 @@ export default function ComplaintBody({
                         }}
                         bgcolorTextField={true}
                         //readonly={isActionRead || isActionDelete || isActionExplain}
-                        readonly={!isActionAdd || !isActionEdit}
+                        readonly={!isActionAdd && !isActionEdit}
                         Validate={validateText?.Lot_No || false}
-                        validateTextLable={validateText?.Lot_No ? "กรุณากรอก Lot No./Bag No" : ""}
+                        validateTextLable={
+                          validateText?.Lot_No ? "กรุณากรอก Lot No./Bag No" : ""
+                        }
                       />
                     </Grid>
                     <Grid size={4}>
@@ -1559,21 +1802,12 @@ export default function ComplaintBody({
                             onEmailChange(e);
                           }
                         }}
-                        //readonly={isActionRead || isActionDelete || isActionExplain}
-                        readonly={!isActionAdd || !isActionEdit}
+                        readonly={!isActionAdd && !isActionEdit}
                         Validate={validateText?.Email || false}
-                        validateTextLable={validateText?.Email ? "กรุณากรอกอีเมล" : ""}
+                        validateTextLable={
+                          validateText?.Email ? "กรุณากรอกอีเมล" : ""
+                        }
                       />
-                      {/* <FullWidthTextField
-                    required="required"
-                    value={ isActionExplain
-                      ? user[0]?.employee_email || "-"
-                                : dataelement?.request_email || "-"
-                    }
-                    labelName="อีเมล (Email)"
-                    onchange={(e) => setrespondent_email(e)}
-                    readonly={isActionRead || isActionDelete || isActionExplainAdd || isActionExplain}
-                  /> */}
                     </Grid>
                   </Grid>
 
@@ -1615,8 +1849,17 @@ export default function ComplaintBody({
                         <Grid size={12} sx={{ display: "flex" }}>
                           <Accordion
                             expanded={isMinimizetypeOpen}
-                            onChange={() => setisMinimizeTypeOpen(!isMinimizetypeOpen)}
-                            sx={{ borderRadius: 2, backgroundColor: "#fafafa", border: validateText?.Complaint_Type ? "1px solid #f44336" : "1px solid #e0e0e0" }}>
+                            onChange={() =>
+                              setisMinimizeTypeOpen(!isMinimizetypeOpen)
+                            }
+                            sx={{
+                              borderRadius: 2,
+                              backgroundColor: "#fafafa",
+                              border: validateText?.Complaint_Type
+                                ? "1px solid #f44336"
+                                : "1px solid #e0e0e0",
+                            }}
+                          >
                             <AccordionSummary
                               expandIcon={<ExpandMoreIcon />}
                               aria-controls="reference-standard-content"
@@ -1624,7 +1867,11 @@ export default function ComplaintBody({
                             >
                               <Typography
                                 className="sarabun-regular-datatable"
-                                sx={{ fontSize: "18px", fontWeight: 600, color: "#333" }}
+                                sx={{
+                                  fontSize: "18px",
+                                  fontWeight: 600,
+                                  color: "#333",
+                                }}
                               >
                                 ประเภทข้อร้องเรียน (Type Of Complaint){" "}
                                 <span style={{ color: "red" }}> *</span>
@@ -1652,14 +1899,18 @@ export default function ComplaintBody({
                                             handleCheckboxChangeCT(item)
                                           }
                                           //readonly={isActionRead || isActionDelete || isActionExplain}
-                                          readonly={!isActionAdd || !isActionEdit}
+                                          readonly={
+                                            !isActionAdd && !isActionEdit
+                                          }
                                         />
                                       </Grid>
                                     )
                                   )}
                                 </Grid>
                                 <Box sx={{ mt: "auto", pt: 2 }}>
-                                  {dataComplaintType.some((c) => c.lov2 === "Y") && (
+                                  {dataComplaintType.some(
+                                    (c) => c.lov2 === "Y"
+                                  ) && (
                                     <FullWidthTextArea
                                       value={compTypeOther}
                                       labelName="Other:"
@@ -1668,19 +1919,32 @@ export default function ComplaintBody({
                                         if (onOtherTypeChange) {
                                           onOtherTypeChange(e);
                                         }
-
                                       }}
-                                      bgcolorTextField={action === "Add" ? false : true}
-                                      //readonly={isActionRead || isActionDelete || isActionExplain}
-                                      readonly={!isActionAdd || !isActionEdit}
-                                      Validate={validateText?.Other_Type || false}
-                                      validateTextLable={validateText?.Other_Type ? "กรุณากรอกรายละเอียด" : ""}
+                                      bgcolorTextField={
+                                        isActionAdd
+                                          ? false
+                                          : isActionEdit
+                                          ? false
+                                          : true
+                                      }
+                                      readonly={!isActionAdd && !isActionEdit}
+                                      Validate={
+                                        validateText?.Other_Type || false
+                                      }
+                                      validateTextLable={
+                                        validateText?.Other_Type
+                                          ? "กรุณากรอกรายละเอียด"
+                                          : ""
+                                      }
                                     />
                                   )}
                                 </Box>
                               </Box>
                               {validateText?.Complaint_Type && (
-                                <label className="fs-7 py-1 sarabun-regular-lable-validate" style={{ color: "red" }}>
+                                <label
+                                  className="fs-7 py-1 sarabun-regular-lable-validate"
+                                  style={{ color: "red" }}
+                                >
                                   กรุณาเลือกประเภทข้อร้องเรียน
                                 </label>
                               )}
@@ -1693,8 +1957,17 @@ export default function ComplaintBody({
                         <Grid size={12} sx={{ display: "flex" }}>
                           <Accordion
                             expanded={isMinimizersOpen}
-                            onChange={() => setisMinimizeRsOpen(!isMinimizersOpen)}
-                            sx={{ borderRadius: 2, backgroundColor: "#fafafa", border: validateText?.Complaint_Rs ? "1px solid #f44336" : "1px solid #e0e0e0" }}>
+                            onChange={() =>
+                              setisMinimizeRsOpen(!isMinimizersOpen)
+                            }
+                            sx={{
+                              borderRadius: 2,
+                              backgroundColor: "#fafafa",
+                              border: validateText?.Complaint_Rs
+                                ? "1px solid #f44336"
+                                : "1px solid #e0e0e0",
+                            }}
+                          >
                             <AccordionSummary
                               expandIcon={<ExpandMoreIcon />}
                               aria-controls="reference-standard-content"
@@ -1702,9 +1975,13 @@ export default function ComplaintBody({
                             >
                               <Typography
                                 className="sarabun-regular-datatable"
-                                sx={{ fontSize: "18px", fontWeight: 600, color: "#333" }}
+                                sx={{
+                                  fontSize: "18px",
+                                  fontWeight: 600,
+                                  color: "#333",
+                                }}
                               >
-                                มาตรฐานอ้างอิง (Reference Standard) {" "}
+                                มาตรฐานอ้างอิง (Reference Standard){" "}
                                 <span style={{ color: "red" }}> *</span>
                               </Typography>
                             </AccordionSummary>
@@ -1725,9 +2002,10 @@ export default function ComplaintBody({
                                         value={dataComplaintRs.some(
                                           (rs) => rs.id === item.id
                                         )}
-                                        onchange={() => handleCheckboxChangeRS(item)}
-                                        //readonly={isActionRead || isActionDelete || isActionExplain}
-                                        readonly={!isActionAdd || !isActionEdit}
+                                        onchange={() =>
+                                          handleCheckboxChangeRS(item)
+                                        }
+                                        readonly={!isActionAdd && !isActionEdit}
                                       />
                                     </Grid>
                                   ))}
@@ -1736,45 +2014,68 @@ export default function ComplaintBody({
                                   {dataComplaintRs.some(
                                     (rs) => rs.lov3 === "Clause"
                                   ) && (
-                                      <FullWidthTextArea
-                                        value={clauseOther}
-                                        labelName="Clause:"
-                                        onchange={(e) => {
-                                          setclauseOther(e);
-                                          if (onClauseChange) {
-                                            onClauseChange(e);
-                                          }
-                                        }}
-                                        bgcolorTextField={action === "Add" ? false : true}
-                                        //readonly={isActionRead || isActionDelete || isActionExplain}
-                                        readonly={!isActionAdd || !isActionEdit}
-                                        Validate={validateText?.Clause_Rs || false}
-                                        validateTextLable={validateText?.Clause_Rs ? "กรุณากรอกรายละเอียด Clause" : ""}
-                                      />
-                                    )}
+                                    <FullWidthTextArea
+                                      value={clauseOther}
+                                      labelName="Clause:"
+                                      onchange={(e) => {
+                                        setclauseOther(e);
+                                        if (onClauseChange) {
+                                          onClauseChange(e);
+                                        }
+                                      }}
+                                      bgcolorTextField={
+                                        isActionAdd
+                                          ? false
+                                          : isActionEdit
+                                          ? false
+                                          : true
+                                      }
+                                      readonly={!isActionAdd && !isActionEdit}
+                                      Validate={
+                                        validateText?.Clause_Rs || false
+                                      }
+                                      validateTextLable={
+                                        validateText?.Clause_Rs
+                                          ? "กรุณากรอกรายละเอียด Clause"
+                                          : ""
+                                      }
+                                    />
+                                  )}
                                   {dataComplaintRs.some(
                                     (rs) => rs.lov3 === "Other"
                                   ) && (
-                                      <FullWidthTextArea
-                                        value={compRsOther}
-                                        labelName="Other:"
-                                        onchange={(e) => {
-                                          setcompRsOther(e);
-                                          if (onOtherRsChange) {
-                                            onOtherRsChange(e);
-                                          }
-                                        }}
-                                        bgcolorTextField={action === "Add" ? false : true}
-                                        //readonly={isActionRead || isActionDelete || isActionExplain}
-                                        readonly={!isActionAdd || !isActionEdit}
-                                        Validate={validateText?.Other_Rs || false}
-                                        validateTextLable={validateText?.Other_Rs ? "กรุณากรอกรายละเอียด Other" : ""}
-                                      />
-                                    )}
+                                    <FullWidthTextArea
+                                      value={compRsOther}
+                                      labelName="Other:"
+                                      onchange={(e) => {
+                                        setcompRsOther(e);
+                                        if (onOtherRsChange) {
+                                          onOtherRsChange(e);
+                                        }
+                                      }}
+                                      bgcolorTextField={
+                                        isActionAdd
+                                          ? false
+                                          : isActionEdit
+                                          ? false
+                                          : true
+                                      }
+                                      readonly={!isActionAdd && !isActionEdit}
+                                      Validate={validateText?.Other_Rs || false}
+                                      validateTextLable={
+                                        validateText?.Other_Rs
+                                          ? "กรุณากรอกรายละเอียด Other"
+                                          : ""
+                                      }
+                                    />
+                                  )}
                                 </Box>
                               </Box>
                               {validateText?.Complaint_Rs && (
-                                <label className="fs-7 py-1 sarabun-regular-lable-validate" style={{ color: "red" }}>
+                                <label
+                                  className="fs-7 py-1 sarabun-regular-lable-validate"
+                                  style={{ color: "red" }}
+                                >
                                   กรุณาเลือกมาตรฐานอ้างอิง
                                 </label>
                               )}
@@ -1788,8 +2089,17 @@ export default function ComplaintBody({
                       <Box sx={{ mt: 3 }}>
                         <Accordion
                           expanded={isMinimizedetailOpen}
-                          onChange={() => setisMinimizeDetailOpen(!isMinimizedetailOpen)}
-                          sx={{ borderRadius: 2, backgroundColor: "#fafafa", border: validateText?.Detail ? "1px solid #f44336" : "1px solid #e0e0e0" }}>
+                          onChange={() =>
+                            setisMinimizeDetailOpen(!isMinimizedetailOpen)
+                          }
+                          sx={{
+                            borderRadius: 2,
+                            backgroundColor: "#fafafa",
+                            border: validateText?.Detail
+                              ? "1px solid #f44336"
+                              : "1px solid #e0e0e0",
+                          }}
+                        >
                           <AccordionSummary
                             expandIcon={<ExpandMoreIcon />}
                             aria-controls="reference-standard-content"
@@ -1797,9 +2107,13 @@ export default function ComplaintBody({
                           >
                             <Typography
                               className="sarabun-regular-datatable"
-                              sx={{ fontSize: "18px", fontWeight: 600, color: "#333" }}
+                              sx={{
+                                fontSize: "18px",
+                                fontWeight: 600,
+                                color: "#333",
+                              }}
                             >
-                              รายละเอียด (Detail) {" "}
+                              รายละเอียด (Detail){" "}
                               <span style={{ color: "red" }}> *</span>
                             </Typography>
                           </AccordionSummary>
@@ -1824,11 +2138,21 @@ export default function ComplaintBody({
                                       onDetailChange(e);
                                     }
                                   }}
-                                  bgcolorTextField={action === "Add" ? false : isActionEdit ? false : true}
+                                  bgcolorTextField={
+                                    action === "Add"
+                                      ? false
+                                      : isActionEdit
+                                      ? false
+                                      : true
+                                  }
                                   //readonly={isActionRead || isActionDelete || isActionExplain}
-                                  readonly={!isActionAdd || !isActionEdit}
+                                  readonly={!isActionAdd && !isActionEdit}
                                   Validate={validateText?.Detail || false}
-                                  validateTextLable={validateText?.Detail ? "กรุณากรอกรายละเอียด (Detail)" : ""}
+                                  validateTextLable={
+                                    validateText?.Detail
+                                      ? "กรุณากรอกรายละเอียด (Detail)"
+                                      : ""
+                                  }
                                 />
                               </Grid>
                             </Grid>
@@ -1841,8 +2165,17 @@ export default function ComplaintBody({
                       <Box sx={{ mt: 3 }}>
                         <Accordion
                           expanded={isMinimizepriorityOpen}
-                          onChange={() => setisMinimizePriorityOpen(!isMinimizepriorityOpen)}
-                          sx={{ borderRadius: 2, backgroundColor: "#fafafa", border: validateText?.Priority ? "1px solid #f44336" : "1px solid #e0e0e0" }}>
+                          onChange={() =>
+                            setisMinimizePriorityOpen(!isMinimizepriorityOpen)
+                          }
+                          sx={{
+                            borderRadius: 2,
+                            backgroundColor: "#fafafa",
+                            border: validateText?.Priority
+                              ? "1px solid #f44336"
+                              : "1px solid #e0e0e0",
+                          }}
+                        >
                           <AccordionSummary
                             expandIcon={<ExpandMoreIcon />}
                             aria-controls="reference-standard-content"
@@ -1850,9 +2183,13 @@ export default function ComplaintBody({
                           >
                             <Typography
                               className="sarabun-regular-datatable"
-                              sx={{ fontSize: "18px", fontWeight: 600, color: "#333" }}
+                              sx={{
+                                fontSize: "18px",
+                                fontWeight: 600,
+                                color: "#333",
+                              }}
                             >
-                              ระดับความสำคัญ (Priority) {" "}
+                              ระดับความสำคัญ (Priority){" "}
                               <span style={{ color: "red" }}> *</span>
                             </Typography>
                           </AccordionSummary>
@@ -1905,13 +2242,22 @@ export default function ComplaintBody({
                                       <FormControlLabel
                                         control={
                                           <Radio
-                                            checked={datapriority?.id === item.id}
+                                            checked={
+                                              datapriority?.id === item.id
+                                            }
                                             onChange={(e) => {
-                                              console.log("🎯 Priority radio clicked:", item);
+                                              console.log(
+                                                "🎯 Priority radio clicked:",
+                                                item
+                                              );
                                               setdatapriority(item);
-                                              setdatapriorityValue_Combobox(item.id);
+                                              setdatapriorityValue_Combobox(
+                                                item.id
+                                              );
                                               setpriority_level(item.id);
-                                              const days = Number(item.lov3 ?? 0);
+                                              const days = Number(
+                                                item.lov3 ?? 0
+                                              );
                                               priorityCalculateRespondDate(
                                                 days,
                                                 true
@@ -2023,7 +2369,10 @@ export default function ComplaintBody({
                               </Grid>
                             </Grid>
                             {validateText?.Priority && (
-                              <label className="fs-7 py-1 sarabun-regular-lable-validate" style={{ color: "red" }}>
+                              <label
+                                className="fs-7 py-1 sarabun-regular-lable-validate"
+                                style={{ color: "red" }}
+                              >
                                 กรุณาเลือกระดับความสำคัญ (Priority)
                               </label>
                             )}
@@ -2041,7 +2390,8 @@ export default function ComplaintBody({
                     mt: 3,
                     width: "100%",
                     borderRadius: 3,
-                    background: "linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%)",
+                    background:
+                      "linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%)",
                     border: "1px solid #e0e0e0",
                     boxShadow: "0 4px 12px rgba(158,158,158,0.1)",
                   }}
@@ -2051,11 +2401,11 @@ export default function ComplaintBody({
                     onChange={() => setisMinimizeFileOpen(!isMinimizefileOpen)}
                     sx={{
                       borderRadius: 3,
-                      background: "linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%)",
+                      background:
+                        "linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%)",
                       border: "1px solid #e0e0e0",
                       boxShadow: "0 4px 12px rgba(158,158,158,0.1)",
                       mt: 3,
-
                     }}
                   >
                     {/* 🔹 หัวข้อ */}
@@ -2085,7 +2435,11 @@ export default function ComplaintBody({
                           />
                           <Typography
                             className="sarabun-regular-datatable"
-                            sx={{ fontSize: 18, fontWeight: 600, color: "#616161" }}
+                            sx={{
+                              fontSize: 18,
+                              fontWeight: 600,
+                              color: "#616161",
+                            }}
                           >
                             แนบไฟล์ (Attachments)
                           </Typography>
@@ -2093,13 +2447,12 @@ export default function ComplaintBody({
                       </Box>
                     </AccordionSummary>
                     <AccordionDetails sx={{ p: 3 }}>
-
                       <Grid container spacing={2}>
                         {
                           <Grid size={12}>
                             <BrowseFileUpload
                               setFile={handleFileChange}
-                              setFileName={() => { }}
+                              setFileName={() => {}}
                               options={(filteredphoto || []).map((p: any) => ({
                                 id: p.id,
                                 lov1: p.lov1,
@@ -2118,11 +2471,19 @@ export default function ComplaintBody({
                                   <Paper
                                     key={photoType.id}
                                     elevation={1}
-                                    sx={{ p: 2, borderRadius: 2, mb: 2, width: "100%" }}
+                                    sx={{
+                                      p: 2,
+                                      borderRadius: 2,
+                                      mb: 2,
+                                      width: "100%",
+                                    }}
                                   >
                                     <label
                                       className="sarabun-regular-datatable"
-                                      style={{ fontWeight: 600, fontSize: "16px" }}
+                                      style={{
+                                        fontWeight: 600,
+                                        fontSize: "16px",
+                                      }}
                                     >
                                       {photoType.lov1}
                                     </label>
@@ -2151,9 +2512,10 @@ export default function ComplaintBody({
                                               color: "#484444ff",
                                             }}
                                           >
-                                            {(item.file.size / (1024 * 1024)).toFixed(
-                                              2
-                                            )}{" "}
+                                            {(
+                                              item.file.size /
+                                              (1024 * 1024)
+                                            ).toFixed(2)}{" "}
                                             MB
                                           </div>
                                           {photoType.id === "TRR_AT_4" && (
@@ -2170,21 +2532,31 @@ export default function ComplaintBody({
                                         </Box>
                                         <Box sx={{ display: "flex", gap: 1 }}>
                                           {/* //ปุ่มลบไฟล์ */}
-                                          {(action == "Edit" || action == "Add") && (
+                                          {(action == "Edit" ||
+                                            action == "Add") && (
                                             <IconButton
                                               color="error"
                                               onClick={() => {
                                                 // หา index ที่ถูกต้องใน fileList
-                                                const actualIndex = fileList.findIndex(f =>
-                                                  f.file.name === item.file.name &&
-                                                  f.attachmentType === item.attachmentType
+                                                const actualIndex =
+                                                  fileList.findIndex(
+                                                    (f) =>
+                                                      f.file.name ===
+                                                        item.file.name &&
+                                                      f.attachmentType ===
+                                                        item.attachmentType
+                                                  );
+                                                console.log(
+                                                  "🔍 Remove file debug:",
+                                                  {
+                                                    itemName: item.file.name,
+                                                    itemType:
+                                                      item.attachmentType,
+                                                    actualIndex,
+                                                    fileListLength:
+                                                      fileList.length,
+                                                  }
                                                 );
-                                                console.log("🔍 Remove file debug:", {
-                                                  itemName: item.file.name,
-                                                  itemType: item.attachmentType,
-                                                  actualIndex,
-                                                  fileListLength: fileList.length
-                                                });
                                                 if (actualIndex !== -1) {
                                                   handleRemoveFile(actualIndex);
                                                 }
@@ -2199,32 +2571,56 @@ export default function ComplaintBody({
                                           <IconButton
                                             color="primary"
                                             onClick={() => {
-                                              console.log("full_path:", item.full_path);
-                                              console.log("file type:", typeof item.file);
-                                              console.log("file instanceof File:", item.file instanceof File);
+                                              console.log(
+                                                "full_path:",
+                                                item.full_path
+                                              );
+                                              console.log(
+                                                "file type:",
+                                                typeof item.file
+                                              );
+                                              console.log(
+                                                "file instanceof File:",
+                                                item.file instanceof File
+                                              );
 
                                               // ตรวจสอบว่าเป็นไฟล์ใหม่ (ไม่มี full_path) หรือไฟล์เก่า (มี full_path)
                                               if (item.full_path) {
                                                 // ไฟล์เก่า - เปิดจาก NAS
-                                                window.open(item.full_path, "_blank");
-                                              } else if (item.file instanceof File) {
+                                                window.open(
+                                                  item.full_path,
+                                                  "_blank"
+                                                );
+                                              } else if (
+                                                item.file instanceof File
+                                              ) {
                                                 // ไฟล์ใหม่ - เปิดจาก File object
-                                                const fileUrl = URL.createObjectURL(item.file);
+                                                const fileUrl =
+                                                  URL.createObjectURL(
+                                                    item.file
+                                                  );
                                                 window.open(fileUrl, "_blank");
                                                 // Clean up URL after a delay to free memory
-                                                setTimeout(() => URL.revokeObjectURL(fileUrl), 1000);
+                                                setTimeout(
+                                                  () =>
+                                                    URL.revokeObjectURL(
+                                                      fileUrl
+                                                    ),
+                                                  1000
+                                                );
                                               } else {
-                                                console.log("Cannot preview file - no full_path or File object");
+                                                console.log(
+                                                  "Cannot preview file - no full_path or File object"
+                                                );
                                               }
                                             }}
                                           >
                                             <VisibilityIcon />
                                           </IconButton>
 
-
                                           {/* //ปุ่มดาวน์โหลดไฟล์ */}
                                           {/* {(action === "Read" || isActionExplain) && ( */}
-                                          { !isActionAdd && (
+                                          {!isActionAdd && (
                                             <IconButton
                                               color="primary"
                                               onClick={async () => {
@@ -2235,19 +2631,26 @@ export default function ComplaintBody({
                                                     item.full_path,
                                                     { method: "GET" }
                                                   );
-                                                  const blob = await response.blob();
-                                                  const url = URL.createObjectURL(blob);
+                                                  const blob =
+                                                    await response.blob();
+                                                  const url =
+                                                    URL.createObjectURL(blob);
 
                                                   const link =
                                                     document.createElement("a");
                                                   link.href = url;
                                                   link.setAttribute(
                                                     "download",
-                                                    item.original_file_name ?? "file"
+                                                    item.original_file_name ??
+                                                      "file"
                                                   );
-                                                  document.body.appendChild(link);
+                                                  document.body.appendChild(
+                                                    link
+                                                  );
                                                   link.click();
-                                                  document.body.removeChild(link);
+                                                  document.body.removeChild(
+                                                    link
+                                                  );
 
                                                   URL.revokeObjectURL(url); // cleanup memory
                                                 } catch (err) {
@@ -2271,7 +2674,11 @@ export default function ComplaintBody({
                               {fileList.length === 0 && (
                                 <Paper
                                   elevation={0}
-                                  sx={{ p: 2, textAlign: "center", color: "#999" }}
+                                  sx={{
+                                    p: 2,
+                                    textAlign: "center",
+                                    color: "#999",
+                                  }}
                                 >
                                   ยังไม่มีไฟล์ที่แนบ
                                 </Paper>
@@ -2291,21 +2698,24 @@ export default function ComplaintBody({
                     mt: 3,
                     width: "100%",
                     borderRadius: 3,
-                    background: "linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%)",
+                    background:
+                      "linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%)",
                     border: "1px solid #e0e0e0",
                     boxShadow: "0 4px 12px rgba(158,158,158,0.1)",
                   }}
                 >
                   <Accordion
                     expanded={isMinimizerespondOpen}
-                    onChange={() => setisMinimizeRespondOpen(!isMinimizerespondOpen)}
+                    onChange={() =>
+                      setisMinimizeRespondOpen(!isMinimizerespondOpen)
+                    }
                     sx={{
                       borderRadius: 3,
-                      background: "linear-gradient(135deg, #f0f8ff 0%, #ffffff 100%)",
+                      background:
+                        "linear-gradient(135deg, #f0f8ff 0%, #ffffff 100%)",
                       border: "1px solid #bbdefb",
                       boxShadow: "0 4px 12px rgba(33,150,243,0.1)",
                       // mt: 3,
-
                     }}
                   >
                     {/* 🔹 หัวข้อ */}
@@ -2337,7 +2747,11 @@ export default function ComplaintBody({
                           />
                           <Typography
                             className="sarabun-regular-datatable"
-                            sx={{ fontSize: 18, fontWeight: 600, color: "#1976d2" }}
+                            sx={{
+                              fontSize: 18,
+                              fontWeight: 600,
+                              color: "#1976d2",
+                            }}
                           >
                             แผนกผู้ทำการออกเอกสาร (Reporting Department)
                           </Typography>
@@ -2345,12 +2759,13 @@ export default function ComplaintBody({
                       </Box>
                     </AccordionSummary>
                     <AccordionDetails sx={{ p: 3 }}>
-
                       <Grid container spacing={3}>
                         <Grid size={4}>
                           <FullWidthTextField
                             value={
-                              isActionAdd ? user[0]?.employee_username || "-" : dataelement?.request_name || "-"
+                              isActionAdd
+                                ? user[0]?.employee_username || "-"
+                                : dataelement?.request_name || "-"
                             }
                             labelName="ชื่อผู้ออกเอกสาร (Reported by)"
                             onchange={(e) => setrequest_name(e.target.value)}
@@ -2360,17 +2775,23 @@ export default function ComplaintBody({
                         <Grid size={4}>
                           <FullWidthTextField
                             value={
-                              isActionAdd ? user[0]?.employee_position || "-" : dataelement?.request_position || "-"
+                              isActionAdd
+                                ? user[0]?.employee_position || "-"
+                                : dataelement?.request_position || "-"
                             }
                             labelName="ตำแหน่ง (Position)"
-                            onchange={(e) => setrequest_position(e.target.value)}
+                            onchange={(e) =>
+                              setrequest_position(e.target.value)
+                            }
                             readonly
                           />
                         </Grid>
                         <Grid size={4}>
                           <FullWidthTextField
                             value={
-                              isActionAdd ? user[0]?.itasset_department_name || "-" : dataelement?.request_department_name || "-"
+                              isActionAdd
+                                ? user[0]?.itasset_department_name || "-"
+                                : dataelement?.request_department_name || "-"
                             }
                             labelName="แผนก (Department)"
                             onchange={(e) => {
@@ -2388,7 +2809,9 @@ export default function ComplaintBody({
                         <Grid size={4}>
                           <FullWidthTextField
                             value={
-                              isActionAdd ? user[0]?.employee_email || "-" : dataelement?.request_email || "-"
+                              isActionAdd
+                                ? user[0]?.employee_email || "-"
+                                : dataelement?.request_email || "-"
                             }
                             labelName="อีเมล (Email)"
                             onchange={(e) => setrequest_email(e.target.value)}
@@ -2398,7 +2821,9 @@ export default function ComplaintBody({
                         <Grid size={4}>
                           <FullWidthTextField
                             value={
-                              isActionAdd ? user[0]?.employee_tel || "-" : dataelement?.request_phone || "-"
+                              isActionAdd
+                                ? user[0]?.employee_tel || "-"
+                                : dataelement?.request_phone || "-"
                             }
                             labelName="โทรศัพท์ (Phone)"
                             onchange={(e) => setrequest_phone(e.target.value)}
@@ -2423,240 +2848,268 @@ export default function ComplaintBody({
               </Grid>
             </AccordionDetails>
           </Accordion>
-
         </Paper>
       )}
 
       {/* {isActionClose || isActionExplain || isActionExplainApproveSc || isActionExplainApproveQc && dataReportTypeValue && ( */}
-      {!isActionAdd && !isActionRead && !isActionEdit && !isActionDelete && dataReportTypeValue && (
-        <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>
-          <Paper elevation={3} sx={{
-            p: 3,
-            mt: 3,
-            width: "100%",
-            borderRadius: 3,
-            background: 'linear-gradient(135deg, #fff8f0 0%, #ffffff 100%)',
-            border: '1px solid #ffe0b2',
-            boxShadow: '0 4px 12px rgba(255,152,0,0.1)'
-          }}>
-            <Grid container spacing={2}>
-              <Grid size={12}>
-                <Accordion expanded={isMinimizeexlistOpen}
-                  onChange={() => setisMinimizeExlistOpen(!isMinimizeexlistOpen)}
-                  sx={{
-                    width: '100%',
-                    borderRadius: 3,
-                    background: 'linear-gradient(135deg, #fff3e0 0%, #ffffff 100%)',
-                    border: '1px solid #ff9800',
-                    boxShadow: '0 4px 12px rgba(255,152,0,0.15)',
-                    mt: 3
-                  }}>
-                  <AccordionSummary
-                    expandIcon={<ExpandMoreIcon />}
-                    aria-controls="reporting-dept-content"
-                    id="reporting-dept-header"
+      {!isActionAdd &&
+        !isActionRead &&
+        !isActionEdit &&
+        !isActionDelete &&
+        dataReportTypeValue && (
+          <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>
+            <Paper
+              elevation={3}
+              sx={{
+                p: 3,
+                mt: 3,
+                width: "100%",
+                borderRadius: 3,
+                background: "linear-gradient(135deg, #fff8f0 0%, #ffffff 100%)",
+                border: "1px solid #ffe0b2",
+                boxShadow: "0 4px 12px rgba(255,152,0,0.1)",
+              }}
+            >
+              <Grid container spacing={2}>
+                <Grid size={12}>
+                  <Accordion
+                    expanded={isMinimizeexlistOpen}
+                    onChange={() =>
+                      setisMinimizeExlistOpen(!isMinimizeexlistOpen)
+                    }
+                    sx={{
+                      width: "100%",
+                      borderRadius: 3,
+                      background:
+                        "linear-gradient(135deg, #fff3e0 0%, #ffffff 100%)",
+                      border: "1px solid #ff9800",
+                      boxShadow: "0 4px 12px rgba(255,152,0,0.15)",
+                      mt: 3,
+                    }}
                   >
-                    <Box
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between", // ✅ ดันซ้าย-ขวา
-                        width: "100%", // ✅ กินเต็ม
-                      }}
+                    <AccordionSummary
+                      expandIcon={<ExpandMoreIcon />}
+                      aria-controls="reporting-dept-content"
+                      id="reporting-dept-header"
                     >
-                      {/* === ฝั่งซ้าย === */}
-                      <Box sx={{ display: "flex", alignItems: "center" }}>
-                        <Box
-                          sx={{
-                            width: 6,
-                            height: 24,
-                            backgroundColor: "#ff9800",
-                            borderRadius: 1,
-                            mr: 2,
-                          }}
-                        />
-                        <Typography
-                          className="sarabun-regular-datatable"
-                          sx={{ fontSize: 18, fontWeight: 600, color: "#000000" }}
-                        >
-                          รายการคำชี้แจง (Explain List)
-                        </Typography>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "space-between", // ✅ ดันซ้าย-ขวา
+                          width: "100%", // ✅ กินเต็ม
+                        }}
+                      >
+                        {/* === ฝั่งซ้าย === */}
+                        <Box sx={{ display: "flex", alignItems: "center" }}>
+                          <Box
+                            sx={{
+                              width: 6,
+                              height: 24,
+                              backgroundColor: "#ff9800",
+                              borderRadius: 1,
+                              mr: 2,
+                            }}
+                          />
+                          <Typography
+                            className="sarabun-regular-datatable"
+                            sx={{
+                              fontSize: 18,
+                              fontWeight: 600,
+                              color: "#000000",
+                            }}
+                          >
+                            รายการคำชี้แจง (Explain List)
+                          </Typography>
+                        </Box>
+
+                        {/* === ฝั่งขวา ปุ่ม Add === */}
+                        {/* {complaint_status_label == 'SUBMIT' &&  
+                        user[0] && dataelement &&
+                        String(user[0].itasset_department_id) === String(dataelement.respondent_department_id) && ( */}
+                        {dataelement.complaint_status_id === "TRR_CS_SUBMIT" && (
+                            <Button
+                              variant="contained"
+                              size="small"
+                              sx={{
+                                backgroundColor: "#2b72d7ff",
+                                "&:hover": {
+                                  backgroundColor: "#1657b1ff",
+                                },
+                                borderRadius: 2,
+                                textTransform: "none",
+                                fontWeight: 600,
+                                px: 3,
+                                py: 1,
+                                transition: "all 0.2s ease-in-out",
+                                boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                              }}
+                              onClick={() => handleOpenAdd && handleOpenAdd()}
+                            >
+                              + เพิ่มคำชี้แจง
+                            </Button>
+                          )}
                       </Box>
+                    </AccordionSummary>
 
-                      {/* === ฝั่งขวา ปุ่ม Add === */}
-                      {complaint_status_label == 'SUBMIT' &&  
-                       user[0] && dataelement &&
-                       String(user[0].itasset_department_id) === String(dataelement.respondent_department_id) && 
-                      (
-                        <Button
-                          variant="contained"
-                          size="small"
-                          sx={{
-                            backgroundColor: "#2b72d7ff",
-                            "&:hover": {
-                              backgroundColor: "#1657b1ff",
-                            },
-                            borderRadius: 2,
-                            textTransform: "none",
-                            fontWeight: 600,
-                            px: 3,
-                            py: 1,
-                            transition: "all 0.2s ease-in-out",
-                            boxShadow: "0 2px 4px rgba(0,0,0,0.1)"
-                          }}
-                          onClick={() => handleOpenAdd && handleOpenAdd()}
-                        >
-                          + เพิ่มคำชี้แจง
-                        </Button>
-                      )}
-                    </Box>
-                  </AccordionSummary>
-
-                  <AccordionDetails>
-                    <Divider sx={{ my: 1, borderBottom: '2px solid #ff9800' }} />
-                    <Grid container spacing={3}>
-
-
-
-                      {/* รายการคำชี้แจง (Explain List) */}
-                      <Grid size={12}>
-                        {explainList.length > 0 ? (
-                          <Box sx={{ mt: 2 }}>
-                            {explainList
-                              .sort((a, b) => new Date(a.create_datetime).getTime() - new Date(b.create_datetime).getTime())
-                              .reverse()
-                              .map((item, index) => (
-                                <Paper
-                                  key={index}
-                                  elevation={2}
-                                  sx={{
-                                    p: 2,
-                                    mb: 2,
-                                    borderRadius: 2,
-                                    border: "1px solid #e0e0e0",
-                                    backgroundColor: "#fafafa",
-                                    "&:hover": {
-                                      backgroundColor: "#f5f5f5",
-                                      boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
-                                    }
-                                  }}
-                                >
-                                  <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                                    <Box sx={{ flex: 1 }}>
-                                      <Typography
-                                        className="sarabun-regular-datatable"
-                                        sx={{ fontSize: "16px", fontWeight: 600, color: "#333", mb: 1 }}
-                                      >
-                                        #{explainList.length - index} รายละเอียดการชี้แจง
-                                      </Typography>
-                                      <Typography
-                                        className="sarabun-regular-datatable"
-                                        sx={{ fontSize: "14px", color: "#666" }}
-                                      >
-                                        สร้างเมื่อ: {item.create_datetime ? dayjs(item.create_datetime).format("DD/MM/YYYY HH:mm") : "-"}
-                                      </Typography>
-                                    </Box>
-
-                                    <Box sx={{ display: "flex", gap: 1 }}>
-
-                                      <Box sx={{ display: 'flex', gap: 1.5 }}>
-                                        {/* ปุ่มอนุมัติ */}
-                                        <Button
-                                          variant="contained"
-                                          size="medium"
-                                          onClick={() => handleOnclickExplainApproveSc && handleOnclickExplainApproveSc(item)}
+                    <AccordionDetails>
+                      <Divider
+                        sx={{ my: 1, borderBottom: "2px solid #ff9800" }}
+                      />
+                      <Grid container spacing={3}>
+                        {/* รายการคำชี้แจง (Explain List) */}
+                        <Grid size={12}>
+                          {explainList.length > 0 ? (
+                            <Box sx={{ mt: 2 }}>
+                              {explainList
+                                .sort(
+                                  (a, b) =>
+                                    new Date(a.create_datetime).getTime() -
+                                    new Date(b.create_datetime).getTime()
+                                )
+                                .reverse()
+                                .map((item, index) => (
+                                  <Paper
+                                    key={index}
+                                    elevation={2}
+                                    sx={{
+                                      p: 2,
+                                      mb: 2,
+                                      borderRadius: 2,
+                                      border: "1px solid #e0e0e0",
+                                      backgroundColor: "#fafafa",
+                                      "&:hover": {
+                                        backgroundColor: "#f5f5f5",
+                                        boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+                                      },
+                                    }}
+                                  >
+                                    <Box
+                                      sx={{
+                                        display: "flex",
+                                        justifyContent: "space-between",
+                                        alignItems: "center",
+                                      }}
+                                    >
+                                      <Box sx={{ flex: 1 }}>
+                                        <Typography
+                                          className="sarabun-regular-datatable"
                                           sx={{
-                                            backgroundColor: '#45bc4bff', 
-                                            color: '#FFFFFF',
-                                            '&:hover': { backgroundColor: '#1b5e20' },
-                                            textTransform: 'none',
+                                            fontSize: "16px",
                                             fontWeight: 600,
-                                            borderRadius: 2,
-                                            px: 4,
+                                            color: "#333",
+                                            mb: 1,
                                           }}
                                         >
-                                          อนุมัติ
-                                        </Button>
-                                        {item.step_label === "EXPLAIN" && (
+                                          #{explainList.length - index}{" "}
+                                          รายละเอียดการชี้แจง
+                                        </Typography>
+                                        <Typography
+                                          className="sarabun-regular-datatable"
+                                          sx={{
+                                            fontSize: "14px",
+                                            color: "#666",
+                                          }}
+                                        >
+                                          สร้างเมื่อ:{" "}
+                                          {item.create_datetime
+                                            ? dayjs(
+                                                item.create_datetime
+                                              ).format("DD/MM/YYYY HH:mm")
+                                            : "-"}
+                                        </Typography>
+                                      </Box>
+
+                                      <Box sx={{ display: "flex", gap: 1 }}>
+                                        <Box sx={{ display: "flex", gap: 1.5 }}>
+                                          {/* ปุ่มอนุมัติ */}
+                                          {/* {item.step_label === "EXPLAIN" && ( */}
+                                          {dataelement.step_label ===
+                                            "EXPLAIN" &&
+                                            dataelement.complaint_status_id ===
+                                              "TRR_CS_APPROVE_SC" && (
+                                              <Button
+                                                variant="contained"
+                                                size="medium"
+                                                onClick={() =>
+                                                  handleOnclickExplainApproveSc &&
+                                                  handleOnclickExplainApproveSc(
+                                                    item
+                                                  )
+                                                }
+                                                sx={{
+                                                  backgroundColor: "#45bc4bff",
+                                                  color: "#FFFFFF",
+                                                  "&:hover": {
+                                                    backgroundColor: "#1b5e20",
+                                                  },
+                                                  textTransform: "none",
+                                                  fontWeight: 600,
+                                                  borderRadius: 2,
+                                                  px: 4,
+                                                }}
+                                              >
+                                                อนุมัติ
+                                              </Button>
+                                            )}
+
+                                          {/* ปุ่มดูข้อมูล */}
                                           <Button
                                             variant="contained"
                                             size="medium"
-                                            onClick={() => handleOnclickExplainApproveSc && handleOnclickExplainApproveSc(item)}
+                                            onClick={() =>
+                                              handleOnclickExplainView &&
+                                              handleOnclickExplainView(item)
+                                            }
                                             sx={{
-                                              backgroundColor: '#45bc4bff',
-                                              color: '#FFFFFF',
-                                              '&:hover': { backgroundColor: '#1b5e20' },
-                                              textTransform: 'none',
+                                              backgroundColor: "#7e828cff",
+                                              color: "#FFFFFF",
+                                              "&:hover": {
+                                                backgroundColor: "#4B5563",
+                                              },
+                                              textTransform: "none",
                                               fontWeight: 600,
                                               borderRadius: 2,
                                               px: 4,
                                             }}
                                           >
-                                            อนุมัติ
+                                            ดูข้อมูล
                                           </Button>
-                                        )}
-
-                                        {/* ปุ่มดูข้อมูล */}
-                                        <Button
-                                          variant="contained"
-                                          size="medium"
-                                          onClick={() =>
-                                            handleOnclickExplainView &&
-                                            handleOnclickExplainView(item)
-                                          }
-                                          sx={{
-                                            backgroundColor: "#7e828cff", 
-                                            color: "#FFFFFF",
-                                            "&:hover": {
-                                              backgroundColor: "#4B5563",
-                                            },
-                                            textTransform: "none",
-                                            fontWeight: 600,
-                                            borderRadius: 2,
-                                            px: 4,
-                                          }}
-                                        >
-                                          ดูข้อมูล
-                                        </Button>
+                                        </Box>
                                       </Box>
                                     </Box>
-                                  </Box>
-                                </Paper>
-                              ))}
-                          </Box>
-                        ) : (
-                          <Paper
-                            elevation={0}
-                            sx={{
-                              p: 4,
-                              textAlign: "center",
-                              color: "#999",
-                              backgroundColor: "#f9f9f9",
-                              borderRadius: 2,
-                              border: "2px dashed #e0e0e0"
-                            }}
-                          >
-                            <Typography
-                              className="sarabun-regular-datatable"
-                              sx={{ fontSize: "16px", color: "#999" }}
+                                  </Paper>
+                                ))}
+                            </Box>
+                          ) : (
+                            <Paper
+                              elevation={0}
+                              sx={{
+                                p: 4,
+                                textAlign: "center",
+                                color: "#999",
+                                backgroundColor: "#f9f9f9",
+                                borderRadius: 2,
+                                border: "2px dashed #e0e0e0",
+                              }}
                             >
-                              ไม่พบรายการคำชี้แจง
-                            </Typography>
-                          </Paper>
-                        )}
+                              <Typography
+                                className="sarabun-regular-datatable"
+                                sx={{ fontSize: "16px", color: "#999" }}
+                              >
+                                ไม่พบรายการคำชี้แจง
+                              </Typography>
+                            </Paper>
+                          )}
+                        </Grid>
                       </Grid>
-
-                    </Grid>
-                  </AccordionDetails>
-                </Accordion>
+                    </AccordionDetails>
+                  </Accordion>
+                </Grid>
               </Grid>
-            </Grid>
+            </Paper>
           </Paper>
-        </Paper>
-      )}
-
-      
-
+        )}
     </Box>
   );
 }

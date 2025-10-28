@@ -683,7 +683,7 @@ const handleDomainChange = (value: any) => {
       const dataset = {
         lov_group: "21,VARIABLE_CONSTANT",
         lov_type:
-          "report_type,complaint_type,reference_standard,attach_type,complaint_status,tool_use,decision_disposition,approve_select,complaint_step,complaint_action,active_company,role_admin",
+          "report_type,complaint_type,reference_standard,priority_level,attach_type,complaint_status,tool_use,decision_disposition,approve_select,complaint_step,complaint_action,active_company,role_admin",
       };
       const response = await _POST(dataset, "/Lov/LovGet");
 
@@ -702,8 +702,9 @@ const handleDomainChange = (value: any) => {
         setdataset_reporttype?.(grouped["report_type"] || []);
         setdataComplaintType_Combobox?.(grouped["complaint_type"] || []);
         setdataComplaintRs_Combobox?.(grouped["reference_standard"] || []);
+        setdataComplaintRs_Combobox?.(grouped["reference_standard"] || []);
+        setdatapriority_Combobox?.(grouped["priority_level"] || []);
         setdataphoto_Combobox?.(grouped["attach_type"] || []);
-        console.log("🔍 index.tsx - attach_type data:", grouped["attach_type"]);
         setdatastatus?.(grouped["complaint_status"] || []);
         setdataToolUse_Combobox?.(grouped["tool_use"] || []);
         setdataDecision_Combobox?.(grouped["decision_disposition"] || []);
@@ -730,23 +731,23 @@ const handleDomainChange = (value: any) => {
   };
 
   // Function - Get Priority Levels
-  const priority_Get = async () => {
-    if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  priority_Get");
+  // const priority_Get = async () => {
+  //   if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  priority_Get");
 
-    try {
-      const dataset = {
-        lov_group: "21",
-        lov_type: "priority_level",
-      };
-      const response = await _POST(dataset, "/Lov/LovGet");
-      if (response && response.status === "success") {
-        // console.log("❇️ Call [Lov/LovGet] -> priority_level :", response.data);
-        setdatapriority_Combobox && setdatapriority_Combobox(response.data);
-      }
-    } catch (e) {
-      console.log("error:", e);
-    }
-  };
+  //   try {
+  //     const dataset = {
+  //       lov_group: "21",
+  //       lov_type: "priority_level",
+  //     };
+  //     const response = await _POST(dataset, "/Lov/LovGet");
+  //     if (response && response.status === "success") {
+  //       // console.log("❇️ Call [Lov/LovGet] -> priority_level :", response.data);
+  //       setdatapriority_Combobox && setdatapriority_Combobox(response.data);
+  //     }
+  //   } catch (e) {
+  //     console.log("error:", e);
+  //   }
+  // };
 
   // Function - Get Domain
   const DomainGet = async () => {
@@ -780,6 +781,45 @@ const handleDomainChange = (value: any) => {
     }
   };
 
+  // Function - Get Company
+  const CompanyGet = async (action?: string) => {
+  if (isCallFuncLogOn)
+    console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  CompanyGet");
+
+  try {
+    const response = await _POST({}, "/Complaint/CasCompanyGet");
+
+    if (response && response.status === "success") {
+      console.log("❇️ Call [Complaint/CasCompanyGet] -> Company_Get :", response.data);
+
+      const activeCompany = dataset_activeCompany; // จาก LovAll_Get
+
+      console.log("🧩 activeCompany sample:", activeCompany);
+      console.log("🧩 company sample:", response.data);
+
+      if (activeCompany?.length > 0) {
+        const active = activeCompany[0]?.lov1 || "";
+
+        const activeid = active.split(",").map((id: string) => id.trim());
+
+        console.log("✅ activeid:", activeid);
+
+         // ✅ filter บริษัทตาม company_id
+        const filteredCompany = response.data.filter((company: any) =>
+          activeid.includes(company.company_id.toString())
+        );
+
+        console.log("⚙️ [filteredCompany]:", filteredCompany);
+        setdataset_company(filteredCompany);
+      } else {
+        console.log("⚠️ activeCompany ยังไม่มีค่า ใช้ company ทั้งหมดแทน");
+        setdataset_company(response.data);
+      }
+    }
+  } catch (e) {
+    console.log("error:", e);
+  }
+};
   // Function - Get DomainRelate
   const DomainRelateGet = async () => {
     if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  DomainRelateGet");
@@ -810,45 +850,7 @@ const handleDomainChange = (value: any) => {
       console.log("error:", e);
     }
   };
-  // Function - Get Company
-  const CompanyGet = async (action?: string) => {
-  if (isCallFuncLogOn)
-    console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  CompanyGet");
-
-  try {
-    const response = await _POST({}, "/Complaint/CasCompanyGet");
-
-    if (response && response.status === "success") {
-      console.log("❇️ Call [Complaint/CasCompanyGet] -> Company_Get :", response.data);
-
-      const activeCompany = dataset_activeCompany; // จาก LovAll_Get
-
-      console.log("🧩 activeCompany sample:", activeCompany?.[0]);
-      console.log("🧩 company sample:", response.data?.[0]);
-
-      if (activeCompany?.length > 0) {
-        const active = activeCompany[0]?.lov1 || "";
-
-        const activeid = active.split(",").map((id: string) => id.trim());
-
-        console.log("✅ activeid:", activeid);
-
-         // ✅ filter บริษัทตาม company_id
-        const filteredCompany = response.data.filter((company: any) =>
-          activeid.includes(company.company_id.toString())
-        );
-
-        console.log("⚙️ [filteredCompany]:", filteredCompany);
-        setdataset_company(filteredCompany);
-      } else {
-        console.log("⚠️ activeCompany ยังไม่มีค่า ใช้ company ทั้งหมดแทน");
-        setdataset_company(response.data);
-      }
-    }
-  } catch (e) {
-    console.log("error:", e);
-  }
-};
+  
 
   // Function - Get Department Domain
   const DepartmentDomainGet = async (action?: string) => {
@@ -1569,6 +1571,157 @@ const handleDomainChange = (value: any) => {
     }
   };
 
+  const ComplaintSavedraftEdit = async () => {
+    if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  ComplaintSavedraftEdit");
+
+    const tempid = uuidv4();
+
+    //Function Split Domain (For using with Complaint Status)
+    const tempComplaintStatus = splitByDot(user[0]?.employee_domain)
+
+    // เตรียม Models
+    const complainttypeModel = dataComplaintTypeValue_Combobox
+      ? compTypeUpdateCompId(
+        dataComplaintTypeValue_Combobox,
+        tempid,
+        compTypeOther
+      )
+      : null;
+
+    const complaintRsModel = dataComplaintRsValue_Combobox
+      ? compRsUpdateCompId(
+        dataComplaintRsValue_Combobox,
+        tempid,
+        compRsOther,
+        clauseOther
+      )
+      : null;
+
+    // สร้าง JSON payload
+    const complaintPayload = {
+      complaintModel: {
+        id: dataelement?.id,
+        report_type: dataReportTypeValue?.id,
+        cas_number: cas_number,
+        date_of_detection: date_of_detection
+          ? date_of_detection
+            .hour(dayjs().hour())
+            .minute(dayjs().minute())
+            .second(dayjs().second())
+            .format("YYYY-MM-DDTHH:mm:ss")
+          : null,
+        request_name: user[0]?.employee_username || "",
+        request_company_id: request_company_id?.company_id,
+        // ? Number(request_company_id.company_id)
+        // : undefined,
+        request_domain_id: user[0]?.employee_domain,
+        request_department_id: user[0].itasset_department_id,
+        request_position: user[0]?.employee_position || "",
+        request_email: user[0]?.employee_email || "",
+        request_phone: user[0]?.employee_tel || "",
+        request_date: new Date().toISOString(),
+        respondent_company_id: respondent_company_id?.company_id,
+        // ? Number(respondent_company_id.company_id)
+        // : undefined,
+        respondent_domain_id: respondent_domain_id?.domain_id,
+        respondent_department_id: respondent_department_id?.department_id,
+        // ? Number(respondent_department_id.department_id)
+        // : undefined,
+        respondent_email: respondent_email,
+        respondent_other_name: respondent_other_name,
+        respondent_other_email: respondent_other_email,
+        product_name: product_name,
+        detail: detail,
+        //priority_level: datapriorityValue_Combobox,
+        priority_level: datapriorityValue_Combobox || dataelement?.priority_level,
+        respond_date_within: respond_date_within
+          ? respond_date_within
+            .hour(dayjs().hour())
+            .minute(dayjs().minute())
+            .second(dayjs().second())
+            .format("YYYY-MM-DDTHH:mm:ss")
+          : null,
+        lot_no: lot_no,
+        complaint_status_id: tempComplaintStatus[0] + "_CS_NEW",
+        create_by: user[0]?.employee_username || "",
+        save_type: "save_draft",
+        complaintType: complainttypeModel,
+        complaintRs: complaintRsModel,
+        // เพิ่ม complaintFile
+        complaintFile:
+          complaintFiles?.map((item: any, index: number) => {
+            return {
+              cf_type: "Complaint",
+              complaint_id: tempid,
+              complaint_at_id: item.attachmentType,
+              other: item.otherText?.trim() || null,
+              cf_file_seq: (index + 1).toString(),
+              user_file_name: item.file.name,
+              file_name: item.file.name,
+              file_type: item.file.type.split("/")[1] || "",
+              file_size: item.file.size.toString(),
+              record_status: true,
+              create_by: user[0]?.employee_username || "",
+              create_datetime: new Date().toISOString(),
+              remark: item.otherText || null,
+            };
+          }) || []
+      },
+      RunningModel: {
+        code_group: dataReportTypeValue.lov_code,
+        code_type: dataReportTypeValue.lov1 + "-" + getPaddingYear(),
+        code_num: 1,
+      },
+      CurrentAccessModel: {
+        user_id: user[0]?.employee_username || "",
+      },
+    };
+
+    // สร้าง FormData
+    const formData = new FormData();
+    formData.append("complaintPayloadJson", JSON.stringify(complaintPayload));
+
+    // แนบไฟล์จริง
+    if (complaintFiles && complaintFiles.length > 0) {
+      complaintFiles.forEach((fileItem: any) => {
+        formData.append("complaintFiles", fileItem.file);
+      });
+    }
+
+    console.log("📤 complaintPayloadSavedraft:", complaintPayload);
+    setIsLoadingScreen(true);
+
+    try {
+      const response = await _POST_FORMDATA(
+        formData,
+        "/Complaint/ComplaintEdit"
+      );
+      if (response && response.status === "success") {
+        FullSweetalert({
+          title: 'Success',
+          text: `บันทึกข้อมูลสำเร็จ`,
+          icon: 'success'
+        });
+        console.log("✅ Complaint Add successfully:", response);
+      } else {
+        FullSweetalert({
+          title: 'Failed',
+          text: `บันทึกไม่ข้อมูลสำเร็จ`,
+          icon: 'error'
+        });
+        console.log("⚠️ Add failed:", response);
+      }
+    } catch (error) {
+      console.error("Upload failed:", error);
+    } finally {
+      setIsLoadingScreen(false);
+      handleClose();
+
+      // Complaint_Get();
+      ComplaintGet();
+    }
+  };
+
   // Function - Add Complaint
   const ComplaintAdd = async () => {
     if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  ComplaintAdd");
@@ -1606,7 +1759,6 @@ const handleDomainChange = (value: any) => {
         id: tempid,
         report_type: dataReportTypeValue?.id,
         cas_number: cas_number,
-        cf_type: "Complain",
         date_of_detection: date_of_detection
           ? date_of_detection
             .hour(dayjs().hour())
@@ -1614,26 +1766,24 @@ const handleDomainChange = (value: any) => {
             .second(dayjs().second())
             .format("YYYY-MM-DDTHH:mm:ss")
           : null,
+
+        // Request Metadata
         request_name: user[0]?.employee_username || "",
         request_company_id: request_company_id?.company_id,
-        // ? Number(request_company_id.company_id)
-        // : undefined,
         request_domain_id: user[0]?.employee_domain,
         request_department_id: user[0]?.itasset_department_id || "",
         request_position: user[0]?.employee_position || "",
         request_email: user[0]?.employee_email || "",
         request_phone: user[0]?.employee_tel || "",
-        request_date: new Date().toISOString(),
+
+        // Respondent Metadata
         respondent_company_id: respondent_company_id?.company_id,
-        // ? Number(respondent_company_id.itasset_company_id)
-        // : undefined,
         respondent_domain_id: respondent_domain_id?.domain_id,
         respondent_department_id: respondent_department_id?.department_id,
-        // ? Number(respondent_department_id.department_id)
-        // : undefined,
         respondent_email: respondent_email,
         respondent_other_name: respondent_other_name,
         respondent_other_email: respondent_other_email,
+
         product_name: product_name,
         detail: detail,
         priority_level: datapriorityValue_Combobox,
@@ -1648,8 +1798,11 @@ const handleDomainChange = (value: any) => {
         complaint_status_id: tempComplaintStatus[0] + "_CS_SUBMIT",
         create_by: user[0]?.employee_username || "",
         save_type: "save_submit",
+
+        // เพิ่ม Complaint Type + Complaint RS
         complaintType: complainttypeModel,
         complaintRs: complaintRsModel,
+
         // เพิ่ม complaintFile
         complaintFile:
           complaintFiles?.map((item: any, index: number) => {
@@ -1742,6 +1895,7 @@ const handleDomainChange = (value: any) => {
     if (!validateBeforeEdit()) {
       return;
     }
+    console.log("👌👌👌👌👌priority_level",priority_level)
 
     const tempid = uuidv4();
 
@@ -1756,13 +1910,12 @@ const handleDomainChange = (value: any) => {
       : null;
 
     // สร้าง JSON payload
-
     const complaintPayload = {
 
       complaintModel: {
         id: dataelement?.id,
-        report_type: dataReportTypeValue?.id,
         cas_number: cas_number,
+        report_type: dataReportTypeValue?.id,
         date_of_detection: date_of_detection
           ? date_of_detection
             .hour(dayjs().hour())
@@ -1770,6 +1923,8 @@ const handleDomainChange = (value: any) => {
             .second(dayjs().second())
             .format("YYYY-MM-DDTHH:mm:ss")
           : null,
+
+        // Request Metadata
         request_name: dataelement?.request_name,
         request_company_id: dataelement?.request_company_id,
         request_domain_id: dataelement?.request_domain_id,
@@ -1777,18 +1932,19 @@ const handleDomainChange = (value: any) => {
         request_position: dataelement?.request_position,
         request_email: dataelement?.request_email,
         request_phone: dataelement?.request_phone,
-        request_date: new Date().toISOString(),
+
+        // Respondent Metadata
         respondent_company_id: dataelement?.respondent_company_id,
         respondent_domain_id: dataelement?.respondent_domain_id,
         respondent_department_id: respondent_department_id?.department_id,
-        // ? Number(respondent_department_id.department_id)
-        // : undefined,
         respondent_email: respondent_email,
         respondent_other_name: respondent_other_name,
         respondent_other_email: respondent_other_email,
+
         product_name: product_name,
         detail: detail,
         priority_level: datapriority?.id ?? dataelement?.priority_level,
+       // priority_level: datapriorityValue_Combobox || dataelement?.priority_level,
         respond_date_within: respond_date_within
           ? respond_date_within
             .hour(dayjs().hour())
@@ -1798,11 +1954,11 @@ const handleDomainChange = (value: any) => {
           : null,
         lot_no: lot_no,
         complaint_status_id: tempComplaintStatus[0] + "_CS_SUBMIT",
-        create_by: user[0]?.employee_username || '',
-        update_by: user[0]?.employee_username || '',
-        action_type: null,
+
+        // เพิ่ม Complaint Type + Complaint RS
         complaintType: complainttypeModel,
         complaintRs: complaintRsModel,
+
         // เพิ่ม complaintFile
         complaintFile:
           complaintFiles?.map((item: any, index: number) => {
@@ -1826,11 +1982,6 @@ const handleDomainChange = (value: any) => {
           ) || []
       },
 
-      RunningModel: {
-        code_group: dataReportTypeValue.lov_code,
-        code_type: dataReportTypeValue.lov1 + "-" + getPaddingYear(),
-        code_num: 1,
-      },
       CurrentAccessModel: {
         user_id: user[0]?.employee_username || '',
       }
@@ -2360,6 +2511,7 @@ const handleDomainChange = (value: any) => {
     if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  handleOnclickExplain");
 
     resetForm();
+    console.log("checkkk",dataelement)
     setOpenExplain(true);
     setdataelement(data);
   };
@@ -2563,16 +2715,36 @@ const handleDomainChange = (value: any) => {
     // ComplaintType_Get();
     // ComplaintRs_Get();
     // photo_Get();
-    priority_Get();
+    // priority_Get();
     // DomainGet();
     DomainRelateGet();
     // DepartmentDomainGet();
-    CompanyGet();
+    // CompanyGet();
 
     // complaint_status_Get();
     // ToolUse_Get();
     // Decision_Get();
   }, []);
+
+  // const effectRan = React.useRef(false); // ป้องกัน run ซ้ำใน dev mode
+ 
+  // React.useEffect(() => {
+  //   if (effectRan.current) return;
+  //   effectRan.current = true;
+ 
+  //   const fetchData = async () => {
+  //     try {
+  //       console.log("useEffect start");
+  //       await mas_DomainRelateGet();
+  //       console.log("useEffect done");
+  //     } catch (err) {
+  //       console.error(err);
+  //     }
+  //   };
+ 
+  //   fetchData();
+  // }, []);
+
 
   React.useEffect(() => {
   if (dataset_activeCompany) {
@@ -2987,8 +3159,8 @@ const handleDomainChange = (value: any) => {
         buttonText={"Save & Submit"}
         handleClose={handleClose}
         handlefunction={ComplaintEdit}
-        handlesavedraft={ComplaintSavedraftAdd}
-        hideSaveDraft={true}
+        handlesavedraft={ComplaintSavedraftEdit}
+        hideSaveDraft={false}
         buttonColor="success"
         element={<ComplaintBody
           action="Edit"
@@ -3107,7 +3279,7 @@ const handleDomainChange = (value: any) => {
           action="Explain"
           handleOpenAdd={() => handleOnclickExplainAdd(dataelement)}
           handleOnclickExplainView={handleOnclickExplainView}
-          //handleOnclickExplainApproveSc={handleOnclickExplainApproveSc}
+          handleOnclickExplainApproveSc={handleOnclickExplainApproveSc}
 
         />}
       />

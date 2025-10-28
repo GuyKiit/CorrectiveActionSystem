@@ -1212,13 +1212,6 @@ export default function ExplaintBody({
     console.log("🔧 dataTooluseCheckbox state changed:", dataTooluseCheckbox);
   }, [dataTooluseCheckbox]);
 
-  React.useEffect(() => {
-    // Call file fetch for complaint actions only, not for explain actions
-    if (action === "ExplainRead") {
-      ComplaintFile_Get();
-    }
-  }, [action, dataelement]);
-
   const setExplainTU = (data: any) => {
     if (true)
       console.log(
@@ -1287,6 +1280,12 @@ export default function ExplaintBody({
       });
     return newData;
   };
+
+  React.useEffect(() => {
+    if (action === "ExplainRead" && dataelement?.id) {
+      ComplaintFile_Get();
+    }
+  }, [action, dataelement]);
 
   return (
     <Box
@@ -1413,7 +1412,7 @@ export default function ExplaintBody({
                       value={
                         isActionExplainAdd
                           ? user[0]?.itasset_department_name ||  "-"
-                          : (responsible_department_id as any)?.department_name || "-"
+                          : (responsible_department_id as any)?.department_name || dataelement?.responsible_department_id ||"-"
                       }
                       labelName="แผนก (Department)"
                       onchange={(e) => setresponsible_department_id(e.target.value)}
@@ -1936,6 +1935,8 @@ export default function ExplaintBody({
                     </Accordion>
                   )}
 
+                  {/* ไฟล์ */}
+                  
                   <Accordion
                     expanded={isMinimizefileOpen}
                     onChange={() => setisMinimizeFileOpen(!isMinimizefileOpen)}
@@ -2234,6 +2235,7 @@ export default function ExplaintBody({
                       </Grid>
                     </AccordionDetails>
                   </Accordion>
+
                 </Box>
               </Paper>
             </Grid>
@@ -2599,7 +2601,7 @@ export default function ExplaintBody({
         </Paper>
       )}
 
-      {/* //ส่วนของ Section Head */}
+      {/* //ส่วนของ Qc */}
       {isActionExplainApproveQcAdd && (
         <Paper
           elevation={3}
