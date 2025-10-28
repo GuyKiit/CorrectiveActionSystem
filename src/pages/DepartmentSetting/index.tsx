@@ -303,9 +303,6 @@ export default function DepartmentSetting() {
 
   // Event Handlers =========================================================
   const handleCompanyChange = (value: any) => {
-    //console.log('####### Onchange Company Value [event] : ', value);
-    //console.log("@@@@@@@@@@@@First", domain);
-
 
     if (value != null) {
       mas_DomainGet(value.company_id, set_domain, user, isCallFuncLogOn);
@@ -324,11 +321,8 @@ export default function DepartmentSetting() {
         department_search: "",
       });
     }
-    //console.log("@@@@@@@@@@@@second", domain);
   };
   const handleDomainChange = (value: any) => {
-    //console.log('####### Onchange Company Value [event] : ', value);
-    //console.log('####### Onchange Domain Value [event] : ', value);
 
     if (value != null) {
       const dataset = {
@@ -362,8 +356,6 @@ export default function DepartmentSetting() {
 
       return str.split('.');
   };
-
-
 
   // =====================================================================================================
   // API FUNCTIONS - GET DATA MASTER
@@ -532,8 +524,6 @@ export default function DepartmentSetting() {
         //console.log("error:", e);
       }
   };
-
-
 
   // Function - Get Username Domain
   const UsernameGet = async (action?: string) => {
@@ -952,7 +942,7 @@ export default function DepartmentSetting() {
   //       valid = false;
   //     }
 
-  
+
 
 
 
@@ -970,6 +960,10 @@ export default function DepartmentSetting() {
     // เตรียม Models
     const DeptApproveSetup = [];
 
+    console.log('sectionApprove:', sectionApprove);
+    
+    console.log('qcApprove:', qcApprove);
+
     if (sectionApprove?.employee_username) {
       DeptApproveSetup.push({
         step: "1",
@@ -984,6 +978,8 @@ export default function DepartmentSetting() {
       });
     }
 
+    console.log('DeptApproveSetup:', DeptApproveSetup);   
+    
     // สร้าง JSON payload
     const DeptSetupPayload = {
 
@@ -1042,6 +1038,7 @@ export default function DepartmentSetting() {
 
     if (sectionApprove?.employee_username) {
       DeptApproveSetup.push({
+        dept_approve_setup_id: sectionApprove?.dept_approve_setup_id,
         step: "1",
         user_id: sectionApprove.employee_username, // ใช้ state ปัจจุบัน
       });
@@ -1049,16 +1046,19 @@ export default function DepartmentSetting() {
 
     if (qcApprove?.employee_username) {
       DeptApproveSetup.push({
+        dept_approve_setup_id: qcApprove?.dept_approve_setup_id,
         step: "2",
         user_id: qcApprove.employee_username, // ใช้ state ปัจจุบัน
       });
     }
 
+    console.log(DeptApproveSetup,'DeptApproveSetupDeptApproveSetup');
+    
     const DeptSetupPayload = {
       id: dataelement?.id,
       // company : dataelement?.company ,
-      domain_dept_id: dataelement?.domain_dept_id,
-      dept_email: dataelement?.dept_email,
+      domain_dept_id: domain_dept_id.domain_dept_id, //**อย่าลืมเปลี่ยนชื่อ นะสุภาวดี */
+      dept_email: dept_email,
       update_by: user[0]?.employee_username,
       DeptApproveSetup: DeptApproveSetup,
     };
@@ -1094,52 +1094,53 @@ export default function DepartmentSetting() {
   };
 
   // Function - Delete DepartmentSetting
-  // const DepartmentSettingDelete = async () => {
-  //   if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  ComplaintDelete");
+  const DepartmentSettingDelete = async () => {
+    if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  ComplaintDelete");
 
-  //   // สร้าง JSON payload
-  //   const DeptSetupPayload = {
+    // สร้าง JSON payload
+    const DeptSetupPayload = {
 
-  //     id: dataelement?.id,
-  //     update_by: user[0]?.employee_username || '',
+      id: dataelement?.id,
+      update_by: user[0]?.employee_username || '',
 
 
-  //   };
+    };
 
-  //   //console.log("📤 DeptSetupPayload:", DeptSetupPayload);
-  //   setIsLoadingScreen(true);
+    //console.log("📤 DeptSetupPayload:", DeptSetupPayload);
+    setIsLoadingScreen(true);
 
-  //   try {
-  //     let response = await _POST(DeptSetupPayload, "/DeptSetup/DeptSetupDelete");
-  //     if (response && response.status === "success") {
-  //       FullSweetalert({
-  //         title: 'Success',
-  //         text: `บันทึกข้อมูลสำเร็จ`,
-  //         icon: 'success'
-  //       });
-  //       //console.log("✅ Complaint Delete successfully:", response);
-  //     } else {
-  //       FullSweetalert({
-  //         title: 'Failed',
-  //         text: `บันทึกไม่ข้อมูลสำเร็จ`,
-  //         icon: 'error'
-  //       });
-  //       //console.log("⚠️ Delete failed:", response);
-  //     }
-  //   } catch (error) {
-  //     console.error("Upload failed:", error);
-  //   } finally {
-  //     setIsLoadingScreen(false);
-  //     handleClose();
-  //     FullSweetalert({
-  //       title: 'Success',
-  //       text: `ลบข้อมูลสำเร็จ`,
-  //       icon: 'success'
-  //     });
-  //     // Complaint_Get();
-  //     DeptSetupGet();
-  //   }
-  // };
+    try {
+      let response = await _POST(DeptSetupPayload, "/DeptSetup/DeptSetupDelete");
+      if (response && response.status === "success") {
+        FullSweetalert({
+          title: 'Success',
+          text: `บันทึกข้อมูลสำเร็จ`,
+          icon: 'success'
+        });
+        //console.log("✅ Complaint Delete successfully:", response);
+      } else {
+        FullSweetalert({
+          title: 'Failed',
+          text: `บันทึกไม่ข้อมูลสำเร็จ`,
+          icon: 'error'
+        });
+        //console.log("⚠️ Delete failed:", response);
+      }
+    } catch (error) {
+      console.error("Upload failed:", error);
+    } finally {
+      setIsLoadingScreen(false);
+      handleClose();
+      FullSweetalert({
+        title: 'Success',
+        text: `ลบข้อมูลสำเร็จ`,
+        icon: 'success'
+      });
+      // Complaint_Get();
+      DeptSetupGet();
+    }
+  };
+
   // // Function - Delete Complaint
   // const ComplaintDelete = async () => {
   //   if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  ComplaintDelete");
@@ -1203,7 +1204,7 @@ export default function DepartmentSetting() {
 
   const handleOnclickDepartmentSettingAdd = () => {
     if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  handleOnclickDepartmentSettingAdd");
-    console.log("⭐step:3 เรียกฟังก์ชั่น ดูข้อมูล handleOnclickDepartmentSettingAdd ", data);
+    console.log("⭐step:3 เรียกฟังก์ชั่น ดูข้อมูล handleOnclickDepartmentSettingAdd ");
     resetForm();
     setdataelement(null);
     setOpenDepartmentSettingAdd(true);
@@ -1227,13 +1228,12 @@ export default function DepartmentSetting() {
 
   const handleOnclickDepartmentSettingDelete = (data: any) => {
     if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  handleOnclickDepartmentSettingDelete");
-      console.log("⭐step:3 เรียกฟังก์ชั่น ดูข้อมูล handleOnclickDepartmentSettingDelete ", data);
+    console.log("⭐step:3 เรียกฟังก์ชั่น ดูข้อมูล handleOnclickDepartmentSettingDelete ", data);
 
     resetForm();
     Dept_setup_Get(data);
     setOpenDepartmentSettingDelete(true);
   };
-
 
   // Search Handlers
   // const handleCloseSearch = () => {
@@ -1261,8 +1261,6 @@ export default function DepartmentSetting() {
     setOpenUpload(false);
     resetForm();
   };
-
-
 
   // =====================================================================================================
   // USEEFFECT - INITIALIZATION (from index.tsx and ComplaintRead.tsx)
@@ -1453,8 +1451,6 @@ export default function DepartmentSetting() {
 
 
       {/* Data Table Section */}
-      {//console.log('dddddddddddddddd', datalist)
-      }
       <DataTable
         colum={Department_Setting_headCells}
         rows={datalist}
@@ -1690,7 +1686,7 @@ export default function DepartmentSetting() {
         />}
       />
 
-      {/* <FuncDialog
+      <FuncDialog
         open={openDepartmentSettingDelete}
         dialogWidth="xl"
         hideSaveDraft={true}
@@ -1704,7 +1700,7 @@ export default function DepartmentSetting() {
         element={<DepartmentSettingBody
           action="Delete"
         />}
-      /> */}
+      />
 
       {/* =================== Dialog Sections =================== */}
 
