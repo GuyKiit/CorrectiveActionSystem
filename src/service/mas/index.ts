@@ -3,7 +3,7 @@ import axios from "axios";
 
 export async function _GET_APP(datasend:any) {
   const url = `${
-    import.meta.env.VITE_APP_TRR_API_URL_LOGIN
+    import.meta.env.VITE_APP_API_URL
   }/api_sys_auth/SysApplication/Sys_Application_Get`;
   const datasent = {
     ...datasend,
@@ -20,7 +20,7 @@ export async function _GET_APP(datasend:any) {
 
 export async function _GET(datasend:any, path:string) {
   const url = `${
-    import.meta.env.VITE_APP_TRR_API_URL
+    import.meta.env.VITE_APP_TRRCAS_API_URL
   }${path}`;
   
   const datasent = {
@@ -40,7 +40,7 @@ export async function _GET(datasend:any, path:string) {
 
 export async function _POST(datasend:any, path:string) {
   const url = `${
-    import.meta.env.VITE_APP_TRR_API_URL
+    import.meta.env.VITE_APP_TRRCAS_API_URL
   }${path}`;
   
   const datasent = {
@@ -66,9 +66,8 @@ export async function _POST(datasend:any, path:string) {
   }
 }
 
-
 export async function _POST_FORMDATA(formData: FormData, path: string) {
-  const url = `${import.meta.env.VITE_APP_TRR_API_URL}${path}`;
+  const url = `${import.meta.env.VITE_APP_TRRCAS_API_URL}${path}`;
 
   try {
     const res = await axios.post(url, formData, {
@@ -84,9 +83,9 @@ export async function _POST_FORMDATA(formData: FormData, path: string) {
   }
 }
 
-export async function _POST_SYNC(datasend:any, path:string) {
+export async function _POST_API_INTRANET(datasend:any, path:string) {
   const url = `${
-    import.meta.env.VITE_APP_TRR_API_URL_SYNC
+    import.meta.env.VITE_APP_API_URL_INTRANET
   }${path}`;
   
   const datasent = {
@@ -94,9 +93,17 @@ export async function _POST_SYNC(datasend:any, path:string) {
   };
 
   try {
-    const res = await axios.post(url, datasent);
-    const data = res.data;
-    if(data && data.status == "success"){
+    const res = await axios.post(url, datasent, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const data = res.data;    
+    if(data && data.status == "Success"){      
+      return data;
+    }else if (data && data.status == "data_error"){
+      return data;
+    }else if (data && data.status == "error"){
       return data;
     }
   } catch {

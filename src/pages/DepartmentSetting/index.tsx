@@ -1,5 +1,5 @@
-import React, { useState, useMemo, use } from "react";
-import { _GET, _POST, _POST_FORMDATA, _POST_SYNC, _POST_SYS_API } from "../../service/mas";
+import React, { useState, useMemo, use, useEffect } from "react";
+import { _GET, _POST, _POST_FORMDATA, _POST_SYS_API } from "../../service/mas";
 import { _formatNumber, conCatDateTime } from "../../../libs/datacontrol";
 import { setValueMas } from "../../../libs/setvaluecallback";
 import dayjs from "dayjs";
@@ -32,7 +32,7 @@ import CloseIcon from '@mui/icons-material/CheckCircle';
 import { useListDepartmentSetting } from "./core/ListDepartmentSettingContext";
 import DepartmentSettingBody from "./components/DepartmentSettingBody";
 import { data } from "react-router-dom";
-import { mas_CompanyGet, mas_DepartmentDomainGet, mas_DomainGet, mas_UsernameGet } from "../../service/mas/lov";
+import { mas_CompanyGet, mas_DepartmentDomainGet, mas_DepartmentDomainGetAll, mas_DomainGet, mas_DomainGetAll, mas_UsernameGetAll } from "../../service/mas/lov";
 // import ExplaintBody from "./components/ExplaintBody";
 
 // =====================================================================================================
@@ -196,6 +196,14 @@ export default function DepartmentSetting() {
     dataset_roleAdmin, setdataset_roleAdmin,
     datastatus, setdatastatus,
 
+    //====================================
+    //--------GetMaster(All)-------
+    master_domain, setmaster_domain,
+    master_department, setmaster_department,
+    master_user, setmaster_user
+    //====================================
+
+
   } = useListDepartmentSetting();
 
   // =====================================================================================================
@@ -213,22 +221,15 @@ export default function DepartmentSetting() {
   const [openExplain, setOpenExplain] = React.useState(false);
   const [openExplainAdd, setOpenExplainAdd] = React.useState(false);
   const [openExplainView, setOpenExplainView] = React.useState(false);
-
   const [openExplainApproveSc, setOpenExplainApproveSc] = React.useState(false);
-
   const [openUpLoad, setOpenUpload] = React.useState(false);
-
-
   const [ComplaintBlocks, setComplaintBlocks] = useState<Block[]>([]);
   const [blockValidateErrors, setBlockValidateErrors] = useState<{ [index: number]: data_detail }>({});
   const [successCardOpen, setSuccessCardOpen] = React.useState(false);
   const [successCardMessage, setSuccessCardMessage] = React.useState("");
   const [openAddlist, setOpenAddlist] = React.useState(false);
-
-
   const handleOpenAddList = () => setOpenAddlist(true);
   const handleCloseAddlist = () => setOpenAddlist(false);
-
   // Date Search Variables (from index.tsx)
   const [respondWithinSearch, setrespondWithinSearch] = React.useState<
     dayjs.Dayjs | undefined | null
@@ -239,7 +240,6 @@ export default function DepartmentSetting() {
   const [endDateSearch, setEndDateSearch] = React.useState<
     dayjs.Dayjs | undefined | null
   >(dayjs().add(3, "month"));
-
   // Search Variables (from index.tsx)
   const [TextNameSearch, setTextNameSearch] = React.useState({
     username_search: "",
@@ -248,7 +248,6 @@ export default function DepartmentSetting() {
     department_search: "",
     Email: "",
   });
-
   const [open, setOpen] = React.useState(false);
   const [dataComplaintType, setdataComplaintType] = useState<LovType[]>([]);
   const [dataComplaintRs, setdataComplaintRs] = useState<LovType[]>([]);
@@ -284,7 +283,6 @@ export default function DepartmentSetting() {
   // For On-Off Calling Function Log
   const [isCallFuncLogOn] = useState(true);
 
-
   // Reset Form Function (from index.tsx)
   const resetSearchTable = () => {
     setdocumentDateSearch(null);
@@ -303,12 +301,10 @@ export default function DepartmentSetting() {
     setqcApprove("");
   };
 
-
-
   // Event Handlers =========================================================
   const handleCompanyChange = (value: any) => {
-    console.log('####### Onchange Company Value [event] : ', value);
-    console.log("@@@@@@@@@@@@First", domain);
+    //console.log('####### Onchange Company Value [event] : ', value);
+    //console.log("@@@@@@@@@@@@First", domain);
 
 
     if (value != null) {
@@ -328,11 +324,11 @@ export default function DepartmentSetting() {
         department_search: "",
       });
     }
-    console.log("@@@@@@@@@@@@second", domain);
+    //console.log("@@@@@@@@@@@@second", domain);
   };
   const handleDomainChange = (value: any) => {
-    console.log('####### Onchange Company Value [event] : ', value);
-    console.log('####### Onchange Domain Value [event] : ', value);
+    //console.log('####### Onchange Company Value [event] : ', value);
+    //console.log('####### Onchange Domain Value [event] : ', value);
 
     if (value != null) {
       const dataset = {
@@ -341,7 +337,7 @@ export default function DepartmentSetting() {
       };
 
       mas_DepartmentDomainGet(value, set_department, isCallFuncLogOn);
-      mas_UsernameGet(dataset, set_username, isCallFuncLogOn);
+      // mas_UsernameGetAll(setmaster_user, isCallFuncLogOn);
     } else {
       set_department([]);
       set_username([]);
@@ -356,15 +352,15 @@ export default function DepartmentSetting() {
   };
   // Handle Change Functions (from ComplaintRead.tsx)
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-    if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  handleChange");
+    if (isCallFuncLogOn) //console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  handleChange");
 
-    setValue(newValue);
+      setValue(newValue);
   };
 
   const splitByDot = (str: any) => {
-    if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  splitByDot");
+    if (isCallFuncLogOn) //console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  splitByDot");
 
-    return str.split('.');
+      return str.split('.');
   };
 
 
@@ -387,7 +383,7 @@ export default function DepartmentSetting() {
 
       if (response && response.status === "success") {
         const lovData = response.data || [];
-        console.log("❇️❇️❇️❇️❇️❇️❇️ Call [Lov/LovGet] -> LovAll_Get :", response.data);
+        //console.log("❇️❇️❇️❇️❇️❇️❇️ Call [Lov/LovGet] -> LovAll_Get :", response.data);
 
         // ✅ จัดกลุ่มตาม lov_type
         const grouped = lovData.reduce((acc: any, item: any) => {
@@ -404,21 +400,21 @@ export default function DepartmentSetting() {
 
 
 
-        console.log('⚠️⚠️⚠️⚠️ [grouped["active_company"]] :', grouped["active_company"])
-        console.log('⚠️⚠️⚠️⚠️ [grouped["role_admin"]] :', grouped["role_admin"])
-        console.log('⚠️⚠️⚠️⚠️ [grouped["complaint_status"]] :', grouped["complaint_status"])
+        //console.log('⚠️⚠️⚠️⚠️ [grouped["active_company"]] :', grouped["active_company"])
+        //console.log('⚠️⚠️⚠️⚠️ [grouped["role_admin"]] :', grouped["role_admin"])
+        //console.log('⚠️⚠️⚠️⚠️ [grouped["complaint_status"]] :', grouped["complaint_status"])
 
 
 
       }
     } catch (e) {
-      console.log("error:", e);
+      //console.log("error:", e);
     }
   };
 
   // Function - Get Domain
   // const DomainGet = async () => {
-  //   if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  DomainGet");
+  //   if (isCallFuncLogOn) //console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  DomainGet");
 
   //   try {
   //     const dataset = {
@@ -426,56 +422,53 @@ export default function DepartmentSetting() {
   //     };
   //     const response = await _POST(dataset, "/Complaint/CasDomainGet");
   //     if (response && response.status === "success") {
-  //       console.log("❇️ Call [Complaint/CasDomainGet] -> Domain_Get :", response.data);
+  //       //console.log("❇️ Call [Complaint/CasDomainGet] -> Domain_Get :", response.data);
   //       if (Array.isArray(response.data)) {
   //         // เอา filter ออก → ใช้ทุกตัว
   //         set_domain_search(response.data);
   //       }
   //     }
   //   } catch (e) {
-  //     console.log("error:", e);
+  //     //console.log("error:", e);
   //   }
   // };
 
   // Function - Get Department Domain
   const DepartmentDomainGet = async (action?: string) => {
-    if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  DepartmentDomainGet");
+    if (isCallFuncLogOn) //console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  DepartmentDomainGet");
 
-    try {
-      const dataset = {
-        domain_id: user[0]?.employee_domain,
-        company_id: user[0]?.itasset_company_id,
-      };
-      const response = await _POST(
-        dataset,
-        "/Complaint/CasDepartmentDomainGet"
-      );
-      if (response && response.status === "success") {
-        console.log(
-          "❇️ Call [Complaint/CasDepartmentDomainGet] -> Department_Domain_Get :",
-          response.data
+      try {
+        const dataset = {
+          domain_id: user[0]?.employee_domain,
+          company_id: user[0]?.itasset_company_id,
+        };
+        const response = await _POST(
+          dataset,
+          "/Complaint/CasDepartmentDomainGet"
         );
+        if (response && response.status === "success") {
 
-        set_department_search(response.data);
 
-        // if (action == "Add") {
+          set_department_search(response.data);
 
-        //   //================================================
-        //   let department = response.data.filter(
-        //     (item: any) => item.department_id != user[0]?.itasset_department_id
-        //   );
-        //   set_department_search(department);
-        //   // if (department) {
-        //   //   // set_domain_search(domain);
-        //   //   set_department_search(department);
-        //   // }
-        //   //================================================
-        // }
+          // if (action == "Add") {
 
+          //   //================================================
+          //   let department = response.data.filter(
+          //     (item: any) => item.department_id != user[0]?.itasset_department_id
+          //   );
+          //   set_department_search(department);
+          //   // if (department) {
+          //   //   // set_domain_search(domain);
+          //   //   set_department_search(department);
+          //   // }
+          //   //================================================
+          // }
+
+        }
+      } catch (e) {
+        //console.log("error:", e);
       }
-    } catch (e) {
-      console.log("error:", e);
-    }
   };
 
   // // Function - Get Company
@@ -503,70 +496,67 @@ export default function DepartmentSetting() {
 
   const CompanyGet = async (action?: string) => {
     if (isCallFuncLogOn)
-      console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  CompanyGet");
+      //console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  CompanyGet");
 
-    try {
-      const response = await _POST({}, "/Complaint/CasCompanyGet");
+      try {
+        const response = await _POST({}, "/Complaint/CasCompanyGet");
 
-      if (response && response.status === "success") {
-        console.log("❇️ Call [Complaint/CasCompanyGet] -> Company_Get :", response.data);
+        if (response && response.status === "success") {
+          //console.log("❇️ Call [Complaint/CasCompanyGet] -> Company_Get :", response.data);
 
-        const activeCompany = dataset_activeCompany; // จาก LovAll_Get
+          const activeCompany = dataset_activeCompany; // จาก LovAll_Get
 
-        console.log("🧩 activeCompany sample:", activeCompany?.[0]);
-        console.log("🧩 company sample:", response.data?.[0]);
+          //console.log("🧩 activeCompany sample:", activeCompany?.[0]);
+          //console.log("🧩 company sample:", response.data?.[0]);
 
-        if (activeCompany?.length > 0) {
-          const active = activeCompany[0]?.lov1 || "";
+          if (activeCompany?.length > 0) {
+            const active = activeCompany[0]?.lov1 || "";
 
-          const activeid = active.split(",").map((id: string) => id.trim());
+            const activeid = active.split(",").map((id: string) => id.trim());
 
-          console.log("✅ activeid:", activeid);
+            //console.log("✅ activeid:", activeid);
 
-          // ✅ filter บริษัทตาม company_id
-          const filteredCompany = response.data.filter((company: any) =>
-            activeid.includes(company.company_id.toString())
-          );
+            // ✅ filter บริษัทตาม company_id
+            const filteredCompany = response.data.filter((company: any) =>
+              activeid.includes(company.company_id.toString())
+            );
 
-          console.log("⚙️ [filteredCompany]:", filteredCompany);
-          set_company(filteredCompany);
-        } else {
-          console.log("⚠️ activeCompany ยังไม่มีค่า ใช้ company ทั้งหมดแทน");
-          set_company(response.data);
+            //console.log("⚙️ [filteredCompany]:", filteredCompany);
+            set_company(filteredCompany);
+          } else {
+            //console.log("⚠️ activeCompany ยังไม่มีค่า ใช้ company ทั้งหมดแทน");
+            set_company(response.data);
+          }
         }
+      } catch (e) {
+        //console.log("error:", e);
       }
-    } catch (e) {
-      console.log("error:", e);
-    }
   };
 
 
 
   // Function - Get Username Domain
   const UsernameGet = async (action?: string) => {
-    if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  CasUsernameGet");
+    if (isCallFuncLogOn) //console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  CasUsernameGet");
 
-    try {
-      const dataset = {
-        domain_id: user[0]?.employee_domain,
-        company_id: user[0]?.itasset_company_id,
-        department_id: user[0]?.itasset_department_id,
-      };
-      const response = await _POST(
-        dataset,
-        "/Complaint/CasUsernameGet"
-      );
-      if (response && response.status === "success") {
-        console.log(
-          "❇️ Call [Complaint/CasUsernameGet] -> CasUsernameGet :",
-          response.data
+      try {
+        const dataset = {
+          domain_id: user[0]?.employee_domain,
+          company_id: user[0]?.itasset_company_id,
+          department_id: user[0]?.itasset_department_id,
+        };
+        const response = await _POST(
+          dataset,
+          "/Complaint/CasUsernameGet"
         );
+        if (response && response.status === "success") {
 
-        set_username_search(response.data);
+
+          set_username_search(response.data);
+        }
+      } catch (e) {
+        //console.log("error:", e);
       }
-    } catch (e) {
-      console.log("error:", e);
-    }
   };
 
 
@@ -577,26 +567,23 @@ export default function DepartmentSetting() {
   // Function - Get Complaints
   const Dept_setup_Get = async (data: any) => {
     if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  Dept_setup_Get");
-    console.log("😥", data);
-
 
     setIsLoadingScreen(true)
     const dataset = {
       id: data.id,
     };
-    console.log("Read step:4 dataset: ", dataset);
-
 
     try {
       let response = await _POST(dataset, "/DeptSetup/DeptSetupGet");
-      console.log("Read step:4 ผลลัพธ์ : ", response);
-      console.log("Read step:4 Normalize ปรับค่าใหม่ : ", response.data[0],);
       if (response && response.status === "success") {
         setIsLoadingScreen(false);
         setdataelement(response.data[0])
       }
+      else {
+        setdataelement(null)
+      }
     } catch (e) {
-      console.log("error");
+      console.error("error", e);
     }
   };
 
@@ -616,11 +603,12 @@ export default function DepartmentSetting() {
       department_search: TextNameSearch.department_search ? TextNameSearch.department_search : null,
     }
 
-    console.log("step:2 dataset ก่อนส่ง API /DeptSearch/DeptSearchGet ", dataset);
+    //console.log("step:2 dataset ก่อนส่ง API /DeptSearch/DeptSearchGet ", dataset);
     try {
       let response = await _POST(dataset, "/DeptSetup/DeptSetupGet");
-      console.log("step:2 ผลลัพธ์ที่ได้จาก API /DeptSetup/DeptSetupGet ", response);
+      //console.log("step:2 ผลลัพธ์ที่ได้จาก API /DeptSetup/DeptSetupGet ", response);
       if (response && response.status === "success") {
+
         setIsLoadingScreen(false);
         const responseData: any = [];
         if (Array.isArray(response.data)) {
@@ -628,10 +616,10 @@ export default function DepartmentSetting() {
             const ACTION = (
               <ActionManageCell
                 hadleOnclickMenu={(name: any) => {
-                  console.log("🎆 🎆 🎆 🎆 hadleOnclickMenu (name) :", name);
+                  //console.log("🎆 🎆 🎆 🎆 hadleOnclickMenu (name) :", name);
                   if (name === "View") {
                     // DepartmentDomainGet("Read");
-                    console.log("e😀l", el);
+                    //console.log("e😀l", el);
 
                     handleOnclickDepartmentSettingView(el);
                   } else if (name === "Edit") {
@@ -694,8 +682,8 @@ export default function DepartmentSetting() {
               />
             );
             el.ACTION = ACTION;
-            console.log("el.acknowledge_flag", el.acknowledge_flag)
-            console.log(el.step_label)
+            //console.log("el.acknowledge_flag", el.acknowledge_flag)
+            //console.log(el.step_label)
             el.complaint_status_label = (
               <BasicChips label={`${el.complaint_status_label}`} acknowledge={el.acknowledge_flag}></BasicChips>
             );
@@ -705,18 +693,26 @@ export default function DepartmentSetting() {
             responseData.push(el);
           });
         }
-        console.log("step:2 ข้อมูลก่อนเข้า ตาราง ", responseData);
+        //console.log("step:2 ข้อมูลก่อนเข้า ตาราง ", responseData);
         setdatalist(responseData);
+      } else if (response.status === "error") {
+        setIsLoadingScreen(false);
+        setdatalist([]);
+      }
+      else {
+        setIsLoadingScreen(false);
+        setdatalist([]);
+
       }
     } catch (e) {
-      console.log("error");
+      //console.log("error");
 
     }
   };
 
   //   // Function - Validate before Add Complaint
   //   const validateBeforeAdd = (): boolean => {
-  //     if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  validateBeforeAdd");
+  //     if (isCallFuncLogOn) //console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  validateBeforeAdd");
   //     let valid = true;
   //     // Clear ALL validation errors before validation
   //     setReportTypeError(false);
@@ -784,14 +780,14 @@ export default function DepartmentSetting() {
   //         setOtherTypeError(true);
   //         valid = false;
   //       } else {
-  //         //console.log("✅ Other Type validation passed");
+  //         ////console.log("✅ Other Type validation passed");
   //       }
   //     }
 
 
   //     // Validate Rs 
   //     const reportTypeCode = dataReportTypeValue?.lov_code;
-  //     console.log("🔍 Report Type Code:", reportTypeCode);
+  //     //console.log("🔍 Report Type Code:", reportTypeCode);
 
   //     // เฉพาะ NCR เท่านั้นที่ต้อง validate Complaint Rs
   //     if (reportTypeCode === "NCR") {
@@ -834,7 +830,7 @@ export default function DepartmentSetting() {
 
   //   //validate Edit
   //   const validateBeforeEdit = (): boolean => {
-  //     if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  validateBeforeEdit");
+  //     if (isCallFuncLogOn) //console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  validateBeforeEdit");
   //     let valid = true;
   //     setReportTypeError(false);
   //     setRespondentDepartmentError(false);
@@ -853,12 +849,12 @@ export default function DepartmentSetting() {
 
   //     // Validate Report Type - ตรวจสอบก่อนและถ้าไม่มีให้ return false ทันที
   //     if (!dataReportTypeValue || !dataReportTypeValue.id) {
-  //       console.log("❌ Report Type validation failed");
+  //       //console.log("❌ Report Type validation failed");
   //       setReportTypeError(true);
   //       document.getElementById("reportTypeField")?.focus();
   //       return false; 
   //     }
-  //     console.log("✅ Report Type validation passed");
+  //     //console.log("✅ Report Type validation passed");
 
   //     // Validate Date of Detection
   //     if (!date_of_detection) {
@@ -892,61 +888,61 @@ export default function DepartmentSetting() {
 
   //     // Validate Complaint Type
   //     if (!dataComplaintTypeValue_Combobox || dataComplaintTypeValue_Combobox.length === 0) {
-  //       console.log("❌ Complaint Type validation failed");
+  //       //console.log("❌ Complaint Type validation failed");
   //       setComplaintTypeError(true);
   //       valid = false;
   //     } else {
-  //       console.log("✅ Complaint Type validation passed");
+  //       //console.log("✅ Complaint Type validation passed");
   //     }
 
   //     // Validate Other Type (if complaint type has "Other" selected)
   //     if (dataComplaintTypeValue_Combobox && dataComplaintTypeValue_Combobox.some((item: any) => item.isOther === "Y")) {
   //       if (!compTypeOther || compTypeOther.trim() === "") {
-  //         console.log("❌ Other Type validation failed");
+  //         //console.log("❌ Other Type validation failed");
   //         setOtherTypeError(true);
   //         valid = false;
   //       } else {
-  //         console.log("✅ Other Type validation passed");
+  //         //console.log("✅ Other Type validation passed");
   //       }
   //     }
 
 
   //     // Validate Rs 
   //     const reportTypeCode = dataReportTypeValue?.lov_code;
-  //     console.log("🔍 Report Type Code:", reportTypeCode);
+  //     //console.log("🔍 Report Type Code:", reportTypeCode);
 
   //     // เฉพาะ NCR เท่านั้นที่ต้อง validate Complaint Rs
   //     if (reportTypeCode === "NCR") {
   //       if (!dataComplaintRsValue_Combobox || dataComplaintRsValue_Combobox.length === 0) {
-  //         console.log("❌ Complaint Rs validation failed for NCR");
+  //         //console.log("❌ Complaint Rs validation failed for NCR");
   //         setComplaintRsError(true);
   //         valid = false;
   //       } else {
-  //         console.log("✅ Complaint Rs validation passed for NCR");
+  //         //console.log("✅ Complaint Rs validation passed for NCR");
   //       }
   //     } else {
-  //       console.log("✅ Complaint Rs validation skipped for", reportTypeCode);
+  //       //console.log("✅ Complaint Rs validation skipped for", reportTypeCode);
   //     }
 
   //     // Validate Other Rs 
   //     if (reportTypeCode === "NCR" && dataComplaintRsValue_Combobox && dataComplaintRsValue_Combobox.some((item: any) => item.isClause === "Other")) {
   //       if (!compRsOther || compRsOther.trim() === "") {
-  //         console.log("❌ Other Rs validation failed for NCR");
+  //         //console.log("❌ Other Rs validation failed for NCR");
   //         setOtherRsError(true);
   //         valid = false;
   //       } else {
-  //         console.log("✅ Other Rs validation passed for NCR");
+  //         //console.log("✅ Other Rs validation passed for NCR");
   //       }
   //     }
 
   //     // Validate Clause Rs
   //     if (reportTypeCode === "NCR" && dataComplaintRsValue_Combobox && dataComplaintRsValue_Combobox.some((item: any) => item.isClause === "Clause")) {
   //       if (!clauseOther || clauseOther.trim() === "") {
-  //         console.log("❌ Clause Rs validation failed for NCR");
+  //         //console.log("❌ Clause Rs validation failed for NCR");
   //         setClauseRsError(true);
   //         valid = false;
   //       } else {
-  //         console.log("✅ Clause Rs validation passed for NCR");
+  //         //console.log("✅ Clause Rs validation passed for NCR");
   //       }
   //     }
 
@@ -956,21 +952,7 @@ export default function DepartmentSetting() {
   //       valid = false;
   //     }
 
-  // // 
-  // if (!datapriorityValue_Combobox) {
-  //   // ถ้าไม่มีข้อมูลใหม่ ให้ใช้ข้อมูลเก่า
-  //   if (dataelement?.priority_level) {
-  //     //console.log("Using old priority data:", dataelement.priority_level);
-  //   } else {
-  //     setPriorityError(true);
-  //     valid = false;
-  //   }
-
-  // } else {
-  //  // console.log("✅ Priority validation passed");
-  // }
-  //     return valid;
-  //   }
+  
 
 
 
@@ -1012,7 +994,7 @@ export default function DepartmentSetting() {
       DeptApproveSetup: DeptApproveSetup,
 
     };
-    console.log("📤 DeptSetupPayload:", DeptSetupPayload);
+    ////console.log("📤 DeptSetupPayload:", DeptSetupPayload);
     setIsLoadingScreen(true);
 
     try {
@@ -1026,14 +1008,14 @@ export default function DepartmentSetting() {
           text: `บันทึกข้อมูลสำเร็จ`,
           icon: 'success'
         });
-        console.log("✅ Complaint Add successfully:", response);
+        //console.log("✅ Complaint Add successfully:", response);
       } else {
         FullSweetalert({
           title: 'Failed',
           text: `บันทึกไม่ข้อมูลสำเร็จ`,
           icon: 'error'
         });
-        console.log("⚠️ Add failed:", response);
+        //console.log("⚠️ Add failed:", response);
       }
     } catch (error) {
       console.error("Upload failed:", error);
@@ -1046,7 +1028,7 @@ export default function DepartmentSetting() {
     }
   };
 
-  // // Function - Edit DepartmentSetting
+  // Function - Edit DepartmentSetting
   const DepartmentSettingEdit = async () => {
     if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  DepartmentSettingEdit");
 
@@ -1054,34 +1036,32 @@ export default function DepartmentSetting() {
     //   return;
     // }
 
-    
+
     // เตรียม Models
     const DeptApproveSetup = [];
 
     if (sectionApprove?.employee_username) {
-    DeptApproveSetup.push({
-      step: "1",
-      user_id: sectionApprove.employee_username, // ใช้ state ปัจจุบัน
-    });
-  }
+      DeptApproveSetup.push({
+        step: "1",
+        user_id: sectionApprove.employee_username, // ใช้ state ปัจจุบัน
+      });
+    }
 
-  if (qcApprove?.employee_username) {
-    DeptApproveSetup.push({
-      step: "2",
-      user_id: qcApprove.employee_username, // ใช้ state ปัจจุบัน
-    });
-  }
+    if (qcApprove?.employee_username) {
+      DeptApproveSetup.push({
+        step: "2",
+        user_id: qcApprove.employee_username, // ใช้ state ปัจจุบัน
+      });
+    }
 
-  const DeptSetupPayload = {
-    id: dataelement?.id,
-    // company : dataelement?.company ,
-    domain_dept_id:  dataelement?.domain_dept_id,
-    dept_email:  dataelement?.dept_email,
-    create_by: user[0]?.employee_username,
-    update_by: user[0]?.employee_username ,
-    DeptApproveSetup: DeptApproveSetup,
-  };
-    console.log("📤 DeptSetupPayload:", DeptSetupPayload);
+    const DeptSetupPayload = {
+      id: dataelement?.id,
+      // company : dataelement?.company ,
+      domain_dept_id: dataelement?.domain_dept_id,
+      dept_email: dataelement?.dept_email,
+      update_by: user[0]?.employee_username,
+      DeptApproveSetup: DeptApproveSetup,
+    };
     setIsLoadingScreen(true);
 
     try {
@@ -1095,14 +1075,12 @@ export default function DepartmentSetting() {
           text: `บันทึกข้อมูลสำเร็จ`,
           icon: 'success'
         });
-        console.log("✅ Complaint Add successfully:", response);
       } else {
         FullSweetalert({
           title: 'Failed',
           text: `บันทึกไม่ข้อมูลสำเร็จ`,
           icon: 'error'
         });
-        console.log("⚠️ Add failed:", response);
       }
     } catch (error) {
       console.error("Upload failed:", error);
@@ -1116,52 +1094,52 @@ export default function DepartmentSetting() {
   };
 
   // Function - Delete DepartmentSetting
-  const DepartmentSettingDelete = async () => {
-    if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  ComplaintDelete");
+  // const DepartmentSettingDelete = async () => {
+  //   if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  ComplaintDelete");
 
-    // สร้าง JSON payload
-    const DeptSetupPayload = {
+  //   // สร้าง JSON payload
+  //   const DeptSetupPayload = {
 
-      id: dataelement?.id,
-      update_by: user[0]?.employee_username || '',
+  //     id: dataelement?.id,
+  //     update_by: user[0]?.employee_username || '',
 
 
-    };
+  //   };
 
-    console.log("📤 DeptSetupPayload:", DeptSetupPayload);
-    setIsLoadingScreen(true);
+  //   //console.log("📤 DeptSetupPayload:", DeptSetupPayload);
+  //   setIsLoadingScreen(true);
 
-    try {
-      let response = await _POST(DeptSetupPayload, "/DeptSetup/DeptSetupDelete");
-      if (response && response.status === "success") {
-        FullSweetalert({
-          title: 'Success',
-          text: `บันทึกข้อมูลสำเร็จ`,
-          icon: 'success'
-        });
-        console.log("✅ Complaint Delete successfully:", response);
-      } else {
-        FullSweetalert({
-          title: 'Failed',
-          text: `บันทึกไม่ข้อมูลสำเร็จ`,
-          icon: 'error'
-        });
-        console.log("⚠️ Delete failed:", response);
-      }
-    } catch (error) {
-      console.error("Upload failed:", error);
-    } finally {
-      setIsLoadingScreen(false);
-      handleClose();
-      FullSweetalert({
-        title: 'Success',
-        text: `ลบข้อมูลสำเร็จ`,
-        icon: 'success'
-      });
-      // Complaint_Get();
-      DeptSetupGet();
-    }
-  };
+  //   try {
+  //     let response = await _POST(DeptSetupPayload, "/DeptSetup/DeptSetupDelete");
+  //     if (response && response.status === "success") {
+  //       FullSweetalert({
+  //         title: 'Success',
+  //         text: `บันทึกข้อมูลสำเร็จ`,
+  //         icon: 'success'
+  //       });
+  //       //console.log("✅ Complaint Delete successfully:", response);
+  //     } else {
+  //       FullSweetalert({
+  //         title: 'Failed',
+  //         text: `บันทึกไม่ข้อมูลสำเร็จ`,
+  //         icon: 'error'
+  //       });
+  //       //console.log("⚠️ Delete failed:", response);
+  //     }
+  //   } catch (error) {
+  //     console.error("Upload failed:", error);
+  //   } finally {
+  //     setIsLoadingScreen(false);
+  //     handleClose();
+  //     FullSweetalert({
+  //       title: 'Success',
+  //       text: `ลบข้อมูลสำเร็จ`,
+  //       icon: 'success'
+  //     });
+  //     // Complaint_Get();
+  //     DeptSetupGet();
+  //   }
+  // };
   // // Function - Delete Complaint
   // const ComplaintDelete = async () => {
   //   if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  ComplaintDelete");
@@ -1216,15 +1194,16 @@ export default function DepartmentSetting() {
   // =====================================================================================================
 
   // Dialog Handlers
-  const handleOnclickMenuSync = () => {
-    if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  handleOnclickMenuSync");
 
-    // setOpenSync(true);
-  };
+  // const handleOnclickMenuSync = () => {
+  //   if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  handleOnclickMenuSync");
+
+  //   // setOpenSync(true);
+  // };
 
   const handleOnclickDepartmentSettingAdd = () => {
     if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  handleOnclickDepartmentSettingAdd");
-
+    console.log("⭐step:3 เรียกฟังก์ชั่น ดูข้อมูล handleOnclickDepartmentSettingAdd ", data);
     resetForm();
     setdataelement(null);
     setOpenDepartmentSettingAdd(true);
@@ -1232,48 +1211,43 @@ export default function DepartmentSetting() {
 
   const handleOnclickDepartmentSettingView = (data: any) => {
     if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  handleOnclickDepartmentSettingView");
-
-    console.log("Read step:3 เรียกฟังก์ชั่น ดูข้อมูล handleOnclickMenuView ");
-    console.log("Read step:3 ข้อมูลที่ได้จาก DeptSearchGet ก่อนส่งเข้าฟังก์ชั่น Complaint_Get  ", data);
-    Dept_setup_Get(data);
+    console.log("⭐step:3 เรียกฟังก์ชั่น ดูข้อมูล handleOnclickMenuView ", data);
     resetForm();
+    Dept_setup_Get(data);
     setOpenDepartmentSettingView(true); // แล้วค่อยเปิด Dialog
   };
 
   const handleOnclickDepartmentSettingEdit = (data: any) => {
     if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  handleOnclickDepartmentSettingEdit");
-
-    console.log("Edit step:3 เรียกฟังก์ชั่น ดูข้อมูล handleOnclickMenuEdit ");
-    console.log("Edit step:3 ข้อมูลที่ได้จาก DeptSearchGet ก่อนส่งเข้าฟังก์ชั่น Complaint_Get  ", data);
-    Dept_setup_Get(data);
+    console.log("⭐step:3 เรียกฟังก์ชั่น ดูข้อมูล handleOnclickDepartmentSettingEdit ", data);
     resetForm();
+    Dept_setup_Get(data);
     setOpenDepartmentSettingEdit(true);
   };
 
   const handleOnclickDepartmentSettingDelete = (data: any) => {
     if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  handleOnclickDepartmentSettingDelete");
+      console.log("⭐step:3 เรียกฟังก์ชั่น ดูข้อมูล handleOnclickDepartmentSettingDelete ", data);
 
-    console.log("Delete step:3 เรียกฟังก์ชั่น ดูข้อมูล handleOnclickMenuDelete ");
-    console.log("Delete step:3 ข้อมูลที่ได้จาก DeptSearchGet ก่อนส่งเข้าฟังก์ชั่น Complaint_Get  ", data);
-    Dept_setup_Get(data);
     resetForm();
+    Dept_setup_Get(data);
     setOpenDepartmentSettingDelete(true);
   };
 
 
   // Search Handlers
-  const handleCloseSearch = () => {
-    if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  handleCloseSearch");
-    setTextNameSearch({
-      username_search: "",
-      company_search: "",
-      department_search: "",
-      domain_search: "",
-      Email: "",
-    });
-    // Complaint_Get()
-    // DeptSearchGet();
-  };
+  // const handleCloseSearch = () => {
+  //   if (isCallFuncLogOn) //console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  handleCloseSearch");
+  //   setTextNameSearch({
+  //     username_search: "",
+  //     company_search: "",
+  //     department_search: "",
+  //     domain_search: "",
+  //     Email: "",
+  //   });
+  //   // Complaint_Get()
+  //   // DeptSearchGet();
+  // };
 
   // Close Dialog Handler
   const handleClose = () => {
@@ -1294,23 +1268,60 @@ export default function DepartmentSetting() {
   // USEEFFECT - INITIALIZATION (from index.tsx and ComplaintRead.tsx)
   // =====================================================================================================
 
-  // Initialize data on component mount
-  React.useEffect(() => {
-    LovAll_Get();
-    resetSearchTable();
-    console.log("step:1 เรียกฟังก์ชั่น DeptSearchGet();");
-    DeptSetupGet();
-    // DomainGet();
-    // DepartmentDomainGet();
-    // CompanyGet();
-    UsernameGet();
+  //   // Initialize data on component mount
+  //   useEffect(() => {
+  //   const fetchData = async () => {
+  //     //console.log("useEffect start");
 
-    console.log("#################### company_search", company_search);
+  //     await LovAll_Get();
+  //     resetSearchTable();
+  //     await DeptSetupGet();
+  //     await UsernameGet();
+  //     await mas_DomainGetAll(setmaster_domain, isCallFuncLogOn);
+  //     await mas_DepartmentDomainGetAll(setmaster_department, isCallFuncLogOn);
+  //     await mas_UsernameGetAll(setmaster_user, isCallFuncLogOn);
+
+  //     //console.log("#################### master_domain", master_domain);
+  //     //console.log("#################### master_department", master_department);
+  //     //console.log("#################### master_user", master_user);
+
+  //     Checkdata(); // ตอนนี้ state ถูกอัปเดตแล้ว
+  //     //console.log("Checkdata done");
+  //   };
+
+  //   fetchData();
+  // }, []);
+
+  // Initialize data on component mount
+  const effectRan = React.useRef(false); // ป้องกัน run ซ้ำใน dev mode
+
+  React.useEffect(() => {
+    if (effectRan.current) return;
+    effectRan.current = true;
+
+    const fetchData = async () => {
+      try {
+        console.log("⭐Step [0] useEffect start");
+        await LovAll_Get();                     // ไม่มี signal
+        await resetSearchTable();
+        await DeptSetupGet();
+        await UsernameGet();
+        await mas_DomainGetAll(setmaster_domain, isCallFuncLogOn);
+        await mas_DepartmentDomainGetAll(setmaster_department, isCallFuncLogOn);
+        await mas_UsernameGetAll(setmaster_user, isCallFuncLogOn);
+        //console.log("useEffect done");
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchData();
   }, []);
 
+  //ใช้สำหรับตอน Add
   React.useEffect(() => {
     if (dataset_activeCompany) {
-      console.log("🔁 activeCompany พร้อมแล้ว → เรียก CompanyGet()");
+      console.log("⭐Step [1] ใช้สำหรับตอน Add 🔁 ActiveCompany พร้อมแล้ว → เรียก CompanyGet()");
       CompanyGet();
     }
   }, [dataset_activeCompany]);
@@ -1429,19 +1440,21 @@ export default function DepartmentSetting() {
               colorname={"primary"}
             />
           </Grid>
-          <Grid>
+          {/* <Grid>
             <FullWidthButton
               labelName={"รีเซท"}
               handleonClick={handleCloseSearch}
               variant_text="outlined"
               colorname={"inherit"}
             />
-          </Grid>
+          </Grid> */}
         </Grid>
       </Box>
 
 
       {/* Data Table Section */}
+      {//console.log('dddddddddddddddd', datalist)
+      }
       <DataTable
         colum={Department_Setting_headCells}
         rows={datalist}
@@ -1677,7 +1690,7 @@ export default function DepartmentSetting() {
         />}
       />
 
-      <FuncDialog
+      {/* <FuncDialog
         open={openDepartmentSettingDelete}
         dialogWidth="xl"
         hideSaveDraft={true}
@@ -1691,7 +1704,7 @@ export default function DepartmentSetting() {
         element={<DepartmentSettingBody
           action="Delete"
         />}
-      />
+      /> */}
 
       {/* =================== Dialog Sections =================== */}
 

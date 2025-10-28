@@ -1,5 +1,5 @@
 import React, { createContext, FC, useContext, useState } from "react";
-import {  initialListDepartmentSetting, ListDepartmentSettingContextProps } from "./model";
+import { initialListDepartmentSetting, ListDepartmentSettingContextProps } from "./model";
 import dayjs from "dayjs";
 import { setPriority } from "node:os";
 import { Launch } from "..";
@@ -40,7 +40,7 @@ const ListDepartmentSettingProvider: FC<WithChildren> = ({ children }) => {
     const [dept_domain, setdept_domain] = useState<any>(
         initialListDepartmentSetting.dept_domain
     );
-    
+
     //-----------dataset-------------
     const [company, set_company] = useState<any>(
         initialListDepartmentSetting.company
@@ -54,7 +54,7 @@ const ListDepartmentSettingProvider: FC<WithChildren> = ({ children }) => {
     const [username, set_username] = useState<any>(
         initialListDepartmentSetting.username
     );
-    
+
     const [company_search, set_company_search] = useState<any>(
         initialListDepartmentSetting.company_search
     );
@@ -76,8 +76,20 @@ const ListDepartmentSettingProvider: FC<WithChildren> = ({ children }) => {
     const [datastatus, setdatastatus] = useState<any>(
         initialListDepartmentSetting.datastatus
     );
-    
-    
+
+    //============================================
+    //--------GetMaster(All)-------
+    const [master_domain, setmaster_domain] = useState<any>(
+        initialListDepartmentSetting.master_domain
+    );
+    const [master_department, setmaster_department] = useState<any>(
+        initialListDepartmentSetting.master_department
+    );
+    const [master_user, setmaster_user] = useState<any>(
+        initialListDepartmentSetting.master_user
+    );
+    //============================================
+
 
     return (
         <ListDepartmentSettingContext.Provider
@@ -107,7 +119,7 @@ const ListDepartmentSettingProvider: FC<WithChildren> = ({ children }) => {
 
                 setdept_company,
                 setdept_domain,
-                
+
 
                 //-----------dataset-------------
                 company,
@@ -117,13 +129,13 @@ const ListDepartmentSettingProvider: FC<WithChildren> = ({ children }) => {
                 dataset_activeCompany,
                 dataset_roleAdmin,
                 datastatus,
-                
+
 
                 company_search,
                 department_search,
                 domain_search,
                 username_search,
-                
+
 
                 set_company,
                 set_department,
@@ -132,13 +144,22 @@ const ListDepartmentSettingProvider: FC<WithChildren> = ({ children }) => {
                 setdataset_activeCompany,
                 setdataset_roleAdmin,
                 setdatastatus,
-                
+
 
                 set_company_search,
                 set_department_search,
                 set_domain_search,
                 set_username_search,
-                
+
+                //============================================
+                //--------GetMaster(All)-------
+                master_domain,
+                master_department,
+                master_user,
+                setmaster_domain,
+                setmaster_department,
+                setmaster_user, 
+                //===========================================
             }}
         >
             {children}
