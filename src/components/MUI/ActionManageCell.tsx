@@ -87,7 +87,7 @@ const ActionManageCell: React.FC<ActionManageCellProps> = (props) => {
   );
 //  nsole.log(menuFuncData,'menuFuncDatamenuFuncDatamenuFuncDatamenuFuncDatamenuFuncDatamenuFuncDatamenuFuncDatamenuFuncDatamenuFuncDatamenuFuncDatamenuFuncData');
   
-console.log('CHECK DATE el in ActionManageCell', menuFuncData)
+// console.log('CHECK DATE el in ActionManageCell', menuFuncData)
   const filteredMenu = (menuFuncData ?? [])
     .filter(el =>
       el?.func_name && el?.func_name !== "Add" &&

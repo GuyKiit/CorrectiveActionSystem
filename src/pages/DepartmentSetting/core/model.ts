@@ -18,8 +18,8 @@ export type ListDepartmentSettingContextProps = {
     sectionApprove?: any
     qcApprove?: any
 
-    dept_company?: string
-    dept_domain?: string
+    dept_company?: any
+    dept_domain?: any
 
     //============================================
     //--------GetMaster(All)-------
@@ -42,8 +42,8 @@ export type ListDepartmentSettingContextProps = {
     setsectionApprove: Dispatch<SetStateAction<any>>;
     setqcApprove: Dispatch<SetStateAction<any>>;
 
-    setdept_company: Dispatch<SetStateAction<string>>;
-    setdept_domain: Dispatch<SetStateAction<string>>;
+    setdept_company: Dispatch<SetStateAction<any>>;
+    setdept_domain: Dispatch<SetStateAction<any>>;
 
    
 
