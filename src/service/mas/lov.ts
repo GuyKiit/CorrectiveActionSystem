@@ -1,6 +1,8 @@
 import axios from "axios";
 import { _POST, _POST_API_INTRANET } from ".";
 import dayjs from "dayjs";
+import React from "react";
+
 
 //===========================================================================================================
 
@@ -16,10 +18,10 @@ export async function mas_CompanyGet(company_id: number, set_company: (data: any
       "/Complaint/CasCompanyGet"
     );
     if (response && response.status === "success") {
-      console.log(
-        "❇️ Call [Complaint/CasCompanyGet] -> Company_Get :",
-        response.data
-      );
+      // console.log(
+      //   "❇️ Call [Complaint/CasCompanyGet] -> Company_Get :",
+      //   response.data
+      // );
       set_company(response.data);
     }
   } catch (e) {
@@ -37,7 +39,7 @@ export async function mas_DomainGet(company_id: number, set_domain: (data: any) 
     };
     const response = await _POST(dataset, "/Complaint/CasDomainGet");
     if (response && response.status === "success") {
-      console.log("❇️ Call [Complaint/CasDomainGet] -> Domain_Get :", response.data);
+      //console.log("❇️ Call [Complaint/CasDomainGet] -> Domain_Get :", response.data);
       if (Array.isArray(response.data)) {
         // เอา filter ออก → ใช้ทุกตัว
         set_domain(response.data);
@@ -57,7 +59,7 @@ export async function mas_DomainGetAll(setmaster_domain: (data: any) => void, is
     };
     const response = await _POST(dataset, "/Complaint/CasDomainGetAll");
     if (response && response.status === "success") {
-      console.log("❇️ Call [Complaint/CasDomainGet] -> Domain_GetAll :", response.data);
+      //console.log("❇️ Call [Complaint/CasDomainGet] -> Domain_GetAll :", response.data);
       if (Array.isArray(response.data)) {
         // เอา filter ออก → ใช้ทุกตัว
         setmaster_domain(response.data);
@@ -100,6 +102,9 @@ export async function mas_DomainRelateGet(value: any, set_domainrelate: (data: a
 export async function mas_DepartmentDomainGet(value: any, set_department: (data: any) => void, isCallFuncLogOn: boolean) {
   if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  DepartmentDomainGet");
 
+  console.log(value, "💚💚💚 value in mas_DepartmentDomainGet 💚💚💚");
+  
+
   try {
     const dataset = {
       domain_id: value.domain_id,
@@ -110,10 +115,10 @@ export async function mas_DepartmentDomainGet(value: any, set_department: (data:
       "/Complaint/CasDepartmentDomainGet"
     );
     if (response && response.status === "success") {
-      console.log(
-        "❇️ Call [Complaint/CasDepartmentDomainGet] -> Department_Domain_Get :",
-        response.data
-      );
+      // console.log(
+      //   "❇️ Call [Complaint/CasDepartmentDomainGet] -> Department_Domain_Get :",
+      //   response.data
+      // );
       if (Array.isArray(response.data)) {
         // เอา filter ออก → ใช้ทุกตัว
         set_department(response.data);
@@ -138,10 +143,10 @@ export async function mas_DepartmentDomainGetAll(setmaster_department: (data: an
       "/Complaint/CasDepartmentDomainGetAll"
     );
     if (response && response.status === "success") {
-      console.log(
-        "❇️ Call [Complaint/CasDepartmentDomainGet] -> Department_Domain_GetAll :",
-        response.data
-      );
+      // console.log(
+      //   "❇️ Call [Complaint/CasDepartmentDomainGet] -> Department_Domain_GetAll :",
+      //   response.data
+      // );
       if (Array.isArray(response.data)) {
         // เอา filter ออก → ใช้ทุกตัว
         setmaster_department(response.data);
@@ -169,10 +174,10 @@ export async function mas_DepartmentGet_Complaint(value: any, setdataset_departm
       "/Complaint/CasDepartmentDomainGet"
     );
     if (response && response.status === "success") {
-      console.log(
-        "❇️❇️❇️❇️❇️❇️❇️❇️ Call [Complaint/CasDepartmentDomainGet] -> Department_Domain_Get :",
-        response.data
-      );
+      // console.log(
+      //   "❇️❇️❇️❇️❇️❇️❇️❇️ Call [Complaint/CasDepartmentDomainGet] -> Department_Domain_Get :",
+      //   response.data
+      // );
       if (Array.isArray(response.data)) {
         // เอา filter ออก → ใช้ทุกตัว
         setdataset_department(response.data);
@@ -230,10 +235,10 @@ export async function mas_UsernameGetAll(setmaster_user: (data: any) => void, is
       "/Employee/Employee_Get"
     );
     if (response && response.status === "Success") {
-      console.log(
-        "❇️ Call [Employee/Employee_Get] -> mas_UsernameGetAll :",
-        response.data
-      );
+      // console.log(
+      //   "❇️ Call [Employee/Employee_Get] -> mas_UsernameGetAll :",
+      //   response.data
+      // );
 
       setmaster_user(response.data);
 

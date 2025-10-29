@@ -20,6 +20,8 @@ interface ActionManageCellProps {
   hiddenEdit?: boolean;
   hiddenDelete?: boolean;
   hiddenExplain?: boolean;
+  hiddenApproveSC?: boolean;
+  hiddenApproveQC?: boolean;
   hiddenClose?: boolean;
   chack_data?: 'Cutoff_Row' | 'CencalCutoff' | undefined;
   hadleOnclickMenu?: (value: string) => void;
@@ -36,13 +38,13 @@ const ICONS_MAP: { [key: string]: ReactElement } = {
 };
 
 const ActionManageCell: React.FC<ActionManageCellProps> = (props) => {
-  const { disabled, chack_data, hadleOnclickMenu, hiddenRead, hiddenEdit, hiddenDelete, hiddenExplain, hiddenClose } = props;
+  const { disabled, chack_data, hadleOnclickMenu, hiddenRead, hiddenEdit, hiddenDelete, hiddenExplain, hiddenApproveSC, hiddenApproveQC, hiddenClose } = props;
   const { menuFuncData } = useAuth();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
+    setAnchorEl(event.currentTarget); 
   };
 
   const handleClose = () => {
@@ -68,7 +70,9 @@ const ActionManageCell: React.FC<ActionManageCellProps> = (props) => {
         (funcName === "View" && hiddenRead) ||         // Complaint
         (funcName === "Edit" && hiddenRead) ||         // Complaint
         (funcName === "Delete" && hiddenRead) ||       // Complaint
-        (funcName === "Detail" && hiddenExplain) ||    // Explain
+        (funcName === "Explain" && hiddenExplain) ||    // Explain
+        (funcName === "ApproveSC" && hiddenApproveSC) ||    // Approve
+        (funcName === "ApproveQC" && hiddenApproveQC) ||    // Approve
         (funcName === "Close" && hiddenClose)          // Close
       }
       // onMouseEnter={(e) => {
@@ -85,7 +89,7 @@ const ActionManageCell: React.FC<ActionManageCellProps> = (props) => {
       {hasSubMenu && <span className="ml-auto">▶</span>}
     </MenuItem>
   );
-//  nsole.log(menuFuncData,'menuFuncDatamenuFuncDatamenuFuncDatamenuFuncDatamenuFuncDatamenuFuncDatamenuFuncDatamenuFuncDatamenuFuncDatamenuFuncDatamenuFuncData');
+  console.log(menuFuncData,'menuFuncData');
   
 // console.log('CHECK DATE el in ActionManageCell', menuFuncData)
   const filteredMenu = (menuFuncData ?? [])
