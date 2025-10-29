@@ -235,12 +235,20 @@ export async function mas_UsernameGetAll(setmaster_user: (data: any) => void, is
       "/Employee/Employee_Get"
     );
     if (response && response.status === "Success") {
+      console.log(
+        "❇️ Call [Employee/Employee_Get] -> mas_UsernameGetAll :",
+        response.data
+      );
+
+      // Filter Master User (Only user that have AD only)
+      const FilteredData = response.data.filter((val: any) => val['employee_username'] != null);
+
       // console.log(
-      //   "❇️ Call [Employee/Employee_Get] -> mas_UsernameGetAll :",
-      //   response.data
+      //   "❇️ FilteredData :",
+      //   FilteredData
       // );
 
-      setmaster_user(response.data);
+      setmaster_user(FilteredData);
 
     }
   } catch (e) {
