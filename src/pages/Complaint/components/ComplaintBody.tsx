@@ -915,6 +915,34 @@ export default function ComplaintBody({
     setcomplaintFiles(fileList); // sync
   }, [fileList]);
 
+  const Acknowledge_Update = async (data: any) => {
+    if (isCallFuncLogOn)
+      console.log("🕑 ",dayjs().format("HH:mm:ss.SSS")," [Calling Function]  :  Acknowledge_Update"
+);
+
+    // setIsLoadingScreen(true)
+    const dataset = {
+      id: data.id,
+      acknowledge_flag: data.acknowledge_flag,
+      acknowledge_name: user[0]?.employee_username,
+      acknowledge_company_id: user[0]?.itasset_company_id,
+      acknowledge_department_id: user[0]?.itasset_department_id,
+      acknowledge_position: user[0]?.employee_position,
+      acknowledge_email: user[0]?.employee_email,
+      update_by: user[0]?.employee_username,
+    };
+
+    try {
+      let response = await _POST(dataset, "/Acknowledge/AcknowledgeEdit");
+      if (response && response.status === "success") {
+        setIsLoadingScreen(false);
+        setdataelement(response.data[0]);
+      }
+    } catch (e) {
+      console.log("error");
+    }
+  };
+
   // Function - Get Complaints
   const Complaint_Get = async (data: any) => {
     if (isCallFuncLogOn)
@@ -1418,16 +1446,15 @@ export default function ComplaintBody({
   }, [dataelement, dataset_reporttype, dataset_department, dataset_company]);
 
   React.useEffect(() => {
-    // เฉพาะตอน Read เท่านั้น
-    //if (action === "Read" || action === "Edit" || action === "Delete" || isActionExplain) {
     if (!isActionAdd) {
       if (dataelement?.id) {
         Complaint_Get(dataelement);
       }
       if (dataelement?.acknowledge_flag == 0) {
         console.log("acknowledge_flag",dataelement?.acknowledge_flag)
-        //Complaint_Get(dataelement);
+        Acknowledge_Update(dataelement);
       }
+      console.log("fffffffffffff",dataelement?.acknowledge_flag )
       ComplaintFile_Get();
       ExplainGet();
     }updateAcknowledgeFlag
@@ -2924,10 +2951,10 @@ export default function ComplaintBody({
                         </Box>
 
                         {/* === ฝั่งขวา ปุ่ม Add === */}
-                        {/* {complaint_status_label == 'SUBMIT' &&  
+                        {complaint_status_label == 'SUBMIT' &&  
                         user[0] && dataelement &&
-                        String(user[0].itasset_department_id) === String(dataelement.respondent_department_id) && ( */}
-                        {dataelement.complaint_status_id === "TRR_CS_SUBMIT" && (
+                        String(user[0].itasset_department_id) === String(dataelement.respondent_department_id) && (
+
                             <Button
                               variant="contained"
                               size="small"
