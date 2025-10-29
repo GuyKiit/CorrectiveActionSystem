@@ -89,7 +89,7 @@ const ActionManageCell: React.FC<ActionManageCellProps> = (props) => {
       {hasSubMenu && <span className="ml-auto">▶</span>}
     </MenuItem>
   );
-  console.log(menuFuncData,'menuFuncData');
+  // console.log(menuFuncData,'menuFuncData');
   
 // console.log('CHECK DATE el in ActionManageCell', menuFuncData)
   const filteredMenu = (menuFuncData ?? [])
