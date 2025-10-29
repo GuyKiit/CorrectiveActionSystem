@@ -768,38 +768,38 @@ export default function ComplaintBody({
     setcomplaintFiles(updatedList);
   };
 
-  const handleFileAttachmentTypeChange = (index: number, type: string) => {
-    if (true)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  handleFileAttachmentTypeChange"
-      );
+  // const handleFileAttachmentTypeChange = (index: number, type: string) => {
+  //   if (true)
+  //     console.log(
+  //       "🕑 ",
+  //       dayjs().format("HH:mm:ss.SSS"),
+  //       " [Calling Function]  :  handleFileAttachmentTypeChange"
+  //     );
 
-    const updated = [...fileList];
-    updated[index] = {
-      ...updated[index],
-      attachmentType: type,
-      otherText: type === "TRR_AT_4" ? updated[index].otherText : "",
-    };
-    setFileList(updated);
-    setcomplaintFiles(updated);
-  };
+  //   const updated = [...fileList];
+  //   updated[index] = {
+  //     ...updated[index],
+  //     attachmentType: type,
+  //     otherText: type === "TRR_AT_4" ? updated[index].otherText : "",
+  //   };
+  //   setFileList(updated);
+  //   setcomplaintFiles(updated);
+  // };
 
-  const handleFileOtherTextChange = (index: number, text: string) => {
-    if (true)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  handleFileOtherTextChange"
-      );
+  // const handleFileOtherTextChange = (index: number, text: string) => {
+  //   if (true)
+  //     console.log(
+  //       "🕑 ",
+  //       dayjs().format("HH:mm:ss.SSS"),
+  //       " [Calling Function]  :  handleFileOtherTextChange"
+  //     );
 
-    const updated = [...fileList];
-    updated[index] = { ...updated[index], otherText: text };
-    setFileList(updated);
-    setcomplaintFiles(updated);
-    return updated;
-  };
+  //   const updated = [...fileList];
+  //   updated[index] = { ...updated[index], otherText: text };
+  //   setFileList(updated);
+  //   setcomplaintFiles(updated);
+  //   return updated;
+  // };
 
   // Functions (Initial, Calculation or ETC.) =================================================
   const resetForm = () => {
@@ -1206,19 +1206,19 @@ export default function ComplaintBody({
         // ================================
         //  กรณี Add → ไม่มี dataelement
         // ================================
-        else {
-          console.log("🧭 Mode: Add");
+        // else {
+        //   console.log("🧭 Mode: Add");
 
-          // ✅ ใช้ company จาก profile
-          if (user?.[0]?.itasset_company_id) {
-            await mas_DomainGet(
-              user[0].itasset_company_id,
-              set_domain,
-              user,
-              isCallFuncLogOn
-            );
-          }
-        }
+        //   // ✅ ใช้ company จาก profile
+        //   if (user?.[0]?.itasset_company_id) {
+        //     await mas_DomainGet(
+        //       user[0].itasset_company_id,
+        //       set_domain,
+        //       user,
+        //       isCallFuncLogOn
+        //     );
+        //   }
+        // }
 
         // ================================
         // 3) Map ค่า default ของ department
@@ -1330,14 +1330,16 @@ export default function ComplaintBody({
     dataset_department,
     dataset_company,
     datapriority_Combobox,
+    
     dataComplaintType_Combobox,
     dataComplaintRs_Combobox,
     dataphoto_Combobox,
     dataReportTypeValue,
     dataApprove_Combobox,
+    
     dataelement,
     dataelement?.respondent_company_id,
-    domain,
+    // domain,
   ]);
 
   //////////////////////// Complaint Read //////////////////////////

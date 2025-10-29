@@ -30,7 +30,7 @@ import FullWidthButton from "../../components/MUI/FullWidthButton";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CloseIcon from '@mui/icons-material/CheckCircle';
 import ExplaintBody from "./components/ExplaintBody";
-import { mas_DepartmentGet_Complaint, mas_DomainRelateGet } from "../../service/mas/lov";
+import { mas_DepartmentGet_Complaint, mas_DomainGet, mas_DomainRelateGet } from "../../service/mas/lov";
 
 // =====================================================================================================
 // TYPE DEFINITIONS
@@ -207,9 +207,11 @@ export default function Complaint() {
     dataset_complaintActionClose,
     dataset_activeCompany,
     dataset_roleAdmin,
-
     dataset_complaintActionApproveSC, 
     dataset_complaintActionApproveQC,
+
+    // Temp Domain Variable
+    domain,
     
 
     //Explaint
@@ -286,7 +288,7 @@ export default function Complaint() {
     setdataComplaintRsValue_Combobox, setdataphoto_Combobox, setdataphotoValue_Combobox,
     setdatapriorityValue_Combobox, setdatapriority_Combobox, setdatapriority,
     setPriorityLevel, setclauseOther, setphoTypeOther, setdataset_reporttype,setdataset_activeCompany,setdataset_roleAdmin,
-    setdataset_department, setdataset_company, setdataset_domain,setdataset_domainrelate, setcomplaintFiles, setotherText,
+    setdataset_department, setdataset_company, set_domain, setdataset_domain,setdataset_domainrelate, setcomplaintFiles, setotherText,
     set_domainrelate, 
     setdataset_complaintActionApproveSC, setdataset_complaintActionApproveQC,
     
@@ -2706,10 +2708,7 @@ const handleDomainChange = (value: any) => {
   // Initialize data on component mount
   React.useEffect(() => {
     resetSearchTable();
-
     // Complaint_Get();
-    console.log("step:1 เรียกฟังก์ชั่น ComplaintGet();");
-    LovAll_Get();
     // ListSearchGet();
     // ReportType_Get();
     // ComplaintType_Get();
@@ -2717,47 +2716,65 @@ const handleDomainChange = (value: any) => {
     // photo_Get();
     // priority_Get();
     // DomainGet();
-    DomainRelateGet();
     // DepartmentDomainGet();
     // CompanyGet();
-
     // complaint_status_Get();
-    // ToolUse_Get();
-    // Decision_Get();
   }, []);
 
-  // const effectRan = React.useRef(false); // ป้องกัน run ซ้ำใน dev mode
+   const effectRan = React.useRef(false); // ป้องกัน run ซ้ำใน dev mode
  
-  // React.useEffect(() => {
-  //   if (effectRan.current) return;
-  //   effectRan.current = true;
- 
-  //   const fetchData = async () => {
-  //     try {
-  //       console.log("useEffect start");
-  //       await mas_DomainRelateGet();
-  //       console.log("useEffect done");
-  //     } catch (err) {
-  //       console.error(err);
-  //     }
-  //   };
- 
-  //   fetchData();
-  // }, []);
-
-
+  // Static useEffect
   React.useEffect(() => {
+    if (effectRan.current) return;
+    effectRan.current = true;
+ 
+    const fetchData = async () => {
+      try {
+        console.log("useEffect start");
+        
+        DomainRelateGet();
+        LovAll_Get();
+
+        await mas_DomainGet(
+          user[0].itasset_company_id,
+          set_domain,
+          user,
+          isCallFuncLogOn
+        );
+
+        // if (user?.[0]?.itasset_company_id) {
+          
+        // }
+
+        console.log("useEffect done");
+      } catch (err) {
+        console.error(err);
+      }
+    };
+ 
+    fetchData();
+  }, []);
+
+  // Dynamic useEffect
+  React.useEffect(() => {
+
   if (dataset_activeCompany) {
     console.log("🔁 activeCompany พร้อมแล้ว → เรียก CompanyGet()");
     CompanyGet();
   }
-}, [dataset_activeCompany]);
 
-  React.useEffect(() => {
-    if (dataset_complaintAction) {
+  if (dataset_complaintAction) {
       ComplaintGet();
-    }
-  }, [dataset_complaintAction]);
+  }
+  
+
+}, [dataset_activeCompany, dataset_complaintAction]);
+
+  // React.useEffect(() => {
+  //   if (dataset_complaintAction) {
+  //     ComplaintGet();
+  //   }
+  // }, [dataset_complaintAction]);
 
   
 
