@@ -1094,53 +1094,52 @@ export default function DepartmentSetting() {
   };
 
   // Function - Delete DepartmentSetting
-  // const DepartmentSettingDelete = async () => {
-  //   if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  ComplaintDelete");
+  const DepartmentSettingDelete = async () => {
+    if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  ComplaintDelete");
 
-  //   // สร้าง JSON payload
-  //   const DeptSetupPayload = {
+    // สร้าง JSON payload
+    const DeptSetupPayload = {
 
-  //     id: dataelement?.id,
-  //     update_by: user[0]?.employee_username || '',
+      id: dataelement?.id,
+      update_by: user[0]?.employee_username || '',
 
 
-  //   };
+    };
 
-  //   //console.log("📤 DeptSetupPayload:", DeptSetupPayload);
-  //   setIsLoadingScreen(true);
+    //console.log("📤 DeptSetupPayload:", DeptSetupPayload);
+    setIsLoadingScreen(true);
 
-  //   try {
-  //     let response = await _POST(DeptSetupPayload, "/DeptSetup/DeptSetupDelete");
-  //     if (response && response.status === "success") {
-  //       FullSweetalert({
-  //         title: 'Success',
-  //         text: `บันทึกข้อมูลสำเร็จ`,
-  //         icon: 'success'
-  //       });
-  //       //console.log("✅ Complaint Delete successfully:", response);
-  //     } else {
-  //       FullSweetalert({
-  //         title: 'Failed',
-  //         text: `บันทึกไม่ข้อมูลสำเร็จ`,
-  //         icon: 'error'
-  //       });
-  //       //console.log("⚠️ Delete failed:", response);
-  //     }
-  //   } catch (error) {
-  //     console.error("Upload failed:", error);
-  //   } finally {
-  //     setIsLoadingScreen(false);
-  //     handleClose();
-  //     FullSweetalert({
-  //       title: 'Success',
-  //       text: `ลบข้อมูลสำเร็จ`,
-  //       icon: 'success'
-  //     });
-  //     // Complaint_Get();
-  //     DeptSetupGet();
-  //   }
-  // };
-  // // Function - Delete Complaint
+    try {
+      let response = await _POST(DeptSetupPayload, "/DeptSetup/DeptSetupDelete");
+      if (response && response.status === "success") {
+        FullSweetalert({
+          title: 'Success',
+          text: `บันทึกข้อมูลสำเร็จ`,
+          icon: 'success'
+        });
+        //console.log("✅ Complaint Delete successfully:", response);
+      } else {
+        FullSweetalert({
+          title: 'Failed',
+          text: `บันทึกไม่ข้อมูลสำเร็จ`,
+          icon: 'error'
+        });
+        //console.log("⚠️ Delete failed:", response);
+      }
+    } catch (error) {
+      console.error("Upload failed:", error);
+    } finally {
+      setIsLoadingScreen(false);
+      handleClose();
+      FullSweetalert({
+        title: 'Success',
+        text: `ลบข้อมูลสำเร็จ`,
+        icon: 'success'
+      });
+      // Complaint_Get();
+      DeptSetupGet();
+    }
+  };
   // const ComplaintDelete = async () => {
   //   if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  ComplaintDelete");
 
@@ -1690,7 +1689,7 @@ export default function DepartmentSetting() {
         />}
       />
 
-      {/* <FuncDialog
+      <FuncDialog
         open={openDepartmentSettingDelete}
         dialogWidth="xl"
         hideSaveDraft={true}
@@ -1704,7 +1703,7 @@ export default function DepartmentSetting() {
         element={<DepartmentSettingBody
           action="Delete"
         />}
-      /> */}
+      />
 
       {/* =================== Dialog Sections =================== */}
 

@@ -445,20 +445,13 @@ export default function DepartmentSettingBody({
     
     ////////////////////// DepartmentSetting Read //////////////////////////
     React.useEffect(() => {
-        console.log("step: 5 เก็บข้อมูลเข้า ฺsetdataelement ใหม่ ")
+        console.log("⭐step: 5 เก็บข้อมูลเข้า ฺsetdataelement ใหม่ ")
 
         if (dataelement && action != "Add") {
-            console.log("🧩🧩🧩🧩🧩🧩🧩🧩 dataelement?.dept_company", dataelement?.company_id);
-            console.log("🧩🧩🧩🧩🧩🧩🧩🧩 dataelement?.dept_company", dataelement?.domain_id);
-            console.log("👀 ตัวอย่าง master_user[0]:", dataelement?.sectionApprove);
 
-            // department mapping จะทำใน useEffect แรกแล้ว (บรรทัด 255-268)
             setdept_email(dataelement?.dept_email ? dataelement?.dept_email : "");
-            setstep(dataelement?.step ? dataelement?.step : "");
-            // setsectionApprove(dataelement?.sectionApprove ? dataelement?.sectionApprove : "");
-            // setqcApprove(dataelement?.qcApprove ? dataelement?.qcApprove : "");
         }
-    }, [dataelement, department, username, company]);
+    }, [dataelement ]);
 
 
     const FilteredData = datastatus.filter((val: any) => val['lov_code'] == 'APPROVE');
