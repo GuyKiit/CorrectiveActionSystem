@@ -145,16 +145,22 @@ export default function ExplaintBody({
   onApproveChange,
   isViewMode = false,
 }: ExplaintBody) {
-  const isActionRead =
-    action === "Read" || action === "ExplainRead" || isViewMode;
+  // const isActionRead =
+  //   action === "Read" || action === "ExplainRead" || isViewMode;
+  const isActionRead = action === "Read" || isViewMode;
   const isActionAdd = action === "Add";
   const isActionEdit = action === "Edit";
   const isActionDelete = action === "Delete";
+  // =====================================================
   const isActionExplain = action === "Explain";
   const isActionExplainAdd = action === "ExplainAdd";
-  const isActionExplainApproveScAdd = action === "ApproveScAdd";
-  const isActionExplainApproveQcAdd = action === "ApproveQcAdd";
   const isActionExplainRead = action === "ExplainRead";
+  // =====================================================
+  const isActionExplainApproveSc = action === "ApproveSC";
+  const isActionExplainApproveScAdd = action === "ApproveScAdd";
+  // =====================================================
+  const isActionExplainApproveQc = action === "ApproveQC";
+  const isActionExplainApproveQcAdd = action === "ApproveQcAdd";
 
   // ตั้งค่า isROOTHidden เป็น false เมื่ออยู่ในโหมดดูข้อมูล
   React.useEffect(() => {
@@ -762,15 +768,57 @@ export default function ExplaintBody({
     }
   };
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  //===================================================================================================
+  //===================================================================================================
+  //===================================================================================================
+
   React.useEffect(() => {
     const updateData = async () => {
       // ================================
       // Map ค่า default ของ company
       // ================================
-      if (
-        Array.isArray(dataset_company) &&
-        dataelement?.respondent_company_id
-      ) {
+      if (Array.isArray(dataset_company) && dataelement?.respondent_company_id) {
         const mappedCompany = await setValueMas(
           dataset_company,
           dataelement.respondent_company_id,
@@ -781,19 +829,16 @@ export default function ExplaintBody({
           setrespondent_company_id(mappedCompany); // ค่า default ของ Combobox
         }
       }
-
       // ================================
       // Map ค่า default ของ department
       // ================================
-      if (
-        Array.isArray(dataset_department) &&
-        dataelement?.respondent_department_id
-      ) {
+      if (Array.isArray(dataset_department) && dataelement?.respondent_department_id) {
         console.log(
           "🗺️ Looking for department with ID:",
           dataelement.respondent_department_id
         );
         console.log("🗺️ Available departments:", dataset_department);
+        console.log("🗺️🗺️🗺️ filteredTooluse:", filteredTooluse);
 
         const mappedDept = await setValueMas(
           dataset_department,
@@ -847,15 +892,12 @@ export default function ExplaintBody({
       }
       //==============================================================
 
-      if (
-        Array.isArray(dataset_department) &&
-        dataelement?.responsible_department_id
-      ) {
+      if (Array.isArray(dataset_department) && dataelement?.responsible_department_id) {
         console.log(
           "🗺️ Looking for department with ID:",
           dataelement.responsible_department_id
         );
-        console.log("🗺️ Available departments:", dataset_department);
+        console.log("😡 Available departments:", dataset_department);
 
         const mappedDept = await setValueMas(
           dataset_department,
@@ -876,7 +918,7 @@ export default function ExplaintBody({
 
       // 2) ถ้า action === "Read" หรือ "Explain" และมี dataelement.report_type ให้หา default จาก newDataset (ถ้ามี)
       if (
-        (isActionRead || isActionEdit || isActionDelete || isActionExplain) &&
+        (!isActionAdd || !isActionRead || !isActionEdit || !isActionDelete) &&
         dataelement?.report_type &&
         Array.isArray(newDataset) &&
         newDataset.length > 0
@@ -1004,6 +1046,53 @@ export default function ExplaintBody({
     dataset_company,
   ]);
 
+  //===================================================================================================
+  //===================================================================================================
+  //===================================================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
   ////////////////////////// Set ค่า User Approve  //////////////////////////
   React.useEffect(() => {
     if (!user?.[0]) return; // รอ user โหลดก่อน
@@ -1077,7 +1166,7 @@ export default function ExplaintBody({
   }, [
     isActionExplainApproveScAdd,
     isActionExplainApproveQcAdd,
-    user,
+    // user,
     dataset_company,
     dataset_department,
     dataelement,
@@ -1288,6 +1377,7 @@ export default function ExplaintBody({
   }, [action, dataelement]);
 
   return (
+    
     <Box
       sx={{
         p: 2,
@@ -1517,7 +1607,7 @@ export default function ExplaintBody({
 
                   <Grid container spacing={2} sx={{ alignItems: "stretch" }}>
                     {/* ✅ Accordion แทน Paper */}
-                    {!isTUHidden && dataReportTypeValue && (
+                    {/* {!isTUHidden && dataReportTypeValue && ( */}
                       <Grid size={12}>
                         <Accordion
                           expanded={isMinimizetoolOpen}
@@ -1596,7 +1686,7 @@ export default function ExplaintBody({
                           </AccordionDetails>
                         </Accordion>
                       </Grid>
-                    )}
+                    {/* )} */}
 
                     {!isDDHidden && dataReportTypeValue && (
                       <Grid size={12}>
