@@ -1447,21 +1447,38 @@ export default function ComplaintBody({
     }
   }, [dataelement, dataset_reporttype, dataset_department, dataset_company]);
 
+  // React.useEffect(() => {
+  //   if (!isActionAdd) {
+  //     if (dataelement?.id) {
+  //       Complaint_Get(dataelement);
+  //     }
+  //     if (dataelement?.acknowledge_flag == 0) {
+  //       console.log("acknowledge_flag",dataelement?.acknowledge_flag)
+  //       Acknowledge_Update(dataelement);
+  //     }
+  //     ComplaintFile_Get();
+  //     ExplainGet();
+  //   }
+  //   updateAcknowledgeFlag
+  // }, [action, dataelement?.id]);
+
   React.useEffect(() => {
-    if (!isActionAdd) {
-      if (dataelement?.id) {
-        Complaint_Get(dataelement);
-      }
+    const fetchAcknowlege = async () => {
+    if (isActionExplain && dataelement?.id) {
       if (dataelement?.acknowledge_flag == 0) {
         console.log("acknowledge_flag",dataelement?.acknowledge_flag)
-        Acknowledge_Update(dataelement);
+        await Acknowledge_Update(dataelement);
       }
-      console.log("fffffffffffff",dataelement?.acknowledge_flag )
-      ComplaintFile_Get();
-      ExplainGet();
-    }updateAcknowledgeFlag
-  }, [action, dataelement?.id]);
-
+      await Complaint_Get(dataelement);
+      await ComplaintFile_Get();
+      await ExplainGet();
+    }
+    //updateAcknowledgeFlag
+  };
+  fetchAcknowlege();
+  }, [action, dataelement?.id, dataelement?.acknowledge_flag]);
+  
+   
   const setComplaintType = (data: any) => {
     if (true)
       console.log(

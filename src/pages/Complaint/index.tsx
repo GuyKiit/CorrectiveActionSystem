@@ -1646,10 +1646,9 @@ const handleDomainChange = (value: any) => {
         lot_no: lot_no,
         complaint_status_id: tempComplaintStatus[0] + "_CS_NEW",
         create_by: user[0]?.employee_username || "",
-        save_type: "save_draft",
+        save_type: "save_draft_edit",
         complaintType: complainttypeModel,
-        complaintRs: complaintRsModel,
-        // เพิ่ม complaintFile
+        complaintRs: complaintRsModel,     
         complaintFile:
           complaintFiles?.map((item: any, index: number) => {
             return {
