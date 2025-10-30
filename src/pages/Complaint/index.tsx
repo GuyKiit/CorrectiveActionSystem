@@ -30,7 +30,7 @@ import FullWidthButton from "../../components/MUI/FullWidthButton";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CloseIcon from '@mui/icons-material/CheckCircle';
 import ExplaintBody from "./components/ExplaintBody";
-import { mas_DepartmentGet_Complaint, mas_DomainGet, mas_DomainRelateGet } from "../../service/mas/lov";
+import { mas_DepartmentDomainGet, mas_DepartmentDomainGetAll, mas_DepartmentGet_Complaint, mas_DomainGet, mas_DomainRelateGet } from "../../service/mas/lov";
 
 // =====================================================================================================
 // TYPE DEFINITIONS
@@ -191,7 +191,7 @@ export default function Complaint() {
 
     dataphotoValue_Combobox, dataphoto_Combobox, datapriorityValue_Combobox, datastatus,
     datapriority_Combobox, datapriority, PriorityLevel, clauseOther, phoTypeOther,
-    complaintFiles, RunningModel, approve_step, otherText,domainrelate,
+    complaintFiles, RunningModel, approve_step, otherText, domainrelate,
     dataapproveValue_Combobox,
 
     // Dataset Variables
@@ -207,12 +207,12 @@ export default function Complaint() {
     dataset_complaintActionClose,
     dataset_activeCompany,
     dataset_roleAdmin,
-    dataset_complaintActionApproveSC, 
+    dataset_complaintActionApproveSC,
     dataset_complaintActionApproveQC,
 
     // Temp Domain Variable
     domain,
-    
+
 
     //Explaint
     dataTooluseValue,
@@ -287,11 +287,11 @@ export default function Complaint() {
     setdataComplaintTypeValue_Combobox, setdataComplaintRs_Combobox, setdatastatus,
     setdataComplaintRsValue_Combobox, setdataphoto_Combobox, setdataphotoValue_Combobox,
     setdatapriorityValue_Combobox, setdatapriority_Combobox, setdatapriority,
-    setPriorityLevel, setclauseOther, setphoTypeOther, setdataset_reporttype,setdataset_activeCompany,setdataset_roleAdmin,
-    setdataset_department, setdataset_company, set_domain, setdataset_domain,setdataset_domainrelate, setcomplaintFiles, setotherText,
-    set_domainrelate, 
+    setPriorityLevel, setclauseOther, setphoTypeOther, setdataset_reporttype, setdataset_activeCompany, setdataset_roleAdmin,
+    setdataset_department, setdataset_company, set_domain, setdataset_domain, setdataset_domainrelate, setcomplaintFiles, setotherText,
+    set_domainrelate,
     setdataset_complaintActionApproveSC, setdataset_complaintActionApproveQC,
-    
+
 
     //set Explaint
     setdataToolUse,
@@ -361,7 +361,7 @@ export default function Complaint() {
   const [explainList, setExplainList] = useState<any[]>([]);
   const [currentExplainForApproval, setCurrentExplainForApproval] = useState<any>(null);
   const [approveSelectionCode, setApproveSelectionCode] = useState<string | null>(null);
-  
+
   // const [openSync, setOpenSync] = React.useState(false);
   // const [statusMode, setstatusMode] = React.useState([]);
   // const [openSnackbar, setOpenSnackbar] = React.useState(false);
@@ -443,38 +443,38 @@ export default function Complaint() {
 
   // For On-Off Calling Function Log
   const [isCallFuncLogOn] = useState(true);
-// Event Handlers =========================================================
+  // Event Handlers =========================================================
   const handleCompanyChange = (value: any) => {
-    console.log('####### Onchange Company Value [event] : ', value);
-    console.log("@@@@@@@@@@@@First", dataset_domainrelate);
-    console.log("Render check respondent_domain_id:", respondent_domain_id);
+    //console.log('####### Onchange Company Value [event] : ', value);
+    //console.log("@@@@@@@@@@@@First", dataset_domainrelate);
+    //console.log("Render check respondent_domain_id:", respondent_domain_id);
 
 
     if (value != null) {
       mas_DomainRelateGet(value, set_domainrelate, isCallFuncLogOn);
     } else {
-      
+
       setrespondent_domain_id(null);
     }
-    console.log("@@@@@@@@@@@@second", dataset_domainrelate);
+    //console.log("@@@@@@@@@@@@second", dataset_domainrelate);
   };
 
-const handleDomainChange = (value: any) => {
-    console.log('####### Onchange Domain Value [event] : ', value);
-    console.log("@@@@@@@@@@@@First", dataset_domainrelate);
-    
+  const handleDomainChange = (value: any) => {
+    //console.log('####### Onchange Domain Value [event] : ', value);
+    //console.log("@@@@@@@@@@@@First", dataset_domainrelate);
+
 
 
     if (value != null) {
-      console.log("😎😎", value);
+      //console.log("😎😎", value);
 
       mas_DepartmentGet_Complaint(value, setdataset_department, isCallFuncLogOn, user);
     } else {
-      
+
       setdataset_department([]);
       setrespondent_department_id(null);
     }
-    console.log("@@@@@@@@@@@@second", domainrelate);
+    //console.log("@@@@@@@@@@@@second", domainrelate);
   };
 
   // Reset Form Function (from index.tsx)
@@ -514,7 +514,7 @@ const handleDomainChange = (value: any) => {
     setobservation_analysis("");
     setcorrective_action("");
     setpreventive_action_plan("");
-    setdataToolUse([]); 
+    setdataToolUse([]);
     setToolOther("");
     setresponsible_date(null);
     setfollow_up_date(null);
@@ -524,7 +524,7 @@ const handleDomainChange = (value: any) => {
     setapprove_date(null);
     setapprove_detail("");
     setapprove_note("");
-    
+
     // Clear ALL validation errors
     setReportTypeError(false);
     setRespondentDepartmentError(false);
@@ -691,7 +691,7 @@ const handleDomainChange = (value: any) => {
 
       if (response && response.status === "success") {
         const lovData = response.data || [];
-        console.log("❇️❇️❇️❇️❇️❇️❇️ Call [Lov/LovGet] -> LovAll_Get :", response.data);
+        //console.log("❇️❇️❇️❇️❇️❇️❇️ Call [Lov/LovGet] -> LovAll_Get :", response.data);
 
         // ✅ จัดกลุ่มตาม lov_type
         const grouped = lovData.reduce((acc: any, item: any) => {
@@ -719,22 +719,22 @@ const handleDomainChange = (value: any) => {
         setdataset_complaintActionNew(grouped["complaint_action"].filter((item: any) => item.lov_code === 'ACTION_NEW'));
         setdataset_complaintActionExplain(grouped["complaint_action"].filter((item: any) => item.lov_code === 'ACTION_EXPLAIN'));
         setdataset_complaintActionClose(grouped["complaint_action"].filter((item: any) => item.lov_code === 'ACTION_CLOSE'));
-        
 
-        console.log('⚠️⚠️⚠️⚠️ [grouped["active_company"]] :', grouped["active_company"])
-        console.log('⚠️⚠️⚠️⚠️ [grouped["role_admin"]] :', grouped["role_admin"])
+
+        //console.log('⚠️⚠️⚠️⚠️ [grouped["active_company"]] :', grouped["active_company"])
+        //console.log('⚠️⚠️⚠️⚠️ [grouped["role_admin"]] :', grouped["role_admin"])
 
 
 
       }
     } catch (e) {
-      console.log("error:", e);
+      //console.log("error:", e);
     }
   };
 
   // Function - Get Priority Levels
   // const priority_Get = async () => {
-  //   if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  priority_Get");
+  //   if (isCallFuncLogOn) //console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  priority_Get");
 
   //   try {
   //     const dataset = {
@@ -743,11 +743,11 @@ const handleDomainChange = (value: any) => {
   //     };
   //     const response = await _POST(dataset, "/Lov/LovGet");
   //     if (response && response.status === "success") {
-  //       // console.log("❇️ Call [Lov/LovGet] -> priority_level :", response.data);
+  //       // //console.log("❇️ Call [Lov/LovGet] -> priority_level :", response.data);
   //       setdatapriority_Combobox && setdatapriority_Combobox(response.data);
   //     }
   //   } catch (e) {
-  //     console.log("error:", e);
+  //     //console.log("error:", e);
   //   }
   // };
 
@@ -761,13 +761,10 @@ const handleDomainChange = (value: any) => {
       };
       const response = await _POST(dataset, "/Complaint/CasDomainGet");
       if (response && response.status === "success") {
-        // console.log("❇️ Call [Complaint/CasDomainGet] -> Domain_Get :",response.data);
-        
+        // //console.log("❇️ Call [Complaint/CasDomainGet] -> Domain_Get :",response.data);
 
-        console.log(
-          "❇️ Call [Complaint/DomainGet] -> DomainGet :",
-          response.data
-        );
+
+        // console.log("❇️ Call [Complaint/DomainGet] -> DomainGet :",response.data );
         if (Array.isArray(response.data)) {
           let domain = response.data.filter(
             (item: any) => item.domain_id === user[0]?.employee_domain
@@ -779,49 +776,49 @@ const handleDomainChange = (value: any) => {
         }
       }
     } catch (e) {
-      console.log("error:", e);
+      //console.log("error:", e);
     }
   };
 
   // Function - Get Company
   const CompanyGet = async (action?: string) => {
-  if (isCallFuncLogOn)
-    console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  CompanyGet");
+    if (isCallFuncLogOn)
+      //console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  CompanyGet");
 
-  try {
-    const response = await _POST({}, "/Complaint/CasCompanyGet");
+      try {
+        const response = await _POST({}, "/Complaint/CasCompanyGet");
 
-    if (response && response.status === "success") {
-      console.log("❇️ Call [Complaint/CasCompanyGet] -> Company_Get :", response.data);
+        if (response && response.status === "success") {
+          //console.log("❇️ Call [Complaint/CasCompanyGet] -> Company_Get :", response.data);
 
-      const activeCompany = dataset_activeCompany; // จาก LovAll_Get
+          const activeCompany = dataset_activeCompany; // จาก LovAll_Get
 
-      console.log("🧩 activeCompany sample:", activeCompany);
-      console.log("🧩 company sample:", response.data);
+          //console.log("🧩 activeCompany sample:", activeCompany);
+          //console.log("🧩 company sample:", response.data);
 
-      if (activeCompany?.length > 0) {
-        const active = activeCompany[0]?.lov1 || "";
+          if (activeCompany?.length > 0) {
+            const active = activeCompany[0]?.lov1 || "";
 
-        const activeid = active.split(",").map((id: string) => id.trim());
+            const activeid = active.split(",").map((id: string) => id.trim());
 
-        console.log("✅ activeid:", activeid);
+            //console.log("✅ activeid:", activeid);
 
-         // ✅ filter บริษัทตาม company_id
-        const filteredCompany = response.data.filter((company: any) =>
-          activeid.includes(company.company_id.toString())
-        );
+            // ✅ filter บริษัทตาม company_id
+            const filteredCompany = response.data.filter((company: any) =>
+              activeid.includes(company.company_id.toString())
+            );
 
-        console.log("⚙️ [filteredCompany]:", filteredCompany);
-        setdataset_company(filteredCompany);
-      } else {
-        console.log("⚠️ activeCompany ยังไม่มีค่า ใช้ company ทั้งหมดแทน");
-        setdataset_company(response.data);
+            //console.log("⚙️ [filteredCompany]:", filteredCompany);
+            setdataset_company(filteredCompany);
+          } else {
+            //console.log("⚠️ activeCompany ยังไม่มีค่า ใช้ company ทั้งหมดแทน");
+            setdataset_company(response.data);
+          }
+        }
+      } catch (e) {
+        //console.log("error:", e);
       }
-    }
-  } catch (e) {
-    console.log("error:", e);
-  }
-};
+  };
   // Function - Get DomainRelate
   const DomainRelateGet = async () => {
     if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  DomainRelateGet");
@@ -833,67 +830,61 @@ const handleDomainChange = (value: any) => {
       };
       const response = await _POST(dataset, "/Complaint/CasDomainRelateGet");
       if (response && response.status === "success") {
-        // console.log("❇️ Call [Complaint/CasDomainGet] -> DomainRelateGet :",response.data);
-        
+        // //console.log("❇️ Call [Complaint/CasDomainGet] -> DomainRelateGet :",response.data);
 
-        console.log(
-          "❇️ Call [Complaint/DomainRelateGet] -> DomainRelateGet :",
-          response.data
-        );
+
+        console.log("❇️ Call [Complaint/DomainRelateGet] -> DomainRelateGet :", response.data);
         if (Array.isArray(response.data)) {
           // let domain = response.data.filter(
           //   (item: any) => item.domain_id === user[0]?.employee_domain
           // );
           setdataset_domainrelate(response.data);
-         
+
         }
       }
     } catch (e) {
-      console.log("error:", e);
+      //console.log("error:", e);
     }
   };
-  
+
 
   // Function - Get Department Domain
-  const DepartmentDomainGet = async (action?: string) => {
-    if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  DepartmentDomainGet");
+  // const DepartmentDomainGet = async (action?: string) => {
+  //   if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  DepartmentDomainGet");
 
-    try {
-      const dataset = {
-        domain_id: respondent_domain_id.domain_id,
-        company_id: user[0]?.itasset_company_id,
-      };
-      const response = await _POST(
-        dataset,
-        "/Complaint/CasDepartmentDomainGet"
-      );
-      if (response && response.status === "success") {
-        console.log(
-          "❇️ Call [Complaint/CasDepartmentDomainGet] -> Department_Domain_Get :",
-          response.data
-        );
+  //   try {
+  //     const dataset = {
+  //       domain_id: respondent_domain_id.domain_id,
+  //       company_id: user[0]?.itasset_company_id,
+  //     };
+  //     const response = await _POST(
+  //       dataset,
+  //       "/Complaint/CasDepartmentDomainGet"
+  //     );
+  //     if (response && response.status === "success") {
+  //       //console.log("❇️ Call [Complaint/CasDepartmentDomainGet] -> Department_Domain_Get :",response.data);
 
-        setdataset_department(response.data);
+  //       setdataset_department(response.data);
 
-        if (action == "Add") {
+  //       if (action == "Add") {
 
-          //================================================
-          let department = response.data.filter(
-            (item: any) => item.department_id != user[0]?.itasset_department_id
-          );
-          setdataset_department(department);
-          // if (department) {
-          //   // setdataset_domain(domain);
-          //   setdataset_department(department);
-          // }
-          //================================================
+  //         //================================================
+  //         let department = response.data.filter(
+  //           (item: any) => item.department_id != user[0]?.itasset_department_id
+  //         );
+  //         setdataset_department(department);
+  //         // if (department) {
+  //         //   // setdataset_domain(domain);
+  //         //   setdataset_department(department);
+  //         // }
+  //         //================================================
 
-        }
-      }
-    } catch (e) {
-      console.log("error:", e);
-    }
-  };
+  //       }
+  //     }
+  //   } catch (e) {
+  //     //console.log("error:", e);
+  //   }
+  // };
 
   // =====================================================================================================
   // API FUNCTIONS - CRUD OPERATIONS
@@ -911,19 +902,19 @@ const handleDomainChange = (value: any) => {
       department_id: user[0]?.itasset_department_id,
       company_id: user[0]?.itasset_company_id,
     };
-    console.log("Read step:4 dataset: ", dataset);
+    //console.log("Read step:4 dataset: ", dataset);
 
 
     try {
       let response = await _POST(dataset, "/Complaint/ComplaintGet");
-      console.log("Read step:4 ผลลัพธ์ : ", response);
-      console.log("Read step:4 Normalize ปรับค่าใหม่ : ", response.data[0],);
+      //console.log("Read step:4 ผลลัพธ์ : ", response);
+      //console.log("Read step:4 Normalize ปรับค่าใหม่ : ", response.data[0],);
       if (response && response.status === "success") {
         setIsLoadingScreen(false);
         setdataelement(response.data[0])
       }
     } catch (e) {
-      console.log("error");
+      //console.log("error");
     }
   };
 
@@ -931,7 +922,7 @@ const handleDomainChange = (value: any) => {
     if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  ExplainGet");
 
     if (!dataelement?.id) {
-      console.log("No complaint ID, skipping explain fetch");
+      //console.log("No complaint ID, skipping explain fetch");
       return;
     }
 
@@ -939,30 +930,30 @@ const handleDomainChange = (value: any) => {
     const dataset = {
       complaint_id: dataelement?.id,
     };
-    console.log("🔍 ExplainGet dataset:", dataset);
+    //console.log("🔍 ExplainGet dataset:", dataset);
 
     try {
       let response = await _POST(dataset, "/Explain/ExplainGet");
-      console.log("🔍 ExplainGet full response:", response);
-      console.log("🔍 ExplainGet response data:", response?.data);
-      console.log("🔍 ExplainGet response length:", response?.data?.length);
+      //console.log("🔍 ExplainGet full response:", response);
+      //console.log("🔍 ExplainGet response data:", response?.data);
+      //console.log("🔍 ExplainGet response length:", response?.data?.length);
 
       if (response && response.status === "success") {
         setIsLoadingScreen(false);
         setExplainList(response.data || []);
-        console.log("🔍 ExplainList set to:", response.data);
+        //console.log("🔍 ExplainList set to:", response.data);
 
         // Debug each explain record
         if (Array.isArray(response.data)) {
           response.data.forEach((explain: any, index: number) => {
-            console.log(`🔍 Explain record ${index}:`, explain);
-            console.log(`🔍 Explain ${index} complaintType:`, explain.complaintType);
-            console.log(`🔍 Explain ${index} complaintRs:`, explain.complaintRs);
+            //console.log(`🔍 Explain record ${index}:`, explain);
+            //console.log(`🔍 Explain ${index} complaintType:`, explain.complaintType);
+            //console.log(`🔍 Explain ${index} complaintRs:`, explain.complaintRs);
           });
         }
       }
     } catch (e) {
-      console.log("ExplainGet error:", e);
+      //console.log("ExplainGet error:", e);
       setIsLoadingScreen(false);
     }
   };
@@ -970,8 +961,8 @@ const handleDomainChange = (value: any) => {
   // Function - Search Complaints
   const ComplaintGet = async () => {
     if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  ComplaintGet");
-    console.log("step:2 เรียกฟังก์ชั่น ComplaintGet ใหม่");
-    console.log("⭐️⭐️⭐️⭐️ CHECK DATA COMPLAINT ACTION : ", dataset_complaintAction, "⭐️⭐️⭐️");
+    //console.log("step:2 เรียกฟังก์ชั่น ComplaintGet ใหม่");
+    //console.log("⭐️⭐️⭐️⭐️ CHECK DATA COMPLAINT ACTION : ", dataset_complaintAction, "⭐️⭐️⭐️");
 
     setIsLoadingScreen(true);
     const dataset = {
@@ -979,7 +970,7 @@ const handleDomainChange = (value: any) => {
       domain_id: user[0]?.employee_domain,
       department_id: user[0]?.itasset_department_id,
       company_id: user[0]?.itasset_company_id,    //@param Fixed
-      
+
       domain: TextNameSearch.dataset_domainrelate ? TextNameSearch.dataset_domainrelate : null,
       department: TextNameSearch.dataset_department ? TextNameSearch.dataset_department : null,
       report_code: TextNameSearch.report_code ? TextNameSearch.report_code : null,
@@ -991,10 +982,10 @@ const handleDomainChange = (value: any) => {
       step_label: TextNameSearch.dataset_stepcomplaint ? TextNameSearch.dataset_stepcomplaint : null,
     }
 
-    console.log("step:2 dataset ก่อนส่ง API /Complaint/ComplaintGet ", dataset);
+    //console.log("step:2 dataset ก่อนส่ง API /Complaint/ComplaintGet ", dataset);
     try {
       let response = await _POST(dataset, "/Complaint/ComplaintGet");
-      console.log("step:2 ผลลัพธ์ที่ได้จาก API /Complaint/ComplaintGet ", response);
+      //console.log("step:2 ผลลัพธ์ที่ได้จาก API /Complaint/ComplaintGet ", response);
       if (response && response.status === "success") {
         setIsLoadingScreen(false);
         const responseData: any = [];
@@ -1003,8 +994,8 @@ const handleDomainChange = (value: any) => {
             const ACTION = (
               <ActionManageCell
                 hadleOnclickMenu={(name: any) => {
-                  console.log("🎆 🎆 🎆 🎆 hadleOnclickMenu (name) :", name);
-                  
+                  //console.log("🎆 🎆 🎆 🎆 hadleOnclickMenu (name) :", name);
+
                   if (name === "View") {
                     // DepartmentDomainGet("Read");
                     handleOnclickComplaintView(el);
@@ -1016,7 +1007,7 @@ const handleDomainChange = (value: any) => {
                     handleOnclickComplaintDelete(el);
                   } else if (name === "Explain") {
                     // DepartmentDomainGet("Explain");
-                    handleOnclickExplain(el);            
+                    handleOnclickExplain(el);
                   }
                   // else if (name === "ExplainApproveSc") {
                   //   // DepartmentDomainGet("Explain");
@@ -1034,7 +1025,7 @@ const handleDomainChange = (value: any) => {
                 //-----------------------------------------------------------------------
                 //-----------------------------------------------------------------------
 
-                
+
 
                 // // For Status [NEW]
                 // hiddenRead={
@@ -1128,7 +1119,7 @@ const handleDomainChange = (value: any) => {
                   (dataset_complaintActionApproveQC &&
                     !dataset_complaintActionApproveQC.some((mode: any) =>
                       mode.lov1.split(",").includes(String(el.complaint_status_label))
-                    ) && splitNextStepName(el.approve_step) ) ?? false
+                    ) && splitNextStepName(el.approve_step)) ?? false
                 }
 
                 //-----------------------------------------------------------------------
@@ -1145,10 +1136,10 @@ const handleDomainChange = (value: any) => {
               />
             );
             el.ACTION = ACTION;
-            console.log("el.acknowledge_flag", el.acknowledge_flag)
-            console.log("🎆 🎆 🎆 🎆 hadleOnclickMenu (el) :", el);
-            console.log("🎆 🎆 🎆 🎆 complaint_status_label:", el.complaint_status_label);
-            console.log(el.step_label)
+            //console.log("el.acknowledge_flag", el.acknowledge_flag)
+            //console.log("🎆 🎆 🎆 🎆 hadleOnclickMenu (el) :", el);
+            //console.log("🎆 🎆 🎆 🎆 complaint_status_label:", el.complaint_status_label);
+            //console.log(el.step_label)
             el.complaint_status_label = (
               <BasicChips label={`${el.complaint_status_label}`} acknowledge={el.acknowledge_flag}></BasicChips>
             );
@@ -1158,11 +1149,11 @@ const handleDomainChange = (value: any) => {
             responseData.push(el);
           });
         }
-        console.log("step:2 ข้อมูลก่อนเข้า ตาราง ", responseData);
+        //console.log("step:2 ข้อมูลก่อนเข้า ตาราง ", responseData);
         setdatalist(responseData);
       }
     } catch (e) {
-      console.log("error");
+      //console.log("error");
 
     }
   };
@@ -1224,7 +1215,7 @@ const handleDomainChange = (value: any) => {
       valid = false;
     }
 
-  
+
     if (!dataComplaintTypeValue_Combobox || dataComplaintTypeValue_Combobox.length === 0) {
       setComplaintTypeError(true);
       valid = false;
@@ -1236,12 +1227,12 @@ const handleDomainChange = (value: any) => {
         setOtherTypeError(true);
         valid = false;
       } else {
-        //console.log("✅ Other Type validation passed");
+        ////console.log("✅ Other Type validation passed");
       }
     }
 
     const reportTypeCode = dataReportTypeValue?.lov_code;
-    console.log("🔍 Report Type Code:", reportTypeCode);
+    //console.log("🔍 Report Type Code:", reportTypeCode);
 
     // เฉพาะ NCR เท่านั้นที่ต้อง validate Complaint Rs
     if (reportTypeCode === "NCR") {
@@ -1302,12 +1293,12 @@ const handleDomainChange = (value: any) => {
 
     // Validate Report Type - ตรวจสอบก่อนและถ้าไม่มีให้ return false ทันที
     if (!dataReportTypeValue || !dataReportTypeValue.id) {
-      console.log("❌ Report Type validation failed");
+      //console.log("❌ Report Type validation failed");
       setReportTypeError(true);
       document.getElementById("reportTypeField")?.focus();
       return false;
     }
-    console.log("✅ Report Type validation passed");
+    //console.log("✅ Report Type validation passed");
 
     // Validate Date of Detection
     if (!date_of_detection) {
@@ -1341,21 +1332,21 @@ const handleDomainChange = (value: any) => {
 
     // Validate Complaint Type
     if (!dataComplaintTypeValue_Combobox || dataComplaintTypeValue_Combobox.length === 0) {
-      console.log("❌ Complaint Type validation failed");
+      //console.log("❌ Complaint Type validation failed");
       setComplaintTypeError(true);
       valid = false;
     } else {
-      console.log("✅ Complaint Type validation passed");
+      //console.log("✅ Complaint Type validation passed");
     }
 
     // Validate Other Type (if complaint type has "Other" selected)
     if (dataComplaintTypeValue_Combobox && dataComplaintTypeValue_Combobox.some((item: any) => item.isOther === "Y")) {
       if (!compTypeOther || compTypeOther.trim() === "") {
-        console.log("❌ Other Type validation failed");
+        //console.log("❌ Other Type validation failed");
         setOtherTypeError(true);
         valid = false;
       } else {
-        console.log("✅ Other Type validation passed");
+        //console.log("✅ Other Type validation passed");
       }
     }
 
@@ -1366,35 +1357,35 @@ const handleDomainChange = (value: any) => {
     // เฉพาะ NCR เท่านั้นที่ต้อง validate Complaint Rs
     if (reportTypeCode === "NCR") {
       if (!dataComplaintRsValue_Combobox || dataComplaintRsValue_Combobox.length === 0) {
-        console.log("❌ Complaint Rs validation failed for NCR");
+        //console.log("❌ Complaint Rs validation failed for NCR");
         setComplaintRsError(true);
         valid = false;
       } else {
-        console.log("✅ Complaint Rs validation passed for NCR");
+        //console.log("✅ Complaint Rs validation passed for NCR");
       }
     } else {
-      console.log("✅ Complaint Rs validation skipped for", reportTypeCode);
+      //console.log("✅ Complaint Rs validation skipped for", reportTypeCode);
     }
 
     // Validate Other Rs 
     if (reportTypeCode === "NCR" && dataComplaintRsValue_Combobox && dataComplaintRsValue_Combobox.some((item: any) => item.isClause === "Other")) {
       if (!compRsOther || compRsOther.trim() === "") {
-        console.log("❌ Other Rs validation failed for NCR");
+        //console.log("❌ Other Rs validation failed for NCR");
         setOtherRsError(true);
         valid = false;
       } else {
-        console.log("✅ Other Rs validation passed for NCR");
+        //console.log("✅ Other Rs validation passed for NCR");
       }
     }
 
     // Validate Clause Rs
     if (reportTypeCode === "NCR" && dataComplaintRsValue_Combobox && dataComplaintRsValue_Combobox.some((item: any) => item.isClause === "Clause")) {
       if (!clauseOther || clauseOther.trim() === "") {
-        console.log("❌ Clause Rs validation failed for NCR");
+        //console.log("❌ Clause Rs validation failed for NCR");
         setClauseRsError(true);
         valid = false;
       } else {
-        console.log("✅ Clause Rs validation passed for NCR");
+        //console.log("✅ Clause Rs validation passed for NCR");
       }
     }
 
@@ -1408,14 +1399,14 @@ const handleDomainChange = (value: any) => {
     if (!datapriorityValue_Combobox) {
       // ถ้าไม่มีข้อมูลใหม่ ให้ใช้ข้อมูลเก่า
       if (dataelement?.priority_level) {
-        //console.log("Using old priority data:", dataelement.priority_level);
+        ////console.log("Using old priority data:", dataelement.priority_level);
       } else {
         setPriorityError(true);
         valid = false;
       }
 
     } else {
-      // console.log("✅ Priority validation passed");
+      // //console.log("✅ Priority validation passed");
     }
     return valid;
   }
@@ -1539,7 +1530,7 @@ const handleDomainChange = (value: any) => {
       });
     }
 
-    console.log("📤 complaintPayloadSavedraft:", complaintPayload);
+    //console.log("📤 complaintPayloadSavedraft:", complaintPayload);
     setIsLoadingScreen(true);
 
     try {
@@ -1553,14 +1544,14 @@ const handleDomainChange = (value: any) => {
           text: `บันทึกข้อมูลสำเร็จ`,
           icon: 'success'
         });
-        console.log("✅ Complaint Add successfully:", response);
+        //console.log("✅ Complaint Add successfully:", response);
       } else {
         FullSweetalert({
           title: 'Failed',
           text: `บันทึกไม่ข้อมูลสำเร็จ`,
           icon: 'error'
         });
-        console.log("⚠️ Add failed:", response);
+        //console.log("⚠️ Add failed:", response);
       }
     } catch (error) {
       console.error("Upload failed:", error);
@@ -1689,7 +1680,7 @@ const handleDomainChange = (value: any) => {
       });
     }
 
-    console.log("📤 complaintPayloadSavedraft:", complaintPayload);
+    //console.log("📤 complaintPayloadSavedraft:", complaintPayload);
     setIsLoadingScreen(true);
 
     try {
@@ -1703,14 +1694,14 @@ const handleDomainChange = (value: any) => {
           text: `บันทึกข้อมูลสำเร็จ`,
           icon: 'success'
         });
-        console.log("✅ Complaint Add successfully:", response);
+        //console.log("✅ Complaint Add successfully:", response);
       } else {
         FullSweetalert({
           title: 'Failed',
           text: `บันทึกไม่ข้อมูลสำเร็จ`,
           icon: 'error'
         });
-        console.log("⚠️ Add failed:", response);
+        //console.log("⚠️ Add failed:", response);
       }
     } catch (error) {
       console.error("Upload failed:", error);
@@ -1834,7 +1825,7 @@ const handleDomainChange = (value: any) => {
         user_id: user[0]?.employee_username || "",
       },
     };
-    console.log("complaintFile:", complaintPayload.complaintModel.complaintFile);
+    //console.log("complaintFile:", complaintPayload.complaintModel.complaintFile);
 
     // สร้าง FormData
     const formData = new FormData();
@@ -1847,14 +1838,11 @@ const handleDomainChange = (value: any) => {
       });
     }
 
-    console.log("📤 FormData prepared:", formData);
-    console.log("📤 complaintPayload:", complaintPayload);
-    console.log("📤 dataReportTypeValue.id:", dataReportTypeValue.id);
-    console.log(
-      "📤 dataReportTypeValue.lov_code:",
-      dataReportTypeValue.lov_code
-    );
-    console.log("📤 dataReportTypeValue.lov1:", dataReportTypeValue.lov1);
+    //console.log("📤 FormData prepared:", formData);
+    //console.log("📤 complaintPayload:", complaintPayload);
+    //console.log("📤 dataReportTypeValue.id:", dataReportTypeValue.id);
+    //console.log("📤 dataReportTypeValue.lov_code:",dataReportTypeValue.lov_code);
+    //console.log("📤 dataReportTypeValue.lov1:", dataReportTypeValue.lov1);
     setIsLoadingScreen(true);
 
     try {
@@ -1868,14 +1856,14 @@ const handleDomainChange = (value: any) => {
           text: `บันทึกข้อมูลสำเร็จ`,
           icon: 'success'
         });
-        console.log("✅ Complaint Add successfully:", response);
+        //console.log("✅ Complaint Add successfully:", response);
       } else {
         FullSweetalert({
           title: 'Failed',
           text: `บันทึกไม่ข้อมูลสำเร็จ`,
           icon: 'error'
         });
-        console.log("⚠️ Add failed:", response);
+        //console.log("⚠️ Add failed:", response);
       }
     } catch (error) {
       console.error("Upload failed:", error);
@@ -1896,7 +1884,7 @@ const handleDomainChange = (value: any) => {
     if (!validateBeforeEdit()) {
       return;
     }
-    console.log("👌👌👌👌👌priority_level",priority_level)
+    //console.log("👌👌👌👌👌priority_level",priority_level)
 
     const tempid = uuidv4();
 
@@ -1945,7 +1933,7 @@ const handleDomainChange = (value: any) => {
         product_name: product_name,
         detail: detail,
         priority_level: datapriority?.id ?? dataelement?.priority_level,
-       // priority_level: datapriorityValue_Combobox || dataelement?.priority_level,
+        // priority_level: datapriorityValue_Combobox || dataelement?.priority_level,
         respond_date_within: respond_date_within
           ? respond_date_within
             .hour(dayjs().hour())
@@ -1998,13 +1986,13 @@ const handleDomainChange = (value: any) => {
         formData.append("complaintFiles", fileItem.file);
       });
     }
-    console.log("🧡dataelement", dataelement);
+    //console.log("🧡dataelement", dataelement);
 
-    console.log("💨💨💨 FormData prepared:", formData);
-    console.log("💨💨💨 complaintPayload:", complaintPayload);
-    console.log("💨💨💨 dataReportTypeValue.id:", dataReportTypeValue.id);
-    console.log("💨💨💨 dataReportTypeValue.lov_code:", dataReportTypeValue.lov_code);
-    console.log("💨💨💨 dataReportTypeValue.lov1:", dataReportTypeValue.lov1);
+    //console.log("💨💨💨 FormData prepared:", formData);
+    //console.log("💨💨💨 complaintPayload:", complaintPayload);
+    //console.log("💨💨💨 dataReportTypeValue.id:", dataReportTypeValue.id);
+    //console.log("💨💨💨 dataReportTypeValue.lov_code:", dataReportTypeValue.lov_code);
+    //console.log("💨💨💨 dataReportTypeValue.lov1:", dataReportTypeValue.lov1);
     setIsLoadingScreen(true);
 
     try {
@@ -2015,14 +2003,14 @@ const handleDomainChange = (value: any) => {
           text: `บันทึกข้อมูลสำเร็จ`,
           icon: 'success'
         });
-        console.log("✅ Complaint edittt successfully:", response);
+        //console.log("✅ Complaint edittt successfully:", response);
       } else {
         FullSweetalert({
           title: 'Failed',
           text: `บันทึกไม่ข้อมูลสำเร็จ`,
           icon: 'error'
         });
-        console.log("⚠️ Edit failed:", response);
+        //console.log("⚠️ Edit failed:", response);
       }
     } catch (error) {
       console.error("Upload failed:", error);
@@ -2053,10 +2041,10 @@ const handleDomainChange = (value: any) => {
       }
     };
 
-    console.log("📤 complaintPayload:", complaintPayload);
-    console.log("📤 dataReportTypeValue.id:", dataReportTypeValue.id);
-    console.log("📤 dataReportTypeValue.lov_code:", dataReportTypeValue.lov_code);
-    console.log("📤 dataReportTypeValue.lov1:", dataReportTypeValue.lov1);
+    //console.log("📤 complaintPayload:", complaintPayload);
+    //console.log("📤 dataReportTypeValue.id:", dataReportTypeValue.id);
+    //console.log("📤 dataReportTypeValue.lov_code:", dataReportTypeValue.lov_code);
+    //console.log("📤 dataReportTypeValue.lov1:", dataReportTypeValue.lov1);
     setIsLoadingScreen(true);
 
     try {
@@ -2067,14 +2055,14 @@ const handleDomainChange = (value: any) => {
           text: `บันทึกข้อมูลสำเร็จ`,
           icon: 'success'
         });
-        console.log("✅ Complaint edittt successfully:", response);
+        //console.log("✅ Complaint edittt successfully:", response);
       } else {
         FullSweetalert({
           title: 'Failed',
           text: `บันทึกไม่ข้อมูลสำเร็จ`,
           icon: 'error'
         });
-        console.log("⚠️ Edit failed:", response);
+        //console.log("⚠️ Edit failed:", response);
       }
     } catch (error) {
       console.error("Upload failed:", error);
@@ -2095,15 +2083,15 @@ const handleDomainChange = (value: any) => {
   const previewComplaint = async () => {
     if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  previewComplaint");
 
-    console.log(dataelement, "dataelement");
-    console.log("dataset_reporttype", dataset_reporttype);
-    console.log("NCR TEST", extractReportType("TRR_RT_NCR"));
-    console.log("OBS TEST", extractReportType("TRR_RT_OBS"));
-    console.log("CAR TEST", extractReportType("TRR_RT_CAR"));
-    console.log("CPAR TEST", extractReportType("TRR_RT_CPAR"));
+    //console.log(dataelement, "dataelement");
+    //console.log("dataset_reporttype", dataset_reporttype);
+    //console.log("NCR TEST", extractReportType("TRR_RT_NCR"));
+    //console.log("OBS TEST", extractReportType("TRR_RT_OBS"));
+    //console.log("CAR TEST", extractReportType("TRR_RT_CAR"));
+    //console.log("CPAR TEST", extractReportType("TRR_RT_CPAR"));
 
     if (dataelement) {
-      console.log("dataelement.report_type", dataelement.report_type);
+      //console.log("dataelement.report_type", dataelement.report_type);
 
       // setIsRSHidden(extractReportType(dataelement.report_type) != "NCR" ? true : false);
 
@@ -2115,11 +2103,11 @@ const handleDomainChange = (value: any) => {
       );
       setdataPriority(selectedPriority?.id || "");
 
-      console.log("dataComplaintType_Combobox", dataComplaintType_Combobox);
-      console.log("dataelement?.complaint_type_id", dataelement?.complaintType);
-      console.log("dataelement?.complaint_type_id", dataelement?.complaintRs);
-      console.log("dataelement?.complaint_at_id", dataelement?.complaintPhoto);
-      console.log("dataelement?.priority_level", dataelement?.priority_level);
+      //console.log("dataComplaintType_Combobox", dataComplaintType_Combobox);
+      //console.log("dataelement?.complaint_type_id", dataelement?.complaintType);
+      //console.log("dataelement?.complaint_type_id", dataelement?.complaintRs);
+      //console.log("dataelement?.complaint_at_id", dataelement?.complaintPhoto);
+      //console.log("dataelement?.priority_level", dataelement?.priority_level);
 
       const data_ComplaintType = await setValueMas(
         dataComplaintType_Combobox,
@@ -2142,11 +2130,11 @@ const handleDomainChange = (value: any) => {
         "id"
       );
 
-      console.log("data_ComplaintType", data_ComplaintType);
-      console.log("data_ComplaintRs", data_ComplaintRs);
-      console.log("data_ComplaintPhoto", data_ComplaintPhoto);
-      console.log("data_Priority", data_Priority);
-      console.log(dataset_reporttype);
+      //console.log("data_ComplaintType", data_ComplaintType);
+      //console.log("data_ComplaintRs", data_ComplaintRs);
+      //console.log("data_ComplaintPhoto", data_ComplaintPhoto);
+      //console.log("data_Priority", data_Priority);
+      //console.log(dataset_reporttype);
     }
   };
 
@@ -2215,9 +2203,9 @@ const handleDomainChange = (value: any) => {
       : 0;
     const nextSeq = maxExplainSeq + 1;
 
-    console.log('🔍 Current explainList:', explainList);
-    console.log('🔍 Max explain_seq found:', maxExplainSeq);
-    console.log('🔍 Next explain_seq will be:', nextSeq);
+    //console.log('🔍 Current explainList:', explainList);
+    //console.log('🔍 Max explain_seq found:', maxExplainSeq);
+    //console.log('🔍 Next explain_seq will be:', nextSeq);
 
     const explainPayload = {
       ExplainModel: {
@@ -2280,7 +2268,7 @@ const handleDomainChange = (value: any) => {
         cf_type: "Explain",
         create_by: user[0]?.employee_username || "",
         domain_id: user[0]?.employee_domain || "",
-      
+
         ExplainTu: ExplainTuModel,
         ExplainDd: ExplainDdModel,
         // เพิ่ม ComplainFile
@@ -2308,7 +2296,7 @@ const handleDomainChange = (value: any) => {
         user_id: user[0]?.employee_username || "",
       },
     };
-    console.log("📦 explainPayload.ExplainModel.ComplaintFile:", explainPayload.ExplainModel.ComplaintFile);
+    //console.log("📦 explainPayload.ExplainModel.ComplaintFile:", explainPayload.ExplainModel.ComplaintFile);
 
 
 
@@ -2323,8 +2311,8 @@ const handleDomainChange = (value: any) => {
       });
     }
 
-    console.log("📤 FormData prepared:", formData);
-    console.log("📤 explaintPayload:", explainPayload);
+    //console.log("📤 FormData prepared:", formData);
+    //console.log("📤 explaintPayload:", explainPayload);
     setIsLoadingScreen(true);
 
     try {
@@ -2338,14 +2326,14 @@ const handleDomainChange = (value: any) => {
           text: `บันทึกข้อมูลชี้แจงสำเร็จ`,
           icon: 'success'
         });
-        console.log("✅ Explain Add successfully:", response);
+        //console.log("✅ Explain Add successfully:", response);
       } else {
         FullSweetalert({
           title: 'Failed',
           text: `บันทึกข้อมูลชี้แจงไม่สำเร็จ`,
           icon: 'error'
         });
-        console.log("⚠️ Explain Add failed:", response);
+        //console.log("⚠️ Explain Add failed:", response);
       }
     } catch (error) {
       console.error("Explain Upload failed:", error);
@@ -2387,12 +2375,12 @@ const handleDomainChange = (value: any) => {
     const maxApproveSeq = currentApproveList.length > 0
       ? Math.max(...currentApproveList.map((item: any) => parseInt(item.approve_seq, 10) || 0))
       : 0;
-    const nextSeq = maxApproveSeq + 1; 
+    const nextSeq = maxApproveSeq + 1;
 
     const approvePayload = {
       ExplaintApproveModel: {
         id: tempid,
-        explain_id: currentExplainForApproval?.id, 
+        explain_id: currentExplainForApproval?.id,
         approve_seq: nextSeq,
         complaint_status_id: tempComplaintStatus[0] + "_APPROVE_SC",
         approve_status: approveSelectionCode,
@@ -2415,15 +2403,15 @@ const handleDomainChange = (value: any) => {
             .format("YYYY-MM-DDTHH:mm:ss")
           : new Date().toISOString(),
         create_by: user[0]?.employee_username || "",
-        domain_id: user[0]?.employee_domain || "", 
+        domain_id: user[0]?.employee_domain || "",
       },
       CurrentAccessModel: {
         user_id: user[0]?.employee_username || "",
       },
     };
-    console.log("📦 approvePayload:", approvePayload.ExplaintApproveModel);
+    //console.log("📦 approvePayload:", approvePayload.ExplaintApproveModel);
 
-    console.log("📤 explaintPayload:", approvePayload);
+    //console.log("📤 explaintPayload:", approvePayload);
     setIsLoadingScreen(true);
 
     try {
@@ -2438,14 +2426,14 @@ const handleDomainChange = (value: any) => {
           text: `บันทึกการอนุมัติสำเร็จ`,
           icon: 'success'
         });
-        console.log("✅ Explain Add successfully:", response);
+        //console.log("✅ Explain Add successfully:", response);
       } else {
         FullSweetalert({
           title: 'Failed',
           text: `บันทึกการอนุมัติไม่สำเร็จ`,
           icon: 'error'
         });
-        console.log("⚠️ Approve Add failed:", response);
+        //console.log("⚠️ Approve Add failed:", response);
       }
     } catch (error) {
       console.error("Approve Upload failed:", error);
@@ -2456,7 +2444,7 @@ const handleDomainChange = (value: any) => {
     }
   };
 
-  
+
 
   // =====================================================================================================
   // EVENT HANDLERS (from index.tsx)
@@ -2480,8 +2468,8 @@ const handleDomainChange = (value: any) => {
   const handleOnclickComplaintView = async (data: any) => {
     if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  Explaint_Get");
 
-    console.log("Read step:3 เรียกฟังก์ชั่น ดูข้อมูล handleOnclickMenuView ");
-    console.log("Read step:3 ข้อมูลที่ได้จาก ListSearchGet ก่อนส่งเข้าฟังก์ชั่น Complaint_Get  ", data);
+    //console.log("Read step:3 เรียกฟังก์ชั่น ดูข้อมูล handleOnclickMenuView ");
+    //console.log("Read step:3 ข้อมูลที่ได้จาก ListSearchGet ก่อนส่งเข้าฟังก์ชั่น Complaint_Get  ", data);
     Complaint_Get(data);
     resetForm();
     setOpenComplaintView(true); // แล้วค่อยเปิด Dialog
@@ -2490,8 +2478,8 @@ const handleDomainChange = (value: any) => {
   const handleOnclickComplaintEdit = (data: any) => {
     if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  handleOnclickComplaintEdit");
 
-    console.log("Edit step:3 เรียกฟังก์ชั่น ดูข้อมูล handleOnclickMenuEdit ");
-    console.log("Edit step:3 ข้อมูลที่ได้จาก ListSearchGet ก่อนส่งเข้าฟังก์ชั่น Complaint_Get  ", data);
+    //console.log("Edit step:3 เรียกฟังก์ชั่น ดูข้อมูล handleOnclickMenuEdit ");
+    //console.log("Edit step:3 ข้อมูลที่ได้จาก ListSearchGet ก่อนส่งเข้าฟังก์ชั่น Complaint_Get  ", data);
     Complaint_Get(data);
     resetForm();
     setOpenComplaintEdit(true);
@@ -2500,8 +2488,8 @@ const handleDomainChange = (value: any) => {
   const handleOnclickComplaintDelete = (data: any) => {
     if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  handleOnclickComplaintDelete");
 
-    console.log("Delete step:3 เรียกฟังก์ชั่น ดูข้อมูล handleOnclickMenuDelete ");
-    console.log("Delete step:3 ข้อมูลที่ได้จาก ListSearchGet ก่อนส่งเข้าฟังก์ชั่น Complaint_Get  ", data);
+    //console.log("Delete step:3 เรียกฟังก์ชั่น ดูข้อมูล handleOnclickMenuDelete ");
+    //console.log("Delete step:3 ข้อมูลที่ได้จาก ListSearchGet ก่อนส่งเข้าฟังก์ชั่น Complaint_Get  ", data);
     Complaint_Get(data);
     resetForm();
     setOpenComplaintDelete(true);
@@ -2512,7 +2500,7 @@ const handleDomainChange = (value: any) => {
     if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  handleOnclickExplain");
 
     resetForm();
-    console.log("checkkk",dataelement)
+    //console.log("checkkk",dataelement)
     setOpenExplain(true);
     setdataelement(data);
   };
@@ -2534,7 +2522,7 @@ const handleDomainChange = (value: any) => {
   };
 
   const handleOnclickExplainAdd = (data: any) => {
-    if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  handleOnclickExplainAdd");
+    if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  handleOnclickExplainAdd");
 
     resetForm();
     setresponsible_date(dayjs()); // ตั้งค่าวันที่ชี้แจงเป็นวันปัจจุบัน
@@ -2550,7 +2538,7 @@ const handleDomainChange = (value: any) => {
   const handleOnclickExplainView = (data: any) => {
     if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  handleOnclickExplainView");
 
-    console.log("🔍 handleOnclickExplainView called with data:", data);
+    //console.log("🔍 handleOnclickExplainView called with data:", data);
 
     // ตั้งค่า dataelement ก่อนเพื่อให้ useEffect ใน ExplaintBody ทำงานได้
     setdataelement(data);
@@ -2560,10 +2548,10 @@ const handleDomainChange = (value: any) => {
 
     // ใช้ข้อมูลที่ส่งมาจากรายการ explain โดยตรง
     if (data) {
-      console.log("🔍 Setting explain data for View:", data);
-      console.log("🔍 Explain data complaintType:", data.complaintType);
-      console.log("🔍 Explain data complaintRs:", data.complaintRs);
-      console.log("🔍 Explain data other:", data.other);
+      //console.log("🔍 Setting explain data for View:", data);
+      //console.log("🔍 Explain data complaintType:", data.complaintType);
+      //console.log("🔍 Explain data complaintRs:", data.complaintRs);
+      //console.log("🔍 Explain data other:", data.other);
 
       // Set ข้อมูล explain ลงใน context
       setobservation_analysis(data.observation_analysis || "");
@@ -2574,7 +2562,7 @@ const handleDomainChange = (value: any) => {
       // 🔧 เพิ่ม: ตั้งค่าการแสดง/ซ่อน sections ตาม report_type สำหรับ View mode
       // ใช้ dataelement.report_type หรือ data.complaint.report_type ขึ้นกับโครงสร้างข้อมูล
       const reportType = data.complaint?.report_type || data.report_type || dataelement?.report_type;
-      console.log("🔍 ExplainView - Setting visibility for report type:", reportType);
+      //console.log("🔍 ExplainView - Setting visibility for report type:", reportType);
 
       if (reportType && dataset_reporttype) {
         const reportTypeObj = dataset_reporttype.find(
@@ -2584,7 +2572,7 @@ const handleDomainChange = (value: any) => {
         );
 
         if (reportTypeObj) {
-          console.log("🔍 ExplainView - Found report type object:", reportTypeObj);
+          //console.log("🔍 ExplainView - Found report type object:", reportTypeObj);
           // บังคับส่งข้อมูลไปให้ ExplaintBody ผ่าน dataelement 
           const updatedDataElement = {
             ...data,
@@ -2635,7 +2623,7 @@ const handleDomainChange = (value: any) => {
   //       handleOnclickMenuUpload();
   //       break;
   //     case "Print":
-  //       console.log("Print clicked");
+  //       //console.log("Print clicked");
   //       break;
   //     default:
   //       console.warn("No handler for", func_name);
@@ -2687,7 +2675,7 @@ const handleDomainChange = (value: any) => {
     setOpenUpload(false);
     setApproveSelectionCode(null); // รีเซ็ตค่าเมื่อปิด Dialog
     //setdataFuapp(null); // รีเซ็ตค่า Approve ที่เลือกไว้
-    resetForm();
+    // resetForm();
   };
 
   // Set Data Handler
@@ -2720,54 +2708,50 @@ const handleDomainChange = (value: any) => {
     // complaint_status_Get();
   }, []);
 
-   const effectRan = React.useRef(false); // ป้องกัน run ซ้ำใน dev mode
- 
+  const effectRan = React.useRef(false); // ป้องกัน run ซ้ำใน dev mode
+
   // Static useEffect
   React.useEffect(() => {
     if (effectRan.current) return;
     effectRan.current = true;
- 
+
     const fetchData = async () => {
       try {
-        console.log("useEffect start");
-        
-        DomainRelateGet();
-        LovAll_Get();
+        //console.log("useEffect start");
+        await LovAll_Get();
+        await DomainRelateGet();
+        // await DepartmentDomainGet();
 
-        await mas_DomainGet(
-          user[0].itasset_company_id,
-          set_domain,
-          user,
-          isCallFuncLogOn
-        );
+        await mas_DomainGet(user[0].itasset_company_id, set_domain, user, isCallFuncLogOn);
+         await mas_DepartmentGet_Complaint({domain_id: dataelement?.respondent_domain_id ?? null,company_id: dataelement?.respondent_company_id,}, setdataset_department, user, isCallFuncLogOn)
 
         // if (user?.[0]?.itasset_company_id) {
-          
+
         // }
 
-        console.log("useEffect done");
+        //console.log("useEffect done");
       } catch (err) {
         console.error(err);
       }
     };
- 
+
     fetchData();
   }, []);
 
   // Dynamic useEffect
   React.useEffect(() => {
 
-  if (dataset_activeCompany) {
-    console.log("🔁 activeCompany พร้อมแล้ว → เรียก CompanyGet()");
-    CompanyGet();
-  }
+    if (dataset_activeCompany) {
+      //console.log("🔁 activeCompany พร้อมแล้ว → เรียก CompanyGet()");
+      CompanyGet();
+    }
 
-  if (dataset_complaintAction) {
+    if (dataset_complaintAction) {
       ComplaintGet();
-  }
-  
+    }
 
-}, [dataset_activeCompany, dataset_complaintAction]);
+
+  }, [dataset_activeCompany, dataset_complaintAction]);
 
   // React.useEffect(() => {
   //   if (dataset_complaintAction) {
@@ -2775,7 +2759,7 @@ const handleDomainChange = (value: any) => {
   //   }
   // }, [dataset_complaintAction]);
 
-  
+
 
   // Filter complaint types based on selected report type (from ComplaintRead.tsx)
   React.useEffect(() => {
@@ -2800,13 +2784,13 @@ const handleDomainChange = (value: any) => {
       (item: LovType) => item.lov_type === "attach_type"
     );
 
-    console.log("filtered", filtered);
+    //console.log("filtered", filtered);
     setFilteredComplaintType(filtered);
-    console.log("filteredRS", filteredRs);
+    //console.log("filteredRS", filteredRs);
     setFilteredComplaintRs(filteredRs);
-    console.log("filteredpriority", filteredpriority);
+    //console.log("filteredpriority", filteredpriority);
     setFilteredpriority(filteredpriority);
-    console.log("filteredphoto", filteredphoto);
+    //console.log("filteredphoto", filteredphoto);
     setFilteredphoto(filteredphoto);
   }, [
     dataComplaintType_Combobox,
@@ -2869,8 +2853,8 @@ const handleDomainChange = (value: any) => {
             <AutocompleteComboBox
               value={
                 dataset_domainrelate?.find(
-                (item: any) => item.domain_id === TextNameSearch.dataset_domainrelate
-              ) || null}
+                  (item: any) => item.domain_id === TextNameSearch.dataset_domainrelate
+                ) || null}
               labelName="โดเมน (Domain)"
               options={dataset_domainrelate || []}
               column="domain_name"
@@ -3039,7 +3023,7 @@ const handleDomainChange = (value: any) => {
               hidden={menuFuncData?.find((item: auth_role_menu_func) => item?.func_name === "Add") ? false : true}
               color="success"
               onClick={() => {
-                DepartmentDomainGet("Add");
+                //DepartmentDomainGet("Add");
                 handleOnclickComplaintAdd();
               }}
             >
@@ -3310,7 +3294,7 @@ const handleDomainChange = (value: any) => {
           action="ApproveSC"
           handleOpenAdd={() => handleOnclickExplainAdd(dataelement)}
           handleOnclickExplainView={handleOnclickExplainView}
-          //handleOnclickExplainApproveSc={handleOnclickExplainApproveSc}
+        //handleOnclickExplainApproveSc={handleOnclickExplainApproveSc}
         />}
       />
 
@@ -3339,7 +3323,7 @@ const handleDomainChange = (value: any) => {
         buttonColor="success"
         element={<ExplaintBody
           action="ExplainRead"
-          //isViewMode={true}
+        //isViewMode={true}
         />}
       />
 
@@ -3405,47 +3389,47 @@ const handleDomainChange = (value: any) => {
       /> */}
 
       <FuncDialog
-         open={openExplainApproveSc}
-         dialogWidth="xl"
-         openBottonHidden={true}
-         hideSaveDraft
-         hideReject={approveSelectionCode === "APPROVE"} // ซ่อนปุ่ม Reject ถ้าเลือก Approve
-         hideSaveSubmit={approveSelectionCode === "ADD" || approveSelectionCode === "REJECT"} 
-         titlename={"Approve Section Head // เพิ่มข้อมูล"}
-         buttonText={"Approve"}
-         handlefunction={ApproveScAdd}
-         handlereject={ApproveScAdd}
-         handleClose={handleClose}
-         buttonColor="success"
-         element={<ExplaintBody
-           action="ApproveScAdd"
-           handleOpenAdd={() => handleOnclickExplainApproveSc(dataelement)}
-           onApproveChange={(value) => {
-             setApproveSelectionCode(value?.lov_code ?? null);
-           }}
-         />}
-       />
+        open={openExplainApproveSc}
+        dialogWidth="xl"
+        openBottonHidden={true}
+        hideSaveDraft
+        hideReject={approveSelectionCode === "APPROVE"} // ซ่อนปุ่ม Reject ถ้าเลือก Approve
+        hideSaveSubmit={approveSelectionCode === "ADD" || approveSelectionCode === "REJECT"}
+        titlename={"Approve Section Head // เพิ่มข้อมูล"}
+        buttonText={"Approve"}
+        handlefunction={ApproveScAdd}
+        handlereject={ApproveScAdd}
+        handleClose={handleClose}
+        buttonColor="success"
+        element={<ExplaintBody
+          action="ApproveScAdd"
+          handleOpenAdd={() => handleOnclickExplainApproveSc(dataelement)}
+          onApproveChange={(value) => {
+            setApproveSelectionCode(value?.lov_code ?? null);
+          }}
+        />}
+      />
 
-       <FuncDialog
-         open={openExplainApproveQc}
-         dialogWidth="xl"
-         openBottonHidden={true}
-         hideSaveDraft
-         hideReject={approveSelectionCode === "APPROVE"} // ซ่อนปุ่ม Reject ถ้าเลือก Approve
-         hideSaveSubmit={approveSelectionCode === "ADD" || approveSelectionCode === "REJECT"} 
-         titlename={"Approve QC // เพิ่มข้อมูล"}
-         buttonText={"Approve"}
-         handlereject={ApproveScAdd}
-         handleClose={handleClose}
-         buttonColor="success"
-         element={<ExplaintBody
-           action="ApproveQcAdd"
-           handleOpenAdd={() => handleOnclickExplainApproveQc(dataelement)}
-           onApproveChange={(value) => {
-             setApproveSelectionCode(value?.lov_code ?? null);
-           }}
-         />}
-       />
+      <FuncDialog
+        open={openExplainApproveQc}
+        dialogWidth="xl"
+        openBottonHidden={true}
+        hideSaveDraft
+        hideReject={approveSelectionCode === "APPROVE"} // ซ่อนปุ่ม Reject ถ้าเลือก Approve
+        hideSaveSubmit={approveSelectionCode === "ADD" || approveSelectionCode === "REJECT"}
+        titlename={"Approve QC // เพิ่มข้อมูล"}
+        buttonText={"Approve"}
+        handlereject={ApproveScAdd}
+        handleClose={handleClose}
+        buttonColor="success"
+        element={<ExplaintBody
+          action="ApproveQcAdd"
+          handleOpenAdd={() => handleOnclickExplainApproveQc(dataelement)}
+          onApproveChange={(value) => {
+            setApproveSelectionCode(value?.lov_code ?? null);
+          }}
+        />}
+      />
 
       {/* =================== Dialog Sections =================== */}
 

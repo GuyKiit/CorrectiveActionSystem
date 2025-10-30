@@ -65,6 +65,7 @@ import { data } from "react-router-dom";
 import { ComplaintFile } from "./BrowseFileUpload";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {
+  mas_DepartmentDomainGet,
   mas_DepartmentGet_Complaint,
   mas_DomainGet,
   mas_DomainRelateGet,
@@ -479,64 +480,58 @@ export default function ComplaintBody({
 
   // Check Acknowledge flag =========================================================
   const updateAcknowledgeFlag = (value: any) => {
-    console.log("####### Onchange Company Value [event] : ", value);
-    console.log("@@@@@@@@@@@@First", dataset_domainrelate);
-    console.log("Render check respondent_domain_id:", respondent_domain_id);
+    // console.log("####### Onchange Company Value [event] : ", value);
+    // console.log("@@@@@@@@@@@@First", dataset_domainrelate);
+    // console.log("Render check respondent_domain_id:", respondent_domain_id);
 
     if (value != null) {
       mas_DomainRelateGet(value, set_domainrelate, isCallFuncLogOn);
     } else {
       setrespondent_domain_id(null);
     }
-    console.log("@@@@@@@@@@@@second", dataset_domainrelate);
+    // console.log("@@@@@@@@@@@@second", dataset_domainrelate);
   };
 
   // Event Handlers =========================================================
   const handleCompanyChange = (value: any) => {
-    console.log("####### Onchange Company Value [event] : ", value);
-    console.log("@@@@@@@@@@@@First", dataset_domainrelate);
-    console.log("Render check respondent_domain_id:", respondent_domain_id);
+    // console.log("####### Onchange Company Value [event] : ", value);
+    // console.log("@@@@@@@@@@@@First", dataset_domainrelate);
+    // console.log("Render check respondent_domain_id:", respondent_domain_id);
 
     if (value != null) {
       mas_DomainRelateGet(value, set_domainrelate, isCallFuncLogOn);
     } else {
       setrespondent_domain_id(null);
     }
-    console.log("@@@@@@@@@@@@second", dataset_domainrelate);
+    // console.log("@@@@@@@@@@@@second", dataset_domainrelate);
   };
 
   // isAcknowledge
 
   const handleDomainChange = (value: any) => {
-    console.log("####### Onchange Domain Value [event] : ", value);
-    console.log("@@@@@@@@@@@@First", dataset_domainrelate);
+    // console.log("####### Onchange Domain Value [event] : ", value);
+    // console.log("@@@@@@@@@@@@First", dataset_domainrelate);
 
     if (value != null) {
-      console.log("😎😎", value);
+      const dataset = {
+        domain_id: respondent_domain_id?.domain_id || value.domain_id,
+        company_id: respondent_company_id?.company_id || value.company_id,
+      };
+      // console.log("😎😎", dataset);
 
-      mas_DepartmentGet_Complaint(
-        value,
-        setdataset_department,
-        isCallFuncLogOn,
-        user
-      );
+      mas_DepartmentGet_Complaint(dataset, setdataset_department, isCallFuncLogOn, user);
     } else {
-      setdataset_department([]);
-      setrespondent_department_id(null);
+      // setdataset_department([]);
+      // setrespondent_department_id(null);
     }
-    console.log("@@@@@@@@@@@@second", domainrelate);
+    // console.log("@@@@@@@@@@@@second", domainrelate);
   };
 
   // Function Handlers (On Change Event) ======================================================
   const handleReportTypeChange = async (val: LovType | null) => {
-    if (true)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  handleReportTypeChange"
-      );
+    // if (true)console.log( "🕑 ",dayjs().format("HH:mm:ss.SSS")," [Calling Function]  :  handleReportTypeChange");
 
-    console.log(val, "valvalvalvalvalvalvalvalvalvalvalvalvalvalvalval");
+    // console.log(val, "valvalvalvalvalvalvalvalvalvalvalvalvalvalvalval");
 
     if (
       val?.lov_code === "CAR" ||
@@ -548,7 +543,7 @@ export default function ComplaintBody({
       setIsRSHidden(false);
     }
     setdataReportTypeValue(val);
-    console.log(dataReportTypeValue, "dataReportTypeValue");
+    // console.log(dataReportTypeValue, "dataReportTypeValue");
 
     // Clear validation error when user selects a value
     if (onReportTypeChange) {
@@ -618,14 +613,9 @@ export default function ComplaintBody({
   };
 
   const handleCheckboxChangeCT = (item: LovType) => {
-    if (true)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  handleCheckboxChangeCT"
-      );
+    // if (true)console.log("🕑 ",dayjs().format("HH:mm:ss.SSS")," [Calling Function]  :  handleCheckboxChangeCT");
 
-    console.log("💛💛item", item);
+    // console.log("💛💛item", item);
 
     setdataComplaintType((prev: LovType[] = []) => {
       let newData: LovType[];
@@ -651,11 +641,11 @@ export default function ComplaintBody({
       }));
 
       // ดู log
-      console.log("Reduced array:", reducedArray);
+      // console.log("Reduced array:", reducedArray);
 
       // อัปเดตเข้า context
       setdataComplaintTypeValue_Combobox(reducedArray);
-      console.log(newData, "newData");
+      // console.log(newData, "newData");
 
       // Clear validation error when user selects/deselects complaint type
       if (onComplaintTypeChange) {
@@ -667,15 +657,10 @@ export default function ComplaintBody({
   };
 
   const handleCheckboxChangeRS = (item: LovType) => {
-    if (true)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  handleCheckboxChangeRS"
-      );
+    // if (true) console.log("🕑 ",dayjs().format("HH:mm:ss.SSS")," [Calling Function]  :  handleCheckboxChangeRS");
 
     setdataComplaintRs((prev: LovType[] = []) => {
-      console.log("💚💚item", item);
+      // console.log("💚💚item", item);
       let newData: LovType[];
 
       if (prev.some((rs) => rs.id === item.id)) {
@@ -702,7 +687,7 @@ export default function ComplaintBody({
       }));
       // const reducedArray = newData.map(rs => ({ complaint_type_id: rs.id, lov1: rs.lov1 }));
 
-      console.log("Reduced array:", reducedArray);
+      // console.log("Reduced array:", reducedArray);
 
       setdataComplaintRsValue_Combobox(reducedArray);
 
@@ -716,12 +701,7 @@ export default function ComplaintBody({
   };
 
   const handleCheckboxChangePhotoType = (item: LovType) => {
-    if (true)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  handleCheckboxChangePhotoType"
-      );
+    // if (true)console.log("🕑 ",dayjs().format("HH:mm:ss.SSS")," [Calling Function]  :  handleCheckboxChangePhotoType");
 
     setdataphoto((prev: LovType[] = []) => {
       let newData: LovType[];
@@ -745,7 +725,7 @@ export default function ComplaintBody({
         label: pho.lov1,
       }));
 
-      console.log("Reduced array:", reducedArray);
+      // console.log("Reduced array:", reducedArray);
 
       setdataphotoValue_Combobox(reducedArray);
 
@@ -755,12 +735,7 @@ export default function ComplaintBody({
 
   // รับ ComplaintFile[] จาก BrowseFileUpload
   const handleFileChange = (fileArray: ComplaintFile[]) => {
-    if (true)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  handleFileChange"
-      );
+    // if (true)console.log("🕑 ",dayjs().format("HH:mm:ss.SSS")," [Calling Function]  :  handleFileChange");
 
     if (!fileArray || fileArray.length === 0) return;
     const updatedList = [...fileList, ...fileArray];
@@ -854,12 +829,7 @@ export default function ComplaintBody({
   };
 
   const arraysAreEqual = (a: any[], b: any[]) => {
-    if (true)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  arraysAreEqual"
-      );
+    // if (true) console.log("🕑 ",dayjs().format("HH:mm:ss.SSS")," [Calling Function]  :  arraysAreEqual");
 
     if (a.length !== b.length) return false;
     return a.every(
@@ -868,12 +838,7 @@ export default function ComplaintBody({
   };
 
   const handleRemoveFile = async (index: number) => {
-    if (true)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  handleRemoveFile"
-      );
+    // if (true)console.log("🕑 ",dayjs().format("HH:mm:ss.SSS")," [Calling Function]  :  handleRemoveFile");
 
     const fileToRemove = fileList[index];
 
@@ -886,20 +851,20 @@ export default function ComplaintBody({
           update_by: user[0]?.employee_username || "",
         };
 
-        console.log("🗑️ Deleting file from database:", deletePayload);
+        // console.log("🗑️ Deleting file from database:", deletePayload);
         const response = await _POST(
           deletePayload,
           "/ComplaintFile/ComplaintFileEdit"
         );
-        console.log("🗑️ Delete response:", response);
+        // console.log("🗑️ Delete response:", response);
 
         if (response && response.status === "success") {
-          console.log("✅ File deleted from database successfully");
+          // console.log("✅ File deleted from database successfully");
         } else {
-          console.log("⚠️ Failed to delete file from database:", response);
+          // console.log("⚠️ Failed to delete file from database:", response);
         }
       } catch (error) {
-        console.error("❌ Error deleting file from database:", error);
+        // console.error("❌ Error deleting file from database:", error);
       }
     }
 
@@ -916,9 +881,7 @@ export default function ComplaintBody({
   }, [fileList]);
 
   const Acknowledge_Update = async (data: any) => {
-    if (isCallFuncLogOn)
-      console.log("🕑 ",dayjs().format("HH:mm:ss.SSS")," [Calling Function]  :  Acknowledge_Update"
-);
+    // if (isCallFuncLogOn)console.log("🕑 ", dayjs().format("HH:mm:ss.SSS"), " [Calling Function]  :  Acknowledge_Update");
 
     // setIsLoadingScreen(true)
     const dataset = {
@@ -939,18 +902,13 @@ export default function ComplaintBody({
         setdataelement(response.data[0]);
       }
     } catch (e) {
-      console.log("error");
+      // console.log("error");
     }
   };
 
   // Function - Get Complaints
   const Complaint_Get = async (data: any) => {
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  Complaint_Get"
-      );
+    // if (isCallFuncLogOn)console.log("🕑 ",dayjs().format("HH:mm:ss.SSS")," [Calling Function]  :  Complaint_Get");
 
     // setIsLoadingScreen(true)
     const dataset = {
@@ -960,34 +918,30 @@ export default function ComplaintBody({
       department_id: user[0]?.itasset_department_id,
       company_id: user[0]?.itasset_company_id,
     };
-    console.log("Read step:4 dataset: ", dataset);
+    // console.log("Read step:4 dataset: ", dataset);
 
     try {
       let response = await _POST(dataset, "/Complaint/ComplaintGet");
-      console.log("Read step:4 ผลลัพธ์ : ", response);
-      console.log("Read step:4 Normalize ปรับค่าใหม่ : ", response.data[0]);
+      // console.log("Read step:4 ผลลัพธ์ : ", response);
+      // console.log("Read step:4 Normalize ปรับค่าใหม่ : ", response.data[0]);
       if (response && response.status === "success") {
         setIsLoadingScreen(false);
         setdataelement(response.data[0]);
       }
     } catch (e) {
-      console.log("error");
+      // console.log("error");
     }
   };
 
   // Function - Get Explain List
   const ExplainGet = async () => {
     if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  ExplainGet"
-      );
+      // console.log("🕑 ",dayjs().format("HH:mm:ss.SSS")," [Calling Function]  :  ExplainGet");
 
-    if (!dataelement?.id) {
-      console.log("No complaint ID, skipping explain fetch");
-      return;
-    }
+      if (!dataelement?.id) {
+        // console.log("No complaint ID, skipping explain fetch");
+        return;
+      }
 
     setIsLoadingScreen(true);
     const dataset = {
@@ -996,14 +950,14 @@ export default function ComplaintBody({
 
     try {
       let response = await _POST(dataset, "/Explain/ExplainGet");
-      console.log("ExplainGet response:", response);
+      // console.log("ExplainGet response:", response);
       if (response && response.status === "success") {
         setIsLoadingScreen(false);
         setExplainList(response.data || []);
-        console.log("Explain list:", response.data);
+        // console.log("Explain list:", response.data);
       }
     } catch (e) {
-      console.log("ExplainGet error:", e);
+      // console.log("ExplainGet error:", e);
       setIsLoadingScreen(false);
     }
   };
@@ -1011,19 +965,15 @@ export default function ComplaintBody({
   // READ - Get Complaints
   const ComplaintFile_Get = async () => {
     if (true)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  ComplaintFile_Get"
-      );
+      // console.log("🕑 ", dayjs().format("HH:mm:ss.SSS")," [Calling Function]  :  ComplaintFile_Get");
 
-    // ตรวจสอบว่ามี dataelement?.id หรือไม่  ไม่error หากไม่มีไฟล์
-    if (!dataelement?.id) {
-      console.log("No complaint ID, skipping file fetch");
-      setFileList([]);
-      setcomplaintFiles([]);
-      return;
-    }
+      // ตรวจสอบว่ามี dataelement?.id หรือไม่  ไม่error หากไม่มีไฟล์
+      if (!dataelement?.id) {
+        // console.log("No complaint ID, skipping file fetch");
+        setFileList([]);
+        setcomplaintFiles([]);
+        return;
+      }
 
     setIsLoadingScreen(true);
     const dataset = {
@@ -1033,16 +983,13 @@ export default function ComplaintBody({
 
     try {
       let response = await _POST(dataset, "/ComplaintFile/ComplaintFileGet");
-      console.log(response, "response_Get");
+      // console.log(response, "response_Get");
       if (response && response.status === "success") {
         setIsLoadingScreen(false);
         const responseData: any = [];
 
         if (Array.isArray(response.data) && response.data.length > 0) {
-          console.log(
-            "################# FILE #######################:",
-            response.data
-          ); // เช็คว่ามีกี่แถวจริง ๆ
+          // console.log("################# FILE #######################:",response.data); // เช็คว่ามีกี่แถวจริง ๆ
 
           const mappedFiles: ComplaintFile[] = response.data.map(
             (file: any) => ({
@@ -1064,18 +1011,18 @@ export default function ComplaintBody({
           setcomplaintFiles(mappedFiles);
         } else {
           // ไม่มีไฟล์
-          console.log("No files found");
+          // console.log("No files found");
           setFileList([]);
           setcomplaintFiles([]);
         }
       } else {
         // Response ไม่สำเร็จ
-        console.log("Failed to get files:", response);
+        // console.log("Failed to get files:", response);
         setFileList([]);
         setcomplaintFiles([]);
       }
     } catch (e) {
-      console.log("Error getting files:", e);
+      // console.log("Error getting files:", e);
       setFileList([]);
       setcomplaintFiles([]);
     } finally {
@@ -1083,264 +1030,199 @@ export default function ComplaintBody({
     }
   };
 
+// ⭐⭐⭐⭐⭐ Start : ==============================================================================================//
+  const effectRan = React.useRef(false); // ป้องกัน run ซ้ำใน dev mode
+
+  // 🧩 1️⃣ โหลดข้อมูลหลัก (ReportType, Company, Domain, Department)
   React.useEffect(() => {
-    const updateData = async () => {
+    if (effectRan.current) return;
+    effectRan.current = true;
+
+    const loadInitialData = async () => {
       try {
-        // ================================
-        // 1) Map ค่า default ของ report_type
-        // ================================
+        // 1) Report Type
         if (Array.isArray(dataset_reporttype) && dataelement?.report_type) {
           const defaultVal =
-            // ลองหาแบบตรง id ก่อน
-            (await setValueMas(
-              dataset_reporttype,
-              dataelement.report_type,
-              "id"
-            )) ||
-            // fallback: หาแบบ lov_code (กันกรณี backend ส่งค่า lov_code แทน id)
+            (await setValueMas(dataset_reporttype, dataelement.report_type, "id")) ||
             dataset_reporttype.find(
               (item: LovType) =>
                 item.lov_code === dataelement.report_type ||
                 item.id === dataelement.report_type
             );
-
-          if (
-            defaultVal &&
-            (!dataReportTypeValue || dataReportTypeValue.id !== defaultVal.id)
-          ) {
-            setdataReportTypeValue(defaultVal);
-          }
+          if (defaultVal) setdataReportTypeValue(defaultVal);
         }
 
-        // ================================
-        // 2) Map ค่า default ของ department
-        // ================================
-        // if (Array.isArray(dataset_department) && dataelement?.respondent_department_id?.department_id) {
-        //   const mappedDept = await setValueMas(
-        //     dataset_department,
-        //     dataelement.respondent_department_id,
-        //     "department_id"
-        //   );
-
-        //   if (mappedDept) {
-        //     setrespondent_department_id(mappedDept); // ค่า default ของ Combobox
-        //   }
-        // }
-        if (
-          Array.isArray(dataset_department) &&
-          dataelement?.respondent_department_id
-        ) {
-          console.log(
-            "🗺️ Looking for department with ID:",
-            dataelement.respondent_department_id
-          );
-          console.log("🗺️ Available departments:", dataset_department);
-
-          const mappedDept = await setValueMas(
-            dataset_department,
-            dataelement.respondent_department_id,
-            "department_id"
-          );
-
-          console.log("🗺️ Mapped department result:", mappedDept);
-          if (mappedDept) {
-            setrespondent_department_id(mappedDept); // ค่า default ของ Combobox
-          } else {
-            console.warn(
-              "⚠️ No department found for ID:",
-              dataelement.respondent_department_id
-            );
-          }
-        }
-
-        // ================================
-        // 3) Map ค่า default ของ company
-        // ================================
-        if (
-          Array.isArray(dataset_company) &&
-          dataelement?.respondent_company_id
-        ) {
-          const mappedDept = await setValueMas(
+        // 2) Company
+        if (Array.isArray(dataset_company) && dataelement?.respondent_company_id) {
+          const mappedCompany = await setValueMas(
             dataset_company,
             dataelement.respondent_company_id,
             "company_id"
           );
-          console.log("🔍 Mapping company:", {
-            target: dataelement.respondent_company_id,
-            dataset: dataset_company.map((c) => c.company_id),
-          });
-          if (mappedDept) {
-            setrespondent_company_id(mappedDept); // ค่า default ของ Combobox
-            setrequest_company_id(mappedDept); // ค่า default ของ Combobox
+          if (mappedCompany) {
+            setrespondent_company_id(mappedCompany);
+            setrequest_company_id(mappedCompany);
           }
         }
 
-        // ================================
-        // 4) Map ค่า default ของ domain
-        // ================================
-        // ✅ โหลด domain ที่เกี่ยวข้องกับบริษัทนั้น
+        // 3) Domain relate
         if (dataelement?.respondent_company_id) {
           await mas_DomainRelateGet(
             {
               domain: dataelement?.respondent_domain_id ?? null,
               company_id: dataelement.respondent_company_id,
             },
-            set_domain,
+            set_domainrelate,
             isCallFuncLogOn
           );
         }
 
-        // ✅ ตั้งค่า default ของ domain ที่เลือกไว้
+        // 4) Domain default
         if (Array.isArray(domain) && dataelement?.respondent_domain_id) {
           const mappedDomain = await setValueMas(
             domain,
             dataelement.respondent_domain_id,
             "domain_id"
           );
-
-          if (mappedDomain) {
-            setrespondent_domain_id(mappedDomain);
-          }
+          if (mappedDomain) setrespondent_domain_id(mappedDomain);
         }
 
-        // ================================
-        //  กรณี Add → ไม่มี dataelement
-        // ================================
-        // else {
-        //   console.log("🧭 Mode: Add");
-
-        //   // ✅ ใช้ company จาก profile
-        //   if (user?.[0]?.itasset_company_id) {
-        //     await mas_DomainGet(
-        //       user[0].itasset_company_id,
-        //       set_domain,
-        //       user,
-        //       isCallFuncLogOn
-        //     );
-        //   }
-        // }
-
-        // ================================
-        // 3) Map ค่า default ของ department
-        // ================================
-
-        // var tempDepartmentValue = {
-        //   company_id: dataelement?.company_id,
-        //   domain_id: dataelement?.domain_id,
-        // };
-
-        // mas_DepartmentDomainGet(tempDepartmentValue, set_department, isCallFuncLogOn);
-
-        // if (Array.isArray(department) && dataelement?.domain_dept_id) {
-        //   const mappedDept = await setValueMas(
-        //     department,
-        //     dataelement.domain_dept_id,
-        //     "domain_dept_id"
-        //   );
-
-        //   if (mappedDept) {
-        //     setdomain_dept_id(mappedDept); // ค่า default ของ Combobox
-        //   } else {
-        //     console.warn("⚠️ No department found for ID:", dataelement.domain_dept_id);
-        //   }
-        // }
-
-        // ================================
-        // 6) Filter priority
-        // ================================
-        if (Array.isArray(datapriority_Combobox)) {
-          const newFilteredPriority = datapriority_Combobox.filter(
-            (item: LovType) => item.lov_type === "priority_level"
-          );
-
-          setFilteredpriority((prev) =>
-            JSON.stringify(prev) !== JSON.stringify(newFilteredPriority)
-              ? newFilteredPriority
-              : prev
+        // 5) โหลด Department
+        if (dataelement?.respondent_department_id) {
+          await mas_DepartmentGet_Complaint(
+            {
+              domain_id: dataelement?.respondent_domain_id ?? null,
+              company_id: dataelement.respondent_company_id,
+            },
+            setdataset_department,
+            isCallFuncLogOn,
+            user
           );
         }
 
-        // ================================
-        // 7) Filter Complaint/Attach/Reference ตาม reportType
-        // ================================
-        if (dataReportTypeValue) {
-          const newFilteredFuApprove = (dataApprove_Combobox || []).filter(
-            (item: LovType) => item.lov_type === "approve_select"
-          );
-          setFilteredFuApprove((prev: LovType[]) => {
-            if (JSON.stringify(prev) !== JSON.stringify(newFilteredFuApprove))
-              return newFilteredFuApprove;
-            return prev;
-          });
-          const val = dataReportTypeValue;
-
-          // Complaint Type
-          const newComplaintType = (dataComplaintType_Combobox || []).filter(
-            (item: LovType) =>
-              item.lov_type === "complaint_type" && item.lov_code === val.id
-          );
-          setFilteredComplaintType((prev) =>
-            JSON.stringify(prev) !== JSON.stringify(newComplaintType)
-              ? newComplaintType
-              : prev
-          );
-
-          // Attach Type
-          const newPhoto = (dataphoto_Combobox || []).filter(
-            (item: LovType) => item.lov_type === "attach_type"
-          );
-          setFilteredphoto((prev) =>
-            JSON.stringify(prev) !== JSON.stringify(newPhoto) ? newPhoto : prev
-          );
-
-          // Reference Standard (เฉพาะ NCR)
-          if (val.lov_code === "NCR") {
-            const newComplaintRs = (dataComplaintRs_Combobox || []).filter(
-              (item: LovType) =>
-                item.lov_type === "reference_standard" &&
-                item.lov_code === val.id
-            );
-            setFilteredComplaintRs((prev) =>
-              JSON.stringify(prev) !== JSON.stringify(newComplaintRs)
-                ? newComplaintRs
-                : prev
-            );
-          } else {
-            setFilteredComplaintRs([]);
-          }
-        } else {
-          // reset ถ้ายังไม่มีค่า reportType
-          setFilteredComplaintType([]);
-          setFilteredComplaintRs([]);
-          setFilteredFuApprove([]);
-          setFilteredphoto([]);
-        }
       } catch (err) {
-        console.error("updateData error:", err);
+        console.error("❌ loadInitialData error:", err);
       }
     };
 
-    console.log("😒😒dataset_department", dataset_department);
+    loadInitialData();
+  }, [dataelement]);
 
-    updateData();
+  // 🧩 2️⃣ เมื่อ dataset_department พร้อมจริง → map default
+  React.useEffect(() => {
+    const mapDepartment = async () => {
+      if (
+        Array.isArray(dataset_department) &&
+        dataset_department.length > 0 &&
+        dataelement?.respondent_department_id
+      ) {
+        console.log("🏬 Mapping department (ready):", {
+          target: dataelement.respondent_department_id,
+          dataset: dataset_department.map((d: any) => d.department_id),
+        });
+
+        const mappedDept = await setValueMas(
+          dataset_department,
+          dataelement.respondent_department_id,
+          "department_id"
+        );
+
+        if (mappedDept) {
+          setrespondent_department_id(mappedDept);
+          console.log("✅ Department mapped:", mappedDept);
+        } else {
+          console.warn("⚠️ Department not found:", dataelement.respondent_department_id);
+        }
+      }
+    };
+
+    mapDepartment();
+  }, [dataset_department]); // 🔁 trigger เฉพาะตอน department dataset update จริง
+
+  // --------------------
+  // Filter Priority
+  // --------------------
+  React.useEffect(() => {
+    if (!Array.isArray(datapriority_Combobox)) return;
+
+    const newFilteredPriority = datapriority_Combobox.filter(
+      (item: LovType) => item.lov_type === "priority_level"
+    );
+
+    setFilteredpriority((prev) =>
+      JSON.stringify(prev) !== JSON.stringify(newFilteredPriority)
+        ? newFilteredPriority
+        : prev
+    );
+  }, [datapriority_Combobox]);
+
+  // --------------------
+  // Filter Complaint/Attach/Reference ตาม reportType
+  // --------------------
+  React.useEffect(() => {
+    if (!dataReportTypeValue) {
+      setFilteredComplaintType([]);
+      setFilteredComplaintRs([]);
+      setFilteredFuApprove([]);
+      setFilteredphoto([]);
+      return;
+    }
+
+    const val = dataReportTypeValue;
+
+    // Approve
+    const newFilteredFuApprove = (dataApprove_Combobox || []).filter(
+      (item: LovType) => item.lov_type === "approve_select"
+    );
+    setFilteredFuApprove((prev) =>
+      JSON.stringify(prev) !== JSON.stringify(newFilteredFuApprove)
+        ? newFilteredFuApprove
+        : prev
+    );
+
+    // Complaint Type
+    const newComplaintType = (dataComplaintType_Combobox || []).filter(
+      (item: LovType) =>
+        item.lov_type === "complaint_type" && item.lov_code === val.id
+    );
+    setFilteredComplaintType((prev) =>
+      JSON.stringify(prev) !== JSON.stringify(newComplaintType)
+        ? newComplaintType
+        : prev
+    );
+
+    // Attach Type
+    const newPhoto = (dataphoto_Combobox || []).filter(
+      (item: LovType) => item.lov_type === "attach_type"
+    );
+    setFilteredphoto((prev) =>
+      JSON.stringify(prev) !== JSON.stringify(newPhoto) ? newPhoto : prev
+    );
+
+    // Reference Standard (เฉพาะ NCR)
+    if (val.lov_code === "NCR") {
+      const newComplaintRs = (dataComplaintRs_Combobox || []).filter(
+        (item: LovType) =>
+          item.lov_type === "reference_standard" && item.lov_code === val.id
+      );
+      setFilteredComplaintRs((prev) =>
+        JSON.stringify(prev) !== JSON.stringify(newComplaintRs)
+          ? newComplaintRs
+          : prev
+      );
+    } else {
+      setFilteredComplaintRs([]);
+    }
   }, [
-    action,
-    dataelement?.report_type,
-    dataset_reporttype,
-    dataset_department,
-    dataset_company,
-    datapriority_Combobox,
-    
-    dataComplaintType_Combobox,
-    dataComplaintRs_Combobox,
-    dataphoto_Combobox,
     dataReportTypeValue,
     dataApprove_Combobox,
-    
-    dataelement,
-    dataelement?.respondent_company_id,
-    // domain,
+    dataComplaintType_Combobox,
+    dataphoto_Combobox,
+    dataComplaintRs_Combobox,
   ]);
+// ⭐⭐⭐⭐⭐ Start : ==============================================================================================//
+
+
 
   //////////////////////// Complaint Read //////////////////////////
   React.useEffect(() => {
@@ -1357,10 +1239,7 @@ export default function ComplaintBody({
       setdate_of_detection(dayjs(dataelement?.date_of_detection));
 
       // Map respondent_department_id
-      console.log("🔍 Department mapping debug:", {
-        respondent_department_id: dataelement.respondent_department_id,
-        dataset_department_sample: dataset_department?.[0],
-      });
+      // console.log("🔍 Department mapping debug:", {respondent_department_id: dataelement.respondent_department_id,dataset_department_sample: dataset_department?.[0], });
 
       // const foundDept = dataset_department.find((el: any) => {
       //   return String(el.department_id) === String(dataelement.respondent_department_id);
@@ -1445,7 +1324,7 @@ export default function ComplaintBody({
         setIsRSHidden(true);
       }
     }
-  }, [dataelement, dataset_reporttype, dataset_department, dataset_company]);
+  }, [dataelement, dataset_reporttype, dataset_company]);
 
   // React.useEffect(() => {
   //   if (!isActionAdd) {
@@ -1462,7 +1341,7 @@ export default function ComplaintBody({
   //   updateAcknowledgeFlag
   // }, [action, dataelement?.id]);
 
-  React.useEffect(() => {
+   React.useEffect(() => {
     const fetchAcknowlege = async () => {
     if (isActionExplain && dataelement?.id) {
       if (dataelement?.acknowledge_flag == 0) {
@@ -1477,15 +1356,9 @@ export default function ComplaintBody({
   };
   fetchAcknowlege();
   }, [action, dataelement?.id, dataelement?.acknowledge_flag]);
-  
-   
+
   const setComplaintType = (data: any) => {
-    if (true)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  setComplaintType"
-      );
+    // if (true) console.log("🕑 ",dayjs().format("HH:mm:ss.SSS"), " [Calling Function]  :  setComplaintType");
 
     const newData: any[] = [];
     Array.isArray(data) &&
@@ -1505,12 +1378,7 @@ export default function ComplaintBody({
   };
 
   const setComplaintRs = (data: any) => {
-    if (true)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  setComplaintRs"
-      );
+    // if (true)console.log("🕑 ",dayjs().format("HH:mm:ss.SSS")," [Calling Function]  :  setComplaintRs");
 
     const newData: any[] = [];
     Array.isArray(data) &&
@@ -1530,12 +1398,7 @@ export default function ComplaintBody({
     return newData;
   };
   const setPriorityLevel = (value: any) => {
-    if (true)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  setPriorityLevel"
-      );
+    // if (true) console.log("🕑 ",dayjs().format("HH:mm:ss.SSS")," [Calling Function]  :  setPriorityLevel");
 
     if (!value) return null;
 
@@ -1543,7 +1406,7 @@ export default function ComplaintBody({
     const selected =
       datapriority_Combobox.find((item: any) => item.id === value) || null;
 
-    console.log("🎯 Priority matched:", selected);
+    // console.log("🎯 Priority matched:", selected);
     return selected;
   };
 
@@ -1673,7 +1536,7 @@ export default function ComplaintBody({
                       console.log("cccccc", val);
                     }}
                     bgcolorTextField={true}
-                    readonly={isActionRead || isActionDelete || isActionExplain}
+                  // readonly={isActionRead || isActionDelete || isActionExplain}
                   />
                 </Grid>
                 <Grid size={3} mt={2}>
@@ -1770,7 +1633,7 @@ export default function ComplaintBody({
                         labelName={
                           "แผนกที่พบปัญหา (Department / Area of Detection)"
                         }
-                        options={dataset_department || []}
+                        options={dataset_department}
                         column="department_name"
                         setvalue={(val) => {
                           console.log(
@@ -1957,33 +1820,33 @@ export default function ComplaintBody({
                                   {dataComplaintType.some(
                                     (c) => c.lov2 === "Y"
                                   ) && (
-                                    <FullWidthTextArea
-                                      value={compTypeOther}
-                                      labelName="Other:"
-                                      onchange={(e) => {
-                                        setcompTypeOther(e);
-                                        if (onOtherTypeChange) {
-                                          onOtherTypeChange(e);
+                                      <FullWidthTextArea
+                                        value={compTypeOther}
+                                        labelName="Other:"
+                                        onchange={(e) => {
+                                          setcompTypeOther(e);
+                                          if (onOtherTypeChange) {
+                                            onOtherTypeChange(e);
+                                          }
+                                        }}
+                                        bgcolorTextField={
+                                          isActionAdd
+                                            ? false
+                                            : isActionEdit
+                                              ? false
+                                              : true
                                         }
-                                      }}
-                                      bgcolorTextField={
-                                        isActionAdd
-                                          ? false
-                                          : isActionEdit
-                                          ? false
-                                          : true
-                                      }
-                                      readonly={!isActionAdd && !isActionEdit}
-                                      Validate={
-                                        validateText?.Other_Type || false
-                                      }
-                                      validateTextLable={
-                                        validateText?.Other_Type
-                                          ? "กรุณากรอกรายละเอียด"
-                                          : ""
-                                      }
-                                    />
-                                  )}
+                                        readonly={!isActionAdd && !isActionEdit}
+                                        Validate={
+                                          validateText?.Other_Type || false
+                                        }
+                                        validateTextLable={
+                                          validateText?.Other_Type
+                                            ? "กรุณากรอกรายละเอียด"
+                                            : ""
+                                        }
+                                      />
+                                    )}
                                 </Box>
                               </Box>
                               {validateText?.Complaint_Type && (
@@ -2060,61 +1923,61 @@ export default function ComplaintBody({
                                   {dataComplaintRs.some(
                                     (rs) => rs.lov3 === "Clause"
                                   ) && (
-                                    <FullWidthTextArea
-                                      value={clauseOther}
-                                      labelName="Clause:"
-                                      onchange={(e) => {
-                                        setclauseOther(e);
-                                        if (onClauseChange) {
-                                          onClauseChange(e);
+                                      <FullWidthTextArea
+                                        value={clauseOther}
+                                        labelName="Clause:"
+                                        onchange={(e) => {
+                                          setclauseOther(e);
+                                          if (onClauseChange) {
+                                            onClauseChange(e);
+                                          }
+                                        }}
+                                        bgcolorTextField={
+                                          isActionAdd
+                                            ? false
+                                            : isActionEdit
+                                              ? false
+                                              : true
                                         }
-                                      }}
-                                      bgcolorTextField={
-                                        isActionAdd
-                                          ? false
-                                          : isActionEdit
-                                          ? false
-                                          : true
-                                      }
-                                      readonly={!isActionAdd && !isActionEdit}
-                                      Validate={
-                                        validateText?.Clause_Rs || false
-                                      }
-                                      validateTextLable={
-                                        validateText?.Clause_Rs
-                                          ? "กรุณากรอกรายละเอียด Clause"
-                                          : ""
-                                      }
-                                    />
-                                  )}
+                                        readonly={!isActionAdd && !isActionEdit}
+                                        Validate={
+                                          validateText?.Clause_Rs || false
+                                        }
+                                        validateTextLable={
+                                          validateText?.Clause_Rs
+                                            ? "กรุณากรอกรายละเอียด Clause"
+                                            : ""
+                                        }
+                                      />
+                                    )}
                                   {dataComplaintRs.some(
                                     (rs) => rs.lov3 === "Other"
                                   ) && (
-                                    <FullWidthTextArea
-                                      value={compRsOther}
-                                      labelName="Other:"
-                                      onchange={(e) => {
-                                        setcompRsOther(e);
-                                        if (onOtherRsChange) {
-                                          onOtherRsChange(e);
+                                      <FullWidthTextArea
+                                        value={compRsOther}
+                                        labelName="Other:"
+                                        onchange={(e) => {
+                                          setcompRsOther(e);
+                                          if (onOtherRsChange) {
+                                            onOtherRsChange(e);
+                                          }
+                                        }}
+                                        bgcolorTextField={
+                                          isActionAdd
+                                            ? false
+                                            : isActionEdit
+                                              ? false
+                                              : true
                                         }
-                                      }}
-                                      bgcolorTextField={
-                                        isActionAdd
-                                          ? false
-                                          : isActionEdit
-                                          ? false
-                                          : true
-                                      }
-                                      readonly={!isActionAdd && !isActionEdit}
-                                      Validate={validateText?.Other_Rs || false}
-                                      validateTextLable={
-                                        validateText?.Other_Rs
-                                          ? "กรุณากรอกรายละเอียด Other"
-                                          : ""
-                                      }
-                                    />
-                                  )}
+                                        readonly={!isActionAdd && !isActionEdit}
+                                        Validate={validateText?.Other_Rs || false}
+                                        validateTextLable={
+                                          validateText?.Other_Rs
+                                            ? "กรุณากรอกรายละเอียด Other"
+                                            : ""
+                                        }
+                                      />
+                                    )}
                                 </Box>
                               </Box>
                               {validateText?.Complaint_Rs && (
@@ -2188,8 +2051,8 @@ export default function ComplaintBody({
                                     action === "Add"
                                       ? false
                                       : isActionEdit
-                                      ? false
-                                      : true
+                                        ? false
+                                        : true
                                   }
                                   //readonly={isActionRead || isActionDelete || isActionExplain}
                                   readonly={!isActionAdd && !isActionEdit}
@@ -2498,7 +2361,7 @@ export default function ComplaintBody({
                           <Grid size={12}>
                             <BrowseFileUpload
                               setFile={handleFileChange}
-                              setFileName={() => {}}
+                              setFileName={() => { }}
                               options={(filteredphoto || []).map((p: any) => ({
                                 id: p.id,
                                 lov1: p.lov1,
@@ -2580,37 +2443,37 @@ export default function ComplaintBody({
                                           {/* //ปุ่มลบไฟล์ */}
                                           {(action == "Edit" ||
                                             action == "Add") && (
-                                            <IconButton
-                                              color="error"
-                                              onClick={() => {
-                                                // หา index ที่ถูกต้องใน fileList
-                                                const actualIndex =
-                                                  fileList.findIndex(
-                                                    (f) =>
-                                                      f.file.name ===
+                                              <IconButton
+                                                color="error"
+                                                onClick={() => {
+                                                  // หา index ที่ถูกต้องใน fileList
+                                                  const actualIndex =
+                                                    fileList.findIndex(
+                                                      (f) =>
+                                                        f.file.name ===
                                                         item.file.name &&
-                                                      f.attachmentType ===
+                                                        f.attachmentType ===
                                                         item.attachmentType
+                                                    );
+                                                  console.log(
+                                                    "🔍 Remove file debug:",
+                                                    {
+                                                      itemName: item.file.name,
+                                                      itemType:
+                                                        item.attachmentType,
+                                                      actualIndex,
+                                                      fileListLength:
+                                                        fileList.length,
+                                                    }
                                                   );
-                                                console.log(
-                                                  "🔍 Remove file debug:",
-                                                  {
-                                                    itemName: item.file.name,
-                                                    itemType:
-                                                      item.attachmentType,
-                                                    actualIndex,
-                                                    fileListLength:
-                                                      fileList.length,
+                                                  if (actualIndex !== -1) {
+                                                    handleRemoveFile(actualIndex);
                                                   }
-                                                );
-                                                if (actualIndex !== -1) {
-                                                  handleRemoveFile(actualIndex);
-                                                }
-                                              }}
-                                            >
-                                              <DeleteIcon />
-                                            </IconButton>
-                                          )}
+                                                }}
+                                              >
+                                                <DeleteIcon />
+                                              </IconButton>
+                                            )}
 
                                           {/* //ปุ่มดูไฟล์ */}
 
@@ -2688,7 +2551,7 @@ export default function ComplaintBody({
                                                   link.setAttribute(
                                                     "download",
                                                     item.original_file_name ??
-                                                      "file"
+                                                    "file"
                                                   );
                                                   document.body.appendChild(
                                                     link
@@ -2970,9 +2833,9 @@ export default function ComplaintBody({
                         </Box>
 
                         {/* === ฝั่งขวา ปุ่ม Add === */}
-                        {complaint_status_label == 'SUBMIT' &&  
-                        user[0] && dataelement &&
-                        String(user[0].itasset_department_id) === String(dataelement.respondent_department_id) && (
+                        {complaint_status_label == 'SUBMIT' &&
+                          user[0] && dataelement &&
+                          String(user[0].itasset_department_id) === String(dataelement.respondent_department_id) && (
 
                             <Button
                               variant="contained"
@@ -3060,8 +2923,8 @@ export default function ComplaintBody({
                                           สร้างเมื่อ:{" "}
                                           {item.create_datetime
                                             ? dayjs(
-                                                item.create_datetime
-                                              ).format("DD/MM/YYYY HH:mm")
+                                              item.create_datetime
+                                            ).format("DD/MM/YYYY HH:mm")
                                             : "-"}
                                         </Typography>
                                       </Box>
@@ -3073,7 +2936,7 @@ export default function ComplaintBody({
                                           {dataelement.step_label ===
                                             "EXPLAIN" &&
                                             dataelement.complaint_status_id ===
-                                              "TRR_CS_APPROVE_SC" && (
+                                            "TRR_CS_APPROVE_SC" && (
                                               <Button
                                                 variant="contained"
                                                 size="medium"
