@@ -508,23 +508,42 @@ export default function ComplaintBody({
 
   // isAcknowledge
 
-  const handleDomainChange = (value: any) => {
-    // console.log("####### Onchange Domain Value [event] : ", value);
-    // console.log("@@@@@@@@@@@@First", dataset_domainrelate);
+  // const handleDomainChange = (value: any) => {
+  //   // console.log("####### Onchange Domain Value [event] : ", value);
+  //   // console.log("@@@@@@@@@@@@First", dataset_domainrelate);
 
-    if (value != null) {
+  //   if (value != null) {
+  //     const dataset = {
+  //       domain_id: respondent_domain_id?.domain_id || value.domain_id,
+  //       company_id: respondent_company_id?.company_id || value.company_id,
+  //     };
+  //     // console.log("😎😎", dataset);
+
+  //     setrespondent_department_id(null);
+  //     mas_DepartmentGet_Complaint(dataset, setdataset_department, isCallFuncLogOn, user);
+  //   } else {
+  //     setdataset_department([]);
+  //     setrespondent_department_id(null);
+  //   }
+  //   // เคลียร์ค่าแผนกทุกครั้งที่เปลี่ยนโดเมน
+  //   setrespondent_department_id(null);
+  //   // console.log("@@@@@@@@@@@@second", domainrelate);
+  // };
+
+  const handleDomainChange = async (value: any) => {
+    // เคลียร์ข้อมูลแผนกทันที (ทั้ง list และค่าเลือก)
+    setdataset_department([]);
+    setrespondent_department_id(null);
+
+    if (!value) return;
+
       const dataset = {
-        domain_id: respondent_domain_id?.domain_id || value.domain_id,
-        company_id: respondent_company_id?.company_id || value.company_id,
+        domain_id: value.domain_id,
+        company_id: value.company_id,
       };
-      // console.log("😎😎", dataset);
 
-      mas_DepartmentGet_Complaint(dataset, setdataset_department, isCallFuncLogOn, user);
-    } else {
-      // setdataset_department([]);
-      // setrespondent_department_id(null);
-    }
-    // console.log("@@@@@@@@@@@@second", domainrelate);
+      await mas_DepartmentGet_Complaint(dataset, setdataset_department, isCallFuncLogOn, user);
+    
   };
 
   // Function Handlers (On Change Event) ======================================================
@@ -1035,6 +1054,7 @@ export default function ComplaintBody({
 
   // 🧩 1️⃣ โหลดข้อมูลหลัก (ReportType, Company, Domain, Department)
   React.useEffect(() => {
+    if (!dataelement || action === "Add") return; // 👈 ป้องกันตอน New
     if (effectRan.current) return;
     effectRan.current = true;
 
@@ -1326,31 +1346,22 @@ export default function ComplaintBody({
     }
   }, [dataelement, dataset_reporttype, dataset_company]);
 
-  // React.useEffect(() => {
-  //   if (!isActionAdd) {
-  //     if (dataelement?.id) {
-  //       Complaint_Get(dataelement);
-  //     }
-  //     if (dataelement?.acknowledge_flag == 0) {
-  //       console.log("acknowledge_flag",dataelement?.acknowledge_flag)
-  //       Acknowledge_Update(dataelement);
-  //     }
-  //     ComplaintFile_Get();
-  //     ExplainGet();
-  //   }
-  //   updateAcknowledgeFlag
-  // }, [action, dataelement?.id]);
+  React.useEffect(() => {
+    if (!isActionAdd && dataelement?.id) {
+      ComplaintFile_Get();
+      ExplainGet();
+    }
+  }, [action, dataelement?.id]);
 
    React.useEffect(() => {
     const fetchAcknowlege = async () => {
     if (isActionExplain && dataelement?.id) {
       if (dataelement?.acknowledge_flag == 0) {
-        console.log("acknowledge_flag",dataelement?.acknowledge_flag)
         await Acknowledge_Update(dataelement);
       }
       await Complaint_Get(dataelement);
-      await ComplaintFile_Get();
-      await ExplainGet();
+      //await ComplaintFile_Get();
+      //await ExplainGet();
     }
     //updateAcknowledgeFlag
   };
@@ -1536,7 +1547,7 @@ export default function ComplaintBody({
                       console.log("cccccc", val);
                     }}
                     bgcolorTextField={true}
-                  // readonly={isActionRead || isActionDelete || isActionExplain}
+                  readonly={isActionRead || isActionDelete || isActionExplain}
                   />
                 </Grid>
                 <Grid size={3} mt={2}>
@@ -1628,12 +1639,13 @@ export default function ComplaintBody({
                     </Grid>
                     <Grid size={4}>
                       <AutocompleteComboBox
+                        key={respondent_domain_id?.domain_id || "no-domain"}
                         required="required"
                         value={respondent_department_id}
                         labelName={
                           "แผนกที่พบปัญหา (Department / Area of Detection)"
                         }
-                        options={dataset_department}
+                        options={dataset_department }
                         column="department_name"
                         setvalue={(val) => {
                           console.log(
@@ -1648,9 +1660,9 @@ export default function ComplaintBody({
                           }
                         }}
                         bgcolorTextField={
-                          action === "Add" ? false : isActionEdit ? false : true
+                          isActionAdd ? false : isActionEdit ? false : true
                         }
-                        readonly={!isActionAdd || !respondent_domain_id}
+                        readonly={(!isActionAdd && !isActionEdit) || !respondent_domain_id}
                         Validate={validateText?.Department_Area || false}
                         validateTextLable={
                           validateText?.Department_Area
@@ -1711,7 +1723,7 @@ export default function ComplaintBody({
                             onEmailChange(e);
                           }
                         }}
-                        readonly={!isActionAdd && !isActionEdit}
+                        readonly
                         Validate={validateText?.Email || false}
                         validateTextLable={
                           validateText?.Email ? "กรุณากรอกอีเมล" : ""
@@ -2196,7 +2208,7 @@ export default function ComplaintBody({
                                             //   isActionDelete ||
                                             //   isActionExplain
                                             // }
-                                            disabled={!isActionAdd}
+                                            disabled={!isActionAdd && !isActionEdit}
                                             sx={{ color: "#ff9800" }}
                                           />
                                         }

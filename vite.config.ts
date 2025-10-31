@@ -4,6 +4,6 @@ import react from '@vitejs/plugin-react'
 
 // https://vite.dev/config/
 export default defineConfig({
-  base : '/trr-cas/',
+  base : '/cas/',
   plugins: [react(), tailwindcss()],
 })
