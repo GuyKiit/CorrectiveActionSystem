@@ -1030,11 +1030,12 @@ export default function ComplaintBody({
     }
   };
 
-// ⭐⭐⭐⭐⭐ Start : ==============================================================================================//
+  // ⭐⭐⭐⭐⭐ Start : ==============================================================================================//
   const effectRan = React.useRef(false); // ป้องกัน run ซ้ำใน dev mode
 
   // 🧩 1️⃣ โหลดข้อมูลหลัก (ReportType, Company, Domain, Department)
   React.useEffect(() => {
+    if (!dataelement || action === "Add") return; // 👈 ป้องกันตอน New
     if (effectRan.current) return;
     effectRan.current = true;
 
@@ -1220,7 +1221,7 @@ export default function ComplaintBody({
     dataphoto_Combobox,
     dataComplaintRs_Combobox,
   ]);
-// ⭐⭐⭐⭐⭐ Start : ==============================================================================================//
+  // ⭐⭐⭐⭐⭐ Start : ==============================================================================================//
 
 
 
@@ -1326,20 +1327,36 @@ export default function ComplaintBody({
     }
   }, [dataelement, dataset_reporttype, dataset_company]);
 
+  // React.useEffect(() => {
+  //   if (!isActionAdd) {
+  //     if (dataelement?.id) {
+  //       Complaint_Get(dataelement);
+  //     }
+  //     if (dataelement?.acknowledge_flag == 0) {
+  //       console.log("acknowledge_flag",dataelement?.acknowledge_flag)
+  //       Acknowledge_Update(dataelement);
+  //     }
+  //     ComplaintFile_Get();
+  //     ExplainGet();
+  //   }
+  //   updateAcknowledgeFlag
+  // }, [action, dataelement?.id]);
+
   React.useEffect(() => {
-    if (!isActionAdd) {
-      if (dataelement?.id) {
-        Complaint_Get(dataelement);
+    const fetchAcknowlege = async () => {
+      if (isActionExplain && dataelement?.id) {
+        if (dataelement?.acknowledge_flag == 0) {
+          console.log("acknowledge_flag", dataelement?.acknowledge_flag)
+          await Acknowledge_Update(dataelement);
+        }
+        await Complaint_Get(dataelement);
+        await ComplaintFile_Get();
+        await ExplainGet();
       }
-      if (dataelement?.acknowledge_flag == 0) {
-        // console.log("acknowledge_flag", dataelement?.acknowledge_flag)
-        Acknowledge_Update(dataelement);
-      }
-      // console.log("fffffffffffff", dataelement?.acknowledge_flag)
-      ComplaintFile_Get();
-      ExplainGet();
-    } updateAcknowledgeFlag
-  }, [action, dataelement?.id]);
+      //updateAcknowledgeFlag
+    };
+    fetchAcknowlege();
+  }, [action, dataelement?.id, dataelement?.acknowledge_flag]);
 
   const setComplaintType = (data: any) => {
     // if (true) console.log("🕑 ",dayjs().format("HH:mm:ss.SSS"), " [Calling Function]  :  setComplaintType");
@@ -1520,7 +1537,7 @@ export default function ComplaintBody({
                       console.log("cccccc", val);
                     }}
                     bgcolorTextField={true}
-                  readonly={isActionRead || isActionDelete || isActionExplain}
+                    readonly={isActionRead || isActionDelete || isActionExplain}
                   />
                 </Grid>
                 <Grid size={3} mt={2}>
@@ -2837,7 +2854,10 @@ export default function ComplaintBody({
                                 transition: "all 0.2s ease-in-out",
                                 boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
                               }}
-                              onClick={() => handleOpenAdd && handleOpenAdd()}
+                              onClick={(e) => {
+                                e.stopPropagation(); // ✅ ป้องกัน accordion toggle
+                                handleOpenAdd?.();   // ✅ เรียกถ้ามีค่าเท่านั้น
+                              }}
                             >
                               + เพิ่มคำชี้แจง
                             </Button>
@@ -2924,11 +2944,14 @@ export default function ComplaintBody({
                                               <Button
                                                 variant="contained"
                                                 size="medium"
-                                                onClick={() =>
+                                                onClick={(e) => {
+                                                  e.stopPropagation();
                                                   handleOnclickExplainApproveSc &&
-                                                  handleOnclickExplainApproveSc(
-                                                    item
-                                                  )
+                                                    handleOnclickExplainApproveSc(
+                                                      item
+                                                    )
+                                                }
+
                                                 }
                                                 sx={{
                                                   backgroundColor: "#45bc4bff",
@@ -2950,10 +2973,11 @@ export default function ComplaintBody({
                                           <Button
                                             variant="contained"
                                             size="medium"
-                                            onClick={() =>
+                                            onClick={(e) =>{
+                                              e.stopPropagation();
                                               handleOnclickExplainView &&
                                               handleOnclickExplainView(item)
-                                            }
+                                            }}
                                             sx={{
                                               backgroundColor: "#7e828cff",
                                               color: "#FFFFFF",

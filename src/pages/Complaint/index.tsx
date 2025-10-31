@@ -961,7 +961,7 @@ export default function Complaint() {
   // Function - Search Complaints
   const ComplaintGet = async () => {
     if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  ComplaintGet");
-    //console.log("step:2 เรียกฟังก์ชั่น ComplaintGet ใหม่");
+    console.log("step:2 เรียกฟังก์ชั่น ComplaintGet ใหม่");
     //console.log("⭐️⭐️⭐️⭐️ CHECK DATA COMPLAINT ACTION : ", dataset_complaintAction, "⭐️⭐️⭐️");
 
     setIsLoadingScreen(true);
@@ -982,10 +982,10 @@ export default function Complaint() {
       step_label: TextNameSearch.dataset_stepcomplaint ? TextNameSearch.dataset_stepcomplaint : null,
     }
 
-    //console.log("step:2 dataset ก่อนส่ง API /Complaint/ComplaintGet ", dataset);
+    console.log("step:2 dataset ก่อนส่ง API /Complaint/ComplaintGet ", dataset);
     try {
       let response = await _POST(dataset, "/Complaint/ComplaintGet");
-      //console.log("step:2 ผลลัพธ์ที่ได้จาก API /Complaint/ComplaintGet ", response);
+      console.log("step:2 ผลลัพธ์ที่ได้จาก API /Complaint/ComplaintGet ", dataset);
       if (response && response.status === "success") {
         setIsLoadingScreen(false);
         const responseData: any = [];
@@ -1637,10 +1637,9 @@ export default function Complaint() {
         lot_no: lot_no,
         complaint_status_id: tempComplaintStatus[0] + "_CS_NEW",
         create_by: user[0]?.employee_username || "",
-        save_type: "save_draft",
+        save_type: "save_draft_edit",
         complaintType: complainttypeModel,
-        complaintRs: complaintRsModel,
-        // เพิ่ม complaintFile
+        complaintRs: complaintRsModel,     
         complaintFile:
           complaintFiles?.map((item: any, index: number) => {
             return {
@@ -2471,8 +2470,8 @@ export default function Complaint() {
 
     //console.log("Read step:3 เรียกฟังก์ชั่น ดูข้อมูล handleOnclickMenuView ");
     //console.log("Read step:3 ข้อมูลที่ได้จาก ListSearchGet ก่อนส่งเข้าฟังก์ชั่น Complaint_Get  ", data);
-    Complaint_Get(data);
     resetForm();
+    Complaint_Get(data);
     setOpenComplaintView(true); // แล้วค่อยเปิด Dialog
   };
 
@@ -2481,8 +2480,8 @@ export default function Complaint() {
 
     //console.log("Edit step:3 เรียกฟังก์ชั่น ดูข้อมูล handleOnclickMenuEdit ");
     //console.log("Edit step:3 ข้อมูลที่ได้จาก ListSearchGet ก่อนส่งเข้าฟังก์ชั่น Complaint_Get  ", data);
-    Complaint_Get(data);
     resetForm();
+    Complaint_Get(data);
     setOpenComplaintEdit(true);
   };
 
@@ -2491,8 +2490,8 @@ export default function Complaint() {
 
     //console.log("Delete step:3 เรียกฟังก์ชั่น ดูข้อมูล handleOnclickMenuDelete ");
     //console.log("Delete step:3 ข้อมูลที่ได้จาก ListSearchGet ก่อนส่งเข้าฟังก์ชั่น Complaint_Get  ", data);
-    Complaint_Get(data);
     resetForm();
+    Complaint_Get(data);
     setOpenComplaintDelete(true);
   };
 
@@ -2889,7 +2888,7 @@ export default function Complaint() {
           <Grid size={4}>
             <AutocompleteComboBox
               value={dataset_reporttype?.find(
-                (item: any) => item.id === TextNameSearch.report_code
+                (item: any) => item.lov_code === TextNameSearch.report_code
               ) || null}
               labelName="ประเภทเอกสาร (Report Type)"
               options={dataset_reporttype || []}
@@ -2897,7 +2896,7 @@ export default function Complaint() {
               setvalue={(val) => {
                 setTextNameSearch({
                   ...TextNameSearch,
-                  report_code: val?.id || "", // เก็บแค่ id เป็น string
+                  report_code: val?.lov_code || "", // เก็บแค่ id เป็น string
                 })
                 setdataReportTypeValue(val);
                 setReportTypeError(false);
