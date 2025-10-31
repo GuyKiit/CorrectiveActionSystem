@@ -2142,8 +2142,6 @@ export default function Complaint() {
   const ExplainAdd = async () => {
     if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  ExplainAdd");
 
-    //await ExplainGet();
-
     const tempid = uuidv4();
 
     //Function Split Domain (For using with Complaint Status)
@@ -3148,7 +3146,6 @@ export default function Complaint() {
           action="Read"
         />}
       />
-
 
       <FuncDialog
         open={openComplaintEdit}

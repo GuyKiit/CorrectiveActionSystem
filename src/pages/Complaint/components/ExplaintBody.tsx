@@ -158,8 +158,9 @@ export default function ExplaintBody({
 
   // ตั้งค่า isROOTHidden เป็น false เมื่ออยู่ในโหมดดูข้อมูล
   React.useEffect(() => {
+    console.log('🟣🟣🟣🟣🟣🟣 [1] 🟣🟣🟣🟣🟣🟣')
     if (action === "ExplainRead" || isViewMode) {
-      setIsROOTHidden(false);
+      // setIsROOTHidden(false);
     }
   }, [action, isViewMode]);
 
@@ -539,6 +540,8 @@ export default function ExplaintBody({
   };
 
   const setVisibilityByReportType = (reportTypeCode: string) => {
+    console.log('👌👌👌👌👌 CHECK VALUE : ', reportTypeCode, "👌👌👌👌👌")
+
     setIsTUHidden(["OBS"].includes(reportTypeCode));
 
     setIsDDHidden(["OBS", "CAR", "CPAR"].includes(reportTypeCode));
@@ -550,6 +553,15 @@ export default function ExplaintBody({
     setIsPAPHidden(["NCR", "OBS", "CAR"].includes(reportTypeCode));
 
     setIsOBSAHidden(["NCR", "CAR", "CPAR"].includes(reportTypeCode));
+
+    console.log('👌👌👌👌👌 TRUE OR FALSE #1 : ', ["OBS"].includes(reportTypeCode), "👌👌👌👌👌")
+    console.log('👌👌👌👌👌 TRUE OR FALSE #2 : ', ["NCR", "OBS"].includes(reportTypeCode), "👌👌👌👌👌")
+    console.log('👌👌👌👌👌 IsTUHidden : ', isTUHidden, "👌👌👌👌👌")
+    console.log('👌👌👌👌👌 IsDDHidden : ', isDDHidden, "👌👌👌👌👌")
+    console.log('👌👌👌👌👌 IsROOTHidden : ', isROOTHidden, "👌👌👌👌👌")
+    console.log('👌👌👌👌👌 IsCAHidden : ', isCAHidden, "👌👌👌👌👌")
+    console.log('👌👌👌👌👌 IsPAPHidden : ', isPAPHidden, "👌👌👌👌👌")
+    console.log('👌👌👌👌👌 IsOBSAHidden : ', isOBSAHidden, "👌👌👌👌👌")
   };
 
   // Check Box DD
@@ -684,6 +696,7 @@ export default function ExplaintBody({
     });
   };
   useEffect(() => {
+    console.log('🟣🟣🟣🟣🟣🟣 [2] 🟣🟣🟣🟣🟣🟣')
     setcomplaintFiles(fileList); // sync
   }, [fileList, filteredTooluse]);
 
@@ -763,6 +776,7 @@ export default function ExplaintBody({
   };
 
   React.useEffect(() => {
+    console.log('🟣🟣🟣🟣🟣🟣 [3] 🟣🟣🟣🟣🟣🟣')
     const updateData = async () => {
       // ================================
       // Map ค่า default ของ company
@@ -919,6 +933,7 @@ export default function ExplaintBody({
       const reportTypeToUse = dataReportTypeValue; // ใช้ state ปัจจุบัน (ซึ่งเราเพิ่งอาจจะ set)
       if (reportTypeToUse) {
         const val = reportTypeToUse;
+        console.log("### CHECK [val] : ", val)
 
         const newFilteredSecApprove = (dataApprove_Combobox || []).filter(
           (item: LovType) => item.lov_type === "approve_select"
@@ -956,6 +971,7 @@ export default function ExplaintBody({
             return newFilteredToolUse;
           return prev;
         });
+        console.log('### CHECK VALUE [filteredTooluse] : ', filteredTooluse)
 
         const newFilteredPhoto = (dataphoto_Combobox || []).filter(
           (item: LovType) => item.lov_type === "attach_type"
@@ -1006,24 +1022,31 @@ export default function ExplaintBody({
 
   ////////////////////////// Set ค่า User Approve  //////////////////////////
   React.useEffect(() => {
+    console.log('🟣🟣🟣🟣🟣🟣 [4] 🟣🟣🟣🟣🟣🟣')
     if (!user?.[0]) return; // รอ user โหลดก่อน
 
+    // Variable
     const uidCompanyId = String(user[0].itasset_company_id ?? "");
     const uidDeptId = String(user[0].itasset_department_id ?? "");
 
+    //==========================================================================
+    
+    // Filter Variable
     // helper เพื่อหาจาก dataset ที่อาจมีคีย์ต่างกัน (itasset_company_id / company_id)
     const findCompany = (id: string) =>
       (Array.isArray(dataset_company) ? dataset_company : []).find(
         (c: any) =>
           String(c.itasset_company_id ?? c.company_id ?? "") === String(id)
       );
-    const findDepartment = (id: string) =>
-      (Array.isArray(dataset_department) ? dataset_department : []).find(
-        (d: any) =>
-          String(d.itasset_department_id ?? d.department_id ?? "") ===
+      const findDepartment = (id: string) =>
+        (Array.isArray(dataset_department) ? dataset_department : []).find(
+          (d: any) =>
+            String(d.itasset_department_id ?? d.department_id ?? "") ===
           String(id)
-      );
+        );
 
+    //==========================================================================
+        
     if (isActionExplainApproveScAdd || isActionExplainApproveQcAdd) {
       setapprove_name(user[0].employee_username || "");
       setapprove_position(user[0].employee_position || "");
@@ -1077,7 +1100,7 @@ export default function ExplaintBody({
   }, [
     isActionExplainApproveScAdd,
     isActionExplainApproveQcAdd,
-    user,
+    // user,
     dataset_company,
     dataset_department,
     dataelement,
@@ -1085,6 +1108,7 @@ export default function ExplaintBody({
 
   //////////////////////// Approve Read //////////////////////////
   React.useEffect(() => {
+    console.log('🟣🟣🟣🟣🟣🟣 [5] 🟣🟣🟣🟣🟣🟣')
     console.log("step: 5 เก็บข้อมูลเข้า ฺsetdataelement ใหม่ ", dataelement);
     if (
       dataelement &&
@@ -1209,6 +1233,7 @@ export default function ExplaintBody({
 
   // Debug useEffect for dataTooluseCheckbox state changes
   React.useEffect(() => {
+    console.log('🟣🟣🟣🟣🟣🟣 [6] 🟣🟣🟣🟣🟣🟣')
     console.log("🔧 dataTooluseCheckbox state changed:", dataTooluseCheckbox);
   }, [dataTooluseCheckbox]);
 
@@ -1282,6 +1307,7 @@ export default function ExplaintBody({
   };
 
   React.useEffect(() => {
+    console.log('🟣🟣🟣🟣🟣🟣 [7] 🟣🟣🟣🟣🟣🟣')
     if (action === "ExplainRead" && dataelement?.id) {
       ComplaintFile_Get();
     }
@@ -1369,7 +1395,7 @@ export default function ExplaintBody({
                       margin: 0,
                     }}
                   >
-                    ข้อมูลผู้ชี้แจง
+                    ข้อมูลผู้ชี้แจง // {action}
                   </label>
                 </Box>
                 <Grid container spacing={3}>
