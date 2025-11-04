@@ -246,8 +246,8 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
     const [dataset_activeCompany, setdataset_activeCompany] = useState<any>(
         initialListComplaint.dataset_activeCompany
     );
-    const [dataset_roleAdmin, setdataset_roleAdmin] = useState<any>(
-        initialListComplaint.dataset_roleAdmin
+    const [dataset_roleProfile, setdataset_roleProfile] = useState<any>(
+        initialListComplaint.dataset_roleProfile
     );
 
     const [dataComplaintTypeValue_Combobox, setdataComplaintTypeValue_Combobox] =
@@ -568,7 +568,7 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 dataset_complaintActionExplain,
                 dataset_complaintActionClose,
                 dataset_activeCompany,
-                dataset_roleAdmin,
+                dataset_roleProfile,
                 domainrelate,
                 domainrelate_search,
                 departmentrelate,
@@ -727,7 +727,7 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 setdataset_complaintActionExplain,
                 setdataset_complaintActionClose,
                 setdataset_activeCompany,
-                setdataset_roleAdmin,
+                setdataset_roleProfile,
                 set_domainrelate,
                 set_domainrelate_search,
                 set_departmentrelate,
