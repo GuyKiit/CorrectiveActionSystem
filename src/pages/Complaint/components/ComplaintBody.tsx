@@ -70,6 +70,7 @@ import {
   mas_DomainGet,
   mas_DomainRelateGet,
 } from "../../../service/mas/lov";
+import { isAction } from "redux";
 
 type Validate = {
   Product_Group: boolean;
@@ -264,6 +265,7 @@ export default function ComplaintBody({
     acknowledge_datetime,
     complaint_status_id,
     complaint_status_label,
+    step_label,
     status_last_datetime,
     return_from_status_id,
     return_from_status_datetime,
@@ -347,6 +349,7 @@ export default function ComplaintBody({
     setacknowledge_datetime,
     setcomplaint_status_id,
     setcomplaint_status_label,
+    setstep_label,
     setstatus_last_datetime,
     setreturn_from_status_id,
     setreturn_from_status_datetime,
@@ -477,6 +480,8 @@ export default function ComplaintBody({
   const [isMinimizefuappOpen, setisMinimizeFuappOpen] = useState(true);
   const [isMinimizedeapp2Open, setisMinimizeDeapp2Open] = useState(true);
   const [isMinimizeotapp2Open, setisMinimizeOtapp2Open] = useState(true);
+
+  
 
   // Check Acknowledge flag =========================================================
   const updateAcknowledgeFlag = (value: any) => {
@@ -1628,7 +1633,7 @@ export default function ComplaintBody({
                         }}
                         bgcolorTextField={action === "Add" ? false : true}
                         //readonly={isActionRead || isActionEdit || isActionDelete || isActionExplain}
-                        readonly={!isActionAdd}
+                        readonly={!isActionAdd && !isActionEdit}
                         Validate={validateText?.Date_of_Detection || false}
                         validateTextLable={
                           validateText?.Date_of_Detection
@@ -1723,7 +1728,7 @@ export default function ComplaintBody({
                             onEmailChange(e);
                           }
                         }}
-                        readonly
+                        //readonly
                         Validate={validateText?.Email || false}
                         validateTextLable={
                           validateText?.Email ? "กรุณากรอกอีเมล" : ""
@@ -2845,12 +2850,10 @@ export default function ComplaintBody({
                         </Box>
 
                         {/* === ฝั่งขวา ปุ่ม Add === */}
-                        {complaint_status_label == 'SUBMIT' &&
-                          user[0] && dataelement &&
-                          String(user[0].itasset_department_id) === String(dataelement.respondent_department_id) && (
-
+                        {step_label == "SUBMIT" && 
+                         complaint_status_id == "TRR_CS_SUBMIT" && (                          
                             <Button
-                              variant="contained"
+                              variant="contained" 
                               size="small"
                               sx={{
                                 backgroundColor: "#2b72d7ff",
@@ -2867,7 +2870,7 @@ export default function ComplaintBody({
                               }}
                               onClick={() => handleOpenAdd && handleOpenAdd()}
                             >
-                              + เพิ่มคำชี้แจง
+                               เพิ่มคำชี้แจง 
                             </Button>
                           )}
                       </Box>

@@ -51,6 +51,7 @@ import {
   mas_DomainGet,
   mas_DomainRelateGet,
 } from "../../service/mas/lov";
+import { data } from "react-router-dom";
 
 // =====================================================================================================
 // TYPE DEFINITIONS
@@ -1745,7 +1746,7 @@ export default function Complaint() {
               .hour(dayjs().hour())
               .minute(dayjs().minute())
               .second(dayjs().second())
-              .format("YYYY-MM-DDTHH:mm:ss")
+              .format("YYYY-MM-DDTHH:mm:ss.SSS")
           : null,
         request_name: user[0]?.employee_username || "",
         request_company_id: request_company_id?.company_id,
@@ -1773,7 +1774,7 @@ export default function Complaint() {
               .hour(23)
           .minute(59)
           .second(59)
-              .format("YYYY-MM-DDTHH:mm:ss")
+              .format("YYYY-MM-DDTHH:mm:ss.SSS")
           : null,
         lot_no: lot_no,
         complaint_status_id: tempComplaintStatus[0] + "_CS_NEW",
@@ -1903,7 +1904,7 @@ export default function Complaint() {
                 .hour(dayjs().hour())
                 .minute(dayjs().minute())
                 .second(dayjs().second())
-                .format("YYYY-MM-DDTHH:mm:ss")
+                .format("YYYY-MM-DDTHH:mm:ss.SSS")
             : null,
           request_name: user[0]?.employee_username || "",
           request_company_id: request_company_id?.company_id,
@@ -1928,14 +1929,14 @@ export default function Complaint() {
           product_name: product_name,
           detail: detail,
           //priority_level: datapriorityValue_Combobox,
-          priority_level:
-            datapriorityValue_Combobox || dataelement?.priority_level,
+          priority_level: datapriorityValue_Combobox || dataelement?.priority_level,
           respond_date_within: respond_date_within
             ? respond_date_within
                 .hour(dayjs().hour())
                 .minute(dayjs().minute())
                 .second(dayjs().second())
-                .format("YYYY-MM-DDTHH:mm:ss.fff")
+                //.format("YYYY-MM-DDTHH:mm:ss.fff")
+                .format("YYYY-MM-DDTHH:mm:ss.SSS")
             : null,
           lot_no: lot_no,
           complaint_status_id: tempComplaintStatus[0] + "_CS_NEW",
@@ -2063,7 +2064,7 @@ export default function Complaint() {
               .hour(dayjs().hour())
               .minute(dayjs().minute())
               .second(dayjs().second())
-              .format("YYYY-MM-DDTHH:mm:ss")
+              .format("YYYY-MM-DDTHH:mm:ss.SSS")
           : null,
 
         // Request Metadata
@@ -2201,109 +2202,10 @@ export default function Complaint() {
     //   return;
     // }
 
-    //console.log("👌👌👌👌👌priority_level",priority_level)
-
     const tempComplaintStatus = splitByDot(user[0]?.employee_domain);
 
-    // สร้าง FormData
+
     const formData = new FormData();
-
-    // if (mode == "NEW") {
-    //   console.log("👽👽👽👽👽👽")
-    //   const tempid = uuidv4();
-
-    //   // เตรียม Models
-    //   const complainttypeModel = dataComplaintTypeValue_Combobox
-    //     ? compTypeUpdateCompId(dataComplaintTypeValue_Combobox, tempid, compTypeOther)
-    //     : null;
-
-    //   const complaintRsModel = dataComplaintRsValue_Combobox
-    //     ? compRsUpdateCompId(dataComplaintRsValue_Combobox, tempid, compRsOther, clauseOther)
-    //     : null;
-
-    //     const complaintPayload = {
-    //     complaintModel: {
-    //       id: dataelement?.id,
-    //       request_domain_id: dataelement?.request_domain_id,
-    //       request_department_id: dataelement?.request_department_id,
-    //       request_email: dataelement?.request_email, //รอแก้เป็นค่าในช่อง Email
-    //       product_name: product_name,
-    //       detail: detail,
-    //       lot_no: lot_no,
-    //       complaint_status_id: tempComplaintStatus[0] + "_CS_NEW",
-    //       // เพิ่ม Complaint Type + Complaint RS
-    //       complaintType: complainttypeModel,
-    //       complaintRs: complaintRsModel,
-    //       // เพิ่ม complaintFile
-    //       complaintFile:
-    //         complaintFiles?.map((item: any, index: number) => {
-    //           return {
-    //             id: item.id || undefined,
-    //             cf_type: "Complaint",
-    //             complaint_id: dataelement?.id,
-    //             complaint_at_id: item.attachmentType,
-    //             other: item.attachmentType === "TRR_AT_4" ? (item.otherText?.trim() || null) : null,
-    //             cf_file_seq: (index + 1).toString(),
-    //             user_file_name: item.file.name,
-    //             file_name: item.file.name,
-    //             file_type: item.file.type,
-    //             file_size: item.file.size.toString(),
-    //             record_status: true,
-    //             create_by: user[0]?.employee_username || "",
-    //             create_datetime: new Date().toISOString(),
-    //             remark: item.attachmentType === "TRR_AT_4" ? (item.otherText?.trim() || null) : null,
-    //           };
-    //         },
-    //         ) || []
-    //     },
-
-    //     CurrentAccessModel: {
-    //       user_id: user[0]?.employee_username || '',
-    //     }
-    //   };
-    //   formData.append("complaintPayloadJson", JSON.stringify(complaintPayload));
-
-    //   // แนบไฟล์จริง
-    //   if (complaintFiles && complaintFiles.length > 0) {
-    //     complaintFiles.forEach((fileItem: any) => {
-    //       formData.append("complaintFiles", fileItem.file);
-    //     });
-    //   }
-
-    //   setIsLoadingScreen(true);
-
-    //   try {
-    //     const response = await _POST_FORMDATA(formData, "/Complaint/ComplaintEdit");
-    //     if (response && response.status === "success") {
-    //       FullSweetalert({
-    //         title: 'Success',
-    //         text: `บันทึกข้อมูลสำเร็จ`,
-    //         icon: 'success'
-    //       });
-    //       //console.log("✅ Complaint edittt successfully:", response);
-    //     } else {
-    //       FullSweetalert({
-    //         title: 'Failed',
-    //         text: `บันทึกไม่ข้อมูลสำเร็จ`,
-    //         icon: 'error'
-    //       });
-    //       //console.log("⚠️ Edit failed:", response);
-    //     }
-    //   } catch (error) {
-    //     console.error("Upload failed:", error);
-    //   } finally {
-    //     setIsLoadingScreen(false);
-    //     handleClose();
-    //     FullSweetalert({
-    //       title: 'Success',
-    //       text: `บันทึกข้อมูลสำเร็จ`,
-    //       icon: 'success'
-    //     });
-    //     ComplaintGet();
-    //   }
-
-    // }
-
     if (mode == "SUBMIT") {
       const tempid = uuidv4();
 
@@ -2328,13 +2230,21 @@ export default function Complaint() {
       const complaintPayload = {
         complaintModel: {
           id: dataelement?.id,
-          respondent_domain_id: dataelement?.respondent_domain_id,
+          mode: mode,
+          date_of_detection: date_of_detection
+            ? date_of_detection
+            .hour(23)
+                .minute(59)
+                .second(59)
+                .format("YYYY-MM-DDTHH:mm:ss.SSS")
+            : null,
+          respondent_domain_id: respondent_domain_id?.domain_id,
           respondent_department_id: respondent_department_id?.department_id,
+          product_name: product_name,
+          lot_no: lot_no,
           respondent_email: respondent_email,
-          product_name: dataelement?.product_name,
-          detail: dataelement?.detail,
-          priority_level: datapriority?.id ?? dataelement?.priority_level,
-          // respond_date_within: respond_date_within?.format("YYYY-MM-DD HH:mm:ss"),
+          detail: detail,
+          priority_level: datapriorityValue_Combobox || dataelement?.priority_level,
           respond_date_within: respond_date_within
             ? respond_date_within
                 .hour(23)
@@ -2342,7 +2252,6 @@ export default function Complaint() {
                 .second(59)
                 .format("YYYY-MM-DDTHH:mm:ss.SSS")
             : null,
-          lot_no: dataelement?.lot_no,
           complaint_status_id: tempComplaintStatus[0] + "_CS_SUBMIT",
           complaintType: complainttypeModel,
           complaintRs: complaintRsModel,
@@ -2386,19 +2295,10 @@ export default function Complaint() {
           formData.append("complaintFiles", fileItem.file);
         });
       }
-
-      //console.log("📤 complaintPayloadSavedraft:", complaintPayload);
-      //setIsLoadingScreen(true);
-
-      // console.log("👽👽👽👽👽👽",respond_date_within
-      //           ?.hour(dayjs().hour())
-      //           .minute(dayjs().minute())
-      //           .second(dayjs().second())
-      //           .format("YYYY-MM-DDTHH:mm:ss"))
       try {
         const response = await _POST_FORMDATA(
           formData,
-          "/Complaint/ComplaintEdit"
+          "/Complaint/ComplaintEditMode"
         );
         if (response && response.status === "success") {
           FullSweetalert({
@@ -2420,6 +2320,133 @@ export default function Complaint() {
       } finally {
         setIsLoadingScreen(false);
         handleClose();
+        ComplaintGet();
+      }
+    } else if (mode == "NEW") {
+      const tempid = uuidv4();
+
+      //Function Split Domain (For using with Complaint Status)
+      const tempComplaintStatus = splitByDot(user[0]?.employee_domain);
+
+      // เตรียม Models
+      const complainttypeModel = dataComplaintTypeValue_Combobox
+        ? compTypeUpdateCompId(
+            dataComplaintTypeValue_Combobox,
+            tempid,
+            compTypeOther
+          )
+        : null;
+
+      const complaintRsModel = dataComplaintRsValue_Combobox
+        ? compRsUpdateCompId(
+            dataComplaintRsValue_Combobox,
+            tempid,
+            compRsOther,
+            clauseOther
+          )
+        : null;
+
+      // สร้าง JSON payload
+      const complaintPayload = {
+        complaintModel: {
+          id: dataelement?.id,
+          mode: mode,
+          date_of_detection: date_of_detection
+            ? date_of_detection
+            .hour(23)
+                .minute(59)
+                .second(59)
+                .format("YYYY-MM-DDTHH:mm:ss.SSS")
+            : null,
+          respondent_domain_id: respondent_domain_id?.domain_id,
+          respondent_department_id: respondent_department_id?.department_id,
+          product_name: product_name,
+          lot_no: lot_no,
+          respondent_email: respondent_email,
+          detail: detail,
+          priority_level: datapriorityValue_Combobox || dataelement?.priority_level,
+          respond_date_within: respond_date_within
+            ? respond_date_within
+                .hour(23)
+                .minute(59)
+                .second(59)
+                .format("YYYY-MM-DDTHH:mm:ss.SSS")
+            : null,
+          complaint_status_id: tempComplaintStatus[0] + "_CS_NEW",
+          complaintType: complainttypeModel,
+          complaintRs: complaintRsModel,
+          complaintFile:
+            complaintFiles?.map((item: any, index: number) => {
+              return {
+                id: item.id || undefined,
+                cf_type: "Complaint",
+                complaint_id: dataelement?.id,
+                complaint_at_id: item.attachmentType,
+                other:
+                  item.attachmentType === "TRR_AT_4"
+                    ? item.otherText?.trim() || null
+                    : null,
+                cf_file_seq: (index + 1).toString(),
+                user_file_name: item.file.name,
+                file_name: item.file.name,
+                file_type: item.file.type,
+                file_size: item.file.size.toString(),
+                record_status: true,
+                create_by: user[0]?.employee_username || "",
+                create_datetime: new Date().toISOString(),
+                remark:
+                  item.attachmentType === "TRR_AT_4"
+                    ? item.otherText?.trim() || null
+                    : null,
+              };
+            }) || [],
+        },
+
+        CurrentAccessModel: {
+          user_id: user[0]?.employee_username || "",
+        },
+
+      };
+
+      formData.append("complaintPayloadJson", JSON.stringify(complaintPayload));
+
+      // แนบไฟล์จริง
+      if (complaintFiles && complaintFiles.length > 0) {
+        complaintFiles.forEach((fileItem: any) => {
+          formData.append("complaintFiles", fileItem.file);
+        });
+      }
+
+      //console.log("📤 complaintPayloadSavedraft:", complaintPayload);
+      setIsLoadingScreen(true);
+
+      try {
+        const response = await _POST_FORMDATA(
+          formData,
+          "/Complaint/ComplaintEditMode"
+        );
+        if (response && response.status === "success") {
+          FullSweetalert({
+            title: "Success",
+            text: `บันทึกข้อมูลสำเร็จ`,
+            icon: "success",
+          });
+          //console.log("✅ Complaint Add successfully:", response);
+        } else {
+          FullSweetalert({
+            title: "Failed",
+            text: `บันทึกไม่ข้อมูลสำเร็จ`,
+            icon: "error",
+          });
+          //console.log("⚠️ Add failed:", response);
+        }
+      } catch (error) {
+        console.error("Upload failed:", error);
+      } finally {
+        setIsLoadingScreen(false);
+        handleClose();
+
+        // Complaint_Get();
         ComplaintGet();
       }
     } else if (mode == "EXPLAIN") {
@@ -2697,11 +2724,6 @@ export default function Complaint() {
           )
         : 0;
     const nextSeq = maxExplainSeq + 1;
-
-    //console.log('🔍 Current explainList:', explainList);
-    //console.log('🔍 Max explain_seq found:', maxExplainSeq);
-    //console.log('🔍 Next explain_seq will be:', nextSeq);
-
     const explainPayload = {
       ExplainModel: {
         id: tempid,
@@ -3765,7 +3787,7 @@ export default function Complaint() {
         // handlefunction={ComplaintEdit}
         handlefunction={() => ComplaintEdit("SUBMIT")}
         // handlesavedraft={ComplaintSavedraftEdit}
-        handlesavedraft={() => ComplaintSavedraftEdit("NEW")}
+        handlesavedraft={() => ComplaintEdit("NEW")}
         hideSaveDraft={false}
         buttonColor="success"
         element={

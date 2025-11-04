@@ -49,6 +49,7 @@ export type ListComplaintContextProps = {
     acknowledge_datetime?: dayjs.Dayjs
     complaint_status_id?: string
     complaint_status_label?: string
+    step_label?: string
     status_last_datetime?: dayjs.Dayjs
     return_from_status_id?: string
     return_from_status_datetime?: dayjs.Dayjs
@@ -223,6 +224,7 @@ export type ListComplaintContextProps = {
     setacknowledge_datetime: Dispatch<SetStateAction<dayjs.Dayjs>>
     setcomplaint_status_id: Dispatch<SetStateAction<string>>;
     setcomplaint_status_label: Dispatch<SetStateAction<string>>;
+    setstep_label: Dispatch<SetStateAction<string>>;
     setstatus_last_datetime: Dispatch<SetStateAction<dayjs.Dayjs>>
     setreturn_from_status_id: Dispatch<SetStateAction<string>>;
     setreturn_from_status_datetime: Dispatch<SetStateAction<dayjs.Dayjs>>
@@ -402,6 +404,7 @@ export const initialListComplaint: ListComplaintContextProps = {
     setacknowledge_datetime: () => { },
     setcomplaint_status_id: () => { },
     setcomplaint_status_label: () => { },
+    setstep_label: () => { },
     setstatus_last_datetime: () => { },
     setreturn_from_status_id: () => { },
     setreturn_from_status_datetime: () => { },
