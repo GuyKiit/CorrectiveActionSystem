@@ -170,7 +170,7 @@ type FileData = {
   id?: string;
 };
 
-export default function ComplaintBody({
+  export default function ComplaintBody({
   action,
   readonlyTextField,
   bgcolorTextField,
@@ -199,7 +199,7 @@ export default function ComplaintBody({
   handleOpenAdd,
   handleOnclickExplainView,
   handleOnclickExplainApproveSc,
-}: ComplaintBody) {
+  }: ComplaintBody) {
   const isActionRead = action === "Read";
   const isActionAdd = action === "Add";
   const isActionEdit = action === "Edit";
@@ -2852,8 +2852,8 @@ export default function ComplaintBody({
                         </Box>
 
                         {/* === ฝั่งขวา ปุ่ม Add === */}
-                        {/* {step_label == "SUBMIT" && 
-                         complaint_status_id == "TRR_CS_SUBMIT" && (                           */}
+                         {dataelement?.step_label === "EXPLAIN"  &&
+                         dataelement?.complaint_status_label === "SUBMIT" && (                          
                             <Button
                               variant="contained" 
                               size="small"
@@ -2877,7 +2877,7 @@ export default function ComplaintBody({
                             >
                                เพิ่มคำชี้แจง 
                             </Button>
-                          {/* )} */}
+                          )} 
                       </Box>
                     </AccordionSummary>
 
@@ -2952,11 +2952,8 @@ export default function ComplaintBody({
                                       <Box sx={{ display: "flex", gap: 1 }}>
                                         <Box sx={{ display: "flex", gap: 1.5 }}>
                                           {/* ปุ่มอนุมัติ */}
-                                          {/* {item.step_label === "EXPLAIN" && ( */}
-                                          {dataelement.step_label ===
-                                            "EXPLAIN" &&
-                                            dataelement.complaint_status_id ===
-                                            "TRR_CS_APPROVE_SC" && (
+                                          { dataelement?.complaint_status_label === "EXPLAIN" &&
+                                           dataelement?.step_label === "EXPLAIN" && (
                                               <Button
                                                 variant="contained"
                                                 size="medium"
@@ -3014,7 +3011,7 @@ export default function ComplaintBody({
                                   </Paper>
                                 ))}
                             </Box>
-                          ) : (
+                            ) : (
                             <Paper
                               elevation={0}
                               sx={{

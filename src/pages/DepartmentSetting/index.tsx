@@ -193,7 +193,7 @@ export default function DepartmentSetting() {
     domain, set_domain,
     username, set_username,
     dataset_activeCompany, setdataset_activeCompany,
-    dataset_roleAdmin, setdataset_roleAdmin,
+    dataset_roleProfile, setdataset_roleProfile,
     datastatus, setdatastatus,
 
     //====================================
@@ -369,7 +369,7 @@ export default function DepartmentSetting() {
       const dataset = {
         lov_group: user[0]?.itasset_company_id + ",VARIABLE_CONSTANT",
         lov_type:
-          "active_company,role_admin,complaint_status",
+          "active_company,role_profile,complaint_status",
       };
       const response = await _POST(dataset, "/Lov/LovGet");
 
@@ -387,13 +387,13 @@ export default function DepartmentSetting() {
         // ตัวอย่างการ set state
 
         setdataset_activeCompany?.(grouped["active_company"] || []);
-        setdataset_roleAdmin?.(grouped["role_admin"] || []);
+        setdataset_roleProfile?.(grouped["role_profile"] || []);
         setdatastatus?.(grouped["complaint_status"] || []);
 
 
 
         //console.log('⚠️⚠️⚠️⚠️ [grouped["active_company"]] :', grouped["active_company"])
-        //console.log('⚠️⚠️⚠️⚠️ [grouped["role_admin"]] :', grouped["role_admin"])
+        //console.log('⚠️⚠️⚠️⚠️ [grouped["role_profile"]] :', grouped["role_profile"])
         //console.log('⚠️⚠️⚠️⚠️ [grouped["complaint_status"]] :', grouped["complaint_status"])
 
 

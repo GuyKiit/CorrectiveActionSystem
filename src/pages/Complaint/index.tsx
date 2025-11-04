@@ -279,7 +279,7 @@ export default function Complaint() {
     dataset_complaintActionExplain,
     dataset_complaintActionClose,
     dataset_activeCompany,
-    dataset_roleAdmin,
+    dataset_roleProfile,
     dataset_complaintActionApproveSC,
     dataset_complaintActionApproveQC,
 
@@ -408,7 +408,7 @@ export default function Complaint() {
     setphoTypeOther,
     setdataset_reporttype,
     setdataset_activeCompany,
-    setdataset_roleAdmin,
+    setdataset_roleProfile,
     setdataset_department,
     setdataset_company,
     set_domain,
@@ -863,7 +863,7 @@ export default function Complaint() {
       const dataset = {
         lov_group: "21,VARIABLE_CONSTANT",
         lov_type:
-          "report_type,complaint_type,reference_standard,priority_level,attach_type,complaint_status,tool_use,decision_disposition,approve_select,complaint_step,complaint_action,active_company,role_admin",
+          "report_type,complaint_type,reference_standard,priority_level,attach_type,complaint_status,tool_use,decision_disposition,approve_select,complaint_step,complaint_action,active_company,role_profile",
       };
       const response = await _POST(dataset, "/Lov/LovGet");
 
@@ -892,7 +892,7 @@ export default function Complaint() {
         setdataset_stepcomplaint?.(grouped["complaint_step"] || []);
         setdataset_complaintAction?.(grouped["complaint_action"] || []);
         setdataset_activeCompany?.(grouped["active_company"] || []);
-        setdataset_roleAdmin?.(grouped["role_admin"] || []);
+        setdataset_roleProfile?.(grouped["role_profile"] || []);
 
         setdataset_complaintActionNew(
           grouped["complaint_action"].filter(
@@ -911,7 +911,7 @@ export default function Complaint() {
         );
 
         //console.log('⚠️⚠️⚠️⚠️ [grouped["active_company"]] :', grouped["active_company"])
-        //console.log('⚠️⚠️⚠️⚠️ [grouped["role_admin"]] :', grouped["role_admin"])
+        //console.log('⚠️⚠️⚠️⚠️ [grouped["role_profile"]] :', grouped["role_profile"])
       }
     } catch (e) {
       //console.log("error:", e);
@@ -1170,11 +1170,12 @@ export default function Complaint() {
 
     setIsLoadingScreen(true);
     const dataset = {
+      // Required Parameter
       user_id: user[0]?.employee_username,
       domain_id: user[0]?.employee_domain,
       department_id: user[0]?.itasset_department_id,
       company_id: user[0]?.itasset_company_id, //@param Fixed
-
+      //=======================================================
       domain: TextNameSearch.dataset_domainrelate
         ? TextNameSearch.dataset_domainrelate
         : null,
@@ -1767,8 +1768,8 @@ export default function Complaint() {
         respond_date_within: respond_date_within
           ? respond_date_within
               .hour(23)
-          .minute(59)
-          .second(59)
+              .minute(59)
+              .second(59)
               .format("YYYY-MM-DDTHH:mm:ss.SSS")
           : null,
         lot_no: lot_no,
@@ -1924,7 +1925,8 @@ export default function Complaint() {
           product_name: product_name,
           detail: detail,
           //priority_level: datapriorityValue_Combobox,
-          priority_level: datapriorityValue_Combobox || dataelement?.priority_level,
+          priority_level:
+            datapriorityValue_Combobox || dataelement?.priority_level,
           respond_date_within: respond_date_within
             ? respond_date_within
                 .hour(dayjs().hour())
@@ -2199,7 +2201,6 @@ export default function Complaint() {
 
     const tempComplaintStatus = splitByDot(user[0]?.employee_domain);
 
-
     const formData = new FormData();
     if (mode == "SUBMIT") {
       const tempid = uuidv4();
@@ -2228,7 +2229,7 @@ export default function Complaint() {
           mode: mode,
           date_of_detection: date_of_detection
             ? date_of_detection
-            .hour(23)
+                .hour(23)
                 .minute(59)
                 .second(59)
                 .format("YYYY-MM-DDTHH:mm:ss.SSS")
@@ -2239,7 +2240,8 @@ export default function Complaint() {
           lot_no: lot_no,
           respondent_email: respondent_email,
           detail: detail,
-          priority_level: datapriorityValue_Combobox || dataelement?.priority_level,
+          priority_level:
+            datapriorityValue_Combobox || dataelement?.priority_level,
           respond_date_within: respond_date_within
             ? respond_date_within
                 .hour(23)
@@ -2348,7 +2350,7 @@ export default function Complaint() {
           mode: mode,
           date_of_detection: date_of_detection
             ? date_of_detection
-            .hour(23)
+                .hour(23)
                 .minute(59)
                 .second(59)
                 .format("YYYY-MM-DDTHH:mm:ss.SSS")
@@ -2359,7 +2361,8 @@ export default function Complaint() {
           lot_no: lot_no,
           respondent_email: respondent_email,
           detail: detail,
-          priority_level: datapriorityValue_Combobox || dataelement?.priority_level,
+          priority_level:
+            datapriorityValue_Combobox || dataelement?.priority_level,
           respond_date_within: respond_date_within
             ? respond_date_within
                 .hour(23)
@@ -2400,7 +2403,6 @@ export default function Complaint() {
         CurrentAccessModel: {
           user_id: user[0]?.employee_username || "",
         },
-
       };
 
       formData.append("complaintPayloadJson", JSON.stringify(complaintPayload));
@@ -2855,22 +2857,16 @@ export default function Complaint() {
       );
 
     const tempid = uuidv4();
-
-    //Function Split Domain (For using with Complaint Status)
     const tempComplaintStatus = splitByDot(user[0]?.employee_domain);
 
-    // Helper: resolve the real complaint id from current context (complaint or explain)
     const resolveComplaintId = () => {
       const el: any = dataelement || {};
-      // prefer explicit complaint_id if available (object or primitive)
       if (el.complaint_id) {
         if (typeof el.complaint_id === "object")
           return el.complaint_id.id ?? el.complaint_id;
         return el.complaint_id;
       }
-      // sometimes nested as complaint.id
       if (el.complaint && el.complaint.id) return el.complaint.id;
-      // fallback to current id (when dataelement is the complaint row)
       return el.id;
     };
 
@@ -2879,9 +2875,7 @@ export default function Complaint() {
     let currentExplainList: any[] = [];
     if (complaintRootId) {
       try {
-        const dataset = {
-          complaint_id: complaintRootId,
-        };
+        const dataset = { complaint_id: complaintRootId };
         const response = await _POST(dataset, "/Explain/ExplainGet");
         if (response && response.status === "success") {
           currentExplainList = response.data || [];
@@ -2899,8 +2893,6 @@ export default function Complaint() {
       ? expDecisionUpdateCompId(dataDecisionValue, tempid, DecisionOther)
       : null;
 
-    // สร้าง JSON payload สำหรับ Explain
-    // Find the maximum explain_seq for current complaint and add 1
     const maxExplainSeq =
       currentExplainList && currentExplainList.length > 0
         ? Math.max(
@@ -2910,6 +2902,7 @@ export default function Complaint() {
           )
         : 0;
     const nextSeq = maxExplainSeq + 1;
+
     const explainPayload = {
       ExplainModel: {
         id: tempid,
@@ -2921,10 +2914,10 @@ export default function Complaint() {
         preventive_action_plan: preventive_action_plan || null,
         follow_up_date: follow_up_date
           ? follow_up_date
-              .hour(dayjs().hour())
-              .minute(dayjs().minute())
-              .second(dayjs().second())
-              .format("YYYY-MM-DDTHH:mm:ss")
+              .hour(23)
+              .minute(59)
+              .second(59)
+              .format("YYYY-MM-DDTHH:mm:ss.SSS")
           : null,
         responsible_name: user[0]?.employee_username || "",
         responsible_company_id: responsible_company_id?.company_id
@@ -2935,112 +2928,106 @@ export default function Complaint() {
           : user[0]?.itasset_department_id || "",
         responsible_position: user[0]?.employee_position || "",
         responsible_email: user[0]?.employee_email || "",
+        // responsible_date: new Date().toISOString(),
         responsible_date: responsible_date
           ? responsible_date
-              .hour(dayjs().hour())
-              .minute(dayjs().minute())
-              .second(dayjs().second())
-              .format("YYYY-MM-DDTHH:mm:ss")
-          : new Date().toISOString(),
-        close_status: close_status || null,
-        close_name: close_name || null,
-        close_company_id: close_company_id || 0,
-        close_department_id: close_department_id || 0,
-        close_position: close_position || null,
-        close_email: close_email || null,
-        close_date: close_date
-          ? close_date
-              .hour(dayjs().hour())
-              .minute(dayjs().minute())
-              .second(dayjs().second())
-              .format("YYYY-MM-DDTHH:mm:ss")
-          : null,
-        return_detail: return_detail || null,
-        return_name: return_name || null,
-        return_company_id: return_company_id || 0,
-        return_department_id: return_department_id || 0,
-        return_position: return_position || null,
-        return_email: return_email || null,
-        return_datetime: return_datetime
-          ? return_datetime
-              .hour(dayjs().hour())
-              .minute(dayjs().minute())
-              .second(dayjs().second())
-              .format("YYYY-MM-DDTHH:mm:ss")
+              .hour(23)
+              .minute(59)
+              .second(59)
+              .format("YYYY-MM-DDTHH:mm:ss.SSS")
           : null,
         cf_type: "Explain",
         create_by: user[0]?.employee_username || "",
         domain_id: user[0]?.employee_domain || "",
-
         ExplainTu: ExplainTuModel,
         ExplainDd: ExplainDdModel,
-        // เพิ่ม ComplainFile
         ComplaintFile:
-          complaintFiles?.map((item: any, index: number) => {
-            return {
-              cf_type: "Explain",
-              complaint_id: complaintRootId,
-              complaint_at_id: item.attachmentType,
-              explain_id: tempid,
-              other:
-                item.attachmentType === "TRR_AT_4"
-                  ? item.otherText?.trim() || null
-                  : null,
-              cf_file_seq: (index + 1).toString(),
-              user_file_name: item.file.name,
-              file_name: item.file.name,
-              file_type: item.file.type.split("/")[1] || "",
-              file_size: item.file.size.toString(),
-              record_status: true,
-              create_by: user[0]?.employee_username || "",
-              create_datetime: new Date().toISOString(),
-              remark:
-                item.attachmentType === "TRR_AT_4"
-                  ? item.otherText?.trim() || null
-                  : null,
-            };
-          }) || [],
+          complaintFiles?.map((item: any, index: number) => ({
+            cf_type: "Explain",
+            complaint_id: complaintRootId,
+            complaint_at_id: item.attachmentType,
+            explain_id: tempid,
+            cf_file_seq: (index + 1).toString(),
+            user_file_name: item.file.name,
+            file_name: item.file.name,
+            file_type: item.file.type.split("/")[1] || "",
+            file_size: item.file.size.toString(),
+            record_status: true,
+            create_by: user[0]?.employee_username || "",
+            create_datetime: new Date().toISOString(),
+          })) || [],
       },
       CurrentAccessModel: {
         user_id: user[0]?.employee_username || "",
       },
     };
-    //console.log("📦 explainPayload.ExplainModel.ComplaintFile:", explainPayload.ExplainModel.ComplaintFile);
 
-    // สร้าง FormData
     const formData = new FormData();
     formData.append("explainPayloadJson", JSON.stringify(explainPayload));
 
-    // แนบไฟล์จริง
     if (complaintFiles && complaintFiles.length > 0) {
       complaintFiles.forEach((fileItem: any) => {
         formData.append("explainFiles", fileItem.file);
       });
     }
 
-    //console.log("📤 FormData prepared:", formData);
-    //console.log("📤 explaintPayload:", explainPayload);
     setIsLoadingScreen(true);
 
     try {
       const response = await _POST_FORMDATA(formData, "/Explain/ExplainAdd");
+
       if (response && response.status === "success") {
-        FullSweetalert({
-          title: "Success",
-          text: `บันทึกข้อมูลชี้แจงสำเร็จ`,
-          icon: "success",
-        });
-        //console.log("✅ Explain Add successfully:", response);
+        // ✅ สร้าง payload สำหรับอัปเดตสถานะ Complaint
+        const complaintEditPayload = {
+          complaintModel: {
+            id: dataelement?.id,
+            mode: "EXPLAIN",
+            complaint_status_id: tempComplaintStatus[0] + "_CS_EXPLAIN",
+          },
+          CurrentAccessModel: {
+            user_id: user[0]?.employee_username || "",
+          },
+        };
+
+        // ✅ ต้องส่งเป็น FormData เพราะ backend ต้องการ complaintPayloadJson
+        const complaintFormData = new FormData();
+        complaintFormData.append(
+          "complaintPayloadJson",
+          JSON.stringify(complaintEditPayload)
+        );
+
+        const updateRes = await _POST_FORMDATA(
+          complaintFormData,
+          "/Complaint/ComplaintEditMode"
+        );
+
+        if (updateRes && updateRes.status === "success") {
+          FullSweetalert({
+            title: "Success",
+            text: `บันทึกข้อมูลชี้แจงและอัปเดตสถานะสำเร็จ`,
+            icon: "success",
+          });
+        } else {
+          FullSweetalert({
+            title: "Warning",
+            text: `บันทึกชี้แจงสำเร็จ แต่ไม่สามารถอัปเดตสถานะได้`,
+            icon: "warning",
+          });
+        }
       } else {
         FullSweetalert({
           title: "Failed",
           text: `บันทึกข้อมูลชี้แจงไม่สำเร็จ`,
           icon: "error",
         });
-        //console.log("⚠️ Explain Add failed:", response);
       }
     } catch (error) {
-      console.error("Explain Upload failed:", error);
+      console.error("ExplainAdd failed:", error);
+      FullSweetalert({
+        title: "Error",
+        text: `เกิดข้อผิดพลาดระหว่างการบันทึก`,
+        icon: "error",
+      });
     } finally {
       setIsLoadingScreen(false);
       handleClose();

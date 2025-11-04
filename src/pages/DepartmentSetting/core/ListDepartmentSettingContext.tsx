@@ -70,8 +70,8 @@ const ListDepartmentSettingProvider: FC<WithChildren> = ({ children }) => {
     const [dataset_activeCompany, setdataset_activeCompany] = useState<any>(
         initialListDepartmentSetting.dataset_activeCompany
     );
-    const [dataset_roleAdmin, setdataset_roleAdmin] = useState<any>(
-        initialListDepartmentSetting.dataset_roleAdmin
+    const [dataset_roleProfile, setdataset_roleProfile] = useState<any>(
+        initialListDepartmentSetting.dataset_roleProfile
     );
     const [datastatus, setdatastatus] = useState<any>(
         initialListDepartmentSetting.datastatus
@@ -127,7 +127,7 @@ const ListDepartmentSettingProvider: FC<WithChildren> = ({ children }) => {
                 domain,
                 username,
                 dataset_activeCompany,
-                dataset_roleAdmin,
+                dataset_roleProfile,
                 datastatus,
 
 
@@ -142,7 +142,7 @@ const ListDepartmentSettingProvider: FC<WithChildren> = ({ children }) => {
                 set_domain,
                 set_username,
                 setdataset_activeCompany,
-                setdataset_roleAdmin,
+                setdataset_roleProfile,
                 setdatastatus,
 
 
