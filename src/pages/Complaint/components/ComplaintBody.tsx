@@ -70,6 +70,7 @@ import {
   mas_DomainGet,
   mas_DomainRelateGet,
 } from "../../../service/mas/lov";
+import { isAction } from "redux";
 
 type Validate = {
   Product_Group: boolean;
@@ -264,6 +265,7 @@ export default function ComplaintBody({
     acknowledge_datetime,
     complaint_status_id,
     complaint_status_label,
+    step_label,
     status_last_datetime,
     return_from_status_id,
     return_from_status_datetime,
@@ -347,6 +349,7 @@ export default function ComplaintBody({
     setacknowledge_datetime,
     setcomplaint_status_id,
     setcomplaint_status_label,
+    setstep_label,
     setstatus_last_datetime,
     setreturn_from_status_id,
     setreturn_from_status_datetime,
@@ -478,6 +481,8 @@ export default function ComplaintBody({
   const [isMinimizedeapp2Open, setisMinimizeDeapp2Open] = useState(true);
   const [isMinimizeotapp2Open, setisMinimizeOtapp2Open] = useState(true);
 
+  
+
   // Check Acknowledge flag =========================================================
   const updateAcknowledgeFlag = (value: any) => {
     // console.log("####### Onchange Company Value [event] : ", value);
@@ -508,23 +513,42 @@ export default function ComplaintBody({
 
   // isAcknowledge
 
-  const handleDomainChange = (value: any) => {
-    // console.log("####### Onchange Domain Value [event] : ", value);
-    // console.log("@@@@@@@@@@@@First", dataset_domainrelate);
+  // const handleDomainChange = (value: any) => {
+  //   // console.log("####### Onchange Domain Value [event] : ", value);
+  //   // console.log("@@@@@@@@@@@@First", dataset_domainrelate);
 
-    if (value != null) {
+  //   if (value != null) {
+  //     const dataset = {
+  //       domain_id: respondent_domain_id?.domain_id || value.domain_id,
+  //       company_id: respondent_company_id?.company_id || value.company_id,
+  //     };
+  //     // console.log("😎😎", dataset);
+
+  //     setrespondent_department_id(null);
+  //     mas_DepartmentGet_Complaint(dataset, setdataset_department, isCallFuncLogOn, user);
+  //   } else {
+  //     setdataset_department([]);
+  //     setrespondent_department_id(null);
+  //   }
+  //   // เคลียร์ค่าแผนกทุกครั้งที่เปลี่ยนโดเมน
+  //   setrespondent_department_id(null);
+  //   // console.log("@@@@@@@@@@@@second", domainrelate);
+  // };
+
+  const handleDomainChange = async (value: any) => {
+    // เคลียร์ข้อมูลแผนกทันที (ทั้ง list และค่าเลือก)
+    setdataset_department([]);
+    setrespondent_department_id(null);
+
+    if (!value) return;
+
       const dataset = {
-        domain_id: respondent_domain_id?.domain_id || value.domain_id,
-        company_id: respondent_company_id?.company_id || value.company_id,
+        domain_id: value.domain_id,
+        company_id: value.company_id,
       };
-      // console.log("😎😎", dataset);
 
-      mas_DepartmentGet_Complaint(dataset, setdataset_department, isCallFuncLogOn, user);
-    } else {
-      // setdataset_department([]);
-      // setrespondent_department_id(null);
-    }
-    // console.log("@@@@@@@@@@@@second", domainrelate);
+      await mas_DepartmentGet_Complaint(dataset, setdataset_department, isCallFuncLogOn, user);
+    
   };
 
   // Function Handlers (On Change Event) ======================================================
@@ -1036,6 +1060,7 @@ export default function ComplaintBody({
   // 🧩 1️⃣ โหลดข้อมูลหลัก (ReportType, Company, Domain, Department)
   React.useEffect(() => {
     if (!dataelement || action === "Add") return; // 👈 ป้องกันตอน New
+    
     if (effectRan.current) return;
     effectRan.current = true;
 
@@ -1327,35 +1352,26 @@ export default function ComplaintBody({
     }
   }, [dataelement, dataset_reporttype, dataset_company]);
 
-  // React.useEffect(() => {
-  //   if (!isActionAdd) {
-  //     if (dataelement?.id) {
-  //       Complaint_Get(dataelement);
-  //     }
-  //     if (dataelement?.acknowledge_flag == 0) {
-  //       console.log("acknowledge_flag",dataelement?.acknowledge_flag)
-  //       Acknowledge_Update(dataelement);
-  //     }
-  //     ComplaintFile_Get();
-  //     ExplainGet();
-  //   }
-  //   updateAcknowledgeFlag
-  // }, [action, dataelement?.id]);
+  React.useEffect(() => {
+    if (!isActionAdd && dataelement?.id) {
+      ComplaintFile_Get();
+      ExplainGet();
+    }
+  }, [action, dataelement?.id]);
 
   React.useEffect(() => {
     const fetchAcknowlege = async () => {
-      if (isActionExplain && dataelement?.id) {
-        if (dataelement?.acknowledge_flag == 0) {
-          console.log("acknowledge_flag", dataelement?.acknowledge_flag)
-          await Acknowledge_Update(dataelement);
-        }
-        await Complaint_Get(dataelement);
-        await ComplaintFile_Get();
-        await ExplainGet();
+    if (isActionExplain && dataelement?.id) {
+      if (dataelement?.acknowledge_flag == 0) {
+        await Acknowledge_Update(dataelement);
       }
-      //updateAcknowledgeFlag
-    };
-    fetchAcknowlege();
+      await Complaint_Get(dataelement);
+      //await ComplaintFile_Get();
+      //await ExplainGet();
+    }
+    //updateAcknowledgeFlag
+  };
+  fetchAcknowlege();
   }, [action, dataelement?.id, dataelement?.acknowledge_flag]);
 
   const setComplaintType = (data: any) => {
@@ -1537,7 +1553,7 @@ export default function ComplaintBody({
                       console.log("cccccc", val);
                     }}
                     bgcolorTextField={true}
-                    readonly={isActionRead || isActionDelete || isActionExplain}
+                  readonly={isActionRead || isActionDelete || isActionExplain}
                   />
                 </Grid>
                 <Grid size={3} mt={2}>
@@ -1618,7 +1634,7 @@ export default function ComplaintBody({
                         }}
                         bgcolorTextField={action === "Add" ? false : true}
                         //readonly={isActionRead || isActionEdit || isActionDelete || isActionExplain}
-                        readonly={!isActionAdd}
+                        readonly={!isActionAdd && !isActionEdit}
                         Validate={validateText?.Date_of_Detection || false}
                         validateTextLable={
                           validateText?.Date_of_Detection
@@ -1629,12 +1645,13 @@ export default function ComplaintBody({
                     </Grid>
                     <Grid size={4}>
                       <AutocompleteComboBox
+                        key={respondent_domain_id?.domain_id || "no-domain"}
                         required="required"
                         value={respondent_department_id}
                         labelName={
                           "แผนกที่พบปัญหา (Department / Area of Detection)"
                         }
-                        options={dataset_department}
+                        options={dataset_department }
                         column="department_name"
                         setvalue={(val) => {
                           console.log(
@@ -1649,9 +1666,9 @@ export default function ComplaintBody({
                           }
                         }}
                         bgcolorTextField={
-                          action === "Add" ? false : isActionEdit ? false : true
+                          isActionAdd ? false : isActionEdit ? false : true
                         }
-                        readonly={!isActionAdd || !respondent_domain_id}
+                        readonly={(!isActionAdd && !isActionEdit) || !respondent_domain_id}
                         Validate={validateText?.Department_Area || false}
                         validateTextLable={
                           validateText?.Department_Area
@@ -1712,7 +1729,7 @@ export default function ComplaintBody({
                             onEmailChange(e);
                           }
                         }}
-                        // readonly
+                        //readonly
                         Validate={validateText?.Email || false}
                         validateTextLable={
                           validateText?.Email ? "กรุณากรอกอีเมล" : ""
@@ -2835,12 +2852,10 @@ export default function ComplaintBody({
                         </Box>
 
                         {/* === ฝั่งขวา ปุ่ม Add === */}
-                        {complaint_status_label == 'SUBMIT' &&
-                          user[0] && dataelement &&
-                          String(user[0].itasset_department_id) === String(dataelement.respondent_department_id) && (
-
+                        {/* {step_label == "SUBMIT" && 
+                         complaint_status_id == "TRR_CS_SUBMIT" && (                           */}
                             <Button
-                              variant="contained"
+                              variant="contained" 
                               size="small"
                               sx={{
                                 backgroundColor: "#2b72d7ff",
@@ -2860,9 +2875,9 @@ export default function ComplaintBody({
                                 handleOpenAdd?.();   // ✅ เรียกถ้ามีค่าเท่านั้น
                               }}
                             >
-                              + เพิ่มคำชี้แจง
+                               เพิ่มคำชี้แจง 
                             </Button>
-                          )}
+                          {/* )} */}
                       </Box>
                     </AccordionSummary>
 
