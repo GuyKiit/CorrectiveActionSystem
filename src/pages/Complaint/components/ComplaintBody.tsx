@@ -1712,10 +1712,11 @@ export default function ComplaintBody({
                             onEmailChange(e);
                           }
                         }}
-                        readonly={!isActionAdd && !isActionEdit}
+                        // readonly
                         Validate={validateText?.Email || false}
                         validateTextLable={
                           validateText?.Email ? "กรุณากรอกอีเมล" : ""
+
                         }
                       />
                     </Grid>
@@ -2197,7 +2198,7 @@ export default function ComplaintBody({
                                             //   isActionDelete ||
                                             //   isActionExplain
                                             // }
-                                            disabled={!isActionAdd}
+                                            disabled={!isActionAdd && !isActionEdit}
                                             sx={{ color: "#ff9800" }}
                                           />
                                         }
@@ -2973,10 +2974,10 @@ export default function ComplaintBody({
                                           <Button
                                             variant="contained"
                                             size="medium"
-                                            onClick={(e) =>{
+                                            onClick={(e) => {
                                               e.stopPropagation();
                                               handleOnclickExplainView &&
-                                              handleOnclickExplainView(item)
+                                                handleOnclickExplainView(item)
                                             }}
                                             sx={{
                                               backgroundColor: "#7e828cff",
