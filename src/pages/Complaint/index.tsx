@@ -2282,8 +2282,7 @@ export default function Complaint() {
           lot_no: lot_no,
           respondent_email: respondent_email,
           detail: detail,
-          priority_level:
-            datapriorityValue_Combobox || dataelement?.priority_level,
+          priority_level: datapriorityValue_Combobox || dataelement?.priority_level,
           respond_date_within: respond_date_within
             ? respond_date_within
                 .hour(23)
