@@ -79,6 +79,7 @@ export type ListComplaintContextProps = {
     datapriorityValue_Combobox?: any
     datapriority?: any
     datastatus?: any
+    datastatusconfig?: any
     PriorityLevel?: any
     compTypeOther?: any
     compRsOther?: any
@@ -179,7 +180,7 @@ export type ListComplaintContextProps = {
     approve_department_id?: any
     approve_position?: string
     approve_email?: string
-    approve_date?: dayjs.Dayjs
+    approve_date?: dayjs.Dayjs | null
     apprvove_position?: string
     dataapproveValue_Combobox?: any
 
@@ -259,6 +260,7 @@ export type ListComplaintContextProps = {
     setdatapriorityValue_Combobox: Dispatch<SetStateAction<any>>
     setdatapriority: Dispatch<SetStateAction<any>>
     setdatastatus: Dispatch<SetStateAction<any>>
+    setdatastatusconfig: Dispatch<SetStateAction<any>>
     setPriorityLevel: Dispatch<SetStateAction<any>>
     // setSelectedFile: Dispatch<SetStateAction<File>>
 
@@ -430,6 +432,7 @@ export const initialListComplaint: ListComplaintContextProps = {
     setdatapriorityValue_Combobox: () => { },
     setdatapriority: () => { },
     setdatastatus: () => { },
+    setdatastatusconfig: () => { },
     setPriorityLevel: () => { },
 
     //--------dataset-------

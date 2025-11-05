@@ -2852,8 +2852,8 @@ type FileData = {
                         </Box>
 
                         {/* === ฝั่งขวา ปุ่ม Add === */}
-                         {dataelement?.step_label === "EXPLAIN"  &&
-                         dataelement?.complaint_status_label === "SUBMIT" && (                          
+                         {dataelement?.complaint_status_label === "SUBMIT" &&
+                          dataelement?.step_label === "EXPLAIN"  && (                          
                             <Button
                               variant="contained" 
                               size="small"

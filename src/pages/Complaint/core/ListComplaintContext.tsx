@@ -120,6 +120,9 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
     const [complaint_status_label, setcomplaint_status_label] = useState<any>(
         initialListComplaint.complaint_status_label
     );
+    const [step_label, setstep_label] = useState<any>(
+        initialListComplaint.step_label
+    );
     const [status_last_datetime, setstatus_last_datetime] = useState<dayjs.Dayjs>(
         dayjs(initialListComplaint.status_last_datetime)
     );
@@ -195,6 +198,9 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
     );
     const [datastatus, setdatastatus] = useState<any>(
         initialListComplaint.datastatus
+    );
+    const [datastatusconfig, setdatastatusconfig] = useState<any>(
+        initialListComplaint.datastatusconfig
     );
     const [PriorityLevel, setPriorityLevel] = useState<any>(
         initialListComplaint.PriorityLevel
@@ -438,7 +444,7 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
     const [approve_email, setapprove_email] = useState<any>(
         initialListComplaint.approve_email
     );
-    const [approve_date, setapprove_date] = useState<dayjs.Dayjs>(
+    const [approve_date, setapprove_date] = useState<dayjs.Dayjs | null>(
         dayjs(initialListComplaint.approve_date)
     );
     const [dataset_stepcomplaint, setdataset_stepcomplaint] = useState<any>(
@@ -455,6 +461,12 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
     );
     const [dataset_complaintActionClose, setdataset_complaintActionClose] = useState<any>(
         initialListComplaint.setdataset_complaintActionClose
+    );
+    const [dataset_complaintActionApproveSC, setdataset_complaintActionApproveSC] = useState<any>(
+        initialListComplaint.dataset_complaintActionApproveSC
+    );
+    const [dataset_complaintActionApproveQC, setdataset_complaintActionApproveQC] = useState<any>(
+        initialListComplaint.dataset_complaintActionApproveQC
     );
     const [domainrelate, set_domainrelate] = useState<any>(
         initialListComplaint.domainrelate
@@ -526,6 +538,7 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 acknowledge_datetime,
                 complaint_status_id,
                 complaint_status_label,
+                step_label,
                 status_last_datetime,
                 return_from_status_id,
                 return_from_status_datetime,
@@ -550,6 +563,7 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 datapriorityValue_Combobox,
                 datapriority,
                 datastatus,
+                datastatusconfig,
                 PriorityLevel,
                 // ✅ expose state ออกมาให้ component อื่นใช้
                 dataComplaintTypeValue_Combobox,
@@ -567,6 +581,8 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 dataset_complaintActionNew,
                 dataset_complaintActionExplain,
                 dataset_complaintActionClose,
+                dataset_complaintActionApproveSC,
+                dataset_complaintActionApproveQC,
                 dataset_activeCompany,
                 dataset_roleProfile,
                 domainrelate,
@@ -686,6 +702,7 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 setacknowledge_datetime,
                 setcomplaint_status_id,
                 setcomplaint_status_label,
+                setstep_label,
                 setstatus_last_datetime,
                 setreturn_from_status_id,
                 setreturn_from_status_datetime,
@@ -710,6 +727,7 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 setdatapriorityValue_Combobox,
                 setdatapriority,
                 setdatastatus,
+                setdatastatusconfig,
                 setPriorityLevel,
                 setdataComplaintTypeValue_Combobox,
 
@@ -726,6 +744,8 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 setdataset_complaintActionNew,
                 setdataset_complaintActionExplain,
                 setdataset_complaintActionClose,
+                setdataset_complaintActionApproveSC,
+                setdataset_complaintActionApproveQC,
                 setdataset_activeCompany,
                 setdataset_roleProfile,
                 set_domainrelate,
