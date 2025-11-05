@@ -390,8 +390,6 @@ export default function DepartmentSetting() {
         setdataset_roleProfile?.(grouped["role_profile"] || []);
         setdatastatus?.(grouped["complaint_status"] || []);
 
-
-
         //console.log('⚠️⚠️⚠️⚠️ [grouped["active_company"]] :', grouped["active_company"])
         //console.log('⚠️⚠️⚠️⚠️ [grouped["role_profile"]] :', grouped["role_profile"])
         //console.log('⚠️⚠️⚠️⚠️ [grouped["complaint_status"]] :', grouped["complaint_status"])
@@ -961,7 +959,7 @@ export default function DepartmentSetting() {
     const DeptApproveSetup = [];
 
     console.log('sectionApprove:', sectionApprove);
-    
+
     console.log('qcApprove:', qcApprove);
 
     if (sectionApprove?.employee_username) {
@@ -978,8 +976,8 @@ export default function DepartmentSetting() {
       });
     }
 
-    console.log('DeptApproveSetup:', DeptApproveSetup);   
-    
+    console.log('DeptApproveSetup:', DeptApproveSetup);
+
     // สร้าง JSON payload
     const DeptSetupPayload = {
 
@@ -1052,8 +1050,8 @@ export default function DepartmentSetting() {
       });
     }
 
-    console.log(DeptApproveSetup,'DeptApproveSetupDeptApproveSetup');
-    
+    console.log(DeptApproveSetup, 'DeptApproveSetupDeptApproveSetup');
+
     const DeptSetupPayload = {
       id: dataelement?.id,
       // company : dataelement?.company ,

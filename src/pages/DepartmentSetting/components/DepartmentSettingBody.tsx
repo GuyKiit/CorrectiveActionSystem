@@ -176,6 +176,8 @@ export default function DepartmentSettingBody({
         department, set_department,
         domain, set_domain,
         datastatus, setdatastatus,
+        datastatusconfig, setdatastatusconfig,
+        approveCard, setapproveCard,
         //====================================
         //--------GetMaster(All)-------
         master_domain, setmaster_domain,
@@ -221,6 +223,7 @@ export default function DepartmentSettingBody({
     const [fileList, setFileList] = useState<FileData[]>([]);
     const [request_department_id, setrequest_department_id] = React.useState<{ itasset_department_id: number; itasset_department_name: string; } | null>(null);
     const [dataDecision, setdataDecision] = useState<LovType[]>([]);
+    const [approveStates, setApproveStates] = useState<Record<string, any>>({});
     // const [dept_domain, setdept_domain] = useState<any>(null);
     // const [sectionApprove, setsectionApprove] = useState<any>(null);
     // const [qcApprove, setqcApprove] = useState<any>(null);
@@ -248,36 +251,48 @@ export default function DepartmentSettingBody({
     //==============================================================================
 
     const handleDomainChange = (value: any) => {
-        // console.log('####### Onchange Company Value [event] : ', value);
-        // console.log('####### Onchange Domain Value [event] : ', value);
-        // console.log("dept_domain:🤍", dept_domain);
-        if (value != null) {
+        console.log("####### Onchange Domain Value [event] :", value);
+
+        if (value && value.domain_id && value.company_id) {
             const dataset = {
-                domain_id: dept_domain?.domain_id || value.domain_id,
-                company_id: dept_company?.company_id || value.company_id,
+                domain_id: value.domain_id,
+                company_id: value.company_id,
             };
 
             mas_DepartmentDomainGet(value, set_department, isCallFuncLogOn);
 
-            // console.log("####### dept_domain :", dept_domain);
+            const approveRows = datastatus.filter(
+                (val: any) => val.lov_code === "APPROVE"
+            );
 
-            // 1️⃣ กรองเฉพาะ approve rows
-            const FilterUser = master_user.filter((val: any) => val['domain_id'] === value.domain_id && val['itasset_company_id'] === value.company_id);
-            // console.log("####### FilterUser:", FilterUser);
-            // console.log("####### master_user :", master_user);
+            const FilterUser = master_user.filter((val: any) => {
+                const domainMatch = String(val.domain_id || "") === String(value.domain_id || "");
+                const companyMatch = Number(val.itasset_company_id || 0) === Number(value.company_id || 0);
+                return domainMatch && companyMatch;
+            });
 
-            set_username(FilterUser)
+            // ✅ สร้าง approveStates object ตาม approveRows
+            const newApproveStates: Record<string, any> = {};
 
-            // mas_UsernameGet(dataset, set_username, isCallFuncLogOn);
+            approveRows.forEach((row: any) => {
+                const stepKey = row.lov3;
+                const usersInDomain = FilterUser.filter(
+                    (u: any) => u.domain_id === value.domain_id
+                );
+                newApproveStates[stepKey] = usersInDomain[0] || null;
+            });
+
+            set_username(FilterUser);
+            setApproveStates(newApproveStates);
+
         } else {
             set_department([]);
             set_username([]);
-            setdomain_dept_id(null);
-            setsectionApprove(null);
-            setqcApprove(null);
+            setApproveStates({});
         }
-
     };
+
+
 
     const handleDepartmentChange = (val: any) => {
         console.log('####### Onchange Department Value [event] : ', val);
@@ -297,6 +312,12 @@ export default function DepartmentSettingBody({
             setqcApprove(null);
         }
     };
+
+    const handleApproveCard = (val: any) => {
+
+
+    };
+
     //========================================================================================
 
     // Functions (Initial, Calculation or ETC.) =================================================
@@ -328,108 +349,109 @@ export default function DepartmentSettingBody({
 
     };
 
+    // ============================
+    // 1️⃣ UseEffect สำหรับ Map ค่าเริ่มต้น
+    // ============================
     React.useEffect(() => {
-        const updateData = async () => {
+        const mapInitialValues = async () => {
             try {
-                console.log("⭐step:4 แมพค่าที่ได้จาก Datatable มาแสดง ");
+                console.log("⭐ step:4.1 Map ค่าเริ่มต้นจาก Datatable");
                 if (!dataelement) return;
 
-                // 1️⃣ Map Company
+                // 🏢 Map Company
                 if (Array.isArray(company) && dataelement?.company_id) {
                     const mappedCompany = await setValueMas(company, dataelement.company_id, "company_id");
-                    console.log("ผลลัพธ์ : mappedCompany:", mappedCompany)
                     if (mappedCompany) setdept_company(mappedCompany);
-
                     mas_DomainGet(dataelement?.company_id, set_domain, user, isCallFuncLogOn);
                 }
 
-                // 2️⃣ Map Domain จาก master_domain
+                // 🌐 Map Domain
                 if (Array.isArray(master_domain) && dataelement?.domain_id) {
                     const mappedDomain = await setValueMas(master_domain, dataelement.domain_id, "domain_id");
-                    console.log("ผลลัพธ์ : mappedDomain:", mappedDomain)
                     if (mappedDomain) setdept_domain(mappedDomain);
+
                     const values = {
-                        domain_id: dataelement?.domain_id,                // <-- string
-                        company_id: Number(dataelement?.company_id) || 0  // <-- force number
+                        domain_id: dataelement?.domain_id,
+                        company_id: Number(dataelement?.company_id) || 0,
                     };
-
                     mas_DepartmentDomainGet(values, set_department, isCallFuncLogOn);
-
-                    const FilterUser = master_user.filter((val: any) => {
-                        const domainMatch = String(val.domain_id || '') === String(values.domain_id || '');
-                        const companyMatch = Number(val.itasset_company_id || 0) === Number(values.company_id || 0);
-                        return domainMatch && companyMatch;
-                    });
-                    console.log("✅ dataelement:", dataelement);
-                    // 🟢 Map user ให้แนบ id จาก deptApproveSetup ถ้ามี
-                    const MappedUserWithSetupId = FilterUser.map((val: any) => {
-                        const matched = dataelement?.deptApproveSetup?.find(
-                            (setup: any) => setup.user_id === val.employee_username
-                        );
-                        return {
-                            ...val,
-                            deptApproveSetup_id: matched?.id || null, // เพิ่ม id จาก setup ถ้ามี
-                        };
-                    });
-
-                    console.log("✅ username mapped:", MappedUserWithSetupId);
-
-                    set_username(FilterUser)
-
                 }
 
-                // 3️⃣ Map Department จาก master_department
+                // 🏬 Map Department
                 if (Array.isArray(master_department) && dataelement?.domain_dept_id) {
                     const mappedDept = await setValueMas(master_department, dataelement.domain_dept_id, "domain_dept_id");
-                    console.log("ผลลัพธ์ : mappedDept:", mappedDept)
                     if (mappedDept) setdomain_dept_id(mappedDept);
                 }
 
-                if (Array.isArray(master_user) && Array.isArray(dataelement?.deptApproveSetup)) {
+            } catch (err) {
+                console.error("mapInitialValues error:", err);
+            }
+        };
 
-                    // 1️⃣ กรองเฉพาะ approve rows
+        if (!isActionAdd && dataelement) mapInitialValues();
+    }, [dataelement, company, master_domain, master_department]);
+
+
+    // ============================
+    // 2️⃣ UseEffect สำหรับ Filter และ Map user หลังจาก state พร้อม
+    // ============================
+    React.useEffect(() => {
+        const processUserMapping = async () => {
+            try {
+                console.log("⭐ step:4.2 Filter + Map user");
+
+                if (!dataelement || !Array.isArray(master_user)) return;
+
+                // ✅ Filter เฉพาะ user ที่ตรงกับ domain & company
+                const FilterUser = master_user.filter((val: any) => {
+                    const domainMatch = String(val.domain_id || '') === String(dataelement.domain_id || '');
+                    const companyMatch = Number(val.itasset_company_id || 0) === Number(dataelement.company_id || 0);
+                    return domainMatch && companyMatch;
+                });
+
+                // ✅ Map id จาก deptApproveSetup
+                const MappedUserWithSetupId = FilterUser.map((val: any) => {
+                    const matched = dataelement?.deptApproveSetup?.find(
+                        (setup: any) => setup.user_id === val.employee_username
+                    );
+                    return {
+                        ...val,
+                        deptApproveSetup_id: matched?.id || null,
+                    };
+                });
+
+                set_username(FilterUser);
+
+                // ==========================
+                // Mapping Approve Steps
+                // ==========================
+                if (Array.isArray(dataelement?.deptApproveSetup)) {
                     const approveRows = datastatus.filter((val: any) => val['lov_code'] === 'APPROVE');
-                    //console.log("approveRows:", approveRows);
 
-                    // 2️⃣ สร้าง map ของ step → deptApproveSetup
                     const stepMap: Record<string, any[]> = {};
                     dataelement.deptApproveSetup.forEach((d: any) => {
                         if (!stepMap[d.step]) stepMap[d.step] = [];
                         stepMap[d.step].push(d);
                     });
-                    //console.log("stepMap:", stepMap);
 
-                    // 4️⃣ map user โดยไม่แยก set ทีละตัว
-                    const mappedStates: Record<string, any[]> = {}; // stepKey -> array ของ user
-
+                    const mappedStates: Record<string, any[]> = {};
                     for (const row of approveRows) {
-                        const stepKey = row.lov3; // ใช้ lov3 เป็น key
+                        const stepKey = row.lov3;
                         const stepData = stepMap[stepKey] || [];
-
-                        //console.log("🧩 stepKey:", stepKey, "stepData:", stepData);
-
                         if (stepData.length > 0) {
-                            // ✅ ส่ง array ของ user_id ทั้งหมดใน step นั้น
                             const userIds = stepData.map((s: any) => s.user_id);
                             const mapped = await setValueMas(master_user, userIds, "employee_username");
-
-                            //console.log(`✅ mapped for step ${stepKey}:`, mapped);
                             mappedStates[stepKey] = mapped;
                         } else {
                             mappedStates[stepKey] = [];
-                            //console.log(`⚠️ No data for step ${stepKey}`);
                         }
                     }
-
-                    //console.log("🎯 mappedStates ready:", mappedStates);
 
                     const setValueMap: Record<string, Function> = {
                         "1": setsectionApprove,
                         "2": setqcApprove,
-                        // ถ้ามี step เพิ่มเติม ก็เพิ่ม mapping ที่นี่
                     };
 
-                    // loop เพื่อเซ็ตค่าจาก mappedStates เข้าสู่ state
                     for (const [stepKey, users] of Object.entries(mappedStates)) {
                         const u = Array.isArray(users) ? users[0] : users;
                         if (u) {
@@ -439,24 +461,20 @@ export default function DepartmentSettingBody({
                                     ? `${u.fullname_th || u.fullname_en || ""} (${u.employee_username})`
                                     : `${u.fullname_th || u.fullname_en || ""}`,
                             };
-
-                            console.log(`💾 Setting formatted state for step ${stepKey}:`, formattedUser);
                             setValueMap[stepKey]?.(formattedUser);
                         } else {
                             setValueMap[stepKey]?.(null);
                         }
                     }
-                    // 4️⃣ set ค่าไว้ใน state เดียว เช่น approveUsers
-                    // setApproveUsers(mappedStates);
                 }
+
             } catch (err) {
-                console.error("updateData error:", err);
+                console.error("processUserMapping error:", err);
             }
         };
 
-        // เรียกเฉพาะตอน View / Edit
-        if (!isActionAdd && dataelement) updateData();
-    }, [action, dataelement, company, master_domain, master_department, master_user]);
+        if (!isActionAdd && dataelement) processUserMapping();
+    }, [dataelement, master_user, datastatus]);
 
 
     ////////////////////// DepartmentSetting Read //////////////////////////
@@ -470,10 +488,28 @@ export default function DepartmentSettingBody({
     }, [dataelement]);
 
 
-    const FilteredData = datastatus.filter((val: any) => val['lov_code'] == 'APPROVE');
+    // let FilteredData = datastatusconfig.filter((val: any) => val['lov_code'] == 'APPROVE');
     // console.log("FilteredData:", FilteredData);
+    // console.log("datastatus:", datastatus);
 
-    const approveRows = FilteredData
+    // const approveRows = datastatus.filter((val: any) => val['lov_code'] == 'APPROVE');
+
+    // React.useEffect(() => {
+
+    // setapproveCard(datastatusconfig.filter((val: any) => val['lov_code'] == 'APPROVE'));
+
+    // } , [datastatusconfig]);
+
+    // ============================ Approve Rows Filter ==================================
+    const approveRows = React.useMemo(() => {
+        if (!Array.isArray(datastatus)) return [];
+        return datastatus.filter(
+            (item: any) =>
+                item.lov_code === "APPROVE" &&
+                item.lov7 === dept_domain?.domain_id
+        );
+    }, [datastatus, dept_domain]);
+
 
     return (
         <Box
@@ -569,6 +605,7 @@ export default function DepartmentSettingBody({
                                     setdept_domain(val);
                                     handleDomainChange(val);
                                     console.log("😋dddddd", val);
+                                    console.log("😋 datastatusconfig", datastatusconfig);
 
                                 }}
                                 bgcolorTextField={
@@ -662,16 +699,19 @@ export default function DepartmentSettingBody({
                     </Box>
 
                     {/* ============================ Approve List ================================== */}
-                    {console.log("sectionApprove", sectionApprove)}
-                    {console.log("qcApprove", qcApprove)}
-                    {/* {console.log("📏 approveRows.length:", approveRows?.length)} */}
-                    {/* {console.log("👀 username:", username)}
-                    {console.log("✅ fullname_th list:", username?.map((u: any) => u.fullname_th))}
-                    {console.log("✅ fullname_en list:", username?.map((u: any) => u.fullname_en))}  */}
+                    {/* Move console logs into an IIFE that returns null so JSX doesn't receive void */}
+                    {(() => {
+                        console.log("sectionApprove", sectionApprove);
+                        console.log("qcApprove", qcApprove);
+                        console.log("📏 approveRows:", approveRows);
+                        console.log("📏 approveRows.length:", approveRows?.length);
+                        console.log("👀 username:", username);
+                        return null;
+                    })()}
 
-                    {approveRows.length > 0 ? (
+                    {approveRows && approveRows.length > 0 ? (
                         approveRows.map((row: any) => {
-                            const stepKey = row['lov3']; // lov3 คือ step
+                            const stepKey = row["lov3"]; // lov3 คือ step
                             // Map step → state dynamically
                             const valueMap: Record<string, any> = {
                                 "1": sectionApprove,
@@ -684,15 +724,12 @@ export default function DepartmentSettingBody({
                                 // เพิ่ม step ใหม่ตามต้องการ
                             };
 
-                            // console.log(valueMap[stepKey].employee_username);
-                            // console.log(setValueMap);
-
                             return (
                                 <Grid container spacing={3} paddingTop={3} key={uuidv4()}>
                                     <Grid size={2}>
                                         <FullWidthTextField
                                             required="required"
-                                            value={row['lov3']}
+                                            value={row["lov3"]}
                                             labelName="ลำดับ (No.)"
                                             readonly
                                             textAlignTextField="center"
@@ -701,7 +738,7 @@ export default function DepartmentSettingBody({
                                     <Grid size={3}>
                                         <FullWidthTextField
                                             required="required"
-                                            value={row['lov6']}
+                                            value={row["lov6"]}
                                             labelName="ตำแหน่ง (Role)"
                                             readonly
                                             textAlignTextField="center"
@@ -715,11 +752,11 @@ export default function DepartmentSettingBody({
                                             options={
                                                 Array.isArray(username)
                                                     ? username.map((u) => ({
-                                                        ...u,
-                                                        display_name: u.employee_username
-                                                            ? `${u.fullname_th || u.fullname_en || ""} (${u.employee_username})`
-                                                            : `${u.fullname_th || u.fullname_en || ""}`,
-                                                    }))
+                                                          ...u,
+                                                          display_name: u.employee_username
+                                                              ? `${u.fullname_th || u.fullname_en || ""} (${u.employee_username})`
+                                                              : `${u.fullname_th || u.fullname_en || ""}`,
+                                                      }))
                                                     : []
                                             }
                                             column="display_name"
@@ -732,14 +769,15 @@ export default function DepartmentSettingBody({
                                                 );
 
                                                 // 2️⃣ ถ้าไม่เจอ username เดิม ให้ fallback ใช้ id ของ step เดิม
-                                                const stepId = matched?.id || dataelement?.deptApproveSetup?.find((i: any) => i.step === stepKey)?.id;
+                                                const stepId =
+                                                    matched?.id ||
+                                                    dataelement?.deptApproveSetup?.find((i: any) => i.step === stepKey)?.id;
 
                                                 const newVal = { ...val, deptApproveSetup_id: stepId || null };
                                                 console.log(`🎯 step ${stepKey} → deptApproveSetup_id:`, stepId);
 
                                                 setValueMap[stepKey]?.(newVal);
                                             }}
-
                                             bgcolorTextField={action === "Add" ? false : isActionEdit ? false : true}
                                             readonly={isActionRead || isActionDelete || !dept_domain}
                                         />
@@ -765,9 +803,7 @@ export default function DepartmentSettingBody({
                         </Paper>
                     )}
 
-
                     {/* ============================ Approve List ================================== */}
-
 
                 </Paper>
             </Grid>

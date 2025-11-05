@@ -123,6 +123,7 @@ interface ComplaintBody {
   dataelement?: any;
   validateText?: Validate;
   validateDetailText?: { [index: number]: detail };
+  hideReject?: boolean;
   onBlocksChange?: (blocks: Block[]) => void;
   onReportTypeChange?: (val: any) => void;
   onDateOfDetectionChange?: (val: any) => void;
@@ -208,6 +209,7 @@ type FileData = {
   const isActionClose = action === "Close";
   const isActionExplainApproveSc = action === "ApproveSC";
   const isActionExplainApproveQc = action === "ApproveQC";
+  
 
   const user = cleanAccessData("userSession");
   const [openConfirm, setOpenConfirm] = useState(false);
@@ -985,6 +987,8 @@ type FileData = {
       setIsLoadingScreen(false);
     }
   };
+
+  
 
   // READ - Get Complaints
   const ComplaintFile_Get = async () => {
