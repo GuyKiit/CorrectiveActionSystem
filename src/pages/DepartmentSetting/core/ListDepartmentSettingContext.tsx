@@ -76,6 +76,12 @@ const ListDepartmentSettingProvider: FC<WithChildren> = ({ children }) => {
     const [datastatus, setdatastatus] = useState<any>(
         initialListDepartmentSetting.datastatus
     );
+    const [datastatusconfig, setdatastatusconfig] = useState<any>(
+        initialListDepartmentSetting.datastatusconfig
+    );
+    const [approveCard, setapproveCard] = useState<any>(
+        initialListDepartmentSetting.approveCard
+    );
 
     //============================================
     //--------GetMaster(All)-------
@@ -129,6 +135,8 @@ const ListDepartmentSettingProvider: FC<WithChildren> = ({ children }) => {
                 dataset_activeCompany,
                 dataset_roleProfile,
                 datastatus,
+                datastatusconfig,
+                approveCard,
 
 
                 company_search,
@@ -144,6 +152,8 @@ const ListDepartmentSettingProvider: FC<WithChildren> = ({ children }) => {
                 setdataset_activeCompany,
                 setdataset_roleProfile,
                 setdatastatus,
+                setdatastatusconfig,
+                setapproveCard,
 
 
                 set_company_search,
