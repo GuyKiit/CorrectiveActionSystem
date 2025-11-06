@@ -1733,7 +1733,7 @@ type FileData = {
                             onEmailChange(e);
                           }
                         }}
-                        //readonly
+                        readonly={!isActionAdd && !isActionEdit}
                         Validate={validateText?.Email || false}
                         validateTextLable={
                           validateText?.Email ? "กรุณากรอกอีเมล" : ""
@@ -2856,7 +2856,7 @@ type FileData = {
                         </Box>
 
                         {/* === ฝั่งขวา ปุ่ม Add === */}
-                         {dataelement?.complaint_status_label === "SUBMIT" &&
+                         {dataelement?.complaint_status_label === "SUBMITED" &&
                           dataelement?.step_label === "EXPLAIN"  && (                          
                             <Button
                               variant="contained" 
@@ -2956,8 +2956,8 @@ type FileData = {
                                       <Box sx={{ display: "flex", gap: 1 }}>
                                         <Box sx={{ display: "flex", gap: 1.5 }}>
                                           {/* ปุ่มอนุมัติ */}
-                                          { dataelement?.complaint_status_label === "EXPLAIN" &&
-                                           dataelement?.step_label === "EXPLAIN" && (
+                                          { dataelement?.complaint_status_label === "EXPLAINED" &&
+                                            dataelement?.step_label === "EXPLAIN" && (
                                               <Button
                                                 variant="contained"
                                                 size="medium"
@@ -2968,7 +2968,6 @@ type FileData = {
                                                       item
                                                     )
                                                 }
-
                                                 }
                                                 sx={{
                                                   backgroundColor: "#45bc4bff",

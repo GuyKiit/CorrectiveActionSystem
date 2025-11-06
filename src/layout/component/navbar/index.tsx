@@ -75,7 +75,7 @@ export default function Navbar({ isOpen, setIsOpen }: NavbarProps) {
               {/* User Info */}
               <div className="hidden md:flex flex-col items-end text-gray-700 mr-4">
                 <span className="text-lg font-medium">{currentUser?.employee_fname_en} {currentUser?.employee_lname_en}</span>
-                <span className="text-base opacity-70">{currentUser?.employee_position}</span>
+                <span className="text-base opacity-70">{userData ? userData[0]?.role_name : ''}</span>
               </div>
 
               {/* Notifications */}
