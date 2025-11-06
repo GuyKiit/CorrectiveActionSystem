@@ -18,12 +18,12 @@ export default function BasicChips(props: BasicChips) {
 
   const allColorMap: Record<string, string> = {
     NEW: "#7db6fa",
-    SUBMIT: props.acknowledge ? "#7db6fa" : "#FF6B7A",
-    EXPLAIN: "#F1C40F",
-    APPROVE_SC: "#85d47f",
-    APPROVE_QC: "#27AE60",
-    APPROVE_FU: "#1ABC9C",
-    CLOSE: "#95A5A6",
+    SUBMITED: props.acknowledge ? "#7db6fa" : "#FF6B7A",
+    EXPLAINED: "#F1C40F",
+    APPROVED: "#85d47f",
+    // APPROVED: "#27AE60",
+    // APPROVE_FU: "#1ABC9C",
+    CLOSED: "#95A5A6",
   };
   const stepColorMap: Record<string, string> = {
     EXPLAIN: "#F1C40F",
