@@ -881,7 +881,6 @@ export default function Complaint() {
           }, {});
 
           return grouped["complaint_status"].filter((item: any) => item.lov7 === respondent_domain_id?.domain_id)
-
         }
       } catch (e) {
         //console.log("error:", e);
@@ -2068,8 +2067,7 @@ export default function Complaint() {
     // console.log("💕 tempvalue", tempvalue);
     console.log("💕 tempvalue 0", tempComplaintStatus[0]);
     console.log("💕 tempvalue 1", tempComplaintStatus[1]);
-    console.log("💕 tempvalue 1 id", tempComplaintStatus[1]?.id);
-    
+        
     const tempid = uuidv4();
 
     //Function Split Domain (For using with Complaint Status)
@@ -2246,6 +2244,8 @@ export default function Complaint() {
     const tempComplaintStatus = await LovAll_Get("complaint_status");
     console.log("💕 tempvalue 0 id", tempComplaintStatus[0]?.id);
     console.log("💕 tempvalue 1 id", tempComplaintStatus[1]?.id);
+    console.log("🔎 tempComplaintStatus = ", tempComplaintStatus);
+
 
     const formData = new FormData();
     if (mode == "SUBMIT") {
@@ -2888,196 +2888,353 @@ export default function Complaint() {
 
   };
 
-  // CREATE - Add Complaint
-  const ExplainAdd = async () => {
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  ExplainAdd"
-      );
+//   const ExplainAdd = async () => {
+//   if (isCallFuncLogOn) console.log("🕑 ", dayjs().format("HH:mm:ss.SSS"), " [Calling Function]  :  ExplainAdd");
 
-    const tempid = uuidv4();
-    const tempComplaintStatus = splitByDot(user[0]?.employee_domain);
+//   const tempid = uuidv4();
+//   const tempComplaintStatus = await LovAll_Get("complaint_status");
+//   console.log("💕 tempvalue 2", tempComplaintStatus[2]?.id);
 
-    const resolveComplaintId = () => {
-      const el: any = dataelement || {};
-      if (el.complaint_id) {
-        if (typeof el.complaint_id === "object")
-          return el.complaint_id.id ?? el.complaint_id;
-        return el.complaint_id;
-      }
-      if (el.complaint && el.complaint.id) return el.complaint.id;
-      return el.id;
-    };
+//   // Helper function to resolve complaint ID
+//   const resolveComplaintId = () => {
+//     const el: any = dataelement || {};
+//     if (el.complaint_id) {
+//       if (typeof el.complaint_id === "object")
+//         return el.complaint_id.id ?? el.complaint_id;
+//       return el.complaint_id;
+//     }
+//     if (el.complaint && el.complaint.id) return el.complaint.id;
+//     return el.id;
+//   };
 
-    const complaintRootId = resolveComplaintId();
+//   const complaintRootId = resolveComplaintId();
 
-    let currentExplainList: any[] = [];
-    if (complaintRootId) {
-      try {
-        const dataset = { complaint_id: complaintRootId };
-        const response = await _POST(dataset, "/Explain/ExplainGet");
-        if (response && response.status === "success") {
-          currentExplainList = response.data || [];
-        }
-      } catch (error) {
-        console.error("Error fetching explain data:", error);
-      }
+//   // Get current explain list 
+//   let currentExplainList: any[] = [];
+//   if (complaintRootId) {
+//     try {
+//       const dataset = { complaint_id: complaintRootId };
+//       const response = await _POST(dataset, "/Explain/ExplainGet");
+//       if (response && response.status === "success") {
+//         currentExplainList = response.data || [];
+//       }
+//     } catch (error) {
+//       console.error("Error fetching explain data:", error);
+//     }
+//   }
+
+//   // Prepare models
+//   const ExplainTuModel = dataTooluseValue 
+//     ? expToolUpdateCompId(dataTooluseValue, tempid, ToolOther)
+//     : null;
+
+//   const ExplainDdModel = dataDecisionValue
+//     ? expDecisionUpdateCompId(dataDecisionValue, tempid, DecisionOther)
+//     : null;
+
+//   // Calculate next sequence number
+//   const maxExplainSeq = currentExplainList && currentExplainList.length > 0
+//     ? Math.max(...currentExplainList.map((item: any) => parseInt(item.explain_seq) || 0))
+//     : 0;
+//   const nextSeq = maxExplainSeq + 1;
+
+//   // Create explain payload
+//   const explainPayload = {
+//     ExplainModel: {
+//       id: tempid,
+//       complaint_id: complaintRootId,
+//       explain_seq: nextSeq,
+//       observation_analysis: observation_analysis || null,
+//       root_cause: root_cause || null,
+//       corrective_action: corrective_action || null,
+//       preventive_action_plan: preventive_action_plan || null,
+//       follow_up_date: follow_up_date
+//         ? follow_up_date
+//           .hour(23)
+//           .minute(59)
+//           .second(59)
+//           .format("YYYY-MM-DDTHH:mm:ss.SSS")
+//         : null,
+//       responsible_name: user[0]?.employee_username || "",
+//       responsible_company_id: responsible_company_id?.company_id
+//         ? Number(responsible_company_id.company_id)
+//         : user[0]?.itasset_company_id || "",
+//       responsible_department_id: responsible_department_id?.department_id
+//         ? Number(responsible_department_id.department_id)
+//         : user[0]?.itasset_department_id || "",
+//       responsible_position: user[0]?.employee_position || "",
+//       responsible_email: user[0]?.employee_email || "",
+//       responsible_date: responsible_date
+//         ? responsible_date
+//           .hour(23)
+//           .minute(59)
+//           .second(59)
+//           .format("YYYY-MM-DDTHH:mm:ss.SSS")
+//         : null,
+//       cf_type: "Explain",
+//       create_by: user[0]?.employee_username || "",
+//       domain_id: user[0]?.employee_domain || "",
+//       ExplainTu: ExplainTuModel,
+//       ExplainDd: ExplainDdModel,
+//       ComplaintFile: complaintFiles?.map((item: any, index: number) => ({
+//         cf_type: "Explain",
+//         complaint_id: complaintRootId,
+//         complaint_at_id: item.attachmentType, 
+//         explain_id: tempid,
+//         cf_file_seq: (index + 1).toString(),
+//         user_file_name: item.file.name,
+//         file_name: item.file.name,
+//         file_type: item.file.type.split("/")[1] || "",
+//         file_size: item.file.size.toString(),
+//         record_status: true,
+//         create_by: user[0]?.employee_username || "",
+//         create_datetime: new Date().toISOString(),
+//       })) || [],
+//     },
+//     CurrentAccessModel: {
+//       user_id: user[0]?.employee_username || "",
+//     },
+//   };
+
+//   // Create FormData and append files
+//   const explainFormData = new FormData();
+//   explainFormData.append("explainPayloadJson", JSON.stringify(explainPayload));
+
+//   if (complaintFiles?.length > 0) {
+//     complaintFiles.forEach((fileItem: any) => {
+//       explainFormData.append("explainFiles", fileItem.file);
+//     });
+//   }
+
+//   // Create complaint update payload
+//   const complaintEditPayload = {
+//     complaintModel: {
+//       id: dataelement?.id,
+//       mode: "EXPLAIN",
+//       complaint_status_id: tempComplaintStatus[2]?.id,
+//       update_by: user[0]?.employee_username || "",
+//     },
+//     CurrentAccessModel: {
+//       user_id: user[0]?.employee_username || "", 
+//     },
+//   };
+
+//   const complaintFormData = new FormData();
+//   complaintFormData.append("complaintPayloadJson", JSON.stringify(complaintEditPayload));
+
+//   //setIsLoadingScreen(true);
+
+//   // try {
+//   //   const [explainResponse, complaintResponse] = await Promise.all([
+//   //     _POST_FORMDATA(explainFormData, "/Explain/ExplainAdd"),
+//   //     _POST_FORMDATA(complaintFormData, "/Complaint/ComplaintEditMode")
+//   //   ]);
+
+//   //   if (explainResponse?.status === "success" && complaintResponse?.status === "success") {
+//   //     FullSweetalert({
+//   //       title: "Success",
+//   //       text: "บันทึกข้อมูลชี้แจงและอัปเดตสถานะสำเร็จ",
+//   //       icon: "success"
+//   //     });
+//   //   } else if (explainResponse?.status === "success") {
+//   //     FullSweetalert({
+//   //       title: "Warning",
+//   //       text: "บันทึกชี้แจงสำเร็จ แต่ไม่สามารถอัปเดตสถานะได้",
+//   //       icon: "warning"
+//   //     });
+//   //   } else {
+//   //     FullSweetalert({
+//   //       title: "Failed", 
+//   //       text: "บันทึกข้อมูลชี้แจงไม่สำเร็จ",
+//   //       icon: "error"
+//   //     });
+//   //   }
+//   // } catch (error) {
+//   //   console.error("ExplainAdd failed:", error);
+//   //   FullSweetalert({
+//   //     title: "Error",
+//   //     text: "เกิดข้อผิดพลาดระหว่างการบันทึก",
+//   //     icon: "error"
+//   //   });
+//   // } finally {
+//   //   setIsLoadingScreen(false);
+//   //   handleClose();
+//   //   ComplaintGet();
+//   // }
+// };
+
+const ExplainAdd = async () => {
+  if (isCallFuncLogOn) console.log("🕑 ", dayjs().format("HH:mm:ss.SSS"), " [Calling Function]  :  ExplainAdd");
+
+  const tempid = uuidv4();
+  const tempComplaintStatus = await LovAll_Get("complaint_status");
+  console.log("💕 tempvalue 2 id", tempComplaintStatus[2]?.id);
+
+  // Get root complaint ID
+  const resolveComplaintId = () => {
+    const el: any = dataelement || {};
+    if (el.complaint_id) {
+      if (typeof el.complaint_id === "object")
+        return el.complaint_id.id ?? el.complaint_id;
+      return el.complaint_id;
     }
-
-    const ExplainTuModel = dataTooluseValue
-      ? expToolUpdateCompId(dataTooluseValue, tempid, ToolOther)
-      : null;
-
-    const ExplainDdModel = dataDecisionValue
-      ? expDecisionUpdateCompId(dataDecisionValue, tempid, DecisionOther)
-      : null;
-
-    const maxExplainSeq =
-      currentExplainList && currentExplainList.length > 0
-        ? Math.max(
-          ...currentExplainList.map(
-            (item: any) => parseInt(item.explain_seq) || 0
-          )
-        )
-        : 0;
-    const nextSeq = maxExplainSeq + 1;
-
-    const explainPayload = {
-      ExplainModel: {
-        id: tempid,
-        complaint_id: complaintRootId,
-        explain_seq: nextSeq,
-        observation_analysis: observation_analysis || null,
-        root_cause: root_cause || null,
-        corrective_action: corrective_action || null,
-        preventive_action_plan: preventive_action_plan || null,
-        follow_up_date: follow_up_date
-          ? follow_up_date
-            .hour(23)
-            .minute(59)
-            .second(59)
-            .format("YYYY-MM-DDTHH:mm:ss.SSS")
-          : null,
-        responsible_name: user[0]?.employee_username || "",
-        responsible_company_id: responsible_company_id?.company_id
-          ? Number(responsible_company_id.company_id)
-          : user[0]?.itasset_company_id || "",
-        responsible_department_id: responsible_department_id?.department_id
-          ? Number(responsible_department_id.department_id)
-          : user[0]?.itasset_department_id || "",
-        responsible_position: user[0]?.employee_position || "",
-        responsible_email: user[0]?.employee_email || "",
-        // responsible_date: new Date().toISOString(),
-        responsible_date: responsible_date
-          ? responsible_date
-            .hour(23)
-            .minute(59)
-            .second(59)
-            .format("YYYY-MM-DDTHH:mm:ss.SSS")
-          : null,
-        cf_type: "Explain",
-        create_by: user[0]?.employee_username || "",
-        domain_id: user[0]?.employee_domain || "",
-        ExplainTu: ExplainTuModel,
-        ExplainDd: ExplainDdModel,
-        ComplaintFile:
-          complaintFiles?.map((item: any, index: number) => ({
-            cf_type: "Explain",
-            complaint_id: complaintRootId,
-            complaint_at_id: item.attachmentType,
-            explain_id: tempid,
-            cf_file_seq: (index + 1).toString(),
-            user_file_name: item.file.name,
-            file_name: item.file.name,
-            file_type: item.file.type.split("/")[1] || "",
-            file_size: item.file.size.toString(),
-            record_status: true,
-            create_by: user[0]?.employee_username || "",
-            create_datetime: new Date().toISOString(),
-          })) || [],
-      },
-      CurrentAccessModel: {
-        user_id: user[0]?.employee_username || "",
-      },
-    };
-
-    const formData = new FormData();
-    formData.append("explainPayloadJson", JSON.stringify(explainPayload));
-
-    if (complaintFiles && complaintFiles.length > 0) {
-      complaintFiles.forEach((fileItem: any) => {
-        formData.append("explainFiles", fileItem.file);
-      });
-    }
-
-    setIsLoadingScreen(true);
-
-    try {
-      const response = await _POST_FORMDATA(formData, "/Explain/ExplainAdd");
-
-      if (response && response.status === "success") {
-        // ✅ สร้าง payload สำหรับอัปเดตสถานะ Complaint
-        const complaintEditPayload = {
-          complaintModel: {
-            id: dataelement?.id,
-            mode: "EXPLAIN",
-            complaint_status_id: tempComplaintStatus[0] + "_CS_EXPLAIN",
-          },
-          CurrentAccessModel: {
-            user_id: user[0]?.employee_username || "",
-          },
-        };
-
-        // ✅ ต้องส่งเป็น FormData เพราะ backend ต้องการ complaintPayloadJson
-        const complaintFormData = new FormData();
-        complaintFormData.append(
-          "complaintPayloadJson",
-          JSON.stringify(complaintEditPayload)
-        );
-
-        const updateRes = await _POST_FORMDATA(
-          complaintFormData,
-          "/Complaint/ComplaintEditMode"
-        );
-
-        if (updateRes && updateRes.status === "success") {
-          FullSweetalert({
-            title: "Success",
-            text: `บันทึกข้อมูลชี้แจงและอัปเดตสถานะสำเร็จ`,
-            icon: "success",
-          });
-        } else {
-          FullSweetalert({
-            title: "Warning",
-            text: `บันทึกชี้แจงสำเร็จ แต่ไม่สามารถอัปเดตสถานะได้`,
-            icon: "warning",
-          });
-        }
-      } else {
-        FullSweetalert({
-          title: "Failed",
-          text: `บันทึกข้อมูลชี้แจงไม่สำเร็จ`,
-          icon: "error",
-        });
-      }
-    } catch (error) {
-      console.error("ExplainAdd failed:", error);
-      FullSweetalert({
-        title: "Error",
-        text: `เกิดข้อผิดพลาดระหว่างการบันทึก`,
-        icon: "error",
-      });
-    } finally {
-      setIsLoadingScreen(false);
-      handleClose();
-      ComplaintGet();
-    }
+    if (el.complaint && el.complaint.id) return el.complaint.id;
+    return el.id;
   };
 
+  const complaintRootId = resolveComplaintId();
+  
+  // 3. Get current explain sequence
+  let currentExplainList: any[] = [];
+  if (complaintRootId) {
+    try {
+      const dataset = { complaint_id: complaintRootId };
+      const response = await _POST(dataset, "/Explain/ExplainGet");
+      if (response && response.status === "success") {
+        currentExplainList = response.data || [];
+      }
+    } catch (error) {
+      console.error("Error fetching explain data:", error);
+    }
+  }
 
-  // CREATE - Add Complaint
+  const maxExplainSeq = currentExplainList && currentExplainList.length > 0
+    ? Math.max(...currentExplainList.map((item: any) => parseInt(item.explain_seq) || 0))
+    : 0;
+  const nextSeq = maxExplainSeq + 1;
+
+  const ExplainTuModel = dataTooluseValue 
+    ? expToolUpdateCompId(dataTooluseValue, tempid, ToolOther)
+    : null;
+
+  const ExplainDdModel = dataDecisionValue
+    ? expDecisionUpdateCompId(dataDecisionValue, tempid, DecisionOther)
+    : null;
+
+  const explainPayload = {
+    ExplainModel: {
+      id: tempid,
+      complaint_id: complaintRootId,
+      explain_seq: nextSeq,
+      observation_analysis: observation_analysis || null,
+      root_cause: root_cause || null,
+      corrective_action: corrective_action || null,
+      preventive_action_plan: preventive_action_plan || null,
+      follow_up_date: follow_up_date
+        ? follow_up_date
+          .hour(23)
+          .minute(59)
+          .second(59)
+          .format("YYYY-MM-DDTHH:mm:ss.SSS")
+        : null,
+      responsible_name: user[0]?.employee_username || "",
+      responsible_company_id: responsible_company_id?.company_id
+        ? Number(responsible_company_id.company_id)
+        : user[0]?.itasset_company_id || "",
+      responsible_department_id: responsible_department_id?.department_id
+        ? Number(responsible_department_id.department_id)
+        : user[0]?.itasset_department_id || "",
+      responsible_position: user[0]?.employee_position || "",
+      responsible_email: user[0]?.employee_email || "",
+      responsible_date: responsible_date
+        ? responsible_date
+          .hour(23)
+          .minute(59)
+          .second(59)
+          .format("YYYY-MM-DDTHH:mm:ss.SSS")
+        : null,
+      cf_type: "Explain",
+      create_by: user[0]?.employee_username || "",
+      domain_id: user[0]?.employee_domain || "",
+      ExplainTu: ExplainTuModel,
+      ExplainDd: ExplainDdModel,
+      ComplaintFile: complaintFiles?.map((item: any, index: number) => ({
+        cf_type: "Explain",
+        complaint_id: complaintRootId,
+        complaint_at_id: item.attachmentType,
+        explain_id: tempid,
+        cf_file_seq: (index + 1).toString(),
+        user_file_name: item.file.name,
+        file_name: item.file.name,
+        file_type: item.file.type.split("/")[1] || "",
+        file_size: item.file.size.toString(),
+        record_status: true,
+        create_by: user[0]?.employee_username || "",
+        create_datetime: new Date().toISOString(),
+      })) || [],
+    },
+    CurrentAccessModel: {
+      user_id: user[0]?.employee_username || "",
+    },
+  };
+
+  const complaintEditPayload = {
+    complaintModel: {
+      id: dataelement?.id,
+      mode: "EXPLAIN",
+      complaint_status_id: tempComplaintStatus[2]?.id, 
+    },
+    CurrentAccessModel: {
+      user_id: user[0]?.employee_username || "",
+    },
+  };
+
+  const explainFormData = new FormData();
+  explainFormData.append("explainPayloadJson", JSON.stringify(explainPayload));
+
+  const complaintFormData = new FormData();
+  complaintFormData.append("complaintPayloadJson", JSON.stringify(complaintEditPayload));
+
+
+  if (complaintFiles?.length > 0) {
+    complaintFiles.forEach((fileItem: any) => {
+      explainFormData.append("explainFiles", fileItem.file);
+    });
+  }
+
+  setIsLoadingScreen(true);
+
+  try {
+    // 10. Make API calls in parallel
+    const [explainResponse, complaintResponse] = await Promise.all([
+      _POST_FORMDATA(explainFormData, "/Explain/ExplainAdd"),
+      _POST_FORMDATA(complaintFormData, "/Complaint/ComplaintEdit")
+    ]);
+
+    // 11. Handle responses
+    if (explainResponse?.status === "success" && complaintResponse?.status === "success") {
+      FullSweetalert({
+        title: "Success",
+        text: "บันทึกข้อมูลชี้แจงและอัปเดตสถานะสำเร็จ",
+        icon: "success"
+      });
+    } else if (explainResponse?.status === "success") {
+      FullSweetalert({
+        title: "Warning",
+        text: "บันทึกชี้แจงสำเร็จ แต่ไม่สามารถอัปเดตสถานะได้",
+        icon: "warning"
+      });
+    } else {
+      FullSweetalert({
+        title: "Failed", 
+        text: "บันทึกข้อมูลชี้แจงไม่สำเร็จ",
+        icon: "error"
+      });
+    }
+  } catch (error) {
+    console.error("ExplainAdd failed:", error);
+    FullSweetalert({
+      title: "Error",
+      text: "เกิดข้อผิดพลาดระหว่างการบันทึก",
+      icon: "error"
+    });
+  } finally {
+    setIsLoadingScreen(false);
+    handleClose();
+    ComplaintGet();
+  }
+};
+
   const ApproveScAdd = async () => {
     if (isCallFuncLogOn)
       console.log(
