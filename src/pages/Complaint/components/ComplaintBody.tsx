@@ -1733,7 +1733,7 @@ type FileData = {
                             onEmailChange(e);
                           }
                         }}
-                        //readonly
+                        readonly={!isActionAdd && !isActionEdit}
                         Validate={validateText?.Email || false}
                         validateTextLable={
                           validateText?.Email ? "กรุณากรอกอีเมล" : ""
