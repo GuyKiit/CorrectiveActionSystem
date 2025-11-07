@@ -2859,6 +2859,10 @@ export default function Complaint() {
         " [Calling Function]  :  ComplaintReturn"
       );
 
+    // if (!validateBeforeEdit()) {
+    //   return;
+    // }
+
     // const tempComplaintStatus = splitByDot(user[0]?.employee_domain);
     console.log("📡 Sending respondent_domain_id to LovAll_Get:",respondent_domain_id);
     console.log("📡 Sending respondent_domain_id to LovAll_Get:",respondent_domain_id?.domain_id);
