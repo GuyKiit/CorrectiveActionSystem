@@ -20,9 +20,14 @@ interface ActionManageCellProps {
   hiddenEdit?: boolean;
   hiddenDelete?: boolean;
   hiddenExplain?: boolean;
+  hiddenReadExplain?: boolean;
   hiddenApproveSC?: boolean;
+  hiddenReadApproveSC?: boolean;
   hiddenApproveQC?: boolean;
+  hiddenReadApproveQC?: boolean;
   hiddenClose?: boolean;
+  hiddenReadClose?: boolean;
+  hiddenCloseHistory?: boolean;
   hiddenDepartmentAdd?: boolean;
   hiddenDepartmentView?: boolean;
   hiddenDepartmentEdit?: boolean;
@@ -42,7 +47,27 @@ const ICONS_MAP: { [key: string]: ReactElement } = {
 };
 
 const ActionManageCell: React.FC<ActionManageCellProps> = (props) => {
-  const { disabled, chack_data, hadleOnclickMenu, hiddenRead, hiddenEdit, hiddenDelete, hiddenExplain, hiddenApproveSC, hiddenApproveQC, hiddenClose, hiddenDepartmentAdd, hiddenDepartmentView, hiddenDepartmentEdit, hiddenDepartmentDelete} = props;
+  const {
+    disabled,
+    chack_data,
+    hadleOnclickMenu,
+    hiddenRead,
+    hiddenEdit,
+    hiddenDelete,
+    hiddenExplain,
+    hiddenReadExplain,
+    hiddenApproveSC,
+    hiddenReadApproveSC,
+    hiddenApproveQC,
+    hiddenReadApproveQC,
+    hiddenClose,
+    hiddenReadClose,
+    hiddenCloseHistory,
+    hiddenDepartmentAdd,
+    hiddenDepartmentView,
+    hiddenDepartmentEdit,
+    hiddenDepartmentDelete
+  } = props;
   const { menuFuncData } = useAuth();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -78,6 +103,12 @@ const ActionManageCell: React.FC<ActionManageCellProps> = (props) => {
         (funcName === "ApproveSC" && hiddenApproveSC) ||            // Approve
         (funcName === "ApproveQC" && hiddenApproveQC) ||            // Approve
         (funcName === "Close" && hiddenClose) ||                    // Close
+        
+        (funcName === "ReadExplain" && hiddenReadExplain) ||                    // ReadExplain
+        (funcName === "ReadApproveSC" && hiddenReadApproveSC) ||                    // ReadApproveSC
+        (funcName === "ReadApproveQC" && hiddenReadApproveQC) ||                    // ReadApproveQC
+        (funcName === "ReadClose" && hiddenReadClose) ||                    // ReadClose
+        (funcName === "CloseHistory" && hiddenCloseHistory) ||                    // CloseHistory
 
         (funcName === "DepartmentAdd" && hiddenDepartmentAdd) ||    // DepartmentAdd
         (funcName === "DepartmentView" && hiddenDepartmentView) ||  // DepartmentView
