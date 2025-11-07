@@ -1433,11 +1433,32 @@ export default function Complaint() {
                     )) ??
                   false
                 }
+                hiddenReadExplain={
+                  (dataset_complaintActionExplain &&
+                    !dataset_complaintActionExplain.some((mode: any) =>
+                      mode.lov1
+                        .split(",")
+                        .includes(String(el.complaint_status_label))
+                    )) ??
+                  false
+                }
                 //-----------------------------------------------------------------------
                 //-----------------------------------------------------------------------
 
                 // For Status [EXPLAINED]
                 hiddenApproveSC={
+                  (dataset_complaintActionApproveSC &&
+                    !dataset_complaintActionApproveSC.some(
+                      (mode: any) =>
+                        mode.lov1
+                          .split(",")
+                          .includes(String(el.complaint_status_label))
+                      // ) &&
+                      // splitNextStepName(el.approve_step
+                    )) ??
+                  false
+                }
+                hiddenReadApproveSC={
                   (dataset_complaintActionApproveSC &&
                     !dataset_complaintActionApproveSC.some(
                       (mode: any) =>
@@ -1465,11 +1486,41 @@ export default function Complaint() {
                     )) ??
                   false
                 }
+                hiddenReadApproveQC={
+                  (dataset_complaintActionApproveQC &&
+                    !dataset_complaintActionApproveQC.some(
+                      (mode: any) =>
+                        mode.lov1
+                          .split(",")
+                          .includes(String(el.complaint_status_label))
+                      // ) &&
+                      // splitNextStepName(el.approve_step
+                    )) ??
+                  false
+                }
                 //-----------------------------------------------------------------------
                 //-----------------------------------------------------------------------
 
                 // For Status [APPROVED][QC]
                 hiddenClose={
+                  (dataset_complaintActionClose &&
+                    !dataset_complaintActionClose.some((mode: any) =>
+                      mode.lov1
+                        .split(",")
+                        .includes(String(el.complaint_status_label))
+                    )) ??
+                  false
+                }
+                hiddenReadClose={
+                  (dataset_complaintActionClose &&
+                    !dataset_complaintActionClose.some((mode: any) =>
+                      mode.lov1
+                        .split(",")
+                        .includes(String(el.complaint_status_label))
+                    )) ??
+                  false
+                }
+                hiddenCloseHistory={
                   (dataset_complaintActionClose &&
                     !dataset_complaintActionClose.some((mode: any) =>
                       mode.lov1
@@ -1487,11 +1538,21 @@ export default function Complaint() {
               "🎆 🎆 🎆 🎆 complaint_status_label:",
               el.complaint_status_label
             );
+            console.log("🎆 🎆 🎆 🎆 setdataset_roleProfile :",dataset_roleProfile);
+            console.log("🎆 🎆 🎆 🎆 user[0] :",user[0]);
+            // console.log("🎆 🎆 🎆 🎆 el :",el);
+            
+            const tempRoleUser = dataset_roleProfile.filter((item: any) => item.lov1 === String(user[0].role_id))
+            const tempRolename = tempRoleUser[0].lov_code
+            console.log("🎆 🎆 🎆 🎆 tempRoleUser :",tempRoleUser);
+
             //console.log(el.step_label)
             el.complaint_status_label = (
               <BasicChips
                 label={`${el.complaint_status_label}`}
                 acknowledge={el.acknowledge_flag}
+                step={`${el.step_label}`}
+                role={tempRolename}
               ></BasicChips>
             );
             el.step_label = (

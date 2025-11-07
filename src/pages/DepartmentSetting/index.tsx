@@ -633,6 +633,12 @@ export default function DepartmentSetting() {
               hiddenExplain={true}
               hiddenClose={true}
 
+              // For hidden menu function READ from [Complaint Read] menu
+              hiddenReadExplain={true}
+              hiddenReadApproveSC={true}
+              hiddenReadApproveQC={true}
+              hiddenReadClose={true}
+              hiddenCloseHistory={true}
               />
             );
             el.ACTION = ACTION;
