@@ -2973,14 +2973,15 @@ export default function Complaint() {
     // 🧩 บันทึกข้อมูล Approve
     const response = await _POST(approvePayload.ExplaintApproveModel,"/ExplaintApprove/ExplaintApproveAdd");
 
+console.log(return_detail,'return_detail');
 
     if (response && response.status === "success") {
       // ✅ หลังบันทึก Approve สำเร็จ → อัปเดตสถานะ Complaint
-      const complaintEditPayload = {
+      const complaintReturnPayload = {
         ComplaintReturnModel: {
           id: dataelement?.id,
-          return_detail: return_detail,
-          return_name: return_name,
+          return_detail: approve_detail,
+          return_name: user[0]?.employee_username || "",
           return_company_id: return_company_id?.company_id? Number(return_company_id.company_id): user[0]?.itasset_company_id || "",
           return_department_id: return_department_id?.department_id? Number(return_department_id.department_id): user[0]?.itasset_department_id || "",
           return_position: user[0]?.employee_position || "",
@@ -2994,13 +2995,13 @@ export default function Complaint() {
         },
       };
 
-      const complaintFormData = new FormData();
-      complaintFormData.append(
-        "complaintPayloadJson",
-        JSON.stringify(complaintEditPayload)
-      );
+      // const complaintFormData = new FormData();
+      // complaintFormData.append(
+      //   "complaintPayloadJson",
+      //   JSON.stringify(complaintReturnPayload));
 
-      const updateRes = await _POST(complaintFormData,"/Complaint/ComplaintReturn");
+    //const response = await _POST(approvePayload.ExplaintApproveModel,"/ExplaintApprove/ExplaintApproveAdd");
+      const updateRes = await _POST(complaintReturnPayload,"/Complaint/ComplaintReturn");
 
       if (updateRes && updateRes.status === "success") {
         FullSweetalert({
