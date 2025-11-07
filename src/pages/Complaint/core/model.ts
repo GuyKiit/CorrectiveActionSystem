@@ -159,8 +159,8 @@ export type ListComplaintContextProps = {
     close_date?: dayjs.Dayjs
     return_detail?: string
     return_name?: string
-    return_company_id?: number
-    return_department_id?: number
+    return_company_id?: any
+    return_department_id?: any
     return_position?: string
     return_email?: string
     return_datetime?: dayjs.Dayjs

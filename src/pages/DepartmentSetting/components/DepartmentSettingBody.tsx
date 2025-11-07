@@ -426,7 +426,7 @@ export default function DepartmentSettingBody({
                 // Mapping Approve Steps
                 // ==========================
                 if (Array.isArray(dataelement?.deptApproveSetup)) {
-                    const approveRows = datastatus.filter((val: any) => val['lov_code'] === 'APPROVE');
+                    const approveRows = datastatus.filter((val: any) => val['lov_code'] === 'APPROVED');
 
                     const stepMap: Record<string, any[]> = {};
                     dataelement.deptApproveSetup.forEach((d: any) => {
@@ -505,7 +505,7 @@ export default function DepartmentSettingBody({
         if (!Array.isArray(datastatus)) return [];
         return datastatus.filter(
             (item: any) =>
-                item.lov_code === "APPROVE" &&
+                item.lov_code === "APPROVED" &&
                 item.lov7 === dept_domain?.domain_id
         );
     }, [datastatus, dept_domain]);
@@ -643,6 +643,7 @@ export default function DepartmentSettingBody({
                                 required="required"
                                 value={dept_email}
                                 labelName="อีเมล (Email)"
+                                placeholderlabel="กรุณากรอกอีเมล"
                                 onchange={(e) => {
                                     console.log("Email changed:", e?.dept_email)
                                     setdept_email(e)

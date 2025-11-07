@@ -1145,6 +1145,29 @@ export default function Complaint() {
   //   }
   // };
 
+  // Function - Get Complaints
+  const Dept_setup_By_Domain_dept_id_Get = async (data: any) => {
+    if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  Dept_setup_By_Domain_dept_id_Get");
+
+    setIsLoadingScreen(true)
+    const dataset = {
+      domain_dept_id: data.domain_dept_id,
+    };
+
+    try {
+      let response = await _POST(dataset, "/DeptSetup/DeptSetupByDomaindeptidGet");
+      if (response && response.status === "success" && response.data?.length > 0) {
+        setIsLoadingScreen(false);
+        setdataelement(response.data[0]);
+        return response.data[0]; // 👈 คืนค่าข้อมูลกลับไป (สำคัญ)
+      }
+      else {
+        setdataelement(null)
+      }
+    } catch (e) {
+      console.error("error", e);
+    }
+  };
   // =====================================================================================================
   // API FUNCTIONS - CRUD OPERATIONS
   // =====================================================================================================
@@ -1821,19 +1844,19 @@ export default function Complaint() {
     // เตรียม Models
     const complainttypeModel = dataComplaintTypeValue_Combobox
       ? compTypeUpdateCompId(
-          dataComplaintTypeValue_Combobox,
-          tempid,
-          compTypeOther
-        )
+        dataComplaintTypeValue_Combobox,
+        tempid,
+        compTypeOther
+      )
       : null;
 
     const complaintRsModel = dataComplaintRsValue_Combobox
       ? compRsUpdateCompId(
-          dataComplaintRsValue_Combobox,
-          tempid,
-          compRsOther,
-          clauseOther
-        )
+        dataComplaintRsValue_Combobox,
+        tempid,
+        compRsOther,
+        clauseOther
+      )
       : null;
 
     // สร้าง JSON payload
@@ -1844,10 +1867,10 @@ export default function Complaint() {
         cas_number: cas_number,
         date_of_detection: date_of_detection
           ? date_of_detection
-              .hour(dayjs().hour())
-              .minute(dayjs().minute())
-              .second(dayjs().second())
-              .format("YYYY-MM-DDTHH:mm:ss.SSS")
+            .hour(dayjs().hour())
+            .minute(dayjs().minute())
+            .second(dayjs().second())
+            .format("YYYY-MM-DDTHH:mm:ss.SSS")
           : null,
         request_name: user[0]?.employee_username || "",
         request_company_id: request_company_id?.company_id,
@@ -1866,10 +1889,10 @@ export default function Complaint() {
         priority_level: datapriorityValue_Combobox,
         respond_date_within: respond_date_within
           ? respond_date_within
-              .hour(23)
-              .minute(59)
-              .second(59)
-              .format("YYYY-MM-DDTHH:mm:ss.SSS")
+            .hour(23)
+            .minute(59)
+            .second(59)
+            .format("YYYY-MM-DDTHH:mm:ss.SSS")
           : null,
         lot_no: lot_no,
         complaint_status_id: tempComplaintStatus[0]?.id,
@@ -2161,19 +2184,19 @@ export default function Complaint() {
     // เตรียม Models
     const complainttypeModel = dataComplaintTypeValue_Combobox
       ? compTypeUpdateCompId(
-          dataComplaintTypeValue_Combobox,
-          tempid,
-          compTypeOther
-        )
+        dataComplaintTypeValue_Combobox,
+        tempid,
+        compTypeOther
+      )
       : null;
 
     const complaintRsModel = dataComplaintRsValue_Combobox
       ? compRsUpdateCompId(
-          dataComplaintRsValue_Combobox,
-          tempid,
-          compRsOther,
-          clauseOther
-        )
+        dataComplaintRsValue_Combobox,
+        tempid,
+        compRsOther,
+        clauseOther
+      )
       : null;
 
     console.log("💕#### tempvalue 1 id", tempComplaintStatus[1]?.id);
@@ -2185,10 +2208,10 @@ export default function Complaint() {
         cas_number: cas_number,
         date_of_detection: date_of_detection
           ? date_of_detection
-              .hour(dayjs().hour())
-              .minute(dayjs().minute())
-              .second(dayjs().second())
-              .format("YYYY-MM-DDTHH:mm:ss.SSS")
+            .hour(dayjs().hour())
+            .minute(dayjs().minute())
+            .second(dayjs().second())
+            .format("YYYY-MM-DDTHH:mm:ss.SSS")
           : null,
 
         // Request Metadata
@@ -2213,10 +2236,10 @@ export default function Complaint() {
         priority_level: datapriorityValue_Combobox,
         respond_date_within: respond_date_within
           ? respond_date_within
-              .hour(dayjs().hour())
-              .minute(dayjs().minute())
-              .second(dayjs().second())
-              .format("YYYY-MM-DDTHH:mm:ss.SSS")
+            .hour(dayjs().hour())
+            .minute(dayjs().minute())
+            .second(dayjs().second())
+            .format("YYYY-MM-DDTHH:mm:ss.SSS")
           : null,
         lot_no: lot_no,
         complaint_status_id: tempComplaintStatus[1]?.id,
@@ -2335,10 +2358,7 @@ export default function Complaint() {
       "📡 Sending respondent_domain_id to LovAll_Get:",
       respondent_domain_id?.domain_id
     );
-    const tempComplaintStatus = await LovAll_Get(
-      "complaint_status",
-      dataelement?.respondent_domain_id
-    );
+    const tempComplaintStatus = await LovAll_Get("complaint_status",dataelement?.respondent_domain_id);
     console.log("💕 tempvalue 0 id", tempComplaintStatus[0]?.id);
     console.log("💕 tempvalue 1 id", tempComplaintStatus[1]?.id);
     console.log("💕 tempvalue 2 id", tempComplaintStatus[2]?.id);
@@ -2352,19 +2372,19 @@ export default function Complaint() {
       // เตรียม Models
       const complainttypeModel = dataComplaintTypeValue_Combobox
         ? compTypeUpdateCompId(
-            dataComplaintTypeValue_Combobox,
-            tempid,
-            compTypeOther
-          )
+          dataComplaintTypeValue_Combobox,
+          tempid,
+          compTypeOther
+        )
         : null;
 
       const complaintRsModel = dataComplaintRsValue_Combobox
         ? compRsUpdateCompId(
-            dataComplaintRsValue_Combobox,
-            tempid,
-            compRsOther,
-            clauseOther
-          )
+          dataComplaintRsValue_Combobox,
+          tempid,
+          compRsOther,
+          clauseOther
+        )
         : null;
 
       const complaintPayload = {
@@ -2373,10 +2393,10 @@ export default function Complaint() {
           mode: mode,
           date_of_detection: date_of_detection
             ? date_of_detection
-                .hour(23)
-                .minute(59)
-                .second(59)
-                .format("YYYY-MM-DDTHH:mm:ss.SSS")
+              .hour(23)
+              .minute(59)
+              .second(59)
+              .format("YYYY-MM-DDTHH:mm:ss.SSS")
             : null,
           respondent_domain_id: respondent_domain_id?.domain_id,
           respondent_department_id: respondent_department_id?.department_id,
@@ -2388,10 +2408,10 @@ export default function Complaint() {
             datapriorityValue_Combobox || dataelement?.priority_level,
           respond_date_within: respond_date_within
             ? respond_date_within
-                .hour(23)
-                .minute(59)
-                .second(59)
-                .format("YYYY-MM-DDTHH:mm:ss.SSS")
+              .hour(23)
+              .minute(59)
+              .second(59)
+              .format("YYYY-MM-DDTHH:mm:ss.SSS")
             : null,
           complaint_status_id: tempComplaintStatus[1]?.id,
           complaintType: complainttypeModel,
@@ -2469,19 +2489,19 @@ export default function Complaint() {
       // เตรียม Models
       const complainttypeModel = dataComplaintTypeValue_Combobox
         ? compTypeUpdateCompId(
-            dataComplaintTypeValue_Combobox,
-            tempid,
-            compTypeOther
-          )
+          dataComplaintTypeValue_Combobox,
+          tempid,
+          compTypeOther
+        )
         : null;
 
       const complaintRsModel = dataComplaintRsValue_Combobox
         ? compRsUpdateCompId(
-            dataComplaintRsValue_Combobox,
-            tempid,
-            compRsOther,
-            clauseOther
-          )
+          dataComplaintRsValue_Combobox,
+          tempid,
+          compRsOther,
+          clauseOther
+        )
         : null;
 
       // สร้าง JSON payload
@@ -2491,10 +2511,10 @@ export default function Complaint() {
           mode: mode,
           date_of_detection: date_of_detection
             ? date_of_detection
-                .hour(23)
-                .minute(59)
-                .second(59)
-                .format("YYYY-MM-DDTHH:mm:ss.SSS")
+              .hour(23)
+              .minute(59)
+              .second(59)
+              .format("YYYY-MM-DDTHH:mm:ss.SSS")
             : null,
           respondent_domain_id: respondent_domain_id?.domain_id,
           respondent_department_id: respondent_department_id?.department_id,
@@ -2506,10 +2526,10 @@ export default function Complaint() {
             datapriorityValue_Combobox || dataelement?.priority_level,
           respond_date_within: respond_date_within
             ? respond_date_within
-                .hour(23)
-                .minute(59)
-                .second(59)
-                .format("YYYY-MM-DDTHH:mm:ss.SSS")
+              .hour(23)
+              .minute(59)
+              .second(59)
+              .format("YYYY-MM-DDTHH:mm:ss.SSS")
             : null,
           complaint_status_id: tempComplaintStatus[0]?.id,
           complaintType: complainttypeModel,
@@ -2646,85 +2666,6 @@ export default function Complaint() {
     } else if (mode == "APPROVEQC") {
     } else if (mode == "CLOSE") {
     }
-
-    // สร้าง JSON payload
-
-    // const complaintPayload = {
-
-    //   complaintModel: {
-    //     id: dataelement?.id,
-    //     cas_number: cas_number,
-    //     report_type: dataReportTypeValue?.id,
-    //     date_of_detection: date_of_detection
-    //       ? date_of_detection
-    //         .hour(dayjs().hour())
-    //         .minute(dayjs().minute())
-    //         .second(dayjs().second())
-    //         .format("YYYY-MM-DDTHH:mm:ss")
-    //       : null,
-
-    //     // Request Metadata
-    //     request_name: dataelement?.request_name,
-    //     request_company_id: dataelement?.request_company_id,
-    //     request_domain_id: dataelement?.request_domain_id,
-    //     request_department_id: dataelement?.request_department_id,
-    //     request_position: dataelement?.request_position,
-    //     request_email: dataelement?.request_email,
-    //     request_phone: dataelement?.request_phone,
-
-    //     // Respondent Metadata
-    //     respondent_company_id: dataelement?.respondent_company_id,
-    //     respondent_domain_id: dataelement?.respondent_domain_id,
-    //     respondent_department_id: respondent_department_id?.department_id,
-    //     respondent_email: respondent_email,
-    //     respondent_other_name: respondent_other_name,
-    //     respondent_other_email: respondent_other_email,
-
-    //     product_name: product_name,
-    //     detail: detail,
-    //     priority_level: datapriority?.id ?? dataelement?.priority_level,
-    //     // priority_level: datapriorityValue_Combobox || dataelement?.priority_level,
-    //     respond_date_within: respond_date_within
-    //       ? respond_date_within
-    //         .hour(dayjs().hour())
-    //         .minute(dayjs().minute())
-    //         .second(dayjs().second())
-    //         .format("YYYY-MM-DDTHH:mm:ss")
-    //       : null,
-    //     lot_no: lot_no,
-    //     complaint_status_id: tempComplaintStatus[0] + "_CS_SUBMIT",
-
-    //     // เพิ่ม Complaint Type + Complaint RS
-    //     complaintType: complainttypeModel,
-    //     complaintRs: complaintRsModel,
-
-    //     // เพิ่ม complaintFile
-    //     complaintFile:
-    //       complaintFiles?.map((item: any, index: number) => {
-    //         return {
-    //           id: item.id || undefined,
-    //           cf_type: "Complaint",
-    //           complaint_id: dataelement?.id,
-    //           complaint_at_id: item.attachmentType,
-    //           other: item.attachmentType === "TRR_AT_4" ? (item.otherText?.trim() || null) : null,
-    //           cf_file_seq: (index + 1).toString(),
-    //           user_file_name: item.file.name,
-    //           file_name: item.file.name,
-    //           file_type: item.file.type,
-    //           file_size: item.file.size.toString(),
-    //           record_status: true,
-    //           create_by: user[0]?.employee_username || "",
-    //           create_datetime: new Date().toISOString(),
-    //           remark: item.attachmentType === "TRR_AT_4" ? (item.otherText?.trim() || null) : null,
-    //         };
-    //       },
-    //       ) || []
-    //   },
-
-    //   CurrentAccessModel: {
-    //     user_id: user[0]?.employee_username || '',
-    //   }
-    // };
   };
 
   // Function - Delete Complaint
@@ -2859,15 +2800,8 @@ export default function Complaint() {
         " [Calling Function]  :  ComplaintReturn"
       );
 
-    // if (!validateBeforeEdit()) {
-    //   return;
-    // }
 
-    // const tempComplaintStatus = splitByDot(user[0]?.employee_domain);
-    console.log("📡 Sending respondent_domain_id to LovAll_Get:",respondent_domain_id);
-    console.log("📡 Sending respondent_domain_id to LovAll_Get:",respondent_domain_id?.domain_id);
-
-    const tempComplaintStatus = await LovAll_Get("complaint_status",respondent_domain_id);
+    const tempComplaintStatus = await LovAll_Get("complaint_status",dataelement?.respondent_domain_id);
     console.log("💕 tempvalue 0 id", tempComplaintStatus[0]?.id);
     console.log("💕 tempvalue 1 id", tempComplaintStatus[1]?.id);
     console.log("💕 tempvalue 2 id", tempComplaintStatus[2]?.id);
@@ -2916,10 +2850,80 @@ export default function Complaint() {
         handleClose();
         ComplaintGet();
       }
-    } else if (mode == "EXPLAIN") {
-      const complaintReturnPayload = {
-        complaintReturnModel: {
+    } 
+    else if (mode == "EXPLAIN") {
+      const tempid = uuidv4();
+
+  // 🧩 โหลดค่า Complaint Status ทั้งหมด (ของ respondent domain)
+  const tempComplaintStatus = await LovAll_Get("complaint_status",dataelement?.respondent_domain_id);
+  console.log("📡 Current tempComplaintStatus:", tempComplaintStatus);
+
+  // 🧩 Helper: หา explain_id ที่แท้จริงจาก dataelement
+  const resolveExplainId = () => {
+    return currentExplainForApproval?.id;
+  };
+
+  const explainRootId = resolveExplainId();
+
+  // 🧩 หาลำดับ approve_seq ล่าสุด แล้วเพิ่ม +1
+  const currentApproveList = currentExplainForApproval?.approveList || [];
+  const maxApproveSeq =
+    currentApproveList.length > 0
+      ? Math.max(...currentApproveList.map((item: any) => parseInt(item.approve_seq, 10) || 0)): 0;
+  const nextSeq = maxApproveSeq + 1;
+
+  // 🧩 สร้าง payload สำหรับ Approve
+  const approvePayload = {
+    ExplaintApproveModel: {
+      id: tempid,
+      explain_id: explainRootId,
+      approve_seq: nextSeq,
+      complaint_status_id: tempComplaintStatus[3]?.id,
+      approve_status: approveSelectionCode,
+      approve_detail: approve_detail || null,
+      approve_note: approve_note || null,
+      approve_name: user[0]?.employee_username || "",
+      approve_company_id: approve_company_id?.company_id
+        ? Number(approve_company_id.company_id)
+        : user[0]?.itasset_company_id || "",
+      approve_department_id: approve_department_id?.department_id
+        ? Number(approve_department_id.department_id)
+        : user[0]?.itasset_department_id || "",
+      approve_position: user[0]?.employee_position || "",
+      approve_email: user[0]?.employee_email || "",
+      approve_date: approve_date
+        ? approve_date
+            .hour(dayjs().hour())
+            .minute(dayjs().minute())
+            .second(dayjs().second())
+            .format("YYYY-MM-DDTHH:mm:ss")
+        : new Date().toISOString(),
+      create_by: user[0]?.employee_username || "",
+      domain_id: user[0]?.employee_domain || "",
+    },
+    CurrentAccessModel: {
+      user_id: user[0]?.employee_username || "",
+    },
+  };
+
+  setIsLoadingScreen(true);
+
+  try {
+    // 🧩 บันทึกข้อมูล Approve
+    const response = await _POST(approvePayload.ExplaintApproveModel,"/ExplaintApprove/ExplaintApproveAdd");
+
+
+    if (response && response.status === "success") {
+      // ✅ หลังบันทึก Approve สำเร็จ → อัปเดตสถานะ Complaint
+      const complaintEditPayload = {
+        ComplaintReturnModel: {
           id: dataelement?.id,
+          return_detail: return_detail,
+          return_name: return_name,
+          return_company_id: return_company_id?.company_id? Number(return_company_id.company_id): user[0]?.itasset_company_id || "",
+          return_department_id: return_department_id?.department_id? Number(return_department_id.department_id): user[0]?.itasset_department_id || "",
+          return_position: user[0]?.employee_position || "",
+          return_email: user[0]?.employee_email || "",
           return_from_status_id: tempComplaintStatus[2]?.id,
           complaint_status_id: tempComplaintStatus[1]?.id,
           mode: mode,
@@ -2929,33 +2933,46 @@ export default function Complaint() {
         },
       };
 
-      try {
-        const response = await _POST(
-          complaintReturnPayload,
-          "/Complaint/ComplaintReturn"
-        );
-        if (response && response.status === "success") {
-          FullSweetalert({
-            title: "Success",
-            text: `บันทึกข้อมูลสำเร็จ`,
-            icon: "success",
-          });
-          console.log("✅ Complaint Add successfully:", response);
-        } else {
-          FullSweetalert({
-            title: "Failed",
-            text: `บันทึกไม่ข้อมูลสำเร็จ`,
-            icon: "error",
-          });
-          console.log("⚠️ Add failed:", response);
-        }
-      } catch (error) {
-        console.error("Upload failed:", error);
-      } finally {
-        setIsLoadingScreen(false);
-        handleClose();
-        ComplaintGet();
+      const complaintFormData = new FormData();
+      complaintFormData.append(
+        "complaintPayloadJson",
+        JSON.stringify(complaintEditPayload)
+      );
+
+      const updateRes = await _POST(complaintFormData,"/Complaint/ComplaintReturn");
+
+      if (updateRes && updateRes.status === "success") {
+        FullSweetalert({
+          title: "Success",
+          text: `บันทึกการอนุมัติและอัปเดตสถานะสำเร็จ`,
+          icon: "success",
+        });
+      } else {
+        FullSweetalert({
+          title: "Warning",
+          text: `บันทึกการอนุมัติสำเร็จ แต่ไม่สามารถอัปเดตสถานะได้`,
+          icon: "warning",
+        });
       }
+    } else {
+      FullSweetalert({
+        title: "Failed",
+        text: `บันทึกการอนุมัติไม่สำเร็จ`,
+        icon: "error",
+      });
+    }
+  } catch (error) {
+    console.error("Approve Upload failed:", error);
+    FullSweetalert({
+      title: "Error",
+      text: `เกิดข้อผิดพลาดระหว่างการบันทึกการอนุมัติ`,
+      icon: "error",
+    });
+  } finally {
+    setIsLoadingScreen(false);
+    handleClose();
+    ComplaintGet();
+  }
     }
   };
 
@@ -3015,10 +3032,10 @@ export default function Complaint() {
     const maxExplainSeq =
       currentExplainList && currentExplainList.length > 0
         ? Math.max(
-            ...currentExplainList.map(
-              (item: any) => parseInt(item.explain_seq) || 0
-            )
+          ...currentExplainList.map(
+            (item: any) => parseInt(item.explain_seq) || 0
           )
+        )
         : 0;
     const nextSeq = maxExplainSeq + 1;
 
@@ -3033,10 +3050,10 @@ export default function Complaint() {
         preventive_action_plan: preventive_action_plan || null,
         follow_up_date: follow_up_date
           ? follow_up_date
-              .hour(23)
-              .minute(59)
-              .second(59)
-              .format("YYYY-MM-DDTHH:mm:ss.SSS")
+            .hour(23)
+            .minute(59)
+            .second(59)
+            .format("YYYY-MM-DDTHH:mm:ss.SSS")
           : null,
         responsible_name: user[0]?.employee_username || "",
         responsible_company_id: responsible_company_id?.company_id
@@ -3049,10 +3066,10 @@ export default function Complaint() {
         responsible_email: user[0]?.employee_email || "",
         responsible_date: responsible_date
           ? responsible_date
-              .hour(23)
-              .minute(59)
-              .second(59)
-              .format("YYYY-MM-DDTHH:mm:ss.SSS")
+            .hour(23)
+            .minute(59)
+            .second(59)
+            .format("YYYY-MM-DDTHH:mm:ss.SSS")
           : null,
         cf_type: "Explain",
         create_by: user[0]?.employee_username || "",
@@ -3274,65 +3291,11 @@ export default function Complaint() {
     handleClose();
     ComplaintGet();
   }
-  };
+};
 
-//  const ApproveScReturn = async (mode: string) => {
-//     if (isCallFuncLogOn)
-//       console.log("🕑 ",dayjs().format("HH:mm:ss.SSS")," [Calling Function]  :  ApproveScReturn");
 
-//     const tempComplaintStatus = await LovAll_Get("complaint_status",respondent_domain_id);
 
-//     const formData = new FormData();
-//     if (mode == "EXPLAIN") {
-//       const complaintReturnPayload = {
-//         complaintReturnModel: {
-//           id: dataelement?.id,
-//           return_from_status_id: tempComplaintStatus[2]?.id,
-//           complaint_status_id: tempComplaintStatus[1]?.id,
-//           mode: mode,
-//         },
-
-//         CurrentAccessModel: {
-//           user_id: user[0]?.employee_username || "",
-//         },
-//       };
-
-//       try {
-//         const response = await _POST(
-//           complaintReturnPayload,
-//           "/Complaint/ComplaintReturn"
-//         );
-//         if (response && response.status === "success") {
-//           FullSweetalert({
-//             title: "Success",
-//             text: `บันทึกข้อมูลสำเร็จ`,
-//             icon: "success",
-//           });
-//           console.log("✅ Complaint Add successfully:", response);
-//         } else {
-//           FullSweetalert({
-//             title: "Failed",
-//             text: `บันทึกไม่ข้อมูลสำเร็จ`,
-//             icon: "error",
-//           });
-//           console.log("⚠️ Add failed:", response);
-//         }
-//       } catch (error) {
-//         console.error("Upload failed:", error);
-//       } finally {
-//         setIsLoadingScreen(false);
-//         handleClose();
-//         ComplaintGet();
-//       }
-//     } else if (mode == "EXPLAIN") {
-//     }
-//   };
-
-  // =====================================================================================================
-  // EVENT HANDLERS (from index.tsx)
-  // =====================================================================================================
-
-  // Dialog Handlers
+  
   const handleOnclickMenuSync = () => {
     if (isCallFuncLogOn)
       console.log(
@@ -4269,7 +4232,7 @@ export default function Complaint() {
             handleOpenAdd={() => handleOnclickExplainAdd(dataelement)}
             handleOnclickExplainView={handleOnclickExplainView}
             handleOnclickExplainApproveSc={handleOnclickExplainApproveSc}
-            // dataelement={dataelement}
+          // dataelement={dataelement}
           />
         }
       />
