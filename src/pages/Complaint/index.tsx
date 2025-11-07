@@ -2882,23 +2882,11 @@ export default function Complaint() {
         " [Calling Function]  :  ComplaintReturn"
       );
 
-    // if (!validateBeforeEdit()) {
-    //   return;
-    // }
-
     // const tempComplaintStatus = splitByDot(user[0]?.employee_domain);
-    console.log(
-      "📡 Sending respondent_domain_id to LovAll_Get:",
-      respondent_domain_id
-    );
-    console.log(
-      "📡 Sending respondent_domain_id to LovAll_Get:",
-      respondent_domain_id?.domain_id
-    );
-    const tempComplaintStatus = await LovAll_Get(
-      "complaint_status",
-      respondent_domain_id
-    );
+    console.log("📡 Sending respondent_domain_id to LovAll_Get:",respondent_domain_id);
+    console.log("📡 Sending respondent_domain_id to LovAll_Get:",respondent_domain_id?.domain_id);
+
+    const tempComplaintStatus = await LovAll_Get("complaint_status",respondent_domain_id);
     console.log("💕 tempvalue 0 id", tempComplaintStatus[0]?.id);
     console.log("💕 tempvalue 1 id", tempComplaintStatus[1]?.id);
     console.log("💕 tempvalue 2 id", tempComplaintStatus[2]?.id);
@@ -2947,160 +2935,145 @@ export default function Complaint() {
         handleClose();
         ComplaintGet();
       }
-    } else if (mode == "EXPLAIN") {
-      const tempid = uuidv4();
+    } 
+    // else if (mode == "EXPLAIN") {
+    //   const tempid = uuidv4();
 
-      //Function Split Domain (For using with Complaint Status)
-      console.log(
-        "📡 Sending respondent_domain_id to LovAll_Get:",
-        respondent_domain_id
-      );
-      console.log(
-        "📡 Sending respondent_domain_id to LovAll_Get:",
-        respondent_domain_id?.domain_id
-      );
-      const tempComplaintStatus = await LovAll_Get(
-        "complaint_status",
-        dataelement?.respondent_domain_id
-      );
-      console.log("💕 tempvalue 0 id", tempComplaintStatus[0]?.id);
-      console.log("💕 tempvalue 1 id", tempComplaintStatus[1]?.id);
-      console.log("💕 tempvalue 2 id", tempComplaintStatus[2]?.id);
-      console.log("💕 tempvalue 3 id", tempComplaintStatus[3]?.id);
-      console.log("💕 tempvalue 4 id", tempComplaintStatus[4]?.id);
+    //   //Function Split Domain (For using with Complaint Status)
+    //   console.log(
+    //     "📡 Sending respondent_domain_id to LovAll_Get:",
+    //     respondent_domain_id
+    //   );
+    //   console.log(
+    //     "📡 Sending respondent_domain_id to LovAll_Get:",
+    //     respondent_domain_id?.domain_id
+    //   );
+    //   const tempComplaintStatus = await LovAll_Get(
+    //     "complaint_status",
+    //     dataelement?.respondent_domain_id
+    //   );
+    //   console.log("💕 tempvalue 0 id", tempComplaintStatus[0]?.id);
+    //   console.log("💕 tempvalue 1 id", tempComplaintStatus[1]?.id);
+    //   console.log("💕 tempvalue 2 id", tempComplaintStatus[2]?.id);
+    //   console.log("💕 tempvalue 3 id", tempComplaintStatus[3]?.id);
+    //   console.log("💕 tempvalue 4 id", tempComplaintStatus[4]?.id);
 
-      // เตรียม Models
-      const complainttypeModel = dataComplaintTypeValue_Combobox
-        ? compTypeUpdateCompId(
-          dataComplaintTypeValue_Combobox,
-          tempid,
-          compTypeOther
-        )
-        : null;
+    //   // เตรียม Models
+    //   const complainttypeModel = dataComplaintTypeValue_Combobox
+    //     ? compTypeUpdateCompId(
+    //       dataComplaintTypeValue_Combobox,
+    //       tempid,
+    //       compTypeOther
+    //     )
+    //     : null;
 
-      const complaintRsModel = dataComplaintRsValue_Combobox
-        ? compRsUpdateCompId(
-          dataComplaintRsValue_Combobox,
-          tempid,
-          compRsOther,
-          clauseOther
-        )
-        : null;
+    //   const complaintRsModel = dataComplaintRsValue_Combobox
+    //     ? compRsUpdateCompId(
+    //       dataComplaintRsValue_Combobox,
+    //       tempid,
+    //       compRsOther,
+    //       clauseOther
+    //     )
+    //     : null;
 
-      // สร้าง JSON payload
-      const complaintPayload = {
-        complaintModel: {
-          id: dataelement?.id,
-          mode: mode,
-          date_of_detection: date_of_detection
-            ? date_of_detection
-              .hour(23)
-              .minute(59)
-              .second(59)
-              .format("YYYY-MM-DDTHH:mm:ss.SSS")
-            : null,
-          respondent_domain_id: respondent_domain_id?.domain_id,
-          respondent_department_id: respondent_department_id?.department_id,
-          product_name: product_name,
-          lot_no: lot_no,
-          respondent_email: respondent_email,
-          detail: detail,
-          priority_level:
-            datapriorityValue_Combobox || dataelement?.priority_level,
-          respond_date_within: respond_date_within
-            ? respond_date_within
-              .hour(23)
-              .minute(59)
-              .second(59)
-              .format("YYYY-MM-DDTHH:mm:ss.SSS")
-            : null,
-          complaint_status_id: tempComplaintStatus[0]?.id,
-          complaintType: complainttypeModel,
-          complaintRs: complaintRsModel,
-          complaintFile:
-            complaintFiles?.map((item: any, index: number) => {
-              return {
-                id: item.id || undefined,
-                cf_type: "Complaint",
-                complaint_id: dataelement?.id,
-                complaint_at_id: item.attachmentType,
-                other:
-                  item.attachmentType === "TRR_AT_4"
-                    ? item.otherText?.trim() || null
-                    : null,
-                cf_file_seq: (index + 1).toString(),
-                user_file_name: item.file.name,
-                file_name: item.file.name,
-                file_type: item.file.type,
-                file_size: item.file.size.toString(),
-                record_status: true,
-                create_by: user[0]?.employee_username || "",
-                create_datetime: new Date().toISOString(),
-                remark:
-                  item.attachmentType === "TRR_AT_4"
-                    ? item.otherText?.trim() || null
-                    : null,
-              };
-            }) || [],
-        },
+    //   // สร้าง JSON payload
+    //   const complaintPayload = {
+    //     complaintModel: {
+    //       id: dataelement?.id,
+    //       return_from_status_id: tempComplaintStatus[2]?.id,
+    //       complaint_status_id: tempComplaintStatus[1]?.id,
+    //       mode: mode,
+    //       date_of_detection: date_of_detection
+    //         ? date_of_detection
+    //           .hour(23)
+    //           .minute(59)
+    //           .second(59)
+    //           .format("YYYY-MM-DDTHH:mm:ss.SSS")
+    //         : null,
+    //       respondent_domain_id: respondent_domain_id?.domain_id,
+    //       respondent_department_id: respondent_department_id?.department_id,
+    //       product_name: product_name,
+    //       lot_no: lot_no,
+    //       respondent_email: respondent_email,
+    //       detail: detail,
+    //       priority_level:
+    //         datapriorityValue_Combobox || dataelement?.priority_level,
+    //       respond_date_within: respond_date_within
+    //         ? respond_date_within
+    //           .hour(23)
+    //           .minute(59)
+    //           .second(59)
+    //           .format("YYYY-MM-DDTHH:mm:ss.SSS")
+    //         : null,
+    //       // complaint_status_id: tempComplaintStatus[0]?.id,
+    //       complaintType: complainttypeModel,
+    //       complaintRs: complaintRsModel,
+    //       complaintFile:
+    //         complaintFiles?.map((item: any, index: number) => {
+    //           return {
+    //             id: item.id || undefined,
+    //             cf_type: "Complaint",
+    //             complaint_id: dataelement?.id,
+    //             complaint_at_id: item.attachmentType,
+    //             other:
+    //               item.attachmentType === "TRR_AT_4"
+    //                 ? item.otherText?.trim() || null
+    //                 : null,
+    //             cf_file_seq: (index + 1).toString(),
+    //             user_file_name: item.file.name,
+    //             file_name: item.file.name,
+    //             file_type: item.file.type,
+    //             file_size: item.file.size.toString(),
+    //             record_status: true,
+    //             create_by: user[0]?.employee_username || "",
+    //             create_datetime: new Date().toISOString(),
+    //             remark:
+    //               item.attachmentType === "TRR_AT_4"
+    //                 ? item.otherText?.trim() || null
+    //                 : null,
+    //           };
+    //         }) || [],
+    //     },
 
-        CurrentAccessModel: {
-          user_id: user[0]?.employee_username || "",
-        },
-      };
+    //     CurrentAccessModel: {
+    //       user_id: user[0]?.employee_username || "",
+    //     },
+    //   };
 
-      formData.append("complaintPayloadJson", JSON.stringify(complaintPayload));
-
-      // แนบไฟล์จริง
-      if (complaintFiles && complaintFiles.length > 0) {
-        complaintFiles.forEach((fileItem: any) => {
-          formData.append("complaintFiles", fileItem.file);
-        });
-      }
-
-      //console.log("📤 complaintPayloadSavedraft:", complaintPayload);
-      setIsLoadingScreen(true);
-
-      try {
-        const response = await _POST_FORMDATA(
-          formData,
-          "/Complaint/ComplaintEdit"
-        );
-        if (response && response.status === "success") {
-          FullSweetalert({
-            title: "Success",
-            text: `บันทึกข้อมูลสำเร็จ`,
-            icon: "success",
-          });
-          //console.log("✅ Complaint Add successfully:", response);
-        } else {
-          FullSweetalert({
-            title: "Failed",
-            text: `บันทึกไม่ข้อมูลสำเร็จ`,
-            icon: "error",
-          });
-          //console.log("⚠️ Add failed:", response);
-        }
-      } catch (error) {
-        console.error("Upload failed:", error);
-      } finally {
-        setIsLoadingScreen(false);
-        handleClose();
-
-        // Complaint_Get();
-        ComplaintGet();
-      }
-    }
+    //   try {
+    //     const response = await _POST(
+    //       complaintReturnPayload,
+    //       "/Complaint/ComplaintReturn"
+    //     );
+    //     if (response && response.status === "success") {
+    //       FullSweetalert({
+    //         title: "Success",
+    //         text: `บันทึกข้อมูลสำเร็จ`,
+    //         icon: "success",
+    //       });
+    //       console.log("✅ Complaint Add successfully:", response);
+    //     } else {
+    //       FullSweetalert({
+    //         title: "Failed",
+    //         text: `บันทึกไม่ข้อมูลสำเร็จ`,
+    //         icon: "error",
+    //       });
+    //       console.log("⚠️ Add failed:", response);
+    //     }
+    //   } catch (error) {
+    //     console.error("Upload failed:", error);
+    //   } finally {
+    //     setIsLoadingScreen(false);
+    //     handleClose();
+    //     ComplaintGet();
+    //   }
+    // }
   };
 
   // CREATE - Add Complaint
   const ExplainAdd = async () => {
     if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  ExplainAdd"
-      );
+      console.log("🕑 ",dayjs().format("HH:mm:ss.SSS")," [Calling Function]  :  ExplainAdd");
 
     const tempid = uuidv4();
     console.log(
@@ -3111,13 +3084,10 @@ export default function Complaint() {
       "📡 Sending respondent_domain_id to LovAll_Get:",
       dataelement?.respondent_domain_id?.domain_id
     );
-    const tempComplaintStatus = await LovAll_Get(
-      "complaint_status",
-      dataelement?.respondent_domain_id
-    );
-    console.log("🧩 tempComplaintStatus raw:", tempComplaintStatus);
-    console.log("💕 tempvalue 1 id", tempComplaintStatus[1]?.id);
-    console.log("💕 tempvalue 2 id", tempComplaintStatus[2]?.id);
+    const tempComplaintStatus = await LovAll_Get("complaint_status",dataelement?.respondent_domain_id);
+    // console.log("🧩 tempComplaintStatus raw:", tempComplaintStatus);
+    // console.log("💕 tempvalue 1 id", tempComplaintStatus[1]?.id);
+    // console.log("💕 tempvalue 2 id", tempComplaintStatus[2]?.id);
 
     const resolveComplaintId = () => {
       const el: any = dataelement || {};
@@ -3295,115 +3265,179 @@ export default function Complaint() {
   };
 
   const ApproveScAdd = async () => {
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  ExplainAdd"
-      );
+  if (isCallFuncLogOn)
+    console.log("🕑 ",dayjs().format("HH:mm:ss.SSS")," [Calling Function]  :  ApproveScAdd");
 
-    const tempid = uuidv4();
+  const tempid = uuidv4();
 
-    //Function Split Domain (For using with Complaint Status)
-    const tempComplaintStatus = await LovAll_Get("complaint_status");
-    console.log("Current tempComplaintStatus:", tempComplaintStatus);
+  // 🧩 โหลดค่า Complaint Status ทั้งหมด (ของ respondent domain)
+  const tempComplaintStatus = await LovAll_Get("complaint_status",dataelement?.respondent_domain_id);
+  console.log("📡 Current tempComplaintStatus:", tempComplaintStatus);
 
-    // Helper: resolve the real complaint id from current context (complaint or explain)
-    const resolveExplainId = () => {
-      const el: any = dataelement || {};
-      // prefer explicit complaint_id if available (object or primitive)
-      if (el.explain_id) {
-        if (typeof el.explain_id === "object")
-          return el.explain_id.id ?? el.explain_id;
-        return el.explain_id;
-      }
-      // sometimes nested as complaint.id
-      if (el.explain && el.explain.id) return el.explain.id;
-      // fallback to current id (when dataelement is the complaint row)
-      return el.id;
-    };
+  // 🧩 Helper: หา explain_id ที่แท้จริงจาก dataelement
+  const resolveExplainId = () => {
+    return currentExplainForApproval?.id;
+  };
 
-    const explainRootId = resolveExplainId();
+  const explainRootId = resolveExplainId();
 
-    // สร้าง JSON payload สำหรับ ApproveSc
-    // ใช้ข้อมูล approveList จาก dataelement ที่มีอยู่แล้ว
-    const currentApproveList = currentExplainForApproval?.approveList || [];
-    const maxApproveSeq =
-      currentApproveList.length > 0
-        ? Math.max(
-          ...currentApproveList.map(
-            (item: any) => parseInt(item.approve_seq, 10) || 0
-          )
-        )
-        : 0;
-    const nextSeq = maxApproveSeq + 1;
+  // 🧩 หาลำดับ approve_seq ล่าสุด แล้วเพิ่ม +1
+  const currentApproveList = currentExplainForApproval?.approveList || [];
+  const maxApproveSeq =
+    currentApproveList.length > 0
+      ? Math.max(...currentApproveList.map((item: any) => parseInt(item.approve_seq, 10) || 0)): 0;
+  const nextSeq = maxApproveSeq + 1;
 
-    const approvePayload = {
-      ExplaintApproveModel: {
-        id: tempid,
-        explain_id: currentExplainForApproval?.id,
-        approve_seq: nextSeq,
-        complaint_status_id: tempComplaintStatus[3]?.id,
-        approve_status: approveSelectionCode,
-        approve_detail: approve_detail || null,
-        approve_note: approve_note || null,
-        approve_name: user[0]?.employee_username || "",
-        approve_company_id: approve_company_id?.company_id
-          ? Number(approve_company_id.company_id)
-          : user[0]?.itasset_company_id || "",
-        approve_department_id: approve_department_id?.department_id
-          ? Number(approve_department_id.department_id)
-          : user[0]?.itasset_department_id || "",
-        approve_position: user[0]?.employee_position || "",
-        approve_email: user[0]?.employee_email || "",
-        approve_date: approve_date
-          ? approve_date
+  // 🧩 สร้าง payload สำหรับ Approve
+  const approvePayload = {
+    ExplaintApproveModel: {
+      id: tempid,
+      explain_id: explainRootId,
+      approve_seq: nextSeq,
+      complaint_status_id: tempComplaintStatus[3]?.id,
+      approve_status: approveSelectionCode,
+      approve_detail: approve_detail || null,
+      approve_note: approve_note || null,
+      approve_name: user[0]?.employee_username || "",
+      approve_company_id: approve_company_id?.company_id
+        ? Number(approve_company_id.company_id)
+        : user[0]?.itasset_company_id || "",
+      approve_department_id: approve_department_id?.department_id
+        ? Number(approve_department_id.department_id)
+        : user[0]?.itasset_department_id || "",
+      approve_position: user[0]?.employee_position || "",
+      approve_email: user[0]?.employee_email || "",
+      approve_date: approve_date
+        ? approve_date
             .hour(dayjs().hour())
             .minute(dayjs().minute())
             .second(dayjs().second())
             .format("YYYY-MM-DDTHH:mm:ss")
-          : new Date().toISOString(),
-        create_by: user[0]?.employee_username || "",
-        domain_id: user[0]?.employee_domain || "",
-      },
-      CurrentAccessModel: {
-        user_id: user[0]?.employee_username || "",
-      },
-    };
-    //console.log("📦 approvePayload:", approvePayload.ExplaintApproveModel);
+        : new Date().toISOString(),
+      create_by: user[0]?.employee_username || "",
+      domain_id: user[0]?.employee_domain || "",
+    },
+    CurrentAccessModel: {
+      user_id: user[0]?.employee_username || "",
+    },
+  };
 
-    //console.log("📤 explaintPayload:", approvePayload);
-    setIsLoadingScreen(true);
+  setIsLoadingScreen(true);
 
-    try {
-      // เปลี่ยนจาก _POST_FORMDATA เป็น _POST และส่ง approvePayload โดยตรง
-      const response = await _POST(
-        approvePayload.ExplaintApproveModel, // ส่งเฉพาะ Model ที่ Backend ต้องการ
-        "/ExplaintApprove/ExplaintApproveAdd"
+  try {
+    // 🧩 บันทึกข้อมูล Approve
+    const response = await _POST(approvePayload.ExplaintApproveModel,"/ExplaintApprove/ExplaintApproveAdd");
+
+
+    if (response && response.status === "success") {
+      // ✅ หลังบันทึก Approve สำเร็จ → อัปเดตสถานะ Complaint
+      const complaintEditPayload = {
+        complaintModel: {
+          id: dataelement?.id,
+          mode: "APPROVE_SC",
+          complaint_status_id: tempComplaintStatus[3]?.id,
+        },
+        CurrentAccessModel: {
+          user_id: user[0]?.employee_username || "",
+        },
+      };
+
+      const complaintFormData = new FormData();
+      complaintFormData.append(
+        "complaintPayloadJson",
+        JSON.stringify(complaintEditPayload)
       );
-      if (response && response.status === "success") {
+
+      const updateRes = await _POST_FORMDATA(
+        complaintFormData,
+        "/Complaint/ComplaintEdit"
+      );
+
+      if (updateRes && updateRes.status === "success") {
         FullSweetalert({
           title: "Success",
-          text: `บันทึกการอนุมัติสำเร็จ`,
+          text: `บันทึกการอนุมัติและอัปเดตสถานะสำเร็จ`,
           icon: "success",
         });
-        //console.log("✅ Explain Add successfully:", response);
       } else {
         FullSweetalert({
-          title: "Failed",
-          text: `บันทึกการอนุมัติไม่สำเร็จ`,
-          icon: "error",
+          title: "Warning",
+          text: `บันทึกการอนุมัติสำเร็จ แต่ไม่สามารถอัปเดตสถานะได้`,
+          icon: "warning",
         });
-        //console.log("⚠️ Approve Add failed:", response);
       }
-    } catch (error) {
-      console.error("Approve Upload failed:", error);
-    } finally {
-      setIsLoadingScreen(false);
-      handleClose();
-      ComplaintGet();
+    } else {
+      FullSweetalert({
+        title: "Failed",
+        text: `บันทึกการอนุมัติไม่สำเร็จ`,
+        icon: "error",
+      });
     }
+  } catch (error) {
+    console.error("Approve Upload failed:", error);
+    FullSweetalert({
+      title: "Error",
+      text: `เกิดข้อผิดพลาดระหว่างการบันทึกการอนุมัติ`,
+      icon: "error",
+    });
+  } finally {
+    setIsLoadingScreen(false);
+    handleClose();
+    ComplaintGet();
+  }
   };
+
+//  const ApproveScReturn = async (mode: string) => {
+//     if (isCallFuncLogOn)
+//       console.log("🕑 ",dayjs().format("HH:mm:ss.SSS")," [Calling Function]  :  ApproveScReturn");
+
+//     const tempComplaintStatus = await LovAll_Get("complaint_status",respondent_domain_id);
+
+//     const formData = new FormData();
+//     if (mode == "EXPLAIN") {
+//       const complaintReturnPayload = {
+//         complaintReturnModel: {
+//           id: dataelement?.id,
+//           return_from_status_id: tempComplaintStatus[2]?.id,
+//           complaint_status_id: tempComplaintStatus[1]?.id,
+//           mode: mode,
+//         },
+
+//         CurrentAccessModel: {
+//           user_id: user[0]?.employee_username || "",
+//         },
+//       };
+
+//       try {
+//         const response = await _POST(
+//           complaintReturnPayload,
+//           "/Complaint/ComplaintReturn"
+//         );
+//         if (response && response.status === "success") {
+//           FullSweetalert({
+//             title: "Success",
+//             text: `บันทึกข้อมูลสำเร็จ`,
+//             icon: "success",
+//           });
+//           console.log("✅ Complaint Add successfully:", response);
+//         } else {
+//           FullSweetalert({
+//             title: "Failed",
+//             text: `บันทึกไม่ข้อมูลสำเร็จ`,
+//             icon: "error",
+//           });
+//           console.log("⚠️ Add failed:", response);
+//         }
+//       } catch (error) {
+//         console.error("Upload failed:", error);
+//       } finally {
+//         setIsLoadingScreen(false);
+//         handleClose();
+//         ComplaintGet();
+//       }
+//     } else if (mode == "EXPLAIN") {
+//     }
+//   };
 
   // =====================================================================================================
   // EVENT HANDLERS (from index.tsx)
@@ -3503,7 +3537,9 @@ export default function Complaint() {
       );
 
     resetForm();
+    Complaint_Get(data);
     setOpenApproveSC(true);
+    
     setdataelement(data);
   };
 
@@ -4360,7 +4396,7 @@ export default function Complaint() {
             action="ApproveSC"
             handleOpenAdd={() => handleOnclickExplainAdd(dataelement)}
             handleOnclickExplainView={handleOnclickExplainView}
-          //handleOnclickExplainApproveSc={handleOnclickExplainApproveSc}
+            handleOnclickExplainApproveSc={handleOnclickExplainApproveSc}
           />
         }
       />
@@ -4390,7 +4426,6 @@ export default function Complaint() {
         element={
           <ExplaintBody
             action="ExplainRead"
-          //isViewMode={true}
           />
         }
       />
@@ -4467,7 +4502,8 @@ export default function Complaint() {
         titlename={"Approve Section Head // เพิ่มข้อมูล"}
         buttonText={"Approve"}
         handlefunction={ApproveScAdd}
-        handlereject={ApproveScAdd}
+        //handlereject={ApproveScReturn}
+        handlereject={() => ComplaintReturn("EXPLAIN")}
         handleClose={handleClose}
         buttonColor="success"
         element={
