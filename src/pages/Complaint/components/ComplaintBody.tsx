@@ -171,7 +171,7 @@ type FileData = {
   id?: string;
 };
 
-  export default function ComplaintBody({
+export default function ComplaintBody({
   action,
   readonlyTextField,
   bgcolorTextField,
@@ -200,7 +200,7 @@ type FileData = {
   handleOpenAdd,
   handleOnclickExplainView,
   handleOnclickExplainApproveSc,
-  }: ComplaintBody) {
+}: ComplaintBody) {
   const isActionRead = action === "Read";
   const isActionAdd = action === "Add";
   const isActionEdit = action === "Edit";
@@ -209,7 +209,7 @@ type FileData = {
   const isActionClose = action === "Close";
   const isActionExplainApproveSc = action === "ApproveSC";
   const isActionExplainApproveQc = action === "ApproveQC";
-  
+
 
   const user = cleanAccessData("userSession");
   const [openConfirm, setOpenConfirm] = useState(false);
@@ -483,7 +483,7 @@ type FileData = {
   const [isMinimizedeapp2Open, setisMinimizeDeapp2Open] = useState(true);
   const [isMinimizeotapp2Open, setisMinimizeOtapp2Open] = useState(true);
 
-  
+
 
   // Check Acknowledge flag =========================================================
   const updateAcknowledgeFlag = (value: any) => {
@@ -544,13 +544,13 @@ type FileData = {
 
     if (!value) return;
 
-      const dataset = {
-        domain_id: value.domain_id,
-        company_id: value.company_id,
-      };
+    const dataset = {
+      domain_id: value.domain_id,
+      company_id: value.company_id,
+    };
 
-      await mas_DepartmentGet_Complaint(dataset, setdataset_department, isCallFuncLogOn, user);
-    
+    await mas_DepartmentGet_Complaint(dataset, setdataset_department, isCallFuncLogOn, user);
+
   };
 
   // Function Handlers (On Change Event) ======================================================
@@ -906,6 +906,37 @@ type FileData = {
     setcomplaintFiles(fileList); // sync
   }, [fileList]);
 
+  const Dept_setup_By_Domain_dept_id_Get = async (data: any) => {
+    if (isCallFuncLogOn)
+      console.log("🕑 ", dayjs().format("HH:mm:ss.SSS"), " [Calling Function]  :  Dept_setup_By_Domain_dept_id_Get");
+
+
+    if (!data?.domain_dept_id) {
+      console.warn("⚠️ ไม่มี domain_dept_id ใน data:", data);
+      return null;
+    }
+
+    setIsLoadingScreen(true);
+    const dataset = { domain_dept_id: data.domain_dept_id };
+    console.log("🧩 Payload ส่งเข้า SP :", dataset);
+
+    try {
+      const response = await _POST(dataset, "/DeptSetup/DeptSetupByDomaindeptidGet");
+      console.log("📥 DeptSetup Response (full):", response);
+      console.log("🧩 Payload ส่งเข้า SP :", dataset);
+
+      // คืน response ทั้งก้อน ให้ caller เลือกเอา element ที่ต้องการ
+      return response || null;
+    } catch (e) {
+      console.error("❌ Error DeptSetupByDomaindeptidGet:", e);
+      return null;
+    } finally {
+      setIsLoadingScreen(false);
+    }
+  };
+
+
+
   const Acknowledge_Update = async (data: any) => {
     // if (isCallFuncLogOn)console.log("🕑 ", dayjs().format("HH:mm:ss.SSS"), " [Calling Function]  :  Acknowledge_Update");
 
@@ -988,7 +1019,7 @@ type FileData = {
     }
   };
 
-  
+
 
   // READ - Get Complaints
   const ComplaintFile_Get = async () => {
@@ -1064,7 +1095,7 @@ type FileData = {
   // 🧩 1️⃣ โหลดข้อมูลหลัก (ReportType, Company, Domain, Department)
   React.useEffect(() => {
     if (!dataelement || action === "Add") return; // 👈 ป้องกันตอน New
-    
+
     if (effectRan.current) return;
     effectRan.current = true;
 
@@ -1365,17 +1396,17 @@ type FileData = {
 
   React.useEffect(() => {
     const fetchAcknowlege = async () => {
-    if (isActionExplain && dataelement?.id) {
-      if (dataelement?.acknowledge_flag == 0) {
-        await Acknowledge_Update(dataelement);
+      if (isActionExplain && dataelement?.id) {
+        if (dataelement?.acknowledge_flag == 0) {
+          await Acknowledge_Update(dataelement);
+        }
+        await Complaint_Get(dataelement);
+        //await ComplaintFile_Get();
+        //await ExplainGet();
       }
-      await Complaint_Get(dataelement);
-      //await ComplaintFile_Get();
-      //await ExplainGet();
-    }
-    //updateAcknowledgeFlag
-  };
-  fetchAcknowlege();
+      //updateAcknowledgeFlag
+    };
+    fetchAcknowlege();
   }, [action, dataelement?.id, dataelement?.acknowledge_flag]);
 
   const setComplaintType = (data: any) => {
@@ -1557,7 +1588,7 @@ type FileData = {
                       console.log("cccccc", val);
                     }}
                     bgcolorTextField={true}
-                  readonly={isActionRead || isActionDelete || isActionExplain}
+                    readonly={isActionRead || isActionDelete || isActionExplain}
                   />
                 </Grid>
                 <Grid size={3} mt={2}>
@@ -1655,9 +1686,9 @@ type FileData = {
                         labelName={
                           "แผนกที่พบปัญหา (Department / Area of Detection)"
                         }
-                        options={dataset_department }
+                        options={dataset_department}
                         column="department_name"
-                        setvalue={(val) => {
+                        setvalue={async (val) => {
                           console.log(
                             "Selected value:",
                             val,
@@ -1665,6 +1696,25 @@ type FileData = {
                             respondent_department_id
                           );
                           setrespondent_department_id(val);
+
+                          // ✅ ดึงข้อมูล Email จากแผนกที่เลือก
+                          // ดึงข้อมูลจาก API (คืน response ทั้งก้อน)
+                          const resp = await Dept_setup_By_Domain_dept_id_Get(val);
+                          // resp?.data อาจเป็น Array หรือ undefined
+                          const arr = Array.isArray(resp?.data) ? resp.data : resp?.data ? [resp.data] : [];
+
+                          const found = arr.find((d: any) => d?.dept_email || d?.email) ?? arr ?? null;
+
+                          const email = found?.dept_email ?? "ไม่พบ Email";
+
+
+                          console.log("📧 Selected dept email extracted:", email, "from", found);
+                          setrespondent_email(email);
+                          if (!val) {
+                            setrespondent_email("");
+                            return;
+                          }
+
                           if (onDepartmentAreaChange) {
                             onDepartmentAreaChange(val);
                           }
@@ -1733,7 +1783,7 @@ type FileData = {
                             onEmailChange(e);
                           }
                         }}
-                        readonly={!isActionAdd && !isActionEdit}
+                        readonly
                         Validate={validateText?.Email || false}
                         validateTextLable={
                           validateText?.Email ? "กรุณากรอกอีเมล" : ""
@@ -2856,10 +2906,10 @@ type FileData = {
                         </Box>
 
                         {/* === ฝั่งขวา ปุ่ม Add === */}
-                         {dataelement?.complaint_status_label === "SUBMITED" &&
-                          dataelement?.step_label === "EXPLAIN"  && (                          
+                        {dataelement?.complaint_status_label === "SUBMITED" &&
+                          dataelement?.step_label === "EXPLAIN" && (
                             <Button
-                              variant="contained" 
+                              variant="contained"
                               size="small"
                               sx={{
                                 backgroundColor: "#2b72d7ff",
@@ -2879,9 +2929,9 @@ type FileData = {
                                 handleOpenAdd?.();   // ✅ เรียกถ้ามีค่าเท่านั้น
                               }}
                             >
-                               เพิ่มคำชี้แจง 
+                              เพิ่มคำชี้แจง
                             </Button>
-                          )} 
+                          )}
                       </Box>
                     </AccordionSummary>
 
@@ -2956,7 +3006,7 @@ type FileData = {
                                       <Box sx={{ display: "flex", gap: 1 }}>
                                         <Box sx={{ display: "flex", gap: 1.5 }}>
                                           {/* ปุ่มอนุมัติ */}
-                                          { dataelement?.complaint_status_label === "EXPLAINED" &&
+                                          {dataelement?.complaint_status_label === "EXPLAINED" &&
                                             dataelement?.step_label === "EXPLAIN" && (
                                               <Button
                                                 variant="contained"
@@ -3014,7 +3064,7 @@ type FileData = {
                                   </Paper>
                                 ))}
                             </Box>
-                            ) : (
+                          ) : (
                             <Paper
                               elevation={0}
                               sx={{

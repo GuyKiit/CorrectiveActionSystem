@@ -5,6 +5,7 @@ import { grey } from '@mui/material/colors';
 interface FullWidthTextField {
   value?: any;
   labelName: string;
+  placeholderlabel?: string;
   required?: string;
   disabled?: boolean;
   hidden?: boolean;
@@ -64,6 +65,7 @@ export default function FullWidthTextField(props: FullWidthTextField) {
         onChange={hedelonChange}
         onBlur={hedelonBlur}
         value={props.value ?? ""}
+        placeholder={props.placeholderlabel}
       />
       {props.validateTextLable && (
         <label className="fs-7 py-1 sarabun-regular-lable-validate">

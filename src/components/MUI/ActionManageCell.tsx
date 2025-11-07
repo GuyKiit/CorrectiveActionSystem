@@ -23,6 +23,10 @@ interface ActionManageCellProps {
   hiddenApproveSC?: boolean;
   hiddenApproveQC?: boolean;
   hiddenClose?: boolean;
+  hiddenDepartmentAdd?: boolean;
+  hiddenDepartmentView?: boolean;
+  hiddenDepartmentEdit?: boolean;
+  hiddenDepartmentDelete?: boolean;
   chack_data?: 'Cutoff_Row' | 'CencalCutoff' | undefined;
   hadleOnclickMenu?: (value: string) => void;
 }
@@ -38,7 +42,7 @@ const ICONS_MAP: { [key: string]: ReactElement } = {
 };
 
 const ActionManageCell: React.FC<ActionManageCellProps> = (props) => {
-  const { disabled, chack_data, hadleOnclickMenu, hiddenRead, hiddenEdit, hiddenDelete, hiddenExplain, hiddenApproveSC, hiddenApproveQC, hiddenClose } = props;
+  const { disabled, chack_data, hadleOnclickMenu, hiddenRead, hiddenEdit, hiddenDelete, hiddenExplain, hiddenApproveSC, hiddenApproveQC, hiddenClose, hiddenDepartmentAdd, hiddenDepartmentView, hiddenDepartmentEdit, hiddenDepartmentDelete} = props;
   const { menuFuncData } = useAuth();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -67,13 +71,18 @@ const ActionManageCell: React.FC<ActionManageCellProps> = (props) => {
         }
       }}
       hidden={
-        (funcName === "View" && hiddenRead) ||         // Complaint
-        (funcName === "Edit" && hiddenRead) ||         // Complaint
-        (funcName === "Delete" && hiddenRead) ||       // Complaint
-        (funcName === "Explain" && hiddenExplain) ||    // Explain
-        (funcName === "ApproveSC" && hiddenApproveSC) ||    // Approve
-        (funcName === "ApproveQC" && hiddenApproveQC) ||    // Approve
-        (funcName === "Close" && hiddenClose)          // Close
+        (funcName === "View" && hiddenRead) ||                      // Complaint
+        (funcName === "Edit" && hiddenRead) ||                      // Complaint
+        (funcName === "Delete" && hiddenRead) ||                    // Complaint
+        (funcName === "Explain" && hiddenExplain) ||                // Explain
+        (funcName === "ApproveSC" && hiddenApproveSC) ||            // Approve
+        (funcName === "ApproveQC" && hiddenApproveQC) ||            // Approve
+        (funcName === "Close" && hiddenClose) ||                    // Close
+
+        (funcName === "DepartmentAdd" && hiddenDepartmentAdd) ||    // DepartmentAdd
+        (funcName === "DepartmentView" && hiddenDepartmentView) ||  // DepartmentView
+        (funcName === "DepartmentEdit" && hiddenDepartmentEdit) ||  // DepartmentEdit
+        (funcName === "DepartmentDelete" && hiddenDepartmentDelete) // DepartmentDelete
       }
       // onMouseEnter={(e) => {
       //   if (hasSubMenu) {
@@ -100,6 +109,13 @@ const ActionManageCell: React.FC<ActionManageCellProps> = (props) => {
       el.menu_func_sequence !== 0 &&      
       (!chack_data || chack_data === el.func_name)
     )
+  //   // ✅ ลบรายการซ้ำ (func_name ซ้ำกัน)
+  // .reduce((acc: any[], curr: any) => {
+  //   if (!acc.some(item => item.func_name === curr.func_name)) {
+  //     acc.push(curr);
+  //   }
+  //   return acc;
+  // }, [])
     .sort((a, b) => (a ? a.menu_func_sequence ?? 9999 : 9999) - (b ? b.menu_func_sequence ?? 9999 : 9999));
 
   return (

@@ -601,83 +601,47 @@ export default function DepartmentSetting() {
         const responseData: any = [];
         if (Array.isArray(response.data)) {
           response.data.forEach((el: any) => {
+            console.log("#################el",el);
+            
             const ACTION = (
               <ActionManageCell
                 hadleOnclickMenu={(name: any) => {
                   //console.log("🎆 🎆 🎆 🎆 hadleOnclickMenu (name) :", name);
-                  if (name === "View") {
+                  if (name === "DepartmentView") {
                     // DepartmentDomainGet("Read");
-                    //console.log("e😀l", el);
-
                     handleOnclickDepartmentSettingView(el);
-                  } else if (name === "Edit") {
+                  } else if (name === "DepartmentEdit") {
                     // DepartmentDomainGet("Edit");
                     handleOnclickDepartmentSettingEdit(el);
-                  } else if (name === "Delete") {
+                  } else if (name === "DepartmentDelete") {
                     // DepartmentDomainGet("Delete");
                     handleOnclickDepartmentSettingDelete(el);
-                  } else if (name === "Explain") {
-                    // DepartmentDomainGet("Explain");
-                  }
+                  } 
                 }}
               // hiddenEdit={el.complaint_status_label == 'SUBMIT'}
 
-              //-----------------------------------------------------------------------
-              //-----------------------------------------------------------------------
+              // For show menu function from [DepartmentSetting] menu 
+              hiddenDepartmentAdd={true}
+              hiddenDepartmentView={false}
+              hiddenDepartmentEdit={false}
+              hiddenDepartmentDelete={false}
 
-              // // For Status [NEW]
-              // hiddenRead={
-              //   (dataset_complaintActionNew &&
-              //     !dataset_complaintActionNew.some((mode: any) =>
-              //       mode.lov1.split(",").includes(String(el.complaint_status_label))
-              //     )) ?? false
-              // }
-              // hiddenEdit={
-              //   (dataset_complaintActionNew &&
-              //     !dataset_complaintActionNew.some((mode: any) =>
-              //       mode.lov1.split(",").includes(String(el.complaint_status_label))
-              //     )) ?? false
-              // }
-              // hiddenDelete={
-              //   (dataset_complaintActionNew &&
-              //     !dataset_complaintActionNew.some((mode: any) =>
-              //       mode.lov1.split(",").includes(String(el.complaint_status_label))
-              //     )) ?? false
-              // }
-
-              // //-----------------------------------------------------------------------
-              // //-----------------------------------------------------------------------
-
-              // // For Status [SUBMIT, EXPLAIN, APPROVE]
-              // hiddenExplain={
-              //   (dataset_complaintActionExplain &&
-              //     !dataset_complaintActionExplain.some((mode: any) =>
-              //       mode.lov1.split(",").includes(String(el.complaint_status_label))
-              //     )) ?? false
-              // }
-
-              // //-----------------------------------------------------------------------
-              // //-----------------------------------------------------------------------
-
-              // // For Status [CLOSE]
-              // hiddenClose={
-              //   (dataset_complaintActionClose &&
-              //     !dataset_complaintActionClose.some((mode: any) =>
-              //       mode.lov1.split(",").includes(String(el.complaint_status_label))
-              //     )) ?? false
-              // }
+              // For hidden menu function from [Complaint] menu
+              hiddenRead={true}
+              hiddenEdit={true}
+              hiddenDelete={true}
+              hiddenExplain={true}
+              hiddenClose={true}
 
               />
             );
             el.ACTION = ACTION;
             //console.log("el.acknowledge_flag", el.acknowledge_flag)
             //console.log(el.step_label)
-            el.complaint_status_label = (
-              <BasicChips label={`${el.complaint_status_label}`} acknowledge={el.acknowledge_flag}></BasicChips>
-            );
-            el.step_label = (
-              <BasicChips label={`${el.step_label}`} type="step"></BasicChips>
-            );
+            // el.complaint_status_label = (
+            //   <BasicChips label={`${el.complaint_status_label}`} acknowledge={el.acknowledge_flag}></BasicChips>
+            // );
+            el.menu_name = "DepartmentSetting";
             responseData.push(el);
           });
         }
