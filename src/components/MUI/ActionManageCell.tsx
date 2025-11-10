@@ -99,11 +99,11 @@ const ActionManageCell: React.FC<ActionManageCellProps> = (props) => {
         (funcName === "View" && hiddenRead) ||                      // Complaint
         (funcName === "Edit" && hiddenRead) ||                      // Complaint
         (funcName === "Delete" && hiddenRead) ||                    // Complaint
-        (funcName === "Explain" && hiddenExplain) ||                // Explain
+        (funcName === "EXPLAIN" && hiddenExplain) ||                // Explain
         (funcName === "ApproveSC" && hiddenApproveSC) ||            // Approve
         (funcName === "ApproveQC" && hiddenApproveQC) ||            // Approve
         (funcName === "Close" && hiddenClose) ||                    // Close
-        
+
         (funcName === "ReadExplain" && hiddenReadExplain) ||                    // ReadExplain
         (funcName === "ReadApproveSC" && hiddenReadApproveSC) ||                    // ReadApproveSC
         (funcName === "ReadApproveQC" && hiddenReadApproveQC) ||                    // ReadApproveQC
@@ -130,8 +130,7 @@ const ActionManageCell: React.FC<ActionManageCellProps> = (props) => {
     </MenuItem>
   );
   console.log(menuFuncData,'menuFuncData');
-  console.log(hiddenApproveSC,'hiddenApproveSC');
-  console.log(hiddenApproveQC,'hiddenApproveQC');
+  console.log(hiddenExplain,'hiddenExplain');
   
 // console.log('CHECK DATE el in ActionManageCell', menuFuncData)
   const filteredMenu = (menuFuncData ?? [])
