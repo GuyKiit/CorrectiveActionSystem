@@ -2906,7 +2906,8 @@ export default function ComplaintBody({
                         </Box>
 
                         {/* === ฝั่งขวา ปุ่ม Add === */}
-                        {dataelement?.complaint_status_label === "SUBMITED" &&
+                        {action !== "ReadExplain" &&
+                        dataelement?.complaint_status_label === "SUBMITED" &&
                           dataelement?.step_label === "EXPLAIN" && (
                             <Button
                               variant="contained"
@@ -3006,7 +3007,8 @@ export default function ComplaintBody({
                                       <Box sx={{ display: "flex", gap: 1 }}>
                                         <Box sx={{ display: "flex", gap: 1.5 }}>
                                           {/* ปุ่มอนุมัติ */}
-                                          {dataelement?.complaint_status_label === "EXPLAINED" &&
+                                          {action !== "ReadApproveSC" &&
+                                          dataelement?.complaint_status_label === "EXPLAINED" &&
                                             dataelement?.step_label === "EXPLAIN" && (
                                               <Button
                                                 variant="contained"

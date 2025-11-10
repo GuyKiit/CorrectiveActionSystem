@@ -468,11 +468,14 @@ export default function Complaint() {
   const [openComplaintEdit, setOpenComplaintEdit] = React.useState(false);
   const [openComplaintDelete, setOpenComplaintDelete] = React.useState(false);
   const [openExplain, setOpenExplain] = React.useState(false);
-  const [openReadExplain, setOpenReadExplain] = React.useState(false);
-  const [openApproveSC, setOpenApproveSC] = React.useState(false);
-  const [openApproveQC, setOpenApproveQC] = React.useState(false);
   const [openExplainAdd, setOpenExplainAdd] = React.useState(false);
   const [openExplainView, setOpenExplainView] = React.useState(false);
+  const [openReadExplain, setOpenReadExplain] = React.useState(false);
+  const [openApproveSC, setOpenApproveSC] = React.useState(false);
+  const [openReadApproveSC, setOpenReadApproveSC] = React.useState(false);
+  const [openApproveQC, setOpenApproveQC] = React.useState(false);
+  const [openReadClose, setopenReadClose] = React.useState(false);
+  
 
   const [openExplainApproveSc, setOpenExplainApproveSc] = React.useState(false);
   const [openExplainApproveQc, setOpenExplainApproveQc] = React.useState(false);
@@ -1340,6 +1343,10 @@ export default function Complaint() {
                     // DepartmentDomainGet("Explain");
                     handleOnclickReadExplain(el);
                   }
+                  else if (name === "ReadApproveSC") {
+                    // DepartmentDomainGet("Explain");
+                    handleOnclickReadApproveSC(el);
+                  }
                   // else if (name === "ExplainApproveSc") {
                   //   // DepartmentDomainGet("Explain");
                   //   handleOnclickExplainApproveSc(el);
@@ -1425,6 +1432,7 @@ export default function Complaint() {
                     )) ??
                   false
                 }
+                
                 //-----------------------------------------------------------------------
                 //-----------------------------------------------------------------------
 
@@ -2978,34 +2986,35 @@ export default function Complaint() {
         // 🧩 บันทึกข้อมูล Approve
         const response = await _POST(approvePayload.ExplaintApproveModel, "/ExplaintApprove/ExplaintApproveAdd");
 
+console.log(return_detail,'return_detail');
 
-        if (response && response.status === "success") {
-          // ✅ หลังบันทึก Approve สำเร็จ → อัปเดตสถานะ Complaint
-          const complaintEditPayload = {
-            ComplaintReturnModel: {
-              id: dataelement?.id,
-              return_detail: return_detail,
-              return_name: return_name,
-              return_company_id: return_company_id?.company_id ? Number(return_company_id.company_id) : user[0]?.itasset_company_id || "",
-              return_department_id: return_department_id?.department_id ? Number(return_department_id.department_id) : user[0]?.itasset_department_id || "",
-              return_position: user[0]?.employee_position || "",
-              return_email: user[0]?.employee_email || "",
-              return_from_status_id: tempComplaintStatus[2]?.id,
-              complaint_status_id: tempComplaintStatus[1]?.id,
-              mode: mode,
-            },
-            CurrentAccessModel: {
-              user_id: user[0]?.employee_username || "",
-            },
-          };
+    if (response && response.status === "success") {
+      // ✅ หลังบันทึก Approve สำเร็จ → อัปเดตสถานะ Complaint
+      const complaintReturnPayload = {
+        ComplaintReturnModel: {
+          id: dataelement?.id,
+          return_detail: approve_detail,
+          return_name: user[0]?.employee_username || "",
+          return_company_id: return_company_id?.company_id? Number(return_company_id.company_id): user[0]?.itasset_company_id || "",
+          return_department_id: return_department_id?.department_id? Number(return_department_id.department_id): user[0]?.itasset_department_id || "",
+          return_position: user[0]?.employee_position || "",
+          return_email: user[0]?.employee_email || "",
+          return_from_status_id: tempComplaintStatus[2]?.id,
+          complaint_status_id: tempComplaintStatus[1]?.id,
+          mode: mode,
+        },
+        CurrentAccessModel: {
+          user_id: user[0]?.employee_username || "",
+        },
+      };
 
-          const complaintFormData = new FormData();
-          complaintFormData.append(
-            "complaintPayloadJson",
-            JSON.stringify(complaintEditPayload)
-          );
+      // const complaintFormData = new FormData();
+      // complaintFormData.append(
+      //   "complaintPayloadJson",
+      //   JSON.stringify(complaintReturnPayload));
 
-          const updateRes = await _POST(complaintFormData, "/Complaint/ComplaintReturn");
+    //const response = await _POST(approvePayload.ExplaintApproveModel,"/ExplaintApprove/ExplaintApproveAdd");
+      const updateRes = await _POST(complaintReturnPayload,"/Complaint/ComplaintReturn");
 
           if (updateRes && updateRes.status === "success") {
             FullSweetalert({
@@ -3442,8 +3451,9 @@ export default function Complaint() {
 
     resetForm();
     //console.log("checkkk",dataelement)
-    setOpenExplain(true);
     setdataelement(data);
+    setOpenExplain(true);
+    
   };
 
   const handleOnclickReadExplain = async (data: any) => {
@@ -3451,14 +3461,14 @@ export default function Complaint() {
       console.log(
         "🕑 ",
         dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  Explaint_Get"
+        " [Calling Function]  :  handleOnclickReadExplain"
       );
 
     //console.log("Read step:3 เรียกฟังก์ชั่น ดูข้อมูล handleOnclickMenuView ");
     //console.log("Read step:3 ข้อมูลที่ได้จาก ListSearchGet ก่อนส่งเข้าฟังก์ชั่น Complaint_Get  ", data);
     resetForm();
-    Complaint_Get(data);
-    setOpenComplaintView(true); // แล้วค่อยเปิด Dialog
+    setdataelement(data);
+    setOpenReadExplain(true); // แล้วค่อยเปิด Dialog
   };
 
   
@@ -3474,8 +3484,22 @@ export default function Complaint() {
     resetForm();
     Complaint_Get(data);
     setOpenApproveSC(true);
-
     setdataelement(data);
+  };
+
+  const handleOnclickReadApproveSC = async (data: any) => {
+    if (isCallFuncLogOn)
+      console.log(
+        "🕑 ",
+        dayjs().format("HH:mm:ss.SSS"),
+        " [Calling Function]  :  handleOnclickReadApproveSC"
+      );
+
+    //console.log("Read step:3 เรียกฟังก์ชั่น ดูข้อมูล handleOnclickMenuView ");
+    //console.log("Read step:3 ข้อมูลที่ได้จาก ListSearchGet ก่อนส่งเข้าฟังก์ชั่น Complaint_Get  ", data);
+    resetForm();
+    Complaint_Get(data);
+    setOpenReadApproveSC(true); // แล้วค่อยเปิด Dialog
   };
 
   const handleOnclickApproveQC = (data: any) => {
@@ -3519,7 +3543,7 @@ export default function Complaint() {
       );
 
     //console.log("🔍 handleOnclickExplainView called with data:", data);
-
+    resetForm();
     // ตั้งค่า dataelement ก่อนเพื่อให้ useEffect ใน ExplaintBody ทำงานได้
     setdataelement(data);
 
@@ -3574,8 +3598,8 @@ export default function Complaint() {
         " [Calling Function]  :  handleOnclickExplainApproveSc"
       );
 
-    setCurrentExplainForApproval(data); // ✅ เก็บข้อมูล explain ที่จะอนุมัติไว้ใน state ใหม่
     resetForm();
+    setCurrentExplainForApproval(data); // ✅ เก็บข้อมูล explain ที่จะอนุมัติไว้ใน state ใหม่
     setapprove_date(dayjs());
     setOpenExplainApproveSc(true);
   };
@@ -3664,7 +3688,9 @@ export default function Complaint() {
     setOpenComplaintEdit(false);
     setOpenComplaintDelete(false);
     setOpenExplain(false);
+    setOpenReadExplain(false);
     setOpenApproveSC(false);
+    setOpenReadApproveSC(false);
     setOpenApproveQC(false);
     setOpenExplainAdd(false);
     setOpenExplainView(false);
@@ -4328,14 +4354,14 @@ export default function Complaint() {
         openBottonHidden={true}
         hideSaveDraft={true}
         hideSaveSubmit={true}
-        hideReject={hideReject}
-        titlename={"Explain // รายละเอียด"}
+        hideReject={true}
+        titlename={"Explain // ดูรายละเอียด"}
         handleClose={handleClose}
-        handlereject={() => ComplaintReturn("COMPLAINT")}
         buttonColor="success"
         element={
           <ComplaintBody
-            action="Explain"
+            action="ReadExplain"
+            handleOpenAdd={() => handleOnclickExplainAdd(dataelement)}
             handleOnclickExplainView={handleOnclickExplainView}
             handleOnclickExplainApproveSc={handleOnclickExplainApproveSc}
           // dataelement={dataelement}
@@ -4353,6 +4379,23 @@ export default function Complaint() {
         element={
           <ComplaintBody
             action="ApproveSC"
+            handleOpenAdd={() => handleOnclickExplainAdd(dataelement)}
+            handleOnclickExplainView={handleOnclickExplainView}
+            handleOnclickExplainApproveSc={handleOnclickExplainApproveSc}
+          />
+        }
+      />
+
+      <FuncDialog
+        open={openReadApproveSC}
+        dialogWidth="xl"
+        openBottonHidden={false}
+        titlename={"Explain // ดูรายละเอียด"}
+        handleClose={handleClose}
+        buttonColor="success"
+        element={
+          <ComplaintBody
+            action="ReadApproveSC"
             handleOpenAdd={() => handleOnclickExplainAdd(dataelement)}
             handleOnclickExplainView={handleOnclickExplainView}
             handleOnclickExplainApproveSc={handleOnclickExplainApproveSc}
