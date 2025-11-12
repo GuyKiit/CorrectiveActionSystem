@@ -1445,7 +1445,7 @@ export default function ExplaintBody({
       {/* ====== Dynamic ฟอร์ม สำหรับเลือกประเภทเอกสาร ====== */}
       {!isFormHidden &&
         (isActionExplainAdd ||
-          isActionExplainRead || isActionExplainApproveScAdd || isActionExplainApproveQcAdd) && (
+          isActionExplainRead || isActionExplainApproveScAdd || isActionExplainApproveQcAdd ) && (
           <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>
             <label className="sarabun-regular-datatable">
               {dataReportTypeValue?.lov4}
@@ -2370,7 +2370,7 @@ export default function ExplaintBody({
         )}
 
       {/* //ส่วนของ Section Head */}
-      {(isActionExplainApproveScAdd || isActionExplainApproveQcAdd) && (
+      {(isActionExplainApproveScAdd || isActionExplainApproveQcAdd  || isActionExplainRead) && (
         <Paper
           elevation={3}
           sx={{

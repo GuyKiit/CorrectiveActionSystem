@@ -3701,9 +3701,6 @@ export default function Complaint() {
     setOpenReadExplain(true); // แล้วค่อยเปิด Dialog
   };
 
-
-
-
   const handleOnclickReadApproveSC = async (data: any) => {
     if (isCallFuncLogOn)
       console.log(
