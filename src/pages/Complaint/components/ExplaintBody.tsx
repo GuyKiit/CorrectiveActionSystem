@@ -1107,7 +1107,7 @@ export default function ExplaintBody({
 
 
 
-  
+
 
   ////////////////////////// Set ค่า User Approve  //////////////////////////
   React.useEffect(() => {
@@ -1119,7 +1119,7 @@ export default function ExplaintBody({
     const uidDeptId = String(user[0].itasset_department_id ?? "");
 
     //==========================================================================
-    
+
     // Filter Variable
     // helper เพื่อหาจาก dataset ที่อาจมีคีย์ต่างกัน (itasset_company_id / company_id)
     const findCompany = (id: string) =>
@@ -1127,15 +1127,15 @@ export default function ExplaintBody({
         (c: any) =>
           String(c.itasset_company_id ?? c.company_id ?? "") === String(id)
       );
-      const findDepartment = (id: string) =>
-        (Array.isArray(dataset_department) ? dataset_department : []).find(
-          (d: any) =>
-            String(d.itasset_department_id ?? d.department_id ?? "") ===
+    const findDepartment = (id: string) =>
+      (Array.isArray(dataset_department) ? dataset_department : []).find(
+        (d: any) =>
+          String(d.itasset_department_id ?? d.department_id ?? "") ===
           String(id)
-        );
+      );
 
     //==========================================================================
-        
+
     if (isActionExplainApproveScAdd || isActionExplainApproveQcAdd) {
       setapprove_name(user[0].employee_username || "");
       setapprove_position(user[0].employee_position || "");
@@ -1198,10 +1198,10 @@ export default function ExplaintBody({
   //////////////////////// Approve Read //////////////////////////
   React.useEffect(() => {
     console.log('🟣🟣🟣🟣🟣🟣 [5] 🟣🟣🟣🟣🟣🟣')
-    console.log("step: 5 เก็บข้อมูลเข้า ฺsetdataelement ใหม่ ", dataelement);
+    console.log("ขั้นตอน: 5 เก็บข้อมูลเข้า ฺเต็dataelement ใหม่ ", dataelement);
     if (
       dataelement &&
-      (action === "ExplainAdd" || action === "ExplainRead" || isViewMode)
+      (action === "ExplainAdd" || action === "ExplainRead" || action === "ApproveScAdd" || action === "ApproveQcAdd" || isViewMode)
     ) {
       // Set basic information
       setresponsible_name(
@@ -1250,75 +1250,81 @@ export default function ExplaintBody({
       }
 
       // Process ToolUse data - wait until combobox loaded
-      if (
-        dataelement?.ToolUse ||
-        dataelement?.tooluse ||
-        dataelement?.explainTu
-      ) {
-        const isComboReady =
-          Array.isArray(dataToolUse_Combobox) &&
-          dataToolUse_Combobox.length > 0;
-        console.log("🔧 ToolUse prefill check:", {
-          isComboReady,
-          currentSelected: (dataTooluse || []).length,
-        });
-        if (isComboReady && (!dataTooluse || dataTooluse.length === 0)) {
-          // Support both possible API shapes: ToolUse (explain_tu_id), tooluse (tool_use_id), explainTu (explain_tu_id)
-          const rawTU = Array.isArray(dataelement?.ToolUse)
-            ? dataelement.ToolUse
-            : Array.isArray(dataelement?.tooluse)
-            ? dataelement.tooluse
-            : Array.isArray(dataelement?.explainTu)
-            ? dataelement.explainTu
-            : [];
 
-          const tu = setExplainTU(rawTU);
-          setdataToolUse(tu);
-
-          // Maintain legacy checkbox mirror if raw 'tooluse' provided
-          if (Array.isArray(dataelement?.tooluse)) {
-            setdataTooluseCheckbox(setTooluse(dataelement.tooluse));
-          }
-
-          // ถ้ามี ToolUse ที่เป็น Other ให้ดึงค่ามา
-          const otherTU = tu.find((el: any) => el.lov2 === "Y");
-          setToolOther(otherTU?.other || "");
-        }
-      }
-
-      // Process Decision data - wait until combobox loaded
-      if (dataelement?.Decision || dataelement?.explainDd) {
-        const isDecisionComboReady =
-          Array.isArray(dataDecision_Combobox) &&
-          dataDecision_Combobox.length > 0;
-        if (
-          isDecisionComboReady &&
-          (!dataDecision || dataDecision.length === 0)
-        ) {
-          const rawDD = Array.isArray(dataelement?.Decision)
-            ? dataelement.Decision
-            : Array.isArray(dataelement?.explainDd)
-            ? dataelement.explainDd
-            : [];
-          const dd = setExplainDD(rawDD);
-          setdataDecision(dd);
-
-          // ถ้ามี Decision ที่เป็น Other ให้ดึงค่ามา
-          const otherDD = dd.find((el: any) => el.lov2 === "Y");
-          setDecisionOther(otherDD?.other || "");
-        }
-      }
     }
   }, [
     dataelement,
     dataset_reporttype,
     dataset_department,
     dataset_company,
-    dataToolUse_Combobox,
-    dataDecision_Combobox,
-    dataTooluse,
-    dataDecision,
+    // dataTooluse,
+    // dataDecision,
   ]);
+
+  React.useEffect(() => {
+    if (
+      !dataelement ||
+      !(
+        dataelement?.ToolUse ||
+        dataelement?.tooluse ||
+        dataelement?.explainTu
+      )
+    )
+      return;
+
+    const isComboReady =
+      Array.isArray(dataToolUse_Combobox) && dataToolUse_Combobox.length > 0;
+    if (!isComboReady) return;
+
+    console.log("🔧 [Effect: ToolUse prefill check]", {
+      isComboReady,
+      currentSelected: (dataTooluse || []).length,
+    });
+
+    if (dataTooluse && dataTooluse.length > 0) return; // กัน loop
+
+    const rawTU = Array.isArray(dataelement?.ToolUse)
+      ? dataelement.ToolUse
+      : Array.isArray(dataelement?.tooluse)
+        ? dataelement.tooluse
+        : Array.isArray(dataelement?.explainTu)
+          ? dataelement.explainTu
+          : [];
+
+    const tu = setExplainTU(rawTU);
+    setdataToolUse(tu);
+
+    if (Array.isArray(dataelement?.tooluse)) {
+      setdataTooluseCheckbox(setTooluse(dataelement.tooluse));
+    }
+
+    const otherTU = tu.find((el: any) => el.lov2 === "Y");
+    setToolOther(otherTU?.other || "");
+  }, [dataelement, dataToolUse_Combobox]); // ✅ แค่สองตัวนี้
+
+
+  React.useEffect(() => {
+    if (!dataelement || !(dataelement?.Decision || dataelement?.explainDd)) return;
+
+    const isDecisionComboReady =
+      Array.isArray(dataDecision_Combobox) && dataDecision_Combobox.length > 0;
+    if (!isDecisionComboReady) return;
+
+    if (dataDecision && dataDecision.length > 0) return; // กัน loop
+
+    const rawDD = Array.isArray(dataelement?.Decision)
+      ? dataelement.Decision
+      : Array.isArray(dataelement?.explainDd)
+        ? dataelement.explainDd
+        : [];
+
+    const dd = setExplainDD(rawDD);
+    setdataDecision(dd);
+
+    const otherDD = dd.find((el: any) => el.lov2 === "Y");
+    setDecisionOther(otherDD?.other || "");
+  }, [dataelement, dataDecision_Combobox]); // ✅ แค่สองตัวนี้
+
 
   // Debug useEffect for dataTooluseCheckbox state changes
   React.useEffect(() => {
@@ -1326,6 +1332,15 @@ export default function ExplaintBody({
     console.log("🔧 dataTooluseCheckbox state changed:", dataTooluseCheckbox);
   }, [dataTooluseCheckbox]);
 
+
+
+  React.useEffect(() => {
+    console.log('🟣🟣🟣🟣🟣🟣 [7] 🟣🟣🟣🟣🟣🟣')
+    console.log("🟡 current action:", action);
+    if ((action === "ExplainRead" || action === "ApproveScAdd" || action === "ApproveQcAdd") && dataelement?.id) {
+      ComplaintFile_Get();
+    }
+  }, [action, dataelement]);
   const setExplainTU = (data: any) => {
     if (true)
       console.log(
@@ -1394,16 +1409,8 @@ export default function ExplaintBody({
       });
     return newData;
   };
-
-  React.useEffect(() => {
-    console.log('🟣🟣🟣🟣🟣🟣 [7] 🟣🟣🟣🟣🟣🟣')
-    if (action === "ExplainRead" && dataelement?.id) {
-      ComplaintFile_Get();
-    }
-  }, [action, dataelement]);
-
   return (
-    
+
     <Box
       sx={{
         p: 2,
@@ -1438,7 +1445,7 @@ export default function ExplaintBody({
       {/* ====== Dynamic ฟอร์ม สำหรับเลือกประเภทเอกสาร ====== */}
       {!isFormHidden &&
         (isActionExplainAdd ||
-          isActionExplainRead ) && (
+          isActionExplainRead || isActionExplainApproveScAdd || isActionExplainApproveQcAdd) && (
           <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>
             <label className="sarabun-regular-datatable">
               {dataReportTypeValue?.lov4}
@@ -1496,8 +1503,8 @@ export default function ExplaintBody({
                         isActionExplainAdd
                           ? user[0]?.employee_username || "-"
                           : responsible_name ||
-                            dataelement?.responsible_name ||
-                            "-"
+                          dataelement?.responsible_name ||
+                          "-"
                       }
                       labelName="ชื่อผู้ดำเนินการ (Responsible Person)"
                       onchange={(e) => setresponsible_name(e.target.value)}
@@ -1506,7 +1513,7 @@ export default function ExplaintBody({
                         isActionDelete ||
                         isActionExplainAdd ||
                         isActionExplainApproveScAdd ||
-                        isActionExplainApproveQcAdd || 
+                        isActionExplainApproveQcAdd ||
                         isActionExplainRead
                       }
                     />
@@ -1528,8 +1535,8 @@ export default function ExplaintBody({
                     <FullWidthTextField
                       value={
                         isActionExplainAdd
-                          ? user[0]?.itasset_department_name ||  "-"
-                          : (responsible_department_id as any)?.department_name || dataelement?.responsible_department_id ||"-"
+                          ? user[0]?.itasset_department_name || "-"
+                          : (responsible_department_id as any)?.department_name || dataelement?.responsible_department_id || "-"
                       }
                       labelName="แผนก (Department)"
                       onchange={(e) => setresponsible_department_id(e.target.value)}
@@ -1543,7 +1550,7 @@ export default function ExplaintBody({
                         isActionExplainAdd
                           ? user[0]?.employee_position || "-"
                           : responsible_position ||
-                            dataelement?.responsible_position || "-"
+                          dataelement?.responsible_position || "-"
                       }
                       labelName="ตำแหน่ง (Position)"
                       onchange={(e) => setresponsible_position(e.target.value)}
@@ -1557,8 +1564,8 @@ export default function ExplaintBody({
                         isActionExplainAdd
                           ? user[0]?.employee_email || "-"
                           : responsible_email ||
-                            dataelement?.responsible_email ||
-                            "-"
+                          dataelement?.responsible_email ||
+                          "-"
                       }
                       labelName="อีเมล (Email)"
                       onchange={(e) => setresponsible_email(e.target.value)}
@@ -1637,7 +1644,7 @@ export default function ExplaintBody({
 
                   <Grid container spacing={2} sx={{ alignItems: "stretch" }}>
                     {/* ✅ Accordion แทน Paper */}
-                     {!isTUHidden && dataReportTypeValue && ( 
+                    {!isTUHidden && dataReportTypeValue && (
                       <Grid size={12}>
                         <Accordion
                           expanded={isMinimizetoolOpen}
@@ -1686,7 +1693,7 @@ export default function ExplaintBody({
                                           handleCheckboxChangeTU(item)
                                         }
                                         readonly={
-                                          isActionRead || isActionDelete || isActionExplainRead
+                                          isActionRead || isActionDelete || isActionExplainRead || isActionExplainApproveScAdd
                                         }
                                       />
                                     </Grid>
@@ -1697,26 +1704,26 @@ export default function ExplaintBody({
                                 {(dataTooluse || []).some(
                                   (t: any) => t.lov2 === "Y"
                                 ) && (
-                                  <FullWidthTextArea
-                                    value={ToolOther}
-                                    labelName="Other:"
-                                    onchange={(e) => setToolOther(e)}
-                                    bgcolorTextField={
-                                      isActionExplainAdd
-                                        ? false
-                                        : isActionEdit
-                                        ? false
-                                        : true
-                                    }
-                                    readonly={isActionRead || isActionDelete || isActionExplainRead}
-                                  />
-                                )}
+                                    <FullWidthTextArea
+                                      value={ToolOther}
+                                      labelName="Other:"
+                                      onchange={(e) => setToolOther(e)}
+                                      bgcolorTextField={
+                                        isActionExplainAdd
+                                          ? false
+                                          : isActionEdit
+                                            ? false
+                                            : true
+                                      }
+                                      readonly={isActionRead || isActionDelete || isActionExplainRead || isActionExplainApproveScAdd}
+                                    />
+                                  )}
                               </Box>
                             </Box>
                           </AccordionDetails>
                         </Accordion>
                       </Grid>
-                    )} 
+                    )}
 
                     {!isDDHidden && dataReportTypeValue && (
                       <Grid size={12}>
@@ -1766,7 +1773,7 @@ export default function ExplaintBody({
                                       onchange={() =>
                                         handleCheckboxChangeDD(item)
                                       }
-                                      readonly={isActionRead || isActionDelete || isActionExplainRead}
+                                      readonly={isActionRead || isActionDelete || isActionExplainRead || isActionExplainApproveScAdd}
                                     />
                                   </Grid>
                                 ))}
@@ -1776,22 +1783,22 @@ export default function ExplaintBody({
                                 {dataDecision.some(
                                   (t: any) => t.lov2 === "Y"
                                 ) && (
-                                  <FullWidthTextArea
-                                    value={DecisionOther}
-                                    labelName="Other:"
-                                    onchange={(e) => setDecisionOther(e)}
-                                    bgcolorTextField={
-                                      isActionAdd
-                                        ? false
-                                        : isActionEdit
-                                        ? false
-                                        : isActionExplainAdd
-                                        ? false
-                                        : true
-                                    }
-                                    readonly={isActionRead || isActionDelete || isActionExplainRead}
-                                  />
-                                )}
+                                    <FullWidthTextArea
+                                      value={DecisionOther}
+                                      labelName="Other:"
+                                      onchange={(e) => setDecisionOther(e)}
+                                      bgcolorTextField={
+                                        isActionAdd
+                                          ? false
+                                          : isActionEdit
+                                            ? false
+                                            : isActionExplainAdd
+                                              ? false
+                                              : true
+                                      }
+                                      readonly={isActionRead || isActionDelete || isActionExplainRead || isActionExplainApproveScAdd}
+                                    />
+                                  )}
                               </Box>
                             </Box>
                           </AccordionDetails>
@@ -1851,10 +1858,10 @@ export default function ExplaintBody({
                                   isActionExplainAdd
                                     ? false
                                     : isActionEdit
-                                    ? false
-                                    : true
+                                      ? false
+                                      : true
                                 }
-                                readonly={isActionRead || isActionDelete || isActionExplainRead}
+                                readonly={isActionRead || isActionDelete || isActionExplainRead || isActionExplainApproveScAdd}
                               />
                             </Grid>
                           </Grid>
@@ -1914,12 +1921,12 @@ export default function ExplaintBody({
                                   isActionAdd
                                     ? false
                                     : isActionEdit
-                                    ? false
-                                    : isActionExplainAdd
-                                    ? false
-                                    : true
+                                      ? false
+                                      : isActionExplainAdd
+                                        ? false
+                                        : true
                                 }
-                                readonly={isActionRead || isActionDelete || isActionExplainRead}
+                                readonly={isActionRead || isActionDelete || isActionExplainRead || isActionExplainApproveScAdd}
                               />
                             </Grid>
                           </Grid>
@@ -1977,12 +1984,12 @@ export default function ExplaintBody({
                                   isActionAdd
                                     ? false
                                     : isActionEdit
-                                    ? false
-                                    : isActionExplainAdd
-                                    ? false
-                                    : true
+                                      ? false
+                                      : isActionExplainAdd
+                                        ? false
+                                        : true
                                 }
-                                readonly={isActionRead || isActionDelete || isActionExplainRead}
+                                readonly={isActionRead || isActionDelete || isActionExplainRead || isActionExplainApproveScAdd}
                               />
                             </Grid>
                           </Grid>
@@ -2041,12 +2048,12 @@ export default function ExplaintBody({
                                   isActionAdd
                                     ? false
                                     : isActionEdit
-                                    ? false
-                                    : isActionExplainAdd
-                                    ? false
-                                    : true
+                                      ? false
+                                      : isActionExplainAdd
+                                        ? false
+                                        : true
                                 }
-                                readonly={isActionRead || isActionDelete}
+                                readonly={isActionRead || isActionDelete ||isActionExplainApproveScAdd}
                               />
                             </Grid>
                           </Grid>
@@ -2056,7 +2063,7 @@ export default function ExplaintBody({
                   )}
 
                   {/* ไฟล์ */}
-                  
+
                   <Accordion
                     expanded={isMinimizefileOpen}
                     onChange={() => setisMinimizeFileOpen(!isMinimizefileOpen)}
@@ -2113,7 +2120,7 @@ export default function ExplaintBody({
                           <Grid size={12}>
                             <BrowseFileUpload
                               setFile={handleFileChange}
-                              setFileName={() => {}}
+                              setFileName={() => { }}
                               options={(filteredphoto || []).map((p: any) => ({
                                 id: p.id,
                                 lov1: p.lov1,
@@ -2198,37 +2205,37 @@ export default function ExplaintBody({
                                             isActionAdd ||
                                             isActionAdd ||
                                             isActionExplainAdd) && (
-                                            <IconButton
-                                              color="error"
-                                              onClick={() => {
-                                                // หา index ที่ถูกต้องใน fileList
-                                                const actualIndex =
-                                                  fileList.findIndex(
-                                                    (f) =>
-                                                      f.file.name ===
+                                              <IconButton
+                                                color="error"
+                                                onClick={() => {
+                                                  // หา index ที่ถูกต้องใน fileList
+                                                  const actualIndex =
+                                                    fileList.findIndex(
+                                                      (f) =>
+                                                        f.file.name ===
                                                         item.file.name &&
-                                                      f.attachmentType ===
+                                                        f.attachmentType ===
                                                         item.attachmentType
+                                                    );
+                                                  console.log(
+                                                    "🔍 Remove file debug:",
+                                                    {
+                                                      itemName: item.file.name,
+                                                      itemType:
+                                                        item.attachmentType,
+                                                      actualIndex,
+                                                      fileListLength:
+                                                        fileList.length,
+                                                    }
                                                   );
-                                                console.log(
-                                                  "🔍 Remove file debug:",
-                                                  {
-                                                    itemName: item.file.name,
-                                                    itemType:
-                                                      item.attachmentType,
-                                                    actualIndex,
-                                                    fileListLength:
-                                                      fileList.length,
+                                                  if (actualIndex !== -1) {
+                                                    handleRemoveFile(actualIndex);
                                                   }
-                                                );
-                                                if (actualIndex !== -1) {
-                                                  handleRemoveFile(actualIndex);
-                                                }
-                                              }}
-                                            >
-                                              <DeleteIcon />
-                                            </IconButton>
-                                          )}
+                                                }}
+                                              >
+                                                <DeleteIcon />
+                                              </IconButton>
+                                            )}
 
                                           {/* //ปุ่มดูไฟล์ */}
 
@@ -2283,53 +2290,53 @@ export default function ExplaintBody({
                                           </IconButton>
 
                                           {/* //ปุ่มดาวน์โหลดไฟล์ */}
-                                          { isActionExplainRead && (
-                                              <IconButton
-                                                color="primary"
-                                                onClick={async () => {
-                                                  if (!item.full_path) return;
+                                          {isActionExplainRead && (
+                                            <IconButton
+                                              color="primary"
+                                              onClick={async () => {
+                                                if (!item.full_path) return;
 
-                                                  try {
-                                                    const response =
-                                                      await fetch(
-                                                        item.full_path,
-                                                        { method: "GET" }
-                                                      );
-                                                    const blob =
-                                                      await response.blob();
-                                                    const url =
-                                                      URL.createObjectURL(blob);
+                                                try {
+                                                  const response =
+                                                    await fetch(
+                                                      item.full_path,
+                                                      { method: "GET" }
+                                                    );
+                                                  const blob =
+                                                    await response.blob();
+                                                  const url =
+                                                    URL.createObjectURL(blob);
 
-                                                    const link =
-                                                      document.createElement(
-                                                        "a"
-                                                      );
-                                                    link.href = url;
-                                                    link.setAttribute(
-                                                      "download",
-                                                      item.original_file_name ??
-                                                        "file"
+                                                  const link =
+                                                    document.createElement(
+                                                      "a"
                                                     );
-                                                    document.body.appendChild(
-                                                      link
-                                                    );
-                                                    link.click();
-                                                    document.body.removeChild(
-                                                      link
-                                                    );
+                                                  link.href = url;
+                                                  link.setAttribute(
+                                                    "download",
+                                                    item.original_file_name ??
+                                                    "file"
+                                                  );
+                                                  document.body.appendChild(
+                                                    link
+                                                  );
+                                                  link.click();
+                                                  document.body.removeChild(
+                                                    link
+                                                  );
 
-                                                    URL.revokeObjectURL(url); // cleanup memory
-                                                  } catch (err) {
-                                                    console.error(
-                                                      "Download failed:",
-                                                      err
-                                                    );
-                                                  }
-                                                }}
-                                              >
-                                                <DownloadIcon />
-                                              </IconButton>
-                                            )}
+                                                  URL.revokeObjectURL(url); // cleanup memory
+                                                } catch (err) {
+                                                  console.error(
+                                                    "Download failed:",
+                                                    err
+                                                  );
+                                                }
+                                              }}
+                                            >
+                                              <DownloadIcon />
+                                            </IconButton>
+                                          )}
                                         </Box>
                                       </Box>
                                     ))}
