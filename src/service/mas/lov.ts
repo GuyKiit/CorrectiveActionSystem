@@ -166,7 +166,7 @@ export async function mas_DepartmentGet_Complaint(value: any, setdataset_departm
   try {
     const dataset = {
       domain_id: value.domain_id,
-      company_id: user[0]?.itasset_company_id,
+      company_id: value.company_id,
       // company_id: value.company_id,
     };
     const response = await _POST(

@@ -32,6 +32,13 @@ export const Complaint_headCells = [
         colWidth: 150,
     },
     {
+        columnName: 'approve_by',
+        numeric: 'center',
+        disablePadding: false,
+        label: 'อนุมัติโดย',
+        colWidth: 150,
+    },
+    {
         columnName: 'request_department_name',
         numeric: 'center',
         disablePadding: false,

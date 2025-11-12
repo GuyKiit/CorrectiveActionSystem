@@ -25,7 +25,7 @@ export default function BasicChips(props: BasicChips) {
               : "#95A5A6",
     // SUBMITED: props.acknowledge ? "#7db6fa" : "#FF6B7A",
     EXPLAINED: props.step === "EXPLAIN" && props.role === "section_head" ? "#F1C40F" : "#95A5A6",
-    APPROVED: props.step === "EXPLAIN" && props.role === "qc" ? "#85d47f" : "#95A5A6",
+    APPROVED: props.role === "qc" && props.step === "EXPLAIN" ? "#85d47f" : "#95A5A6",
     // APPROVED: "#27AE60",
     // APPROVE_FU: "#1ABC9C",
     CLOSED: "#95A5A6",

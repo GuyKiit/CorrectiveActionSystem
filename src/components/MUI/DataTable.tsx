@@ -31,7 +31,8 @@ export default function DataTable({ colum, rows, titlename, noDataname = "ไม
   const [searchQuery, setSearchQuery] = React.useState("");
 
   // console.log('[DataTable] colum : ', colum);
-  
+
+
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
     property: keyof any
@@ -142,7 +143,7 @@ export default function DataTable({ colum, rows, titlename, noDataname = "ไม
       );
     }
   };
-  
+
 
   // Clear selected data when rows change
   React.useEffect(() => {
@@ -189,13 +190,13 @@ export default function DataTable({ colum, rows, titlename, noDataname = "ไม
       </div> */}
       <div className="p-5">
         <TableContainer className="border border-gray-300 rounded-lg">
-          <Table  aria-label="simple table">
+          <Table aria-label="simple table">
             <TableHead>
               <TableRow>
                 {select && (
                   <TableCell
                     //align={"center"}
-                  //padding={"none"}
+                    //padding={"none"}
                     sortDirection={orderBy === "id" ? order : false}
                     //sx={{ minWidth: 50 }}
                     className="border border-gray-500/10 bg-gray-50"
@@ -216,7 +217,7 @@ export default function DataTable({ colum, rows, titlename, noDataname = "ไม
                   </TableCell>
                 )}
                 {colum.map((headCell: any, index: number) => (
-                  
+
                   <TableCell
                     key={index}
                     align={headCell.numeric}
@@ -230,7 +231,7 @@ export default function DataTable({ colum, rows, titlename, noDataname = "ไม
                       onClick={(e) => handleRequestSort(e, headCell.columnName)}
                       sx={{}}
                     >
-                       <label className="text-gray-600 pl-5 text-center sarabun-regular">
+                      <label className="text-gray-600 pl-5 text-center sarabun-regular">
                         {headCell.label}
                       </label>
                       {orderBy === headCell.columnName ? (
@@ -247,10 +248,11 @@ export default function DataTable({ colum, rows, titlename, noDataname = "ไม
 
 
 
-            
+
             <TableBody>
               {visibleRows &&
                 visibleRows.map((row: any, index: number) => {
+
                   return (
                     <TableRow
                       className={`hover:bg-blue-50`}
@@ -279,18 +281,31 @@ export default function DataTable({ colum, rows, titlename, noDataname = "ไม
                       {/* Render data cells for each column */}
                       {colum?.map((column: any, cellIndex: number) => {
                         const value = row[column.columnName];
+
                         return (
                           <TableCell
                             key={`${column.columnName}-${cellIndex}`}
-                            align={column.numeric}
+                            align={column.numeric || "center"}
                             className="border border-gray-500/10"
                           >
-                            <label className="text-gray-600">
-                              {value}
-                            </label>
+                            {/* ✅ 1. ถ้าเป็น React Element */}
+                            {React.isValidElement(value) ? (
+                              value
+                            ) :
+                              /* ✅ 2. ถ้าเป็น string HTML (มี <br/>) */
+                              typeof value === "string" && value.includes("<br") ? (
+                                <div
+                                  className="text-gray-600"
+                                  dangerouslySetInnerHTML={{ __html: value }}
+                                ></div>
+                              ) : (
+                                /* ✅ 3. ค่าธรรมดา */
+                                <div className="text-gray-600">{value ?? ""}</div>
+                              )}
                           </TableCell>
                         );
                       })}
+
                     </TableRow>
                   );
                 })}

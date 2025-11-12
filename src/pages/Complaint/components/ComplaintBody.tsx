@@ -143,7 +143,7 @@ interface ComplaintBody {
   onPriorityChange?: (val: any) => void;
 
   handleOpenAdd?: () => void;
-  handleOnclickExplainView?: (item: any) => void;
+  handleOnclickExplainView?: (item: any , name : string) => void;
   handleOnclickExplainApproveSc?: (item: any) => void;
 
   handleOnclickComplainCloseAdd?: (item: any) => void;
@@ -506,17 +506,25 @@ export default function ComplaintBody({
 
   // Event Handlers =========================================================
   const handleCompanyChange = (value: any) => {
-    // console.log("####### Onchange Company Value [event] : ", value);
-    // console.log("@@@@@@@@@@@@First", dataset_domainrelate);
-    // console.log("Render check respondent_domain_id:", respondent_domain_id);
+  if (value != null) {
+    // เรียก fetch domain ของ company ทั้งหมด
+    mas_DomainGet(value.company_id,set_domain,user,isCallFuncLogOn
+    );
 
-    if (value != null) {
-      mas_DomainRelateGet(value, set_domainrelate, isCallFuncLogOn);
-    } else {
-      setrespondent_domain_id(null);
-    }
-    // console.log("@@@@@@@@@@@@second", dataset_domainrelate);
-  };
+    // เคลียร์ domain ที่เลือกก่อน
+    setrespondent_domain_id(null);
+
+    // เคลียร์ department ที่เกี่ยวข้องด้วย
+    setdataset_department([]);
+    setrespondent_department_id(null);
+  } else {
+    set_domain([]);
+    setrespondent_domain_id(null);
+    setdataset_department([]);
+    setrespondent_department_id(null);
+  }
+};
+
 
   // isAcknowledge
 
@@ -1573,7 +1581,7 @@ export default function ComplaintBody({
                       console.log("cccccc", val);
                     }}
                     bgcolorTextField={true}
-                    readonly
+                    // readonly
                   />
                 </Grid>
                 <Grid size={3} mt={2}>
@@ -2912,7 +2920,8 @@ export default function ComplaintBody({
                         </Box>
 
                         {/* === ฝั่งขวา ปุ่ม Add === */}
-                        {dataelement?.complaint_status_label === "SUBMITED" &&
+                        {action !== "ReadExplain" &&
+                        dataelement?.complaint_status_label === "SUBMITED" &&
                           dataelement?.step_label === "EXPLAIN" && (
                             <Button
                               variant="contained"
@@ -3012,7 +3021,8 @@ export default function ComplaintBody({
                                       <Box sx={{ display: "flex", gap: 1 }}>
                                         <Box sx={{ display: "flex", gap: 1.5 }}>
                                           {/* ปุ่มอนุมัติ */}
-                                          {dataelement?.complaint_status_label === "EXPLAINED" &&
+                                          {action !== "ReadApproveSC" &&
+                                          dataelement?.complaint_status_label === "EXPLAINED" &&
                                             dataelement?.step_label === "EXPLAIN" &&
                                             index === 0 &&
                                             (
@@ -3080,7 +3090,7 @@ export default function ComplaintBody({
                                             onClick={(e) => {
                                               e.stopPropagation();
                                               handleOnclickExplainView &&
-                                                handleOnclickExplainView(item)
+                                                handleOnclickExplainView(item,action)
                                             }}
                                             sx={{
                                               backgroundColor: "#7e828cff",

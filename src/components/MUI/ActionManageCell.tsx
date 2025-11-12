@@ -97,18 +97,18 @@ const ActionManageCell: React.FC<ActionManageCellProps> = (props) => {
       }}
       hidden={
         (funcName === "View" && hiddenRead) ||                      // Complaint
-        (funcName === "Edit" && hiddenRead) ||                      // Complaint
-        (funcName === "Delete" && hiddenRead) ||                    // Complaint
-        (funcName === "Explain" && hiddenExplain) ||                // Explain
+        (funcName === "Edit" && hiddenEdit) ||                      // Complaint
+        (funcName === "Delete" && hiddenDelete) ||                  // Complaint
+        (funcName === "EXPLAIN" && hiddenExplain) ||                // Explain
         (funcName === "ApproveSC" && hiddenApproveSC) ||            // Approve
         (funcName === "ApproveQC" && hiddenApproveQC) ||            // Approve
         (funcName === "Close" && hiddenClose) ||                    // Close
-        
-        (funcName === "ReadExplain" && hiddenReadExplain) ||                    // ReadExplain
-        (funcName === "ReadApproveSC" && hiddenReadApproveSC) ||                    // ReadApproveSC
-        (funcName === "ReadApproveQC" && hiddenReadApproveQC) ||                    // ReadApproveQC
-        (funcName === "ReadClose" && hiddenReadClose) ||                    // ReadClose
-        (funcName === "CloseHistory" && hiddenCloseHistory) ||                    // CloseHistory
+
+        (funcName === "ReadExplain" && hiddenReadExplain) ||        // ReadExplain
+        (funcName === "ReadApproveSC" && hiddenReadApproveSC) ||    // ReadApproveSC
+        (funcName === "ReadApproveQC" && hiddenReadApproveQC) ||    // ReadApproveQC
+        (funcName === "ReadClose" && hiddenReadClose) ||            // ReadClose
+        (funcName === "CloseHistory" && hiddenCloseHistory) ||      // CloseHistory
 
         (funcName === "DepartmentAdd" && hiddenDepartmentAdd) ||    // DepartmentAdd
         (funcName === "DepartmentView" && hiddenDepartmentView) ||  // DepartmentView
@@ -130,8 +130,7 @@ const ActionManageCell: React.FC<ActionManageCellProps> = (props) => {
     </MenuItem>
   );
   console.log(menuFuncData,'menuFuncData');
-  console.log(hiddenApproveSC,'hiddenApproveSC');
-  console.log(hiddenApproveQC,'hiddenApproveQC');
+  console.log(hiddenExplain,'hiddenExplain');
   console.log(hiddenClose,'🎏🎏🎏hiddenClose');
   
 // console.log('CHECK DATE el in ActionManageCell', menuFuncData)

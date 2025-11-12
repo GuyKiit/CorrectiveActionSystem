@@ -1061,6 +1061,7 @@ export default function ExplaintBody({
 
     //==========================================================================
 
+
     // Filter Variable
     // helper เพื่อหาจาก dataset ที่อาจมีคีย์ต่างกัน (itasset_company_id / company_id)
     const findCompany = (id: string) =>
@@ -1076,12 +1077,8 @@ export default function ExplaintBody({
       );
 
     //==========================================================================
-
-    if (
-      isActionExplainApproveScAdd ||
-      isActionExplainApproveQcAdd ||
-      isActionCloseAdd
-    ) {
+        
+    if (isActionExplainApproveScAdd || isActionExplainApproveQcAdd) {
       setapprove_name(user[0].employee_username || "");
       setclose_name(user[0].employee_username || "");
       setapprove_position(user[0].employee_position || "");
@@ -1158,10 +1155,10 @@ export default function ExplaintBody({
   //////////////////////// Approve Read //////////////////////////
   React.useEffect(() => {
     console.log("🟣🟣🟣🟣🟣🟣 [5] 🟣🟣🟣🟣🟣🟣");
-    console.log("step: 5 เก็บข้อมูลเข้า ฺsetdataelement ใหม่ ", dataelement);
+    console.log("ขั้นตอน: 5 เก็บข้อมูลเข้า ฺเต็dataelement ใหม่ ", dataelement);
     if (
       dataelement &&
-      (action === "ExplainAdd" || action === "ExplainRead" || isViewMode)
+      (action === "ExplainAdd" || action === "ExplainRead" || action === "ApproveScAdd" || action === "ApproveQcAdd" || isViewMode)
     ) {
       // Set basic information
       setresponsible_name(
@@ -1211,75 +1208,81 @@ export default function ExplaintBody({
       }
 
       // Process ToolUse data - wait until combobox loaded
-      if (
-        dataelement?.ToolUse ||
-        dataelement?.tooluse ||
-        dataelement?.explainTu
-      ) {
-        const isComboReady =
-          Array.isArray(dataToolUse_Combobox) &&
-          dataToolUse_Combobox.length > 0;
-        console.log("🔧 ToolUse prefill check:", {
-          isComboReady,
-          currentSelected: (dataTooluse || []).length,
-        });
-        if (isComboReady && (!dataTooluse || dataTooluse.length === 0)) {
-          // Support both possible API shapes: ToolUse (explain_tu_id), tooluse (tool_use_id), explainTu (explain_tu_id)
-          const rawTU = Array.isArray(dataelement?.ToolUse)
-            ? dataelement.ToolUse
-            : Array.isArray(dataelement?.tooluse)
-            ? dataelement.tooluse
-            : Array.isArray(dataelement?.explainTu)
-            ? dataelement.explainTu
-            : [];
 
-          const tu = setExplainTU(rawTU);
-          setdataToolUse(tu);
-
-          // Maintain legacy checkbox mirror if raw 'tooluse' provided
-          if (Array.isArray(dataelement?.tooluse)) {
-            setdataTooluseCheckbox(setTooluse(dataelement.tooluse));
-          }
-
-          // ถ้ามี ToolUse ที่เป็น Other ให้ดึงค่ามา
-          const otherTU = tu.find((el: any) => el.lov2 === "Y");
-          setToolOther(otherTU?.other || "");
-        }
-      }
-
-      // Process Decision data - wait until combobox loaded
-      if (dataelement?.Decision || dataelement?.explainDd) {
-        const isDecisionComboReady =
-          Array.isArray(dataDecision_Combobox) &&
-          dataDecision_Combobox.length > 0;
-        if (
-          isDecisionComboReady &&
-          (!dataDecision || dataDecision.length === 0)
-        ) {
-          const rawDD = Array.isArray(dataelement?.Decision)
-            ? dataelement.Decision
-            : Array.isArray(dataelement?.explainDd)
-            ? dataelement.explainDd
-            : [];
-          const dd = setExplainDD(rawDD);
-          setdataDecision(dd);
-
-          // ถ้ามี Decision ที่เป็น Other ให้ดึงค่ามา
-          const otherDD = dd.find((el: any) => el.lov2 === "Y");
-          setDecisionOther(otherDD?.other || "");
-        }
-      }
     }
   }, [
     dataelement,
     dataset_reporttype,
     dataset_department,
     dataset_company,
-    dataToolUse_Combobox,
-    dataDecision_Combobox,
-    dataTooluse,
-    dataDecision,
+    // dataTooluse,
+    // dataDecision,
   ]);
+
+  React.useEffect(() => {
+    if (
+      !dataelement ||
+      !(
+        dataelement?.ToolUse ||
+        dataelement?.tooluse ||
+        dataelement?.explainTu
+      )
+    )
+      return;
+
+    const isComboReady =
+      Array.isArray(dataToolUse_Combobox) && dataToolUse_Combobox.length > 0;
+    if (!isComboReady) return;
+
+    console.log("🔧 [Effect: ToolUse prefill check]", {
+      isComboReady,
+      currentSelected: (dataTooluse || []).length,
+    });
+
+    if (dataTooluse && dataTooluse.length > 0) return; // กัน loop
+
+    const rawTU = Array.isArray(dataelement?.ToolUse)
+      ? dataelement.ToolUse
+      : Array.isArray(dataelement?.tooluse)
+        ? dataelement.tooluse
+        : Array.isArray(dataelement?.explainTu)
+          ? dataelement.explainTu
+          : [];
+
+    const tu = setExplainTU(rawTU);
+    setdataToolUse(tu);
+
+    if (Array.isArray(dataelement?.tooluse)) {
+      setdataTooluseCheckbox(setTooluse(dataelement.tooluse));
+    }
+
+    const otherTU = tu.find((el: any) => el.lov2 === "Y");
+    setToolOther(otherTU?.other || "");
+  }, [dataelement, dataToolUse_Combobox]); // ✅ แค่สองตัวนี้
+
+
+  React.useEffect(() => {
+    if (!dataelement || !(dataelement?.Decision || dataelement?.explainDd)) return;
+
+    const isDecisionComboReady =
+      Array.isArray(dataDecision_Combobox) && dataDecision_Combobox.length > 0;
+    if (!isDecisionComboReady) return;
+
+    if (dataDecision && dataDecision.length > 0) return; // กัน loop
+
+    const rawDD = Array.isArray(dataelement?.Decision)
+      ? dataelement.Decision
+      : Array.isArray(dataelement?.explainDd)
+        ? dataelement.explainDd
+        : [];
+
+    const dd = setExplainDD(rawDD);
+    setdataDecision(dd);
+
+    const otherDD = dd.find((el: any) => el.lov2 === "Y");
+    setDecisionOther(otherDD?.other || "");
+  }, [dataelement, dataDecision_Combobox]); // ✅ แค่สองตัวนี้
+
 
   // Debug useEffect for dataTooluseCheckbox state changes
   React.useEffect(() => {
@@ -1287,6 +1290,15 @@ export default function ExplaintBody({
     console.log("🔧 dataTooluseCheckbox state changed:", dataTooluseCheckbox);
   }, [dataTooluseCheckbox]);
 
+
+
+  React.useEffect(() => {
+    console.log('🟣🟣🟣🟣🟣🟣 [7] 🟣🟣🟣🟣🟣🟣')
+    console.log("🟡 current action:", action);
+    if ((action === "ExplainRead" || action === "ApproveScAdd" || action === "ApproveQcAdd") && dataelement?.id) {
+      ComplaintFile_Get();
+    }
+  }, [action, dataelement]);
   const setExplainTU = (data: any) => {
     if (true)
       console.log(
@@ -1364,6 +1376,7 @@ export default function ExplaintBody({
   }, [action, dataelement]);
 
   return (
+
     <Box
       sx={{
         p: 2,
@@ -1396,7 +1409,7 @@ export default function ExplaintBody({
       </Grid>
 
       {/* ====== Dynamic ฟอร์ม สำหรับเลือกประเภทเอกสาร ====== */}
-      {!isFormHidden && (isActionExplainAdd || isActionExplainRead) && (
+      {!isFormHidden && (isActionExplainAdd || isActionExplainRead || isActionExplainApproveScAdd || isActionExplainApproveQcAdd) && (
         <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>
           <label className="sarabun-regular-datatable">
             {dataReportTypeValue?.lov4}
@@ -2022,12 +2035,12 @@ export default function ExplaintBody({
                                 isActionAdd
                                   ? false
                                   : isActionEdit
-                                  ? false
-                                  : isActionExplainAdd
-                                  ? false
-                                  : true
+                                    ? false
+                                    : isActionExplainAdd
+                                      ? false
+                                      : true
                               }
-                              readonly={isActionRead || isActionDelete}
+                              readonly={isActionRead || isActionDelete ||isActionExplainApproveScAdd}
                             />
                           </Grid>
                         </Grid>
