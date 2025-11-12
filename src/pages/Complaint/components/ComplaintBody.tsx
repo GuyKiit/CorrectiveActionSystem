@@ -3021,15 +3021,23 @@ export default function ComplaintBody({
                                       <Box sx={{ display: "flex", gap: 1 }}>
                                         <Box sx={{ display: "flex", gap: 1.5 }}>
                                           {/* ปุ่มอนุมัติ */}
-                                          {action !== "ReadApproveSC" &&
+                                          {
                                           (
-                                          (dataelement?.complaint_status_label === "EXPLAINED" &&
-                                            dataelement?.step_label === "EXPLAIN" &&
-                                            index === 0 ) 
+                                            action === "ApproveSc" || action === "ApproveQc" 
+                                          )
+                                          &&
+                                          (
+                                            (
+                                              dataelement?.complaint_status_label === "EXPLAINED" &&
+                                              dataelement?.step_label === "EXPLAIN" &&
+                                              index === 0 
+                                            ) 
                                             || 
-                                            (dataelement?.complaint_status_label === "APPROVED" &&
-                                            dataelement?.step_label === "COMPLAINT" &&
-                                            index === 0 ) 
+                                            (
+                                              dataelement?.complaint_status_label === "APPROVED" &&
+                                              dataelement?.step_label === "COMPLAINT" &&
+                                              index === 0 
+                                            ) 
                                           ) &&
                                             (
                                               <Button

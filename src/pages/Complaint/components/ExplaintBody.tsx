@@ -1409,63 +1409,66 @@ export default function ExplaintBody({
       </Grid>
 
       {/* ====== Dynamic ฟอร์ม สำหรับเลือกประเภทเอกสาร ====== */}
-      {!isFormHidden && (isActionExplainAdd || isActionExplainRead || isActionExplainApproveScAdd || isActionExplainApproveQcAdd) && (
-        <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>
-          <label className="sarabun-regular-datatable">
-            {dataReportTypeValue?.lov4}
-          </label>
-          <Divider sx={{ my: 1 }} />
-          <Grid container spacing={2}>
-            <Paper
-              elevation={3}
-              sx={{
-                p: 3,
-                mt: 3,
-                width: "100%",
-                borderRadius: 3,
-                background: "linear-gradient(135deg, #fff5f5 0%, #ffffff 100%)",
-                border: "1px solid #ffcdd2",
-                boxShadow: "0 4px 12px rgba(244,67,54,0.1)",
-              }}
-            >
-              <Box
+      {!isFormHidden &&
+        (isActionExplainAdd ||
+          isActionExplainRead || isActionExplainApproveScAdd || isActionExplainApproveQcAdd ) && (
+          <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>
+            <label className="sarabun-regular-datatable">
+              {dataReportTypeValue?.lov4}
+            </label>
+            <Divider sx={{ my: 1 }} />
+            <Grid container spacing={2}>
+              <Paper
+                elevation={3}
                 sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  mb: 3,
-                  pb: 2,
-                  borderBottom: "2px solid #f44336",
+                  p: 3,
+                  mt: 3,
+                  width: "100%",
+                  borderRadius: 3,
+                  background:
+                    "linear-gradient(135deg, #fff5f5 0%, #ffffff 100%)",
+                  border: "1px solid #ffcdd2",
+                  boxShadow: "0 4px 12px rgba(244,67,54,0.1)",
                 }}
               >
                 <Box
                   sx={{
-                    width: 6,
-                    height: 24,
-                    backgroundColor: "#f44336",
-                    borderRadius: 1,
-                    mr: 2,
-                  }}
-                />
-                <label
-                  className="sarabun-regular-datatable"
-                  style={{
-                    fontSize: "18px",
-                    fontWeight: "600",
-                    color: "#d32f2f",
-                    margin: 0,
+                    display: "flex",
+                    alignItems: "center",
+                    mb: 3,
+                    pb: 2,
+                    borderBottom: "2px solid #f44336",
                   }}
                 >
-                  ข้อมูลผู้ชี้แจง // {action}
-                </label>
-              </Box>
-              <Grid container spacing={3}>
-                <Grid size={4}>
-                  <FullWidthTextField
-                    required="required"
-                    value={
-                      isActionExplainAdd
-                        ? user[0]?.employee_username || "-"
-                        : responsible_name ||
+                  <Box
+                    sx={{
+                      width: 6,
+                      height: 24,
+                      backgroundColor: "#f44336",
+                      borderRadius: 1,
+                      mr: 2,
+                    }}
+                  />
+                  <label
+                    className="sarabun-regular-datatable"
+                    style={{
+                      fontSize: "18px",
+                      fontWeight: "600",
+                      color: "#d32f2f",
+                      margin: 0,
+                    }}
+                  >
+                    ข้อมูลผู้ชี้แจง // {action}
+                  </label>
+                </Box>
+                <Grid container spacing={3}>
+                  <Grid size={4}>
+                    <FullWidthTextField
+                      required="required"
+                      value={
+                        isActionExplainAdd
+                          ? user[0]?.employee_username || "-"
+                          : responsible_name ||
                           dataelement?.responsible_name ||
                           "-"
                     }
@@ -2344,7 +2347,7 @@ export default function ExplaintBody({
       )}
 
       {/* //ส่วนของ Section Head */}
-      {(isActionExplainApproveScAdd || isActionExplainApproveQcAdd) && (
+      {(isActionExplainApproveScAdd || isActionExplainApproveQcAdd  || isActionExplainRead) && (
         <Paper
           elevation={3}
           sx={{
