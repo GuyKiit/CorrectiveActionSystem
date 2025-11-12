@@ -3503,12 +3503,12 @@ console.log(return_detail,'return_detail');
   currentExplainForApproval?.id; 
 
 	// 🧩 โหลดค่า Complaint Status ทั้งหมด โดยใช้โดเมนจาก ComplaintGet เป็นหลัก
-	const domainForLov = dataelement?.domain_id ?? respondent_domain_id?.domain_id ?? user[0]?.employee_domain;
-	const tempComplaintStatus = await LovAll_Get("complaint_status", domainForLov);
-	console.log("📡 Current tempComplaintStatus:", tempComplaintStatus);
-	console.log("📡 Current tempComplaintStatus[5].id:", tempComplaintStatus[5]?.id);
-	console.log('📡📡📡📡📡📡📡📡',dataelement?.request_domain_id)
-	console.log("👽👽👽complaint_status domain:", domainForLov);
+	// const domainForLov = dataelement?.domain_id ?? respondent_domain_id?.domain_id ?? user[0]?.employee_domain;
+	const tempComplaintStatus = await LovAll_Get("complaint_status", user[0]?.employee_domain);
+	// console.log("👽👽👽 Current tempComplaintStatus:", tempComplaintStatus);
+	// console.log("👽👽👽 Current tempComplaintStatus[5].id:", tempComplaintStatus[5]?.id);
+	console.log("👽👽👽complaint_status domain:", user[0]?.employee_domain);
+  console.log("👽👽👽complaintId:",dataelement?.id);
 
   // 🧩 Helper: หา explain_id ที่แท้จริงจาก dataelement
   const resolveExplainId = () => {
@@ -3539,69 +3539,69 @@ console.log(return_detail,'return_detail');
     },
   };
 
-  setIsLoadingScreen(true);
+  // setIsLoadingScreen(true);
 
-  try {
-    // 🧩 บันทึกข้อมูล Approve
-    const response = await _POST(closePayload,"/Explain/CloseAdd");
+  // try {
+  //   // 🧩 บันทึกข้อมูล Approve
+  //   const response = await _POST(closePayload,"/Explain/CloseAdd");
 
 
-    if (response && response.status === "success") {
-      // ✅ หลังบันทึก Approve สำเร็จ → อัปเดตสถานะ Complaint
-      const complaintEditPayload = {
-        complaintModel: {
-          id: complaintId,
-          mode: "CLOSE",
-          complaint_status_id: tempComplaintStatus[5]?.id,
-        },
-        CurrentAccessModel: {
-          user_id: user[0]?.employee_username || "",
-        },
-      };
+  //   if (response && response.status === "success") {
+  //     // ✅ หลังบันทึก Approve สำเร็จ → อัปเดตสถานะ Complaint
+  //     const complaintEditPayload = {
+  //       complaintModel: {
+  //         id: complaintId,
+  //         mode: "CLOSE",
+  //         complaint_status_id: tempComplaintStatus[5]?.id,
+  //       },
+  //       CurrentAccessModel: {
+  //         user_id: user[0]?.employee_username || "",
+  //       },
+  //     };
 
-      const complaintFormData = new FormData();
-      complaintFormData.append(
-        "complaintPayloadJson",
-        JSON.stringify(complaintEditPayload)
-      );
+  //     const complaintFormData = new FormData();
+  //     complaintFormData.append(
+  //       "complaintPayloadJson",
+  //       JSON.stringify(complaintEditPayload)
+  //     );
 
-      const updateRes = await _POST_FORMDATA(
-        complaintFormData,
-        "/Complaint/ComplaintEdit"
-      );
+  //     const updateRes = await _POST_FORMDATA(
+  //       complaintFormData,
+  //       "/Complaint/ComplaintEdit"
+  //     );
 
-      if (updateRes && updateRes.status === "success") {
-        FullSweetalert({
-          title: "Success",
-          text: `บันทึกการอนุมัติและอัปเดตสถานะสำเร็จ`,
-          icon: "success",
-        });
-      } else {
-        FullSweetalert({
-          title: "Warning",
-          text: `บันทึกการอนุมัติสำเร็จ แต่ไม่สามารถอัปเดตสถานะได้`,
-          icon: "warning",
-        });
-      }
-    } else {
-      FullSweetalert({
-        title: "Failed",
-        text: `บันทึกการอนุมัติไม่สำเร็จ`,
-        icon: "error",
-      });
-    }
-  } catch (error) {
-    console.error("Approve Upload failed:", error);
-    FullSweetalert({
-      title: "Error",
-      text: `เกิดข้อผิดพลาดระหว่างการบันทึกการอนุมัติ`,
-      icon: "error",
-    });
-  } finally {
-    setIsLoadingScreen(false);
-    handleClose();
-    ComplaintGet();
-  }
+  //     if (updateRes && updateRes.status === "success") {
+  //       FullSweetalert({
+  //         title: "Success",
+  //         text: `บันทึกการอนุมัติและอัปเดตสถานะสำเร็จ`,
+  //         icon: "success",
+  //       });
+  //     } else {
+  //       FullSweetalert({
+  //         title: "Warning",
+  //         text: `บันทึกการอนุมัติสำเร็จ แต่ไม่สามารถอัปเดตสถานะได้`,
+  //         icon: "warning",
+  //       });
+  //     }
+  //   } else {
+  //     FullSweetalert({
+  //       title: "Failed",
+  //       text: `บันทึกการอนุมัติไม่สำเร็จ`,
+  //       icon: "error",
+  //     });
+  //   }
+  // } catch (error) {
+  //   console.error("Approve Upload failed:", error);
+  //   FullSweetalert({
+  //     title: "Error",
+  //     text: `เกิดข้อผิดพลาดระหว่างการบันทึกการอนุมัติ`,
+  //     icon: "error",
+  //   });
+  // } finally {
+  //   setIsLoadingScreen(false);
+  //   handleClose();
+  //   ComplaintGet();
+  // }
 };
   // ------------------------------------------------------//
 

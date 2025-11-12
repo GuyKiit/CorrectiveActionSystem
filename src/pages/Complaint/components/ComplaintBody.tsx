@@ -3013,7 +3013,9 @@ export default function ComplaintBody({
                                         <Box sx={{ display: "flex", gap: 1.5 }}>
                                           {/* ปุ่มอนุมัติ */}
                                           {dataelement?.complaint_status_label === "EXPLAINED" &&
-                                            dataelement?.step_label === "EXPLAIN" && (
+                                            dataelement?.step_label === "EXPLAIN" &&
+                                            index === 0 &&
+                                            (
                                               <Button
                                                 variant="contained"
                                                 size="medium"
