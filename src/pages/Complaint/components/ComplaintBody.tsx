@@ -143,8 +143,9 @@ interface ComplaintBody {
   onPriorityChange?: (val: any) => void;
 
   handleOpenAdd?: () => void;
-  handleOnclickExplainView?: (item: any , name : string) => void;
+  handleOnclickExplainView?: (item: any, name: string) => void;
   handleOnclickExplainApproveSc?: (item: any) => void;
+  handleOnclickExplainApproveQc?: (item: any) => void;
 
   handleOnclickComplainCloseAdd?: (item: any) => void;
 }
@@ -202,6 +203,7 @@ export default function ComplaintBody({
   handleOpenAdd,
   handleOnclickExplainView,
   handleOnclickExplainApproveSc,
+  handleOnclickExplainApproveQc,
 
   handleOnclickComplainCloseAdd,
 }: ComplaintBody) {
@@ -506,24 +508,24 @@ export default function ComplaintBody({
 
   // Event Handlers =========================================================
   const handleCompanyChange = (value: any) => {
-  if (value != null) {
-    // เรียก fetch domain ของ company ทั้งหมด
-    mas_DomainGet(value.company_id,set_domain,user,isCallFuncLogOn
-    );
+    if (value != null) {
+      // เรียก fetch domain ของ company ทั้งหมด
+      mas_DomainGet(value.company_id, set_domain, user, isCallFuncLogOn
+      );
 
-    // เคลียร์ domain ที่เลือกก่อน
-    setrespondent_domain_id(null);
+      // เคลียร์ domain ที่เลือกก่อน
+      setrespondent_domain_id(null);
 
-    // เคลียร์ department ที่เกี่ยวข้องด้วย
-    setdataset_department([]);
-    setrespondent_department_id(null);
-  } else {
-    set_domain([]);
-    setrespondent_domain_id(null);
-    setdataset_department([]);
-    setrespondent_department_id(null);
-  }
-};
+      // เคลียร์ department ที่เกี่ยวข้องด้วย
+      setdataset_department([]);
+      setrespondent_department_id(null);
+    } else {
+      set_domain([]);
+      setrespondent_domain_id(null);
+      setdataset_department([]);
+      setrespondent_department_id(null);
+    }
+  };
 
 
   // isAcknowledge
@@ -1581,7 +1583,7 @@ export default function ComplaintBody({
                       console.log("cccccc", val);
                     }}
                     bgcolorTextField={true}
-                    // readonly
+                  // readonly
                   />
                 </Grid>
                 <Grid size={3} mt={2}>
@@ -2921,7 +2923,7 @@ export default function ComplaintBody({
 
                         {/* === ฝั่งขวา ปุ่ม Add === */}
                         {action !== "ReadExplain" &&
-                        dataelement?.complaint_status_label === "SUBMITED" &&
+                          dataelement?.complaint_status_label === "SUBMITED" &&
                           dataelement?.step_label === "EXPLAIN" && (
                             <Button
                               variant="contained"
@@ -3022,35 +3024,35 @@ export default function ComplaintBody({
                                         <Box sx={{ display: "flex", gap: 1.5 }}>
                                           {/* ปุ่มอนุมัติ */}
                                           {
-                                          (
-                                            action === "ApproveSc" || action === "ApproveQc" 
-                                          )
-                                          &&
-                                          (
                                             (
-                                              dataelement?.complaint_status_label === "EXPLAINED" &&
-                                              dataelement?.step_label === "EXPLAIN" &&
-                                              index === 0 
-                                            ) 
-                                            || 
+                                              action === "ApproveSC" || action === "ApproveQC"
+                                            )
+                                            &&
                                             (
-                                              dataelement?.complaint_status_label === "APPROVED" &&
-                                              dataelement?.step_label === "COMPLAINT" &&
-                                              index === 0 
-                                            ) 
-                                          ) &&
+                                              (
+                                                dataelement?.complaint_status_label === "EXPLAINED" &&
+                                                dataelement?.step_label === "EXPLAIN" &&
+                                                index === 0
+                                              )
+                                              ||
+                                              (
+                                                dataelement?.complaint_status_label === "APPROVED" &&
+                                                dataelement?.step_label === "COMPLAINT" &&
+                                                index === 0
+                                              )
+                                            ) &&
                                             (
                                               <Button
                                                 variant="contained"
                                                 size="medium"
                                                 onClick={(e) => {
                                                   e.stopPropagation();
-                                                  handleOnclickExplainApproveSc &&
-                                                    handleOnclickExplainApproveSc(
-                                                      item
-                                                    )
-                                                }
-                                                }
+                                                  if (action === "ApproveSC" && handleOnclickExplainApproveSc) {
+                                                    handleOnclickExplainApproveSc(item);
+                                                  } else if (action === "ApproveQC" && handleOnclickExplainApproveQc) {
+                                                    handleOnclickExplainApproveQc(item);
+                                                  }
+                                                }}
                                                 sx={{
                                                   backgroundColor: "#45bc4bff",
                                                   color: "#FFFFFF",
@@ -3068,8 +3070,8 @@ export default function ComplaintBody({
                                             )}
 
                                           {/* ปุ่มปิดรายการ */}
-                                          { dataelement?.complaint_status_label === "APPROVED" &&
-                                            dataelement?.step_label === "COMPLAINT" && 
+                                          {dataelement?.complaint_status_label === "APPROVED" &&
+                                            dataelement?.step_label === "COMPLAINT" &&
                                             dataelement?.approve_by === "ผู้อนุมัติ (ผู้จัดการคุณภาพ)" &&
                                             (
                                               <Button
@@ -3105,8 +3107,9 @@ export default function ComplaintBody({
                                             size="medium"
                                             onClick={(e) => {
                                               e.stopPropagation();
+                                              console.log("🧩 handleOnclickExplainView click:", { action, item });
                                               handleOnclickExplainView &&
-                                                handleOnclickExplainView(item,action)
+                                                handleOnclickExplainView(item, action)
                                             }}
                                             sx={{
                                               backgroundColor: "#7e828cff",
@@ -3161,261 +3164,261 @@ export default function ComplaintBody({
 
       {/*  CLOSE  */}
       {isActionCloseHistory && (
-      <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>
-        <Paper elevation={3} sx={{
-          p: 3,
-          mt: 3,
-          width: "100%",
-          borderRadius: 3,
-          background: 'linear-gradient(135deg, #e0e0e0 0%, #f5f5f5 100%)',
-          border: '1px solid #9e9e9e',
-          boxShadow: '0 4px 12px rgba(158,158,158,0.1)'
-        }}>
-          <Grid container spacing={2}>
-            <Grid size={12}>
-              <Accordion expanded={isMinimizecloseOpen}
-                onChange={() => setisMinimizeCloseOpen(!isMinimizecloseOpen)}
-                sx={{
-                  width: '100%',
-                  borderRadius: 3,
-                  background: 'linear-gradient(135deg, #e0e0e0 0%, #f5f5f5 100%)',
-                  border: '1px solid #9e9e9e',
-                  boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-                  mt: 3
-                }}>
-                <AccordionSummary
-                  expandIcon={<ExpandMoreIcon />}
-                  aria-controls="reporting-dept-content"
-                  id="reporting-dept-header"
-                >
-                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <Box sx={{
-                      width: 6,
-                      height: 24,
-                      backgroundColor: '#424242',
-                      borderRadius: 1,
-                      mr: 2
-                    }} />
-                    <Typography
-                      className="sarabun-regular-datatable"
-                      sx={{ fontSize: 18, fontWeight: 600, color: '#000000' }}
-                    >
-                      ปิดรายการคำร้องเรียน (Close Complaint)
-                    </Typography>
-                  </Box>
-                </AccordionSummary>
-
-                <AccordionDetails>
-                  <Divider sx={{ my: 1, borderBottom: '2px solid #424242' }} />
-                  <Paper
-                    elevation={3}
-                    sx={{
-                      p: 3,
-                      mt: 3,
-                      width: "100%",
-                      borderRadius: 3,
-                      background: "linear-gradient(135deg, #e0e0e0 0%, #fafafa 100%)",
-                      border: "1px solid #9e9e9e",
-                      boxShadow: "0 4px 12px rgba(158,158,158,0.12)",
-                    }}
+        <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>
+          <Paper elevation={3} sx={{
+            p: 3,
+            mt: 3,
+            width: "100%",
+            borderRadius: 3,
+            background: 'linear-gradient(135deg, #e0e0e0 0%, #f5f5f5 100%)',
+            border: '1px solid #9e9e9e',
+            boxShadow: '0 4px 12px rgba(158,158,158,0.1)'
+          }}>
+            <Grid container spacing={2}>
+              <Grid size={12}>
+                <Accordion expanded={isMinimizecloseOpen}
+                  onChange={() => setisMinimizeCloseOpen(!isMinimizecloseOpen)}
+                  sx={{
+                    width: '100%',
+                    borderRadius: 3,
+                    background: 'linear-gradient(135deg, #e0e0e0 0%, #f5f5f5 100%)',
+                    border: '1px solid #9e9e9e',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                    mt: 3
+                  }}>
+                  <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls="reporting-dept-content"
+                    id="reporting-dept-header"
                   >
-                    <Box
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      <Box sx={{
+                        width: 6,
+                        height: 24,
+                        backgroundColor: '#424242',
+                        borderRadius: 1,
+                        mr: 2
+                      }} />
+                      <Typography
+                        className="sarabun-regular-datatable"
+                        sx={{ fontSize: 18, fontWeight: 600, color: '#000000' }}
+                      >
+                        ปิดรายการคำร้องเรียน (Close Complaint)
+                      </Typography>
+                    </Box>
+                  </AccordionSummary>
+
+                  <AccordionDetails>
+                    <Divider sx={{ my: 1, borderBottom: '2px solid #424242' }} />
+                    <Paper
+                      elevation={3}
                       sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        mb: 3,
-                        pb: 2,
-                        borderBottom: "2px solid #424242",
+                        p: 3,
+                        mt: 3,
+                        width: "100%",
+                        borderRadius: 3,
+                        background: "linear-gradient(135deg, #e0e0e0 0%, #fafafa 100%)",
+                        border: "1px solid #9e9e9e",
+                        boxShadow: "0 4px 12px rgba(158,158,158,0.12)",
                       }}
                     >
-                      <Box
-                        sx={{
-                          width: 6,
-                          height: 24,
-                          backgroundColor: "#424242",
-                          borderRadius: 1,
-                          mr: 2,
-                        }}
-                      />
-                      <label
-                        className="sarabun-regular-datatable"
-                        style={{
-                          fontSize: "18px",
-                          fontWeight: "600",
-                          color: "#000000",
-                          margin: 0,
-                        }}
-                      >
-                        ข้อมูลผู้ตรวจติดตาม (แผนกต้นทาง)
-                      </label>
-                    </Box>
-                    <Grid container spacing={3}>
-                      <Grid size={4}>
-                        <FullWidthTextField
-                          required="required"
-                          value={product_name}
-                          labelName="ผู้ตรวจติดตาม (Follow-up by)"
-                          onchange={(e) => setproduct_name(e)}
-                          readonly={isActionRead || isActionDelete}
-                        />
-                      </Grid>
-                      <Grid size={4}>
-                        <FullWidthTextField
-                          required="required"
-                          value={product_name}
-                          labelName="บริษัท (Company)"
-                          onchange={(e) => setproduct_name(e)}
-                          readonly={isActionRead || isActionDelete }
-                        />
-                      </Grid>
-                      <Grid size={4}>
-                        <AutocompleteComboBox
-                          required="required"
-                          value={respondent_department_id}
-                          labelName={
-                            "แผนก (Department)"
-                          }
-                          options={dataset_department}
-                          column="department_name"
-                          setvalue={(e) => {
-                            // //console.log(e); // ดูค่าของ e ที่ถูกส่งมาจาก AutocompleteComboBox
-                            setrespondent_department_id(e);
-                          }}
-                          bgcolorTextField={
-                            isActionAdd ? false : isActionEdit ? false : true
-                          }
-                          readonly={isActionRead || isActionDelete}
-                        />
-                      </Grid>
-                      <Grid size={4}>
-                        <FullWidthTextField
-                          required="required"
-                          value={product_name}
-                          labelName="แผนก (Position)"
-                          onchange={(e) => setproduct_name(e)}
-                          readonly={isActionRead || isActionDelete}
-                        />
-                      </Grid>
-                      <Grid size={4}>
-                        <FullWidthTextField
-                          required="required"
-                          value={respondent_email}
-                          labelName="อีเมล (Email)"
-                          onchange={(e) => setrespondent_email(e)}
-                          readonly={isActionRead || isActionDelete}
-                        />
-                      </Grid>
-                      <Grid size={4}>
-                        <DesktopDatePickers
-                          required="required"
-                          labelName={"วันที่อนุมัติ (Date)"}
-                          value={date_of_detection}
-                          handleChange={(val) => setdate_of_detection(val ?? null)}
-                          bgcolorTextField={isActionAdd ? false : true}
-                          readonly={isActionRead || isActionEdit || isActionDelete}
-                        />
-                      </Grid>
-
-                    </Grid>
-
-                    <Box sx={{ mt: 4 }}>
                       <Box
                         sx={{
                           display: "flex",
                           alignItems: "center",
                           mb: 3,
-                          pb: 1,
-                          borderBottom: "1px solid #424242",
+                          pb: 2,
+                          borderBottom: "2px solid #424242",
                         }}
                       >
                         <Box
                           sx={{
-                            width: 4,
-                            height: 16,
+                            width: 6,
+                            height: 24,
                             backgroundColor: "#424242",
-                            borderRadius: 0.5,
-                            mr: 1.5,
+                            borderRadius: 1,
+                            mr: 2,
                           }}
                         />
                         <label
                           className="sarabun-regular-datatable"
                           style={{
-                            fontSize: "16px",
-                            fontWeight: "500",
+                            fontSize: "18px",
+                            fontWeight: "600",
                             color: "#000000",
                             margin: 0,
                           }}
                         >
-                          รายละเอียด
+                          ข้อมูลผู้ตรวจติดตาม (แผนกต้นทาง)
                         </label>
                       </Box>
-                    </Box>
-                    <Grid container spacing={2} sx={{ alignItems: 'stretch' }}>
-                      {/* ✅ Accordion แทน Paper */}
-                      {/* {dataReportTypeValue && ( */}
-                      <Grid size={12}>
-                        <Accordion
-                          expanded={isMinimizefuappOpen}
-                          onChange={() => setisMinimizeFuappOpen(!isMinimizefuappOpen)}
-                          sx={{ borderRadius: 2, backgroundColor: "#fafafa" }}
-                        >
-                          <AccordionSummary
-                            expandIcon={<ExpandMoreIcon />}
-                            aria-controls="complaint-type-content"
-                            id="complaint-type-header"
-                          >
-                            <Typography
-                              className="sarabun-regular-datatable"
-                              sx={{ fontSize: "18px", fontWeight: 600, color: "#333" }}
-                            >
-                               ผลการตรวจติดตาม (Follow-up)
-                              <span style={{ color: "red" }}> *</span>
-                            </Typography>
-                          </AccordionSummary>
+                      <Grid container spacing={3}>
+                        <Grid size={4}>
+                          <FullWidthTextField
+                            required="required"
+                            value={product_name}
+                            labelName="ผู้ตรวจติดตาม (Follow-up by)"
+                            onchange={(e) => setproduct_name(e)}
+                            readonly={isActionRead || isActionDelete}
+                          />
+                        </Grid>
+                        <Grid size={4}>
+                          <FullWidthTextField
+                            required="required"
+                            value={product_name}
+                            labelName="บริษัท (Company)"
+                            onchange={(e) => setproduct_name(e)}
+                            readonly={isActionRead || isActionDelete}
+                          />
+                        </Grid>
+                        <Grid size={4}>
+                          <AutocompleteComboBox
+                            required="required"
+                            value={respondent_department_id}
+                            labelName={
+                              "แผนก (Department)"
+                            }
+                            options={dataset_department}
+                            column="department_name"
+                            setvalue={(e) => {
+                              // //console.log(e); // ดูค่าของ e ที่ถูกส่งมาจาก AutocompleteComboBox
+                              setrespondent_department_id(e);
+                            }}
+                            bgcolorTextField={
+                              isActionAdd ? false : isActionEdit ? false : true
+                            }
+                            readonly={isActionRead || isActionDelete}
+                          />
+                        </Grid>
+                        <Grid size={4}>
+                          <FullWidthTextField
+                            required="required"
+                            value={product_name}
+                            labelName="แผนก (Position)"
+                            onchange={(e) => setproduct_name(e)}
+                            readonly={isActionRead || isActionDelete}
+                          />
+                        </Grid>
+                        <Grid size={4}>
+                          <FullWidthTextField
+                            required="required"
+                            value={respondent_email}
+                            labelName="อีเมล (Email)"
+                            onchange={(e) => setrespondent_email(e)}
+                            readonly={isActionRead || isActionDelete}
+                          />
+                        </Grid>
+                        <Grid size={4}>
+                          <DesktopDatePickers
+                            required="required"
+                            labelName={"วันที่อนุมัติ (Date)"}
+                            value={date_of_detection}
+                            handleChange={(val) => setdate_of_detection(val ?? null)}
+                            bgcolorTextField={isActionAdd ? false : true}
+                            readonly={isActionRead || isActionEdit || isActionDelete}
+                          />
+                        </Grid>
 
-                          <AccordionDetails>
-                            <Divider sx={{ my: 1 }} />
-                            <Box sx={{ flexGrow: 1, display: "flex", flexDirection: "column" }}>
-                              {/* ✅ ใช้ RadioGroup แทน Checkbox */}
-                              <RadioGroup
-                                row
-                                value={dataFuapp?.id || ""} // เก็บ id ของที่เลือก
-                                onChange={(e) => {
-                                  const selectedId = e.target.value;
-                                  const selectedItem = (filteredFuApprove || []).find(
-                                    (item) => item.id === selectedId
-                                  );
-                                  setdataFuapp(selectedItem ? { ...selectedItem } : null); // เก็บแค่ 1 ค่า
-                                }}
-                              >
-                                <Grid container spacing={2}>
-                                  {(filteredFuApprove || []).map((item: LovType) => (
-                                    <Grid  key={item.id}>
-                                      <FormControlLabel
-                                        value={item.id}
-                                        control={<Radio />}
-                                        label={item.lov1}
-                                        disabled={isActionRead || isActionDelete}
-                                        sx={{
-                                          m: 2,
-                                          px: 2,
-                                          py: 1,
-                                          borderRadius: 2,
-                                          border: dataFuapp?.id === item.id ? "2px solid #4caf50" : "none",
-                                          bgcolor: dataFuapp?.id === item.id ? "#d0f0c0" : "#f5f5f5", // ✅ เขียวพาสเทลถ้าเลือก, เทาอ่อนถ้ายังไม่เลือก
-                                          "&:hover": {
-                                            bgcolor: "#c8e6c9", // สี hover
-                                          },
-                                        }}
-                                      />
-                                    </Grid>
-                                  ))}
-                                </Grid>
-                              </RadioGroup>
-                            </Box>
-                          </AccordionDetails>
-                        </Accordion>
+                      </Grid>
+
+                      <Box sx={{ mt: 4 }}>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            mb: 3,
+                            pb: 1,
+                            borderBottom: "1px solid #424242",
+                          }}
+                        >
+                          <Box
+                            sx={{
+                              width: 4,
+                              height: 16,
+                              backgroundColor: "#424242",
+                              borderRadius: 0.5,
+                              mr: 1.5,
+                            }}
+                          />
+                          <label
+                            className="sarabun-regular-datatable"
+                            style={{
+                              fontSize: "16px",
+                              fontWeight: "500",
+                              color: "#000000",
+                              margin: 0,
+                            }}
+                          >
+                            รายละเอียด
+                          </label>
+                        </Box>
+                      </Box>
+                      <Grid container spacing={2} sx={{ alignItems: 'stretch' }}>
+                        {/* ✅ Accordion แทน Paper */}
                         {/* {dataReportTypeValue && ( */}
+                        <Grid size={12}>
+                          <Accordion
+                            expanded={isMinimizefuappOpen}
+                            onChange={() => setisMinimizeFuappOpen(!isMinimizefuappOpen)}
+                            sx={{ borderRadius: 2, backgroundColor: "#fafafa" }}
+                          >
+                            <AccordionSummary
+                              expandIcon={<ExpandMoreIcon />}
+                              aria-controls="complaint-type-content"
+                              id="complaint-type-header"
+                            >
+                              <Typography
+                                className="sarabun-regular-datatable"
+                                sx={{ fontSize: "18px", fontWeight: 600, color: "#333" }}
+                              >
+                                ผลการตรวจติดตาม (Follow-up)
+                                <span style={{ color: "red" }}> *</span>
+                              </Typography>
+                            </AccordionSummary>
+
+                            <AccordionDetails>
+                              <Divider sx={{ my: 1 }} />
+                              <Box sx={{ flexGrow: 1, display: "flex", flexDirection: "column" }}>
+                                {/* ✅ ใช้ RadioGroup แทน Checkbox */}
+                                <RadioGroup
+                                  row
+                                  value={dataFuapp?.id || ""} // เก็บ id ของที่เลือก
+                                  onChange={(e) => {
+                                    const selectedId = e.target.value;
+                                    const selectedItem = (filteredFuApprove || []).find(
+                                      (item) => item.id === selectedId
+                                    );
+                                    setdataFuapp(selectedItem ? { ...selectedItem } : null); // เก็บแค่ 1 ค่า
+                                  }}
+                                >
+                                  <Grid container spacing={2}>
+                                    {(filteredFuApprove || []).map((item: LovType) => (
+                                      <Grid key={item.id}>
+                                        <FormControlLabel
+                                          value={item.id}
+                                          control={<Radio />}
+                                          label={item.lov1}
+                                          disabled={isActionRead || isActionDelete}
+                                          sx={{
+                                            m: 2,
+                                            px: 2,
+                                            py: 1,
+                                            borderRadius: 2,
+                                            border: dataFuapp?.id === item.id ? "2px solid #4caf50" : "none",
+                                            bgcolor: dataFuapp?.id === item.id ? "#d0f0c0" : "#f5f5f5", // ✅ เขียวพาสเทลถ้าเลือก, เทาอ่อนถ้ายังไม่เลือก
+                                            "&:hover": {
+                                              bgcolor: "#c8e6c9", // สี hover
+                                            },
+                                          }}
+                                        />
+                                      </Grid>
+                                    ))}
+                                  </Grid>
+                                </RadioGroup>
+                              </Box>
+                            </AccordionDetails>
+                          </Accordion>
+                          {/* {dataReportTypeValue && ( */}
                           <Accordion
                             expanded={isMinimizedeapp2Open}
                             onChange={() => setisMinimizeDeapp2Open(!isMinimizedeapp2Open)}
@@ -3457,8 +3460,8 @@ export default function ComplaintBody({
                               </Box>
                             </AccordionDetails>
                           </Accordion>
-                        {/* )} */}
-                        {/* {dataReportTypeValue && ( */}
+                          {/* )} */}
+                          {/* {dataReportTypeValue && ( */}
                           <Accordion
                             expanded={isMinimizeotapp2Open}
                             onChange={() => setisMinimizeOtapp2Open(!isMinimizeotapp2Open)}
@@ -3500,19 +3503,19 @@ export default function ComplaintBody({
                               </Box>
                             </AccordionDetails>
                           </Accordion>
+                          {/* )} */}
+                        </Grid>
                         {/* )} */}
                       </Grid>
-                      {/* )} */}
-                    </Grid>
-                  </Paper>
+                    </Paper>
 
-                </AccordionDetails>
-              </Accordion>
+                  </AccordionDetails>
+                </Accordion>
+              </Grid>
             </Grid>
-          </Grid>
+          </Paper>
         </Paper>
-      </Paper>
-    )}
+      )}
 
     </Box>
   );

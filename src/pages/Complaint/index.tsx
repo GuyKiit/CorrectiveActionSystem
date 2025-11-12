@@ -454,6 +454,7 @@ export default function Complaint() {
     setapprove_name,
     setapprove_company_id,
     setapprove_department_id,
+    setapprove_position,
     setapprove_email,
   } = useListComplaint();
 
@@ -4209,7 +4210,7 @@ export default function Complaint() {
   //   setOpenApproveQC(true);
   //   setdataelement(data);
   // };
-  
+
 
   const handleOnclickApproveQC = async (data: any, name: string) => {
     setAction(name);
@@ -4232,7 +4233,7 @@ export default function Complaint() {
     // ดึง explain ของ complaint
     await Explain_Get(complaintData.id);
 
-    setOpenApproveSC(true);
+    setOpenApproveQC(true);
   };
 
   // -------- Approve Dialog Handlers --------
@@ -4288,7 +4289,7 @@ export default function Complaint() {
     }
   };
 
-  
+
 
   // const handleOnclickExplainView = (data: any, name: string) => {
   //   console.log("dataaaaaaaaaaaa", data);
@@ -4362,7 +4363,7 @@ export default function Complaint() {
     setdataelement(data);
 
     // ไม่ reset form ในโหมดดูข้อมูล เพื่อไม่ให้ dataReportTypeValue หาย
-    setOpenExplainView(true);
+    // setOpenExplainView(true);
 
     // ใช้ข้อมูลที่ส่งมาจากรายการ explain โดยตรง
     if (data) {
@@ -4401,6 +4402,13 @@ export default function Complaint() {
           setdataelement(updatedDataElement);
         }
       }
+    }
+    if (name === "ReadApproveSC") {
+      // ถ้ามาโหมด ApproveSC → เปิด Dialog ที่ใช้สำหรับอนุมัติ
+      setOpenExplainApproveSc(true);
+    } else {
+      // ถ้ามาโหมดดูข้อมูลทั่วไป → เปิด Dialog แสดงเฉย ๆ
+      setOpenExplainView(true);
     }
     // เปิด modal
     // setOpenExplainApproveSc(true);
@@ -4448,13 +4456,16 @@ export default function Complaint() {
   // };
 
   const handleOnclickExplainApproveQc = (explainData: any) => {
+    
     if (isCallFuncLogOn)
       console.log(
         "🕑",
         dayjs().format("HH:mm:ss.SSS"),
         "[Calling Function] : handleOnclickExplainApproveQc"
       );
+      
     const complaintData = dataelement;
+    
     // เก็บ complaint หลัก
     setComplaintMainData(complaintData);
 
@@ -5250,7 +5261,7 @@ export default function Complaint() {
           <ComplaintBody
             action="ReadExplain"
             handleOpenAdd={() => handleOnclickExplainAdd(dataelement)}
-            handleOnclickExplainView={handleOnclickExplainView}
+            handleOnclickExplainView={(item) => handleOnclickExplainView(item, "ReadExplain")}
             handleOnclickExplainApproveSc={handleOnclickExplainApproveSc}
           />
         }
@@ -5284,7 +5295,7 @@ export default function Complaint() {
           <ComplaintBody
             action="ReadApproveSC"
             handleOpenAdd={() => handleOnclickExplainAdd(dataelement)}
-            handleOnclickExplainView={handleOnclickExplainView}
+            handleOnclickExplainView={(item) => handleOnclickExplainView(item, "ReadApproveSC")}
             handleOnclickExplainApproveSc={handleOnclickExplainApproveSc}
           />
         }
@@ -5377,11 +5388,11 @@ export default function Complaint() {
             action="ApproveQC"
             handleOpenAdd={() => handleOnclickExplainAdd(dataelement)}
             handleOnclickExplainView={handleOnclickExplainView}
-            handleOnclickExplainApproveSc={handleOnclickExplainApproveSc}
+            handleOnclickExplainApproveQc={handleOnclickExplainApproveQc}
           />
         }
       />
-{/* 
+      {/* 
       <FuncDialog
         open={openExplainApproveQc}
         dialogWidth="xl"
@@ -5405,7 +5416,7 @@ export default function Complaint() {
         }
       /> */}
 
-         <FuncDialog
+      <FuncDialog
         // open={action === "ReadApproveSC" || action === "ReadApproveQC" || action === "ApproveSC" ? openExplainApproveSc : false}
         open={openExplainApproveQc}
         dialogWidth="xl"
