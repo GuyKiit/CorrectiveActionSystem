@@ -131,6 +131,7 @@ const ActionManageCell: React.FC<ActionManageCellProps> = (props) => {
   );
   console.log(menuFuncData,'menuFuncData');
   console.log(hiddenExplain,'hiddenExplain');
+  console.log(hiddenClose,'🎏🎏🎏hiddenClose');
   
 // console.log('CHECK DATE el in ActionManageCell', menuFuncData)
   const filteredMenu = (menuFuncData ?? [])

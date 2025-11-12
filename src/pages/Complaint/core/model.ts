@@ -152,11 +152,13 @@ export type ListComplaintContextProps = {
     responsible_date?: dayjs.Dayjs | null
     close_status?: string
     close_name?: string
-    close_company_id?: number
-    close_department_id?: number
+    close_company_id?: any
+    close_department_id?: any
     close_position?: string
     close_email?: string
     close_date?: dayjs.Dayjs
+    close_detail?: string
+    close_note?: string
     return_detail?: string
     return_name?: string
     return_company_id?: any
@@ -330,7 +332,9 @@ export type ListComplaintContextProps = {
     setclose_department_id: Dispatch<SetStateAction<number>>
     setclose_position: Dispatch<SetStateAction<string>>
     setclose_email: Dispatch<SetStateAction<string>>
-    setclose_date: Dispatch<SetStateAction<dayjs.Dayjs>>;
+    setclose_date: Dispatch<SetStateAction<dayjs.Dayjs | null>>
+    setclose_detail: Dispatch<SetStateAction<string>>
+    setclose_note: Dispatch<SetStateAction<string>>
     setreturn_detail: Dispatch<SetStateAction<string>>
     setreturn_name: Dispatch<SetStateAction<string>>
     setreturn_company_id: Dispatch<SetStateAction<number>>
@@ -506,6 +510,9 @@ export const initialListComplaint: ListComplaintContextProps = {
     setclose_position: () => { },
     setclose_email: () => { },
     setclose_date: () => { },
+    setclose_detail: () => { },
+    setclose_note: () => { },   
+
     setreturn_detail: () => { },
     setreturn_name: () => { },
     setreturn_company_id: () => { },
