@@ -5187,7 +5187,8 @@ export default function Complaint() {
           />
         }
       />
-<FuncDialog
+      
+      <FuncDialog
         open={openComplainClose}
         dialogWidth="xl"
         openBottonHidden={true}

@@ -3022,9 +3022,15 @@ export default function ComplaintBody({
                                         <Box sx={{ display: "flex", gap: 1.5 }}>
                                           {/* ปุ่มอนุมัติ */}
                                           {action !== "ReadApproveSC" &&
-                                          dataelement?.complaint_status_label === "EXPLAINED" &&
+                                          (
+                                          (dataelement?.complaint_status_label === "EXPLAINED" &&
                                             dataelement?.step_label === "EXPLAIN" &&
-                                            index === 0 &&
+                                            index === 0 ) 
+                                            || 
+                                            (dataelement?.complaint_status_label === "APPROVED" &&
+                                            dataelement?.step_label === "COMPLAINT" &&
+                                            index === 0 ) 
+                                          ) &&
                                             (
                                               <Button
                                                 variant="contained"
@@ -3054,8 +3060,10 @@ export default function ComplaintBody({
                                             )}
 
                                           {/* ปุ่มปิดรายการ */}
-                                          {dataelement?.complaint_status_label === "APPROVED" &&
-                                            dataelement?.step_label === "COMPLAINT" && (
+                                          { dataelement?.complaint_status_label === "APPROVED" &&
+                                            dataelement?.step_label === "COMPLAINT" && 
+                                            dataelement?.approve_by === "ผู้อนุมัติ (ผู้จัดการคุณภาพ)" &&
+                                            (
                                               <Button
                                                 variant="contained"
                                                 size="medium"

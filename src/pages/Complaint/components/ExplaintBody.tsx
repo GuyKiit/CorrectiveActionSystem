@@ -2703,7 +2703,7 @@ export default function ExplaintBody({
       )}
 
       {/* //ส่วนของ Qc */}
-      {isActionExplainApproveQcAdd && (
+      { isActionExplainApproveQcAdd && (
         <Paper
           elevation={3}
           sx={{
@@ -2716,330 +2716,348 @@ export default function ExplaintBody({
             boxShadow: "0 4px 12px rgba(158,158,158,0.12)",
           }}
         >
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              mb: 3,
-              pb: 2,
-              borderBottom: "2px solid #81c784",
-            }}
+          <Accordion
+            defaultExpanded
+            sx={{ backgroundColor: "transparent", boxShadow: "none" }}
           >
-            <Box
-              sx={{
-                width: 6,
-                height: 24,
-                backgroundColor: "#66bb6a",
-                borderRadius: 1,
-                mr: 2,
-              }}
-            />
-            <label
-              className="sarabun-regular-datatable"
-              style={{
-                fontSize: "18px",
-                fontWeight: "600",
-                color: "#2e7d32",
-                margin: 0,
-              }}
-            >
-              ข้อมูลผู้รับรอง (QC)
-            </label>
-          </Box>
-
-          <Grid container spacing={3}>
-            <Grid size={4}>
-              <FullWidthTextField
-                required="required"
-                value={approve_name}
-                labelName="ชื่อผู้อนุมัติ (Approved by)"
-                readonly
-              />
-            </Grid>
-            <Grid size={4}>
-              <AutocompleteComboBox
-                required="required"
-                value={approve_company_id}
-                labelName={"บริษัท (Company)"}
-                options={dataset_company}
-                column="company_name"
-                setvalue={(v) => setapprove_company_id(v)}
-                bgcolorTextField={true}
-                readonly
-              />
-            </Grid>
-            <Grid size={4}>
-              <AutocompleteComboBox
-                required="required"
-                value={approve_department_id}
-                labelName={"แผนก (Department)"}
-                options={dataset_department}
-                column="department_name"
-                setvalue={(v) => setapprove_department_id(v)}
-                bgcolorTextField={true}
-                readonly
-              />
-            </Grid>
-            <Grid size={4}>
-              <FullWidthTextField
-                required="required"
-                value={approve_position}
-                labelName="ตำแหน่ง (Position)"
-                readonly
-              />
-            </Grid>
-            <Grid size={4}>
-              <FullWidthTextField
-                required="required"
-                value={approve_email}
-                labelName="อีเมล (Email)"
-                readonly
-              />
-            </Grid>
-            <Grid size={4}>
-              <DesktopDatePickers
-                required="required"
-                labelName={"วันที่อนุมัติ (Date)"}
-                value={approve_date}
-                handleChange={(val) => setapprove_date(val ?? null)}
-                bgcolorTextField={isActionExplainApproveQcAdd ? false : true}
-                readonly
-              />
-            </Grid>
-          </Grid>
-
-          <Box sx={{ mt: 4 }}>
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                mb: 3,
-                pb: 1,
-                borderBottom: "1px solid #66bb6a",
-              }}
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="section-head-content"
+              id="section-head-header"
             >
               <Box
                 sx={{
-                  width: 4,
-                  height: 16,
-                  backgroundColor: "#388e3c",
-                  borderRadius: 0.5,
-                  mr: 1.5,
-                }}
-              />
-              <label
-                className="sarabun-regular-datatable"
-                style={{
-                  fontSize: "16px",
-                  fontWeight: "500",
-                  color: "#2e7d32",
-                  margin: 0,
+                  display: "flex",
+                  alignItems: "center",
+                  width: "100%",
+                  pb: 2,
+                  borderBottom: "2px solid #81c784",
                 }}
               >
-                รายละเอียด
-              </label>
-            </Box>
-          </Box>
+                <Box sx={{ display: "flex", alignItems: "center" }}>
+                  <Box
+                    sx={{
+                      width: 6,
+                      height: 24,
+                      backgroundColor: "#66bb6a",
+                      borderRadius: 1,
+                      mr: 2,
+                    }}
+                  />
+                  <Typography
+                    className="sarabun-regular-datatable"
+                    sx={{
+                      fontSize: "18px",
+                      fontWeight: "600",
+                      color: "#2e7d32",
+                    }}
+                  >
+                    ข้อมูลผู้รับรอง (QC)
+                  </Typography>
+                </Box>
+              </Box>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Grid container spacing={3} sx={{ mt: 1 }}>
+                <Grid size={4}>
+                  <FullWidthTextField
+                    required="required"
+                    value={approve_name}
+                    labelName="ชื่อผู้อนุมัติ (Approved by)"
+                    readonly
+                  />
+                </Grid>
+                <Grid size={4}>
+                  <AutocompleteComboBox
+                    required="required"
+                    value={approve_company_id}
+                    labelName={"บริษัท (Company)"}
+                    options={dataset_company}
+                    column="company_name"
+                    setvalue={(v) => setapprove_company_id(v)}
+                    bgcolorTextField={true}
+                    readonly
+                  />
+                </Grid>
+                <Grid size={4}>
+                  <AutocompleteComboBox
+                    required="required"
+                    value={approve_department_id}
+                    labelName={"แผนก (Department)"}
+                    options={dataset_department}
+                    column="department_name"
+                    setvalue={(v) => setapprove_department_id(v)}
+                    bgcolorTextField={true}
+                    readonly
+                  />
+                </Grid>
+                <Grid size={4}>
+                  <FullWidthTextField
+                    required="required"
+                    value={approve_position}
+                    labelName="ตำแหน่ง (Position)"
+                    readonly
+                  />
+                </Grid>
+                <Grid size={4}>
+                  <FullWidthTextField
+                    required="required"
+                    value={approve_email}
+                    labelName="อีเมล (Email)"
+                    readonly
+                  />
+                </Grid>
+                <Grid size={4}>
+                  <DesktopDatePickers
+                    required="required"
+                    labelName={"วันที่อนุมัติ (Date)"}
+                    value={approve_date}
+                    handleChange={(val) => setapprove_date(val ?? null)}
+                    bgcolorTextField={action === "ApproveQcAdd" ? false : true}
+                    readonly
+                  />
+                </Grid>
+              </Grid>
 
-          <Grid container spacing={2} sx={{ alignItems: "stretch" }}>
-            {/* ✅ Accordion แทน Paper */}
-            {
-              <Grid size={12}>
-                <Accordion
-                  expanded={isMinimizesectionappOpen}
-                  onChange={() =>
-                    setisMinimizeSectionappOpen(!isMinimizesectionappOpen)
-                  }
-                  sx={{ borderRadius: 2, backgroundColor: "#fafafa" }}
+              <Box sx={{ mt: 4 }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    mb: 3,
+                    pb: 1,
+                    borderBottom: "1px solid #66bb6a",
+                  }}
                 >
-                  <AccordionSummary
-                    expandIcon={<ExpandMoreIcon />}
-                    aria-controls="complaint-type-content"
-                    id="complaint-type-header"
+                  <Box
+                    sx={{
+                      width: 4,
+                      height: 16,
+                      backgroundColor: "#388e3c",
+                      borderRadius: 0.5,
+                      mr: 1.5,
+                    }}
+                  />
+                  <label
+                    className="sarabun-regular-datatable"
+                    style={{
+                      fontSize: "19px",
+                      fontWeight: "600",
+                      color: "#2e7d32",
+                      margin: 0,
+                    }}
                   >
-                    <Typography
-                      className="sarabun-regular-datatable"
-                      sx={{ fontSize: "18px", fontWeight: 600, color: "#333" }}
-                    >
-                      Reviewed ผู้จัดการคุณภาพ (QMR)
-                      <span style={{ color: "red" }}> *</span>
-                    </Typography>
-                  </AccordionSummary>
+                    รายละเอียด
+                  </label>
+                </Box>
+              </Box>
 
-                  <AccordionDetails>
-                    <Divider sx={{ my: 1 }} />
-                    <Box
-                      sx={{
-                        flexGrow: 1,
-                        display: "flex",
-                        flexDirection: "column",
-                      }}
+              <Grid container spacing={2} sx={{ alignItems: "stretch" }}>
+                {
+                  <Grid size={12}>
+                    <Accordion
+                      expanded={isMinimizesectionappOpen}
+                      onChange={() =>
+                        setisMinimizeSectionappOpen(!isMinimizesectionappOpen)
+                      }
+                      sx={{ borderRadius: 2, backgroundColor: "#fafafa" }}
                     >
-                      {/* ✅ ใช้ RadioGroup แทน Checkbox */}
-                      <RadioGroup
-                        row
-                        value={dataFuapp?.id || ""}
-                        onChange={(e) => {
-                          const selectedId = e.target.value;
-                          const selectedItem = (filteredFuApprove || []).find(
-                            (item) => item.id === selectedId
-                          );
-                          if (onApproveChange) {
-                            onApproveChange(selectedItem || null);
-                          }
-                          setdataFuapp(
-                            selectedItem ? { ...selectedItem } : null
-                          );
-                        }}
+                      <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="complaint-type-content"
+                        id="complaint-type-header"
                       >
-                        {/* ให้ radio อยู่บรรทัดเดียวกัน */}
-                        {(filteredFuApprove || []).map((item: LovType) => (
-                          <FormControlLabel
-                            key={item.id}
-                            value={item.id}
-                            control={<Radio />}
-                            label={item.lov1}
-                            // disabled={isActionRead || isActionDelete || isActionExplainApproveQcAdd}
-                            sx={{
-                              m: 1,
-                              px: 1,
-                              py: 1,
-                              borderRadius: 2,
-                              border:
-                                dataFuapp?.id === item.id
-                                  ? "2px solid #4caf50"
-                                  : "none",
-                              bgcolor:
-                                dataFuapp?.id === item.id
-                                  ? "#d0f0c0"
-                                  : "#f5f5f5",
-                              "&:hover": {
-                                bgcolor: "#c8e6c9",
-                              },
+                        <Typography
+                          className="sarabun-regular-datatable"
+                          sx={{
+                            fontSize: "18px",
+                            fontWeight: 600,
+                            color: "#333",
+                          }}
+                        >
+                          Approve หัวหน้าส่วน (Section Approve)
+                          <span style={{ color: "red" }}> *</span>
+                        </Typography>
+                      </AccordionSummary>
+
+                      <AccordionDetails>
+                        <Divider sx={{ my: 1 }} />
+                        <Box
+                          sx={{
+                            flexGrow: 1,
+                            display: "flex",
+                            flexDirection: "column",
+                          }}
+                        >
+                          <RadioGroup
+                            row
+                            value={dataFuapp?.id || ""}
+                            onChange={(e) => {
+                              const selectedId = e.target.value;
+                              const selectedItem = (
+                                filteredFuApprove || []
+                              ).find((item) => item.id === selectedId);
+                              if (onApproveChange) {
+                                onApproveChange(selectedItem || null);
+                              }
+                              setdataFuapp(
+                                selectedItem ? { ...selectedItem } : null
+                              );
                             }}
-                          />
-                        ))}
-                      </RadioGroup>
-                    </Box>
-                  </AccordionDetails>
-                </Accordion>
-                {
-                  <Accordion
-                    expanded={isMinimizedeappOpen}
-                    onChange={() =>
-                      setisMinimizeDeappOpen(!isMinimizedeappOpen)
-                    }
-                    sx={{
-                      borderRadius: 2,
-                      backgroundColor: "#fafafa",
-                      mt: 2,
-                    }}
-                  >
-                    <AccordionSummary
-                      expandIcon={<ExpandMoreIcon />}
-                      aria-controls="detail-content"
-                      id="detail-header"
-                    >
-                      <Typography
-                        className="sarabun-regular-datatable"
+                          >
+                            {(filteredFuApprove || []).map((item: LovType) => (
+                              <FormControlLabel
+                                key={item.id}
+                                value={item.id}
+                                control={<Radio />}
+                                label={item.lov1}
+                                disabled={
+                                  isActionRead ||
+                                  isActionDelete ||
+                                  isActionExplainApproveQcAdd
+                                }
+                                sx={{
+                                  m: 1,
+                                  px: 1,
+                                  py: 1,
+                                  borderRadius: 2,
+                                  border:
+                                    dataFuapp?.id === item.id
+                                      ? "2px solid #4caf50"
+                                      : "none",
+                                  bgcolor:
+                                    dataFuapp?.id === item.id
+                                      ? "#d0f0c0"
+                                      : "#f5f5f5",
+                                  "&:hover": {
+                                    bgcolor: "#c8e6c9",
+                                  },
+                                }}
+                              />
+                            ))}
+                          </RadioGroup>
+                        </Box>
+                      </AccordionDetails>
+                    </Accordion>
+                    {
+                      <Accordion
+                        expanded={isMinimizedeappOpen}
+                        onChange={() =>
+                          setisMinimizeDeappOpen(!isMinimizedeappOpen)
+                        }
                         sx={{
-                          fontSize: "18px",
-                          fontWeight: 600,
-                          color: "#333",
+                          borderRadius: 2,
+                          backgroundColor: "#fafafa",
+                          mt: 2,
                         }}
                       >
-                        หมายเหตุการอนุมัติ
-                        <span style={{ color: "red" }}> *</span>
-                      </Typography>
-                    </AccordionSummary>
-
-                    <AccordionDetails>
-                      <Box sx={{ mt: -3 }}>
-                        <Divider sx={{ my: 1 }} />
-                        <Grid
-                          container
-                          spacing={2}
-                          sx={{
-                            justifyContent: "center",
-                            alignItems: "flex-start",
-                          }}
+                        <AccordionSummary
+                          expandIcon={<ExpandMoreIcon />}
+                          aria-controls="detail-content"
+                          id="detail-header"
                         >
-                          <Grid size={12}>
-                            <FullWidthTextArea
-                              value={approve_detail}
-                              labelName=""
-                              onchange={(e) => setapprove_detail(e)}
-                              bgcolorTextField={
-                                isActionExplainApproveQcAdd ? false : true
-                              }
-                              readonly={isActionRead || isActionDelete}
-                            />
-                          </Grid>
-                        </Grid>
-                      </Box>
-                    </AccordionDetails>
-                  </Accordion>
-                }
-                {
-                  <Accordion
-                    expanded={isMinimizeotappOpen}
-                    onChange={() =>
-                      setisMinimizeOtappOpen(!isMinimizeotappOpen)
+                          <Typography
+                            className="sarabun-regular-datatable"
+                            sx={{
+                              fontSize: "18px",
+                              fontWeight: 600,
+                              color: "#333",
+                            }}
+                          >
+                            หมายเหตุการอนุมัติ
+                            <span style={{ color: "red" }}> *</span>
+                          </Typography>
+                        </AccordionSummary>
+
+                        <AccordionDetails>
+                          <Box sx={{ mt: -3 }}>
+                            <Divider sx={{ my: 1 }} />
+                            <Grid
+                              container
+                              spacing={2}
+                              sx={{
+                                justifyContent: "center",
+                                alignItems: "flex-start",
+                              }}
+                            >
+                              <Grid size={12}>
+                                <FullWidthTextArea
+                                  value={approve_detail}
+                                  labelName=""
+                                  onchange={(e) => setapprove_detail(e)}
+                                  bgcolorTextField={
+                                    isActionExplainApproveScAdd ? false : true
+                                  }
+                                  readonly={isActionRead || isActionDelete}
+                                />
+                              </Grid>
+                            </Grid>
+                          </Box>
+                        </AccordionDetails>
+                      </Accordion>
                     }
-                    sx={{
-                      borderRadius: 2,
-                      backgroundColor: "#fafafa",
-                      mt: 2,
-                    }}
-                  >
-                    <AccordionSummary
-                      expandIcon={<ExpandMoreIcon />}
-                      aria-controls="detail-content"
-                      id="detail-header"
-                    >
-                      <Typography
-                        className="sarabun-regular-datatable"
+                    {
+                      <Accordion
+                        expanded={isMinimizeotappOpen}
+                        onChange={() =>
+                          setisMinimizeOtappOpen(!isMinimizeotappOpen)
+                        }
                         sx={{
-                          fontSize: "18px",
-                          fontWeight: 600,
-                          color: "#333",
+                          borderRadius: 2,
+                          backgroundColor: "#fafafa",
+                          mt: 2,
                         }}
                       >
-                        หมายเหตุเพิ่มเติม
-                        <span style={{ color: "red" }}> *</span>
-                      </Typography>
-                    </AccordionSummary>
-
-                    <AccordionDetails>
-                      <Box sx={{ mt: -3 }}>
-                        <Divider sx={{ my: 1 }} />
-                        <Grid
-                          container
-                          spacing={2}
-                          sx={{
-                            justifyContent: "center",
-                            alignItems: "flex-start",
-                          }}
+                        <AccordionSummary
+                          expandIcon={<ExpandMoreIcon />}
+                          aria-controls="detail-content"
+                          id="detail-header"
                         >
-                          <Grid size={12}>
-                            <FullWidthTextArea
-                              value={approve_note}
-                              labelName=""
-                              onchange={(e) => setapprove_note(e)}
-                              bgcolorTextField={
-                                isActionExplainApproveQcAdd ? false : true
-                              }
-                              readonly={isActionRead || isActionDelete}
-                            />
-                          </Grid>
-                        </Grid>
-                      </Box>
-                    </AccordionDetails>
-                  </Accordion>
+                          <Typography
+                            className="sarabun-regular-datatable"
+                            sx={{
+                              fontSize: "18px",
+                              fontWeight: 600,
+                              color: "#333",
+                            }}
+                          >
+                            หมายเหตุเพิ่มเติม
+                            <span style={{ color: "red" }}> *</span>
+                          </Typography>
+                        </AccordionSummary>
+
+                        <AccordionDetails>
+                          <Box sx={{ mt: -3 }}>
+                            <Divider sx={{ my: 1 }} />
+                            <Grid
+                              container
+                              spacing={2}
+                              sx={{
+                                justifyContent: "center",
+                                alignItems: "flex-start",
+                              }}
+                            >
+                              <Grid size={12}>
+                                <FullWidthTextArea
+                                  value={approve_note}
+                                  labelName=""
+                                  onchange={(e) => setapprove_note(e)}
+                                  bgcolorTextField={
+                                    isActionExplainApproveScAdd ? false : true
+                                  }
+                                  readonly={isActionRead || isActionDelete}
+                                />
+                              </Grid>
+                            </Grid>
+                          </Box>
+                        </AccordionDetails>
+                      </Accordion>
+                    }
+                  </Grid>
                 }
               </Grid>
-            }
-          </Grid>
+            </AccordionDetails>
+          </Accordion>
         </Paper>
       )}
 
