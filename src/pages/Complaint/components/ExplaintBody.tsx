@@ -2878,7 +2878,7 @@ export default function ExplaintBody({
                             color: "#333",
                           }}
                         >
-                          Approve หัวหน้าส่วน (Section Approve)
+                          Approve ผู้จัดการคุณภาพ (QC)
                           <span style={{ color: "red" }}> *</span>
                         </Typography>
                       </AccordionSummary>
@@ -2916,8 +2916,7 @@ export default function ExplaintBody({
                                 label={item.lov1}
                                 disabled={
                                   isActionRead ||
-                                  isActionDelete ||
-                                  isActionExplainApproveQcAdd
+                                  isActionDelete 
                                 }
                                 sx={{
                                   m: 1,
@@ -2987,10 +2986,7 @@ export default function ExplaintBody({
                                 <FullWidthTextArea
                                   value={approve_detail}
                                   labelName=""
-                                  onchange={(e) => setapprove_detail(e)}
-                                  bgcolorTextField={
-                                    isActionExplainApproveScAdd ? false : true
-                                  }
+                                  onchange={(e) => setapprove_detail(e)}        
                                   readonly={isActionRead || isActionDelete}
                                 />
                               </Grid>
@@ -3045,9 +3041,6 @@ export default function ExplaintBody({
                                   value={approve_note}
                                   labelName=""
                                   onchange={(e) => setapprove_note(e)}
-                                  bgcolorTextField={
-                                    isActionExplainApproveScAdd ? false : true
-                                  }
                                   readonly={isActionRead || isActionDelete}
                                 />
                               </Grid>

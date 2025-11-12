@@ -145,6 +145,7 @@ interface ComplaintBody {
   handleOpenAdd?: () => void;
   handleOnclickExplainView?: (item: any , name : string) => void;
   handleOnclickExplainApproveSc?: (item: any) => void;
+  handleOnclickExplainApproveQc?: (item: any) => void;
 
   handleOnclickComplainCloseAdd?: (item: any) => void;
 }
@@ -202,6 +203,7 @@ export default function ComplaintBody({
   handleOpenAdd,
   handleOnclickExplainView,
   handleOnclickExplainApproveSc,
+  handleOnclickExplainApproveQc,
 
   handleOnclickComplainCloseAdd,
 }: ComplaintBody) {
@@ -3022,35 +3024,40 @@ export default function ComplaintBody({
                                         <Box sx={{ display: "flex", gap: 1.5 }}>
                                           {/* ปุ่มอนุมัติ */}
                                           {
-                                          (
-                                            action === "ApproveSc" || action === "ApproveQc" 
-                                          )
-                                          &&
-                                          (
                                             (
-                                              dataelement?.complaint_status_label === "EXPLAINED" &&
-                                              dataelement?.step_label === "EXPLAIN" &&
-                                              index === 0 
-                                            ) 
-                                            || 
-                                            (
-                                              dataelement?.complaint_status_label === "APPROVED" &&
-                                              dataelement?.step_label === "COMPLAINT" &&
-                                              index === 0 
-                                            ) 
-                                          ) &&
-                                            (
+                                              (action === "ApproveSC" || action === "ApproveQC") &&
+                                              (
+                                                (
+                                                  dataelement?.complaint_status_label === "EXPLAINED" &&
+                                                  dataelement?.step_label === "EXPLAIN" &&
+                                                  index === 0
+                                                )
+                                                ||
+                                                (
+                                                  dataelement?.complaint_status_label === "APPROVED" &&
+                                                  dataelement?.step_label === "COMPLAINT" &&
+                                                  index === 0
+                                                )
+                                              )
+                                            ) && (
                                               <Button
                                                 variant="contained"
                                                 size="medium"
                                                 onClick={(e) => {
                                                   e.stopPropagation();
-                                                  handleOnclickExplainApproveSc &&
-                                                    handleOnclickExplainApproveSc(
-                                                      item
-                                                    )
-                                                }
-                                                }
+
+                                                  if (
+                                                    dataelement?.complaint_status_label === "EXPLAINED" &&
+                                                    dataelement?.step_label === "EXPLAIN"
+                                                  ) {
+                                                    handleOnclickExplainApproveSc?.(item);
+                                                  } else if (
+                                                    dataelement?.complaint_status_label === "APPROVED" &&
+                                                    dataelement?.step_label === "COMPLAINT"
+                                                  ) {
+                                                    handleOnclickExplainApproveQc?.(item);
+                                                  }
+                                                }}
                                                 sx={{
                                                   backgroundColor: "#45bc4bff",
                                                   color: "#FFFFFF",
@@ -3065,12 +3072,14 @@ export default function ComplaintBody({
                                               >
                                                 อนุมัติ
                                               </Button>
-                                            )}
+                                            )
+                                          }
 
                                           {/* ปุ่มปิดรายการ */}
                                           { dataelement?.complaint_status_label === "APPROVED" &&
                                             dataelement?.step_label === "COMPLAINT" && 
                                             dataelement?.approve_by === "ผู้อนุมัติ (ผู้จัดการคุณภาพ)" &&
+                                            index === 0 &&
                                             (
                                               <Button
                                                 variant="contained"
