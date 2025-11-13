@@ -1665,7 +1665,8 @@ export default function ExplaintBody({
                                     readonly={
                                       isActionRead ||
                                       isActionDelete ||
-                                      isActionExplainRead
+                                      isActionExplainRead ||
+                                      isActionExplainApproveScAdd || isActionExplainApproveQcAdd
                                     }
                                   />
                                 </Grid>
@@ -1720,8 +1721,7 @@ export default function ExplaintBody({
                               color: "#333",
                             }}
                           >
-                            การตัดสินใจเกี่ยวกับแนวทางการจัดการ (Decision on
-                            Disposition)
+                            การตัดสินใจเกี่ยวกับแนวทางการจัดการ (Decision on Disposition)
                             <span style={{ color: "red" }}> *</span>
                           </Typography>
                         </AccordionSummary>
@@ -1749,7 +1749,8 @@ export default function ExplaintBody({
                                     readonly={
                                       isActionRead ||
                                       isActionDelete ||
-                                      isActionExplainRead
+                                      isActionExplainRead ||
+                                      isActionExplainApproveScAdd || isActionExplainApproveQcAdd
                                     }
                                   />
                                 </Grid>
@@ -1787,7 +1788,7 @@ export default function ExplaintBody({
                     </Grid>
                   )}
                 </Grid>
-                {!isOBSAHidden && dataReportTypeValue && (
+                  {!isOBSAHidden && dataReportTypeValue && (
                   <Accordion
                     expanded={isMinimizeobservOpen}
                     onChange={() =>

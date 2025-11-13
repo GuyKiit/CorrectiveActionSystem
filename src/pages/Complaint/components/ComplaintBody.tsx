@@ -1583,7 +1583,7 @@ export default function ComplaintBody({
                       console.log("cccccc", val);
                     }}
                     bgcolorTextField={true}
-                    // readonly
+                    readonly={!isActionAdd}
                   />
                 </Grid>
                 <Grid size={3} mt={2}>
