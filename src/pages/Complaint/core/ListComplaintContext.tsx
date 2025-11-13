@@ -380,8 +380,14 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
     const [close_email, setclose_email] = useState<any>(
         initialListComplaint.close_email
     );
-    const [close_date, setclose_date] = useState<dayjs.Dayjs>(
+    const [close_date, setclose_date] = useState<dayjs.Dayjs | null>(
         dayjs(initialListComplaint.close_date)
+    );
+    const [close_detail, setclose_detail] = useState<any>(
+        initialListComplaint.close_detail
+    );
+    const [close_note, setclose_note] = useState<any>(
+        initialListComplaint.close_note
     );
     const [return_detail, setreturn_detail] = useState<any>(
         initialListComplaint.return_detail
@@ -451,16 +457,16 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
         initialListComplaint.dataset_stepcomplaint
     );
     const [dataset_complaintAction, setdataset_complaintAction] = useState<any>(
-        initialListComplaint.setdataset_complaintAction
+        initialListComplaint.dataset_complaintAction
     );
     const [dataset_complaintActionNew, setdataset_complaintActionNew] = useState<any>(
-        initialListComplaint.setdataset_complaintActionNew
+        initialListComplaint.dataset_complaintActionNew
     );
     const [dataset_complaintActionExplain, setdataset_complaintActionExplain] = useState<any>(
-        initialListComplaint.setdataset_complaintActionExplain
+        initialListComplaint.dataset_complaintActionExplain
     );
     const [dataset_complaintActionClose, setdataset_complaintActionClose] = useState<any>(
-        initialListComplaint.setdataset_complaintActionClose
+        initialListComplaint.dataset_complaintActionClose
     );
     const [dataset_complaintActionApproveSC, setdataset_complaintActionApproveSC] = useState<any>(
         initialListComplaint.dataset_complaintActionApproveSC
@@ -486,6 +492,7 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
     const [domain, set_domain] = useState<any>(
         initialListComplaint.domain
     );
+    
 
     return (
         <ListComplaintContext.Provider
@@ -654,6 +661,9 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 approve_position,
                 approve_email,
                 approve_date,
+                
+                close_detail,
+                close_note,
 
 
                 setComplaint_no,
@@ -817,6 +827,9 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 setapprove_position,
                 setapprove_email,
                 setapprove_date,
+
+                setclose_detail,
+                setclose_note,
             }}
         >
             {children}

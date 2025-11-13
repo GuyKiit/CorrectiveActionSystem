@@ -156,7 +156,7 @@ export type ListComplaintContextProps = {
     close_department_id?: any
     close_position?: string
     close_email?: string
-    close_date?: dayjs.Dayjs
+    close_date?: dayjs.Dayjs | null
     close_detail?: string
     close_note?: string
     return_detail?: string
@@ -328,8 +328,8 @@ export type ListComplaintContextProps = {
     setresponsible_date: Dispatch<SetStateAction<dayjs.Dayjs | null>>;
     setclose_status: Dispatch<SetStateAction<string>>;
     setclose_name: Dispatch<SetStateAction<string>>
-    setclose_company_id: Dispatch<SetStateAction<number>>
-    setclose_department_id: Dispatch<SetStateAction<number>>
+    setclose_company_id: Dispatch<SetStateAction<any>>
+    setclose_department_id: Dispatch<SetStateAction<any>>
     setclose_position: Dispatch<SetStateAction<string>>
     setclose_email: Dispatch<SetStateAction<string>>
     setclose_date: Dispatch<SetStateAction<dayjs.Dayjs | null>>

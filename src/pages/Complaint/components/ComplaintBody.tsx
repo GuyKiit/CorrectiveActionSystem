@@ -300,6 +300,14 @@ export default function ComplaintBody({
     datapriorityValue_Combobox,
     dataApprove_Combobox,
     root_cause,
+    close_name,
+    close_company_id,
+    close_department_id,
+    close_position,
+    close_email,
+    close_date,
+    close_detail,
+    close_note,
 
     // Dataset
     dataset_reporttype,
@@ -384,6 +392,15 @@ export default function ComplaintBody({
     setdatapriorityValue_Combobox,
     setdataApprove_Combobox,
     setroot_cause,
+
+    setclose_name,
+    setclose_company_id,
+    setclose_department_id,
+    setclose_position,
+    setclose_email,
+    setclose_date,
+    setclose_detail,
+    setclose_note,
 
     // Dataset
     setdataset_reporttype,
@@ -1026,7 +1043,7 @@ export default function ComplaintBody({
       if (response && response.status === "success") {
         setIsLoadingScreen(false);
         setExplainList(response.data || []);
-        // console.log("Explain list:", response.data);
+        console.log("Explain list:", response.data);
       }
     } catch (e) {
       // console.log("ExplainGet error:", e);
@@ -1303,6 +1320,10 @@ export default function ComplaintBody({
   //////////////////////// Complaint Read //////////////////////////
   React.useEffect(() => {
     console.log("step: 5 เก็บข้อมูลเข้า ฺsetdataelement ใหม่ ", dataelement);
+    console.log("💾 close_name:", dataelement?.close_name);
+    console.log("💾 close_company_id:", dataelement?.close_company_id);
+    console.log("💾 close_email:", dataelement?.close_email);
+    console.log("💾 product_name:", dataelement?.product_name);
 
     if (dataelement && action != "Add") {
       // setrespondent_company_id(dataset_company.find((el: any) => String(el.itasset_company_id) === String(dataelement.respondent_company_id?.company_id)));
@@ -1399,6 +1420,14 @@ export default function ComplaintBody({
       } else {
         setIsRSHidden(true);
       }
+
+      setclose_name(dataelement?.close_name || "");
+      setclose_company_id(dataelement?.close_company_id ? dataelement?.close_company_id : "");
+      setclose_email(dataelement?.close_email ? dataelement?.close_email : "");
+      console.log("💾2 close_name:", dataelement?.close_name);
+      console.log("💾2 close_company_id:", dataelement?.close_company_id);
+      console.log("💾2 close_email:", dataelement?.close_email);
+      console.log("💾2 product_name:", dataelement?.product_name);
     }
   }, [dataelement, dataset_reporttype, dataset_company]);
 
@@ -3047,10 +3076,17 @@ export default function ComplaintBody({
                                                 size="medium"
                                                 onClick={(e) => {
                                                   e.stopPropagation();
-                                                  if (action === "ApproveSC" && handleOnclickExplainApproveSc) {
-                                                    handleOnclickExplainApproveSc(item);
-                                                  } else if (action === "ApproveQC" && handleOnclickExplainApproveQc) {
-                                                    handleOnclickExplainApproveQc(item);
+
+                                                  if (
+                                                    dataelement?.complaint_status_label === "EXPLAINED" &&
+                                                    dataelement?.step_label === "EXPLAIN"
+                                                  ) {
+                                                    handleOnclickExplainApproveSc?.(item);
+                                                  } else if (
+                                                    dataelement?.complaint_status_label === "APPROVED" &&
+                                                    dataelement?.step_label === "COMPLAINT"
+                                                  ) {
+                                                    handleOnclickExplainApproveQc?.(item);
                                                   }
                                                 }}
                                                 sx={{
@@ -3067,12 +3103,14 @@ export default function ComplaintBody({
                                               >
                                                 อนุมัติ
                                               </Button>
-                                            )}
+                                            )
+                                          }
 
                                           {/* ปุ่มปิดรายการ */}
                                           {dataelement?.complaint_status_label === "APPROVED" &&
                                             dataelement?.step_label === "COMPLAINT" &&
                                             dataelement?.approve_by === "ผู้อนุมัติ (ผู้จัดการคุณภาพ)" &&
+                                            index === 0 &&
                                             (
                                               <Button
                                                 variant="contained"
@@ -3256,25 +3294,25 @@ export default function ComplaintBody({
                         <Grid size={4}>
                           <FullWidthTextField
                             required="required"
-                            value={product_name}
+                            value={close_name}
                             labelName="ผู้ตรวจติดตาม (Follow-up by)"
-                            onchange={(e) => setproduct_name(e)}
-                            readonly={isActionRead || isActionDelete}
+                            onchange={(e) => setclose_name(e)}
+                            readonly={isActionRead || isActionDelete || isActionCloseHistory}
                           />
                         </Grid>
                         <Grid size={4}>
                           <FullWidthTextField
                             required="required"
-                            value={product_name}
+                            value={close_company_id}
                             labelName="บริษัท (Company)"
-                            onchange={(e) => setproduct_name(e)}
-                            readonly={isActionRead || isActionDelete}
+                            onchange={(e) => setclose_company_id(e)}
+                            readonly={isActionRead || isActionDelete || isActionCloseHistory}
                           />
                         </Grid>
                         <Grid size={4}>
                           <AutocompleteComboBox
                             required="required"
-                            value={respondent_department_id}
+                            value={close_department_id}
                             labelName={
                               "แผนก (Department)"
                             }
@@ -3282,40 +3320,40 @@ export default function ComplaintBody({
                             column="department_name"
                             setvalue={(e) => {
                               // //console.log(e); // ดูค่าของ e ที่ถูกส่งมาจาก AutocompleteComboBox
-                              setrespondent_department_id(e);
+                              setclose_department_id(e);
                             }}
                             bgcolorTextField={
                               isActionAdd ? false : isActionEdit ? false : true
                             }
-                            readonly={isActionRead || isActionDelete}
+                            readonly={isActionRead || isActionDelete || isActionCloseHistory}
                           />
                         </Grid>
                         <Grid size={4}>
                           <FullWidthTextField
                             required="required"
-                            value={product_name}
+                            value={close_position}
                             labelName="แผนก (Position)"
-                            onchange={(e) => setproduct_name(e)}
-                            readonly={isActionRead || isActionDelete}
+                            onchange={(e) => setclose_position(e)}
+                            readonly={isActionRead || isActionDelete || isActionCloseHistory}
                           />
                         </Grid>
                         <Grid size={4}>
                           <FullWidthTextField
                             required="required"
-                            value={respondent_email}
+                            value={close_email}
                             labelName="อีเมล (Email)"
-                            onchange={(e) => setrespondent_email(e)}
-                            readonly={isActionRead || isActionDelete}
+                            onchange={(e) => setclose_email(e)}
+                            readonly={isActionRead || isActionDelete || isActionCloseHistory}
                           />
                         </Grid>
                         <Grid size={4}>
                           <DesktopDatePickers
                             required="required"
                             labelName={"วันที่อนุมัติ (Date)"}
-                            value={date_of_detection}
-                            handleChange={(val) => setdate_of_detection(val ?? null)}
+                            value={close_date}
+                            handleChange={(val) => setclose_date(val ?? null)}
                             bgcolorTextField={isActionAdd ? false : true}
-                            readonly={isActionRead || isActionEdit || isActionDelete}
+                            readonly={isActionRead || isActionEdit || isActionDelete || isActionCloseHistory}
                           />
                         </Grid>
 
@@ -3398,13 +3436,13 @@ export default function ComplaintBody({
                                           value={item.id}
                                           control={<Radio />}
                                           label={item.lov1}
-                                          disabled={isActionRead || isActionDelete}
+                                          disabled={isActionRead || isActionDelete || isActionCloseHistory}
                                           sx={{
                                             m: 2,
                                             px: 2,
                                             py: 1,
                                             borderRadius: 2,
-                                            border: dataFuapp?.id === item.id ? "2px solid #4caf50" : "none",
+                                            border: dataFuapp?.id === item.id ? "2px solid #424242" : "none",
                                             bgcolor: dataFuapp?.id === item.id ? "#d0f0c0" : "#f5f5f5", // ✅ เขียวพาสเทลถ้าเลือก, เทาอ่อนถ้ายังไม่เลือก
                                             "&:hover": {
                                               bgcolor: "#c8e6c9", // สี hover
@@ -3448,11 +3486,11 @@ export default function ComplaintBody({
                                   {/* Response Date Field - positioned after Emergency option */}
                                   <Grid size={12}>
                                     <FullWidthTextArea
-                                      value={root_cause}
+                                      value={close_detail}
                                       labelName=""
-                                      onchange={(e) => setroot_cause(e)}
+                                      onchange={(e) => setclose_detail(e)}
                                       bgcolorTextField={isActionAdd ? false : isActionEdit ? false : true}
-                                      readonly={isActionRead || isActionDelete}
+                                      readonly={isActionRead || isActionDelete || isActionCloseHistory}
                                     />
 
                                   </Grid>
@@ -3491,13 +3529,12 @@ export default function ComplaintBody({
                                   {/* Response Date Field - positioned after Emergency option */}
                                   <Grid size={12}>
                                     <FullWidthTextArea
-                                      value={root_cause}
+                                      value={close_note}
                                       labelName=""
-                                      onchange={(e) => setroot_cause(e)}
+                                      onchange={(e) => setclose_note(e)}
                                       bgcolorTextField={isActionAdd ? false : isActionEdit ? false : true}
-                                      readonly={isActionRead || isActionDelete}
+                                      readonly={isActionRead || isActionDelete || isActionCloseHistory}
                                     />
-
                                   </Grid>
                                 </Grid>
                               </Box>

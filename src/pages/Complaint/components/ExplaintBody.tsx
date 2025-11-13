@@ -158,9 +158,11 @@ export default function ExplaintBody({
   // =====================================================
   const isActionExplainApproveSc = action === "ApproveSC";
   const isActionExplainApproveScAdd = action === "ApproveScAdd";
+  const isActionExplainReadApproveSc = action === "ReadApproveSc";
   // =====================================================
   const isActionExplainApproveQc = action === "ApproveQC";
   const isActionExplainApproveQcAdd = action === "ApproveQcAdd";
+  const isActionExplainReadApproveQc = action === "ReadApproveQc";
   // =====================================================
   const isActionClose = action === "Close";
   const isActionCloseAdd = action === "CloseAdd";
@@ -1078,7 +1080,7 @@ export default function ExplaintBody({
 
     //==========================================================================
         
-    if (isActionExplainApproveScAdd || isActionExplainApproveQcAdd) {
+    if (isActionExplainApproveScAdd || isActionExplainApproveQcAdd || isActionCloseAdd) {
       setapprove_name(user[0].employee_username || "");
       setclose_name(user[0].employee_username || "");
       setapprove_position(user[0].employee_position || "");
@@ -1145,6 +1147,7 @@ export default function ExplaintBody({
   }, [
     isActionExplainApproveScAdd,
     isActionExplainApproveQcAdd,
+    isActionCloseAdd,
     // user,
     isActionClose,
     dataset_company,
@@ -1158,7 +1161,8 @@ export default function ExplaintBody({
     console.log("ขั้นตอน: 5 เก็บข้อมูลเข้า ฺเต็dataelement ใหม่ ", dataelement);
     if (
       dataelement &&
-      (action === "ExplainAdd" || action === "ExplainRead" || action === "ApproveScAdd" || action === "ApproveQcAdd" || isViewMode)
+      (action === "ExplainAdd" || action === "ExplainRead" || action === "ApproveScAdd" || action === "ApproveQcAdd" || isActionCloseHistory 
+       ||isActionExplainReadApproveSc || isActionExplainReadApproveQc || isActionClose || isViewMode)
     ) {
       // Set basic information
       setresponsible_name(
@@ -1206,6 +1210,13 @@ export default function ExplaintBody({
           setVisibilityByReportType(reportTypeObj.lov_code);
         }
       }
+      setclose_name(dataelement?.close_name || "");
+      setclose_company_id(dataelement?.close_company_id ? dataelement?.close_company_id : "");
+      setclose_email(dataelement?.close_email ? dataelement?.close_email : "");
+      console.log("💾2 close_name:", dataelement?.close_name);
+      console.log("💾2 close_company_id:", dataelement?.close_company_id);
+      console.log("💾2 close_email:", dataelement?.close_email);
+      console.log("💾2 product_name:", dataelement?.product_name);
 
       // Process ToolUse data - wait until combobox loaded
 
@@ -2347,7 +2358,11 @@ export default function ExplaintBody({
       )}
 
       {/* //ส่วนของ Section Head */}
-      {(isActionExplainApproveScAdd || isActionExplainApproveQcAdd  || isActionExplainRead) && (
+      {(
+        isActionExplainApproveScAdd || 
+      isActionExplainApproveQcAdd  || 
+      isActionExplainRead) 
+      && (
         <Paper
           elevation={3}
           sx={{
@@ -2457,7 +2472,7 @@ export default function ExplaintBody({
                     labelName={"วันที่อนุมัติ (Date)"}
                     value={approve_date}
                     handleChange={(val) => setapprove_date(val ?? null)}
-                    bgcolorTextField={action === "ApproveScAdd" ? false : true}
+                    bgcolorTextField={true}
                     readonly
                   />
                 </Grid>
@@ -2878,7 +2893,7 @@ export default function ExplaintBody({
                             color: "#333",
                           }}
                         >
-                          Approve หัวหน้าส่วน (Section Approve)
+                          Approve ผู้จัดการคุณภาพ (QC)
                           <span style={{ color: "red" }}> *</span>
                         </Typography>
                       </AccordionSummary>
@@ -2916,8 +2931,7 @@ export default function ExplaintBody({
                                 label={item.lov1}
                                 disabled={
                                   isActionRead ||
-                                  isActionDelete ||
-                                  isActionExplainApproveQcAdd
+                                  isActionDelete 
                                 }
                                 sx={{
                                   m: 1,
@@ -2987,10 +3001,7 @@ export default function ExplaintBody({
                                 <FullWidthTextArea
                                   value={approve_detail}
                                   labelName=""
-                                  onchange={(e) => setapprove_detail(e)}
-                                  bgcolorTextField={
-                                    isActionExplainApproveScAdd ? false : true
-                                  }
+                                  onchange={(e) => setapprove_detail(e)}        
                                   readonly={isActionRead || isActionDelete}
                                 />
                               </Grid>
@@ -3045,9 +3056,6 @@ export default function ExplaintBody({
                                   value={approve_note}
                                   labelName=""
                                   onchange={(e) => setapprove_note(e)}
-                                  bgcolorTextField={
-                                    isActionExplainApproveScAdd ? false : true
-                                  }
                                   readonly={isActionRead || isActionDelete}
                                 />
                               </Grid>
@@ -3065,7 +3073,7 @@ export default function ExplaintBody({
       )}
 
       {/* //ส่วนของ Close */}
-      {(isActionCloseAdd  )&& (
+      {(isActionCloseAdd  || isActionCloseHistory)&& (
         <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>
           <Paper
             elevation={3}
@@ -3223,7 +3231,7 @@ export default function ExplaintBody({
                             labelName={"วันที่ปิดรายการ (Date)"}
                             value={close_date}
                             handleChange={(val) => setclose_date(val ?? null)}
-                            readonly
+                            readonly={!isActionCloseAdd}
                           />
                         </Grid>
                       </Grid>
@@ -3399,6 +3407,7 @@ export default function ExplaintBody({
                                       value={close_detail}
                                       labelName=""
                                       onchange={(e) => setclose_detail(e)}
+                                      readonly={!isActionCloseAdd}
                                     />
                                   </Grid>
                                 </Grid>
@@ -3450,6 +3459,7 @@ export default function ExplaintBody({
                                       value={close_note}
                                       labelName=""
                                       onchange={(e) => setclose_note(e)}
+                                      readonly={!isActionCloseAdd}
                                     />
                                   </Grid>
                                 </Grid>
