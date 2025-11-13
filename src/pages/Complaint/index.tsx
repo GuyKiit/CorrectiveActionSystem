@@ -321,6 +321,7 @@ export default function Complaint() {
     close_detail,
     close_note,
     return_detail,
+    return_note,
     return_name,
     return_company_id,
     return_department_id,
@@ -454,7 +455,18 @@ export default function Complaint() {
     setapprove_name,
     setapprove_company_id,
     setapprove_department_id,
+    setapprove_position,
     setapprove_email,
+
+    //set Close
+    setclose_name,
+    setclose_company_id,
+    setclose_department_id,
+    setclose_position,
+    setclose_email,
+    setclose_date,
+    setclose_detail,
+    setclose_note,
   } = useListComplaint();
 
   // =====================================================================================================
@@ -478,6 +490,8 @@ export default function Complaint() {
   //const [openApproveQC, setOpenApproveQC] = React.useState(false);
   const [openReadApproveQC, setOpenReadApproveQC] = React.useState(false);
   const [openReadClose, setopenReadClose] = React.useState(false);
+  const [openCloseHistory, setopenCloseHistory] = React.useState(false);
+
 
   const [openExplainApproveSc, setOpenExplainApproveSc] = React.useState(false);
   const [openExplainApproveQc, setOpenExplainApproveQc] = React.useState(false);
@@ -499,6 +513,7 @@ export default function Complaint() {
   const [openAddlist, setOpenAddlist] = React.useState(false);
 
   const [explainList, setExplainList] = useState<any[]>([]);
+  const [approveList, setApproveList] = useState<any[]>([]);
   const [currentExplainForApproval, setCurrentExplainForApproval] =
     useState<any>(null);
   const [complaintMainData, setComplaintMainData] = useState<any>(null);
@@ -1287,6 +1302,49 @@ export default function Complaint() {
     }
   };
 
+  const ExplaintApprove_Get = async () => {
+    if (isCallFuncLogOn)
+      console.log(
+        "🕑 ",
+        dayjs().format("HH:mm:ss.SSS"),
+        " [Calling Function]  :  ExplaintApprove_Get"
+      );
+
+    if (!dataelement?.explain_id) {
+      //console.log("No complaint ID, skipping explain fetch");
+      return;
+    }
+
+    setIsLoadingScreen(true);
+    const dataset = {
+      id: dataelement?.explain_id,
+
+    };
+    //console.log("🔍 ExplainGet dataset:", dataset);
+
+    try {
+      let response = await _POST(dataset, "/ExplaintApprove/ExplaintApproveGet");
+
+      if (response && response.status === "success") {
+        setIsLoadingScreen(false);
+        setApproveList(response.data || []);
+        //console.log("🔍 ExplainList set to:", response.data);
+
+        // Debug each explain record
+        if (Array.isArray(response.data)) {
+          response.data.forEach((approve: any, index: number) => {
+            console.log(`✅ Approve record ${index}:`, approve);
+            console.log(`   explain_id:`, approve.explain_id);
+            console.log(`   status:`, approve.status);
+          });
+        }
+      }
+    } catch (e) {
+      //console.log("ExplainGet error:", e);
+      setIsLoadingScreen(false);
+    }
+  };
+
   // Function - Search Complaints
   const ComplaintGet = async () => {
     if (isCallFuncLogOn)
@@ -1397,6 +1455,11 @@ export default function Complaint() {
                   } else if (name === "Close") {
                     handleOnclickComplainClose(el);
                   }
+                  else if (name === "CloseHistory") {
+                    // DepartmentDomainGet("Explain");
+                    handleOnclickCloseHistory(el);
+                  }
+
                 }}
                 // hiddenEdit={el.complaint_status_label == 'SUBMIT'}
 
@@ -2995,7 +3058,8 @@ export default function Complaint() {
     console.log("🧩 tempComplaintStatus raw:", tempComplaintStatus);
 
     const formData = new FormData();
-    if (mode == "COMPLAINT") {
+    if (mode == "COMPLAINT") 
+    {
       const complaintReturnPayload = {
         complaintReturnModel: {
           id: dataelement?.id,
@@ -3038,6 +3102,8 @@ export default function Complaint() {
       }
     } else if (mode == "EXPLAIN") {
       const tempid = uuidv4();
+      const domainId = dataelement?.respondent_domain_id;
+      console.log("📡 respondent_domain_id:", domainId);
 
       // 🧩 โหลดค่า Complaint Status ทั้งหมด (ของ respondent domain)
       // const tempComplaintStatus = await LovAll_Get(
@@ -3288,6 +3354,116 @@ export default function Complaint() {
           text: `เกิดข้อผิดพลาดระหว่างการบันทึกการอนุมัติ`,
           icon: "error",
         });
+      } finally {
+        setIsLoadingScreen(false);
+        handleClose();
+        ComplaintGet();
+      }
+      
+    
+    }else if (mode == "APPROVE_QC") {
+
+      const tempid = uuidv4();
+
+      // 🧩 Helper: หา explain_id ที่แท้จริงจาก dataelement
+      const resolveExplainId = () => {return currentExplainForApproval?.id;};
+
+      const explainRootId = resolveExplainId();
+
+      // 🧩 หาลำดับ approve_seq ล่าสุด แล้วเพิ่ม +1
+      const currentApproveList = currentExplainForApproval?.approveList || [];
+      const maxApproveSeq =
+        currentApproveList.length > 0
+          ? Math.max(...currentApproveList.map((item: any) => parseInt(item.approve_seq, 10) || 0 )) : 0;
+      const nextSeq = maxApproveSeq + 1;
+
+      // 🧩 สร้าง payload สำหรับ Approve
+      // const approvePayload = {
+      //   ExplaintApproveModel: {
+      //     id: tempid,
+      //     explain_id: explainRootId,
+      //     approve_seq: nextSeq,
+      //     complaint_status_id: tempComplaintStatus[5]?.id,
+      //     approve_status: approveSelectionCode,
+      //     approve_detail: approve_detail || null,
+      //     approve_note: approve_note || null,
+      //     approve_name: user[0]?.employee_username || "",
+      //     approve_company_id: approve_company_id?.company_id
+      //       ? Number(approve_company_id.company_id)
+      //       : user[0]?.itasset_company_id || "",
+      //     approve_department_id: approve_department_id?.department_id
+      //       ? Number(approve_department_id.department_id)
+      //       : user[0]?.itasset_department_id || "",
+      //     approve_position: user[0]?.employee_position || "",
+      //     approve_email: user[0]?.employee_email || "",
+      //     approve_date: approve_date
+      //       ? approve_date
+      //           .hour(dayjs().hour())
+      //           .minute(dayjs().minute())
+      //           .second(dayjs().second())
+      //           .format("YYYY-MM-DDTHH:mm:ss")
+      //       : new Date().toISOString(),
+      //     create_by: user[0]?.employee_username || "",
+      //     domain_id: user[0]?.employee_domain || "",
+      //   },
+      //   CurrentAccessModel: {
+      //     user_id: user[0]?.employee_username || "",
+      //   },
+      // };
+
+      setIsLoadingScreen(true);
+
+      
+        // 🧩 บันทึกข้อมูล Approve
+        //const response = await _POST(approvePayload.ExplaintApproveModel,"/ExplaintApprove/ExplaintApproveAdd");
+        
+        //if (response && response.status === "success") {
+          // 🧩 ใช้ complaint_id จาก currentExplainForApproval แทน dataelement?.id 
+          // เพราะ dataelement?.id อาจเป็น explain id แทน complaint id
+          const complaintId = currentExplainForApproval?.complaint_id ?? dataelement?.id;
+          
+          const complaintReturnPayload = {
+            ComplaintReturnModel: {
+              id: complaintId,
+              explain_id: explainRootId,
+              return_detail: close_detail,
+              return_note: close_note,
+              return_name: user[0]?.employee_username || "",
+              return_company_id: return_company_id?.company_id ? Number(return_company_id.company_id) : user[0]?.itasset_company_id || "",
+              return_department_id: return_department_id?.department_id? Number(return_department_id.department_id): user[0]?.itasset_department_id || "",
+              return_position: user[0]?.employee_position || "",
+              return_email: user[0]?.employee_email || "",
+              return_from_status_id: tempComplaintStatus[4]?.id,
+              complaint_status_id: tempComplaintStatus[1]?.id,
+              mode: mode,
+            },
+            CurrentAccessModel: {
+              user_id: user[0]?.employee_username || "",
+            },
+          };
+
+          try {
+        const response = await _POST(
+          complaintReturnPayload,
+          "/Complaint/ComplaintReturn"
+        );
+        if (response && response.status === "success") {
+          FullSweetalert({
+            title: "Success",
+            text: `บันทึกข้อมูลสำเร็จ`,
+            icon: "success",
+          });
+          console.log("✅ Complaint Add successfully:", response);
+        } else {
+          FullSweetalert({
+            title: "Failed",
+            text: `บันทึกไม่ข้อมูลสำเร็จ`,
+            icon: "error",
+          });
+          console.log("⚠️ Add failed:", response);
+        }
+      } catch (error) {
+        console.error("Upload failed:", error);
       } finally {
         setIsLoadingScreen(false);
         handleClose();
@@ -4028,29 +4204,29 @@ export default function Complaint() {
     setOpenExplain(true);
   };
 
-  const handleOnclickApproveSC = async (data: any, name: string) => {
-    setAction(name);
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  handleOnclickApproveSC"
-      );
+  // const handleOnclickApproveSC = async (data: any, name: string) => {
+  //   setAction(name);
+  //   if (isCallFuncLogOn)
+  //     console.log(
+  //       "🕑 ",
+  //       dayjs().format("HH:mm:ss.SSS"),
+  //       " [Calling Function]  :  handleOnclickApproveSC"
+  //     );
 
-    resetForm();
-    // ดึง complaint ข้อมูลจริงจาก API
-    const complaintData = await Complaint_Get(data);
+  //   resetForm();
+  //   // ดึง complaint ข้อมูลจริงจาก API
+  //   const complaintData = await Complaint_Get(data);
 
-    if (!complaintData) return;
+  //   if (!complaintData) return;
 
-    // เซ็ต state ของ complaint
-    setdataelement(complaintData);
+  //   // เซ็ต state ของ complaint
+  //   setdataelement(complaintData);
 
-    // ดึง explain ของ complaint
-    await Explain_Get(complaintData.id);
+  //   // ดึง explain ของ complaint
+  //   await Explain_Get(complaintData.id);
 
-    setOpenApproveSC(true);
-  };
+  //   setOpenApproveSC(true);
+  // };
 
   // const handleOnclickExplainApproveSc = (data: any) => {
   //   if (isCallFuncLogOn)
@@ -4061,6 +4237,46 @@ export default function Complaint() {
   //   setapprove_date(dayjs());
   //   setOpenExplainApproveSc(true);
   // };
+
+
+  const handleOnclickApproveSC = async (data: any, name: string) => {
+    setAction(name);
+
+    if (isCallFuncLogOn)
+      console.log(
+        "🕑 ",
+        dayjs().format("HH:mm:ss.SSS"),
+        " [Calling Function]  :  handleOnclickApproveSC"
+      );
+
+    resetForm();
+
+    // 1️⃣ ดึง complaint ข้อมูลจริงจาก API
+    const complaintData = await Complaint_Get(data);
+    if (!complaintData) {
+      console.log("❌ No complaint data found");
+      return;
+    }
+
+    // 2️⃣ เซ็ต state ของ complaint
+    setdataelement(complaintData);
+    console.log("✅ Complaint data set:", complaintData);
+
+    // 3️⃣ ดึง explain ของ complaint
+    await Explain_Get(complaintData.id);
+    console.log("📘 Explain_Get called with complaint_id:", complaintData.id);
+
+    // 4️⃣ ดึง approve ของ explain (ต่อจาก explain)
+    if (complaintData.explain_id) {
+      console.log("📗 Found explain_id:", complaintData.explain_id);
+      await ExplaintApprove_Get(); // ใช้ฟังก์ชันที่คุณเขียนไว้แล้ว
+    } else {
+      console.log("⚠️ No explain_id found in complaintData");
+    }
+
+    // 5️⃣ เปิดหน้าต่าง Approve SC
+    setOpenApproveSC(true);
+  };
 
   const handleOnclickExplainApproveSc = (explainData: any) => {
     if (isCallFuncLogOn)
@@ -4147,17 +4363,33 @@ export default function Complaint() {
   const handleOnclickComplainCloseAdd = (data: any) => {
     //ADD
     if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  handleOnclickComplainCloseAdd"
-      );
+      console.log("🕑 ", dayjs().format("HH:mm:ss.SSS"), " [Calling Function]  :  handleOnclickComplainCloseAdd");
+    console.log("🧩 Data received:", data);
+    console.log("🧑‍💼 User profile:", user[0]);
 
     setCurrentExplainForApproval(data);
     resetForm();
+
+    // 🧩 เซตค่าฟิลด์เริ่มต้นจากโปรไฟล์ user
+    setclose_name(user[0]?.employee_username || "TEST USER");
+    console.log("💾 close_name set to:", user[0]?.employee_username || "TEST USER");
+    setclose_company_id({
+      company_id: user[0]?.itasset_company_id || null,
+      company_name: user[0]?.company_name || "",
+    });
+
+    setclose_department_id({
+      department_id: user[0]?.itasset_department_id || null,
+      department_name: user[0]?.department_name || "",
+    });
+    setclose_position(user[0]?.employee_position || "");
+    setclose_email(user[0]?.employee_email || "");
+    setclose_date(dayjs()); // วันที่ปิดรายการ = วันนี้
+
+
     Complaint_Get(data);
-    setOpenComplainCloseAdd(true);
     setdataelement(data);
+    setOpenComplainCloseAdd(true);
   };
 
   const CloseAdd = async () => {
@@ -4273,17 +4505,38 @@ export default function Complaint() {
       ComplaintGet();
     }
   };
+  const handleOnclickCloseHistory = async (data: any) => {
+    if (isCallFuncLogOn)
+      console.log(
+        "🕑 ",
+        dayjs().format("HH:mm:ss.SSS"),
+        " [Calling Function]  :  handleOnclickCloseHistory"
+      );
+    // ดึง complaint ข้อมูลจริงจาก API
+    // const complaintData = await Complaint_Get(data);
+
+    // if (!complaintData) return;
+    // setdataelement(complaintData);
+
+    // // ดึง explain ของ complaint
+    // await Explain_Get(complaintData.id);
+
+    // setOpenApproveSC(true);
+
+    // เซ็ต state ของ complaint
+    //console.log("Read step:3 เรียกฟังก์ชั่น ดูข้อมูล handleOnclickMenuView ");
+    //console.log("Read step:3 ข้อมูลที่ได้จาก ListSearchGet ก่อนส่งเข้าฟังก์ชั่น Complaint_Get  ", data);
+    resetForm();
+    setdataelement(data);
+    setopenCloseHistory(true);
+  };
   // ------------------------------------------------------//
 
   // -------------------------  QC  ---------------------------//
   const handleOnclickApproveQC = async (data: any, name: string) => {
     setAction(name);
     if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  handleOnclickApproveQC"
-      );
+      console.log("🕑 ", dayjs().format("HH:mm:ss.SSS"), " [Calling Function]  :  handleOnclickApproveQC");
 
     resetForm();
     Complaint_Get(data);
@@ -4416,7 +4669,7 @@ export default function Complaint() {
     setdataelement(data);
 
     // ไม่ reset form ในโหมดดูข้อมูล เพื่อไม่ให้ dataReportTypeValue หาย
-    setOpenExplainView(true);
+    // setOpenExplainView(true);
 
     // ใช้ข้อมูลที่ส่งมาจากรายการ explain โดยตรง
     if (data) {
@@ -4455,6 +4708,13 @@ export default function Complaint() {
           setdataelement(updatedDataElement);
         }
       }
+    }
+    if (name === "ReadApproveSC") {
+      // ถ้ามาโหมด ApproveSC → เปิด Dialog ที่ใช้สำหรับอนุมัติ
+      setOpenExplainApproveSc(true);
+    } else {
+      // ถ้ามาโหมดดูข้อมูลทั่วไป → เปิด Dialog แสดงเฉย ๆ
+      setOpenExplainView(true);
     }
     // เปิด modal
     // setOpenExplainApproveSc(true);
@@ -4501,13 +4761,16 @@ export default function Complaint() {
   // };
 
   const handleOnclickExplainApproveQc = (explainData: any) => {
+
     if (isCallFuncLogOn)
       console.log(
         "🕑",
         dayjs().format("HH:mm:ss.SSS"),
         "[Calling Function] : handleOnclickExplainApproveQc"
       );
+
     const complaintData = dataelement;
+
     // เก็บ complaint หลัก
     setComplaintMainData(complaintData);
 
@@ -5293,56 +5556,16 @@ export default function Complaint() {
       />
 
       <FuncDialog
-        open={openReadExplain}
-        dialogWidth="xl"
-        openBottonHidden={true}
-        hideSaveDraft={true}
-        hideSaveSubmit={true}
-        hideReject={true}
-        titlename={"Explain // ดูรายละเอียด"}
-        handleClose={handleClose}
-        buttonColor="success"
-        element={
-          <ComplaintBody
-            action="ReadExplain"
-            handleOpenAdd={() => handleOnclickExplainAdd(dataelement)}
-            handleOnclickExplainView={handleOnclickExplainView}
-            handleOnclickExplainApproveSc={handleOnclickExplainApproveSc}
-          />
-        }
-      />
-      {/* กดปุ่มจัดการ อนุมัติรายการ */}
-      {/* <FuncDialog
-        open={openApproveSC}
+        open={openExplainView}
         dialogWidth="xl"
         openBottonHidden={false}
-        titlename={"Explain // รายละเอียด"}
+        titlename={"Explain // ดูข้อมูล"}
         handleClose={handleClose}
+        handlefunction={ExplainGet}
         buttonColor="success"
         element={
-          <ComplaintBody
-            action="ApproveSC"
-            handleOpenAdd={() => handleOnclickExplainAdd(dataelement)}
-            // handleOnclickExplainView={handleOnclickExplainView}
-            handleOnclickExplainApproveSc={handleOnclickExplainApproveSc}
-          />
-        }
-      /> */}
-      {/* กดปุ่มจัดการ ดูข้อมูล */}
-
-      <FuncDialog
-        open={openReadApproveSC}
-        dialogWidth="xl"
-        openBottonHidden={false}
-        titlename={"ApproveSC // ดูรายละเอียด"}
-        handleClose={handleClose}
-        buttonColor="success"
-        element={
-          <ComplaintBody
-            action="ReadApproveSC"
-            handleOpenAdd={() => handleOnclickExplainAdd(dataelement)}
-            handleOnclickExplainView={handleOnclickExplainView}
-            handleOnclickExplainApproveSc={handleOnclickExplainApproveSc}
+          <ExplaintBody
+            action="ExplainRead"
           />
         }
       />
@@ -5362,16 +5585,26 @@ export default function Complaint() {
       />
 
       <FuncDialog
-        open={openExplainView}
+        open={openReadExplain}
         dialogWidth="xl"
-        openBottonHidden={false}
-        titlename={"Explain // ดูข้อมูล"}
+        openBottonHidden={true}
+        hideSaveDraft={true}
+        hideSaveSubmit={true}
+        hideReject={true}
+        titlename={"Explain // ดูรายละเอียด"}
         handleClose={handleClose}
-        handlefunction={ExplainGet}
         buttonColor="success"
-        element={<ExplaintBody action="ExplainRead" />}
+        element={
+          <ComplaintBody
+            action="ReadExplain"
+            handleOpenAdd={() => handleOnclickExplainAdd(dataelement)}
+            handleOnclickExplainView={(item) => handleOnclickExplainView(item, "ReadExplain")}
+            handleOnclickExplainApproveSc={handleOnclickExplainApproveSc}
+          />
+        }
       />
 
+      { /* กดปุ่มจัดการ อนุมัติรายการ */}
       <FuncDialog
         open={openApproveSC}
         dialogWidth="xl"
@@ -5418,6 +5651,23 @@ export default function Complaint() {
       />
 
       <FuncDialog
+        open={openReadApproveSC}
+        dialogWidth="xl"
+        openBottonHidden={false}
+        titlename={"ApproveSC // ดูรายละเอียด"}
+        handleClose={handleClose}
+        buttonColor="success"
+        element={
+          <ComplaintBody
+            action="ReadApproveSC"
+            handleOpenAdd={() => handleOnclickExplainAdd(dataelement)}
+            handleOnclickExplainView={(item) => handleOnclickExplainView(item, "ReadApproveSC")}
+            handleOnclickExplainApproveSc={handleOnclickExplainApproveSc}
+          />
+        }
+      />
+      
+      <FuncDialog
         open={openApproveQC}
         dialogWidth="xl"
         openBottonHidden={false}
@@ -5429,7 +5679,6 @@ export default function Complaint() {
             action="ApproveQC"
             handleOpenAdd={() => handleOnclickExplainAdd(dataelement)}
             handleOnclickExplainView={handleOnclickExplainView}
-            handleOnclickExplainApproveSc={handleOnclickExplainApproveSc}
             handleOnclickExplainApproveQc={handleOnclickExplainApproveQc}
           />
         }
@@ -5457,37 +5706,7 @@ export default function Complaint() {
             }}
           />
         }
-      />
-
-      {/* <FuncDialog
-        open={openExplainApproveSc}
-        dialogWidth="xl"
-        openBottonHidden={true}
-        hideSaveDraft
-        hideReject={approveSelectionCode === "APPROVE" || !approveSelectionCode}
-        hideSaveSubmit={
-          approveSelectionCode === "ADD" ||
-          approveSelectionCode === "REJECT" ||
-          !approveSelectionCode
-        }
-        titlename={"Approve Section Head (SC ADD) // เพิ่มข้อมูล"}
-        buttonText={"Approve"}
-        handlefunction={ApproveScAdd}
-        //handlereject={ApproveScReturn}
-        handlereject={() => ComplaintReturn("EXPLAIN")}
-        handleClose={handleClose}
-        buttonColor="success"
-        element={
-          <ExplaintBody
-            action="ApproveScAdd"
-            handleOpenAdd={() => handleOnclickExplainApproveSc(dataelement)}
-            onApproveChange={(value) => {
-              setApproveSelectionCode(value?.lov_code ?? null);
-            }}
-          />
-        }
-      /> */}
-
+   />
 
       <FuncDialog
         open={openComplainClose}
@@ -5495,35 +5714,7 @@ export default function Complaint() {
         openBottonHidden={true}
         hideSaveDraft
         hideReject={approveSelectionCode === "APPROVE" || !approveSelectionCode}
-        hideSaveSubmit={
-          approveSelectionCode === "ADD" ||
-          approveSelectionCode === "REJECT" ||
-          !approveSelectionCode
-        }
-        titlename={"Close (CLOSE READ) // ปิดรายการ"}
-        handlereject={() => ComplaintReturn("EXPLAIN")}
-        handleClose={handleClose}
-        buttonColor="success"
-        element={
-          <ComplaintBody
-            action="Close"
-            handleOnclickExplainView={handleOnclickExplainView}
-            handleOnclickComplainCloseAdd={handleOnclickComplainCloseAdd}
-          />
-        }
-      />
-
-      <FuncDialog
-        open={openComplainClose}
-        dialogWidth="xl"
-        openBottonHidden={true}
-        hideSaveDraft
-        hideReject={approveSelectionCode === "APPROVE" || !approveSelectionCode}
-        hideSaveSubmit={
-          approveSelectionCode === "ADD" ||
-          approveSelectionCode === "REJECT" ||
-          !approveSelectionCode
-        }
+        hideSaveSubmit={approveSelectionCode === "ADD" || approveSelectionCode === "REJECT" || !approveSelectionCode}
         titlename={"Close (CLOSE READ) // ปิดรายการ"}
         handlereject={() => ComplaintReturn("EXPLAIN")}
         handleClose={handleClose}
@@ -5543,15 +5734,11 @@ export default function Complaint() {
         openBottonHidden={true}
         hideSaveDraft
         hideReject={approveSelectionCode === "APPROVE" || !approveSelectionCode}
-        hideSaveSubmit={
-          approveSelectionCode === "ADD" ||
-          approveSelectionCode === "REJECT" ||
-          !approveSelectionCode
-        }
+        hideSaveSubmit={approveSelectionCode === "ADD" || approveSelectionCode === "REJECT" || !approveSelectionCode}
         titlename={"Close (CLOSE ADD) // ปิดรายการ"}
         buttonText={"Approve"}
         handlefunction={CloseAdd}
-        handlereject={() => ComplaintReturn("EXPLAIN")}
+        handlereject={() => ComplaintReturn("APPROVE_QC")}
         handleClose={handleClose}
         buttonColor="success"
         element={
@@ -5564,6 +5751,25 @@ export default function Complaint() {
           />
         }
       />
+
+      <FuncDialog
+        open={openCloseHistory}
+        dialogWidth="xl"
+        openBottonHidden={false}
+        titlename={"CloseHistory // ดูรายละเอียด"}
+        handleClose={handleClose}
+        buttonColor="success"
+        element={
+          <ComplaintBody
+            action="CloseHistory"
+            handleOpenAdd={() => handleOnclickComplainCloseAdd(dataelement)}
+            handleOnclickExplainView={(item) => handleOnclickExplainView(item, "CloseHistory")}
+          // handleOnclickExplainApproveSc={handleOnclickExplainApproveSc}
+          />
+        }
+      />
+
+
 
       {/* =================== Dialog Sections =================== */}
 
