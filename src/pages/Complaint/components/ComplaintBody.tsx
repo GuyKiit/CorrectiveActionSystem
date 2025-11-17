@@ -454,6 +454,7 @@ export default function ComplaintBody({
   }>({});
   const [fileList, setFileList] = useState<FileData[]>([]);
   const [explainList, setExplainList] = useState<any[]>([]);
+  
   const [request_department_id, setrequest_department_id] = React.useState<{
     itasset_department_id: number;
     itasset_department_name: string;
@@ -1051,6 +1052,8 @@ export default function ComplaintBody({
     }
   };
 
+  
+
 
 
   // READ - Get Complaints
@@ -1420,6 +1423,7 @@ export default function ComplaintBody({
       } else {
         setIsRSHidden(true);
       }
+      
 
       setclose_name(dataelement?.close_name || "");
       setclose_company_id(dataelement?.close_company_id ? dataelement?.close_company_id : "");

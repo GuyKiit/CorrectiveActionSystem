@@ -187,6 +187,15 @@ export type ListComplaintContextProps = {
     apprvove_position?: string
     dataapproveValue_Combobox?: any
 
+    qcapprove_name?: string
+    qcapprove_company_id?: any
+    qcapprove_department_id?: any
+    qcapprove_position?: string
+    qcapprove_email?: string
+    qcapprove_date?: dayjs.Dayjs | null
+    qcapprove_detail?: string
+    qcapprove_note?: string
+
 
     setComplaint_no: Dispatch<SetStateAction<string>>;
     setno: Dispatch<SetStateAction<string>>;
@@ -358,6 +367,15 @@ export type ListComplaintContextProps = {
     setapprove_position: Dispatch<SetStateAction<string>>
     setapprove_email: Dispatch<SetStateAction<string>>
     setapprove_date: Dispatch<SetStateAction<dayjs.Dayjs | null>>
+
+    setqcapprove_name: Dispatch<SetStateAction<string>>
+    setqcapprove_company_id: Dispatch<SetStateAction<number>>
+    setqcapprove_department_id: Dispatch<SetStateAction<any>>
+    setqcapprove_position: Dispatch<SetStateAction<string>>
+    setqcapprove_email: Dispatch<SetStateAction<string>>
+    setqcapprove_date: Dispatch<SetStateAction<dayjs.Dayjs | null>>
+    setqcapprove_detail: Dispatch<SetStateAction<string>>
+    setqcapprove_note: Dispatch<SetStateAction<string>>
 };
 
 export const initialListComplaint: ListComplaintContextProps = {
@@ -536,4 +554,13 @@ export const initialListComplaint: ListComplaintContextProps = {
     setapprove_position: () => { },
     setapprove_email: () => { },
     setapprove_date: () => { },
+
+    setqcapprove_name: () => { },
+    setqcapprove_company_id: () => { },
+    setqcapprove_department_id: () => {},
+    setqcapprove_position: () => { },
+    setqcapprove_email: () => { },
+    setqcapprove_date: () => { },
+    setqcapprove_detail: () => { },
+    setqcapprove_note: () => { },
 };

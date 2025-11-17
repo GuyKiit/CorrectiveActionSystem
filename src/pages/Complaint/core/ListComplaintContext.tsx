@@ -492,6 +492,31 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
     const [domain, set_domain] = useState<any>(
         initialListComplaint.domain
     );
+
+    const [qcapprove_name, setqcapprove_name] = useState<any>(
+        initialListComplaint.qcapprove_name
+    );
+    const [qcapprove_company_id, setqcapprove_company_id] = useState<any>(
+        initialListComplaint.qcapprove_company_id
+    );
+    const [qcapprove_department_id, setqcapprove_department_id] = useState<any>(
+        initialListComplaint.qcapprove_department_id
+    );
+    const [qcapprove_position, setqcapprove_position] = useState<any>(
+        initialListComplaint.qcapprove_position
+    );
+    const [qcapprove_email, setqcapprove_email] = useState<any>(
+        initialListComplaint.qcapprove_email
+    );
+    const [qcapprove_date, setqcapprove_date] = useState<dayjs.Dayjs | null>(
+        dayjs(initialListComplaint.qcapprove_date)
+    );
+    const [qcapprove_detail, setqcapprove_detail] = useState<any>(
+        initialListComplaint.qcapprove_detail
+    );
+    const [qcapprove_note, setqcapprove_note] = useState<any>(
+        initialListComplaint.qcapprove_note
+    );
     
 
     return (
@@ -661,7 +686,16 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 approve_position,
                 approve_email,
                 approve_date,
-                
+
+                qcapprove_name,
+                qcapprove_company_id,
+                qcapprove_department_id,
+                qcapprove_position,
+                qcapprove_email,
+                qcapprove_date,
+                qcapprove_detail,
+                qcapprove_note,
+
                 close_detail,
                 close_note,
 
@@ -827,6 +861,15 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 setapprove_position,
                 setapprove_email,
                 setapprove_date,
+
+                setqcapprove_name,
+                setqcapprove_company_id,
+                setqcapprove_department_id,
+                setqcapprove_position,
+                setqcapprove_email,
+                setqcapprove_date,
+                setqcapprove_detail,
+                setqcapprove_note,
 
                 setclose_detail,
                 setclose_note,
