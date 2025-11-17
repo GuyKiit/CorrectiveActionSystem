@@ -3359,8 +3359,6 @@ export default function Complaint() {
         handleClose();
         ComplaintGet();
       }
-      
-    
     }else if (mode == "APPROVE_QC") {
 
       const tempid = uuidv4();
@@ -3377,40 +3375,6 @@ export default function Complaint() {
           ? Math.max(...currentApproveList.map((item: any) => parseInt(item.approve_seq, 10) || 0 )) : 0;
       const nextSeq = maxApproveSeq + 1;
 
-      // 🧩 สร้าง payload สำหรับ Approve
-      // const approvePayload = {
-      //   ExplaintApproveModel: {
-      //     id: tempid,
-      //     explain_id: explainRootId,
-      //     approve_seq: nextSeq,
-      //     complaint_status_id: tempComplaintStatus[5]?.id,
-      //     approve_status: approveSelectionCode,
-      //     approve_detail: approve_detail || null,
-      //     approve_note: approve_note || null,
-      //     approve_name: user[0]?.employee_username || "",
-      //     approve_company_id: approve_company_id?.company_id
-      //       ? Number(approve_company_id.company_id)
-      //       : user[0]?.itasset_company_id || "",
-      //     approve_department_id: approve_department_id?.department_id
-      //       ? Number(approve_department_id.department_id)
-      //       : user[0]?.itasset_department_id || "",
-      //     approve_position: user[0]?.employee_position || "",
-      //     approve_email: user[0]?.employee_email || "",
-      //     approve_date: approve_date
-      //       ? approve_date
-      //           .hour(dayjs().hour())
-      //           .minute(dayjs().minute())
-      //           .second(dayjs().second())
-      //           .format("YYYY-MM-DDTHH:mm:ss")
-      //       : new Date().toISOString(),
-      //     create_by: user[0]?.employee_username || "",
-      //     domain_id: user[0]?.employee_domain || "",
-      //   },
-      //   CurrentAccessModel: {
-      //     user_id: user[0]?.employee_username || "",
-      //   },
-      // };
-
       setIsLoadingScreen(true);
 
       
@@ -3425,16 +3389,17 @@ export default function Complaint() {
           const complaintReturnPayload = {
             ComplaintReturnModel: {
               id: complaintId,
-              explain_id: explainRootId,
-              return_detail: close_detail,
-              return_note: close_note,
+              // return_detail: close_detail,
+              // return_note: close_note,
+              return_detail: approve_detail,
+              return_note: approve_note,
               return_name: user[0]?.employee_username || "",
               return_company_id: return_company_id?.company_id ? Number(return_company_id.company_id) : user[0]?.itasset_company_id || "",
               return_department_id: return_department_id?.department_id? Number(return_department_id.department_id): user[0]?.itasset_department_id || "",
               return_position: user[0]?.employee_position || "",
               return_email: user[0]?.employee_email || "",
-              return_from_status_id: tempComplaintStatus[4]?.id,
               complaint_status_id: tempComplaintStatus[1]?.id,
+              return_from_status_id: tempComplaintStatus[4]?.id,
               mode: mode,
             },
             CurrentAccessModel: {
@@ -3469,7 +3434,73 @@ export default function Complaint() {
         handleClose();
         ComplaintGet();
       }
-    }
+    }else if (mode == "CLOSE"){
+
+      // 🧩 Helper: หา explain_id ที่แท้จริงจาก dataelement
+      const resolveExplainId = () => {return currentExplainForApproval?.id;};
+
+      const explainRootId = resolveExplainId();
+
+      // 🧩 หาลำดับ approve_seq ล่าสุด แล้วเพิ่ม +1
+      const currentApproveList = currentExplainForApproval?.approveList || [];
+      const maxApproveSeq =
+        currentApproveList.length > 0
+          ? Math.max(...currentApproveList.map((item: any) => parseInt(item.approve_seq, 10) || 0 )) : 0;
+      const nextSeq = maxApproveSeq + 1;
+
+      setIsLoadingScreen(true);
+      
+          const complaintId = currentExplainForApproval?.complaint_id ?? dataelement?.id;
+          
+          const complaintReturnPayload = {
+            ComplaintReturnModel: {
+              id: complaintId,
+              explain_id: explainRootId, //
+              return_detail: close_detail,
+              return_note: close_note,
+              return_name: user[0]?.employee_username || "",
+              return_company_id: return_company_id?.company_id ? Number(return_company_id.company_id) : user[0]?.itasset_company_id || "",
+              return_department_id: return_department_id?.department_id? Number(return_department_id.department_id): user[0]?.itasset_department_id || "",
+              return_position: user[0]?.employee_position || "",
+              return_email: user[0]?.employee_email || "",
+              return_from_status_id: tempComplaintStatus[4]?.id, 
+              complaint_status_id: tempComplaintStatus[1]?.id,
+              close_status: approveSelectionCode, //
+              mode: mode,
+            },
+            CurrentAccessModel: {
+              user_id: user[0]?.employee_username || "",
+            },
+          };
+
+          try {
+        const response = await _POST(
+          complaintReturnPayload,
+          "/Complaint/ComplaintReturn"
+        );
+        if (response && response.status === "success") {
+          FullSweetalert({
+            title: "Success",
+            text: `บันทึกข้อมูลสำเร็จ`,
+            icon: "success",
+          });
+          console.log("✅ Complaint Add successfully:", response);
+        } else {
+          FullSweetalert({
+            title: "Failed",
+            text: `บันทึกไม่ข้อมูลสำเร็จ`,
+            icon: "error",
+          });
+          console.log("⚠️ Add failed:", response);
+        }
+      } catch (error) {
+        console.error("Upload failed:", error);
+      } finally {
+        setIsLoadingScreen(false);
+        handleClose();
+        ComplaintGet();
+      }
+  }
   };
 
   // CREATE - Add Complaint
@@ -3814,6 +3845,25 @@ export default function Complaint() {
   //   }
   // };
 
+  const getApproveSeqByRole = (roleId: number, lovRoleList: any[]) => {
+
+  // ค้นหา role จาก LOV
+  //const role = lovRoleList.find((item: any) => Number(item.lov_code) === Number(roleId));
+
+    const role = lovRoleList.find((item: any) => item.lov_code === Number(roleId));
+
+  if (!role) return 99; // fallback กัน error
+
+  switch (role.lov1) {
+    case "section_head":
+      return 1;           
+    case "qc":
+      return 2;           
+    default:
+      return 99;          
+  }
+};
+
   const ApproveScAdd = async () => {
     if (isCallFuncLogOn)
       console.log(
@@ -3823,6 +3873,8 @@ export default function Complaint() {
       );
 
     const tempid = uuidv4();
+
+    
 
     // ใช้ currentExplainForApproval เป็น source สำหรับ approve
     const approvalSource = currentExplainForApproval;
@@ -3857,7 +3909,7 @@ export default function Complaint() {
       ExplaintApproveModel: {
         id: tempid,
         explain_id: explainRootId,
-        approve_seq: nextSeq,
+        approve_seq: 1,
         complaint_status_id: tempComplaintStatus[3]?.id,
         approve_status: approveSelectionCode,
         approve_detail: approve_detail || null,
@@ -3997,7 +4049,7 @@ export default function Complaint() {
       ExplaintApproveModel: {
         id: tempid,
         explain_id: explainRootId,
-        approve_seq: nextSeq,
+        approve_seq: 2,
         complaint_status_id: tempComplaintStatus[3]?.id,
         approve_status: approveSelectionCode,
         approve_detail: approve_detail || null,
@@ -5716,7 +5768,7 @@ export default function Complaint() {
         hideReject={approveSelectionCode === "APPROVE" || !approveSelectionCode}
         hideSaveSubmit={approveSelectionCode === "ADD" || approveSelectionCode === "REJECT" || !approveSelectionCode}
         titlename={"Close (CLOSE READ) // ปิดรายการ"}
-        handlereject={() => ComplaintReturn("EXPLAIN")}
+        handlereject={() => ComplaintReturn("CLOSE")}
         handleClose={handleClose}
         buttonColor="success"
         element={
@@ -5738,7 +5790,7 @@ export default function Complaint() {
         titlename={"Close (CLOSE ADD) // ปิดรายการ"}
         buttonText={"Approve"}
         handlefunction={CloseAdd}
-        handlereject={() => ComplaintReturn("APPROVE_QC")}
+        handlereject={() => ComplaintReturn("CLOSE")}
         handleClose={handleClose}
         buttonColor="success"
         element={

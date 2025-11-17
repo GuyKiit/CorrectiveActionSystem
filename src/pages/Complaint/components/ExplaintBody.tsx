@@ -3406,7 +3406,7 @@ export default function ExplaintBody({
                                     <FullWidthTextArea
                                       value={close_detail || return_detail}
                                       labelName=""
-                                      onchange={(e) => setclose_detail(e) ||setreturn_detail(e)}
+                                      onchange={(e) => setclose_detail(e) }
                                       readonly={!isActionCloseAdd}
                                     />
                                   </Grid>
