@@ -1211,7 +1211,7 @@ export default function ExplaintBody({
     console.log("ขั้นตอน: 5 ", approve_department_id);
     if (
       dataelement &&
-      (action === "ExplainAdd" || action === "ExplainRead" || action === "ApproveScAdd" || action === "ApproveQcAdd" || isActionCloseHistory
+      (action === "ExplainAdd" || action === "ExplainRead" || action === "ApproveScAdd" || action === "ApproveQcAdd" || action === "CloseAdd"  || isActionCloseHistory
         || isActionExplainReadApproveSc || isActionExplainReadApproveQc || isActionClose || isViewMode)
     ) {
       // Set basic information
@@ -1383,7 +1383,7 @@ export default function ExplaintBody({
   React.useEffect(() => {
     console.log('🟣🟣🟣🟣🟣🟣 [7] 🟣🟣🟣🟣🟣🟣')
     console.log("🟡 current action:", action);
-    if ((action === "ExplainRead" || action === "ApproveScAdd" || action === "ApproveQcAdd") && dataelement?.id) {
+    if ((action === "ExplainRead" || action === "ApproveScAdd" || action === "ApproveQcAdd" || action === "CloseAdd") && dataelement?.id) {
       ComplaintFile_Get();
     }
   }, [action, dataelement]);

@@ -509,7 +509,8 @@ export default function Complaint() {
   const [openReadApproveQC, setOpenReadApproveQC] = React.useState(false);
   const [openReadClose, setopenReadClose] = React.useState(false);
   const [openCloseHistory, setopenCloseHistory] = React.useState(false);
-
+ // Close Dialog Handler
+  
 
   const [openExplainApproveSc, setOpenExplainApproveSc] = React.useState(false);
   const [openExplainApproveQc, setOpenExplainApproveQc] = React.useState(false);
@@ -550,8 +551,6 @@ export default function Complaint() {
   // const [tool_use, settool_use] = React.useState<any>([]);
   // const [decision_disposition, setdecision_disposition] = React.useState<any>([]);
 
-  const handleOpenAddList = () => setOpenAddlist(true);
-  const handleCloseAddlist = () => setOpenAddlist(false);
 
   // Date Search Variables (from index.tsx)
   const [respondWithinSearch, setrespondWithinSearch] = React.useState<
@@ -620,6 +619,81 @@ export default function Complaint() {
   const [clauseRsError, setClauseRsError] = useState(false);
   const [detailError, setDetailError] = useState(false);
   const [priorityError, setPriorityError] = useState(false);
+
+  
+  const handleOpenAddList = () => setOpenAddlist(true);
+  const handleCloseAddlist = () => setOpenAddlist(false);
+
+  // const handleClose = () => {
+  //   if (isCallFuncLogOn)
+  //     console.log(
+  //       "🕑 ",
+  //       dayjs().format("HH:mm:ss.SSS"),
+  //       " [Calling Function]  :  handleClose"
+  //     );
+
+  //   setOpenComplaintAdd(false);
+  //   // setOpenSync(false);
+  //   setOpenComplaintView(false);
+  //   setOpenComplaintEdit(false);
+  //   setOpenComplaintDelete(false);
+  //   setOpenExplain(false);
+  //   setOpenReadExplain(false);
+  //   setOpenApproveSC(false);
+  //   setOpenReadApproveSC(false);
+  //   setOpenApproveQC(false);
+  //   setOpenReadApproveQC(false);
+  //   setOpenExplainAdd(false);
+  //   setOpenExplainView(false);
+  //   setOpenExplainApproveSc(false);
+  //   setOpenExplainApproveQc(false);
+  //   setOpenApproveQC(false);
+  //   setOpenComplainClose(false);
+  //   setOpenComplainCloseAdd(false);
+  //   setOpenUpload(false);
+  //   setApproveSelectionCode(null); // รีเซ็ตค่าเมื่อปิด Dialog
+  //   //setdataFuapp(null); // รีเซ็ตค่า Approve ที่เลือกไว้
+  //   // resetForm();
+  // };
+
+// const handleOnclickCloseHistory = async (data: any) => {
+//     if (isCallFuncLogOn)
+//       console.log(
+//         "🕑 ",
+//         dayjs().format("HH:mm:ss.SSS"),
+//         " [Calling Function]  :  handleOnclickCloseHistory"
+//       );
+//     // ดึง complaint ข้อมูลจริงจาก API
+//     // const complaintData = await Complaint_Get(data);
+
+//     // if (!complaintData) return;
+//     // setdataelement(complaintData);
+
+//     // // ดึง explain ของ complaint
+//     // await Explain_Get(complaintData.id);
+
+//     // setOpenApproveSC(true);
+
+//     // เซ็ต state ของ complaint
+//     //console.log("Read step:3 เรียกฟังก์ชั่น ดูข้อมูล handleOnclickMenuView ");
+//     //console.log("Read step:3 ข้อมูลที่ได้จาก ListSearchGet ก่อนส่งเข้าฟังก์ชั่น Complaint_Get  ", data);
+//     resetForm();
+//     setdataelement(data);
+//     setopenCloseHistory(true);
+//   };
+//   // ------------------------------------------------------//
+
+//   // -------------------------  QC  ---------------------------//
+//   const handleOnclickApproveQC = async (data: any, name: string) => {
+//     setAction(name);
+//     if (isCallFuncLogOn)
+//       console.log("🕑 ", dayjs().format("HH:mm:ss.SSS"), " [Calling Function]  :  handleOnclickApproveQC");
+
+//     resetForm();
+//     Complaint_Get(data);
+//     setOpenApproveQC(true);
+//     setdataelement(data);
+//   };
 
 
   // For On-Off Calling Function Log
@@ -1451,7 +1525,7 @@ export default function Complaint() {
                     handleOnclickApproveQC(el, name);
                   }
                   else if (name === "Close") {
-                    handleOnclickComplainClose(el);
+                    handleOnclickComplainClose(el, name);
                   }
                   else if (name === "CloseHistory") {
                     // DepartmentDomainGet("Explain");
@@ -4032,7 +4106,8 @@ export default function Complaint() {
   // ------------------------------------------------------//
 
   // --------------------- CLOSE ---------------------//
-  const handleOnclickComplainClose = (data: any) => {  //READ
+  const handleOnclickComplainClose = (data: any, name: string) => {  //READ
+    setAction(name);
     if (isCallFuncLogOn)
       console.log("🕑 ", dayjs().format("HH:mm:ss.SSS"), " [Calling Function]  :  handleOnclickComplainClose");
 
@@ -4042,11 +4117,13 @@ export default function Complaint() {
     setdataelement(data);
   };
 
-  // const handleOnclickComplainCloseAdd = (data: any) => {  //ADD
-  //   if (isCallFuncLogOn)
-  //     console.log("🕑 ", dayjs().format("HH:mm:ss.SSS"), " [Calling Function]  :  handleOnclickComplainCloseAdd");
-  //   console.log("🧩 Data received:", data);
-  //   console.log("🧑‍💼 User profile:", user[0]);
+//   const handleOnclickComplainCloseAdd = (data: any) => {
+//     //ADD
+//     if (isCallFuncLogOn)
+//       console.log("🕑 ", dayjs().format("HH:mm:ss.SSS"), " [Calling Function]  :  handleOnclickComplainCloseAdd");
+//     console.log("🧩 Data received:", data);
+//     console.log("🧑‍💼 User profile:", user[0]);
+// }
 
   //   setCurrentExplainForApproval(data);
   //   resetForm();
@@ -4565,6 +4642,7 @@ export default function Complaint() {
         dayjs().format("HH:mm:ss.SSS"),
         "[Calling Function] : handleOnclickExplainApproveQc"
       );
+      console.log("🧪 ExplaintBody loaded", { action, dataelement, observation_analysis, root_cause });
 
     const complaintData = dataelement;
 
@@ -4665,13 +4743,12 @@ export default function Complaint() {
       console.log("🕑 ", dayjs().format("HH:mm:ss.SSS"), " [Calling Function]  :  handleOnclickComplainCloseAdd");
     console.log("🧩 Data received:", data);
     console.log("🧑‍💼 User profile:", user[0]);
+    console.log("🧪 ExplaintBody loaded", { action, dataelement, observation_analysis, root_cause });
 
-    const complaintData = dataelement;
+   const complaintData = dataelement;
 
     // เก็บ complaint หลัก
     setComplaintMainData(complaintData);
-    console.log("complaintData", complaintData);
-    
 
     // สร้าง object สำหรับ approve (เอา respondent_domain_id จาก complaint หลัก)
     const approvalData = {
@@ -4680,8 +4757,6 @@ export default function Complaint() {
     };
 
     setCurrentExplainForApproval(approvalData);
-    console.log("approvalData");
-    
 
     // Reset form ก่อน
     resetForm();
@@ -4759,29 +4834,6 @@ export default function Complaint() {
     } else {
       setdataelement(explainData);
     }
-
-    // setCurrentExplainForApproval(data);
-    // resetForm();
-
-    // // 🧩 เซตค่าฟิลด์เริ่มต้นจากโปรไฟล์ user
-    // setclose_name(user[0]?.employee_username || "TEST USER");
-    // console.log("💾 close_name set to:", user[0]?.employee_username || "TEST USER");
-    // setclose_company_id({
-    //   company_id: user[0]?.itasset_company_id || null,
-    //   company_name: user[0]?.company_name || "",
-    // });
-
-    // setclose_department_id({
-    //   department_id: user[0]?.itasset_department_id || null,
-    //   department_name: user[0]?.department_name || "",
-    // });
-    // setclose_position(user[0]?.employee_position || "");
-    // setclose_email(user[0]?.employee_email || "");
-    // setclose_date(dayjs()); // วันที่ปิดรายการ = วันนี้
-
-
-    // Complaint_Get(data);
-    // setdataelement(data);
     setOpenComplainCloseAdd(true);
   };
 
@@ -5708,7 +5760,7 @@ export default function Complaint() {
       />
 
 
-      <FuncDialog
+      {/* <FuncDialog
         open={openComplainClose}
         dialogWidth="xl"
         openBottonHidden={true}
@@ -5722,6 +5774,22 @@ export default function Complaint() {
         element={
           <ComplaintBody
             action="Close"
+            handleOnclickExplainView={handleOnclickExplainView}
+            handleOnclickComplainCloseAdd={handleOnclickComplainCloseAdd}
+          />
+        }
+      /> */}
+      <FuncDialog
+        open={openComplainClose}
+        dialogWidth="xl"
+        openBottonHidden={false}
+        titlename={"Close (CLOSE READ) // ปิดรายการ"}
+        handleClose={handleClose}
+        buttonColor="success"
+        element={
+          <ComplaintBody
+            action="Close"
+            handleOpenAdd={() => handleOnclickExplainAdd(dataelement)}
             handleOnclickExplainView={handleOnclickExplainView}
             handleOnclickComplainCloseAdd={handleOnclickComplainCloseAdd}
           />
@@ -5798,4 +5866,5 @@ export default function Complaint() {
       </Grow>
     </>
   );
-}
+} 
+
