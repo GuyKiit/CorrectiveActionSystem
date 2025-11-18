@@ -440,6 +440,7 @@ export default function Complaint() {
     setdataToolUse_Combobox,
     setToolOther,
     setdataSectionapp,
+    setdataQcapp,
     setdataFuapp,
     setdataDecision_Combobox,
     setdataApprove_Combobox,
@@ -1581,7 +1582,7 @@ export default function Complaint() {
                   else if (name === "ApproveSC") {
                     handleOnclickApproveSC(el, name);
                   } else if (name === "ApproveQC") {
-                    //andleOnclickApproveQC(el, name);
+                    handleOnclickApproveQC(el, name);
                   } else if (name === "Close") {
                     handleOnclickComplainClose(el);
                   }
@@ -2986,7 +2987,7 @@ export default function Complaint() {
         console.error("Upload failed:", error);
       } finally {
         setIsLoadingScreen(false);
-        //handleClose();
+        handleClose();
 
         ComplaintGet();
       }
@@ -3042,7 +3043,7 @@ export default function Complaint() {
         console.error("Upload failed:", error);
       } finally {
         setIsLoadingScreen(false);
-        //handleClose();
+        handleClose();
 
         ComplaintGet();
       }
@@ -3100,7 +3101,7 @@ export default function Complaint() {
       console.error("Upload failed:", error);
     } finally {
       setIsLoadingScreen(false);
-      //handleClose();
+      handleClose();
       FullSweetalert({
         title: "Success",
         text: `ลบข้อมูลสำเร็จ`,
@@ -3486,7 +3487,7 @@ export default function Complaint() {
         });
       } finally {
         setIsLoadingScreen(false);
-        //handleClose();
+        handleClose();
         ComplaintGet();
       }
     }else if (mode == "APPROVE_QC") {
@@ -3561,7 +3562,7 @@ export default function Complaint() {
         console.error("Upload failed:", error);
       } finally {
         setIsLoadingScreen(false);
-        //handleClose();
+        handleClose();
         ComplaintGet();
       }
     }else if (mode == "CLOSE"){
@@ -3627,7 +3628,7 @@ export default function Complaint() {
         console.error("Upload failed:", error);
       } finally {
         setIsLoadingScreen(false);
-        //handleClose();
+        handleClose();
         ComplaintGet();
       }
   }
@@ -3829,7 +3830,7 @@ export default function Complaint() {
       });
     } finally {
       setIsLoadingScreen(false);
-      //handleClose();
+      handleClose();
       ComplaintGet();
     }
   };
@@ -4131,7 +4132,7 @@ export default function Complaint() {
       });
     } finally {
       setIsLoadingScreen(false);
-      //handleClose();
+      handleClose();
       ComplaintGet();
     }
   };
@@ -4271,7 +4272,7 @@ export default function Complaint() {
       });
     } finally {
       setIsLoadingScreen(false);
-      //handleClose();
+      handleClose();
       ComplaintGet();
     }
   };
@@ -5029,39 +5030,55 @@ export default function Complaint() {
     if (explainData.follow_up_date)
       setfollow_up_date(dayjs(explainData.follow_up_date));
 
-    // 🔹 ดึง approve ของ explain นี้และแมปลง fields
+    // 🔹 ดึง approve ของ explain นี้และแมปลง fields (QC approve = approve_seq: 2)
     if (explainData.id) {
-      // console.log("📘 Fetching approve data for explain_id:", explainData.id);
-      // console.log("📘 Fetching approve data for explain_id:", explainData.id.approve_name);
       const approveData = await ExplaintApprove_Get(explainData.id);
 
       if (approveData && approveData.length > 0) {
-        const firstApprove = approveData[0]; // เลือก record แรก
-        setqcapprove_name(firstApprove.qcapprove_name || user[0]?.employee_username);
-
-        // map company_id → object
-        const userCompanyId = String(user[0]?.itasset_company_id);
-        setqcapprove_company_id(
-          dataset_company.find(
-            (c: any) => c.company_id === userCompanyId
-          ) || null
-        );
-
-        // map department_id → object
-        const userDepartmentId = String(user[0]?.itasset_department_id);
-        setqcapprove_department_id(
-          dataset_department.find(
-            (d: any) => d.department_id === userDepartmentId
-          ) || null
-        );
-        setqcapprove_position(firstApprove.position || user[0]?.employee_position);
-        setqcapprove_email(firstApprove.email || user[0]?.employee_email);
-        if (firstApprove.approve_date)
-          setqcapprove_date(dayjs(firstApprove.approve_date));
-        // console.log("📘 Fetching approve data for explain_id:", approveData.approve_name);
-        console.log("📘 Fetching approve data for explain_id:", qcapprove_department_id);
-        console.log("📘 dataset_department:", dataset_department);
-        console.log("📘 dataset_company:", dataset_company);
+        // หา QC approve record (approve_seq === 2)
+        const qcApprove = approveData.find((item: any) => item.approve_seq === 2) || approveData[0];
+        
+        // Set QC approve name
+        setqcapprove_name(qcApprove.approve_name || "");
+        
+        // Map company_id → object
+        if (qcApprove.approve_company_id) {
+          const qcCompany = dataset_company.find(
+            (c: any) => Number(c.company_id) === Number(qcApprove.approve_company_id)
+          );
+          if (qcCompany) {
+            setqcapprove_company_id(qcCompany);
+          }
+        }
+        
+        // Map department_id → object
+        if (qcApprove.approve_department_id) {
+          const qcDepartment = dataset_department.find(
+            (d: any) => Number(d.department_id) === Number(qcApprove.approve_department_id)
+          );
+          if (qcDepartment) {
+            setqcapprove_department_id(qcDepartment);
+          }
+        }
+        
+        // Set other QC approve fields
+        setqcapprove_position(qcApprove.approve_position || "");
+        setqcapprove_email(qcApprove.approve_email || "");
+        if (qcApprove.approve_date) {
+          setqcapprove_date(dayjs(qcApprove.approve_date));
+        }
+        
+        // Set QC approve detail and note
+        if (qcApprove.approve_detail) {
+          setqcapprove_detail(qcApprove.approve_detail);
+        }
+        if (qcApprove.approve_note) {
+          setqcapprove_note(qcApprove.approve_note);
+        }
+        setdataQcapp(dataApprove_Combobox.find((item: any) => item.lov_code === qcApprove.approve_status) || null);
+        // Note: QC approve radio (dataQcapp) will be set in ExplaintBody.tsx from dataelement
+        
+        console.log("📘 QC Approve data loaded:", qcApprove);
       }
     }
 

@@ -1212,7 +1212,7 @@ export default function ExplaintBody({
     if (
       dataelement &&
       (action === "ExplainAdd" || action === "ExplainRead" || action === "ApproveScAdd" || action === "ApproveQcAdd" || isActionCloseHistory
-        || isActionExplainReadApproveSc || isActionExplainReadApproveQc || isActionClose || isViewMode)
+        || isActionExplainReadApproveSc || isActionExplainReadApproveQc || isActionClose || isActionCloseAdd)
     ) {
       // Set basic information
       setresponsible_name(
@@ -1266,6 +1266,77 @@ export default function ExplaintBody({
       console.log("💾2 close_email:", dataelement?.close_email);
       console.log("💾2 product_name:", dataelement?.product_name);
 
+      // Load QC approve data from dataelement (for CloseAdd mode)
+      if (isActionCloseAdd || isActionClose || isActionCloseHistory) {
+        // Set QC approve name
+        if (dataelement?.qcapprove_name) {
+          setqcapprove_name(dataelement.qcapprove_name);
+        }
+        
+        // Set QC approve company
+        if (dataelement?.qcapprove_company_id) {
+          const qcCompany = dataset_company?.find(
+            (el: any) =>
+              String(el.company_id) === String(dataelement.qcapprove_company_id)
+          );
+          if (qcCompany) {
+            setqcapprove_company_id(qcCompany);
+          }
+        }
+        
+        // Set QC approve department
+        if (dataelement?.qcapprove_department_id) {
+          const qcDepartment = dataset_department?.find(
+            (el: any) =>
+              String(el.department_id) === String(dataelement.qcapprove_department_id)
+          );
+          if (qcDepartment) {
+            setqcapprove_department_id(qcDepartment);
+          }
+        }
+        
+        // Set other QC approve fields
+        if (dataelement?.qcapprove_position) {
+          setqcapprove_position(dataelement.qcapprove_position);
+        }
+        if (dataelement?.qcapprove_email) {
+          setqcapprove_email(dataelement.qcapprove_email);
+        }
+        if (dataelement?.qcapprove_date) {
+          setqcapprove_date(dayjs(dataelement.qcapprove_date));
+        }
+        if (dataelement?.qcapprove_detail) {
+          setqcapprove_detail(dataelement.qcapprove_detail);
+        }
+        if (dataelement?.qcapprove_note) {
+          setqcapprove_note(dataelement.qcapprove_note);
+        }
+        
+        // Set QC approve radio (dataQcapp) from dataelement
+        // Try multiple possible field names for QC approve status
+        const qcApproveStatus = 
+          dataelement?.qcapprove_status || 
+          dataelement?.qc_approve_status ||
+          dataelement?.qc_approve_status_code ||
+          dataelement?.approve_status_qc;
+        
+        if (qcApproveStatus && dataApprove_Combobox?.length > 0) {
+          const qcApproveItem = dataApprove_Combobox.find(
+            (item: LovType) => 
+              String(item.id) === String(qcApproveStatus) || 
+              item.lov_code === qcApproveStatus ||
+              String(item.lov_code) === String(qcApproveStatus) ||
+              item.lov1 === qcApproveStatus
+          );
+          if (qcApproveItem) {
+            setdataQcapp(qcApproveItem);
+            console.log("✅ QC Approve radio loaded from dataelement:", qcApproveItem);
+          } else {
+            console.log("⚠️ QC Approve item not found in dataelement for status:", qcApproveStatus);
+          }
+        }
+      }
+
       // Process ToolUse data - wait until combobox loaded
 
     }
@@ -1274,6 +1345,10 @@ export default function ExplaintBody({
     dataset_reporttype,
     dataset_department,
     dataset_company,
+    dataApprove_Combobox,
+    isActionCloseAdd,
+    isActionClose,
+    isActionCloseHistory,
     // dataTooluse,
     // dataDecision,
   ]);
@@ -1306,6 +1381,40 @@ export default function ExplaintBody({
 
     fetchApproveData();
   }, [currentExplainForApproval]);
+
+  // 🔹 Load QC approve data and radio when in CloseAdd mode
+  useEffect(() => {
+    if (!isActionCloseAdd || !currentExplainForApproval || !dataApprove_Combobox?.length) return;
+    
+    const fetchQcApproveData = async () => {
+      const approveData = await ExplaintApprove_Get(currentExplainForApproval.id);
+
+      if (approveData?.length > 0) {
+        // หา QC approve record (approve_seq === 2)
+        const qcApprove = approveData.find((item: any) => item.approve_seq === 2);
+        
+        if (qcApprove && qcApprove.approve_status) {
+          // Set QC approve radio (dataQcapp) from approve_status
+          const qcApproveItem = dataApprove_Combobox.find(
+            (item: any) => 
+              item.lov_code === qcApprove.approve_status || 
+              item.id === qcApprove.approve_status ||
+              String(item.id) === String(qcApprove.approve_status)
+          );
+          
+          if (qcApproveItem) {
+            setdataQcapp(qcApproveItem);
+            console.log("✅ QC Approve radio loaded:", qcApproveItem);
+          } else {
+            console.log("⚠️ QC Approve item not found for status:", qcApprove.approve_status);
+            console.log("📋 Available approve items:", dataApprove_Combobox);
+          }
+        }
+      }
+    };
+
+    fetchQcApproveData();
+  }, [isActionCloseAdd, currentExplainForApproval, dataApprove_Combobox]);
 
   React.useEffect(() => {
     if (
@@ -1570,7 +1679,7 @@ export default function ExplaintBody({
                         isActionExplainAdd ||
                         isActionExplainApproveScAdd ||
                         isActionExplainApproveQcAdd ||
-                        isActionExplainRead
+                        isActionExplainRead || isActionCloseAdd
                       }
                     />
                   </Grid>
@@ -1637,7 +1746,7 @@ export default function ExplaintBody({
                         isActionExplainAdd ||
                         isActionExplainApproveScAdd ||
                         isActionExplainApproveQcAdd ||
-                        isActionExplainRead
+                        isActionExplainRead || isActionCloseAdd
                       }
                     />
                   </Grid>
@@ -1664,7 +1773,7 @@ export default function ExplaintBody({
                         isActionDelete ||
                         isActionExplainApproveScAdd ||
                         isActionExplainApproveQcAdd ||
-                        isActionExplainRead
+                        isActionExplainRead || isActionCloseAdd
                       }
                     />
                   </Grid>
@@ -2644,7 +2753,7 @@ export default function ExplaintBody({
                                   selectedItem ? { ...selectedItem } : null
                                 );
                               }}
-                            >
+                             >
                               {(dataApprove_Combobox || []).map((item: LovType) => (
                                 <FormControlLabel
                                   key={item.id}
@@ -2655,7 +2764,7 @@ export default function ExplaintBody({
                                     isActionRead ||
                                     isActionDelete ||
                                     isActionExplainApproveQcAdd ||
-                                    isActionCloseAdd
+                                    isActionCloseAdd 
                                   }
                                   sx={{
                                     m: 1,
@@ -2674,8 +2783,11 @@ export default function ExplaintBody({
                                       bgcolor: "#c8e6c9",
                                     },
                                   }}
+                                  
                                 />
+                                
                               ))}
+                              
                             </RadioGroup>
                           </Box>
                         </AccordionDetails>
@@ -3014,7 +3126,8 @@ export default function ExplaintBody({
                                 label={item.lov1}
                                 disabled={
                                   isActionRead ||
-                                  isActionDelete
+                                  isActionDelete ||
+                                  isActionCloseAdd
                                 }
                                 sx={{
                                   m: 1,
@@ -3085,7 +3198,7 @@ export default function ExplaintBody({
                                   value={qcapprove_detail}
                                   labelName=""
                                   onchange={(e) => setqcapprove_detail(e)}
-                                  readonly={isActionRead || isActionDelete}
+                                  readonly={isActionRead || isActionDelete || isActionCloseAdd}
                                 />
                               </Grid>
                             </Grid>
@@ -3139,7 +3252,7 @@ export default function ExplaintBody({
                                   value={qcapprove_note}
                                   labelName=""
                                   onchange={(e) => setqcapprove_note(e)}
-                                  readonly={isActionRead || isActionDelete}
+                                  readonly={isActionRead || isActionDelete || isActionCloseAdd}
                                 />
                               </Grid>
                             </Grid>
