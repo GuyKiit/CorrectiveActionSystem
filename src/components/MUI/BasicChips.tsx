@@ -7,6 +7,9 @@ interface BasicChips {
   acknowledge?: boolean;
   step?: string;
   role?: string;
+  approveseq?: string;
+  userdept?: number;
+  requestdept?: number;
   backgroundColor?: string;
   borderColor?: string;
   type?: "status" | "step";
@@ -19,15 +22,18 @@ export default function BasicChips(props: BasicChips) {
 
   const allColorMap: Record<string, string> = {
     NEW: "#7db6fa",
-    SUBMITED: props.role === "user" && props.step === "COMPLAINT" && !props.acknowledge ? "#FF6B7A"
-              : props.role === "user" && props.step === "EXPLAIN" && !props.acknowledge ? "#FF6B7A"
-              : props.role === "user" && props.step === "EXPLAIN" && props.acknowledge ? "#7db6fa"
+    SUBMITED: props.role !== "section_head" && props.role !== "qc" && props.step === "COMPLAINT" && !props.acknowledge ? "#FF6B7A"
+              : props.role !== "section_head" && props.role !== "qc" && props.step === "EXPLAIN" && !props.acknowledge ? "#FF6B7A"
+              : props.role !== "section_head" && props.role !== "qc" && props.step === "EXPLAIN" && props.acknowledge ? "#7db6fa"
               : "#95A5A6",
-    // SUBMITED: props.acknowledge ? "#7db6fa" : "#FF6B7A",
+    // SUBMITED: props.role === "user" && props.step === "COMPLAINT" && !props.acknowledge ? "#FF6B7A"
+    //           : props.role === "user" && props.step === "EXPLAIN" && !props.acknowledge ? "#FF6B7A"
+    //           : props.role === "user" && props.step === "EXPLAIN" && props.acknowledge ? "#7db6fa"
+    //           : "#95A5A6",
     EXPLAINED: props.step === "EXPLAIN" && props.role === "section_head" ? "#F1C40F" : "#95A5A6",
-    APPROVED: props.role === "qc" && props.step === "EXPLAIN" ? "#85d47f" : "#95A5A6",
-    // APPROVED: "#27AE60",
-    // APPROVE_FU: "#1ABC9C",
+    APPROVED: props.role === "qc" && props.approveseq === "1" ? "#85d47f"
+              : props.role !== "section_head" && props.role !== "qc" && props.step === "COMPLAINT" && props.approveseq === "2" ? "#27AE60"
+              : "#95A5A6",
     CLOSED: "#95A5A6",
   };
   const stepColorMap: Record<string, string> = {

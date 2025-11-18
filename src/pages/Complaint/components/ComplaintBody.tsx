@@ -3152,7 +3152,8 @@ export default function ComplaintBody({
                                             size="medium"
                                             onClick={(e) => {
                                               e.stopPropagation();
-                                              console.log("🧩 handleOnclickExplainView click:", { action, item });
+                                              // console.log("🧩 handleOnclickExplainView click:", { action, item });
+                                              console.log("🧩 item:", { item });
                                               handleOnclickExplainView &&
                                                 handleOnclickExplainView(item, action)
                                             }}
