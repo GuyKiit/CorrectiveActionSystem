@@ -166,6 +166,7 @@ export default function ExplaintBody({
   // =====================================================
   const isActionClose = action === "Close";
   const isActionCloseAdd = action === "CloseAdd";
+  const isActionReadClose = action === "ReadClose";
   const isActionCloseHistory = action === "CloseHistory";
 
   // ตั้งค่า isROOTHidden เป็น false เมื่ออยู่ในโหมดดูข้อมูล
@@ -1492,7 +1493,7 @@ export default function ExplaintBody({
   React.useEffect(() => {
     console.log('🟣🟣🟣🟣🟣🟣 [7] 🟣🟣🟣🟣🟣🟣')
     console.log("🟡 current action:", action);
-    if ((action === "ExplainRead" || action === "ApproveScAdd" || action === "ApproveQcAdd") && dataelement?.id) {
+    if ((action === "ExplainRead" || action === "ApproveScAdd" || action === "ApproveQcAdd" || action === "CloseAdd") && dataelement?.id) {
       ComplaintFile_Get();
     }
   }, [action, dataelement]);
@@ -2548,10 +2549,11 @@ export default function ExplaintBody({
 
       {/* //ส่วนของ Section Head */}
       {(
-        isActionExplainApproveScAdd ||
+        (isActionExplainApproveScAdd ||
         isActionExplainApproveQcAdd ||
         isActionCloseAdd ||
-        isActionExplainRead)
+        isActionExplainRead ||
+        isActionExplainReadApproveSc) )
         && (
           <Paper
             elevation={3}
@@ -2916,6 +2918,8 @@ export default function ExplaintBody({
 
       {/* //ส่วนของ Qc */}
       {(isActionExplainApproveQcAdd||
+      isActionExplainReadApproveQc ||
+      isActionReadClose ||
        isActionCloseAdd )&& (
         <Paper
           elevation={3}
