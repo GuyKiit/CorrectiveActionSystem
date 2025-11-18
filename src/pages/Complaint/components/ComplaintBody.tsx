@@ -131,6 +131,7 @@ interface ComplaintBody {
   onProductNameChange?: (val: any) => void;
   onLotNoChange?: (val: any) => void;
   onEmailChange?: (val: any) => void;
+  onRespondentDepartmentChange?: (val: any) => void;
 
   onComplaintTypeChange?: (val: any) => void;
   onOtherTypeChange?: (val: any) => void;
@@ -189,6 +190,7 @@ export default function ComplaintBody({
   onProductNameChange,
   onLotNoChange,
   onEmailChange,
+  onRespondentDepartmentChange,
 
   onComplaintTypeChange,
   onOtherTypeChange,
@@ -1634,10 +1636,20 @@ export default function ComplaintBody({
 
                       setrespondent_domain_id(val);
                       console.log("cccccc", val);
+
+                      if (onRespondentDepartmentChange) {
+                        onRespondentDepartmentChange(val);
+                      }
                     }}
                     bgcolorTextField={true}
-                    //readonly={isActionRead || isActionDelete || isActionExplain}
                     readonly={!isActionAdd && !isActionEdit}
+                    required="required"
+                    Validate={validateText?.Respondent_Department || false}
+                    validateTextLable={
+                      validateText?.Respondent_Department
+                        ? "กรุณาเลือกโดเมน"
+                        : ""
+                    }
                   />
                 </Grid>
                 <Grid size={3} mt={2}>
@@ -1717,14 +1729,13 @@ export default function ComplaintBody({
                           }
                         }}
                         bgcolorTextField={action === "Add" ? false : true}
-                        //readonly={isActionRead || isActionEdit || isActionDelete || isActionExplain}
                         readonly={!isActionAdd && !isActionEdit}
                         Validate={validateText?.Date_of_Detection || false}
                         validateTextLable={
                           validateText?.Date_of_Detection
                             ? "กรุณาเลือกวันที่พบปัญหา"
-                            : ""
-                        }
+                            : "" } 
+                            
                       />
                     </Grid>
                     <Grid size={4}>

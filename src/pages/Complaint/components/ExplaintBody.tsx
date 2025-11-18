@@ -1134,11 +1134,11 @@ export default function ExplaintBody({
       setclose_email(user[0].employee_email || "");
 
       // ตั้งค่าวันที่เริ่มต้นเป็น null เฉพาะเมื่อยังไม่มีค่าเท่านั้น
-      if (approve_date === undefined) {
-        setapprove_date(null);
+      if (!approve_date) {
+        setapprove_date(dayjs());
       }
-      if (close_date === undefined) {
-        setclose_date(null);
+      if (!close_date) {
+        setclose_date(dayjs());
       }
       const userCompany = findCompany(uidCompanyId);
       if (userCompany) setapprove_company_id(userCompany);
@@ -1865,7 +1865,7 @@ export default function ExplaintBody({
                                       isActionRead ||
                                       isActionDelete ||
                                       isActionExplainRead ||
-                                      isActionExplainApproveScAdd || isActionExplainApproveQcAdd
+                                      isActionExplainApproveScAdd || isActionExplainApproveQcAdd || isActionCloseAdd
                                     }
                                   />
                                 </Grid>
@@ -1889,7 +1889,7 @@ export default function ExplaintBody({
                                   readonly={
                                     isActionRead ||
                                     isActionDelete ||
-                                    isActionExplainRead
+                                    isActionExplainRead || isActionCloseAdd
                                   }
                                 />
                               )}
@@ -1949,7 +1949,7 @@ export default function ExplaintBody({
                                       isActionRead ||
                                       isActionDelete ||
                                       isActionExplainRead ||
-                                      isActionExplainApproveScAdd || isActionExplainApproveQcAdd
+                                      isActionExplainApproveScAdd || isActionExplainApproveQcAdd || isActionCloseAdd
                                     }
                                   />
                                 </Grid>
@@ -3198,6 +3198,7 @@ export default function ExplaintBody({
                                   value={qcapprove_detail}
                                   labelName=""
                                   onchange={(e) => setqcapprove_detail(e)}
+                                  bgcolorTextField={!isActionExplainApproveQcAdd}
                                   readonly={isActionRead || isActionDelete || isActionCloseAdd}
                                 />
                               </Grid>
@@ -3252,6 +3253,7 @@ export default function ExplaintBody({
                                   value={qcapprove_note}
                                   labelName=""
                                   onchange={(e) => setqcapprove_note(e)}
+                                  bgcolorTextField={!isActionExplainApproveQcAdd}
                                   readonly={isActionRead || isActionDelete || isActionCloseAdd}
                                 />
                               </Grid>
