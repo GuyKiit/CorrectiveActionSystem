@@ -511,37 +511,7 @@ export default function Complaint() {
   const [openReadClose, setopenReadClose] = React.useState(false);
   const [openCloseHistory, setopenCloseHistory] = React.useState(false);
  // Close Dialog Handler
-  const handleClose = () => {
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  handleClose"
-      );
-
-    setOpenComplaintAdd(false);
-    // setOpenSync(false);
-    setOpenComplaintView(false);
-    setOpenComplaintEdit(false);
-    setOpenComplaintDelete(false);
-    setOpenExplain(false);
-    setOpenReadExplain(false);
-    setOpenApproveSC(false);
-    setOpenReadApproveSC(false);
-    setOpenApproveQC(false);
-    setOpenReadApproveQC(false);
-    setOpenExplainAdd(false);
-    setOpenExplainView(false);
-    setOpenExplainApproveSc(false);
-    setOpenExplainApproveQc(false);
-    setOpenApproveQC(false);
-    setOpenComplainClose(false);
-    setOpenComplainCloseAdd(false);
-    setOpenUpload(false);
-    setApproveSelectionCode(null); // รีเซ็ตค่าเมื่อปิด Dialog
-    //setdataFuapp(null); // รีเซ็ตค่า Approve ที่เลือกไว้
-    // resetForm();
-  };
+  
 
   const [openExplainApproveSc, setOpenExplainApproveSc] = React.useState(false);
   const [openExplainApproveQc, setOpenExplainApproveQc] = React.useState(false);
@@ -583,8 +553,6 @@ export default function Complaint() {
   // const [tool_use, settool_use] = React.useState<any>([]);
   // const [decision_disposition, setdecision_disposition] = React.useState<any>([]);
 
-  const handleOpenAddList = () => setOpenAddlist(true);
-  const handleCloseAddlist = () => setOpenAddlist(false);
 
   // Date Search Variables (from index.tsx)
   const [respondWithinSearch, setrespondWithinSearch] = React.useState<
@@ -653,6 +621,42 @@ export default function Complaint() {
   const [clauseRsError, setClauseRsError] = useState(false);
   const [detailError, setDetailError] = useState(false);
   const [priorityError, setPriorityError] = useState(false);
+
+  
+  const handleOpenAddList = () => setOpenAddlist(true);
+  const handleCloseAddlist = () => setOpenAddlist(false);
+
+  const handleClose = () => {
+    if (isCallFuncLogOn)
+      console.log(
+        "🕑 ",
+        dayjs().format("HH:mm:ss.SSS"),
+        " [Calling Function]  :  handleClose"
+      );
+
+    setOpenComplaintAdd(false);
+    // setOpenSync(false);
+    setOpenComplaintView(false);
+    setOpenComplaintEdit(false);
+    setOpenComplaintDelete(false);
+    setOpenExplain(false);
+    setOpenReadExplain(false);
+    setOpenApproveSC(false);
+    setOpenReadApproveSC(false);
+    setOpenApproveQC(false);
+    setOpenReadApproveQC(false);
+    setOpenExplainAdd(false);
+    setOpenExplainView(false);
+    setOpenExplainApproveSc(false);
+    setOpenExplainApproveQc(false);
+    setOpenApproveQC(false);
+    setOpenComplainClose(false);
+    setOpenComplainCloseAdd(false);
+    setOpenUpload(false);
+    setApproveSelectionCode(null); // รีเซ็ตค่าเมื่อปิด Dialog
+    //setdataFuapp(null); // รีเซ็ตค่า Approve ที่เลือกไว้
+    // resetForm();
+  };
 
   const handleOnclickCloseHistory = async (data: any) => {
     if (isCallFuncLogOn)
@@ -4489,12 +4493,13 @@ export default function Complaint() {
     setdataelement(data);
   };
 
-  const handleOnclickComplainCloseAdd = (data: any) => {
-    //ADD
-    if (isCallFuncLogOn)
-      console.log("🕑 ", dayjs().format("HH:mm:ss.SSS"), " [Calling Function]  :  handleOnclickComplainCloseAdd");
-    console.log("🧩 Data received:", data);
-    console.log("🧑‍💼 User profile:", user[0]);
+//   const handleOnclickComplainCloseAdd = (data: any) => {
+//     //ADD
+//     if (isCallFuncLogOn)
+//       console.log("🕑 ", dayjs().format("HH:mm:ss.SSS"), " [Calling Function]  :  handleOnclickComplainCloseAdd");
+//     console.log("🧩 Data received:", data);
+//     console.log("🧑‍💼 User profile:", user[0]);
+// }
 
   //   setCurrentExplainForApproval(data);
   //   resetForm();
@@ -6093,4 +6098,4 @@ export default function Complaint() {
     </>
   );
 } 
-} 
+
