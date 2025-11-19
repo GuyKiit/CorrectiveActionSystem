@@ -89,6 +89,7 @@ export type ListComplaintContextProps = {
     phoTypeOther?: any
 
     //--------dataset-------
+    dataset_crosscompany?: any
     dataset_reporttype?: any
     dataset_company?: any
     dataset_department?: any
@@ -279,6 +280,7 @@ export type ListComplaintContextProps = {
     // setSelectedFile: Dispatch<SetStateAction<File>>
 
     //--------dataset-------
+    setdataset_crosscompany: Dispatch<SetStateAction<any>>
     setdataset_reporttype: Dispatch<SetStateAction<any>>
     setdataset_company: Dispatch<SetStateAction<any>>
     setdataset_department: Dispatch<SetStateAction<any>>
@@ -463,6 +465,7 @@ export const initialListComplaint: ListComplaintContextProps = {
     setPriorityLevel: () => { },
 
     //--------dataset-------
+    setdataset_crosscompany: () => { },
     setdataset_reporttype: () => { },
     setdataset_company: () => { },
     setdataset_department: () => { },

@@ -269,6 +269,7 @@ export default function Complaint() {
     dataapproveValue_Combobox,
 
     // Dataset Variables
+    dataset_crosscompany,
     dataset_reporttype,
     dataset_department,
     dataset_company,
@@ -422,6 +423,7 @@ export default function Complaint() {
     setPriorityLevel,
     setclauseOther,
     setphoTypeOther,
+    setdataset_crosscompany,
     setdataset_reporttype,
     setdataset_activeCompany,
     setdataset_roleProfile,
@@ -1042,7 +1044,7 @@ export default function Complaint() {
         const dataset = {
           lov_group: user[0]?.itasset_company_id + ",VARIABLE_CONSTANT",
           lov_type:
-            "report_type,complaint_type,reference_standard,priority_level,attach_type,complaint_status,tool_use,decision_disposition,approve_select,complaint_step,complaint_action,active_company,role_profile",
+            "report_type,complaint_type,reference_standard,cross_company_check,priority_level,attach_type,complaint_status,tool_use,decision_disposition,approve_select,complaint_step,complaint_action,active_company,role_profile",
         };
         const response = await _POST(dataset, "/Lov/LovGet");
 
@@ -1059,6 +1061,7 @@ export default function Complaint() {
 
           // ตัวอย่างการ set state
           setdataset_reporttype?.(grouped["report_type"] || []);
+          setdataset_crosscompany?.(grouped["cross_company_check"] || []);
           setdataComplaintType_Combobox?.(grouped["complaint_type"] || []);
           setdataComplaintRs_Combobox?.(grouped["reference_standard"] || []);
           setdataComplaintRs_Combobox?.(grouped["reference_standard"] || []);
@@ -1110,7 +1113,7 @@ export default function Complaint() {
             grouped["complaint_status"]
           );
           //console.log('⚠️⚠️⚠️⚠️ [grouped["active_company"]] :', grouped["active_company"])
-          //console.log('⚠️⚠️⚠️⚠️ [grouped["role_profile"]] :', grouped["role_profile"])
+          console.log('⚠️⚠️⚠️⚠️ grouped["cross_company_check"] :', grouped["cross_company_check"])
         }
       } catch (e) {
         //console.log("error:", e);
@@ -6065,7 +6068,13 @@ export default function Complaint() {
         buttonColor="success"
         element={
           <ExplaintBody
-            action= "ExplainRead"
+            action= {action == "ApproveSC" ? "ApproveScAdd"
+                    : action == "ReadApproveSC" ? "ReadApproveSc"
+                    : action == "ApproveQC" ? "ApproveQcAdd"
+                    : action == "ReadApproveQC" ? "ReadApproveQc"
+                    : action == "Close" ? "CloseAdd"
+                    : "ReadApproveSc"
+            }
             // {
             // action={action == "ApproveSC" ? "ApproveScAdd"
             //         : action == "ReadApproveSC" ? "ReadApproveSc"
