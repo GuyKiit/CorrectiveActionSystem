@@ -540,10 +540,9 @@ export default function Complaint() {
   // const [approveList, setApproveList] = useState<any[]>([]);
   const [currentExplainForApproval, setCurrentExplainForApproval] = useState<any>(null);
   const [complaintMainData, setComplaintMainData] = useState<any>(null);
-  const [approveSelectionCode, setApproveSelectionCode] = useState<
-    string | null
-  >(null);
+  const [approveSelectionCode, setApproveSelectionCode] = useState<string | null>(null);
   const [action, setAction] = React.useState("");
+
   // const [openSync, setOpenSync] = React.useState(false);
   // const [statusMode, setstatusMode] = React.useState([]);
   // const [openSnackbar, setOpenSnackbar] = React.useState(false);
@@ -789,6 +788,12 @@ export default function Complaint() {
     setapprove_date(null);
     setapprove_detail("");
     setapprove_note("");
+    setdataSectionapp("");
+    setdataQcapp("");
+    setqcapprove_detail("");
+    setqcapprove_note("");
+    setclose_detail("");
+    setclose_note("");
 
     // Clear ALL validation errors
     setReportTypeError(false);
@@ -1863,6 +1868,12 @@ export default function Complaint() {
       return false; // หยุดการตรวจสอบส่วนอื่น
     }
 
+    // Validate Respondent Domain
+    if (!respondent_domain_id || !respondent_domain_id.domain_id) {
+      setRespondentDepartmentError(true);
+      valid = false;
+    }
+
     if (!date_of_detection) {
       setDateOfDetectionError(true);
       valid = false;
@@ -1883,10 +1894,10 @@ export default function Complaint() {
       valid = false;
     }
 
-    if (!respondent_email || respondent_email.trim() === "") {
-      setEmailError(true);
-      valid = false;
-    }
+    // if (!respondent_email || respondent_email.trim() === "") {
+    //   setEmailError(true);
+    //   valid = false;
+    // }
 
     if (
       !dataComplaintTypeValue_Combobox ||
@@ -2000,6 +2011,12 @@ export default function Complaint() {
       return false;
     }
     //console.log("✅ Report Type validation passed");
+
+    // Validate Respondent Domain
+    if (!respondent_domain_id || !respondent_domain_id.domain_id) {
+      setRespondentDepartmentError(true);
+      valid = false;
+    }
 
     // Validate Date of Detection
     if (!date_of_detection) {
@@ -3294,6 +3311,11 @@ export default function Complaint() {
 
         if (response && response.status === "success") {
           // ✅ หลังบันทึก Approve สำเร็จ → อัปเดตสถานะ Complaint
+          // 🧩 ใช้ complaint_id จาก currentExplainForApproval แทน dataelement?.id 
+          // เพราะ dataelement?.id อาจเป็น explain id แทน complaint id
+          const complaintId = currentExplainForApproval?.complaint_id ?? dataelement?.id;
+       
+          
           const complaintReturnPayload = {
             ComplaintReturnModel: {
               id: dataelement?.id,
@@ -3965,7 +3987,17 @@ export default function Complaint() {
     }
 
     // โหลดค่า Complaint Status จาก respondent_domain_id
-    const tempComplaintStatus = await LovAll_Get("complaint_status", approvalSource?.respondent_domain_id);
+    const tempComplaintStatus = await LovAll_Get(
+      "complaint_status",
+      approvalSource?.respondent_domain_id
+    );
+
+    //ขั้นตอนการเตรียมลำดับการอนุมัติ (Approve Seq)
+    const approveInfo = datastatus.filter((val: any) => val['lov_code'] === 'APPROVED');
+    const approveSeq = approveInfo.filter((val: any) => val['lov5'] == user[0].role_id);
+    // console.log("datastatus", datastatus);
+    // console.log("🤑🤑approveSeq", approveInfo);
+    // console.log("🤑🤑🤑🤑🤑🤑🤑", approveSeq[0].lov3);
 
     // หา explain_id และ nextSeq
     const explainRootId = approvalSource.id;
@@ -3978,7 +4010,7 @@ export default function Complaint() {
       ExplaintApproveModel: {
         id: tempid,
         explain_id: explainRootId,
-        approve_seq: nextSeq,
+        approve_seq: approveSeq[0].lov3,
         complaint_status_id: tempComplaintStatus[3]?.id,
         approve_status: approveSelectionCode,
         approve_detail: approve_detail || null,
@@ -4087,7 +4119,16 @@ export default function Complaint() {
     }
 
     // โหลดค่า Complaint Status จาก respondent_domain_id
-    const tempComplaintStatus = await LovAll_Get("complaint_status", approvalSource?.respondent_domain_id);
+    const tempComplaintStatus = await LovAll_Get(
+      "complaint_status",
+      approvalSource?.respondent_domain_id
+    );
+
+    const approveInfo = datastatus.filter((val: any) => val['lov_code'] === 'APPROVED');
+    const approveSeq = approveInfo.filter((val: any) => val['lov5'] == user[0].role_id);
+    // console.log("datastatus", datastatus);
+    // console.log("🤑🤑approveSeq", approveInfo);
+    // console.log("🤑🤑🤑🤑🤑🤑🤑", approveSeq[0].lov3);
 
     // หา explain_id และ nextSeq
     const explainRootId = approvalSource.id;
@@ -4100,7 +4141,7 @@ export default function Complaint() {
       ExplaintApproveModel: {
         id: tempid,
         explain_id: explainRootId,
-        approve_seq: nextSeq,
+        approve_seq: approveSeq[0].lov3,
         complaint_status_id: tempComplaintStatus[3]?.id,
         approve_status: approveSelectionCode,
         approve_detail: qcapprove_detail || null,
@@ -4489,8 +4530,10 @@ export default function Complaint() {
     if (isCallFuncLogOn)
       console.log("🕑 ", dayjs().format("HH:mm:ss.SSS"), " [Calling Function]  :  CloseAdd");
 
-    const complaintId = dataelement?.id ?? currentExplainForApproval?.complaint_id ??
-      currentExplainForApproval?.id;
+    // const complaintId =
+    //   dataelement?.id ??
+    //   currentExplainForApproval?.complaint_id ??
+    //   currentExplainForApproval?.id;
 
     // 🧩 โหลดค่า Complaint Status ทั้งหมด โดยใช้โดเมนจาก ComplaintGet เป็นหลัก
     // const domainForLov = dataelement?.domain_id ?? respondent_domain_id?.domain_id ?? user[0]?.employee_domain;
@@ -4537,7 +4580,9 @@ export default function Complaint() {
 
 
       if (response && response.status === "success") {
-        // ✅ หลังบันทึก Approve สำเร็จ → อัปเดตสถานะ Complaint
+
+        const complaintId = currentExplainForApproval?.complaint_id  
+
         const complaintEditPayload = {
           complaintModel: {
             id: complaintId,
@@ -4550,15 +4595,9 @@ export default function Complaint() {
         };
 
         const complaintFormData = new FormData();
-        complaintFormData.append(
-          "complaintPayloadJson",
-          JSON.stringify(complaintEditPayload)
-        );
+        complaintFormData.append("complaintPayloadJson",JSON.stringify(complaintEditPayload));
 
-        const updateRes = await _POST_FORMDATA(
-          complaintFormData,
-          "/Complaint/ComplaintEdit"
-        );
+        const updateRes = await _POST_FORMDATA(complaintFormData,"/Complaint/ComplaintEdit");
 
         if (updateRes && updateRes.status === "success") {
           FullSweetalert({
@@ -5754,6 +5793,8 @@ export default function Complaint() {
         dialogWidth="xl"
         openBottonHidden={true}
         hideReject={true}
+        hideSaveDraft={!dataReportTypeValue}
+        hideSaveSubmit={!dataReportTypeValue}
         titlename={"Complaint // เพิ่มข้อมูล"}
         buttonText={"Save & Submit"}
         handleClose={handleClose}
@@ -5768,7 +5809,7 @@ export default function Complaint() {
             validateText={{
               Product_Group: false,
               Report_Type: reportTypeError,
-              Respondent_Department: false,
+              Respondent_Department: respondentDepartmentError,
               Date_of_Detection: dateOfDetectionError,
               Department_Area: departmentAreaError,
               Product_Name: productNameError,
@@ -5785,6 +5826,7 @@ export default function Complaint() {
             onReportTypeChange={(val) => {
               setdataReportTypeValue(val);
               setReportTypeError(false);
+              setRespondentDepartmentError(false);
               // Clear all validation errors when report type changes
               setDateOfDetectionError(false);
               setDepartmentAreaError(false);
@@ -5802,6 +5844,12 @@ export default function Complaint() {
             onDateOfDetectionChange={(val) => {
               setdate_of_detection(val);
               setDateOfDetectionError(false);
+            }}
+            onRespondentDepartmentChange={(val) => {
+              setrespondent_domain_id(val);
+              if (val && val.domain_id) {
+                setRespondentDepartmentError(false);
+              }
             }}
             onDepartmentAreaChange={(val) => {
               setrespondent_department_id(val);
@@ -5881,8 +5929,8 @@ export default function Complaint() {
             handleOpenAdd={handleOpenAddList}
             validateText={{
               Product_Group: false,
-              Report_Type: reportTypeError,
-              Respondent_Department: false,
+            Report_Type: reportTypeError,
+            Respondent_Department: respondentDepartmentError,
               Date_of_Detection: dateOfDetectionError,
               Department_Area: departmentAreaError,
               Product_Name: productNameError,
@@ -5899,6 +5947,7 @@ export default function Complaint() {
             onReportTypeChange={(val) => {
               setdataReportTypeValue(val);
               setReportTypeError(false);
+              setRespondentDepartmentError(false);
               setDateOfDetectionError(false);
               setDepartmentAreaError(false);
               setProductNameError(false);
@@ -5915,6 +5964,12 @@ export default function Complaint() {
             onDateOfDetectionChange={(val) => {
               setdate_of_detection(val);
               setDateOfDetectionError(false);
+            }}
+            onRespondentDepartmentChange={(val) => {
+              setrespondent_domain_id(val);
+              if (val && val.domain_id) {
+                setRespondentDepartmentError(false);
+              }
             }}
             onDepartmentAreaChange={(val) => {
               setrespondent_department_id(val);
@@ -6246,7 +6301,7 @@ export default function Complaint() {
         hideReject={approveSelectionCode === "APPROVE" || !approveSelectionCode}
         hideSaveSubmit={approveSelectionCode === "ADD" || approveSelectionCode === "REJECT" || !approveSelectionCode}
         titlename={"Close (CLOSE ADD) // ปิดรายการ"}
-        buttonText={"Approve"}
+        buttonText={"CLOSE"}
         handlefunction={CloseAdd}
         handlereject={() => ComplaintReturn("EXPLAIN")}
         handleClose={handleClose}

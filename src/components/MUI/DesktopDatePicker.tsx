@@ -66,13 +66,16 @@ export default function DesktopDatePickers({
           format={dateFormat}
           value={value ? value : null}
           onChange={(newValue) => handleChangeDate(newValue)}
-          slotProps={{ 
-            textField: { 
-              size: "small" ,
+          slotProps={{
+            textField: {
+              size: "small",
               error: Validate,
-              
-            } 
-            }}
+              inputProps: { readOnly: true },
+              onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => {
+                e.preventDefault();
+              },
+            },
+          }}
         />
       </LocalizationProvider>
       {validateTextLable && (

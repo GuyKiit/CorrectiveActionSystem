@@ -70,7 +70,7 @@ export const Complaint_headCells = [
         columnName: 'product_name',
         numeric: 'center',
         disablePadding: true,
-        label: 'ชื่อผลิตภัณฑ์',
+        label: 'ชื่อสินค้า',
         colWidth: 150
     },
     {
