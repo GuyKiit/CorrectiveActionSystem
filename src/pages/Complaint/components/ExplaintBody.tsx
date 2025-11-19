@@ -1133,14 +1133,10 @@ export default function ExplaintBody({
       setclose_position(user[0].employee_position || "");
       setapprove_email(user[0].employee_email || "");
       setclose_email(user[0].employee_email || "");
+      setapprove_date(dayjs());
+      setqcapprove_date(dayjs());
+      setclose_date(dayjs());
 
-      // ตั้งค่าวันที่เริ่มต้นเป็น null เฉพาะเมื่อยังไม่มีค่าเท่านั้น
-      if (!approve_date) {
-        setapprove_date(dayjs());
-      }
-      if (!close_date) {
-        setclose_date(dayjs());
-      }
       const userCompany = findCompany(uidCompanyId);
       if (userCompany) setapprove_company_id(userCompany);
       if (userCompany) setclose_company_id(userCompany);
@@ -1156,8 +1152,13 @@ export default function ExplaintBody({
       setapprove_email(dataelement.approve_email || "");
       setclose_email(dataelement.close_email || "");
       setapprove_date(
-        dataelement?.doc_date
+        dataelement?.approve_date
           ? dayjs(dataelement.setapprove_date, "DD-MM-YYYY")
+          : dayjs()
+      );
+      setqcapprove_date(
+        dataelement?.qcapprove_date
+          ? dayjs(dataelement.setqcapprove_date, "DD-MM-YYYY")
           : dayjs()
       );
       setclose_date(

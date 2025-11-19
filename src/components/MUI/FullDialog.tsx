@@ -17,7 +17,8 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 }));
 
 interface FuncDialog {
-  open: boolean;
+  open: any;
+  // close: any;
   handleClose: () => void;
   handlefunction?: () => void;
   handlesavedraft?: () => void;

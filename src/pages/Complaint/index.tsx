@@ -1417,8 +1417,6 @@ export default function Complaint() {
     }
   };
 
-
-
   // Function - Search Complaints
   const ComplaintGet = async () => {
     if (isCallFuncLogOn)
@@ -4226,9 +4224,6 @@ export default function Complaint() {
     }
   };
 
-
-
-
   const handleOnclickMenuSync = () => {
     if (isCallFuncLogOn)
       console.log(
@@ -4267,8 +4262,6 @@ export default function Complaint() {
     Complaint_Get(data);
     setOpenComplaintView(true); // แล้วค่อยเปิด Dialog
   };
-
-
 
   const handleOnclickComplaintEdit = (data: any) => {
     if (isCallFuncLogOn)
@@ -4311,6 +4304,16 @@ export default function Complaint() {
     setOpenExplain(true);
 
   };
+
+  const handleOnclickCloseAddExplain = (data: any) => {
+    if (isCallFuncLogOn)
+      console.log("🕑 ", dayjs().format("HH:mm:ss.SSS"), " [Calling Function]  :  handleOnclickCloseAddExplain");
+
+    //resetForm();
+    setOpenExplainAdd(false);
+    setdataelement(data);
+    setOpenExplain(true);
+ };
 
   const handleOnclickReadExplain = async (data: any) => {
     if (isCallFuncLogOn)
@@ -4371,12 +4374,6 @@ export default function Complaint() {
   //   setapprove_date(dayjs());
   //   setOpenExplainApproveSc(true);
   // };
-
-
-
-
-
-
 
   const handleOnclickExplainApproveSc = (explainData: any) => {
     if (isCallFuncLogOn)
@@ -4743,6 +4740,15 @@ export default function Complaint() {
       );
 
     resetForm();
+    setroot_cause("");
+    setobservation_analysis("");
+    setcorrective_action("");
+    setpreventive_action_plan("");
+    setdataToolUse([]);
+    setToolOther("");
+    setresponsible_date(null);
+    setfollow_up_date(null);
+
     setresponsible_date(dayjs()); // ตั้งค่าวันที่ชี้แจงเป็นวันปัจจุบัน
     setOpenExplainAdd(true);
     // ใช้ข้อมูลที่ส่งมาจากหน้า Explain รายละเอียด
@@ -4965,10 +4971,7 @@ export default function Complaint() {
     else if (name === "ReadClose") setOpenExplainView(true);
     else setOpenExplainView(false);
   };
-
-
-
-
+  
   const handleOnclickReadApproveSC = async (data: any) => {
     if (isCallFuncLogOn)
       console.log(
@@ -4995,10 +4998,6 @@ export default function Complaint() {
     setOpenReadApproveSC(true); // แล้วค่อยเปิด Dialog
   };
 
-
-
-
-
   // const handleOnclickExplainApproveSc = (data: any) => {
   //   if (isCallFuncLogOn)
   //     console.log(
@@ -5016,11 +5015,7 @@ export default function Complaint() {
   const handleOnclickExplainApproveQc = async (explainData: any) => {
 
     if (isCallFuncLogOn)
-      console.log(
-        "🕑",
-        dayjs().format("HH:mm:ss.SSS"),
-        "[Calling Function] : handleOnclickExplainApproveQc"
-      );
+    console.log("🕑",dayjs().format("HH:mm:ss.SSS"),"[Calling Function] : handleOnclickExplainApproveQc");
     console.log("🧪 ExplaintBody loaded", { action, dataelement, observation_analysis, root_cause });
 
     const complaintData = dataelement;
@@ -5116,10 +5111,6 @@ export default function Complaint() {
     // เปิด modal
     setOpenExplainApproveQc(true);
   };
-
-
-
-  
 
   const handleOnclickComplainCloseAdd = async (explainData: any) => {  //ADD
     if (isCallFuncLogOn)
@@ -5473,6 +5464,8 @@ export default function Complaint() {
     };
     fetchSCApprove();
   }, [currentExplainForApproval, dataApprove_Combobox]);
+
+
 
 
   // =====================================================================================================
@@ -5997,7 +5990,6 @@ export default function Complaint() {
             handleOpenAdd={() => handleOnclickExplainAdd(dataelement)}
             handleOnclickExplainView={handleOnclickExplainView}
             handleOnclickExplainApproveSc={handleOnclickExplainApproveSc}
-          // dataelement={dataelement}
           />
         }
       />
@@ -6023,14 +6015,14 @@ export default function Complaint() {
         openBottonHidden={true}
         titlename={"Explain (EXPLAIN ADD)// เพิ่มข้อมูล"}
         buttonText={"Save & Submit"}
-        handleClose={handleClose}
+        handleClose={() => handleOnclickCloseAddExplain(dataelement)}
         handlefunction={ExplainAdd}
         hideSaveDraft={true}
         hideReject={true}
         buttonColor="success"
         element={
           <ExplaintBody
-            action={action}
+            action="ExplainAdd"
           />}
       />
 
@@ -6082,7 +6074,6 @@ export default function Complaint() {
         titlename={"Approve Section Head (SC ADD) // เพิ่มข้อมูล"}
         buttonText={"Approve"}
         handlefunction={ApproveScAdd}
-        //handlereject={ApproveScReturn}
         handlereject={() => ComplaintReturn("EXPLAIN")}
         handleClose={handleClose}
         buttonColor="success"
@@ -6116,7 +6107,7 @@ export default function Complaint() {
       />
 
 
-      { /* กดปุ่มจัดการ ดูข้อมูล */}
+      { /* QC */}
       <FuncDialog
         open={openReadApproveQC}
         dialogWidth="xl"
@@ -6134,6 +6125,7 @@ export default function Complaint() {
         }
       />
 
+      { /* QC READ */}
       <FuncDialog
         open={openApproveQC}
         dialogWidth="xl"
@@ -6151,6 +6143,7 @@ export default function Complaint() {
         }
       />
 
+      { /* QC ADD */}
       <FuncDialog
         open={openExplainApproveQc}
         dialogWidth="xl"
@@ -6175,7 +6168,6 @@ export default function Complaint() {
           />
         }
       />
-
 
       {/* <FuncDialog
         open={openComplainClose}
