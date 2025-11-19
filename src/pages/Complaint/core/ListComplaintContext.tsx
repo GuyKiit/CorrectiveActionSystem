@@ -268,6 +268,12 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
 
 
     //--------Explaint-------
+    const [explainList, setExplainList] = useState<any>(
+        initialListComplaint.explainList
+    );
+    const [approveList, setApproveList] = useState<any>(
+        initialListComplaint.approveList
+    );
     const [dataTooluse, setdataToolUse] = useState<any>(
         initialListComplaint.dataTooluse
     );
@@ -625,6 +631,8 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 domain,
 
                 //--------Explaint-------
+                explainList,
+                approveList,
                 dataTooluse,
                 dataToolUse_Combobox,
                 dataTooluseValue,
@@ -800,6 +808,8 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 set_domain,
 
                 //--------Explaint-------
+                setExplainList,
+                setApproveList,
                 setdataToolUse,
                 setdataToolUse_Combobox,
                 setdataToolUseValue,

@@ -288,6 +288,8 @@ export default function Complaint() {
     domain,
 
     //Explaint
+    explainList,
+    approveList,
     dataTooluseValue,
     dataTooluse_Combobox,
     ToolOther,
@@ -435,6 +437,8 @@ export default function Complaint() {
     setdataset_complaintActionApproveQC,
 
     //set Explaint
+    setExplainList,
+    setApproveList,
     setdataToolUse,
     setdataToolUse_Combobox,
     setToolOther,
@@ -532,8 +536,8 @@ export default function Complaint() {
   const [successCardMessage, setSuccessCardMessage] = React.useState("");
   const [openAddlist, setOpenAddlist] = React.useState(false);
 
-  const [explainList, setExplainList] = useState<any[]>([]);
-  const [approveList, setApproveList] = useState<any[]>([]);
+  // const [explainList, setExplainList] = useState<any[]>([]);
+  // const [approveList, setApproveList] = useState<any[]>([]);
   const [currentExplainForApproval, setCurrentExplainForApproval] = useState<any>(null);
   const [complaintMainData, setComplaintMainData] = useState<any>(null);
   const [approveSelectionCode, setApproveSelectionCode] = useState<string | null>(null);
@@ -772,6 +776,12 @@ export default function Complaint() {
     setToolOther("");
     setresponsible_date(null);
     setfollow_up_date(null);
+    setapprove_name("");
+    setapprove_company_id(0);
+    setapprove_department_id(null);
+    setapprove_position("");
+    setapprove_email("");
+
 
     // เคลียร์ข้อมูล Approve
     setdataFuapp(null);
@@ -4886,8 +4896,9 @@ export default function Complaint() {
   //   // setOpenExplainApproveSc(true);
   // };
 
-  const handleOnclickExplainView = async (data: any, name: string) => {
+  const handleOnclickExplainView = async (explainData: any, name: string) => {
     console.log("dataaaaaaaaaaaa", data);
+    console.log("dataaaaaaaaaaaa", explainData);
 
     setAction(name);
     if (isCallFuncLogOn)
@@ -4897,78 +4908,118 @@ export default function Complaint() {
         " [Calling Function]  :  handleOnclickExplainView"
       );
 
-    // ตั้งค่าข้อมูล explain
-    setdataelement(data);
-    setCurrentExplainForApproval(data);
+    const complaintData = dataelement;
 
-    // ตั้งค่าข้อมูลสำหรับ context
-    setobservation_analysis(data.observation_analysis || "");
-    setroot_cause(data.root_cause || "");
-    setcorrective_action(data.corrective_action || "");
-    setpreventive_action_plan(data.preventive_action_plan || "");
+    // เก็บ complaint หลัก
+    setComplaintMainData(complaintData);
 
-    // ตรวจสอบและตั้งค่า report_type
+    // สร้าง object สำหรับ approve (เอา respondent_domain_id จาก complaint หลัก)
+    const approvalData = {
+      ...explainData,
+      respondent_domain_id: complaintData?.respondent_domain_id,
+    };
+
+    setCurrentExplainForApproval(approvalData);
+
+    // Reset form ก่อน
+    resetForm();
+
+    // ตั้งวันที่ approve
+    setapprove_date(dayjs());
+
+    // เซ็ตข้อมูลลง context สำหรับ modal
+    setobservation_analysis(explainData.observation_analysis || "");
+    setroot_cause(explainData.root_cause || "");
+    setcorrective_action(explainData.corrective_action || "");
+    setpreventive_action_plan(explainData.preventive_action_plan || "");
+
+    if (explainData.responsible_date)
+      setresponsible_date(dayjs(explainData.responsible_date));
+    if (explainData.follow_up_date)
+      setfollow_up_date(dayjs(explainData.follow_up_date));
+
+    // 🔹 ดึง approve ของ explain นี้และแมปลง fields (QC approve = approve_seq: 2)
+    if (explainData.id) {
+      const approveData = await ExplaintApprove_Get(explainData.id);
+
+      if (approveData && approveData.length > 0) {
+        // หา QC approve record (approve_seq === 2)
+        const qcApprove = approveData.find((item: any) => item.approve_seq === 2) || approveData[0];
+
+        // Set QC approve name
+        setqcapprove_name(qcApprove.approve_name || "");
+
+        // Map company_id → object
+        if (qcApprove.approve_company_id) {
+          const qcCompany = dataset_company.find(
+            (c: any) => Number(c.company_id) === Number(qcApprove.approve_company_id)
+          );
+          if (qcCompany) {
+            setqcapprove_company_id(qcCompany);
+          }
+        }
+
+        // Map department_id → object
+        if (qcApprove.approve_department_id) {
+          const qcDepartment = dataset_department.find(
+            (d: any) => Number(d.department_id) === Number(qcApprove.approve_department_id)
+          );
+          if (qcDepartment) {
+            setqcapprove_department_id(qcDepartment);
+          }
+        }
+
+        // Set other QC approve fields
+        setqcapprove_position(qcApprove.approve_position || "");
+        setqcapprove_email(qcApprove.approve_email || "");
+        if (qcApprove.approve_date) {
+          setqcapprove_date(dayjs(qcApprove.approve_date));
+        }
+
+        // Set QC approve detail and note
+        if (qcApprove.approve_detail) {
+          setqcapprove_detail(qcApprove.approve_detail);
+        }
+        if (qcApprove.approve_note) {
+          setqcapprove_note(qcApprove.approve_note);
+        }
+        setdataQcapp(dataApprove_Combobox.find((item: any) => item.lov_code === qcApprove.approve_status) || null);
+        // Note: QC approve radio (dataQcapp) will be set in ExplaintBody.tsx from dataelement
+
+        console.log("📘 QC Approve data loaded:", qcApprove);
+      }
+    }
+
+    // เอา report_type มาด้วย
     const reportType =
-      data.complaint?.report_type || data.report_type || dataelement?.report_type;
+      explainData.complaint?.report_type ||
+      explainData.report_type ||
+      complaintData?.report_type;
+
     if (reportType && dataset_reporttype) {
       const reportTypeObj = dataset_reporttype.find(
         (item: any) => item.id === reportType || item.lov_code === reportType
       );
 
       if (reportTypeObj) {
-        const updatedDataElement = {
-          ...data,
+        setdataelement({
+          ...explainData,
           report_type: reportTypeObj.lov_code,
-          _forceVisibilityUpdate: true,
-        };
-        setdataelement(updatedDataElement);
-      }
-    }
-    // // 🔹 ดึง approve ของ explain
-    if (name === "ReadApproveQc" && data.id) {
-      console.log("📘 Fetching approve data for explain_id:", data.id);
-
-      const approveData = await ExplaintApprove_Get(data.id);
-
-      if (approveData.length > 0) {
-        const firstApprove = approveData[0];
-
-        setapprove_name(firstApprove.approve_name || "");
-
-        const company = dataset_company.find(
-          (c: any) => c.company_id === firstApprove.approve_company_id
-        );
-        setapprove_company_id(company || null);
-
-        const department = dataset_department.find(
-          (d: any) =>
-            d.department_id === firstApprove.approve_department_id
-        );
-        setapprove_department_id(department || null);
-
-        setapprove_position(firstApprove.approve_position || "");
-        setapprove_email(firstApprove.approve_email || "");
-
-        if (firstApprove.approve_date)
-          setapprove_date(dayjs(firstApprove.approve_date));
-
-        console.log("✅ Mapped approve data:", firstApprove);
+          _forceVisibilityUpdate: Date.now(),
+        });
       } else {
-        console.log("⚠️ No approve data for this explain");
-
-        setapprove_company_id(0);
-        setapprove_department_id(null);
-        setapprove_position("");
-        setapprove_email("");
-        setapprove_date(dayjs());
+        setdataelement(explainData);
       }
+    } else {
+      setdataelement(explainData);
     }
 
 
     // เปิด Dialog
     if (name === "ApproveScRead") setOpenExplainView(true);
-    else if (name === "ReadApproveQc") setOpenExplainView(true);
+    else if (name === "ApproveQcRead") setOpenExplainView(true);
     else if (name === "ReadClose") setOpenExplainView(true);
+    else if (name === "CloseHistory") setOpenExplainView(true);
     else setOpenExplainView(false);
   };
   
@@ -5132,9 +5183,7 @@ export default function Complaint() {
 
     setCurrentExplainForApproval(approvalData);
 
-    // Reset form ก่อน
-    resetForm();
-
+  
     // ตั้งวันที่ approve
     setapprove_date(dayjs());
 
@@ -5225,6 +5274,9 @@ export default function Complaint() {
       setdataelement(explainData);
     }
     setOpenComplainCloseAdd(true);
+      // Reset form ก่อน
+    resetForm();
+
   };
 
   // const handleOnclickMenuUpload = () => {
@@ -5450,7 +5502,7 @@ export default function Complaint() {
       const approveData = await ExplaintApprove_Get(currentExplainForApproval.id);
       if (approveData?.length > 0) {
         const firstApprove = approveData[0];
-        setapprove_name(firstApprove.approve_name || "");
+        // setapprove_name(firstApprove.approve_name || "");
         setapprove_company_id(dataset_company.find((c: any) => Number(c.company_id) === firstApprove.approve_company_id) || null);
         setapprove_department_id(dataset_department.find((d: any) => Number(d.department_id) === firstApprove.approve_department_id) || null);
         // radio
@@ -5460,6 +5512,7 @@ export default function Complaint() {
         setapprove_date(firstApprove.approve_date ? dayjs(firstApprove.approve_date) : dayjs());
         setapprove_detail(firstApprove.approve_detail || "");
         setapprove_note(firstApprove.approve_note || "");
+        
       }
     };
     fetchSCApprove();
@@ -5565,7 +5618,7 @@ export default function Complaint() {
             <AutocompleteComboBox
               value={
                 dataset_reporttype?.find(
-                  (item: any) => item.lov_code === TextNameSearch.report_code
+                  (item: any) => item.id === TextNameSearch.report_code
                 ) || null
               }
               labelName="ประเภทเอกสาร (Report Type)"
@@ -5574,7 +5627,7 @@ export default function Complaint() {
               setvalue={(val) => {
                 setTextNameSearch({
                   ...TextNameSearch,
-                  report_code: val?.lov_code || "", // เก็บแค่ id เป็น string
+                  report_code: val?.id || "", // เก็บแค่ id เป็น string
                 });
                 setdataReportTypeValue(val);
                 setReportTypeError(false);
@@ -6004,7 +6057,15 @@ export default function Complaint() {
         buttonColor="success"
         element={
           <ExplaintBody
-            action="ExplainRead"
+            action= "ExplainRead"
+            // {
+            // action={action == "ApproveSC" ? "ApproveScAdd"
+            //         : action == "ReadApproveSC" ? "ReadApproveSc"
+            //         : action == "ApproveQC" ? "ApproveQcAdd"
+            //         : action == "ReadApproveQC" ? "ReadApproveQc"
+            //         : action == "Close" ? "CloseAdd"
+            //         : "ReadApproveSc"
+            // }
           />
         }
       />
@@ -6058,7 +6119,7 @@ export default function Complaint() {
           <ComplaintBody
             action="ApproveSC"
             handleOpenAdd={() => handleOnclickExplainAdd(dataelement)}
-            handleOnclickExplainView={handleOnclickExplainView}
+            handleOnclickExplainView={(item) => handleOnclickExplainView(item, "ApproveScRead")}
             handleOnclickExplainApproveSc={handleOnclickExplainApproveSc}
           />
         }
@@ -6119,7 +6180,7 @@ export default function Complaint() {
           <ComplaintBody
             action="ReadApproveQC"
             handleOpenAdd={() => handleOnclickExplainAdd(dataelement)}
-            handleOnclickExplainView={(item) => handleOnclickExplainView(item, "ReadApproveQc")}
+            handleOnclickExplainView={(item) => handleOnclickExplainView(item, "ApproveQcRead")}
             handleOnclickExplainApproveQc={handleOnclickExplainApproveQc}
           />
         }
@@ -6137,7 +6198,7 @@ export default function Complaint() {
           <ComplaintBody
             action="ApproveQC"
             handleOpenAdd={() => handleOnclickExplainAdd(dataelement)}
-            handleOnclickExplainView={handleOnclickExplainView}
+            handleOnclickExplainView={(item) => handleOnclickExplainView(item, "ApproveQcRead")}
             handleOnclickExplainApproveQc={handleOnclickExplainApproveQc}
           />
         }
@@ -6218,7 +6279,7 @@ export default function Complaint() {
           <ComplaintBody
             action="Close"
             handleOpenAdd={() => handleOnclickExplainAdd(dataelement)}
-            handleOnclickExplainView={handleOnclickExplainView}
+            handleOnclickExplainView={(item) => handleOnclickExplainView(item, "ReadClose")}
             handleOnclickComplainCloseAdd={handleOnclickComplainCloseAdd}
           />
         }
