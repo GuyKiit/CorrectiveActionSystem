@@ -321,6 +321,7 @@ export default function ComplaintBody({
     departmentrelate,
     department,
     domain,
+    explainList,
 
     setComplaint_no,
     setno,
@@ -414,6 +415,7 @@ export default function ComplaintBody({
     set_departmentrelate,
     set_department,
     set_domain,
+    setExplainList
   } = useListComplaint();
 
   const [previewFile, setPreviewFile] = useState<File | null>(null);
@@ -453,8 +455,8 @@ export default function ComplaintBody({
     [fileIndex: number]: string;
   }>({});
   const [fileList, setFileList] = useState<FileData[]>([]);
-  const [explainList, setExplainList] = useState<any[]>([]);
-  
+  // const [explainList, setExplainList] = useState<any[]>([]);
+
   const [request_department_id, setrequest_department_id] = React.useState<{
     itasset_department_id: number;
     itasset_department_name: string;
@@ -1040,11 +1042,12 @@ export default function ComplaintBody({
 
     try {
       let response = await _POST(dataset, "/Explain/ExplainGet");
-      // console.log("ExplainGet response:", response);
+      console.log("ExplainGet response:", response);
       if (response && response.status === "success") {
         setIsLoadingScreen(false);
         setExplainList(response.data || []);
         console.log("Explain list:", response.data);
+        console.log("explainList list:", explainList);
       }
     } catch (e) {
       // console.log("ExplainGet error:", e);
@@ -1052,7 +1055,7 @@ export default function ComplaintBody({
     }
   };
 
-  
+
 
 
 
@@ -1323,9 +1326,10 @@ export default function ComplaintBody({
   //////////////////////// Complaint Read //////////////////////////
   React.useEffect(() => {
     console.log("step: 5 เก็บข้อมูลเข้า ฺsetdataelement ใหม่ ", dataelement);
-    console.log("💾 close_name:", dataelement?.close_name);
-    console.log("💾 close_company_id:", dataelement?.close_company_id);
-    console.log("💾 close_email:", dataelement?.close_email);
+    console.log("step: 5 เก็บข้อมูลเข้า ฺsetdataelement ใหม่ ", explainList);
+    console.log("💾 close_name:", explainList?.close_name);
+    console.log("💾 close_company_id:", explainList?.close_company_id);
+    console.log("💾 close_email:", explainList?.close_email);
     console.log("💾 product_name:", dataelement?.product_name);
 
     if (dataelement && action != "Add") {
@@ -1423,17 +1427,43 @@ export default function ComplaintBody({
       } else {
         setIsRSHidden(true);
       }
-      
 
-      setclose_name(dataelement?.close_name || "");
-      setclose_company_id(dataelement?.close_company_id ? dataelement?.close_company_id : "");
-      setclose_email(dataelement?.close_email ? dataelement?.close_email : "");
-      console.log("💾2 close_name:", dataelement?.close_name);
-      console.log("💾2 close_company_id:", dataelement?.close_company_id);
-      console.log("💾2 close_email:", dataelement?.close_email);
-      console.log("💾2 product_name:", dataelement?.product_name);
+
+
     }
   }, [dataelement, dataset_reporttype, dataset_company]);
+
+  React.useEffect(() => {
+    console.log("🔄 explainList UPDATED:", explainList);
+    if (explainList?.length > 0 && action != "Add") {
+
+      const close = explainList[0];
+
+      console.log("👉 SELECTED explain for close:", close);
+
+      setclose_name(close?.close_name || "");
+      setclose_company_id(dataset_company.find((c: any) => Number(c.company_id) == close.close_company_id) || null);
+      setclose_department_id(dataset_department.find((d: any) => Number(d.department_id) == close.close_department_id) || null);
+      setclose_position(close?.close_position ? close?.close_position : "");
+      setclose_email(close?.close_email ? close?.close_email : "");
+      setclose_date(dayjs(close.close_date));
+      setdataFuapp(dataApprove_Combobox.find((item: any) => item.lov_code === close.close_status) || null);
+      setclose_detail(close?.close_detail ? close?.close_detail : "");
+      setclose_note(close?.close_note ? close?.close_note : "");
+
+
+
+      console.log("💾2 close_name:", close?.close_name);
+      console.log("💾2 close_company_id:", close?.close_company_id);
+      console.log("💾2 close_company_id:", close_company_id);
+      console.log("💾2 close_email:", close?.close_email);
+      console.log("💾2 close_department_id:", close?.close_department_id);
+      console.log("💾2 close_department_id:", close_department_id);
+      console.log("💾2 close_position:", close?.close_position);
+      console.log("💾2 close_detail:", close?.close_detail);
+      console.log("💾2 close_note:", close?.close_note);
+    }
+  }, [explainList, dataset_department]);
 
   React.useEffect(() => {
     if (!isActionAdd && dataelement?.id) {
@@ -2992,16 +3022,16 @@ export default function ComplaintBody({
                       <Grid container spacing={3}>
                         {/* รายการคำชี้แจง (Explain List) */}
                         <Grid size={12}>
-                          {explainList.length > 0 ? (
+                          {explainList ? (
                             <Box sx={{ mt: 2 }}>
                               {explainList
                                 .sort(
-                                  (a, b) =>
+                                  (a: any, b: any) =>
                                     new Date(a.create_datetime).getTime() -
                                     new Date(b.create_datetime).getTime()
                                 )
                                 .reverse()
-                                .map((item, index) => (
+                                .map((item: any, index: any) => (
                                   <Paper
                                     key={index}
                                     elevation={2}
@@ -3308,13 +3338,25 @@ export default function ComplaintBody({
                             readonly={isActionRead || isActionDelete || isActionCloseHistory}
                           />
                         </Grid>
-                        <Grid size={4}>
+                        {/* <Grid size={4}>
                           <FullWidthTextField
                             required="required"
                             value={close_company_id}
                             labelName="บริษัท (Company)"
                             onchange={(e) => setclose_company_id(e)}
                             readonly={isActionRead || isActionDelete || isActionCloseHistory}
+                          />
+                        </Grid> */}
+                        <Grid size={4}>
+                          <AutocompleteComboBox
+                            required="required"
+                            value={close_company_id}
+                            labelName={"บริษัท (Company)"}
+                            options={dataset_company}
+                            column="company_name"
+                            setvalue={(v) => setclose_company_id(v)}
+                            bgcolorTextField={true}
+                            readonly
                           />
                         </Grid>
                         <Grid size={4}>

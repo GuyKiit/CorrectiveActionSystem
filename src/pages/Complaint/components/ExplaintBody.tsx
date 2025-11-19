@@ -213,6 +213,7 @@ export default function ExplaintBody({
     DecisionOther,
 
     //Explaint
+    approveList,
     dataTooluse,
     dataToolUse_Combobox,
     dataToolUseValue_Combobox,
@@ -314,6 +315,8 @@ export default function ExplaintBody({
     setcomplaintFiles,
 
     //Explaint
+    setExplainList,
+    setApproveList,
     setdataToolUse,
     setdataToolUse_Combobox,
     setdataToolUseValue,
@@ -479,7 +482,7 @@ export default function ExplaintBody({
   const [isMinimizecloseOpen, setisMinimizeCloseOpen] = useState(true);
   const [currentExplainForApproval, setCurrentExplainForApproval] = useState<any>(null);
   const [currentApproveData, setCurrentApproveData] = useState<any>(null);
-  const [approveList, setApproveList] = useState<any[]>([]);
+  // const [approveList, setApproveList] = useState<any[]>([]);
   // Function Handlers (On Change Event) ======================================================
   const handleReportTypeChange = (val: LovType | null) => {
     if (true)
@@ -1126,7 +1129,8 @@ export default function ExplaintBody({
 
     //==========================================================================
 
-    if (isActionExplainApproveScAdd || isActionExplainApproveQcAdd || isActionCloseAdd) {
+    if (isActionExplainApproveScAdd || isActionExplainApproveQcAdd ) {
+      // alert(1)
       setapprove_name(user[0].employee_username || "");
       setclose_name(user[0].employee_username || "");
       setapprove_position(user[0].employee_position || "");
@@ -1148,8 +1152,12 @@ export default function ExplaintBody({
       const userDept = findDepartment(uidDeptId);
       if (userDept) setapprove_department_id(userDept);
       if (userDept) setclose_department_id(userDept);
-    } else if (dataelement) {
-      setapprove_name(dataelement.approve_name || "");
+    } else if (isActionCloseAdd) {
+      //  alert(approveList[0].approve_name)
+       setapprove_name(approveList[0].approve_name || "");
+    }
+    else if (dataelement) {
+      
       setclose_name(dataelement.close_name || "");
       setapprove_position(dataelement.approve_position || "");
       setclose_position(dataelement.close_position || "");
@@ -1199,6 +1207,7 @@ export default function ExplaintBody({
     dataset_company,
     dataset_department,
     dataelement,
+    approveList
   ]);
 
 
@@ -1206,7 +1215,8 @@ export default function ExplaintBody({
   React.useEffect(() => {
     console.log("🟣🟣🟣🟣🟣🟣 [5] 🟣🟣🟣🟣🟣🟣");
     console.log("ขั้นตอน: 5 เก็บข้อมูลเข้า ฺเต็dataelement ใหม่ ", dataelement);
-    console.log("ขั้นตอน: 5 ", approve_name);
+    console.log("ขั้นตอน: 5 เก็บข้อมูลเข้า approveList ใหม่ ", approveList);
+    console.log("ขั้นตอน: 5 ", approveList[0].approve_name);
     console.log("ขั้นตอน: 5 ", approve_email);
     console.log("ขั้นตอน: 5 ", approve_company_id);
     console.log("ขั้นตอน: 5 ", approve_department_id);
@@ -1249,6 +1259,10 @@ export default function ExplaintBody({
       setcorrective_action(dataelement?.corrective_action || "");
       setpreventive_action_plan(dataelement?.preventive_action_plan || "");
 
+      setapprove_name(approveList[0]?.approve_name || "");
+      setapprove_position(approveList[0]?.approve_position || "");
+      setapprove_email(approveList[0]?.approve_email || "");
+
       // Set visibility based on report type from dataelement
       if (dataelement.report_type) {
         const reportTypeObj = dataset_reporttype?.find(
@@ -1262,10 +1276,10 @@ export default function ExplaintBody({
         }
       }
 
-      console.log("💾2 close_name:", dataelement?.close_name);
-      console.log("💾2 close_company_id:", dataelement?.close_company_id);
-      console.log("💾2 close_email:", dataelement?.close_email);
-      console.log("💾2 product_name:", dataelement?.product_name);
+      console.log("💾2 close_name:", approveList[0]?.close_name);
+      console.log("💾2 close_company_id:", approveList?.close_company_id);
+      console.log("💾2 close_email:", approveList?.close_email);
+      console.log("💾2 product_name:", approveList?.product_name);
 
       // Load QC approve data from dataelement (for CloseAdd mode)
       if (isActionCloseAdd || isActionClose || isActionCloseHistory) {
@@ -1350,6 +1364,7 @@ export default function ExplaintBody({
     isActionCloseAdd,
     isActionClose,
     isActionCloseHistory,
+    approveList
     // dataTooluse,
     // dataDecision,
   ]);
@@ -1363,7 +1378,6 @@ export default function ExplaintBody({
       if (approveData?.length > 0) {
         const firstApprove = approveData[0];
         setCurrentApproveData(firstApprove); // 🔹 เก็บ approve data ทั้ง object
-        setapprove_name(firstApprove.approve_name || "");
         setapprove_company_id(firstApprove.approve_company_id || "");
         setapprove_department_id(firstApprove.approve_department_id || "");
         setapprove_position(firstApprove.approve_position || "");
@@ -1866,7 +1880,9 @@ export default function ExplaintBody({
                                       isActionRead ||
                                       isActionDelete ||
                                       isActionExplainRead ||
-                                      isActionExplainApproveScAdd || isActionExplainApproveQcAdd
+                                      isActionExplainApproveScAdd || 
+                                      isActionExplainApproveQcAdd ||
+                                      isActionCloseAdd
                                     }
                                   />
                                 </Grid>
@@ -1890,7 +1906,8 @@ export default function ExplaintBody({
                                   readonly={
                                     isActionRead ||
                                     isActionDelete ||
-                                    isActionExplainRead
+                                    isActionExplainRead ||
+                                    isActionCloseAdd
                                   }
                                 />
                               )}
@@ -1950,7 +1967,9 @@ export default function ExplaintBody({
                                       isActionRead ||
                                       isActionDelete ||
                                       isActionExplainRead ||
-                                      isActionExplainApproveScAdd || isActionExplainApproveQcAdd
+                                      isActionExplainApproveScAdd || 
+                                      isActionExplainApproveQcAdd ||
+                                      isActionCloseAdd
                                     }
                                   />
                                 </Grid>
@@ -1977,7 +1996,8 @@ export default function ExplaintBody({
                                   readonly={
                                     isActionRead ||
                                     isActionDelete ||
-                                    isActionExplainRead
+                                    isActionExplainRead ||
+                                    isActionCloseAdd
                                   }
                                 />
                               )}
@@ -2045,7 +2065,8 @@ export default function ExplaintBody({
                                 readonly={
                                   isActionRead ||
                                   isActionDelete ||
-                                  isActionExplainRead
+                                  isActionExplainRead ||
+                                  isActionCloseAdd
                                 }
                               />
                             </Grid>
@@ -2112,7 +2133,8 @@ export default function ExplaintBody({
                                 readonly={
                                   isActionRead ||
                                   isActionDelete ||
-                                  isActionExplainRead
+                                  isActionExplainRead ||
+                                  isActionCloseAdd
                                 }
                               />
                             </Grid>
@@ -2179,7 +2201,8 @@ export default function ExplaintBody({
                                 readonly={
                                   isActionRead ||
                                   isActionDelete ||
-                                  isActionExplainRead
+                                  isActionExplainRead ||
+                                  isActionCloseAdd
                                 }
                               />
                             </Grid>
@@ -2244,7 +2267,7 @@ export default function ExplaintBody({
                                         ? false
                                         : true
                                 }
-                                readonly={isActionRead || isActionDelete || isActionExplainApproveScAdd}
+                                readonly={isActionRead || isActionExplainRead || isActionDelete || isActionExplainApproveScAdd || isActionCloseAdd}
                               />
                             </Grid>
                           </Grid>
@@ -2553,7 +2576,10 @@ export default function ExplaintBody({
         isActionExplainApproveQcAdd ||
         isActionCloseAdd ||
         isActionExplainRead ||
-        isActionExplainReadApproveSc) )
+        isActionExplainReadApproveSc ||
+        isActionExplainReadApproveQc ||
+        isActionReadClose
+      ) )
         && (
           <Paper
             elevation={3}
@@ -2764,6 +2790,7 @@ export default function ExplaintBody({
                                   label={item.lov1}
                                   disabled={
                                     isActionRead ||
+                                    isActionExplainRead ||
                                     isActionDelete ||
                                     isActionExplainApproveQcAdd ||
                                     isActionCloseAdd 
@@ -2843,7 +2870,7 @@ export default function ExplaintBody({
                                     bgcolorTextField={
                                       isActionExplainApproveScAdd ? false : true
                                     }
-                                    readonly={isActionRead || isActionDelete || isActionExplainApproveQcAdd || isActionCloseAdd}
+                                    readonly={isActionRead || isActionExplainRead || isActionDelete || isActionExplainApproveQcAdd || isActionCloseAdd}
                                   />
                                 </Grid>
                               </Grid>
@@ -2900,7 +2927,7 @@ export default function ExplaintBody({
                                     bgcolorTextField={
                                       isActionExplainApproveScAdd ? false : true
                                     }
-                                    readonly={isActionRead || isActionDelete || isActionExplainApproveQcAdd || isActionCloseAdd}
+                                    readonly={isActionRead ||  isActionExplainRead || isActionDelete || isActionExplainApproveQcAdd || isActionCloseAdd}
                                   />
                                 </Grid>
                               </Grid>
@@ -2919,6 +2946,7 @@ export default function ExplaintBody({
       {/* //ส่วนของ Qc */}
       {(isActionExplainApproveQcAdd||
       isActionExplainReadApproveQc ||
+      isActionExplainRead ||
       isActionReadClose ||
        isActionCloseAdd )&& (
         <Paper
@@ -3130,6 +3158,7 @@ export default function ExplaintBody({
                                 label={item.lov1}
                                 disabled={
                                   isActionRead ||
+                                  isActionExplainRead ||
                                   isActionDelete ||
                                   isActionCloseAdd
                                 }
@@ -3202,7 +3231,7 @@ export default function ExplaintBody({
                                   value={qcapprove_detail}
                                   labelName=""
                                   onchange={(e) => setqcapprove_detail(e)}
-                                  readonly={isActionRead || isActionDelete || isActionCloseAdd}
+                                  readonly={isActionRead || isActionExplainRead || isActionDelete || isActionCloseAdd}
                                 />
                               </Grid>
                             </Grid>
@@ -3256,7 +3285,7 @@ export default function ExplaintBody({
                                   value={qcapprove_note}
                                   labelName=""
                                   onchange={(e) => setqcapprove_note(e)}
-                                  readonly={isActionRead || isActionDelete || isActionCloseAdd}
+                                  readonly={isActionRead || isActionExplainRead || isActionDelete || isActionCloseAdd}
                                 />
                               </Grid>
                             </Grid>

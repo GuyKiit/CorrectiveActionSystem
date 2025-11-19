@@ -116,6 +116,8 @@ export type ListComplaintContextProps = {
     RunningModel?: any
 
     //--------Explaint-------
+    explainList?: any
+    approveList?: any
     dataTooluse?: any
     dataToolUse_Combobox?: any
     dataTooluse_Combobox?: any
@@ -304,6 +306,8 @@ export type ListComplaintContextProps = {
 
 
     //--------Explaint-------
+    setExplainList: Dispatch<SetStateAction<any>>
+    setApproveList: Dispatch<SetStateAction<any>>
     setdataToolUse: Dispatch<SetStateAction<any>>
     setdataToolUse_Combobox: Dispatch<SetStateAction<any>>
     setdataToolUseValue: Dispatch<SetStateAction<any>>
@@ -490,6 +494,8 @@ export const initialListComplaint: ListComplaintContextProps = {
 
 
     //--------Explaint-------
+    setExplainList: () => { },
+    setApproveList: () => { },
     setdataToolUse: () => { },
     setdataToolUse_Combobox: () => { },
     setdataToolUseValue: () => { },
