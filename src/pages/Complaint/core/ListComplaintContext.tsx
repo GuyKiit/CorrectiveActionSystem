@@ -527,6 +527,16 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
         initialListComplaint.qcapprove_note
     );
     
+    const [isApproveScBoxHidden, setisApproveScBoxHidden] = useState<boolean | undefined>(
+        false
+    );
+    const [isApproveQcBoxHidden, setisApproveQcBoxHidden] = useState<any>(
+        initialListComplaint.isApproveQcBoxHidden
+    );
+    const [isApproveCloseBoxHidden, setisApproveCloseBoxHidden] = useState<any>(
+        initialListComplaint.isApproveCloseBoxHidden
+    );
+    
 
     return (
         <ListComplaintContext.Provider
@@ -710,6 +720,14 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
 
                 close_detail,
                 close_note,
+
+                isApproveScBoxHidden,
+                setisApproveScBoxHidden,
+                isApproveQcBoxHidden,
+                setisApproveQcBoxHidden,
+                isApproveCloseBoxHidden,
+                setisApproveCloseBoxHidden,
+            
 
 
                 setComplaint_no,
