@@ -1004,7 +1004,7 @@ export default function ComplaintBody({
 
   // Function - Get Complaints
   const Complaint_Get = async (data: any) => {
-    // if (isCallFuncLogOn)console.log("🕑 ",dayjs().format("HH:mm:ss.SSS")," [Calling Function]  :  Complaint_Get");
+    if (isCallFuncLogOn)console.log("🕑 ",dayjs().format("HH:mm:ss.SSS")," [Calling Function]  :  Complaint_Get");
 
     // setIsLoadingScreen(true)
     const dataset = {
@@ -1023,6 +1023,8 @@ export default function ComplaintBody({
       if (response && response.status === "success") {
         setIsLoadingScreen(false);
         setdataelement(response.data[0]);
+       
+        
       }
     } catch (e) {
       // console.log("error");
@@ -1050,6 +1052,9 @@ export default function ComplaintBody({
       if (response && response.status === "success") {
         setIsLoadingScreen(false);
         setExplainList(response.data || []);
+        setcomplaint_status_id(dataelement?.complaint_status_id)
+       console.log("dataelementdataelement",dataelement);
+       
         console.log("Explain list:", response.data);
         console.log("explainList list:", explainList);
       }
@@ -1058,6 +1063,15 @@ export default function ComplaintBody({
       setIsLoadingScreen(false);
     }
   };
+
+
+  useEffect(() => {
+    console.log("complaint_status_id",complaint_status_id);
+  }) , [complaint_status_id];
+
+
+
+
 
 
 

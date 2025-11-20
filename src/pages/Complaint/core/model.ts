@@ -199,6 +199,12 @@ export type ListComplaintContextProps = {
     qcapprove_detail?: string
     qcapprove_note?: string
 
+    isApproveScBoxHidden?: boolean
+    isApproveQcBoxHidden?: boolean
+    isApproveCloseBoxHidden?: boolean
+
+    
+
 
     setComplaint_no: Dispatch<SetStateAction<string>>;
     setno: Dispatch<SetStateAction<string>>;
@@ -382,6 +388,10 @@ export type ListComplaintContextProps = {
     setqcapprove_date: Dispatch<SetStateAction<dayjs.Dayjs | null>>
     setqcapprove_detail: Dispatch<SetStateAction<string>>
     setqcapprove_note: Dispatch<SetStateAction<string>>
+    
+    setisApproveScBoxHidden: Dispatch<SetStateAction<boolean | undefined>>
+    setisApproveQcBoxHidden: Dispatch<SetStateAction<boolean>>
+    setisApproveCloseBoxHidden: Dispatch<SetStateAction<boolean>>
 };
 
 export const initialListComplaint: ListComplaintContextProps = {
@@ -572,4 +582,8 @@ export const initialListComplaint: ListComplaintContextProps = {
     setqcapprove_date: () => { },
     setqcapprove_detail: () => { },
     setqcapprove_note: () => { },
+    
+    setisApproveScBoxHidden: () => { },
+    setisApproveQcBoxHidden: () => { },
+    setisApproveCloseBoxHidden: () => { },
 };
