@@ -3232,7 +3232,8 @@ export default function ExplaintBody({
                                   value={qcapprove_detail}
                                   labelName=""
                                   onchange={(e) => setqcapprove_detail(e)}
-                                  readonly={isActionRead || isActionExplainRead || isActionDelete || isActionCloseAdd}
+                                  bgcolorTextField={isActionExplainApproveQcAdd ? false : true}
+                                  readonly={isActionRead || isActionExplainRead || isActionDelete || isActionCloseAdd }
                                 />
                               </Grid>
                             </Grid>
@@ -3286,7 +3287,8 @@ export default function ExplaintBody({
                                   value={qcapprove_note}
                                   labelName=""
                                   onchange={(e) => setqcapprove_note(e)}
-                                  readonly={isActionRead || isActionExplainRead || isActionDelete || isActionCloseAdd}
+                                  bgcolorTextField={isActionExplainApproveQcAdd ? false : true}
+                                  readonly={isActionRead || isActionExplainRead || isActionDelete || isActionCloseAdd || isActionExplainRead}
                                 />
                               </Grid>
                             </Grid>

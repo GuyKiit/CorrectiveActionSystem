@@ -1394,7 +1394,10 @@ export default function ComplaintBody({
       setcomplaint_status_label(dataelement?.complaint_status_label);
 
       // สมมติ LovType คือ { id: string; label: string }
-
+      // if (dataelement && dataComplaintType?.length > 0) {
+      
+      // }
+      
       const ct = setComplaintType(dataelement?.complaintType);
       setdataComplaintType(ct);
 
