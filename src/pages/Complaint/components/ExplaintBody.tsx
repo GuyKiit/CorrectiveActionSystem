@@ -66,7 +66,10 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 // pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
 type Validate = {
-  Product_Group: boolean;
+  QcDetail : boolean;
+  QcNote : boolean;
+  CloseDetail : boolean;
+  CloseNote : boolean;
 };
 
 type detail = {
@@ -106,6 +109,10 @@ interface ExplaintBody {
   handleOnclickExplainView?: (item: any) => void;
   handleOnclickExplainApproveSc?: (item: any) => void;
   onApproveChange?: (value: LovType | null) => void;
+  onQCDetailChange?: (value: string) => void;
+  onQCNoteChange?: (value: string) => void;
+  onCloseDetailChange?: (value: string) => void;
+  onCloseNoteChange?: (value: string) => void;
   isViewMode?: boolean;
 }
 
@@ -143,6 +150,12 @@ export default function ExplaintBody({
   handleOnclickExplainView,
   handleOnclickExplainApproveSc,
   onApproveChange,
+
+  onQCDetailChange,
+  onQCNoteChange,
+  onCloseDetailChange,
+  onCloseNoteChange,
+
   isViewMode = false,
 }: ExplaintBody) {
   // const isActionRead =
@@ -1395,7 +1408,7 @@ export default function ExplaintBody({
       }
     };
 
-    fetchApproveData();
+    //fetchApproveData();
   }, [currentExplainForApproval]);
 
   // 🔹 Load QC approve data and radio when in CloseAdd mode
@@ -3227,14 +3240,25 @@ export default function ExplaintBody({
                                 alignItems: "flex-start",
                               }}
                             >
-                              <Grid size={12}>
-                                <FullWidthTextArea
+                              <Grid size={12}><FullWidthTextArea
                                   value={qcapprove_detail}
                                   labelName=""
-                                  onchange={(e) => setqcapprove_detail(e)}
+                                  onchange={(e) => {
+                                    setqcapprove_detail(e)
+                                    if (onQCDetailChange) {
+                                   onQCDetailChange(e);
+                                    }
+                                  }}
                                   bgcolorTextField={isActionExplainApproveQcAdd ? false : true}
                                   readonly={isActionRead || isActionExplainRead || isActionDelete || isActionCloseAdd }
+                                  Validate={validateText?.QcDetail || false}
+                                  validateTextLable={
+                                  validateText?.QcDetail
+                                  ? "กรุณากรอกหมายเหตุการอนุมัติ"
+                                  : ""
+                                  }       
                                 />
+                                
                               </Grid>
                             </Grid>
                           </Box>
@@ -3286,9 +3310,20 @@ export default function ExplaintBody({
                                 <FullWidthTextArea
                                   value={qcapprove_note}
                                   labelName=""
-                                  onchange={(e) => setqcapprove_note(e)}
+                                  onchange={(e) => {
+                                    setqcapprove_note(e)
+                                    if (onQCNoteChange) {
+                                      onQCNoteChange(e);
+                                    }
+                                  }}                        
                                   bgcolorTextField={isActionExplainApproveQcAdd ? false : true}
                                   readonly={isActionRead || isActionExplainRead || isActionDelete || isActionCloseAdd || isActionExplainRead}
+                                  Validate={validateText?.QcNote || false}
+                                  validateTextLable={
+                                  validateText?.QcNote
+                                  ? "กรุณากรอกหมายเหตุเพิ่มเติม"
+                                  : ""
+                                  }       
                                 />
                               </Grid>
                             </Grid>
@@ -3638,8 +3673,18 @@ export default function ExplaintBody({
                                     <FullWidthTextArea
                                       value={close_detail || return_detail}
                                       labelName=""
-                                      onchange={(e) => setclose_detail(e) }
+                                      onchange={(e) => {
+                                        setclose_detail(e) 
+                                        if(onCloseDetailChange){
+                                          onCloseDetailChange(e);
+                                      }}}
                                       readonly={!isActionCloseAdd}
+                                      Validate={validateText?.CloseDetail || false}
+                                      validateTextLable={
+                                      validateText?.CloseDetail
+                                      ? "กรุณากรอกหมายเหตุการปิดรายการ"
+                                      : ""
+                                      }       
                                     />
                                   </Grid>
                                 </Grid>
@@ -3690,7 +3735,11 @@ export default function ExplaintBody({
                                     <FullWidthTextArea
                                       value={close_note}
                                       labelName=""
-                                      onchange={(e) => setclose_note(e)}
+                                      onchange={(e) => {
+                                        setclose_note(e) 
+                                        if(onCloseNoteChange){
+                                          onCloseNoteChange(e);
+                                      }}}
                                       readonly={!isActionCloseAdd}
                                     //   value={approve_note}
                                     //   labelName=""
