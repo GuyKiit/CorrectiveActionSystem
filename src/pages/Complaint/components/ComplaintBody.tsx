@@ -1410,7 +1410,10 @@ export default function ComplaintBody({
       setcomplaint_status_label(dataelement?.complaint_status_label);
 
       // สมมติ LovType คือ { id: string; label: string }
-
+      // if (dataelement && dataComplaintType?.length && dataComplaintRs?.length > 0) {
+      
+      // }
+      
       const ct = setComplaintType(dataelement?.complaintType);
       setdataComplaintType(ct);
 
@@ -1431,6 +1434,7 @@ export default function ComplaintBody({
 
       const clauseRS = rs.find((el: any) => el.lov3 === "Clause");
       setclauseOther(clauseRS?.clause || "");
+      
 
       // หา LovType จาก datapriority_Combobox ตาม dataelement?.priority_level
       const selectedPriority =
