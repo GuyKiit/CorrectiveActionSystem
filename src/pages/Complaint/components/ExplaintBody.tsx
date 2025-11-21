@@ -66,6 +66,15 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 // pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
 type Validate = {
+  Follow_up_Date : boolean;
+  ObsAnaly:boolean
+  Tu: boolean;
+  Tuother: boolean;
+  Rc: boolean;
+  Dd: boolean;
+  Ddother: boolean;
+  Ca: boolean;
+  Pap : boolean;
   QcDetail : boolean;
   QcNote : boolean;
   CloseDetail : boolean;
@@ -113,6 +122,17 @@ interface ExplaintBody {
   onQCNoteChange?: (value: string) => void;
   onCloseDetailChange?: (value: string) => void;
   onCloseNoteChange?: (value: string) => void;
+
+  onFollowUpDateChange?: (value: any) => void;
+  onObsAnalyChange?: (value: string) => void;
+  onToolUseChange?: (value: any) => void;
+  onToolOtherChange?: (value: any) => void;
+  onDdChange?: (value: any) => void;
+  onDecisionOtherChange?: (value: any) => void;
+  onRootCauseChange?: (value: string) => void;
+  onCorrectiveActionChange?: (value: string) => void;
+  onPreventiveActionPlanChange?: (value: string) => void;
+
   isViewMode?: boolean;
   currentExplainForApproval?: any
   complaint_status_lable?: any
@@ -152,8 +172,18 @@ export default function ExplaintBody({
   handleOnclickExplainView,
   handleOnclickExplainApproveSc,
   currentExplainForApproval,
-  onApproveChange,
 
+  onFollowUpDateChange,
+  onObsAnalyChange,
+  onToolUseChange,
+  onToolOtherChange,
+  onDdChange,
+  onDecisionOtherChange,
+  onRootCauseChange,
+  onCorrectiveActionChange,
+  onPreventiveActionPlanChange,
+
+  onApproveChange,
   onQCDetailChange,
   onQCNoteChange,
   onCloseDetailChange,
@@ -598,6 +628,10 @@ export default function ExplaintBody({
       }));
       // อัปเดตเข้า context
       setdataToolUseValue(reducedArray);
+
+      if (onToolUseChange) {
+            onToolUseChange(newData); // ส่งค่าใหม่กลับไปให้ Parent
+        }
       return newData;
     });
   };
@@ -669,7 +703,11 @@ export default function ExplaintBody({
 
       setdataDecisionValue(reducedArray);
 
+      if (onDdChange) {
+            onDdChange(newData); // ส่งค่าใหม่กลับไปให้ Parent
+        }
       return newData;
+
     });
   };
 
@@ -1845,7 +1883,12 @@ export default function ExplaintBody({
                       required="required"
                       labelName={"กำหนดวันตรวจติดตามผลวันที่ (Follow-up Date)"}
                       value={follow_up_date}
-                      handleChange={(val) => setfollow_up_date(val ?? null)}
+                      handleChange={(val) => {
+                        setfollow_up_date(val ?? null)
+                        if (onFollowUpDateChange) {
+                          onFollowUpDateChange(val);
+                        }
+                      }}
                       bgcolorTextField={isActionAdd ? false : true}
                       readonly={
                         isActionRead ||
@@ -1854,6 +1897,12 @@ export default function ExplaintBody({
                         isActionExplainApproveScAdd ||
                         isActionExplainApproveQcAdd ||
                         isActionExplainRead || isActionCloseAdd
+                      }
+                      Validate={validateText?.Follow_up_Date || false}
+                      validateTextLable={
+                        validateText?.Follow_up_Date
+                          ? "กรุณาเลือกวันที่ตรวจติดตามผล"
+                          : ""
                       }
                     />
                   </Grid>
@@ -1901,7 +1950,11 @@ export default function ExplaintBody({
                           onChange={() =>
                             setisMinimizeToolOpen(!isMinimizetoolOpen)
                           }
-                          sx={{ borderRadius: 2, backgroundColor: "#fafafa" }}
+                          sx={{ borderRadius: 2, backgroundColor: "#fafafa" ,
+                            border: validateText?.Tu
+                                ? "1px solid #f44336"
+                                : "1px solid #e0e0e0",
+                          }}
                         >
                           <AccordionSummary
                             expandIcon={<ExpandMoreIcon />}
@@ -1948,7 +2001,8 @@ export default function ExplaintBody({
                                         isActionExplainApproveScAdd ||
                                         isActionExplainApproveQcAdd ||
                                         isActionCloseAdd
-                                      }
+                                      }     
+                                      Validate={validateText?.Tu || false}
                                     />
                                   </Grid>
                                 ))}
@@ -1960,7 +2014,12 @@ export default function ExplaintBody({
                                     <FullWidthTextArea
                                       value={ToolOther}
                                       labelName="Other:"
-                                      onchange={(e) => setToolOther(e)}
+                                      onchange={(e) => {
+                                        setToolOther(e)
+                                        if (onToolOtherChange) {
+                                          onToolOtherChange(e);
+                                        }
+                                      }}
                                       bgcolorTextField={
                                         isActionExplainAdd
                                           ? false
@@ -1974,10 +2033,24 @@ export default function ExplaintBody({
                                         isActionExplainRead ||
                                         isActionCloseAdd
                                       }
+                                      Validate={validateText?.Tuother || false}
+                                      validateTextLable={
+                                          validateText?.Tuother
+                                            ? "กรุณากรอกรายละเอียด"
+                                            : ""
+                                        }
                                     />
                                   )}
                               </Box>
                             </Box>
+                            {validateText?.Tu && (
+                                <label
+                                  className="fs-7 py-1 sarabun-regular-lable-validate"
+                                  style={{ color: "red" }}
+                                >
+                                  กรุณาเลือกเครื่องมือที่ใช้ (Tools Used)
+                                </label>
+                              )}
                           </AccordionDetails>
                         </Accordion>
                       </Grid>
@@ -1988,7 +2061,11 @@ export default function ExplaintBody({
                         <Accordion
                           expanded={isMinimizeddOpen}
                           onChange={() => setisMinimizeDdOpen(!isMinimizeddOpen)}
-                          sx={{ borderRadius: 2, backgroundColor: "#fafafa" }}
+                          sx={{ borderRadius: 2, backgroundColor: "#fafafa", 
+                            border: validateText?.Dd
+                                ? "1px solid #f44336"
+                                : "1px solid #e0e0e0",
+                          }}
                         >
                           <AccordionSummary
                             expandIcon={<ExpandMoreIcon />}
@@ -2036,6 +2113,7 @@ export default function ExplaintBody({
                                         isActionExplainApproveQcAdd ||
                                         isActionCloseAdd
                                       }
+                                      Validate={validateText?.Dd || false}
                                     />
                                   </Grid>
                                 ))}
@@ -2048,7 +2126,12 @@ export default function ExplaintBody({
                                     <FullWidthTextArea
                                       value={DecisionOther}
                                       labelName="Other:"
-                                      onchange={(e) => setDecisionOther(e)}
+                                      onchange={(e) => {
+                                        setDecisionOther(e)
+                                        if (onDecisionOtherChange) {
+                                          onDecisionOtherChange(e);
+                                        }
+                                      }}
                                       bgcolorTextField={
                                         isActionAdd
                                           ? false
@@ -2064,10 +2147,24 @@ export default function ExplaintBody({
                                         isActionExplainRead ||
                                         isActionCloseAdd
                                       }
+                                      Validate={validateText?.Ddother || false}
+                                      validateTextLable={
+                                          validateText?.Ddother
+                                            ? "กรุณากรอกรายละเอียด"
+                                            : ""
+                                        }
                                     />
                                   )}
                               </Box>
                             </Box>
+                            {validateText?.Dd && (
+                                <label
+                                  className="fs-7 py-1 sarabun-regular-lable-validate"
+                                  style={{ color: "red" }}
+                                >
+                                  กรุณาเลือกเครื่องมือที่ใช้ (Decision on Disposition)
+                                </label>
+                              )}
                           </AccordionDetails>
                         </Accordion>
                       </Grid>
@@ -2083,6 +2180,9 @@ export default function ExplaintBody({
                         borderRadius: 2,
                         backgroundColor: "#fafafa",
                         mt: 2, // <-- เพิ่ม margin-top
+                        border: validateText?.ObsAnaly
+                                ? "1px solid #f44336"
+                                : "1px solid #e0e0e0",
                       }}
                     >
                       <AccordionSummary
@@ -2119,7 +2219,12 @@ export default function ExplaintBody({
                               <FullWidthTextArea
                                 value={observation_analysis}
                                 labelName=""
-                                onchange={(e) => setobservation_analysis(e)}
+                                onchange={(e) => {
+                                  setobservation_analysis(e)
+                                  if (onObsAnalyChange) {
+                                       onObsAnalyChange(e);
+                                     }
+                                }}
                                 bgcolorTextField={
                                   isActionExplainAdd
                                     ? false
@@ -2133,6 +2238,22 @@ export default function ExplaintBody({
                                   isActionExplainRead ||
                                   isActionCloseAdd
                                 }
+                                Validate={validateText?.ObsAnaly || false}
+                                  validateTextLable={
+                                  validateText?.ObsAnaly
+                                  ? "กรุณากรอกการวิเคราะห์เบื้องต้นของข้อสังเกต"
+                                  : ""
+                                  }  
+
+                                // onchange={(e) => {
+                                //     setqcapprove_note(e)
+                                //     if (onQCNoteChange) {
+                                //       onQCNoteChange(e);
+                                //     }
+                                //   }}                        
+                                //   bgcolorTextField={isActionExplainApproveQcAdd ? false : true}
+                                //   readonly={isActionRead || isActionExplainRead || isActionDelete || isActionCloseAdd || isActionExplainRead}
+                                       
                               />
                             </Grid>
                           </Grid>
@@ -2149,6 +2270,9 @@ export default function ExplaintBody({
                         borderRadius: 2,
                         backgroundColor: "#fafafa",
                         mt: 2, // <-- เพิ่ม margin-top
+                        border: validateText?.Rc
+                                ? "1px solid #f44336"
+                                : "1px solid #e0e0e0",
                       }}
                     >
                       <AccordionSummary
@@ -2185,7 +2309,12 @@ export default function ExplaintBody({
                               <FullWidthTextArea
                                 value={root_cause}
                                 labelName=""
-                                onchange={(e) => setroot_cause(e)}
+                                onchange={(e) => {
+                                  setroot_cause(e)
+                                  if (onRootCauseChange) {
+                                    onRootCauseChange(e);
+                                  }
+                                }}
                                 bgcolorTextField={
                                   isActionAdd
                                     ? false
@@ -2200,7 +2329,13 @@ export default function ExplaintBody({
                                   isActionDelete ||
                                   isActionExplainRead ||
                                   isActionCloseAdd
-                                }
+                                }        
+                                Validate={validateText?.Rc || false}
+                                  validateTextLable={
+                                  validateText?.Rc
+                                  ? "กรุณากรอกคำอธิบายการวิเคราะห์ (Root Cause)"
+                                  : ""
+                                  }  
                               />
                             </Grid>
                           </Grid>
@@ -2217,6 +2352,9 @@ export default function ExplaintBody({
                         borderRadius: 2,
                         backgroundColor: "#fafafa",
                         mt: 2, // <-- เพิ่ม margin-top
+                        border: validateText?.Ca
+                                ? "1px solid #f44336"
+                                : "1px solid #e0e0e0",
                       }}
                     >
                       <AccordionSummary
@@ -2246,6 +2384,7 @@ export default function ExplaintBody({
                             sx={{
                               justifyContent: "center",
                               alignItems: "flex-start",
+
                             }}
                           >
                             {/* Response Date Field - positioned after Emergency option */}
@@ -2253,7 +2392,12 @@ export default function ExplaintBody({
                               <FullWidthTextArea
                                 value={corrective_action}
                                 labelName=""
-                                onchange={(e) => setcorrective_action(e)}
+                                onchange={(e) => {
+                                  setcorrective_action(e)
+                                  if (onCorrectiveActionChange) {
+                                    onCorrectiveActionChange(e);
+                                  }
+                                }}  
                                 bgcolorTextField={
                                   isActionAdd
                                     ? false
@@ -2269,6 +2413,12 @@ export default function ExplaintBody({
                                   isActionExplainRead ||
                                   isActionCloseAdd
                                 }
+                                Validate={validateText?.Ca || false}
+                                  validateTextLable={
+                                  validateText?.Ca
+                                  ? "กรุณากรอกการดำเนินการแก้ไข (Corrective Action)"
+                                  : ""
+                                  }  
                               />
                             </Grid>
                           </Grid>
@@ -2285,6 +2435,9 @@ export default function ExplaintBody({
                         borderRadius: 2,
                         backgroundColor: "#fafafa",
                         mt: 2, // <-- เพิ่ม margin-top
+                        border: validateText?.Pap
+                                ? "1px solid #f44336"
+                                : "1px solid #e0e0e0",
                       }}
                     >
                       <AccordionSummary
@@ -2322,7 +2475,13 @@ export default function ExplaintBody({
                               <FullWidthTextArea
                                 value={preventive_action_plan}
                                 labelName=""
-                                onchange={(e) => setpreventive_action_plan(e)}
+                                onchange={(e) => {
+                                  setpreventive_action_plan(e)
+                                  if (onPreventiveActionPlanChange) {
+                                    onPreventiveActionPlanChange(e);
+                                  }
+                                }
+                                }
                                 bgcolorTextField={
                                   isActionAdd
                                     ? false
@@ -2333,6 +2492,12 @@ export default function ExplaintBody({
                                         : true
                                 }
                                 readonly={isActionRead || isActionExplainRead || isActionDelete || isActionExplainApproveScAdd || isActionCloseAdd}
+                                Validate={validateText?.Pap || false}
+                                  validateTextLable={
+                                  validateText?.Pap
+                                  ? "กรุณากรอกแผนการป้องกันไม่ให้ปัญหาเกิดขึ้นซ้ำ (Preventive Action Plan)"
+                                  : ""
+                                  }  
                               />
                             </Grid>
                           </Grid>
@@ -3260,6 +3425,9 @@ export default function ExplaintBody({
                             borderRadius: 2,
                             backgroundColor: "#fafafa",
                             mt: 2,
+                            border: validateText?.QcDetail
+                                ? "1px solid #f44336"
+                                : "1px solid #e0e0e0",
                           }}
                         >
                           <AccordionSummary
@@ -3273,6 +3441,7 @@ export default function ExplaintBody({
                                 fontSize: "18px",
                                 fontWeight: 600,
                                 color: "#333",
+                                
                               }}
                             >
                               หมายเหตุการอนุมัติ
@@ -3326,6 +3495,9 @@ export default function ExplaintBody({
                           borderRadius: 2,
                           backgroundColor: "#fafafa",
                           mt: 2,
+                            border: validateText?.QcNote
+                                ? "1px solid #f44336"
+                                : "1px solid #e0e0e0",
                         }}
                       >
                         <AccordionSummary
@@ -3688,6 +3860,9 @@ export default function ExplaintBody({
                               borderRadius: 2,
                               backgroundColor: "#fafafa",
                               mt: 2, // <-- เพิ่ม margin-top
+                              border: validateText?.CloseDetail
+                                ? "1px solid #f44336"
+                                : "1px solid #e0e0e0",
                             }}
                           >
                             <AccordionSummary
@@ -3751,6 +3926,9 @@ export default function ExplaintBody({
                               borderRadius: 2,
                               backgroundColor: "#fafafa",
                               mt: 2,
+                              border: validateText?.CloseNote
+                                ? "1px solid #f44336"
+                                : "1px solid #e0e0e0",
                             }}
                           >
                             <AccordionSummary
@@ -3792,10 +3970,12 @@ export default function ExplaintBody({
                                           onCloseNoteChange(e);
                                       }}}
                                       readonly={!isActionCloseAdd}
-                                    //   value={approve_note}
-                                    //   labelName=""
-                                    //  onchange={(e) => setapprove_note(e)}
-                                    //  readonly={isActionRead || isActionDelete}
+                                    Validate={validateText?.CloseNote || false}
+                                      validateTextLable={
+                                      validateText?.CloseNote
+                                      ? "กรุณากรอกหมายเหตุเพิ่มเติม"
+                                      : ""
+                                      }       
                                     />
                                   </Grid>
                                 </Grid>

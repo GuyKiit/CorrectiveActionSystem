@@ -1785,7 +1785,6 @@ export default function ComplaintBody({
                           validateText?.Date_of_Detection
                             ? "กรุณาเลือกวันที่พบปัญหา"
                             : ""}
-
                       />
                     </Grid>
                     <Grid size={4}>
@@ -1990,7 +1989,6 @@ export default function ComplaintBody({
                                           onchange={() =>
                                             handleCheckboxChangeCT(item)
                                           }
-                                          //readonly={isActionRead || isActionDelete || isActionExplain}
                                           readonly={
                                             !isActionAdd && !isActionEdit
                                           }
