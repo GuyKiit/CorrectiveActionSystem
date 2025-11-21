@@ -5041,6 +5041,7 @@ export default function Complaint() {
 
     // เปิด Dialog
     if (name === "ApproveScRead") setOpenExplainView(true);
+    else if (name === "ReadExplain") setOpenExplainView(true);
     else if (name === "ApproveQcRead") setOpenExplainView(true);
     else if (name === "ReadClose") setOpenExplainView(true);
     else if (name === "CloseHistory") setOpenExplainView(true);
