@@ -3118,10 +3118,46 @@ export default function ComplaintBody({
                                         <Box sx={{ display: "flex", gap: 1.5 }}>
                                           {/* ปุ่มอนุมัติ */}
                                           {
+                                            (isActionExplainApproveSc || isActionExplainApproveQc || isActionClose)
+                                            && ((isActionExplainApproveSc && index === 0)
+                                              || (isActionExplainApproveQc && index === 0)
+                                              || (isActionClose && index === 0)
+                                            ) &&
                                             (
-                                              isActionExplainApproveSc || isActionExplainApproveQc
+                                              <Button
+                                                variant="contained"
+                                                size="medium"
+                                                onClick={(e) => {
+                                                  e.stopPropagation();
+
+                                                  if (isActionExplainApproveSc) {
+                                                    handleOnclickExplainApproveSc?.(item);
+
+                                                  } else if (isActionExplainApproveQc) {
+                                                    handleOnclickExplainApproveQc?.(item);
+                                                    
+                                                  } else if (isActionClose) {
+                                                    handleOnclickComplainCloseAdd?.(item);
+                                                  }
+
+                                                }}
+                                                sx={{
+                                                  backgroundColor: "#45bc4bff",
+                                                  color: "#FFFFFF",
+                                                  "&:hover": {
+                                                    backgroundColor: "#1b5e20",
+                                                  },
+                                                  textTransform: "none",
+                                                  fontWeight: 600,
+                                                  borderRadius: 2,
+                                                  px: 4,
+                                                }}>
+                                                {isActionClose ? "ปิดรายการ" : "อนุมัติ"}
+                                              </Button>
                                             )
-                                            &&
+                                          }
+                                          {/* {
+                                            (isActionExplainApproveSc || isActionExplainApproveQc)&&
                                             (
                                               (
                                                 // dataelement?.complaint_status_label === "EXPLAINED" &&
@@ -3173,10 +3209,10 @@ export default function ComplaintBody({
                                                 อนุมัติ
                                               </Button>
                                             )
-                                          }
+                                          } */}
 
                                           {/* ปุ่มปิดรายการ */}
-                                          {
+                                          {/* {
                                             isActionClose &&
                                             index === 0 &&
                                             (
@@ -3205,7 +3241,8 @@ export default function ComplaintBody({
                                               >
                                                 ปิดรายการ
                                               </Button>
-                                            )}
+                                            )
+                                          } */}
 
                                           {/* ปุ่มดูข้อมูล */}
                                           <Button

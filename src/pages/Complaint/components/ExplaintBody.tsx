@@ -171,20 +171,41 @@ export default function ExplaintBody({
   // =====================================================
   const isActionExplain = action === "Explain";
   const isActionExplainAdd = action === "ExplainAdd";
-  const isActionExplainRead = action === "ExplainRead";
+  const isActionExplainRead = action === "ReadExplain";
   // =====================================================
   const isActionExplainApproveSc = action === "ApproveSC";
-  const isActionExplainApproveScAdd = action === "ApproveScAdd";
-  const isActionExplainReadApproveSc = action === "ReadApproveSc";
+  const isActionExplainApproveScAdd = action === "ApproveSCAdd";
+  const isActionExplainReadApproveSc = action === "ReadApproveSC";
   // =====================================================
   const isActionExplainApproveQc = action === "ApproveQC";
-  const isActionExplainApproveQcAdd = action === "ApproveQcAdd";
-  const isActionExplainReadApproveQc = action === "ReadApproveQc";
+  const isActionExplainApproveQcAdd = action === "ApproveQCAdd";
+  const isActionExplainReadApproveQc = action === "ReadApproveQC";
   // =====================================================
   const isActionClose = action === "Close";
   const isActionCloseAdd = action === "CloseAdd";
   const isActionReadClose = action === "ReadClose";
-  const isActionCloseHistory = action === "CloseHistory";
+  const isActionCloseHistory = action === "CloseHistoryRead";
+  // const isActionRead = action === "Read" || isViewMode;
+  // const isActionAdd = action === "Add";
+  // const isActionEdit = action === "Edit";
+  // const isActionDelete = action === "Delete";
+  // // =====================================================
+  // const isActionExplain = action === "Explain";
+  // const isActionExplainAdd = action === "ExplainAdd";
+  // const isActionExplainRead = action === "ExplainRead";
+  // // =====================================================
+  // const isActionExplainApproveSc = action === "ApproveSC";
+  // const isActionExplainApproveScAdd = action === "ApproveScAdd";
+  // const isActionExplainReadApproveSc = action === "ReadApproveSc";
+  // // =====================================================
+  // const isActionExplainApproveQc = action === "ApproveQC";
+  // const isActionExplainApproveQcAdd = action === "ApproveQcAdd";
+  // const isActionExplainReadApproveQc = action === "ReadApproveQc";
+  // // =====================================================
+  // const isActionClose = action === "Close";
+  // const isActionCloseAdd = action === "CloseAdd";
+  // const isActionReadClose = action === "ReadClose";
+  // const isActionCloseHistory = action === "CloseHistory";
 
   // ตั้งค่า isROOTHidden เป็น false เมื่ออยู่ในโหมดดูข้อมูล
   React.useEffect(() => {
