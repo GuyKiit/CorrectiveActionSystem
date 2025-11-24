@@ -1317,8 +1317,8 @@ export default function ExplaintBody({
       (action === "ExplainAdd" ||
         action === "ExplainRead" ||
         isActionReadExplain ||
-        action === "ApproveScAdd" ||
-        action === "ApproveQcAdd" ||
+        isActionExplainApproveScAdd ||
+        isActionExplainApproveQcAdd ||
         isActionCloseHistory ||
         isActionExplainReadApproveSc ||
         isActionExplainApproveScRead ||
@@ -1372,7 +1372,8 @@ export default function ExplaintBody({
       setroot_cause(dataelement?.root_cause || "");
       setcorrective_action(dataelement?.corrective_action || "");
       setpreventive_action_plan(dataelement?.preventive_action_plan || "");
-
+      
+      if (!isActionExplainApproveScAdd) {
       const company =
         dataset_company?.find(
           (c: any) =>
@@ -1396,6 +1397,7 @@ export default function ExplaintBody({
       setapprove_email(scApprove?.approve_email || "");
       setapprove_detail(scApprove?.approve_detail || "");
       setapprove_note(scApprove?.approve_note || "");
+    }
 
       // setdataSectionapp(dataApprove_Combobox.find((item: any) => item.lov_code === scApprove?.approve_status) || null);
       console.log("scApprove?.approve_detail", scApprove?.approve_detail);
@@ -1659,8 +1661,8 @@ export default function ExplaintBody({
     console.log("🟡 current action:", action);
     if (
       (action === "ExplainRead" ||
-        action === "ApproveScAdd" ||
-        action === "ApproveQcAdd" ||
+        action === "ApproveSCAdd" ||
+        action === "ApproveQCAdd" ||
         action === "CloseAdd") &&
       dataelement?.id
     ) {

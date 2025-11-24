@@ -6547,7 +6547,7 @@ export default function Complaint() {
         }
       />
 
-      <FuncDialog
+      {/* <FuncDialog
         open={openExplainApproveSc}
         dialogWidth="xl"
         openBottonHidden={true}
@@ -6573,7 +6573,7 @@ export default function Complaint() {
             }}
           />
         }
-      />
+      /> */}
 
       {/* ------------------------------------------------------------------------------------------ */}
       {/* ------------------------------------------------------------------------------------------ */}
@@ -6598,7 +6598,7 @@ export default function Complaint() {
         buttonColor="success"
         element={
           <ExplaintBody
-            action="ApproveScAdd"
+            action="ApproveSCAdd"
             handleOpenAdd={() => handleOnclickExplainApproveSc(dataelement)}
             onApproveChange={(value) => {
               setApproveSelectionCode(value?.lov_code ?? null);
@@ -6623,7 +6623,7 @@ export default function Complaint() {
         buttonColor="success"
         element={
           <ExplaintBody
-            action="ApproveQcAdd"
+            action="ApproveQCAdd"
             handleOpenAdd={() => handleOnclickExplainApproveQc(dataelement)}
             onApproveChange={(value) => {
               setApproveSelectionCode(value?.lov_code ?? null);
