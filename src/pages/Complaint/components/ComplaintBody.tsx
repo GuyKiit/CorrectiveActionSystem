@@ -512,7 +512,7 @@ export default function ComplaintBody({
   const [isMinimizefuappOpen, setisMinimizeFuappOpen] = useState(true);
   const [isMinimizedeapp2Open, setisMinimizeDeapp2Open] = useState(true);
   const [isMinimizeotapp2Open, setisMinimizeOtapp2Open] = useState(true);
-  const isCrossCompany = dataset_crosscompany?.[0]?.lov_code == "0";
+  const isCrossCompany = dataset_crosscompany?.[0]?.lov_code == "1";
 
   // Check Acknowledge flag =========================================================
   const updateAcknowledgeFlag = (value: any) => {
@@ -1679,7 +1679,7 @@ export default function ComplaintBody({
                       console.log("cccccc", val);
                     }}
                     bgcolorTextField={true}
-                    readonly={!isActionAdd || isCrossCompany}
+                    readonly={!isActionAdd || !isCrossCompany}
                   />
                 </Grid>
                 <Grid size={3} mt={2}>

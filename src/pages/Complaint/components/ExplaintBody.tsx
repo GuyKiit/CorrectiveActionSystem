@@ -1318,7 +1318,7 @@ export default function ExplaintBody({
         action === "ExplainRead" ||
         isActionReadExplain ||
         isActionExplainApproveScAdd ||
-        action === "ApproveQcAdd" ||
+        isActionExplainApproveQcAdd ||
         isActionCloseHistory ||
         isActionExplainReadApproveSc ||
         isActionExplainApproveScRead ||
@@ -1373,29 +1373,32 @@ export default function ExplaintBody({
       setcorrective_action(dataelement?.corrective_action || "");
       setpreventive_action_plan(dataelement?.preventive_action_plan || "");
 
-      const company =
-        dataset_company?.find(
-          (c: any) =>
-            Number(c.company_id) === Number(scApprove?.approve_company_id)
-        ) || null;
-      setapprove_company_id(company);
-      const department =
-        dataset_department?.find(
-          (c: any) =>
-            Number(c.department_id) === Number(scApprove?.approve_department_id)
-        ) || null;
-      setapprove_department_id(department);
-      setdataSectionapp(
-        dataApprove_Combobox.find(
-          (item: any) => item.lov_code === scApprove?.approve_status
-        ) || null
-      );
-      setapprove_name(scApprove?.approve_name || "");
-      setapprove_company_id;
-      setapprove_position(scApprove?.approve_position || "");
-      setapprove_email(scApprove?.approve_email || "");
-      setapprove_detail(scApprove?.approve_detail || "");
-      setapprove_note(scApprove?.approve_note || "");
+      if (!isActionExplainApproveScAdd) {
+        const company =
+          dataset_company?.find(
+            (c: any) =>
+              Number(c.company_id) === Number(scApprove?.approve_company_id)
+          ) || null;
+        setapprove_company_id(company);
+        const department =
+          dataset_department?.find(
+            (c: any) =>
+              Number(c.department_id) ===
+              Number(scApprove?.approve_department_id)
+          ) || null;
+        setapprove_department_id(department);
+        setdataSectionapp(
+          dataApprove_Combobox.find(
+            (item: any) => item.lov_code === scApprove?.approve_status
+          ) || null
+        );
+        setapprove_name(scApprove?.approve_name || "");
+        setapprove_company_id;
+        setapprove_position(scApprove?.approve_position || "");
+        setapprove_email(scApprove?.approve_email || "");
+        setapprove_detail(scApprove?.approve_detail || "");
+        setapprove_note(scApprove?.approve_note || "");
+      }
 
       // setdataSectionapp(dataApprove_Combobox.find((item: any) => item.lov_code === scApprove?.approve_status) || null);
       console.log("scApprove?.approve_detail", scApprove?.approve_detail);
@@ -1660,7 +1663,7 @@ export default function ExplaintBody({
     if (
       (action === "ExplainRead" ||
         action === "ApproveSCAdd" ||
-        action === "ApproveQcAdd" ||
+        action === "ApproveQCAdd" ||
         action === "CloseAdd") &&
       dataelement?.id
     ) {
