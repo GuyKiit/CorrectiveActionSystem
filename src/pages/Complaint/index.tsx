@@ -656,7 +656,9 @@ export default function Complaint() {
   const handleOpenAddList = () => setOpenAddlist(true);
   const handleCloseAddlist = () => setOpenAddlist(false);
 
-  // Close Dialog Handler
+  // For On-Off Calling Function Log
+  const [isCallFuncLogOn] = useState(true);
+
   const handleClose = () => {
     if (isCallFuncLogOn)
       console.log(
@@ -682,49 +684,12 @@ export default function Complaint() {
     setOpenExplainApproveQc(false);
     setOpenApproveQC(false);
     setOpenComplainClose(false);
-    setOpenReadClose(false);
     setOpenComplainCloseAdd(false);
-    setOpenCloseHistory(false);
     setOpenUpload(false);
     setApproveSelectionCode(null); // รีเซ็ตค่าเมื่อปิด Dialog
     //setdataFuapp(null); // รีเซ็ตค่า Approve ที่เลือกไว้
     // resetForm();
   };
-
-  // For On-Off Calling Function Log
-  const [isCallFuncLogOn] = useState(true);
-
-  // const handleClose = () => {
-  //   if (isCallFuncLogOn)
-  //     console.log(
-  //       "🕑 ",
-  //       dayjs().format("HH:mm:ss.SSS"),
-  //       " [Calling Function]  :  handleClose"
-  //     );
-
-  //   setOpenComplaintAdd(false);
-  //   // setOpenSync(false);
-  //   setOpenComplaintView(false);
-  //   setOpenComplaintEdit(false);
-  //   setOpenComplaintDelete(false);
-  //   setOpenExplain(false);
-  //   setOpenReadExplain(false);
-  //   setOpenApproveSC(false);
-  //   setOpenReadApproveSC(false);
-  //   setOpenApproveQC(false);
-  //   setOpenReadApproveQC(false);
-  //   setOpenExplainAdd(false);
-  //   setOpenExplainView(false);
-  //   setOpenExplainApproveSc(false);
-  //   setOpenExplainApproveQc(false);
-  //   setOpenApproveQC(false);
-  //   setOpenComplainClose(false);
-  //   setOpenComplainCloseAdd(false);
-  //   setOpenUpload(false);
-  //   setApproveSelectionCode(null); // รีเซ็ตค่าเมื่อปิด Dialog
-  //   //setdataFuapp(null); // รีเซ็ตค่า Approve ที่เลือกไว้
-  //   // resetForm();
-  // };
 
   // const handleOnclickCloseHistory = async (data: any) => {
   //     if (isCallFuncLogOn)
@@ -1845,6 +1810,8 @@ export default function Complaint() {
             //console.log(el.step_label)
 
             // For Display Status on Datatable [NEW, SUBMITED, EXPLAINED, APPROVED, CLOSED]
+
+            // For Display Status on Datatable [NEW, SUBMITED, EXPLAINED, APPROVED, CLOSED]
             el.complaint_status_label = (
               <BasicChips
                 label={`${el.complaint_status_label}`}
@@ -1856,6 +1823,8 @@ export default function Complaint() {
                 requestdept={el.request_department_id}
               ></BasicChips>
             );
+
+            // For Display Step on Datatable [COMPLAINT, EXPLAIN]
 
             // For Display Step on Datatable [COMPLAINT, EXPLAIN]
             el.step_label = (
@@ -6539,6 +6508,18 @@ export default function Complaint() {
           buttonColor="success"
           element={<ComplaintBody action="Read" />}
         />
+        {/* ------------------------------------------------------------------------------------------ */}
+        {/* ------------------------------------ For Status [NEW] ------------------------------------ */}
+        {/* ------------------------------------------------------------------------------------------ */}
+        <FuncDialog
+          open={openComplaintView}
+          dialogWidth="xl"
+          openBottonHidden={false}
+          titlename={"[Complaint] ดูข้อมูล"}
+          handleClose={handleClose}
+          buttonColor="success"
+          element={<ComplaintBody action="Read" />}
+        />
 
         {/* For Status [NEW] */}
         <FuncDialog
@@ -6691,77 +6672,6 @@ export default function Complaint() {
               handleOnclickExplainApproveSc={handleOnclickExplainApproveSc}
             />
           }
-        />
-
-        <FuncDialog
-          open={openExplainView}
-          dialogWidth="xl"
-          openBottonHidden={false}
-          titlename={"Explain // ดูข้อมูล"}
-          handleClose={handleClose}
-          handlefunction={ExplainGet}
-          buttonColor="success"
-          element={
-            <ExplaintBody
-              complaint_status_lable={dataelement?.complaint_status_lable}
-              currentExplainForApproval={currentExplainForApproval}
-              action={
-                //ADD
-                action == "Explain"
-                  ? "ExplainRead"
-                  : action == "ApproveSC"
-                  ? "ApproveScAdd"
-                  : // : action == "ApproveQC" ? "ApproveQcAdd"
-                  action == "Close"
-                  ? "CloseAdd"
-                  : action === "CloseHistory"
-                  ? "ReadClose"
-                  : //READ
-                  action == "ReadApproveSC"
-                  ? "ApproveScRead"
-                  : action == "ReadApproveQC"
-                  ? "ApproveQcRead"
-                  : action == "ReadClose"
-                  ? "ReadClose"
-                  : action == "ReadExplain"
-                  ? "ReadExplain"
-                  : action === "CloseHistory"
-                  ? "ReadClose"
-                  : "-"
-
-                // action == "ApproveSC" ? "ApproveScAdd"
-                // : action == "ReadApproveSC" ? "ApproveScRead"
-                // : action == "ApproveQC" ? "ApproveQcAdd"
-                // : action == "ReadApproveQC" ? "ApproveQcRead"
-                // : action == "Close" ? "CloseAdd"
-                // : action == "ReadClose" ? "ReadClose"
-                // : action == "ReadExplain" ? "ReadExplain"
-                // : action === "CloseHistory" ? "ReadClose"
-              }
-              // {
-              // action={action == "ApproveSC" ? "ApproveScAdd"
-              //         : action == "ReadApproveSC" ? "ReadApproveSc"
-              //         : action == "ApproveQC" ? "ApproveQcAdd"
-              //         : action == "ReadApproveQC" ? "ReadApproveQc"
-              //         : action == "Close" ? "CloseAdd"
-              //         : "ReadApproveSc"
-              // }
-            />
-          }
-        />
-
-        <FuncDialog
-          open={openExplainAdd}
-          dialogWidth="xl"
-          openBottonHidden={true}
-          titlename={"Explain (EXPLAIN ADD)// เพิ่มข้อมูล"}
-          buttonText={"Save & Submit"}
-          handleClose={() => handleOnclickCloseAddExplain(dataelement)}
-          handlefunction={ExplainAdd}
-          hideSaveDraft={true}
-          hideReject={true}
-          buttonColor="success"
-          element={<ExplaintBody action="ExplainAdd" />}
         />
 
         <FuncDialog
