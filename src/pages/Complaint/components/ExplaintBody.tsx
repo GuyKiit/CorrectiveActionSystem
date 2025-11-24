@@ -1317,7 +1317,7 @@ export default function ExplaintBody({
       (action === "ExplainAdd" ||
         action === "ExplainRead" ||
         isActionReadExplain ||
-        action === "ApproveScAdd" ||
+        isActionExplainApproveScAdd ||
         action === "ApproveQcAdd" ||
         isActionCloseHistory ||
         isActionExplainReadApproveSc ||
@@ -1659,7 +1659,7 @@ export default function ExplaintBody({
     console.log("🟡 current action:", action);
     if (
       (action === "ExplainRead" ||
-        action === "ApproveScAdd" ||
+        action === "ApproveSCAdd" ||
         action === "ApproveQcAdd" ||
         action === "CloseAdd") &&
       dataelement?.id
@@ -1863,7 +1863,7 @@ export default function ExplaintBody({
                         isActionExplainApproveScAdd ||
                         isActionExplainApproveScRead ||
                         isActionExplainApproveQcAdd ||
-                        isActionReadExplain || 
+                        isActionReadExplain ||
                         isActionExplainRead ||
                         isActionExplainApproveQcRead ||
                         isActionCloseAdd ||
@@ -1939,7 +1939,7 @@ export default function ExplaintBody({
                         isActionExplainApproveScAdd ||
                         isActionExplainApproveScRead ||
                         isActionExplainApproveQcAdd ||
-                        isActionReadExplain || 
+                        isActionReadExplain ||
                         isActionExplainRead ||
                         isActionExplainApproveQcRead ||
                         isActionCloseAdd ||
@@ -2208,7 +2208,7 @@ export default function ExplaintBody({
                                         isActionExplainApproveScAdd ||
                                         isActionExplainApproveScRead ||
                                         isActionExplainApproveQcAdd ||
-                                        isActionCloseAdd || 
+                                        isActionCloseAdd ||
                                         isActionReadClose ||
                                         isActionCloseHistory
                                       }
@@ -2931,133 +2931,130 @@ export default function ExplaintBody({
         )}
 
       {/* //ส่วนของ Section Head */}
-      {(
-        (isActionExplainApproveScAdd ||
-          isActionExplainApproveQcAdd ||
-          isActionCloseAdd ||
-          isActionReadExplain ||
-          isActionExplainRead ||
-          (isActionExplainReadApproveSc && isApproveScBoxHidden) ||
-          (isActionExplainReadApproveQc && isApproveQcBoxHidden) ||
-          isActionExplainApproveQcRead ||
-          isActionCloseHistory ||
-          isActionReadClose
-        ))
-        && (
-          <Paper
-            elevation={3}
-            sx={{
-              p: 3,
-              mt: 3,
-              width: "100%",
-              borderRadius: 3,
-              background: "linear-gradient(135deg, #e6f4ea 0%, #ffffff 100%)",
-              border: "1px solid #a5d6a7",
-              boxShadow: "0 4px 12px rgba(158,158,158,0.12)",
-            }}
+      {(isActionExplainApproveScAdd ||
+        isActionExplainApproveQcAdd ||
+        isActionCloseAdd ||
+        isActionReadExplain ||
+        isActionExplainRead ||
+        (isActionExplainReadApproveSc && isApproveScBoxHidden) ||
+        (isActionExplainReadApproveQc && isApproveQcBoxHidden) ||
+        isActionExplainApproveQcRead ||
+        isActionCloseHistory ||
+        isActionReadClose) && (
+        <Paper
+          elevation={3}
+          sx={{
+            p: 3,
+            mt: 3,
+            width: "100%",
+            borderRadius: 3,
+            background: "linear-gradient(135deg, #e6f4ea 0%, #ffffff 100%)",
+            border: "1px solid #a5d6a7",
+            boxShadow: "0 4px 12px rgba(158,158,158,0.12)",
+          }}
+        >
+          <Accordion
+            defaultExpanded
+            sx={{ backgroundColor: "transparent", boxShadow: "none" }}
           >
-            <Accordion
-              defaultExpanded
-              sx={{ backgroundColor: "transparent", boxShadow: "none" }}
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="section-head-content"
+              id="section-head-header"
             >
-              <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="section-head-content"
-                id="section-head-header"
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  width: "100%",
+                  pb: 2,
+                  borderBottom: "2px solid #81c784",
+                }}
               >
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    width: "100%",
-                    pb: 2,
-                    borderBottom: "2px solid #81c784",
-                  }}
-                >
-                  <Box sx={{ display: "flex", alignItems: "center" }}>
-                    <Box
-                      sx={{
-                        width: 6,
-                        height: 24,
-                        backgroundColor: "#66bb6a",
-                        borderRadius: 1,
-                        mr: 2,
-                      }}
-                    />
-                    <Typography
-                      className="sarabun-regular-datatable"
-                      sx={{
-                        fontSize: "18px",
-                        fontWeight: "600",
-                        color: "#2e7d32",
-                      }}
-                    >
-                      ข้อมูลผู้รับรอง (Section Head)
-                    </Typography>
-                  </Box>
+                <Box sx={{ display: "flex", alignItems: "center" }}>
+                  <Box
+                    sx={{
+                      width: 6,
+                      height: 24,
+                      backgroundColor: "#66bb6a",
+                      borderRadius: 1,
+                      mr: 2,
+                    }}
+                  />
+                  <Typography
+                    className="sarabun-regular-datatable"
+                    sx={{
+                      fontSize: "18px",
+                      fontWeight: "600",
+                      color: "#2e7d32",
+                    }}
+                  >
+                    ข้อมูลผู้รับรอง (Section Head)
+                  </Typography>
                 </Box>
-              </AccordionSummary>
-              <AccordionDetails>
-                <Grid container spacing={3} sx={{ mt: 1 }}>
-                  <Grid size={4}>
-                    <FullWidthTextField
-                      required="required"
-                      value={approve_name || ""}
-                      labelName="ชื่อผู้อนุมัติ (Approved by)"
-                      readonly
-                    />
-                  </Grid>
-                  <Grid size={4}>
-                    <AutocompleteComboBox
-                      required="required"
-                      value={approve_company_id}
-                      labelName={"บริษัท (Company)"}
-                      options={dataset_company}
-                      column="company_name"
-                      setvalue={(v) => setapprove_company_id(v)}
-                      bgcolorTextField={true}
-                      readonly
-                    />
-                  </Grid>
-                  <Grid size={4}>
-                    <AutocompleteComboBox
-                      required="required"
-                      value={approve_department_id}
-                      labelName={"แผนก (Department)"}
-                      options={dataset_department}
-                      column="department_name"
-                      setvalue={(v) => setapprove_department_id(v)}
-                      bgcolorTextField={true}
-                      readonly
-                    />
-                  </Grid>
-                  <Grid size={4}>
-                    <FullWidthTextField
-                      required="required"
-                      value={approve_position || ""}
-                      labelName="ตำแหน่ง (Position)"
-                      readonly
-                    />
-                  </Grid>
-                  <Grid size={4}>
-                    <FullWidthTextField
-                      required="required"
-                      value={approve_email || ""}
-                      labelName="อีเมล (Email)"
-                      readonly
-                    />
-                  </Grid>
-                  <Grid size={4}>
-                    <DesktopDatePickers
-                      required="required"
-                      labelName={"วันที่อนุมัติ (Date)"}
-                      value={approve_date}
-                      handleChange={(val) => setapprove_date(val ?? null)}
-                      bgcolorTextField={true}
-                      readonly
-                    />
-                  </Grid>
+              </Box>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Grid container spacing={3} sx={{ mt: 1 }}>
+                <Grid size={4}>
+                  <FullWidthTextField
+                    required="required"
+                    value={approve_name || ""}
+                    labelName="ชื่อผู้อนุมัติ (Approved by)"
+                    readonly
+                  />
                 </Grid>
+                <Grid size={4}>
+                  <AutocompleteComboBox
+                    required="required"
+                    value={approve_company_id}
+                    labelName={"บริษัท (Company)"}
+                    options={dataset_company}
+                    column="company_name"
+                    setvalue={(v) => setapprove_company_id(v)}
+                    bgcolorTextField={true}
+                    readonly
+                  />
+                </Grid>
+                <Grid size={4}>
+                  <AutocompleteComboBox
+                    required="required"
+                    value={approve_department_id}
+                    labelName={"แผนก (Department)"}
+                    options={dataset_department}
+                    column="department_name"
+                    setvalue={(v) => setapprove_department_id(v)}
+                    bgcolorTextField={true}
+                    readonly
+                  />
+                </Grid>
+                <Grid size={4}>
+                  <FullWidthTextField
+                    required="required"
+                    value={approve_position || ""}
+                    labelName="ตำแหน่ง (Position)"
+                    readonly
+                  />
+                </Grid>
+                <Grid size={4}>
+                  <FullWidthTextField
+                    required="required"
+                    value={approve_email || ""}
+                    labelName="อีเมล (Email)"
+                    readonly
+                  />
+                </Grid>
+                <Grid size={4}>
+                  <DesktopDatePickers
+                    required="required"
+                    labelName={"วันที่อนุมัติ (Date)"}
+                    value={approve_date}
+                    handleChange={(val) => setapprove_date(val ?? null)}
+                    bgcolorTextField={true}
+                    readonly
+                  />
+                </Grid>
+              </Grid>
 
               <Box sx={{ mt: 4 }}>
                 <Box

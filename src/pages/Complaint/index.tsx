@@ -1879,14 +1879,14 @@ export default function Complaint() {
       return false; // หยุดการตรวจสอบส่วนอื่น
     }
 
-    // Validate Respondent Domain
-    if (!respondent_domain_id || !respondent_domain_id.domain_id) {
-      setRespondentDepartmentError(true);
+    if (!date_of_detection) {
+      setDateOfDetectionError(true);
       valid = false;
     }
 
-    if (!date_of_detection) {
-      setDateOfDetectionError(true);
+    // Validate Respondent Domain
+    if (!respondent_domain_id || !respondent_domain_id.domain_id) {
+      setRespondentDepartmentError(true);
       valid = false;
     }
 
@@ -1983,170 +1983,38 @@ export default function Complaint() {
   };
 
   //validate Edit
-  const validateBeforeEdit = (): boolean => {
+  const validateSaveDraft = (): boolean => {
     if (isCallFuncLogOn)
       console.log(
         "🕑 ",
         dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  validateBeforeEdit"
+        " [Calling Function]  :  validateSaveDraft"
       );
     let valid = true;
-    setReportTypeError(false);
+
     setRespondentDepartmentError(false);
     setDateOfDetectionError(false);
     setDepartmentAreaError(false);
-    setProductNameError(false);
-    setLotNoError(false);
-    setEmailError(false);
-    setComplaintTypeError(false);
-    setOtherTypeError(false);
-    setComplaintRsError(false);
-    setOtherRsError(false);
-    setClauseRsError(false);
-    setDetailError(false);
-    setPriorityError(false);
+    // setProductNameError(false);
+    // setLotNoError(false);
+    // setEmailError(false);
+    // setComplaintTypeError(false);
+    // setOtherTypeError(false);
+    // setComplaintRsError(false);
+    // setOtherRsError(false);
+    // setClauseRsError(false);
+    // setDetailError(false);
+    // setPriorityError(false);
 
     // Validate Report Type - ตรวจสอบก่อนและถ้าไม่มีให้ return false ทันที
-    if (!dataReportTypeValue || !dataReportTypeValue.id) {
-      //console.log("❌ Report Type validation failed");
-      setReportTypeError(true);
-      document.getElementById("reportTypeField")?.focus();
-      return false;
-    }
-    //console.log("✅ Report Type validation passed");
-
-    // Validate Respondent Domain
     if (!respondent_domain_id || !respondent_domain_id.domain_id) {
       setRespondentDepartmentError(true);
       valid = false;
     }
 
-    // Validate Date of Detection
-    if (!date_of_detection) {
-      setDateOfDetectionError(true);
-      valid = false;
-    }
-
-    // Validate Department/Area of Detection
     if (!respondent_department_id || !respondent_department_id.department_id) {
       setDepartmentAreaError(true);
       valid = false;
-    }
-
-    // Validate Product Name
-    if (!product_name || product_name.trim() === "") {
-      setProductNameError(true);
-      valid = false;
-    }
-
-    // Validate Lot no
-    if (!lot_no || lot_no.trim() === "") {
-      setLotNoError(true);
-      valid = false;
-    }
-
-    // Validate Email
-    if (!respondent_email || respondent_email.trim() === "") {
-      setEmailError(true);
-      valid = false;
-    }
-
-    // Validate Complaint Type
-    if (
-      !dataComplaintTypeValue_Combobox ||
-      dataComplaintTypeValue_Combobox.length === 0
-    ) {
-      //console.log("❌ Complaint Type validation failed");
-      setComplaintTypeError(true);
-      valid = false;
-    } else {
-      //console.log("✅ Complaint Type validation passed");
-    }
-
-    // Validate Other Type (if complaint type has "Other" selected)
-    if (
-      dataComplaintTypeValue_Combobox &&
-      dataComplaintTypeValue_Combobox.some((item: any) => item.isOther === "Y")
-    ) {
-      if (!compTypeOther || compTypeOther.trim() === "") {
-        //console.log("❌ Other Type validation failed");
-        setOtherTypeError(true);
-        valid = false;
-      } else {
-        //console.log("✅ Other Type validation passed");
-      }
-    }
-
-    // Validate Rs
-    const reportTypeCode = dataReportTypeValue?.lov_code;
-
-    // เฉพาะ NCR เท่านั้นที่ต้อง validate Complaint Rs
-    if (reportTypeCode === "NCR") {
-      if (
-        !dataComplaintRsValue_Combobox ||
-        dataComplaintRsValue_Combobox.length === 0
-      ) {
-        //console.log("❌ Complaint Rs validation failed for NCR");
-        setComplaintRsError(true);
-        valid = false;
-      } else {
-        //console.log("✅ Complaint Rs validation passed for NCR");
-      }
-    } else {
-      //console.log("✅ Complaint Rs validation skipped for", reportTypeCode);
-    }
-
-    // Validate Other Rs
-    if (
-      reportTypeCode === "NCR" &&
-      dataComplaintRsValue_Combobox &&
-      dataComplaintRsValue_Combobox.some(
-        (item: any) => item.isClause === "Other"
-      )
-    ) {
-      if (!compRsOther || compRsOther.trim() === "") {
-        //console.log("❌ Other Rs validation failed for NCR");
-        setOtherRsError(true);
-        valid = false;
-      } else {
-        //console.log("✅ Other Rs validation passed for NCR");
-      }
-    }
-
-    // Validate Clause Rs
-    if (
-      reportTypeCode === "NCR" &&
-      dataComplaintRsValue_Combobox &&
-      dataComplaintRsValue_Combobox.some(
-        (item: any) => item.isClause === "Clause"
-      )
-    ) {
-      if (!clauseOther || clauseOther.trim() === "") {
-        //console.log("❌ Clause Rs validation failed for NCR");
-        setClauseRsError(true);
-        valid = false;
-      } else {
-        //console.log("✅ Clause Rs validation passed for NCR");
-      }
-    }
-
-    // Validate Detail
-    if (!detail || detail.trim() === "") {
-      setDetailError(true);
-      valid = false;
-    }
-
-    //
-    if (!datapriorityValue_Combobox) {
-      // ถ้าไม่มีข้อมูลใหม่ ให้ใช้ข้อมูลเก่า
-      if (dataelement?.priority_level) {
-        ////console.log("Using old priority data:", dataelement.priority_level);
-      } else {
-        setPriorityError(true);
-        valid = false;
-      }
-    } else {
-      // //console.log("✅ Priority validation passed");
     }
     return valid;
   };
@@ -2381,6 +2249,10 @@ export default function Complaint() {
         dayjs().format("HH:mm:ss.SSS"),
         " [Calling Function]  :  ComplaintSavedraftAdd"
       );
+
+    if (!validateSaveDraft()) {
+      return;
+    }
 
     const tempid = uuidv4();
 
@@ -6954,7 +6826,7 @@ export default function Complaint() {
         buttonColor="success"
         element={
           <ExplaintBody
-            action="ApproveScAdd"
+            action="ApproveSCAdd"
             handleOpenAdd={() => handleOnclickExplainApproveSc(dataelement)}
             onApproveChange={(value) => {
               setApproveSelectionCode(value?.lov_code ?? null);
@@ -6967,7 +6839,7 @@ export default function Complaint() {
       {/* ------------------------------------------------------------------------------------------ */}
       {/* ------------------------------------------------------------------------------------------ */}
 
-      <FuncDialog
+      {/* <FuncDialog
         open={openExplainApproveSc}
         dialogWidth="xl"
         openBottonHidden={true}
@@ -6986,14 +6858,14 @@ export default function Complaint() {
         buttonColor="success"
         element={
           <ExplaintBody
-            action="ApproveScAdd"
+            action="ApproveSCAdd"
             handleOpenAdd={() => handleOnclickExplainApproveSc(dataelement)}
             onApproveChange={(value) => {
               setApproveSelectionCode(value?.lov_code ?? null);
             }}
           />
         }
-      />
+      /> */}
 
       {/* QC ADD */}
       <FuncDialog
