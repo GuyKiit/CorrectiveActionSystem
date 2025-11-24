@@ -56,6 +56,7 @@ import { data } from "react-router-dom";
 // =====================================================================================================
 // TYPE DEFINITIONS
 // =====================================================================================================
+
 export type Launch = {
   id: string;
   report_type?: string;
@@ -158,7 +159,6 @@ type Block = {
   validateMessage: string;
   req: any;
 };
-
 type data_detail = {
   tms_Complaint_no?: any;
   prod_id?: any;
@@ -656,6 +656,44 @@ export default function Complaint() {
   const handleOpenAddList = () => setOpenAddlist(true);
   const handleCloseAddlist = () => setOpenAddlist(false);
 
+  // Close Dialog Handler
+  const handleClose = () => {
+    if (isCallFuncLogOn)
+      console.log(
+        "🕑 ",
+        dayjs().format("HH:mm:ss.SSS"),
+        " [Calling Function]  :  handleClose"
+      );
+
+    setOpenComplaintAdd(false);
+    // setOpenSync(false);
+    setOpenComplaintView(false);
+    setOpenComplaintEdit(false);
+    setOpenComplaintDelete(false);
+    setOpenExplain(false);
+    setOpenReadExplain(false);
+    setOpenApproveSC(false);
+    setOpenReadApproveSC(false);
+    setOpenApproveQC(false);
+    setOpenReadApproveQC(false);
+    setOpenExplainAdd(false);
+    setOpenExplainView(false);
+    setOpenExplainApproveSc(false);
+    setOpenExplainApproveQc(false);
+    setOpenApproveQC(false);
+    setOpenComplainClose(false);
+    setOpenReadClose(false);
+    setOpenComplainCloseAdd(false);
+    setOpenCloseHistory(false);
+    setOpenUpload(false);
+    setApproveSelectionCode(null); // รีเซ็ตค่าเมื่อปิด Dialog
+    //setdataFuapp(null); // รีเซ็ตค่า Approve ที่เลือกไว้
+    // resetForm();
+  };
+
+  // For On-Off Calling Function Log
+  const [isCallFuncLogOn] = useState(true);
+
   // const handleClose = () => {
   //   if (isCallFuncLogOn)
   //     console.log(
@@ -727,14 +765,11 @@ export default function Complaint() {
   //     setdataelement(data);
   //   };
 
-  // For On-Off Calling Function Log
-  const [isCallFuncLogOn] = useState(true);
-  // Event Handlers =========================================================
-  const handleCompanyChange = (value: any) => {
-    //console.log('####### Onchange Company Value [event] : ', value);
-    //console.log("@@@@@@@@@@@@First", dataset_domainrelate);
-    //console.log("Render check respondent_domain_id:", respondent_domain_id);
+  // =====================================================================================================
+  // EVENT HANDLERS (On Change Functions)
+  // =====================================================================================================
 
+  const handleCompanyChange = (value: any) => {
     if (value != null) {
       mas_DomainRelateGet(value, set_domainrelate, isCallFuncLogOn);
     } else {
@@ -1575,94 +1610,52 @@ export default function Complaint() {
             const ACTION = (
               <ActionManageCell
                 hadleOnclickMenu={(name: any) => {
-                  //console.log("🎆 🎆 🎆 🎆 hadleOnclickMenu (name) :", name);
-
+                  // -------- For Status [NEW] -------------
                   if (name === "View") {
-                    // DepartmentDomainGet("Read");
                     handleOnclickComplaintView(el);
                   } else if (name === "Edit") {
-                    // DepartmentDomainGet("Edit");
                     handleOnclickComplaintEdit(el);
                   } else if (name === "Delete") {
-                    // DepartmentDomainGet("Delete");
                     handleOnclickComplaintDelete(el);
+
+                    // -------- For Status [SUBMITED] ----------
                   } else if (name === "Explain") {
-                    // DepartmentDomainGet("Explain");
                     handleOnclickExplain(el);
                   } else if (name === "ReadExplain") {
-                    // DepartmentDomainGet("Explain");
                     handleOnclickReadExplain(el);
-                  } else if (name === "ReadApproveSC") {
-                    // DepartmentDomainGet("Explain");
-                    handleOnclickReadApproveSC(el);
-                  } else if (name === "ReadApproveQC") {
-                    // DepartmentDomainGet("Explain");
-                    handleOnclickReadApproveQC(el);
-                  }
-                  // else if (name === "ExplainApproveSc") {
-                  //   // DepartmentDomainGet("Explain");
-                  //   handleOnclickExplainApproveSc(el);
-                  // }
-                  else if (name === "ApproveSC") {
+
+                    // -------- For Status [EXPLAINED] ----------
+                  } else if (name === "ApproveSC") {
                     handleOnclickApproveSC(el, name);
+                  } else if (name === "ReadApproveSC") {
+                    handleOnclickReadApproveSC(el);
+
+                    // -------- For Status [APPROVED][SC] --------
                   } else if (name === "ApproveQC") {
                     handleOnclickApproveQC(el, name);
+                  } else if (name === "ReadApproveQC") {
+                    handleOnclickReadApproveQC(el);
+
+                    // -------- For Status [APPROVED][QC] --------
+                  } else if (name === "Close") {
+                    handleOnclickComplainClose(el, name);
                   } else if (name === "ReadClose") {
                     // DepartmentDomainGet("Explain");
                     handleOnclickReadClose(el);
-                  } else if (name === "Close") {
-                    handleOnclickComplainClose(el, name);
+
+                    // -------- For Status [CLOSED] --------------
                   } else if (name === "CloseHistory") {
                     // DepartmentDomainGet("Explain");
                     handleOnclickCloseHistory(el);
                   }
+
+                  // else if (name === "ExplainApproveSc") {
+                  //   // DepartmentDomainGet("Explain");
+                  //   handleOnclickExplainApproveSc(el);
+                  // }
                 }}
-                // hiddenEdit={el.complaint_status_label == 'SUBMIT'}
-
                 //-----------------------------------------------------------------------
                 //-----------------------------------------------------------------------
-
-                // // For Status [NEW]
-                // hiddenRead={
-                //   (dataset_complaintActionNew &&
-                //     !dataset_complaintActionNew.some((mode: any) =>
-                //       mode.lov1.split(",").includes(String(el.complaint_status_label))
-                //     )) ?? false
-                // }
-                // hiddenEdit={
-                //   (dataset_complaintActionNew &&
-                //     !dataset_complaintActionNew.some((mode: any) =>
-                //       mode.lov1.split(",").includes(String(el.complaint_status_label))
-                //     )) ?? false
-                // }
-                // hiddenDelete={
-                //   (dataset_complaintActionNew &&
-                //     !dataset_complaintActionNew.some((mode: any) =>
-                //       mode.lov1.split(",").includes(String(el.complaint_status_label))
-                //     )) ?? false
-                // }
-
-                // //-----------------------------------------------------------------------
-                // //-----------------------------------------------------------------------
-
-                // // For Status [SUBMIT, EXPLAIN, APPROVE]
-                // hiddenExplain={
-                //   (dataset_complaintActionExplain &&
-                //     !dataset_complaintActionExplain.some((mode: any) =>
-                //       mode.lov1.split(",").includes(String(el.complaint_status_label))
-                //     )) ?? false
-                // }
-
-                // //-----------------------------------------------------------------------
-                // //-----------------------------------------------------------------------
-
-                // // For Status [CLOSE]
-                // hiddenClose={
-                //   (dataset_complaintActionClose &&
-                //     !dataset_complaintActionClose.some((mode: any) =>
-                //       mode.lov1.split(",").includes(String(el.complaint_status_label))
-                //     )) ?? false
-                // }
 
                 // For Status [NEW]
                 hiddenRead={
@@ -1718,12 +1711,6 @@ export default function Complaint() {
                 }
                 //-----------------------------------------------------------------------
                 //-----------------------------------------------------------------------
-
-                // NEW
-                // APPROVED
-                // SUBMITED
-                // EXPLAINED
-                // CLOSED
 
                 // For Status [EXPLAINED]
                 hiddenApproveSC={
@@ -1799,26 +1786,6 @@ export default function Complaint() {
                     )) ??
                   false
                 }
-                // hiddenClose={
-                //   // (dataset_complaintActionClose &&
-                //   //   !dataset_complaintActionClose.some((mode: any) =>
-                //   //     mode.lov1
-                //   //       .split(",")
-                //   //       .includes(String(el.complaint_status_label))
-                //   //   )) ??
-                //   // false
-                //   ((dataset_complaintActionApproveQC &&
-                //     !dataset_complaintActionApproveQC.some((mode: any) =>
-                //       mode.lov1
-                //         .split(",")
-                //         .includes(String(el.complaint_status_label))
-                //     )) ?? false) &&
-                //   !(
-                //     el.step_label === "COMPLAINT"
-                //     && tempApproveSeq == "2"
-                //     // el.request_name === user[0].employee_username
-                //   )
-                // }
                 hiddenReadClose={
                   (dataset_complaintActionApproveQC &&
                     !dataset_complaintActionApproveQC.some(
@@ -1845,8 +1812,8 @@ export default function Complaint() {
                 }
               />
             );
-            el.approve_by = el.approve_by.replace(/\s*\(/, "<br/>(");
 
+            el.approve_by = el.approve_by.replace(/\s*\(/, "<br/>(");
             el.ACTION = ACTION;
 
             const tempRoleUser = dataset_roleProfile.filter(
@@ -1866,8 +1833,18 @@ export default function Complaint() {
             console.log("🎆 🎆 🎆 🎆 el :", el);
             console.log("🎆 🎆 🎆 🎆 user[0] :", user[0]);
             console.log("🎆 🎆 🎆 🎆 tempRoleUser :", tempRoleUser);
+            // Prepare Role From Role Profile
+
+            // console.log("🦄🦄🦄🦄🦄🦄 tempApproveSeq : ", tempApproveSeq);
+            // console.log("🎆 🎆 🎆 🎆 complaint_status_label:", el.complaint_status_label);
+            // console.log("🎆 🎆 🎆 🎆 setdataset_roleProfile :", dataset_roleProfile);
+            // console.log("🎆 🎆 🎆 🎆 el :", el);
+            // console.log("🎆 🎆 🎆 🎆 user[0] :", user[0]);
+            // console.log("🎆 🎆 🎆 🎆 tempRoleUser :", tempRoleUser);
 
             //console.log(el.step_label)
+
+            // For Display Status on Datatable [NEW, SUBMITED, EXPLAINED, APPROVED, CLOSED]
             el.complaint_status_label = (
               <BasicChips
                 label={`${el.complaint_status_label}`}
@@ -1879,9 +1856,12 @@ export default function Complaint() {
                 requestdept={el.request_department_id}
               ></BasicChips>
             );
+
+            // For Display Step on Datatable [COMPLAINT, EXPLAIN]
             el.step_label = (
               <BasicChips label={`${el.step_label}`} type="step"></BasicChips>
             );
+
             responseData.push(el);
           });
         }
@@ -3410,68 +3390,68 @@ export default function Complaint() {
   };
 
   // READ - Preview Complaint (from ComplaintRead.tsx)
-  const previewComplaint = async () => {
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  previewComplaint"
-      );
+  // const previewComplaint = async () => {
+  //   if (isCallFuncLogOn)
+  //     console.log(
+  //       "🕑 ",
+  //       dayjs().format("HH:mm:ss.SSS"),
+  //       " [Calling Function]  :  previewComplaint"
+  //     );
 
-    //console.log(dataelement, "dataelement");
-    //console.log("dataset_reporttype", dataset_reporttype);
-    //console.log("NCR TEST", extractReportType("TRR_RT_NCR"));
-    //console.log("OBS TEST", extractReportType("TRR_RT_OBS"));
-    //console.log("CAR TEST", extractReportType("TRR_RT_CAR"));
-    //console.log("CPAR TEST", extractReportType("TRR_RT_CPAR"));
+  //   //console.log(dataelement, "dataelement");
+  //   //console.log("dataset_reporttype", dataset_reporttype);
+  //   //console.log("NCR TEST", extractReportType("TRR_RT_NCR"));
+  //   //console.log("OBS TEST", extractReportType("TRR_RT_OBS"));
+  //   //console.log("CAR TEST", extractReportType("TRR_RT_CAR"));
+  //   //console.log("CPAR TEST", extractReportType("TRR_RT_CPAR"));
 
-    if (dataelement) {
-      //console.log("dataelement.report_type", dataelement.report_type);
+  //   if (dataelement) {
+  //     //console.log("dataelement.report_type", dataelement.report_type);
 
-      // setIsRSHidden(extractReportType(dataelement.report_type) != "NCR" ? true : false);
+  //     // setIsRSHidden(extractReportType(dataelement.report_type) != "NCR" ? true : false);
 
-      // แปลง priority text → id ของ RadioGroup
-      const selectedPriority = datapriority_Combobox.find(
-        (item: any) =>
-          item.lov_code === dataelement.priority_level ||
-          item.lov1 === dataelement.priority_level
-      );
-      setdataPriority(selectedPriority?.id || "");
+  //     // แปลง priority text → id ของ RadioGroup
+  //     const selectedPriority = datapriority_Combobox.find(
+  //       (item: any) =>
+  //         item.lov_code === dataelement.priority_level ||
+  //         item.lov1 === dataelement.priority_level
+  //     );
+  //     setdataPriority(selectedPriority?.id || "");
 
-      //console.log("dataComplaintType_Combobox", dataComplaintType_Combobox);
-      //console.log("dataelement?.complaint_type_id", dataelement?.complaintType);
-      //console.log("dataelement?.complaint_type_id", dataelement?.complaintRs);
-      //console.log("dataelement?.complaint_at_id", dataelement?.complaintPhoto);
-      //console.log("dataelement?.priority_level", dataelement?.priority_level);
+  //     //console.log("dataComplaintType_Combobox", dataComplaintType_Combobox);
+  //     //console.log("dataelement?.complaint_type_id", dataelement?.complaintType);
+  //     //console.log("dataelement?.complaint_type_id", dataelement?.complaintRs);
+  //     //console.log("dataelement?.complaint_at_id", dataelement?.complaintPhoto);
+  //     //console.log("dataelement?.priority_level", dataelement?.priority_level);
 
-      const data_ComplaintType = await setValueMas(
-        dataComplaintType_Combobox,
-        dataelement?.complaint_type_id,
-        "id"
-      );
-      const data_ComplaintRs = await setValueMas(
-        dataComplaintRs_Combobox,
-        dataelement?.complaint_type_id,
-        "id"
-      );
-      const data_ComplaintPhoto = await setValueMas(
-        dataphoto_Combobox,
-        dataelement?.complaint_at_id,
-        "id"
-      );
-      const data_Priority = await setValueMas(
-        datapriority_Combobox,
-        dataelement?.priority_level,
-        "id"
-      );
+  //     const data_ComplaintType = await setValueMas(
+  //       dataComplaintType_Combobox,
+  //       dataelement?.complaint_type_id,
+  //       "id"
+  //     );
+  //     const data_ComplaintRs = await setValueMas(
+  //       dataComplaintRs_Combobox,
+  //       dataelement?.complaint_type_id,
+  //       "id"
+  //     );
+  //     const data_ComplaintPhoto = await setValueMas(
+  //       dataphoto_Combobox,
+  //       dataelement?.complaint_at_id,
+  //       "id"
+  //     );
+  //     const data_Priority = await setValueMas(
+  //       datapriority_Combobox,
+  //       dataelement?.priority_level,
+  //       "id"
+  //     );
 
-      //console.log("data_ComplaintType", data_ComplaintType);
-      //console.log("data_ComplaintRs", data_ComplaintRs);
-      //console.log("data_ComplaintPhoto", data_ComplaintPhoto);
-      //console.log("data_Priority", data_Priority);
-      //console.log(dataset_reporttype);
-    }
-  };
+  //     //console.log("data_ComplaintType", data_ComplaintType);
+  //     //console.log("data_ComplaintRs", data_ComplaintRs);
+  //     //console.log("data_ComplaintPhoto", data_ComplaintPhoto);
+  //     //console.log("data_Priority", data_Priority);
+  //     //console.log(dataset_reporttype);
+  //   }
+  // };
 
   const ComplaintReturn = async (mode: string, subMode?: string) => {
     if (isCallFuncLogOn)
@@ -4874,6 +4854,21 @@ export default function Complaint() {
   //   setOpenExplainApproveSc(true);
   // };
 
+  //======================================================================================================
+  //======================================================================================================
+  //======================================================================================================
+  //======================================================================================================
+  //======================================================================================================
+  //======================================================================================================
+  //======================================================================================================
+  //======================================================================================================
+  //======================================================================================================
+  //======================================================================================================
+  //======================================================================================================
+  //======================================================================================================
+  //======================================================================================================
+  //======================================================================================================
+
   const handleOnclickExplainApproveSc = (explainData: any) => {
     if (isCallFuncLogOn)
       console.log(
@@ -4938,13 +4933,28 @@ export default function Complaint() {
     setOpenExplainApproveSc(true);
   };
 
+  //======================================================================================================
+  //======================================================================================================
+  //======================================================================================================
+  //======================================================================================================
+  //======================================================================================================
+  //======================================================================================================
+  //======================================================================================================
+  //======================================================================================================
+  //======================================================================================================
+  //======================================================================================================
+  //======================================================================================================
+  //======================================================================================================
+  //======================================================================================================
+  //======================================================================================================
+
   // ------------------------------------------------------//
   const handleOnclickReadClose = async (data: any) => {
     if (isCallFuncLogOn)
       console.log(
         "🕑 ",
         dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  handleOnclickReadApproveQC"
+        " [Calling Function]  :  handleOnclickReadClose"
       );
 
     //console.log("Read step:3 เรียกฟังก์ชั่น ดูข้อมูล handleOnclickMenuView ");
@@ -5546,6 +5556,8 @@ export default function Complaint() {
 
     // เปิด Dialog
     if (name === "ApproveScRead") setOpenExplainView(true);
+    else if (name === "ReadExplain") setOpenExplainView(true);
+    else if (name === "ExplainRead") setOpenExplainView(true);
     else if (name === "ApproveQcRead") setOpenExplainView(true);
     else if (name === "ReadClose") setOpenExplainView(true);
     else if (name === "CloseHistory") setOpenExplainView(true);
@@ -5591,6 +5603,21 @@ export default function Complaint() {
   //   setapprove_date(dayjs());
   //   setOpenExplainApproveSc(true);
   // };
+
+  //======================================================================================================
+  //======================================================================================================
+  //======================================================================================================
+  //======================================================================================================
+  //======================================================================================================
+  //======================================================================================================
+  //======================================================================================================
+  //======================================================================================================
+  //======================================================================================================
+  //======================================================================================================
+  //======================================================================================================
+  //======================================================================================================
+  //======================================================================================================
+  //======================================================================================================
 
   const handleOnclickExplainApproveQc = async (explainData: any) => {
     if (isCallFuncLogOn)
@@ -5714,531 +5741,548 @@ export default function Complaint() {
         dayjs().format("HH:mm:ss.SSS"),
         " [Calling Function]  :  handleOnclickComplainCloseAdd"
       );
-    console.log("🧩 Data received:", data);
-    console.log("🧑‍💼 User profile:", user[0]);
-    console.log("🧪 ExplaintBody loaded", {
-      action,
-      dataelement,
-      observation_analysis,
-      root_cause,
-    });
+    //======================================================================================================
+    //======================================================================================================
+    //======================================================================================================
+    //======================================================================================================
+    //======================================================================================================
+    //======================================================================================================
+    //======================================================================================================
+    //======================================================================================================
+    //======================================================================================================
+    //======================================================================================================
+    //======================================================================================================
+    //======================================================================================================
+    //======================================================================================================
+    //======================================================================================================
 
-    const complaintData = dataelement;
-
-    // เก็บ complaint หลัก
-    setComplaintMainData(complaintData);
-
-    // สร้าง object สำหรับ approve (เอา respondent_domain_id จาก complaint หลัก)
-    const approvalData = {
-      ...explainData,
-      respondent_domain_id: complaintData?.respondent_domain_id,
-    };
-
-    setCurrentExplainForApproval(approvalData);
-
-    // ตั้งวันที่ approve
-    setapprove_date(dayjs());
-
-    // เซ็ตข้อมูลลง context สำหรับ modal
-    setobservation_analysis(explainData.observation_analysis || "");
-    setroot_cause(explainData.root_cause || "");
-    setcorrective_action(explainData.corrective_action || "");
-    setpreventive_action_plan(explainData.preventive_action_plan || "");
-
-    if (explainData.responsible_date)
-      setresponsible_date(dayjs(explainData.responsible_date));
-    if (explainData.follow_up_date)
-      setfollow_up_date(dayjs(explainData.follow_up_date));
-
-    // 🔹 ดึง approve ของ explain นี้และแมปลง fields (QC approve = approve_seq: 2)
-    if (explainData.id) {
-      const approveData = await ExplaintApprove_Get(explainData.id);
-
-      if (approveData && approveData.length > 0) {
-        // หา QC approve record (approve_seq === 2)
-        const qcApprove =
-          approveData.find((item: any) => item.approve_seq === 2) ||
-          approveData[0];
-
-        // Set QC approve name
-        setqcapprove_name(qcApprove.approve_name || "");
-
-        // Map company_id → object
-        if (qcApprove.approve_company_id) {
-          const qcCompany = dataset_company.find(
-            (c: any) =>
-              Number(c.company_id) === Number(qcApprove.approve_company_id)
-          );
-          if (qcCompany) {
-            setqcapprove_company_id(qcCompany);
-          }
-        }
-
-        // Map department_id → object
-        if (qcApprove.approve_department_id) {
-          const qcDepartment = dataset_department.find(
-            (d: any) =>
-              Number(d.department_id) ===
-              Number(qcApprove.approve_department_id)
-          );
-          if (qcDepartment) {
-            setqcapprove_department_id(qcDepartment);
-          }
-        }
-
-        // Set other QC approve fields
-        setqcapprove_position(qcApprove.approve_position || "");
-        setqcapprove_email(qcApprove.approve_email || "");
-        if (qcApprove.approve_date) {
-          setqcapprove_date(dayjs(qcApprove.approve_date));
-        }
-
-        // Set QC approve detail and note
-        if (qcApprove.approve_detail) {
-          setqcapprove_detail(qcApprove.approve_detail);
-        }
-        if (qcApprove.approve_note) {
-          setqcapprove_note(qcApprove.approve_note);
-        }
-        setdataQcapp(
-          dataApprove_Combobox.find(
-            (item: any) => item.lov_code === qcApprove.approve_status
-          ) || null
+    const handleOnclickComplainCloseAdd = async (explainData: any) => {
+      //ADD
+      if (isCallFuncLogOn)
+        console.log(
+          "🕑 ",
+          dayjs().format("HH:mm:ss.SSS"),
+          " [Calling Function]  :  handleOnclickComplainCloseAdd"
         );
-        // Note: QC approve radio (dataQcapp) will be set in ExplaintBody.tsx from dataelement
 
-        console.log("📘 QC Approve data loaded:", qcApprove);
-      }
-    }
+      console.log("🧩 Data received:", data);
+      console.log("🧑‍💼 User profile:", user[0]);
+      console.log("🧪 ExplaintBody loaded", {
+        action,
+        dataelement,
+        observation_analysis,
+        root_cause,
+      });
 
-    // เอา report_type มาด้วย
-    const reportType =
-      explainData.complaint?.report_type ||
-      explainData.report_type ||
-      complaintData?.report_type;
+      const complaintData = dataelement;
 
-    if (reportType && dataset_reporttype) {
-      const reportTypeObj = dataset_reporttype.find(
-        (item: any) => item.id === reportType || item.lov_code === reportType
+      console.log(
+        "😡😡😡😡😡😡😡😡 #1 dataelement",
+        dataelement,
+        "😡😡😡😡😡😡😡😡"
+      );
+      console.log(
+        "🌐🌐🌐🌐🌐🌐🌐🌐 explainData",
+        explainData,
+        "🌐🌐🌐🌐🌐🌐🌐🌐"
       );
 
-      if (reportTypeObj) {
-        setdataelement({
-          ...explainData,
-          report_type: reportTypeObj.lov_code,
-          _forceVisibilityUpdate: Date.now(),
-        });
+      // เก็บ complaint หลัก
+      setComplaintMainData(complaintData);
+
+      // สร้าง object สำหรับ approve (เอา respondent_domain_id จาก complaint หลัก)
+      const approvalData = {
+        ...explainData,
+        respondent_domain_id: complaintData?.respondent_domain_id,
+      };
+
+      setCurrentExplainForApproval(approvalData);
+
+      // ตั้งวันที่ approve
+      setapprove_date(dayjs());
+
+      // เซ็ตข้อมูลลง context สำหรับ modal
+      setobservation_analysis(explainData.observation_analysis || "");
+      setroot_cause(explainData.root_cause || "");
+      setcorrective_action(explainData.corrective_action || "");
+      setpreventive_action_plan(explainData.preventive_action_plan || "");
+
+      if (explainData.responsible_date)
+        setresponsible_date(dayjs(explainData.responsible_date));
+      if (explainData.follow_up_date)
+        setfollow_up_date(dayjs(explainData.follow_up_date));
+
+      // 🔹 ดึง approve ของ explain นี้และแมปลง fields (QC approve = approve_seq: 2)
+      if (explainData.id) {
+        const approveData = await ExplaintApprove_Get(explainData.id);
+
+        if (approveData && approveData.length > 0) {
+          // หา QC approve record (approve_seq === 2)
+          const qcApprove =
+            approveData.find((item: any) => item.approve_seq === 2) ||
+            approveData[0];
+
+          // Set QC approve name
+          setqcapprove_name(qcApprove.approve_name || "");
+
+          // Map company_id → object
+          if (qcApprove.approve_company_id) {
+            const qcCompany = dataset_company.find(
+              (c: any) =>
+                Number(c.company_id) === Number(qcApprove.approve_company_id)
+            );
+            if (qcCompany) {
+              setqcapprove_company_id(qcCompany);
+            }
+          }
+
+          // Map department_id → object
+          if (qcApprove.approve_department_id) {
+            const qcDepartment = dataset_department.find(
+              (d: any) =>
+                Number(d.department_id) ===
+                Number(qcApprove.approve_department_id)
+            );
+            if (qcDepartment) {
+              setqcapprove_department_id(qcDepartment);
+            }
+          }
+
+          // Set other QC approve fields
+          setqcapprove_position(qcApprove.approve_position || "");
+          setqcapprove_email(qcApprove.approve_email || "");
+          if (qcApprove.approve_date) {
+            setqcapprove_date(dayjs(qcApprove.approve_date));
+          }
+
+          // Set QC approve detail and note
+          if (qcApprove.approve_detail) {
+            setqcapprove_detail(qcApprove.approve_detail);
+          }
+          if (qcApprove.approve_note) {
+            setqcapprove_note(qcApprove.approve_note);
+          }
+          setdataQcapp(
+            dataApprove_Combobox.find(
+              (item: any) => item.lov_code === qcApprove.approve_status
+            ) || null
+          );
+          // Note: QC approve radio (dataQcapp) will be set in ExplaintBody.tsx from dataelement
+
+          console.log("📘 QC Approve data loaded:", qcApprove);
+        }
+      }
+
+      // เอา report_type มาด้วย
+      const reportType =
+        explainData.complaint?.report_type ||
+        explainData.report_type ||
+        complaintData?.report_type;
+
+      if (reportType && dataset_reporttype) {
+        const reportTypeObj = dataset_reporttype.find(
+          (item: any) => item.id === reportType || item.lov_code === reportType
+        );
+
+        if (reportTypeObj) {
+          setdataelement({
+            ...explainData,
+            report_type: reportTypeObj.lov_code,
+            _forceVisibilityUpdate: Date.now(),
+          });
+        } else {
+          setdataelement(explainData);
+        }
       } else {
         setdataelement(explainData);
       }
-    } else {
-      setdataelement(explainData);
-    }
-    setOpenComplainCloseAdd(true);
-    // Reset form ก่อน
-    resetForm();
-  };
-
-  // const handleOnclickMenuUpload = () => {
-  //   setOpenUpload(true);
-  // };
-
-  // const handleTableButtonClick = (func_name: string) => {
-  //   switch (func_name) {
-  //     case "Add":
-  //       handleOnclickComplaintAdd();
-  //       break;
-  //     case "Upload":
-  //       handleOnclickMenuUpload();
-  //       break;
-  //     case "Print":
-  //       //console.log("Print clicked");
-  //       break;
-  //     default:
-  //       console.warn("No handler for", func_name);
-  //   }
-  // };
-
-  // Search Handlers
-  const handleCloseSearch = () => {
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  handleCloseSearch"
-      );
-
-    setdataReportTypeValue(null);
-    setdataComplaintTypeValue_Combobox([]);
-    setdataComplaintRsValue_Combobox([]);
-    setdataphotoValue_Combobox([]);
-    setrespondWithinSearch(null);
-    setdocumentDateSearch(null);
-    setTextNameSearch({
-      dataset_company: "",
-      dataset_domainrelate: "",
-      dataset_department: "",
-      report_code: "",
-      cas_number: "",
-      product_name: "",
-      lot_no: "",
-      datastatus: "",
-      dataset_stepcomplaint: "",
-      // request_department_id: ""
-    });
-    // Complaint_Get()
-    // ListSearchGet();
-  };
-
-  // Close Dialog Handler
-  const handleClose = () => {
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  handleClose"
-      );
-
-    setOpenComplaintAdd(false);
-    // setOpenSync(false);
-    setOpenComplaintView(false);
-    setOpenComplaintEdit(false);
-    setOpenComplaintDelete(false);
-    setOpenExplain(false);
-    setOpenReadExplain(false);
-    setOpenApproveSC(false);
-    setOpenReadApproveSC(false);
-    setOpenApproveQC(false);
-    setOpenReadApproveQC(false);
-    setOpenExplainAdd(false);
-    setOpenExplainView(false);
-    setOpenExplainApproveSc(false);
-    setOpenExplainApproveQc(false);
-    setOpenApproveQC(false);
-    setOpenComplainClose(false);
-    setOpenReadClose(false);
-    setOpenComplainCloseAdd(false);
-    setOpenCloseHistory(false);
-    setOpenUpload(false);
-    setApproveSelectionCode(null); // รีเซ็ตค่าเมื่อปิด Dialog
-    //setdataFuapp(null); // รีเซ็ตค่า Approve ที่เลือกไว้
-    // resetForm();
-  };
-
-  // Set Data Handler
-  const setData = (data: any) => {
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  setData"
-      );
-
-    setcompTypeOther("");
-    setComplaint_no("");
-    setno("");
-    setcas_number("");
-  };
-
-  // =====================================================================================================
-  // USEEFFECT - INITIALIZATION (from index.tsx and ComplaintRead.tsx)
-  // =====================================================================================================
-
-  // Initialize data on component mount
-  React.useEffect(() => {
-    resetSearchTable();
-    // Complaint_Get();
-    // ListSearchGet();
-    // ReportType_Get();
-    // ComplaintType_Get();
-    // ComplaintRs_Get();
-    // photo_Get();
-    // priority_Get();
-    // DomainGet();
-    // DepartmentDomainGet();
-    // CompanyGet();
-    // complaint_status_Get();
-  }, []);
-
-  const effectRan = React.useRef(false); // ป้องกัน run ซ้ำใน dev mode
-
-  // Static useEffect
-  React.useEffect(() => {
-    if (effectRan.current) return;
-    effectRan.current = true;
-
-    const fetchData = async () => {
-      try {
-        //console.log("useEffect start");
-        await LovAll_Get();
-        await DomainRelateGet();
-        // await DepartmentDomainGet();
-
-        await mas_DomainGet(
-          user[0]?.itasset_company_id,
-          set_domain,
-          user,
-          isCallFuncLogOn
-        );
-        await mas_DepartmentGet_Complaint(
-          {
-            domain_id: dataelement?.respondent_domain_id ?? null,
-            company_id: dataelement?.respondent_company_id,
-          },
-          setdataset_department,
-          user,
-          isCallFuncLogOn
-        );
-
-        // if (user?.[0]?.itasset_company_id) {
-
-        // }
-
-        //console.log("useEffect done");
-      } catch (err) {
-        console.error(err);
-      }
+      setOpenComplainCloseAdd(true);
+      // Reset form ก่อน
+      resetForm();
     };
 
-    fetchData();
-  }, []);
+    //======================================================================================================
+    //======================================================================================================
+    //======================================================================================================
+    //======================================================================================================
+    //======================================================================================================
+    //======================================================================================================
+    //======================================================================================================
+    //======================================================================================================
+    //======================================================================================================
+    //======================================================================================================
+    //======================================================================================================
+    //======================================================================================================
+    //======================================================================================================
+    //======================================================================================================
 
-  // Dynamic useEffect
-  React.useEffect(() => {
-    if (dataset_activeCompany) {
-      //console.log("🔁 activeCompany พร้อมแล้ว → เรียก CompanyGet()");
-      CompanyGet();
-    }
+    // const handleOnclickMenuUpload = () => {
+    //   setOpenUpload(true);
+    // };
 
-    if (dataset_complaintAction) {
-      ComplaintGet();
-    }
-  }, [dataset_activeCompany, dataset_complaintAction]);
+    // const handleTableButtonClick = (func_name: string) => {
+    //   switch (func_name) {
+    //     case "Add":
+    //       handleOnclickComplaintAdd();
+    //       break;
+    //     case "Upload":
+    //       handleOnclickMenuUpload();
+    //       break;
+    //     case "Print":
+    //       //console.log("Print clicked");
+    //       break;
+    //     default:
+    //       console.warn("No handler for", func_name);
+    //   }
+    // };
 
-  // React.useEffect(() => {
-  //   if (dataset_complaintAction) {
-  //     ComplaintGet();
-  //   }
-  // }, [dataset_complaintAction]);
-
-  // Filter complaint types based on selected report type (from ComplaintRead.tsx)
-  React.useEffect(() => {
-    // previewComplaint();
-    if (!dataelement) return;
-
-    // กรอง complaint type
-    const filtered = (dataComplaintType_Combobox || []).filter(
-      (item: LovType) =>
-        item.lov_type === "complaint_type" &&
-        item.lov_code === dataelement?.report_type
-    );
-    const filteredRs = (dataComplaintRs_Combobox || []).filter(
-      (item: LovType) =>
-        item.lov_type === "reference_standard" &&
-        item.lov_code === dataelement?.report_type
-    );
-    const filteredpriority = (datapriority_Combobox || []).filter(
-      (item: LovType) => item.lov_type === "priority_level"
-    );
-    const filteredphoto = (dataphoto_Combobox || []).filter(
-      (item: LovType) => item.lov_type === "attach_type"
-    );
-
-    //console.log("filtered", filtered);
-    setFilteredComplaintType(filtered);
-    //console.log("filteredRS", filteredRs);
-    setFilteredComplaintRs(filteredRs);
-    //console.log("filteredpriority", filteredpriority);
-    setFilteredpriority(filteredpriority);
-    //console.log("filteredphoto", filteredphoto);
-    setFilteredphoto(filteredphoto);
-  }, [
-    dataComplaintType_Combobox,
-    dataComplaintRs_Combobox,
-    datapriority_Combobox,
-    dataphoto_Combobox,
-    dataelement,
-  ]);
-
-  React.useEffect(() => {
-    if (!currentExplainForApproval || !dataApprove_Combobox?.length) return;
-    const fetchSCApprove = async () => {
-      const approveData = await ExplaintApprove_Get(
-        currentExplainForApproval.id
-      );
-      if (approveData?.length > 0) {
-        const firstApprove = approveData.find(
-          (x: any) => x.explain_id === dataelement?.id && x.approve_seq === 1
+    // Search Handlers
+    const handleCloseSearch = () => {
+      if (isCallFuncLogOn)
+        console.log(
+          "🕑 ",
+          dayjs().format("HH:mm:ss.SSS"),
+          " [Calling Function]  :  handleCloseSearch"
         );
-        setapprove_position(firstApprove?.approve_position || "");
-        setapprove_email(firstApprove?.approve_email || "");
-        setapprove_date(
-          firstApprove?.approve_date
-            ? dayjs(firstApprove?.approve_date)
-            : dayjs()
-        );
-        setapprove_detail(firstApprove?.approve_detail || "");
-        setapprove_note(firstApprove?.approve_note || "");
-      }
+
+      setdataReportTypeValue(null);
+      setdataComplaintTypeValue_Combobox([]);
+      setdataComplaintRsValue_Combobox([]);
+      setdataphotoValue_Combobox([]);
+      setrespondWithinSearch(null);
+      setdocumentDateSearch(null);
+      setTextNameSearch({
+        dataset_company: "",
+        dataset_domainrelate: "",
+        dataset_department: "",
+        report_code: "",
+        cas_number: "",
+        product_name: "",
+        lot_no: "",
+        datastatus: "",
+        dataset_stepcomplaint: "",
+        // request_department_id: ""
+      });
+      // Complaint_Get()
+      // ListSearchGet();
     };
-    fetchSCApprove();
-  }, [currentExplainForApproval, dataApprove_Combobox]);
 
-  // =====================================================================================================
-  // RETURN SECTION - RENDER COMPONENT
-  // =====================================================================================================
+    // Set Data Handler
+    const setData = (data: any) => {
+      if (isCallFuncLogOn)
+        console.log(
+          "🕑 ",
+          dayjs().format("HH:mm:ss.SSS"),
+          " [Calling Function]  :  setData"
+        );
 
-  // #F29739
-  const statusOptions = (datastatus || []).map((item: any) => ({
-    id: item.id,
-    lov_code: item.lov_code,
-    lov4: item.lov4,
-    displayText: item.lov4 ? `${item.lov_code} (${item.lov4})` : item.lov_code,
-  }));
+      setcompTypeOther("");
+      setComplaint_no("");
+      setno("");
+      setcas_number("");
+    };
 
-  return (
-    <>
-      {/* Search Section */}
-      <Box
-        sx={{
-          p: 2,
-          mt: 8,
-          mb: 2,
-          border: "2px solid #39a2f2",
-          borderRadius: 2,
-          backgroundColor: "#ffffff",
-        }}
-      >
-        <div className="px-2 pt-2 pb-5">
-          <label className="sarabun-regular-datatable">ค้นหา</label>
-        </div>
-        <Divider sx={{ my: 0.1, borderColor: "#39a2f2" }} />
-        <Grid container spacing={2} mt={2}>
-          <Grid size={4}>
-            <AutocompleteComboBox
-              value={
-                dataset_company?.find(
-                  (item: any) =>
-                    String(item.company_id) ===
-                    String(TextNameSearch.dataset_company)
-                ) ||
-                dataset_company?.find(
-                  (item: any) =>
-                    String(item.company_id) ===
-                    String(user[0]?.itasset_company_id)
-                ) ||
-                null
-              }
-              labelName="บริษัท (Company)"
-              options={dataset_company || []}
-              column="company_name"
-              setvalue={(val) => {
-                handleCompanyChange(val);
-                setTextNameSearch({
-                  ...TextNameSearch,
-                  dataset_company: val?.company_id || "", // เก็บแค่ id เป็น string
-                });
-              }}
-              readonly
-            />
-          </Grid>
-          <Grid size={4}>
-            <AutocompleteComboBox
-              value={
-                dataset_domainrelate?.find(
-                  (item: any) =>
-                    item.domain_id === TextNameSearch.dataset_domainrelate
-                ) || null
-              }
-              labelName="โดเมน (Domain)"
-              options={dataset_domainrelate || []}
-              column="domain_name"
-              setvalue={(val) => {
-                handleDomainChange(val);
-                setTextNameSearch({
-                  ...TextNameSearch,
-                  dataset_domainrelate: val?.domain_id || "", // เก็บแค่ id เป็น string
-                });
-              }}
-            />
-          </Grid>
-          <Grid size={4}>
-            <AutocompleteComboBox
-              value={
-                dataset_department?.find(
-                  (item: any) =>
-                    item.department_id === TextNameSearch.dataset_department
-                ) || null
-              }
-              labelName="แผนก (Department)"
-              options={dataset_department || []}
-              column="department_name"
-              setvalue={(val) => {
-                setTextNameSearch({
-                  ...TextNameSearch,
-                  dataset_department: val?.department_id || "", // เก็บแค่ id เป็น string
-                });
-              }}
-              readonly={!TextNameSearch.dataset_domainrelate}
-            />
-          </Grid>
+    // =====================================================================================================
+    // USEEFFECT - INITIALIZATION (from index.tsx and ComplaintRead.tsx)
+    // =====================================================================================================
 
-          <Grid size={4}>
-            <AutocompleteComboBox
-              value={
-                dataset_reporttype?.find(
-                  (item: any) => item.id === TextNameSearch.report_code
-                ) || null
-              }
-              labelName="ประเภทเอกสาร (Report Type)"
-              options={dataset_reporttype || []}
-              column="lov_code"
-              setvalue={(val) => {
-                setTextNameSearch({
-                  ...TextNameSearch,
-                  report_code: val?.id || "", // เก็บแค่ id เป็น string
-                });
-                setdataReportTypeValue(val);
-                setReportTypeError(false);
-              }}
-              error={reportTypeError}
-            />
-          </Grid>
-          <Grid size={4}>
-            <FullWidthTextField
-              value={TextNameSearch.cas_number}
-              labelName={"CAS Number"}
-              onchange={(value) =>
-                setTextNameSearch({
-                  ...TextNameSearch,
-                  ...{ cas_number: value },
-                })
-              }
-            />
-          </Grid>
-          <Grid size={4}>
-            <FullWidthTextField
-              value={TextNameSearch.product_name}
-              labelName={"ชื่อสินค้า (Product Name)"}
-              onchange={(value) =>
-                setTextNameSearch({
-                  ...TextNameSearch,
-                  ...{ product_name: value },
-                })
-              }
-            />
-          </Grid>
-          <Grid size={4}>
-            <FullWidthTextField
-              value={TextNameSearch.lot_no}
-              labelName={"Lot No./Bag No"}
-              onchange={(value) =>
-                setTextNameSearch({ ...TextNameSearch, ...{ lot_no: value } })
-              }
-            />
-          </Grid>
-          <Grid size={4}>
-            {/* <AutocompleteComboBox
+    // Initialize data on component mount
+    React.useEffect(() => {
+      resetSearchTable();
+      // Complaint_Get();
+      // ListSearchGet();
+      // ReportType_Get();
+      // ComplaintType_Get();
+      // ComplaintRs_Get();
+      // photo_Get();
+      // priority_Get();
+      // DomainGet();
+      // DepartmentDomainGet();
+      // CompanyGet();
+      // complaint_status_Get();
+    }, []);
+
+    const effectRan = React.useRef(false); // ป้องกัน run ซ้ำใน dev mode
+
+    // Static useEffect
+    React.useEffect(() => {
+      if (effectRan.current) return;
+      effectRan.current = true;
+
+      const fetchData = async () => {
+        try {
+          //console.log("useEffect start");
+          await LovAll_Get();
+          await DomainRelateGet();
+          // await DepartmentDomainGet();
+
+          await mas_DomainGet(
+            user[0]?.itasset_company_id,
+            set_domain,
+            user,
+            isCallFuncLogOn
+          );
+          await mas_DepartmentGet_Complaint(
+            {
+              domain_id: dataelement?.respondent_domain_id ?? null,
+              company_id: dataelement?.respondent_company_id,
+            },
+            setdataset_department,
+            user,
+            isCallFuncLogOn
+          );
+
+          // if (user?.[0]?.itasset_company_id) {
+
+          // }
+
+          //console.log("useEffect done");
+        } catch (err) {
+          console.error(err);
+        }
+      };
+
+      fetchData();
+    }, []);
+
+    // Dynamic useEffect
+    React.useEffect(() => {
+      if (dataset_activeCompany) {
+        //console.log("🔁 activeCompany พร้อมแล้ว → เรียก CompanyGet()");
+        CompanyGet();
+      }
+
+      if (dataset_complaintAction) {
+        ComplaintGet();
+      }
+    }, [dataset_activeCompany, dataset_complaintAction]);
+
+    // React.useEffect(() => {
+    //   if (dataset_complaintAction) {
+    //     ComplaintGet();
+    //   }
+    // }, [dataset_complaintAction]);
+
+    // Filter complaint types based on selected report type (from ComplaintRead.tsx)
+    React.useEffect(() => {
+      // previewComplaint();
+      if (!dataelement) return;
+
+      // กรอง complaint type
+      const filtered = (dataComplaintType_Combobox || []).filter(
+        (item: LovType) =>
+          item.lov_type === "complaint_type" &&
+          item.lov_code === dataelement?.report_type
+      );
+      const filteredRs = (dataComplaintRs_Combobox || []).filter(
+        (item: LovType) =>
+          item.lov_type === "reference_standard" &&
+          item.lov_code === dataelement?.report_type
+      );
+      const filteredpriority = (datapriority_Combobox || []).filter(
+        (item: LovType) => item.lov_type === "priority_level"
+      );
+      const filteredphoto = (dataphoto_Combobox || []).filter(
+        (item: LovType) => item.lov_type === "attach_type"
+      );
+
+      //console.log("filtered", filtered);
+      setFilteredComplaintType(filtered);
+      //console.log("filteredRS", filteredRs);
+      setFilteredComplaintRs(filteredRs);
+      //console.log("filteredpriority", filteredpriority);
+      setFilteredpriority(filteredpriority);
+      //console.log("filteredphoto", filteredphoto);
+      setFilteredphoto(filteredphoto);
+    }, [
+      dataComplaintType_Combobox,
+      dataComplaintRs_Combobox,
+      datapriority_Combobox,
+      dataphoto_Combobox,
+      dataelement,
+    ]);
+
+    React.useEffect(() => {
+      if (!currentExplainForApproval || !dataApprove_Combobox?.length) return;
+      const fetchSCApprove = async () => {
+        const approveData = await ExplaintApprove_Get(
+          currentExplainForApproval.id
+        );
+        if (approveData?.length > 0) {
+          const firstApprove = approveData.find(
+            (x: any) => x.explain_id === dataelement?.id && x.approve_seq === 1
+          );
+          setapprove_position(firstApprove?.approve_position || "");
+          setapprove_email(firstApprove?.approve_email || "");
+          setapprove_date(
+            firstApprove?.approve_date
+              ? dayjs(firstApprove?.approve_date)
+              : dayjs()
+          );
+          setapprove_detail(firstApprove?.approve_detail || "");
+          setapprove_note(firstApprove?.approve_note || "");
+        }
+      };
+      fetchSCApprove();
+    }, [currentExplainForApproval, dataApprove_Combobox]);
+
+    // =====================================================================================================
+    // RETURN SECTION - RENDER COMPONENT
+    // =====================================================================================================
+
+    // #F29739
+    const statusOptions = (datastatus || []).map((item: any) => ({
+      id: item.id,
+      lov_code: item.lov_code,
+      lov4: item.lov4,
+      displayText: item.lov4
+        ? `${item.lov_code} (${item.lov4})`
+        : item.lov_code,
+    }));
+
+    return (
+      <>
+        {/* Search Section */}
+        <Box
+          sx={{
+            p: 2,
+            mt: 8,
+            mb: 2,
+            border: "2px solid #39a2f2",
+            borderRadius: 2,
+            backgroundColor: "#ffffff",
+          }}
+        >
+          <div className="px-2 pt-2 pb-5">
+            <label className="sarabun-regular-datatable">ค้นหา</label>
+          </div>
+          <Divider sx={{ my: 0.1, borderColor: "#39a2f2" }} />
+          <Grid container spacing={2} mt={2}>
+            <Grid size={4}>
+              <AutocompleteComboBox
+                value={
+                  dataset_company?.find(
+                    (item: any) =>
+                      String(item.company_id) ===
+                      String(TextNameSearch.dataset_company)
+                  ) ||
+                  dataset_company?.find(
+                    (item: any) =>
+                      String(item.company_id) ===
+                      String(user[0]?.itasset_company_id)
+                  ) ||
+                  null
+                }
+                labelName="บริษัท (Company)"
+                options={dataset_company || []}
+                column="company_name"
+                setvalue={(val) => {
+                  handleCompanyChange(val);
+                  setTextNameSearch({
+                    ...TextNameSearch,
+                    dataset_company: val?.company_id || "", // เก็บแค่ id เป็น string
+                  });
+                }}
+                readonly
+              />
+            </Grid>
+            <Grid size={4}>
+              <AutocompleteComboBox
+                value={
+                  dataset_domainrelate?.find(
+                    (item: any) =>
+                      item.domain_id === TextNameSearch.dataset_domainrelate
+                  ) || null
+                }
+                labelName="โดเมน (Domain)"
+                options={dataset_domainrelate || []}
+                column="domain_name"
+                setvalue={(val) => {
+                  handleDomainChange(val);
+                  setTextNameSearch({
+                    ...TextNameSearch,
+                    dataset_domainrelate: val?.domain_id || "", // เก็บแค่ id เป็น string
+                  });
+                }}
+              />
+            </Grid>
+            <Grid size={4}>
+              <AutocompleteComboBox
+                value={
+                  dataset_department?.find(
+                    (item: any) =>
+                      item.department_id === TextNameSearch.dataset_department
+                  ) || null
+                }
+                labelName="แผนก (Department)"
+                options={dataset_department || []}
+                column="department_name"
+                setvalue={(val) => {
+                  setTextNameSearch({
+                    ...TextNameSearch,
+                    dataset_department: val?.department_id || "", // เก็บแค่ id เป็น string
+                  });
+                }}
+                readonly={!TextNameSearch.dataset_domainrelate}
+              />
+            </Grid>
+
+            <Grid size={4}>
+              <AutocompleteComboBox
+                value={
+                  dataset_reporttype?.find(
+                    (item: any) => item.id === TextNameSearch.report_code
+                  ) || null
+                }
+                labelName="ประเภทเอกสาร (Report Type)"
+                options={dataset_reporttype || []}
+                column="lov_code"
+                setvalue={(val) => {
+                  setTextNameSearch({
+                    ...TextNameSearch,
+                    report_code: val?.id || "", // เก็บแค่ id เป็น string
+                  });
+                  setdataReportTypeValue(val);
+                  setReportTypeError(false);
+                }}
+                error={reportTypeError}
+              />
+            </Grid>
+            <Grid size={4}>
+              <FullWidthTextField
+                value={TextNameSearch.cas_number}
+                labelName={"CAS Number"}
+                onchange={(value) =>
+                  setTextNameSearch({
+                    ...TextNameSearch,
+                    ...{ cas_number: value },
+                  })
+                }
+              />
+            </Grid>
+            <Grid size={4}>
+              <FullWidthTextField
+                value={TextNameSearch.product_name}
+                labelName={"ชื่อสินค้า (Product Name)"}
+                onchange={(value) =>
+                  setTextNameSearch({
+                    ...TextNameSearch,
+                    ...{ product_name: value },
+                  })
+                }
+              />
+            </Grid>
+            <Grid size={4}>
+              <FullWidthTextField
+                value={TextNameSearch.lot_no}
+                labelName={"Lot No./Bag No"}
+                onchange={(value) =>
+                  setTextNameSearch({ ...TextNameSearch, ...{ lot_no: value } })
+                }
+              />
+            </Grid>
+            <Grid size={4}>
+              {/* <AutocompleteComboBox
               value={
                 datastatus?.find(
                   (item: any) => item.id === TextNameSearch.datastatus
@@ -6254,737 +6298,626 @@ export default function Complaint() {
                 })
               }
             /> */}
-            <AutocompleteComboBox
-              value={
-                statusOptions?.find(
-                  (item: any) => item.id === TextNameSearch.datastatus
-                ) || null
-              }
-              labelName="สถานะ (Status)"
-              options={(datastatus || []).map((item: any) => ({
-                id: item.id, // เก็บ id ไว้
-                lov_code: item.lov_code,
-                lov4: item.lov4,
-                displayText: item.lov4
-                  ? `${item.lov_code} (${item.lov4})`
-                  : item.lov_code,
-              }))}
-              column="displayText" // ใช้ displayText แสดงใน dropdown
-              setvalue={(val) =>
-                setTextNameSearch({
-                  ...TextNameSearch,
-                  datastatus: val?.id || "", // ใช้ id จริง
-                })
-              }
-            />
-          </Grid>
-          <Grid size={4}>
-            <DesktopDatePickers
-              labelName={"วันที่ออกเอกสาร (Document Issuance Date)"}
-              value={documentDateSearch}
-              handleChange={(val) => setdocumentDateSearch(val ?? null)}
-            />
+              <AutocompleteComboBox
+                value={
+                  statusOptions?.find(
+                    (item: any) => item.id === TextNameSearch.datastatus
+                  ) || null
+                }
+                labelName="สถานะ (Status)"
+                options={(datastatus || []).map((item: any) => ({
+                  id: item.id, // เก็บ id ไว้
+                  lov_code: item.lov_code,
+                  lov4: item.lov4,
+                  displayText: item.lov4
+                    ? `${item.lov_code} (${item.lov4})`
+                    : item.lov_code,
+                }))}
+                column="displayText" // ใช้ displayText แสดงใน dropdown
+                setvalue={(val) =>
+                  setTextNameSearch({
+                    ...TextNameSearch,
+                    datastatus: val?.id || "", // ใช้ id จริง
+                  })
+                }
+              />
+            </Grid>
+            <Grid size={4}>
+              <DesktopDatePickers
+                labelName={"วันที่ออกเอกสาร (Document Issuance Date)"}
+                value={documentDateSearch}
+                handleChange={(val) => setdocumentDateSearch(val ?? null)}
+              />
+            </Grid>
+
+            <Grid size={4}>
+              <AutocompleteComboBox
+                value={
+                  dataset_stepcomplaint?.find(
+                    (item: any) =>
+                      item.lov_code === TextNameSearch.dataset_stepcomplaint
+                  ) || null
+                }
+                labelName="ขั้นตอน (Action Step)"
+                options={dataset_stepcomplaint}
+                column="lov_code" // หรือชื่อ field ที่คุณต้องการแสดง
+                setvalue={(val) =>
+                  setTextNameSearch({
+                    ...TextNameSearch,
+                    dataset_stepcomplaint: val?.lov_code || "", // เก็บแค่ id เป็น string
+                  })
+                }
+              />
+            </Grid>
           </Grid>
 
-          <Grid size={4}>
-            <AutocompleteComboBox
-              value={
-                dataset_stepcomplaint?.find(
-                  (item: any) =>
-                    item.lov_code === TextNameSearch.dataset_stepcomplaint
-                ) || null
-              }
-              labelName="ขั้นตอน (Action Step)"
-              options={dataset_stepcomplaint}
-              column="lov_code" // หรือชื่อ field ที่คุณต้องการแสดง
-              setvalue={(val) =>
-                setTextNameSearch({
-                  ...TextNameSearch,
-                  dataset_stepcomplaint: val?.lov_code || "", // เก็บแค่ id เป็น string
-                })
-              }
-            />
-          </Grid>
-        </Grid>
+          {/* ======================================================================== */}
+          {/* ======================================================================== */}
 
-        {/* ======================================================================== */}
-        {/* ======================================================================== */}
-
-        <Grid
-          container
-          spacing={2}
-          sx={{ mt: 2 }}
-          justifyContent="flex-end"
-          gap={1}
-        >
-          <Grid>
-            <FullWidthButton
-              labelName={"ค้นหา"}
-              handleonClick={ComplaintGet}
-              variant_text="contained"
-              colorname={"primary"}
-            />
+          <Grid
+            container
+            spacing={2}
+            sx={{ mt: 2 }}
+            justifyContent="flex-end"
+            gap={1}
+          >
+            <Grid>
+              <FullWidthButton
+                labelName={"ค้นหา"}
+                handleonClick={ComplaintGet}
+                variant_text="contained"
+                colorname={"primary"}
+              />
+            </Grid>
+            <Grid>
+              <FullWidthButton
+                labelName={"รีเซ็ต"}
+                handleonClick={handleCloseSearch}
+                variant_text="outlined"
+                colorname={"inherit"}
+              />
+            </Grid>
           </Grid>
-          <Grid>
-            <FullWidthButton
-              labelName={"รีเซท"}
-              handleonClick={handleCloseSearch}
-              variant_text="outlined"
-              colorname={"inherit"}
-            />
-          </Grid>
-        </Grid>
-      </Box>
+        </Box>
 
-      {/* Data Table Section */}
-      <DataTable
-        colum={Complaint_headCells}
-        rows={datalist}
-        titlename={"ข้อมูล Complaint"}
-        buttonElement={
-          <div className="flex gap-x-4">
-            <Button
-              variant="contained"
-              hidden={
-                menuFuncData?.find(
+        {/* Data Table Section */}
+        <DataTable
+          colum={Complaint_headCells}
+          rows={datalist}
+          titlename={"ข้อมูล Complaint"}
+          buttonElement={
+            <div className="flex gap-x-4">
+              <Button
+                variant="contained"
+                hidden={
+                  menuFuncData?.find(
+                    (item: auth_role_menu_func) => item?.func_name === "Add"
+                  )
+                    ? false
+                    : true
+                }
+                color="success"
+                onClick={() => {
+                  //DepartmentDomainGet("Add");
+                  handleOnclickComplaintAdd();
+                }}
+              >
+                {menuFuncData?.find(
                   (item: auth_role_menu_func) => item?.func_name === "Add"
                 )
-                  ? false
-                  : true
-              }
-              color="success"
-              onClick={() => {
-                //DepartmentDomainGet("Add");
-                handleOnclickComplaintAdd();
+                  ? "เพิ่มข้อมูล"
+                  : ""}
+                <AddIcon sx={{}} />
+              </Button>
+            </div>
+          }
+        />
+
+        {/* // ===================================================================================================== */}
+        {/* // FUNC DIALOG (Complaint) */}
+        {/* // ===================================================================================================== */}
+
+        {/* ------------------------------------------------------------------------------------------ */}
+        {/* ------------------------------------- For All Status ------------------------------------- */}
+        {/* ------------------------------------------------------------------------------------------ */}
+        <FuncDialog
+          open={openComplaintAdd}
+          dialogWidth="xl"
+          openBottonHidden={true}
+          hideReject={true}
+          hideSaveDraft={!dataReportTypeValue}
+          hideSaveSubmit={!dataReportTypeValue}
+          titlename={"[Complaint] เพิ่มข้อมูล"}
+          buttonText={"Save & Submit"}
+          handleClose={handleClose}
+          handlefunction={ComplaintAdd}
+          handlesavedraft={ComplaintSavedraftAdd}
+          buttonColor="success"
+          element={
+            <ComplaintBody
+              action="Add"
+              validateDetailText={blockValidateErrors}
+              handleOpenAdd={handleOpenAddList}
+              validateText={{
+                Product_Group: false,
+                Report_Type: reportTypeError,
+                Respondent_Department: respondentDepartmentError,
+                Date_of_Detection: dateOfDetectionError,
+                Department_Area: departmentAreaError,
+                Product_Name: productNameError,
+                Lot_No: lotNoError,
+                Email: emailError,
+                Complaint_Type: complaintTypeError,
+                Other_Type: otherTypeError,
+                Complaint_Rs: complaintRsError,
+                Other_Rs: otherRsError,
+                Clause_Rs: clauseRsError,
+                Detail: detailError,
+                Priority: priorityError,
               }}
-            >
-              {menuFuncData?.find(
-                (item: auth_role_menu_func) => item?.func_name === "Add"
-              )
-                ? "เพิ่มข้อมูล"
-                : ""}
-              <AddIcon sx={{}} />
-            </Button>
-          </div>
-        }
-      />
-
-      {/* ---------------------------------------------------------------------- */}
-      {/* ------------------------ Complaint FuncDialog ------------------------ */}
-      {/* ---------------------------------------------------------------------- */}
-
-      <FuncDialog
-        open={openComplaintAdd}
-        dialogWidth="xl"
-        openBottonHidden={true}
-        hideReject={true}
-        hideSaveDraft={!dataReportTypeValue}
-        hideSaveSubmit={!dataReportTypeValue}
-        titlename={"Complaint // เพิ่มข้อมูล"}
-        buttonText={"Save & Submit"}
-        handleClose={handleClose}
-        handlefunction={ComplaintAdd}
-        handlesavedraft={ComplaintSavedraftAdd}
-        buttonColor="success"
-        element={
-          <ComplaintBody
-            action="Add"
-            validateDetailText={blockValidateErrors}
-            handleOpenAdd={handleOpenAddList}
-            validateText={{
-              Product_Group: false,
-              Report_Type: reportTypeError,
-              Respondent_Department: respondentDepartmentError,
-              Date_of_Detection: dateOfDetectionError,
-              Department_Area: departmentAreaError,
-              Product_Name: productNameError,
-              Lot_No: lotNoError,
-              Email: emailError,
-              Complaint_Type: complaintTypeError,
-              Other_Type: otherTypeError,
-              Complaint_Rs: complaintRsError,
-              Other_Rs: otherRsError,
-              Clause_Rs: clauseRsError,
-              Detail: detailError,
-              Priority: priorityError,
-            }}
-            onReportTypeChange={(val) => {
-              setdataReportTypeValue(val);
-              setReportTypeError(false);
-              setRespondentDepartmentError(false);
-              // Clear all validation errors when report type changes
-              setDateOfDetectionError(false);
-              setDepartmentAreaError(false);
-              setProductNameError(false);
-              setLotNoError(false);
-              setEmailError(false);
-              setComplaintTypeError(false);
-              setOtherTypeError(false);
-              setComplaintRsError(false);
-              setOtherRsError(false);
-              setClauseRsError(false);
-              setDetailError(false);
-              setPriorityError(false);
-            }}
-            onDateOfDetectionChange={(val) => {
-              setdate_of_detection(val);
-              setDateOfDetectionError(false);
-            }}
-            onRespondentDepartmentChange={(val) => {
-              setrespondent_domain_id(val);
-              if (val && val.domain_id) {
+              onReportTypeChange={(val) => {
+                setdataReportTypeValue(val);
+                setReportTypeError(false);
                 setRespondentDepartmentError(false);
-              }
-            }}
-            onDepartmentAreaChange={(val) => {
-              setrespondent_department_id(val);
-              setDepartmentAreaError(false);
-            }}
-            onProductNameChange={(val) => {
-              setproduct_name(val);
-              setProductNameError(false);
-            }}
-            onLotNoChange={(val) => {
-              setlot_no(val);
-              setLotNoError(false);
-            }}
-            onEmailChange={(val) => {
-              setrespondent_email(val);
-              setEmailError(false);
-            }}
-            onComplaintTypeChange={(val) => {
-              setComplaintTypeError(false);
-              setOtherTypeError(false);
-            }}
-            onOtherTypeChange={(val) => {
-              setOtherTypeError(false);
-            }}
-            onComplaintRsChange={(val) => {
-              setComplaintRsError(false);
-              setOtherRsError(false);
-              setClauseRsError(false);
-            }}
-            onOtherRsChange={(val) => {
-              setOtherRsError(false);
-            }}
-            onClauseChange={(val) => {
-              setClauseRsError(false);
-            }}
-            onDetailChange={(val) => {
-              setDetailError(false);
-            }}
-            onPriorityChange={(val) => {
-              setPriorityError(false);
-            }}
-          />
-        }
-      />
+                // Clear all validation errors when report type changes
+                setDateOfDetectionError(false);
+                setDepartmentAreaError(false);
+                setProductNameError(false);
+                setLotNoError(false);
+                setEmailError(false);
+                setComplaintTypeError(false);
+                setOtherTypeError(false);
+                setComplaintRsError(false);
+                setOtherRsError(false);
+                setClauseRsError(false);
+                setDetailError(false);
+                setPriorityError(false);
+              }}
+              onDateOfDetectionChange={(val) => {
+                setdate_of_detection(val);
+                setDateOfDetectionError(false);
+              }}
+              onRespondentDepartmentChange={(val) => {
+                setrespondent_domain_id(val);
+                if (val && val.domain_id) {
+                  setRespondentDepartmentError(false);
+                }
+              }}
+              onDepartmentAreaChange={(val) => {
+                setrespondent_department_id(val);
+                setDepartmentAreaError(false);
+              }}
+              onProductNameChange={(val) => {
+                setproduct_name(val);
+                setProductNameError(false);
+              }}
+              onLotNoChange={(val) => {
+                setlot_no(val);
+                setLotNoError(false);
+              }}
+              onEmailChange={(val) => {
+                setrespondent_email(val);
+                setEmailError(false);
+              }}
+              onComplaintTypeChange={(val) => {
+                setComplaintTypeError(false);
+                setOtherTypeError(false);
+              }}
+              onOtherTypeChange={(val) => {
+                setOtherTypeError(false);
+              }}
+              onComplaintRsChange={(val) => {
+                setComplaintRsError(false);
+                setOtherRsError(false);
+                setClauseRsError(false);
+              }}
+              onOtherRsChange={(val) => {
+                setOtherRsError(false);
+              }}
+              onClauseChange={(val) => {
+                setClauseRsError(false);
+              }}
+              onDetailChange={(val) => {
+                setDetailError(false);
+              }}
+              onPriorityChange={(val) => {
+                setPriorityError(false);
+              }}
+            />
+          }
+        />
 
-      <FuncDialog
-        open={openComplaintView}
-        dialogWidth="xl"
-        openBottonHidden={false}
-        titlename={"Complaint // ดูข้อมูล"}
-        handleClose={handleClose}
-        buttonColor="success"
-        element={<ComplaintBody action="Read" />}
-      />
+        {/* ------------------------------------------------------------------------------------------ */}
+        {/* ------------------------------------ For Status [NEW] ------------------------------------ */}
+        {/* ------------------------------------------------------------------------------------------ */}
+        <FuncDialog
+          open={openComplaintView}
+          dialogWidth="xl"
+          openBottonHidden={false}
+          titlename={"[Complaint] ดูข้อมูล"}
+          handleClose={handleClose}
+          buttonColor="success"
+          element={<ComplaintBody action="Read" />}
+        />
 
-      <FuncDialog
-        open={openComplaintEdit}
-        dialogWidth="xl"
-        openBottonHidden={true}
-        hideReject={true}
-        titlename={"Complaint // แก้ไขข้อมูล"}
-        buttonText={"Save & Submit"}
-        handleClose={handleClose}
-        // handlefunction={ComplaintEdit}
-        handlefunction={() => ComplaintEdit("SUBMIT")}
-        // handlesavedraft={ComplaintSavedraftEdit}
-        handlesavedraft={() => ComplaintEdit("NEW")}
-        hideSaveDraft={false}
-        buttonColor="success"
-        element={
-          <ComplaintBody
-            action="Edit"
-            onBlocksChange={(data) => setComplaintBlocks(data)}
-            validateDetailText={blockValidateErrors}
-            handleOpenAdd={handleOpenAddList}
-            validateText={{
-              Product_Group: false,
-              Report_Type: reportTypeError,
-              Respondent_Department: respondentDepartmentError,
-              Date_of_Detection: dateOfDetectionError,
-              Department_Area: departmentAreaError,
-              Product_Name: productNameError,
-              Lot_No: lotNoError,
-              Email: emailError,
-              Complaint_Type: complaintTypeError,
-              Other_Type: otherTypeError,
-              Complaint_Rs: complaintRsError,
-              Other_Rs: otherRsError,
-              Clause_Rs: clauseRsError,
-              Detail: detailError,
-              Priority: priorityError,
-            }}
-            onReportTypeChange={(val) => {
-              setdataReportTypeValue(val);
-              setReportTypeError(false);
-              setRespondentDepartmentError(false);
-              setDateOfDetectionError(false);
-              setDepartmentAreaError(false);
-              setProductNameError(false);
-              setLotNoError(false);
-              setEmailError(false);
-              setComplaintTypeError(false);
-              setOtherTypeError(false);
-              setComplaintRsError(false);
-              setOtherRsError(false);
-              setClauseRsError(false);
-              setDetailError(false);
-              setPriorityError(false);
-            }}
-            onDateOfDetectionChange={(val) => {
-              setdate_of_detection(val);
-              setDateOfDetectionError(false);
-            }}
-            onRespondentDepartmentChange={(val) => {
-              setrespondent_domain_id(val);
-              if (val && val.domain_id) {
+        {/* For Status [NEW] */}
+        <FuncDialog
+          open={openComplaintEdit}
+          dialogWidth="xl"
+          openBottonHidden={true}
+          hideReject={true}
+          titlename={"[Complaint] แก้ไขข้อมูล"}
+          buttonText={"Save & Submit"}
+          handleClose={handleClose}
+          // handlefunction={ComplaintEdit}
+          handlefunction={() => ComplaintEdit("SUBMIT")}
+          // handlesavedraft={ComplaintSavedraftEdit}
+          handlesavedraft={() => ComplaintEdit("NEW")}
+          hideSaveDraft={false}
+          buttonColor="success"
+          element={
+            <ComplaintBody
+              action="Edit"
+              onBlocksChange={(data) => setComplaintBlocks(data)}
+              validateDetailText={blockValidateErrors}
+              handleOpenAdd={handleOpenAddList}
+              validateText={{
+                Product_Group: false,
+                Report_Type: reportTypeError,
+                Respondent_Department: respondentDepartmentError,
+                Date_of_Detection: dateOfDetectionError,
+                Department_Area: departmentAreaError,
+                Product_Name: productNameError,
+                Lot_No: lotNoError,
+                Email: emailError,
+                Complaint_Type: complaintTypeError,
+                Other_Type: otherTypeError,
+                Complaint_Rs: complaintRsError,
+                Other_Rs: otherRsError,
+                Clause_Rs: clauseRsError,
+                Detail: detailError,
+                Priority: priorityError,
+              }}
+              onReportTypeChange={(val) => {
+                setdataReportTypeValue(val);
+                setReportTypeError(false);
                 setRespondentDepartmentError(false);
+                setDateOfDetectionError(false);
+                setDepartmentAreaError(false);
+                setProductNameError(false);
+                setLotNoError(false);
+                setEmailError(false);
+                setComplaintTypeError(false);
+                setOtherTypeError(false);
+                setComplaintRsError(false);
+                setOtherRsError(false);
+                setClauseRsError(false);
+                setDetailError(false);
+                setPriorityError(false);
+              }}
+              onDateOfDetectionChange={(val) => {
+                setdate_of_detection(val);
+                setDateOfDetectionError(false);
+              }}
+              onRespondentDepartmentChange={(val) => {
+                setrespondent_domain_id(val);
+                if (val && val.domain_id) {
+                  setRespondentDepartmentError(false);
+                }
+              }}
+              onDepartmentAreaChange={(val) => {
+                setrespondent_department_id(val);
+                setDepartmentAreaError(false);
+              }}
+              onProductNameChange={(val) => {
+                setproduct_name(val);
+                setProductNameError(false);
+              }}
+              onLotNoChange={(val) => {
+                setlot_no(val);
+                setLotNoError(false);
+              }}
+              onEmailChange={(val) => {
+                setrespondent_email(val);
+                setEmailError(false);
+              }}
+              onComplaintTypeChange={(val) => {
+                setComplaintTypeError(false);
+                setOtherTypeError(false);
+              }}
+              onOtherTypeChange={(val) => {
+                setOtherTypeError(false);
+              }}
+              onComplaintRsChange={(val) => {
+                setComplaintRsError(false);
+                setOtherRsError(false);
+                setClauseRsError(false);
+              }}
+              onOtherRsChange={(val) => {
+                setOtherRsError(false);
+              }}
+              onClauseChange={(val) => {
+                setClauseRsError(false);
+              }}
+              onDetailChange={(val) => {
+                setDetailError(false);
+              }}
+              onPriorityChange={(val) => {
+                setPriorityError(false);
+              }}
+            />
+          }
+        />
+
+        <FuncDialog
+          open={openComplaintDelete}
+          dialogWidth="xl"
+          hideSaveDraft={true}
+          openBottonHidden={true}
+          hideReject={true}
+          titlename={"[Complaint] ลบข้อมูล"}
+          buttonText={"Delete"}
+          handleClose={handleClose}
+          handlefunction={ComplaintDelete}
+          buttonColor="error"
+          element={<ComplaintBody action="Delete" />}
+        />
+
+        {/* // ===================================================================================================== */}
+        {/* // FUNC DIALOG (Explain)(Complaint Modal / LAYER 1) */}
+        {/* // ===================================================================================================== */}
+
+        {/* ------------------------------------------------------------------------------------------ */}
+        {/* ------------------------------------ For Status [SUBMITED] ------------------------------------ */}
+        {/* ------------------------------------------------------------------------------------------ */}
+        <FuncDialog
+          open={openExplain}
+          dialogWidth="xl"
+          openBottonHidden={true}
+          hideSaveDraft={true}
+          hideSaveSubmit={true}
+          hideReject={hideReject}
+          titlename={"[Complaint] ข้อมูลและรายละเอียด"}
+          handleClose={handleClose}
+          handlereject={() => ComplaintReturn("COMPLAINT")}
+          buttonColor="success"
+          element={
+            <ComplaintBody
+              action="Explain"
+              handleOpenAdd={() => handleOnclickExplainAdd(dataelement)}
+              handleOnclickExplainView={(item) =>
+                handleOnclickExplainView(item, "ExplainRead")
               }
-            }}
-            onDepartmentAreaChange={(val) => {
-              setrespondent_department_id(val);
-              setDepartmentAreaError(false);
-            }}
-            onProductNameChange={(val) => {
-              setproduct_name(val);
-              setProductNameError(false);
-            }}
-            onLotNoChange={(val) => {
-              setlot_no(val);
-              setLotNoError(false);
-            }}
-            onEmailChange={(val) => {
-              setrespondent_email(val);
-              setEmailError(false);
-            }}
-            onComplaintTypeChange={(val) => {
-              setComplaintTypeError(false);
-              setOtherTypeError(false);
-            }}
-            onOtherTypeChange={(val) => {
-              setOtherTypeError(false);
-            }}
-            onComplaintRsChange={(val) => {
-              setComplaintRsError(false);
-              setOtherRsError(false);
-              setClauseRsError(false);
-            }}
-            onOtherRsChange={(val) => {
-              setOtherRsError(false);
-            }}
-            onClauseChange={(val) => {
-              setClauseRsError(false);
-            }}
-            onDetailChange={(val) => {
-              setDetailError(false);
-            }}
-            onPriorityChange={(val) => {
-              setPriorityError(false);
-            }}
-          />
-        }
-      />
+              handleOnclickExplainApproveSc={handleOnclickExplainApproveSc}
+            />
+          }
+        />
 
-      <FuncDialog
-        open={openComplaintDelete}
-        dialogWidth="xl"
-        hideSaveDraft={true}
-        openBottonHidden={true}
-        hideReject={true}
-        titlename={"Complaint // ลบข้อมูล"}
-        buttonText={"Delete"}
-        handleClose={handleClose}
-        handlefunction={ComplaintDelete}
-        buttonColor="error"
-        element={<ComplaintBody action="Delete" />}
-      />
+        <FuncDialog
+          open={openExplainView}
+          dialogWidth="xl"
+          openBottonHidden={false}
+          titlename={"Explain // ดูข้อมูล"}
+          handleClose={handleClose}
+          handlefunction={ExplainGet}
+          buttonColor="success"
+          element={
+            <ExplaintBody
+              complaint_status_lable={dataelement?.complaint_status_lable}
+              currentExplainForApproval={currentExplainForApproval}
+              action={
+                //ADD
+                action == "Explain"
+                  ? "ExplainRead"
+                  : action == "ApproveSC"
+                  ? "ApproveScAdd"
+                  : // : action == "ApproveQC" ? "ApproveQcAdd"
+                  action == "Close"
+                  ? "CloseAdd"
+                  : action === "CloseHistory"
+                  ? "ReadClose"
+                  : //READ
+                  action == "ReadApproveSC"
+                  ? "ApproveScRead"
+                  : action == "ReadApproveQC"
+                  ? "ApproveQcRead"
+                  : action == "ReadClose"
+                  ? "ReadClose"
+                  : action == "ReadExplain"
+                  ? "ReadExplain"
+                  : action === "CloseHistory"
+                  ? "ReadClose"
+                  : "-"
 
-      {/* ---------------------------------------------------------------------- */}
-      {/* ------------------------ Explain FuncDialog ------------------------ */}
-      {/* ---------------------------------------------------------------------- */}
+                // action == "ApproveSC" ? "ApproveScAdd"
+                // : action == "ReadApproveSC" ? "ApproveScRead"
+                // : action == "ApproveQC" ? "ApproveQcAdd"
+                // : action == "ReadApproveQC" ? "ApproveQcRead"
+                // : action == "Close" ? "CloseAdd"
+                // : action == "ReadClose" ? "ReadClose"
+                // : action == "ReadExplain" ? "ReadExplain"
+                // : action === "CloseHistory" ? "ReadClose"
+              }
+              // {
+              // action={action == "ApproveSC" ? "ApproveScAdd"
+              //         : action == "ReadApproveSC" ? "ReadApproveSc"
+              //         : action == "ApproveQC" ? "ApproveQcAdd"
+              //         : action == "ReadApproveQC" ? "ReadApproveQc"
+              //         : action == "Close" ? "CloseAdd"
+              //         : "ReadApproveSc"
+              // }
+            />
+          }
+        />
 
-      <FuncDialog
-        open={openExplain}
-        dialogWidth="xl"
-        openBottonHidden={true}
-        hideSaveDraft={true}
-        hideSaveSubmit={true}
-        hideReject={hideReject}
-        titlename={"Explain (EXPLAIN READ)// รายละเอียด"}
-        handleClose={handleClose}
-        handlereject={() => ComplaintReturn("COMPLAINT")}
-        buttonColor="success"
-        element={
-          <ComplaintBody
-            action="Explain"
-            handleOpenAdd={() => handleOnclickExplainAdd(dataelement)}
-            handleOnclickExplainView={handleOnclickExplainView}
-            handleOnclickExplainApproveSc={handleOnclickExplainApproveSc}
-          />
-        }
-      />
+        <FuncDialog
+          open={openExplainAdd}
+          dialogWidth="xl"
+          openBottonHidden={true}
+          titlename={"Explain (EXPLAIN ADD)// เพิ่มข้อมูล"}
+          buttonText={"Save & Submit"}
+          handleClose={() => handleOnclickCloseAddExplain(dataelement)}
+          handlefunction={ExplainAdd}
+          hideSaveDraft={true}
+          hideReject={true}
+          buttonColor="success"
+          element={<ExplaintBody action="ExplainAdd" />}
+        />
 
-      <FuncDialog
-        open={openExplainView}
-        dialogWidth="xl"
-        openBottonHidden={false}
-        titlename={"Explain // ดูข้อมูล"}
-        handleClose={handleClose}
-        handlefunction={ExplainGet}
-        buttonColor="success"
-        element={
-          <ExplaintBody
-            complaint_status_lable={dataelement?.complaint_status_lable}
-            currentExplainForApproval={currentExplainForApproval}
-            action={
-              //ADD
-              action == "Explain"
-                ? "ExplainRead"
-                : action == "ApproveSC"
-                ? "ApproveScAdd"
-                : // : action == "ApproveQC" ? "ApproveQcAdd"
-                action == "Close"
-                ? "CloseAdd"
-                : action === "CloseHistory"
-                ? "ReadClose"
-                : //READ
-                action == "ReadApproveSC"
-                ? "ApproveScRead"
-                : action == "ReadApproveQC"
-                ? "ApproveQcRead"
-                : action == "ReadClose"
-                ? "ReadClose"
-                : action == "ReadExplain"
-                ? "ReadExplain"
-                : action === "CloseHistory"
-                ? "ReadClose"
-                : "-"
+        <FuncDialog
+          open={openReadExplain}
+          dialogWidth="xl"
+          openBottonHidden={true}
+          hideSaveDraft={true}
+          hideSaveSubmit={true}
+          hideReject={true}
+          titlename={"[Complaint] ข้อมูลและรายละเอียด"}
+          handleClose={handleClose}
+          buttonColor="success"
+          element={
+            <ComplaintBody
+              action="ReadExplain"
+              handleOpenAdd={() => handleOnclickExplainAdd(dataelement)}
+              handleOnclickExplainView={(item) =>
+                handleOnclickExplainView(item, "ReadExplain")
+              }
+              handleOnclickExplainApproveSc={handleOnclickExplainApproveSc}
+            />
+          }
+        />
 
-              // action == "ApproveSC" ? "ApproveScAdd"
-              // : action == "ReadApproveSC" ? "ApproveScRead"
-              // : action == "ApproveQC" ? "ApproveQcAdd"
-              // : action == "ReadApproveQC" ? "ApproveQcRead"
-              // : action == "Close" ? "CloseAdd"
-              // : action == "ReadClose" ? "ReadClose"
-              // : action == "ReadExplain" ? "ReadExplain"
-              // : action === "CloseHistory" ? "ReadClose"
-            }
-            // {
-            // action={action == "ApproveSC" ? "ApproveScAdd"
-            //         : action == "ReadApproveSC" ? "ReadApproveSc"
-            //         : action == "ApproveQC" ? "ApproveQcAdd"
-            //         : action == "ReadApproveQC" ? "ReadApproveQc"
-            //         : action == "Close" ? "CloseAdd"
-            //         : "ReadApproveSc"
-            // }
-          />
-        }
-      />
+        {/* กดปุ่มจัดการ อนุมัติรายการ */}
+        <FuncDialog
+          open={openApproveSC}
+          dialogWidth="xl"
+          openBottonHidden={false}
+          titlename={"Explain (SC READ) // รายละเอียด"}
+          handleClose={handleClose}
+          buttonColor="success"
+          element={
+            <ComplaintBody
+              action="ApproveSC"
+              handleOpenAdd={() => handleOnclickExplainAdd(dataelement)}
+              handleOnclickExplainView={(item) =>
+                handleOnclickExplainView(item, "ApproveScRead")
+              }
+              handleOnclickExplainApproveSc={handleOnclickExplainApproveSc}
+            />
+          }
+        />
 
-      <FuncDialog
-        open={openExplainAdd}
-        dialogWidth="xl"
-        openBottonHidden={true}
-        titlename={"Explain (EXPLAIN ADD)// เพิ่มข้อมูล"}
-        buttonText={"Save & Submit"}
-        // handleClose={() => handleOnclickCloseAddExplain(dataelement)}
-        handleClose={handleClose}
-        handlefunction={ExplainAdd}
-        hideSaveDraft={true}
-        hideReject={true}
-        buttonColor="success"
-        element={
-          <ExplaintBody
-            action="ExplainAdd"
-            validateText={{
-              Follow_up_Date: followUpDateError,
-              ObsAnaly: obsAnalyError,
-              Tu: toolUseError,
-              Tuother: toolUseOtherError,
-              Rc: rootCauseError,
-              Dd: ddError,
-              Ddother: ddOtherError,
-              Ca: correctiveActionError,
-              Pap: preventiveActionPlanError,
-              QcDetail: qcDetailError,
-              QcNote: qcNoteError,
-              CloseDetail: closeDetailError,
-              CloseNote: closeNoteError,
-            }}
-            onFollowUpDateChange={(val) => {
-              setfollow_up_date(val);
-              setFollowUpDateError(false);
-            }}
-            onObsAnalyChange={(val) => {
-              setobservation_analysis(val);
-              setObsAnalyError(false);
-            }}
-            onRootCauseChange={(val) => {
-              setroot_cause(val);
-              setRootCauseError(false);
-            }}
-            onToolUseChange={(val) => {
-              setToolUseError(false);
-              setToolUseOtherError(false);
-            }}
-            onToolOtherChange={(val) => {
-              setToolUseOtherError(false);
-            }}
-            onDdChange={(val) => {
-              setDdError(false);
-              setDdOtherError(false);
-            }}
-            onDecisionOtherChange={(val) => {
-              setDdOtherError(false);
-            }}
-            onCorrectiveActionChange={(val) => {
-              setcorrective_action(val);
-              setCorrectiveActionError(false);
-            }}
-            onPreventiveActionPlanChange={(val) => {
-              setpreventive_action_plan(val);
-              setPreventiveActionPlanError(false);
-            }}
-          />
-        }
-      />
+        <FuncDialog
+          open={openReadApproveSC}
+          dialogWidth="xl"
+          openBottonHidden={false}
+          titlename={"ApproveSC // ดูรายละเอียด"}
+          handleClose={handleClose}
+          buttonColor="success"
+          element={
+            <ComplaintBody
+              action="ReadApproveSC"
+              handleOpenAdd={() => handleOnclickExplainAdd(dataelement)}
+              handleOnclickExplainView={(item) =>
+                handleOnclickExplainView(item, "ApproveScRead")
+              }
+              handleOnclickExplainApproveSc={handleOnclickExplainApproveSc}
+            />
+          }
+        />
 
-      <FuncDialog
-        open={openReadExplain}
-        dialogWidth="xl"
-        openBottonHidden={true}
-        hideSaveDraft={true}
-        hideSaveSubmit={true}
-        hideReject={true}
-        titlename={"Explain // ดูรายละเอียด"}
-        handleClose={handleClose}
-        buttonColor="success"
-        element={
-          <ComplaintBody
-            action="ReadExplain"
-            handleOpenAdd={() => handleOnclickExplainAdd(dataelement)}
-            handleOnclickExplainView={(item) =>
-              handleOnclickExplainView(item, "ReadExplain")
-            }
-            handleOnclickExplainApproveSc={handleOnclickExplainApproveSc}
-          />
-        }
-      />
+        <FuncDialog
+          open={openApproveQC}
+          dialogWidth="xl"
+          openBottonHidden={false}
+          titlename={"Explain (QC READ) // รายละเอียด"}
+          handleClose={handleClose}
+          buttonColor="success"
+          element={
+            <ComplaintBody
+              action="ApproveQC"
+              handleOpenAdd={() => handleOnclickExplainAdd(dataelement)}
+              handleOnclickExplainView={(item) =>
+                handleOnclickExplainView(item, "ApproveQcRead")
+              }
+              handleOnclickExplainApproveQc={handleOnclickExplainApproveQc}
+            />
+          }
+        />
 
-      {/* กดปุ่มจัดการ อนุมัติรายการ */}
-      <FuncDialog
-        open={openApproveSC}
-        dialogWidth="xl"
-        openBottonHidden={false}
-        titlename={"Explain (SC READ) // รายละเอียด"}
-        handleClose={handleClose}
-        buttonColor="success"
-        element={
-          <ComplaintBody
-            action="ApproveSC"
-            handleOpenAdd={() => handleOnclickExplainAdd(dataelement)}
-            handleOnclickExplainView={(item) =>
-              handleOnclickExplainView(item, "ApproveScRead")
-            }
-            handleOnclickExplainApproveSc={handleOnclickExplainApproveSc}
-          />
-        }
-      />
+        <FuncDialog
+          open={openReadApproveQC}
+          dialogWidth="xl"
+          openBottonHidden={false}
+          titlename={"ApproveQC // ดูรายละเอียด"}
+          handleClose={handleClose}
+          buttonColor="success"
+          element={
+            <ComplaintBody
+              action="ReadApproveQC"
+              handleOpenAdd={() => handleOnclickExplainAdd(dataelement)}
+              handleOnclickExplainView={(item) =>
+                handleOnclickExplainView(item, "ApproveQcRead")
+              }
+              handleOnclickExplainApproveQc={handleOnclickExplainApproveQc}
+            />
+          }
+        />
 
-      <FuncDialog
-        open={openExplainApproveSc}
-        dialogWidth="xl"
-        openBottonHidden={true}
-        hideSaveDraft
-        hideReject={approveSelectionCode === "APPROVE" || !approveSelectionCode}
-        hideSaveSubmit={
-          approveSelectionCode === "ADD" ||
-          approveSelectionCode === "REJECT" ||
-          !approveSelectionCode
-        }
-        titlename={"Approve Section Head (SC ADD) // เพิ่มข้อมูล"}
-        buttonText={"Approve"}
-        handlefunction={ApproveScAdd}
-        handlereject={() => ComplaintReturn("EXPLAIN")}
-        handleClose={handleClose}
-        buttonColor="success"
-        element={
-          <ExplaintBody
-            action="ApproveScAdd"
-            handleOpenAdd={() => handleOnclickExplainApproveSc(dataelement)}
-            onApproveChange={(value) => {
-              setApproveSelectionCode(value?.lov_code ?? null);
-            }}
-          />
-        }
-      />
+        {/* QC ADD */}
+        <FuncDialog
+          open={openExplainApproveQc}
+          dialogWidth="xl"
+          openBottonHidden={true}
+          hideSaveDraft
+          hideReject={
+            approveSelectionCode === "APPROVE" || !approveSelectionCode
+          }
+          hideSaveSubmit={
+            approveSelectionCode === "ADD" ||
+            approveSelectionCode === "REJECT" ||
+            !approveSelectionCode
+          }
+          titlename={"Approve QC (QC ADD)// เพิ่มข้อมูล"}
+          buttonText={"Approve"}
+          handlefunction={ApproveQcAdd}
+          handlereject={() => ComplaintReturn("APPROVE_QC")}
+          handleClose={handleClose}
+          buttonColor="success"
+          element={
+            <ExplaintBody
+              action="ApproveQcAdd"
+              handleOpenAdd={() => handleOnclickExplainApproveQc(dataelement)}
+              onApproveChange={(value) => {
+                setApproveSelectionCode(value?.lov_code ?? null);
+              }}
+              validateText={{
+                Follow_up_Date: followUpDateError,
+                ObsAnaly: obsAnalyError,
+                Tu: toolUseError,
+                Tuother: toolUseOtherError,
+                Rc: rootCauseError,
+                Dd: ddError,
+                Ddother: ddOtherError,
+                Ca: correctiveActionError,
+                Pap: preventiveActionPlanError,
+                QcDetail: qcDetailError,
+                QcNote: qcNoteError,
+                CloseDetail: closeDetailError,
+                CloseNote: closeNoteError,
+              }}
+              onQCDetailChange={(val) => {
+                setqcapprove_detail(val);
+                setQcDetailError(false);
+              }}
+              onQCNoteChange={(val) => {
+                setqcapprove_note(val);
+                setQcNoteError(false);
+              }}
+            />
+          }
+        />
 
-      {/* กดปุ่มจัดการ ดูข้อมูล */}
-      <FuncDialog
-        open={openReadApproveSC}
-        dialogWidth="xl"
-        openBottonHidden={false}
-        titlename={"ApproveSC // ดูรายละเอียด"}
-        handleClose={handleClose}
-        buttonColor="success"
-        element={
-          <ComplaintBody
-            action="ReadApproveSC"
-            handleOpenAdd={() => handleOnclickExplainAdd(dataelement)}
-            handleOnclickExplainView={(item) =>
-              handleOnclickExplainView(item, "ApproveScRead")
-            }
-            handleOnclickExplainApproveSc={handleOnclickExplainApproveSc}
-          />
-        }
-      />
-
-      {/* QC */}
-      <FuncDialog
-        open={openReadApproveQC}
-        dialogWidth="xl"
-        openBottonHidden={false}
-        titlename={"ApproveQC // ดูรายละเอียด"}
-        handleClose={handleClose}
-        buttonColor="success"
-        element={
-          <ComplaintBody
-            action="ReadApproveQC"
-            handleOpenAdd={() => handleOnclickExplainAdd(dataelement)}
-            handleOnclickExplainView={(item) =>
-              handleOnclickExplainView(item, "ApproveQcRead")
-            }
-            handleOnclickExplainApproveQc={handleOnclickExplainApproveQc}
-          />
-        }
-      />
-
-      {/* QC READ */}
-      <FuncDialog
-        open={openApproveQC}
-        dialogWidth="xl"
-        openBottonHidden={false}
-        titlename={"Explain (QC READ) // รายละเอียด"}
-        handleClose={handleClose}
-        buttonColor="success"
-        element={
-          <ComplaintBody
-            action="ApproveQC"
-            handleOpenAdd={() => handleOnclickExplainAdd(dataelement)}
-            handleOnclickExplainView={(item) =>
-              handleOnclickExplainView(item, "ApproveQcRead")
-            }
-            handleOnclickExplainApproveQc={handleOnclickExplainApproveQc}
-          />
-        }
-      />
-
-      {/* QC ADD */}
-      <FuncDialog
-        open={openExplainApproveQc}
-        dialogWidth="xl"
-        openBottonHidden={true}
-        hideSaveDraft
-        hideReject={approveSelectionCode === "APPROVE" || !approveSelectionCode}
-        hideSaveSubmit={
-          approveSelectionCode === "ADD" ||
-          approveSelectionCode === "REJECT" ||
-          !approveSelectionCode
-        }
-        titlename={"Approve QC (QC ADD)// เพิ่มข้อมูล"}
-        buttonText={"Approve"}
-        handlefunction={ApproveQcAdd}
-        handlereject={() => ComplaintReturn("APPROVE_QC")}
-        handleClose={handleClose}
-        buttonColor="success"
-        element={
-          <ExplaintBody
-            action="ApproveQcAdd"
-            handleOpenAdd={() => handleOnclickExplainApproveQc(dataelement)}
-            onApproveChange={(value) => {
-              setApproveSelectionCode(value?.lov_code ?? null);
-            }}
-            validateText={{
-              Follow_up_Date: followUpDateError,
-              ObsAnaly: obsAnalyError,
-              Tu: toolUseError,
-              Tuother: toolUseOtherError,
-              Rc: rootCauseError,
-              Dd: ddError,
-              Ddother: ddOtherError,
-              Ca: correctiveActionError,
-              Pap: preventiveActionPlanError,
-              QcDetail: qcDetailError,
-              QcNote: qcNoteError,
-              CloseDetail: closeDetailError,
-              CloseNote: closeNoteError,
-            }}
-            onQCDetailChange={(val) => {
-              setqcapprove_detail(val);
-              setQcDetailError(false);
-            }}
-            onQCNoteChange={(val) => {
-              setqcapprove_note(val);
-              setQcNoteError(false);
-            }}
-          />
-        }
-      />
-
-      {/* <FuncDialog
-        open={openComplainClose}
-        dialogWidth="xl"
-        openBottonHidden={true}
-        hideSaveDraft
-        hideReject={approveSelectionCode === "APPROVE" || !approveSelectionCode}
-        hideSaveSubmit={approveSelectionCode === "ADD" || approveSelectionCode === "REJECT" || !approveSelectionCode}
-        titlename={"Close (CLOSE READ) // ปิดรายการ"}
-        handlereject={() => ComplaintReturn("EXPLAIN")}
-        handleClose={handleClose}
-        buttonColor="success"
-        element={
-          <ComplaintBody
-            action="Close"
-            handleOnclickExplainView={handleOnclickExplainView}
-            handleOnclickComplainCloseAdd={handleOnclickComplainCloseAdd}
-          />
-        }
-      /> */}
-
-      {/* กดปุ่มจัดการ ดูข้อมูล */}
-      <FuncDialog
-        open={openReadClose}
-        dialogWidth="xl"
-        openBottonHidden={false}
-        titlename={"ReadClose // ดูรายละเอียด"}
-        handleClose={handleClose}
-        buttonColor="success"
-        element={
-          <ComplaintBody
-            action="ReadClose"
-            handleOpenAdd={() => handleOnclickExplainAdd(dataelement)}
-            handleOnclickExplainView={(item) =>
-              handleOnclickExplainView(item, "ReadClose")
-            }
-            handleOnclickComplainCloseAdd={handleOnclickComplainCloseAdd}
-          />
-        }
-      />
-
-      <FuncDialog
+        {/* <FuncDialog
         open={openComplainClose}
         dialogWidth="xl"
         openBottonHidden={false}
@@ -7003,103 +6936,300 @@ export default function Complaint() {
         }
       />
 
-      <FuncDialog
-        open={openComplainCloseAdd}
-        dialogWidth="xl"
-        openBottonHidden={true}
-        hideSaveDraft
-        hideReject={approveSelectionCode === "APPROVE" || !approveSelectionCode}
-        hideSaveSubmit={
-          approveSelectionCode === "ADD" ||
-          approveSelectionCode === "REJECT" ||
-          !approveSelectionCode
-        }
-        titlename={"Close (CLOSE ADD) // ปิดรายการ"}
-        buttonText={"CLOSE"}
-        handlefunction={CloseAdd}
-        handlereject={() => ComplaintReturn("EXPLAIN", "CLOSE")}
-        handleClose={handleClose}
-        buttonColor="success"
-        element={
-          <ExplaintBody
-            action="CloseAdd"
-            handleOpenAdd={() => handleOnclickComplainCloseAdd(dataelement)}
-            onApproveChange={(value) => {
-              setApproveSelectionCode(value?.lov_code ?? null);
-            }}
-            validateText={{
-              Follow_up_Date: followUpDateError,
-              ObsAnaly: obsAnalyError,
-              Tu: toolUseError,
-              Tuother: toolUseOtherError,
-              Rc: rootCauseError,
-              Dd: ddError,
-              Ddother: ddOtherError,
-              Ca: correctiveActionError,
-              Pap: preventiveActionPlanError,
-              QcDetail: qcDetailError,
-              QcNote: qcNoteError,
-              CloseDetail: closeDetailError,
-              CloseNote: closeNoteError,
-            }}
-            onCloseDetailChange={(val) => {
-              setclose_detail(val);
-              setCloseDetailError(false);
-            }}
-            onCloseNoteChange={(val) => {
-              setclose_note(val);
-              setCloseNoteError(false);
-            }}
-          />
-        }
-      />
+      {/* กดปุ่มจัดการ ดูข้อมูล */}
+        <FuncDialog
+          open={openReadClose}
+          dialogWidth="xl"
+          openBottonHidden={false}
+          titlename={"ReadClose // ดูรายละเอียด"}
+          handleClose={handleClose}
+          buttonColor="success"
+          element={
+            <ComplaintBody
+              action="ReadClose"
+              handleOpenAdd={() => handleOnclickExplainAdd(dataelement)}
+              handleOnclickExplainView={(item) =>
+                handleOnclickExplainView(item, "ReadClose")
+              }
+              handleOnclickComplainCloseAdd={handleOnclickComplainCloseAdd}
+            />
+          }
+        />
 
-      <FuncDialog
-        open={openCloseHistory}
-        dialogWidth="xl"
-        openBottonHidden={false}
-        titlename={"CloseHistory // ดูรายละเอียด"}
-        handleClose={handleClose}
-        buttonColor="success"
-        element={
-          <ComplaintBody
-            action="CloseHistory"
-            handleOpenAdd={() => handleOnclickComplainCloseAdd(dataelement)}
-            handleOnclickExplainView={(item) =>
-              handleOnclickExplainView(item, "CloseHistory")
-            }
-            // handleOnclickExplainApproveSc={handleOnclickExplainApproveSc}
-          />
-        }
-      />
+        <FuncDialog
+          open={openCloseHistory}
+          dialogWidth="xl"
+          openBottonHidden={false}
+          titlename={"CloseHistory // ดูรายละเอียด"}
+          handleClose={handleClose}
+          buttonColor="success"
+          element={
+            <ComplaintBody
+              action="CloseHistory"
+              handleOpenAdd={() => handleOnclickComplainCloseAdd(dataelement)}
+              handleOnclickExplainView={(item) =>
+                handleOnclickExplainView(item, "CloseHistory")
+              }
+              // handleOnclickExplainApproveSc={handleOnclickExplainApproveSc}
+            />
+          }
+        />
 
-      {/* =================== Dialog Sections =================== */}
+        {/* // ===================================================================================================== */}
+        {/* // FUNC DIALOG (Explain)(Explain Modal / LAYER 2) */}
+        {/* // ===================================================================================================== */}
 
-      <Grow in={successCardOpen} mountOnEnter unmountOnExit>
-        <Card
-          sx={{
-            position: "fixed",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            zIndex: 1500,
-            minWidth: 300,
-            bgcolor: "#e8f5e9",
-            boxShadow: 8,
-            borderRadius: 3,
-          }}
-        >
-          <CardContent sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-            <CheckCircleIcon color="success" fontSize="large" />
-            <Typography variant="body1" sx={{ flexGrow: 1 }}>
-              {successCardMessage}
-            </Typography>
-            <IconButton size="small" onClick={() => setSuccessCardOpen(false)}>
-              <CloseIcon />
-            </IconButton>
-          </CardContent>
-        </Card>
-      </Grow>
-    </>
-  );
+        {/* ------------------------------------------------------------------------------------------ */}
+        {/* ------------------------------------ For Status [SUBMITED] ------------------------------- */}
+        {/* ------------------------------------------------------------------------------------------ */}
+        <FuncDialog
+          open={openExplainAdd}
+          dialogWidth="xl"
+          openBottonHidden={true}
+          titlename={"[Explain] เพิ่มข้อมูล"}
+          buttonText={"Save & Submit"}
+          handleClose={() => handleOnclickCloseAddExplain(dataelement)}
+          handlefunction={ExplainAdd}
+          hideSaveDraft={true}
+          hideReject={true}
+          buttonColor="success"
+          element={<ExplaintBody action="ExplainAdd" />}
+        />
+
+        <FuncDialog
+          open={openExplainView}
+          dialogWidth="xl"
+          openBottonHidden={false}
+          titlename={"[Explain] ดูข้อมูล"}
+          handleClose={handleClose}
+          handlefunction={ExplainGet}
+          buttonColor="success"
+          element={
+            <ExplaintBody
+              complaint_status_lable={dataelement?.complaint_status_lable}
+              currentExplainForApproval={currentExplainForApproval}
+              action={
+                action.includes("Read") ? action : action + "Read"
+
+                // //ADD
+                // action == "Explain" ? "ExplainRead" // ✅
+                // : action == "ApproveSC" ? "ApproveScRead"
+                // : action == "ApproveQC" ? "ApproveQcRead"
+                // : action == "Close" ? "CloseRead"
+                // : action === "CloseHistory" ? "CloseRead"
+                // : "Action is Incorrect. (Please recheck in FuncDialog)"
+
+                // //ADD
+                // action == "Explain" ? "ExplainRead" // ✅
+                // : action == "ApproveSC" ? "ApproveScRead"
+                // : action == "ApproveQC" ? "ApproveQcRead"
+                // : action == "Close" ? "CloseRead"
+                // : action === "CloseHistory" ? "CloseRead"
+
+                // //READ
+                // : action == "ReadExplain" ? "ExplainRead"
+                // : action == "ReadApproveSC" ? "ApproveScRead" // ✅
+                // : action == "ReadApproveQC" ? "ApproveQcRead"
+                // : action == "ReadClose" ? "CloseRead"
+                // : "Action is Incorrect. (Please recheck in FuncDialog)"
+              }
+            />
+          }
+        />
+
+        <FuncDialog
+          open={openExplainApproveSc}
+          dialogWidth="xl"
+          openBottonHidden={true}
+          hideSaveDraft
+          hideReject={
+            approveSelectionCode === "APPROVE" || !approveSelectionCode
+          }
+          hideSaveSubmit={
+            approveSelectionCode === "ADD" ||
+            approveSelectionCode === "REJECT" ||
+            !approveSelectionCode
+          }
+          titlename={"Approve Section Head (SC ADD) // เพิ่มข้อมูล"}
+          buttonText={"Approve"}
+          handlefunction={ApproveScAdd}
+          handlereject={() => ComplaintReturn("EXPLAIN")}
+          handleClose={handleClose}
+          buttonColor="success"
+          element={
+            <ExplaintBody
+              action="ApproveScAdd"
+              handleOpenAdd={() => handleOnclickExplainApproveSc(dataelement)}
+              onApproveChange={(value) => {
+                setApproveSelectionCode(value?.lov_code ?? null);
+              }}
+            />
+          }
+        />
+
+        {/* ------------------------------------------------------------------------------------------ */}
+        {/* ------------------------------------------------------------------------------------------ */}
+        {/* ------------------------------------------------------------------------------------------ */}
+
+        <FuncDialog
+          open={openExplainApproveSc}
+          dialogWidth="xl"
+          openBottonHidden={true}
+          hideSaveDraft
+          hideReject={
+            approveSelectionCode === "APPROVE" || !approveSelectionCode
+          }
+          hideSaveSubmit={
+            approveSelectionCode === "ADD" ||
+            approveSelectionCode === "REJECT" ||
+            !approveSelectionCode
+          }
+          titlename={"Approve Section Head (SC ADD) // เพิ่มข้อมูล"}
+          buttonText={"Approve"}
+          handlefunction={ApproveScAdd}
+          handlereject={() => ComplaintReturn("EXPLAIN")}
+          handleClose={handleClose}
+          buttonColor="success"
+          element={
+            <ExplaintBody
+              action="ApproveScAdd"
+              handleOpenAdd={() => handleOnclickExplainApproveSc(dataelement)}
+              onApproveChange={(value) => {
+                setApproveSelectionCode(value?.lov_code ?? null);
+              }}
+            />
+          }
+        />
+
+        {/* QC ADD */}
+        <FuncDialog
+          open={openExplainApproveQc}
+          dialogWidth="xl"
+          openBottonHidden={true}
+          hideSaveDraft
+          hideReject={
+            approveSelectionCode === "APPROVE" || !approveSelectionCode
+          }
+          hideSaveSubmit={
+            approveSelectionCode === "ADD" ||
+            approveSelectionCode === "REJECT" ||
+            !approveSelectionCode
+          }
+          titlename={"Approve QC (QC ADD)// เพิ่มข้อมูล"}
+          buttonText={"Approve"}
+          handlefunction={ApproveQcAdd}
+          handlereject={() => ComplaintReturn("EXPLAIN")}
+          handleClose={handleClose}
+          buttonColor="success"
+          element={
+            <ExplaintBody
+              action="ApproveQcAdd"
+              handleOpenAdd={() => handleOnclickExplainApproveQc(dataelement)}
+              onApproveChange={(value) => {
+                setApproveSelectionCode(value?.lov_code ?? null);
+              }}
+              // validateText={{
+              //   QcDetail: qcDetailError,
+              //   QcNote: qcNoteError,
+              //   CloseDetail: closeDetailError,
+              //   CloseNote: closeNoteError,
+              // }}
+              onQCDetailChange={(val) => {
+                setqcapprove_detail(val);
+                setQcDetailError(false);
+              }}
+              onQCNoteChange={(val) => {
+                setqcapprove_note(val);
+                setQcNoteError(false);
+              }}
+            />
+          }
+        />
+
+        <FuncDialog
+          open={openComplainCloseAdd}
+          dialogWidth="xl"
+          openBottonHidden={true}
+          hideSaveDraft
+          hideReject={
+            approveSelectionCode === "APPROVE" || !approveSelectionCode
+          }
+          hideSaveSubmit={
+            approveSelectionCode === "ADD" ||
+            approveSelectionCode === "REJECT" ||
+            !approveSelectionCode
+          }
+          titlename={"Close (CLOSE ADD) // ปิดรายการ"}
+          buttonText={"CLOSE"}
+          handlefunction={CloseAdd}
+          handlereject={() => ComplaintReturn("EXPLAIN", "CLOSE")}
+          handleClose={handleClose}
+          buttonColor="success"
+          element={
+            <ExplaintBody
+              action="CloseAdd"
+              handleOpenAdd={() => handleOnclickComplainCloseAdd(dataelement)}
+              onApproveChange={(value) => {
+                setApproveSelectionCode(value?.lov_code ?? null);
+              }}
+              validateText={{
+                Follow_up_Date: followUpDateError,
+                ObsAnaly: obsAnalyError,
+                Tu: toolUseError,
+                Tuother: toolUseOtherError,
+                Rc: rootCauseError,
+                Dd: ddError,
+                Ddother: ddOtherError,
+                Ca: correctiveActionError,
+                Pap: preventiveActionPlanError,
+                QcDetail: qcDetailError,
+                QcNote: qcNoteError,
+                CloseDetail: closeDetailError,
+                CloseNote: closeNoteError,
+              }}
+              onCloseDetailChange={(val) => {
+                setclose_detail(val);
+                setCloseDetailError(false);
+              }}
+              onCloseNoteChange={(val) => {
+                setclose_note(val);
+                setCloseNoteError(false);
+              }}
+            />
+          }
+        />
+
+        {/* =================== Dialog Sections =================== */}
+
+        <Grow in={successCardOpen} mountOnEnter unmountOnExit>
+          <Card
+            sx={{
+              position: "fixed",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              zIndex: 1500,
+              minWidth: 300,
+              bgcolor: "#e8f5e9",
+              boxShadow: 8,
+              borderRadius: 3,
+            }}
+          >
+            <CardContent sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+              <CheckCircleIcon color="success" fontSize="large" />
+              <Typography variant="body1" sx={{ flexGrow: 1 }}>
+                {successCardMessage}
+              </Typography>
+              <IconButton
+                size="small"
+                onClick={() => setSuccessCardOpen(false)}
+              >
+                <CloseIcon />
+              </IconButton>
+            </CardContent>
+          </Card>
+        </Grow>
+      </>
+    );
+  };
 }
