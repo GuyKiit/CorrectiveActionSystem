@@ -19,6 +19,9 @@ export default defineConfig(({ mode }) => {
     build: {
       chunkSizeWarningLimit: 3000,      
       outDir, // Set the output directory dynamically
+      rollupOptions: {
+        input: '/index.html',
+      },
     },
     // esbuild: {
     //   drop: ["console", "debugger"],

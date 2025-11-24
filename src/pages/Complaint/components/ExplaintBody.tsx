@@ -177,6 +177,7 @@ export default function ExplaintBody({
   const isActionExplainApproveSc = action === "ApproveSC";
   const isActionExplainApproveScAdd = action === "ApproveSCAdd";
   const isActionExplainReadApproveSc = action === "ReadApproveSC";
+  const isActionExplainApproveScRead = action === "ApproveScRead";
   // =====================================================
   const isActionExplainApproveQc = action === "ApproveQC";
   const isActionExplainApproveQcAdd = action === "ApproveQCAdd";
@@ -1271,7 +1272,7 @@ export default function ExplaintBody({
     if (
       dataelement &&
       (action === "ExplainAdd" || action === "ExplainRead" || isActionReadExplain || action === "ApproveScAdd" || action === "ApproveQcAdd" || isActionCloseHistory
-        || isActionExplainReadApproveSc || isActionExplainReadApproveQc || isActionExplainApproveQcRead || isActionClose || isActionCloseAdd || isActionReadClose )
+        || isActionExplainReadApproveSc || isActionExplainApproveScRead || isActionExplainReadApproveQc || isActionExplainApproveQcRead || isActionClose || isActionCloseAdd || isActionReadClose )
     ) {
       // Set basic information
       setresponsible_name(
@@ -1710,6 +1711,7 @@ export default function ExplaintBody({
           isActionReadExplain ||
           isActionExplainRead ||
           isActionExplainReadApproveSc ||
+          isActionExplainApproveScRead ||
           isActionExplainReadApproveQc ||
           isActionReadClose ||
           isActionCloseHistory ||
@@ -1784,6 +1786,7 @@ export default function ExplaintBody({
                         isActionDelete ||
                         isActionExplainAdd ||
                         isActionExplainApproveScAdd ||
+                        isActionExplainApproveScRead ||
                         isActionExplainApproveQcAdd ||
                         isActionReadExplain || 
                         isActionExplainRead ||
@@ -1856,6 +1859,7 @@ export default function ExplaintBody({
                         isActionDelete ||
                         isActionExplainAdd ||
                         isActionExplainApproveScAdd ||
+                        isActionExplainApproveScRead ||
                         isActionExplainApproveQcAdd ||
                         isActionReadExplain || 
                         isActionExplainRead ||
@@ -1888,6 +1892,7 @@ export default function ExplaintBody({
                         isActionEdit ||
                         isActionDelete ||
                         isActionExplainApproveScAdd ||
+                        isActionExplainApproveScRead ||
                         isActionExplainApproveQcAdd ||
                         isActionReadExplain || 
                         isActionExplainRead ||
@@ -1989,6 +1994,7 @@ export default function ExplaintBody({
                                         isActionExplainRead ||
                                         isActionExplainApproveQcRead ||
                                         isActionExplainApproveScAdd ||
+                                        isActionExplainApproveScRead ||
                                         isActionExplainApproveQcAdd ||
                                         isActionCloseAdd ||
                                         isActionReadClose ||
@@ -2018,6 +2024,7 @@ export default function ExplaintBody({
                                         isActionDelete ||
                                         isActionReadExplain ||
                                         isActionExplainRead ||
+                                        isActionExplainApproveScRead ||
                                         isActionExplainApproveQcRead ||
                                         isActionCloseAdd ||
                                         isActionReadClose ||
@@ -2084,6 +2091,7 @@ export default function ExplaintBody({
                                         isActionExplainRead ||
                                         isActionExplainApproveQcRead ||
                                         isActionExplainApproveScAdd ||
+                                        isActionExplainApproveScRead ||
                                         isActionExplainApproveQcAdd ||
                                         isActionCloseAdd || 
                                         isActionReadClose ||
@@ -2117,6 +2125,7 @@ export default function ExplaintBody({
                                         isActionReadExplain ||
                                         isActionExplainRead ||
                                         isActionExplainApproveQcRead ||
+                                        isActionExplainApproveScRead ||
                                         isActionCloseAdd ||
                                         isActionReadClose ||
                                         isActionCloseHistory
@@ -2189,6 +2198,7 @@ export default function ExplaintBody({
                                   isActionDelete ||
                                   isActionReadExplain ||
                                   isActionExplainRead ||
+                                  isActionExplainApproveScRead ||
                                   isActionExplainApproveQcRead ||
                                   isActionCloseAdd ||
                                   isActionReadClose ||
@@ -2261,6 +2271,7 @@ export default function ExplaintBody({
                                   isActionDelete ||
                                   isActionReadExplain ||
                                   isActionExplainRead ||
+                                  isActionExplainApproveScRead || 
                                   isActionExplainApproveQcRead ||
                                   isActionCloseAdd ||
                                   isActionReadClose ||
@@ -2333,6 +2344,7 @@ export default function ExplaintBody({
                                   isActionDelete ||
                                   isActionReadExplain ||
                                   isActionExplainRead ||
+                                  isActionExplainApproveScRead ||
                                   isActionExplainApproveQcRead ||
                                   isActionCloseAdd ||
                                   isActionReadClose ||
@@ -2401,7 +2413,7 @@ export default function ExplaintBody({
                                         ? false
                                         : true
                                 }
-                                readonly={isActionRead || isActionReadExplain || isActionExplainRead || isActionExplainApproveQcRead|| isActionDelete || isActionExplainApproveScAdd || isActionCloseAdd || isActionReadClose || isActionCloseHistory}
+                                readonly={isActionRead || isActionReadExplain || isActionExplainRead || isActionExplainApproveQcRead|| isActionDelete || isActionExplainApproveScAdd || isActionExplainApproveScRead || isActionCloseAdd || isActionReadClose || isActionCloseHistory}
                               />
                             </Grid>
                           </Grid>
