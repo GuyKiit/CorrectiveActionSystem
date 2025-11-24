@@ -164,9 +164,14 @@ export default function DepartmentSettingBody({
 
     const [openConfirm, setOpenConfirm] = useState(false);
     const [deleteIndex, setDeleteIndex] = useState<number | null>(null);
-    const [approveState, setApproveState] = useState<Record<string, any>>({});
-    const [validateStepState, setValidateStepState] = useState<{ [step: string]: boolean }>({});
-    const stepValidation = validateStep || validateStepState;
+    // const [validateText, setValidateText] = useState({
+    //     Company_Area: false,
+    //     Domain_Area: false,
+    //     Department_Area: false,
+    //     Email_Area: false,
+    //     Username_Area: false,
+    //     step: false,
+    // });
     const {
         dataelement,
         dept_id,
@@ -530,8 +535,8 @@ export default function DepartmentSettingBody({
                 item.lov7 === dept_domain?.domain_id
         );
     }, [datastatus, dept_domain]);
-
-    console.log("🚀 validateText.Company_Area (Body) =", validateText?.Company_Area);
+    
+console.log("🚀 validateText.Company_Area (Body) =", validateText?.Company_Area);
 
 
     return (
@@ -613,8 +618,8 @@ export default function DepartmentSettingBody({
                                 }}
                                 readonly={isActionRead || isActionDelete}
                                 Validate={validateText?.Company_Area || false}
-                                validateTextLable={validateText?.Company_Area ? "กรุณาเลือกบริษัท (Company)" : ""}
-
+                                validateTextLable={validateText?.Company_Area? "กรุณาเลือกบริษัท (Company)": ""}
+                                
                             />
                         </Grid>
                         <Grid size={4}>
@@ -821,11 +826,6 @@ export default function DepartmentSettingBody({
                                                     dataelement?.deptApproveSetup?.find((i: any) => i.step === stepKey)?.id;
 
                                                 const newVal = { ...val, deptApproveSetup_id: stepId || null };
-
-                                                setApproveState(prev => ({ ...prev, [stepKey]: newVal }));
-
-                                                // Clear validation
-                                                setValidateStepState(prev => ({ ...prev, [stepKey]: false }));
                                                 console.log(`🎯 step ${stepKey} → deptApproveSetup_id:`, stepId);
 
                                                 setValueMap[stepKey]?.(newVal);

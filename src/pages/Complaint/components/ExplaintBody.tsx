@@ -171,20 +171,43 @@ export default function ExplaintBody({
   // =====================================================
   const isActionExplain = action === "Explain";
   const isActionExplainAdd = action === "ExplainAdd";
+  const isActionReadExplain = action === "ReadExplain";
   const isActionExplainRead = action === "ExplainRead";
   // =====================================================
   const isActionExplainApproveSc = action === "ApproveSC";
-  const isActionExplainApproveScAdd = action === "ApproveScAdd";
-  const isActionExplainReadApproveSc = action === "ReadApproveSc";
+  const isActionExplainApproveScAdd = action === "ApproveSCAdd";
+  const isActionExplainReadApproveSc = action === "ReadApproveSC";
   // =====================================================
   const isActionExplainApproveQc = action === "ApproveQC";
-  const isActionExplainApproveQcAdd = action === "ApproveQcAdd";
-  const isActionExplainReadApproveQc = action === "ReadApproveQc";
+  const isActionExplainApproveQcAdd = action === "ApproveQCAdd";
+  const isActionExplainReadApproveQc = action === "ReadApproveQC";
+  const isActionExplainApproveQcRead = action === "ApproveQcRead";
   // =====================================================
   const isActionClose = action === "Close";
   const isActionCloseAdd = action === "CloseAdd";
   const isActionReadClose = action === "ReadClose";
-  const isActionCloseHistory = action === "CloseHistory";
+  const isActionCloseHistory = action === "CloseHistoryRead";
+  // const isActionRead = action === "Read" || isViewMode;
+  // const isActionAdd = action === "Add";
+  // const isActionEdit = action === "Edit";
+  // const isActionDelete = action === "Delete";
+  // // =====================================================
+  // const isActionExplain = action === "Explain";
+  // const isActionExplainAdd = action === "ExplainAdd";
+  // const isActionReadExplain = action === "ExplainRead";
+  // // =====================================================
+  // const isActionExplainApproveSc = action === "ApproveSC";
+  // const isActionExplainApproveScAdd = action === "ApproveScAdd";
+  // const isActionExplainReadApproveSc = action === "ReadApproveSc";
+  // // =====================================================
+  // const isActionExplainApproveQc = action === "ApproveQC";
+  // const isActionExplainApproveQcAdd = action === "ApproveQcAdd";
+  // const isActionExplainReadApproveQc = action === "ReadApproveQc";
+  // // =====================================================
+  // const isActionClose = action === "Close";
+  // const isActionCloseAdd = action === "CloseAdd";
+  // const isActionReadClose = action === "ReadClose";
+  // const isActionCloseHistory = action === "CloseHistory";
 
   // ตั้งค่า isROOTHidden เป็น false เมื่ออยู่ในโหมดดูข้อมูล
   React.useEffect(() => {
@@ -1247,8 +1270,8 @@ export default function ExplaintBody({
 
     if (
       dataelement &&
-      (action === "ExplainAdd" || action === "ExplainRead" || action === "ApproveScAdd" || action === "ApproveQcAdd" || isActionCloseHistory
-        || isActionExplainReadApproveSc || isActionExplainReadApproveQc || isActionClose || isActionCloseAdd || isActionReadClose)
+      (action === "ExplainAdd" || action === "ExplainRead" || isActionReadExplain || action === "ApproveScAdd" || action === "ApproveQcAdd" || isActionCloseHistory
+        || isActionExplainReadApproveSc || isActionExplainReadApproveQc || isActionExplainApproveQcRead || isActionClose || isActionCloseAdd || isActionReadClose )
     ) {
       // Set basic information
       setresponsible_name(
@@ -1684,6 +1707,7 @@ export default function ExplaintBody({
       {/* ====== Dynamic ฟอร์ม สำหรับเลือกประเภทเอกสาร ====== */}
       {!isFormHidden &&
         (isActionExplainAdd ||
+          isActionReadExplain ||
           isActionExplainRead ||
           isActionExplainReadApproveSc ||
           isActionExplainReadApproveQc ||
@@ -1691,6 +1715,7 @@ export default function ExplaintBody({
           isActionCloseHistory ||
           isActionExplainApproveScAdd ||
           isActionExplainApproveQcAdd ||
+          isActionExplainApproveQcRead ||
           isActionCloseAdd) && (
           <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>
             <label className="sarabun-regular-datatable">
@@ -1760,7 +1785,12 @@ export default function ExplaintBody({
                         isActionExplainAdd ||
                         isActionExplainApproveScAdd ||
                         isActionExplainApproveQcAdd ||
-                        isActionExplainRead || isActionCloseAdd
+                        isActionReadExplain || 
+                        isActionExplainRead ||
+                        isActionExplainApproveQcRead ||
+                        isActionCloseAdd ||
+                        isActionReadClose ||
+                        isActionCloseHistory
                       }
                     />
                   </Grid>
@@ -1827,7 +1857,12 @@ export default function ExplaintBody({
                         isActionExplainAdd ||
                         isActionExplainApproveScAdd ||
                         isActionExplainApproveQcAdd ||
-                        isActionExplainRead || isActionCloseAdd
+                        isActionReadExplain || 
+                        isActionExplainRead ||
+                        isActionExplainApproveQcRead ||
+                        isActionCloseAdd ||
+                        isActionReadClose ||
+                        isActionCloseHistory
                       }
                     />
                   </Grid>
@@ -1854,7 +1889,12 @@ export default function ExplaintBody({
                         isActionDelete ||
                         isActionExplainApproveScAdd ||
                         isActionExplainApproveQcAdd ||
-                        isActionExplainRead || isActionCloseAdd
+                        isActionReadExplain || 
+                        isActionExplainRead ||
+                        isActionExplainApproveQcRead ||
+                        isActionCloseAdd ||
+                        isActionReadClose ||
+                        isActionCloseHistory
                       }
                     />
                   </Grid>
@@ -1945,10 +1985,14 @@ export default function ExplaintBody({
                                       readonly={
                                         isActionRead ||
                                         isActionDelete ||
+                                        isActionReadExplain ||
                                         isActionExplainRead ||
+                                        isActionExplainApproveQcRead ||
                                         isActionExplainApproveScAdd ||
                                         isActionExplainApproveQcAdd ||
-                                        isActionCloseAdd
+                                        isActionCloseAdd ||
+                                        isActionReadClose ||
+                                        isActionCloseHistory
                                       }
                                     />
                                   </Grid>
@@ -1972,8 +2016,12 @@ export default function ExplaintBody({
                                       readonly={
                                         isActionRead ||
                                         isActionDelete ||
+                                        isActionReadExplain ||
                                         isActionExplainRead ||
-                                        isActionCloseAdd
+                                        isActionExplainApproveQcRead ||
+                                        isActionCloseAdd ||
+                                        isActionReadClose ||
+                                        isActionCloseHistory
                                       }
                                     />
                                   )}
@@ -2032,10 +2080,14 @@ export default function ExplaintBody({
                                       readonly={
                                         isActionRead ||
                                         isActionDelete ||
+                                        isActionReadExplain ||
                                         isActionExplainRead ||
+                                        isActionExplainApproveQcRead ||
                                         isActionExplainApproveScAdd ||
                                         isActionExplainApproveQcAdd ||
-                                        isActionCloseAdd
+                                        isActionCloseAdd || 
+                                        isActionReadClose ||
+                                        isActionCloseHistory
                                       }
                                     />
                                   </Grid>
@@ -2062,8 +2114,12 @@ export default function ExplaintBody({
                                       readonly={
                                         isActionRead ||
                                         isActionDelete ||
+                                        isActionReadExplain ||
                                         isActionExplainRead ||
-                                        isActionCloseAdd
+                                        isActionExplainApproveQcRead ||
+                                        isActionCloseAdd ||
+                                        isActionReadClose ||
+                                        isActionCloseHistory
                                       }
                                     />
                                   )}
@@ -2131,8 +2187,12 @@ export default function ExplaintBody({
                                 readonly={
                                   isActionRead ||
                                   isActionDelete ||
+                                  isActionReadExplain ||
                                   isActionExplainRead ||
-                                  isActionCloseAdd
+                                  isActionExplainApproveQcRead ||
+                                  isActionCloseAdd ||
+                                  isActionReadClose ||
+                                  isActionCloseHistory
                                 }
                               />
                             </Grid>
@@ -2199,8 +2259,12 @@ export default function ExplaintBody({
                                 readonly={
                                   isActionRead ||
                                   isActionDelete ||
+                                  isActionReadExplain ||
                                   isActionExplainRead ||
-                                  isActionCloseAdd
+                                  isActionExplainApproveQcRead ||
+                                  isActionCloseAdd ||
+                                  isActionReadClose ||
+                                  isActionCloseHistory
                                 }
                               />
                             </Grid>
@@ -2267,8 +2331,12 @@ export default function ExplaintBody({
                                 readonly={
                                   isActionRead ||
                                   isActionDelete ||
+                                  isActionReadExplain ||
                                   isActionExplainRead ||
-                                  isActionCloseAdd
+                                  isActionExplainApproveQcRead ||
+                                  isActionCloseAdd ||
+                                  isActionReadClose ||
+                                  isActionCloseHistory
                                 }
                               />
                             </Grid>
@@ -2333,7 +2401,7 @@ export default function ExplaintBody({
                                         ? false
                                         : true
                                 }
-                                readonly={isActionRead || isActionExplainRead || isActionDelete || isActionExplainApproveScAdd || isActionCloseAdd}
+                                readonly={isActionRead || isActionReadExplain || isActionExplainRead || isActionExplainApproveQcRead|| isActionDelete || isActionExplainApproveScAdd || isActionCloseAdd || isActionReadClose || isActionCloseHistory}
                               />
                             </Grid>
                           </Grid>
@@ -2565,7 +2633,7 @@ export default function ExplaintBody({
                                           </IconButton>
 
                                           {/* //ปุ่มดาวน์โหลดไฟล์ */}
-                                          {isActionExplainRead && (
+                                          {isActionReadExplain && (
                                             <IconButton
                                               color="primary"
                                               onClick={async () => {
@@ -2641,9 +2709,11 @@ export default function ExplaintBody({
         (isActionExplainApproveScAdd ||
           isActionExplainApproveQcAdd ||
           isActionCloseAdd ||
+          isActionReadExplain ||
           isActionExplainRead ||
           (isActionExplainReadApproveSc && isApproveScBoxHidden) ||
           (isActionExplainReadApproveQc && isApproveQcBoxHidden) ||
+          isActionExplainApproveQcRead ||
           isActionCloseHistory ||
           isActionReadClose
         ))
@@ -2857,10 +2927,14 @@ export default function ExplaintBody({
                                   label={item.lov1}
                                   disabled={
                                     isActionRead ||
+                                    isActionReadExplain ||
                                     isActionExplainRead ||
+                                    isActionExplainApproveQcRead ||
                                     isActionDelete ||
                                     isActionExplainApproveQcAdd ||
-                                    isActionCloseAdd
+                                    isActionCloseAdd ||
+                                    isActionReadClose ||
+                                    isActionCloseHistory
                                   }
                                   sx={{
                                     m: 1,
@@ -2937,7 +3011,7 @@ export default function ExplaintBody({
                                     bgcolorTextField={
                                       isActionExplainApproveScAdd ? false : true
                                     }
-                                    readonly={isActionRead || isActionExplainRead || isActionDelete || isActionExplainApproveQcAdd || isActionCloseAdd}
+                                    readonly={isActionRead || isActionReadExplain || isActionExplainRead || isActionDelete || isActionExplainApproveQcAdd || isActionExplainApproveQcRead || isActionCloseAdd || isActionReadClose || isActionCloseHistory}
                                   />
                                 </Grid>
                               </Grid>
@@ -2994,7 +3068,7 @@ export default function ExplaintBody({
                                     bgcolorTextField={
                                       isActionExplainApproveScAdd ? false : true
                                     }
-                                    readonly={isActionRead || isActionExplainRead || isActionDelete || isActionExplainApproveQcAdd || isActionCloseAdd}
+                                    readonly={isActionRead || isActionReadExplain || isActionExplainRead || isActionDelete || isActionExplainApproveQcAdd || isActionExplainApproveQcRead || isActionCloseAdd || isActionReadClose || isActionCloseHistory}
                                   />
                                 </Grid>
                               </Grid>
@@ -3013,6 +3087,7 @@ export default function ExplaintBody({
       {/* //ส่วนของ Qc */}
       {(isActionExplainApproveQcAdd ||
         isActionExplainReadApproveQc ||
+        isActionReadExplain ||
         isActionExplainRead ||
         isActionReadClose ||
         isActionCloseHistory ||
@@ -3226,9 +3301,12 @@ export default function ExplaintBody({
                                   label={item.lov1}
                                   disabled={
                                     isActionRead ||
+                                    isActionReadExplain ||
                                     isActionExplainRead ||
                                     isActionDelete ||
-                                    isActionCloseAdd
+                                    isActionCloseAdd ||
+                                    isActionReadClose ||
+                                    isActionCloseHistory
                                   }
                                   sx={{
                                     m: 1,
@@ -3304,7 +3382,7 @@ export default function ExplaintBody({
                                     }
                                   }}
                                   bgcolorTextField={isActionExplainApproveQcAdd ? false : true}
-                                  readonly={isActionRead || isActionExplainRead || isActionDelete || isActionCloseAdd }
+                                  readonly={isActionRead || isActionReadExplain || isActionExplainRead || isActionDelete || isActionCloseAdd || isActionReadClose || isActionCloseHistory}
                                   Validate={validateText?.QcDetail || false}
                                   validateTextLable={
                                   validateText?.QcDetail
@@ -3371,7 +3449,7 @@ export default function ExplaintBody({
                                     }
                                   }}                        
                                   bgcolorTextField={isActionExplainApproveQcAdd ? false : true}
-                                  readonly={isActionRead || isActionExplainRead || isActionDelete || isActionCloseAdd || isActionExplainRead}
+                                  readonly={isActionRead || isActionReadExplain || isActionExplainRead || isActionDelete || isActionCloseAdd || isActionReadClose || isActionCloseHistory || isActionReadExplain}
                                   Validate={validateText?.QcNote || false}
                                   validateTextLable={
                                   validateText?.QcNote
