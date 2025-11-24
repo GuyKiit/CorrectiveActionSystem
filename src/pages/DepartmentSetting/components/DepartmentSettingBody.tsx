@@ -62,7 +62,12 @@ import { mas_DepartmentDomainGet, mas_DomainGet } from "../../../service/mas/lov
 // pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
 type Validate = {
-    Product_Group: boolean;
+    Company_Area: boolean;
+    Domain_Area: boolean;
+    Department_Area: boolean;
+    Email_Area: boolean;
+    Username_Area: boolean;
+    [step: string]: boolean;
 };
 
 type detail = {
@@ -97,8 +102,15 @@ interface DepartmentSettingBody {
     dataelement?: any;
     validateText?: Validate;
     validateDetailText?: { [index: number]: detail };
+    validateStep?: { [step: string]: boolean };
     onBlocksChange?: (blocks: Block[]) => void;
     handleOpenAdd?: () => void;
+    onCompanyAreaChange?: (val: any) => void;
+    onDomainAreaChange?: (val: any) => void;
+    onDepartmentAreaChange?: (val: any) => void;
+    onEmailAreaChange?: (val: any) => void;
+    onSectionAreaChange?: (val: any) => void;
+    onQcAreaChange?: (val: any) => void;
 }
 
 type LovType = {
@@ -129,9 +141,16 @@ export default function DepartmentSettingBody({
     readonlyTextField,
     bgcolorTextField,
     validateText,
+    validateStep,
     onBlocksChange,
     validateDetailText,
     handleOpenAdd,
+    onCompanyAreaChange,
+    onDomainAreaChange,
+    onDepartmentAreaChange,
+    onEmailAreaChange,
+    onSectionAreaChange,
+    onQcAreaChange,
 }: DepartmentSettingBody) {
     const isActionRead = action === "Read" || action === "ExplainRead";
     const isActionAdd = action === "Add";
@@ -145,7 +164,9 @@ export default function DepartmentSettingBody({
 
     const [openConfirm, setOpenConfirm] = useState(false);
     const [deleteIndex, setDeleteIndex] = useState<number | null>(null);
-
+    const [approveState, setApproveState] = useState<Record<string, any>>({});
+    const [validateStepState, setValidateStepState] = useState<{ [step: string]: boolean }>({});
+    const stepValidation = validateStep || validateStepState;
     const {
         dataelement,
         dept_id,
@@ -510,6 +531,8 @@ export default function DepartmentSettingBody({
         );
     }, [datastatus, dept_domain]);
 
+    console.log("🚀 validateText.Company_Area (Body) =", validateText?.Company_Area);
+
 
     return (
         <Box
@@ -582,13 +605,16 @@ export default function DepartmentSettingBody({
                                 options={company}
                                 column="company_name"
                                 setvalue={(val) => {
-                                    // console.log("Company selected:", val?.company_name);
-                                    handleCompanyChange(val);
+                                    console.log("เลือกบริษัท:", val);
+                                    console.log("🚀 validateText.Company_Area (Body) =", validateText?.Company_Area);
                                     setdept_company(val);
-                                    // console.log("cccccc", val);
-
+                                    handleCompanyChange(val);
+                                    onCompanyAreaChange?.(val);
                                 }}
                                 readonly={isActionRead || isActionDelete}
+                                Validate={validateText?.Company_Area || false}
+                                validateTextLable={validateText?.Company_Area ? "กรุณาเลือกบริษัท (Company)" : ""}
+
                             />
                         </Grid>
                         <Grid size={4}>
@@ -604,14 +630,21 @@ export default function DepartmentSettingBody({
                                     console.log("Domain selected:", val?.domain_name);
                                     setdept_domain(val);
                                     handleDomainChange(val);
-                                    console.log("😋dddddd", val);
-                                    console.log("😋 datastatusconfig", datastatusconfig);
-
+                                    if (onDomainAreaChange) {
+                                        onDomainAreaChange(val);
+                                    }
                                 }}
+
                                 bgcolorTextField={
                                     isActionAdd ? false : isActionEdit ? false : true
                                 }
                                 readonly={isActionRead || isActionDelete || !dept_company}
+                                Validate={validateText?.Domain_Area || false}
+                                validateTextLable={
+                                    validateText?.Domain_Area
+                                        ? "กรุณาเลือกโดเมน (Domain)"
+                                        : ""
+                                }
                             />
                         </Grid>
 
@@ -625,17 +658,22 @@ export default function DepartmentSettingBody({
                                 options={department}
                                 column="department_name"
                                 setvalue={(val) => {
-                                    console.log("Department selected:", val?.department_name);
-                                    console.log("Department selected:", val?.department_id);
-                                    console.log("Department selected:", val?.domain_dept_id);
                                     handleDepartmentChange(val);
                                     setdomain_dept_id(val);
-                                    console.log("😋aaaaaa", val);
+                                    if (onDepartmentAreaChange) {
+                                        onDepartmentAreaChange(val);
+                                    }
                                 }}
                                 bgcolorTextField={
                                     isActionAdd ? false : isActionEdit ? false : true
                                 }
                                 readonly={isActionRead || isActionDelete || !dept_domain}
+                                Validate={validateText?.Department_Area || false}
+                                validateTextLable={
+                                    validateText?.Department_Area
+                                        ? "กรุณาเลือกแผนก (Department)"
+                                        : ""
+                                }
                             />
                         </Grid>
                         <Grid size={12}>
@@ -645,10 +683,18 @@ export default function DepartmentSettingBody({
                                 labelName="อีเมล (Email)"
                                 placeholderlabel="กรุณากรอกอีเมล"
                                 onchange={(e) => {
-                                    console.log("Email changed:", e?.dept_email)
                                     setdept_email(e)
+                                    if (onEmailAreaChange) {
+                                        onEmailAreaChange(e);
+                                    }
                                 }}
                                 readonly={isActionRead || isActionDelete}
+                                Validate={validateText?.Email_Area || false}
+                                validateTextLable={
+                                    validateText?.Email_Area
+                                        ? "กรุณากรอกรายละเอียด (Email)"
+                                        : ""
+                                }
                             />
                         </Grid>
                     </Grid>
@@ -753,11 +799,11 @@ export default function DepartmentSettingBody({
                                             options={
                                                 Array.isArray(username)
                                                     ? username.map((u) => ({
-                                                          ...u,
-                                                          display_name: u.employee_username
-                                                              ? `${u.fullname_th || u.fullname_en || ""} (${u.employee_username})`
-                                                              : `${u.fullname_th || u.fullname_en || ""}`,
-                                                      }))
+                                                        ...u,
+                                                        display_name: u.employee_username
+                                                            ? `${u.fullname_th || u.fullname_en || ""} (${u.employee_username})`
+                                                            : `${u.fullname_th || u.fullname_en || ""}`,
+                                                    }))
                                                     : []
                                             }
                                             column="display_name"
@@ -775,12 +821,23 @@ export default function DepartmentSettingBody({
                                                     dataelement?.deptApproveSetup?.find((i: any) => i.step === stepKey)?.id;
 
                                                 const newVal = { ...val, deptApproveSetup_id: stepId || null };
+
+                                                setApproveState(prev => ({ ...prev, [stepKey]: newVal }));
+
+                                                // Clear validation
+                                                setValidateStepState(prev => ({ ...prev, [stepKey]: false }));
                                                 console.log(`🎯 step ${stepKey} → deptApproveSetup_id:`, stepId);
 
                                                 setValueMap[stepKey]?.(newVal);
                                             }}
                                             bgcolorTextField={action === "Add" ? false : isActionEdit ? false : true}
                                             readonly={isActionRead || isActionDelete || !dept_domain}
+                                            Validate={validateStep?.[stepKey] || false}
+                                            validateTextLable={
+                                                validateStep?.[stepKey]
+                                                    ? "กรุณาเลือกชื่อผู้อนุมัติ"
+                                                    : ""
+                                            }
                                         />
                                     </Grid>
                                 </Grid>

@@ -168,6 +168,9 @@ export default function DepartmentSetting() {
     step,
     sectionApprove,
     qcApprove,
+    dept_company,
+    dept_domain,
+    
 
     // Setter Functions
     setdataelement,
@@ -245,8 +248,7 @@ export default function DepartmentSetting() {
     username_search: "",
     company_search: "",
     domain_search: "",
-    department_search: "",
-    Email: "",
+    department_search: ""
   });
   const [open, setOpen] = React.useState(false);
   const [dataComplaintType, setdataComplaintType] = useState<LovType[]>([]);
@@ -265,21 +267,13 @@ export default function DepartmentSetting() {
   // UTILITY FUNCTIONS (from index.tsx and ComplaintRead.tsx)
   // =====================================================================================================
 
-  const [reportTypeError, setReportTypeError] = useState(false);
-  const [respondentDepartmentError, setRespondentDepartmentError] = useState(false);
-  const [dateOfDetectionError, setDateOfDetectionError] = useState(false);
+  const [companyAreaError, setCompanyAreaError] = useState(false);
+  const [domainAreaError, setDomainAreaError] = useState(false);
   const [departmentAreaError, setDepartmentAreaError] = useState(false);
-  const [productNameError, setProductNameError] = useState(false);
-  const [lotNoError, setLotNoError] = useState(false);
-  const [emailError, setEmailError] = useState(false);
-  const [complaintTypeError, setComplaintTypeError] = useState(false);
-  const [otherTypeError, setOtherTypeError] = useState(false);
-  const [complaintRsError, setComplaintRsError] = useState(false);
-  const [otherRsError, setOtherRsError] = useState(false);
-  const [clauseRsError, setClauseRsError] = useState(false);
-  const [detailError, setDetailError] = useState(false);
-  const [priorityError, setPriorityError] = useState(false);
-
+  const [emailAreaError, setEmailAreaError] = useState(false);
+  const [usernameAreaError, setUsernameAreaError] = useState(false);
+  const [stepAreaError, setStepAreaError] = useState(false);
+  
   // For On-Off Calling Function Log
   const [isCallFuncLogOn] = useState(true);
 
@@ -291,6 +285,47 @@ export default function DepartmentSetting() {
 
   };
 
+  // Function - Validate before Add Complaint
+    const validateBeforeAdd = (): boolean => {
+      if (isCallFuncLogOn)
+        console.log(
+          "🕑 ",
+          dayjs().format("HH:mm:ss.SSS"),
+          " [Calling Function]  :  validateBeforeAdd"
+        );
+      let valid = true;
+      // Clear ALL validation errors before validation
+      setCompanyAreaError(false);
+      setDomainAreaError(false);
+      setDepartmentAreaError(false);
+      setEmailAreaError(false);
+      setStepAreaError(false);
+    
+
+    // Validate 
+    if (!dept_company || !dept_company.company_id) {
+      setCompanyAreaError(true);
+      valid = false;
+    }
+
+    if (!dept_domain || !dept_domain.domain_id) {
+      setDomainAreaError(true);
+      valid = false;
+    }
+
+    if (!domain_dept_id || !domain_dept_id.department_id) {
+      setDepartmentAreaError(true);
+      valid = false;
+    }
+
+    if (!dept_email || dept_email.trim() === "") {
+      setEmailAreaError(true);
+      valid = false;
+    }
+
+    return valid;
+  };
+
   // Reset Form Function (from index.tsx)
   const resetForm = () => {
     setdept_company("");
@@ -299,6 +334,11 @@ export default function DepartmentSetting() {
     setdept_email("");
     setsectionApprove("");
     setqcApprove("");
+
+    setCompanyAreaError(false);
+    setDomainAreaError(false);
+    setDepartmentAreaError(false);
+    setEmailAreaError(false);
   };
 
   // Event Handlers =========================================================
@@ -601,8 +641,8 @@ export default function DepartmentSetting() {
         const responseData: any = [];
         if (Array.isArray(response.data)) {
           response.data.forEach((el: any) => {
-            console.log("#################el",el);
-            
+            console.log("#################el", el);
+
             const ACTION = (
               <ActionManageCell
                 hadleOnclickMenu={(name: any) => {
@@ -616,29 +656,29 @@ export default function DepartmentSetting() {
                   } else if (name === "DepartmentDelete") {
                     // DepartmentDomainGet("Delete");
                     handleOnclickDepartmentSettingDelete(el);
-                  } 
+                  }
                 }}
-              // hiddenEdit={el.complaint_status_label == 'SUBMIT'}
+                // hiddenEdit={el.complaint_status_label == 'SUBMIT'}
 
-              // For show menu function from [DepartmentSetting] menu 
-              hiddenDepartmentAdd={true}
-              hiddenDepartmentView={false}
-              hiddenDepartmentEdit={false}
-              hiddenDepartmentDelete={false}
+                // For show menu function from [DepartmentSetting] menu 
+                hiddenDepartmentAdd={true}
+                hiddenDepartmentView={false}
+                hiddenDepartmentEdit={false}
+                hiddenDepartmentDelete={false}
 
-              // For hidden menu function from [Complaint] menu
-              hiddenRead={true}
-              hiddenEdit={true}
-              hiddenDelete={true}
-              hiddenExplain={true}
-              hiddenClose={true}
+                // For hidden menu function from [Complaint] menu
+                hiddenRead={true}
+                hiddenEdit={true}
+                hiddenDelete={true}
+                hiddenExplain={true}
+                hiddenClose={true}
 
-              // For hidden menu function READ from [Complaint Read] menu
-              hiddenReadExplain={true}
-              hiddenReadApproveSC={true}
-              hiddenReadApproveQC={true}
-              hiddenReadClose={true}
-              hiddenCloseHistory={true}
+                // For hidden menu function READ from [Complaint Read] menu
+                hiddenReadExplain={true}
+                hiddenReadApproveSC={true}
+                hiddenReadApproveQC={true}
+                hiddenReadClose={true}
+                hiddenCloseHistory={true}
               />
             );
             el.ACTION = ACTION;
@@ -918,9 +958,9 @@ export default function DepartmentSetting() {
   const DepartmentSettingAdd = async () => {
     if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  DepartmentSettingAdd");
 
-    // if (!validateBeforeAdd()) {
-    //   return;
-    // }
+    if (!validateBeforeAdd()) {
+      return;
+    }
 
     const tempid = uuidv4();
 
@@ -1204,18 +1244,17 @@ export default function DepartmentSetting() {
   };
 
   // Search Handlers
-  // const handleCloseSearch = () => {
-  //   if (isCallFuncLogOn) //console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  handleCloseSearch");
-  //   setTextNameSearch({
-  //     username_search: "",
-  //     company_search: "",
-  //     department_search: "",
-  //     domain_search: "",
-  //     Email: "",
-  //   });
-  //   // Complaint_Get()
-  //   // DeptSearchGet();
-  // };
+  const handleCloseSearch = () => {
+    if (isCallFuncLogOn) //console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  handleCloseSearch");
+      setTextNameSearch({
+        username_search: "",
+        company_search: "",
+        department_search: "",
+        domain_search: ""
+      });
+    // Complaint_Get()
+    // DeptSearchGet();
+  };
 
   // Close Dialog Handler
   const handleClose = () => {
@@ -1406,14 +1445,14 @@ export default function DepartmentSetting() {
               colorname={"primary"}
             />
           </Grid>
-          {/* <Grid>
+          <Grid>
             <FullWidthButton
-              labelName={"รีเซท"}
+              labelName={"รีเซ็ต"}
               handleonClick={handleCloseSearch}
               variant_text="outlined"
               colorname={"inherit"}
             />
-          </Grid> */}
+          </Grid>
         </Grid>
       </Box>
 
@@ -1469,88 +1508,34 @@ export default function DepartmentSetting() {
         element={
           <DepartmentSettingBody
             action="Add"
-          //   // onBlocksChange={(data) => setComplaintBlocks(data)}
-          //   validateDetailText={blockValidateErrors}
-          //   handleOpenAdd={handleOpenAddList}
-          //   validateText={{
-          //     Product_Group: false,
-          //     Report_Type: reportTypeError,
-          //     Respondent_Department: false,
-          //     Date_of_Detection: dateOfDetectionError,
-          //     Department_Area: departmentAreaError,
-          //     Product_Name: productNameError,
-          //     Lot_No: lotNoError,
-          //     Email: emailError,
-          //     Complaint_Type: complaintTypeError,
-          //     Other_Type: otherTypeError,
-          //     Complaint_Rs: complaintRsError,
-          //     Other_Rs: otherRsError,
-          //     Clause_Rs: clauseRsError,
-          //     Detail: detailError,
-          //     Priority: priorityError,
-          //   }}
-          //   onReportTypeChange={(val) => {
-          //     setdataReportTypeValue(val);
-          //     setReportTypeError(false);
-          //     // Clear all validation errors when report type changes
-          //     setDateOfDetectionError(false);
-          //     setDepartmentAreaError(false);
-          //     setProductNameError(false);
-          //     setLotNoError(false);
-          //     setEmailError(false);
-          //     setComplaintTypeError(false);
-          //     setOtherTypeError(false);
-          //     setComplaintRsError(false);
-          //     setOtherRsError(false);
-          //     setClauseRsError(false);
-          //     setDetailError(false);
-          //     setPriorityError(false);
-          //   }}
-          //   onDateOfDetectionChange={(val) => {
-          //     setdate_of_detection(val);
-          //     setDateOfDetectionError(false);
-          //   }}
-          //   onDepartmentAreaChange={(val) => {
-          //     setrespondent_department_id(val);
-          //     setDepartmentAreaError(false);
-          //   }}
-          //   onProductNameChange={(val) => {
-          //     setproduct_name(val);
-          //     setProductNameError(false);
-          //   }}
-          //   onLotNoChange={(val) => {
-          //     setlot_no(val);
-          //     setLotNoError(false);
-          //   }}
+            // onBlocksChange={(data) => setComplaintBlocks(data)}
+            validateDetailText={blockValidateErrors}
+            handleOpenAdd={handleOpenAddList}
+            validateText={{
+              Company_Area: companyAreaError,
+              Domain_Area: domainAreaError,
+              Department_Area: departmentAreaError,
+              Email_Area: emailAreaError,
+              Username_Area: usernameAreaError,
+              step: stepAreaError,
 
-          //   onEmailChange={(val) => {
-          //     setrespondent_email(val);
-          //     setEmailError(false);
-          //   }}
-          //   onComplaintTypeChange={(val) => {
-          //     setComplaintTypeError(false);
-          //     setOtherTypeError(false);
-          //   }}
-          //   onOtherTypeChange={(val) => {
-          //     setOtherTypeError(false);
-          //   }}
-          //   onComplaintRsChange={(val) => {
-          //     setComplaintRsError(false);
-          //     setOtherRsError(false);
-          //     setClauseRsError(false);
-          //   }}
-          //   onOtherRsChange={(val) => {
-          //     setOtherRsError(false);
-          //   }}
-          //   onClauseChange={(val) => {
-          //     setClauseRsError(false);
-          //   }}
-          //   onDetailChange={(val) => {
-          //     setDetailError(false);
-          //   }}
-          //   onPriorityChange={(val) => {
-          //     setPriorityError(false);
-          //   }}
+            }}
+            onCompanyAreaChange={(val) => {
+              setdept_company(val);
+              setCompanyAreaError(false);
+            }}
+            onDomainAreaChange={(val) => {
+              setdept_domain(val);
+              setDomainAreaError(false);
+            }}
+            onDepartmentAreaChange={(val) => {
+              setdomain_dept_id(val);
+              setDepartmentAreaError(false);
+            }}
+            onEmailAreaChange={(val) => {
+              setdept_email(val);
+              setEmailAreaError(false);
+            }}
           />
 
 
@@ -1570,87 +1555,35 @@ export default function DepartmentSetting() {
         buttonColor="success"
         element={<DepartmentSettingBody
           action="Edit"
-        // onBlocksChange={(data) => setComplaintBlocks(data)}
-        //   validateDetailText={blockValidateErrors}
-        //   handleOpenAdd={handleOpenAddList}
-        //   validateText={{
-        //     Product_Group: false,
-        //     Report_Type: reportTypeError,
-        //     Respondent_Department: false,
-        //     Date_of_Detection: dateOfDetectionError,
-        //     Department_Area: departmentAreaError,
-        //     Product_Name: productNameError,
-        //     Lot_No: lotNoError,
-        //     Email: emailError,
-        //     Complaint_Type: complaintTypeError,
-        //     Other_Type: otherTypeError,
-        //     Complaint_Rs: complaintRsError,
-        //     Other_Rs: otherRsError,
-        //     Clause_Rs: clauseRsError,
-        //     Detail: detailError,
-        //     Priority: priorityError,
-        //   }}
-        //   onReportTypeChange={(val) => {
-        //     setdataReportTypeValue(val);
-        //     setReportTypeError(false);
-        //     setDateOfDetectionError(false);
-        //     setDepartmentAreaError(false);
-        //     setProductNameError(false);
-        //     setLotNoError(false);
-        //     setEmailError(false);
-        //     setComplaintTypeError(false);
-        //     setOtherTypeError(false);
-        //     setComplaintRsError(false);
-        //     setOtherRsError(false);
-        //     setClauseRsError(false);
-        //     setDetailError(false);
-        //     setPriorityError(false);
-        //   }}
-        //   onDateOfDetectionChange={(val) => {
-        //     setdate_of_detection(val);
-        //     setDateOfDetectionError(false);
-        //   }}
-        //   onDepartmentAreaChange={(val) => {
-        //     setrespondent_department_id(val);
-        //     setDepartmentAreaError(false);
-        //   }}
-        //   onProductNameChange={(val) => {
-        //     setproduct_name(val);
-        //     setProductNameError(false);
-        //   }}
-        //   onLotNoChange={(val) => {
-        //     setlot_no(val);
-        //     setLotNoError(false);
-        //   }}
+          onBlocksChange={(data) => setComplaintBlocks(data)}
+          validateDetailText={blockValidateErrors}
+          handleOpenAdd={handleOpenAddList}
+          validateText={{
+            Company_Area: companyAreaError,
+            Domain_Area: domainAreaError,
+            Department_Area: departmentAreaError,
+            Email_Area: emailAreaError,
+            Username_Area: usernameAreaError,
+            step: stepAreaError,
 
-        //   onEmailChange={(val) => {
-        //     setrespondent_email(val);
-        //     setEmailError(false);
-        //   }}
-        //   onComplaintTypeChange={(val) => {
-        //     setComplaintTypeError(false);
-        //     setOtherTypeError(false);
-        //   }}
-        //   onOtherTypeChange={(val) => {
-        //     setOtherTypeError(false);
-        //   }}
-        //   onComplaintRsChange={(val) => {
-        //     setComplaintRsError(false);
-        //     setOtherRsError(false);
-        //     setClauseRsError(false);
-        //   }}
-        //   onOtherRsChange={(val) => {
-        //     setOtherRsError(false);
-        //   }}
-        //   onClauseChange={(val) => {
-        //     setClauseRsError(false);
-        //   }}
-        //   onDetailChange={(val) => {
-        //     setDetailError(false);
-        //   }}
-        //   onPriorityChange={(val) => {
-        //     setPriorityError(false);
-        //   }}
+          }}
+          onCompanyAreaChange={(val) => {
+            setdept_company(val);
+            setCompanyAreaError(false);
+          }}
+          onDomainAreaChange={(val) => {
+            setdept_domain(val);
+            setDomainAreaError(false);
+          }}
+          onDepartmentAreaChange={(val) => {
+            setdomain_dept_id(val);
+            setDepartmentAreaError(false);
+          }}
+          onEmailAreaChange={(val) => {
+            setdept_email(val);
+            setEmailAreaError(false);
+          }}
+
         />}
       />
 

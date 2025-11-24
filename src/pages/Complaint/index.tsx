@@ -6017,7 +6017,7 @@ export default function Complaint() {
           </Grid>
           <Grid>
             <FullWidthButton
-              labelName={"รีเซท"}
+              labelName={"รีเซ็ต"}
               handleonClick={handleCloseSearch}
               variant_text="outlined"
               colorname={"inherit"}

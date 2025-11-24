@@ -67,6 +67,7 @@ export default function AutocompleteComboBox(props: AutocompleteComboBox) {
             {column && option[column] ? option[column] : ""}
             {ColumnConcat && option[ColumnConcat] ? ` ${option[ColumnConcat]}` : ""}
           </li>
+          
         )}
         onChange={handleOnchange}
         disabled={disabled}
