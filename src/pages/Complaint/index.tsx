@@ -34,7 +34,7 @@ import {mas_DepartmentDomainGet,mas_DepartmentDomainGetAll,mas_DepartmentGet_Com
 import { data } from "react-router-dom";
 
 // =====================================================================================================
-// TYPE DEFINITIONS
+// TYPE DEFINITIONS : จ๊ะเอ๋ตัวเองงงงง...!
 // =====================================================================================================
 
 export type Launch = {
