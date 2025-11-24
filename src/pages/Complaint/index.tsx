@@ -353,7 +353,6 @@ export default function Complaint() {
     qcapprove_detail,
     qcapprove_note,
 
-
     // Setter Functions
     setComplaint_no,
     setno,
@@ -645,7 +644,8 @@ export default function Complaint() {
   const [ddError, setDdError] = useState(false);
   const [ddOtherError, setDdOtherError] = useState(false);
   const [correctiveActionError, setCorrectiveActionError] = useState(false);
-  const [preventiveActionPlanError, setPreventiveActionPlanError] = useState(false);
+  const [preventiveActionPlanError, setPreventiveActionPlanError] =
+    useState(false);
 
   const [qcDetailError, setQcDetailError] = useState(false);
   const [qcNoteError, setQcNoteError] = useState(false);
@@ -753,7 +753,7 @@ export default function Complaint() {
         value,
         setdataset_department,
         isCallFuncLogOn,
-        user,
+        user
       );
     } else {
       setdataset_department([]);
@@ -1152,8 +1152,10 @@ export default function Complaint() {
             grouped["complaint_status"]
           );
           //console.log('⚠️⚠️⚠️⚠️ [grouped["active_company"]] :', grouped["active_company"])
-          console.log('⚠️⚠️⚠️⚠️ grouped["cross_company_check"] :', grouped["cross_company_check"])
-
+          console.log(
+            '⚠️⚠️⚠️⚠️ grouped["cross_company_check"] :',
+            grouped["cross_company_check"]
+          );
         }
       } catch (e) {
         //console.log("error:", e);
@@ -1563,7 +1565,7 @@ export default function Complaint() {
 
           filteredData.forEach((el: any) => {
             const tempApproveInfo = (datastatus || []).filter(
-            //const tempApproveInfo = datastatus.filter(
+              //const tempApproveInfo = datastatus.filter(
               (val: any) =>
                 val["id"] == el.complaint_status_id && val["lov3"] !== null
             );
@@ -1759,8 +1761,8 @@ export default function Complaint() {
                       (mode: any) =>
                         mode.lov1
                           .split(",")
-                          .includes(String(el.complaint_status_label))
-                        && tempApproveSeq == "1"
+                          .includes(String(el.complaint_status_label)) &&
+                        tempApproveSeq == "1"
                       // ) &&
                       // splitNextStepName(el.approve_step
                     )) ??
@@ -1772,8 +1774,8 @@ export default function Complaint() {
                       (mode: any) =>
                         mode.lov1
                           .split(",")
-                          .includes(String(el.complaint_status_label))
-                        && tempApproveSeq == "1"
+                          .includes(String(el.complaint_status_label)) &&
+                        tempApproveSeq == "1"
                       // ) &&
                       // splitNextStepName(el.approve_step
                     )) ??
@@ -1789,9 +1791,9 @@ export default function Complaint() {
                       (mode: any) =>
                         mode.lov1
                           .split(",")
-                          .includes(String(el.complaint_status_label))
-                        && el.step_label === "COMPLAINT"
-                        && tempApproveSeq == "2"
+                          .includes(String(el.complaint_status_label)) &&
+                        el.step_label === "COMPLAINT" &&
+                        tempApproveSeq == "2"
                       // ) &&
                       // splitNextStepName(el.approve_step
                     )) ??
@@ -1819,11 +1821,12 @@ export default function Complaint() {
                 // }
                 hiddenReadClose={
                   (dataset_complaintActionApproveQC &&
-                    !dataset_complaintActionApproveQC.some((mode: any) =>
-                      mode.lov1
-                        .split(",")
-                        .includes(String(el.complaint_status_label))
-                      && tempApproveSeq == "2"
+                    !dataset_complaintActionApproveQC.some(
+                      (mode: any) =>
+                        mode.lov1
+                          .split(",")
+                          .includes(String(el.complaint_status_label)) &&
+                        tempApproveSeq == "2"
                     )) ??
                   false
                 }
@@ -1846,14 +1849,20 @@ export default function Complaint() {
 
             el.ACTION = ACTION;
 
-            const tempRoleUser = dataset_roleProfile.filter((item: any) => item.lov1 === String(user[0].role_id))
-            const tempRolename = tempRoleUser[0].lov_code
-
-
+            const tempRoleUser = dataset_roleProfile.filter(
+              (item: any) => item.lov1 === String(user[0].role_id)
+            );
+            const tempRolename = tempRoleUser[0].lov_code;
 
             console.log("🦄🦄🦄🦄🦄🦄 tempApproveSeq : ", tempApproveSeq);
-            console.log("🎆 🎆 🎆 🎆 complaint_status_label:", el.complaint_status_label);
-            console.log("🎆 🎆 🎆 🎆 setdataset_roleProfile :", dataset_roleProfile);
+            console.log(
+              "🎆 🎆 🎆 🎆 complaint_status_label:",
+              el.complaint_status_label
+            );
+            console.log(
+              "🎆 🎆 🎆 🎆 setdataset_roleProfile :",
+              dataset_roleProfile
+            );
             console.log("🎆 🎆 🎆 🎆 el :", el);
             console.log("🎆 🎆 🎆 🎆 user[0] :", user[0]);
             console.log("🎆 🎆 🎆 🎆 tempRoleUser :", tempRoleUser);
@@ -1947,7 +1956,10 @@ export default function Complaint() {
       valid = false;
     }
 
-    if (!dataComplaintTypeValue_Combobox || dataComplaintTypeValue_Combobox.length === 0) {
+    if (
+      !dataComplaintTypeValue_Combobox ||
+      dataComplaintTypeValue_Combobox.length === 0
+    ) {
       setComplaintTypeError(true);
       valid = false;
     } else {
@@ -1960,13 +1972,10 @@ export default function Complaint() {
       if (!compTypeOther || compTypeOther.trim() === "") {
         setOtherTypeError(true);
         valid = false;
-      } else {
-        ////console.log("✅ Other Type validation passed");
       }
     }
 
     const reportTypeCode = dataReportTypeValue?.lov_code;
-    //console.log("🔍 Report Type Code:", reportTypeCode);
 
     // เฉพาะ NCR เท่านั้นที่ต้อง validate Complaint Rs
     if (reportTypeCode === "NCR") {
@@ -2195,9 +2204,15 @@ export default function Complaint() {
 
   const validateExplainAdd = (): boolean => {
     if (isCallFuncLogOn)
-      console.log("🕑 ",dayjs().format("HH:mm:ss.SSS")," [Calling Function]  :  validateExplainAdd");
+      console.log(
+        "🕑 ",
+        dayjs().format("HH:mm:ss.SSS"),
+        " [Calling Function]  :  validateExplainAdd"
+      );
+
     let valid = true;
-    // Clear  validation
+
+    // Clear all validation errors
     setFollowUpDateError(false);
     setObsAnalyError(false);
     setToolUseError(false);
@@ -2208,59 +2223,166 @@ export default function Complaint() {
     setCorrectiveActionError(false);
     setPreventiveActionPlanError(false);
 
+    // Get report type code
+    const reportTypeCode =
+      dataReportTypeValue?.lov_code || dataelement?.report_type;
+    console.log("🔍 Report Type for validation:", reportTypeCode);
+
+    // Common validation: Follow-up Date (required for all types)
     if (!follow_up_date) {
+      console.log("❌ Validation failed: follow_up_date is missing");
       setFollowUpDateError(true);
       valid = false;
     }
-    if (!observation_analysis || observation_analysis.trim() === "") {
-      setObsAnalyError(true);
-      valid = false;
-    }
-    if (!root_cause || root_cause.trim() === "") {
-      setRootCauseError(true);
-      valid = false;
-    }
-    if (!corrective_action || corrective_action.trim() === "") {
-      setCorrectiveActionError(true);
-      valid = false;
-    }
-    if (!preventive_action_plan || preventive_action_plan.trim() === "") {
-      setPreventiveActionPlanError(true);
-      valid = false;
-    }
 
-    if (!dataTooluseValue || dataTooluseValue.length === 0) {
-    setToolUseError(true);
-    valid = false;
-    }
-
-    if (dataTooluseValue && dataTooluseValue.some((item: any) => item.isOther === "Y")) {
-      if (!ToolOther || ToolOther.trim() === "") {
-        setToolUseOtherError(true);
+    // Type-specific validation
+    if (reportTypeCode === "OBS") {
+      // OBS: Only requires observation_analysis and follow_up_date
+      if (!observation_analysis || observation_analysis.trim() === "") {
+        console.log(
+          "❌ OBS Validation failed: observation_analysis is required"
+        );
+        setObsAnalyError(true);
         valid = false;
-      } else {
+      }
+      console.log("✅ OBS validation complete");
+    } else if (reportTypeCode === "NCR") {
+      // NCR: Requires Tu (Tools Used), Rc (Root Cause), Dd (Decision/Disposition)
+
+      // Validate Tools Used
+      if (!dataTooluseValue || dataTooluseValue.length === 0) {
+        console.log("❌ NCR Validation failed: Tools Used is required");
+        setToolUseError(true);
+        valid = false;
+      }
+
+      if (
+        dataTooluseValue &&
+        dataTooluseValue.some((item: any) => item.isOther === "Y")
+      ) {
+        if (!ToolOther || ToolOther.trim() === "") {
+          console.log("❌ NCR Validation failed: ToolOther is required");
+          setToolUseOtherError(true);
+          valid = false;
+        }
+      }
+
+      // Validate Root Cause
+      if (!root_cause || root_cause.trim() === "") {
+        console.log("❌ NCR Validation failed: Root Cause is required");
+        setRootCauseError(true);
+        valid = false;
+      }
+
+      // Validate Decision/Disposition
+      if (!dataDecisionValue || dataDecisionValue.length === 0) {
+        console.log(
+          "❌ NCR Validation failed: Decision/Disposition is required"
+        );
+        setDdError(true);
+        valid = false;
+      }
+
+      if (
+        dataDecisionValue &&
+        dataDecisionValue.some((item: any) => item.isOther === "Y")
+      ) {
+        if (!DecisionOther || DecisionOther.trim() === "") {
+          console.log("❌ NCR Validation failed: DecisionOther is required");
+          setDdOtherError(true);
+          valid = false;
+        }
+      }
+    } else if (reportTypeCode === "CAR") {
+      // CAR: Requires Tu (Tools Used), Rc (Root Cause), Ca (Corrective Action)
+
+      // Validate Tools Used
+      if (!dataTooluseValue || dataTooluseValue.length === 0) {
+        console.log("❌ CAR Validation failed: Tools Used is required");
+        setToolUseError(true);
+        valid = false;
+      }
+
+      if (
+        dataTooluseValue &&
+        dataTooluseValue.some((item: any) => item.isOther === "Y")
+      ) {
+        if (!ToolOther || ToolOther.trim() === "") {
+          console.log("❌ CAR Validation failed: ToolOther is required");
+          setToolUseOtherError(true);
+          valid = false;
+        }
+      }
+
+      // Validate Root Cause
+      if (!root_cause || root_cause.trim() === "") {
+        console.log("❌ CAR Validation failed: Root Cause is required");
+        setRootCauseError(true);
+        valid = false;
+      }
+
+      // Validate Corrective Action
+      if (!corrective_action || corrective_action.trim() === "") {
+        console.log("❌ CAR Validation failed: Corrective Action is required");
+        setCorrectiveActionError(true);
+        valid = false;
+      }
+    } else if (reportTypeCode === "CPAR") {
+      // CPAR: Requires Tu (Tools Used), Rc (Root Cause), Ca (Corrective Action), Pap (Preventive Action Plan)
+
+      // Validate Tools Used
+      if (!dataTooluseValue || dataTooluseValue.length === 0) {
+        console.log("❌ CPAR Validation failed: Tools Used is required");
+        setToolUseError(true);
+        valid = false;
+      }
+
+      if (
+        dataTooluseValue &&
+        dataTooluseValue.some((item: any) => item.isOther === "Y")
+      ) {
+        if (!ToolOther || ToolOther.trim() === "") {
+          console.log("❌ CPAR Validation failed: ToolOther is required");
+          setToolUseOtherError(true);
+          valid = false;
+        }
+      }
+
+      // Validate Root Cause
+      if (!root_cause || root_cause.trim() === "") {
+        console.log("❌ CPAR Validation failed: Root Cause is required");
+        setRootCauseError(true);
+        valid = false;
+      }
+
+      // Validate Corrective Action
+      if (!corrective_action || corrective_action.trim() === "") {
+        console.log("❌ CPAR Validation failed: Corrective Action is required");
+        setCorrectiveActionError(true);
+        valid = false;
+      }
+
+      // Validate Preventive Action Plan
+      if (!preventive_action_plan || preventive_action_plan.trim() === "") {
+        console.log(
+          "❌ CPAR Validation failed: Preventive Action Plan is required"
+        );
+        setPreventiveActionPlanError(true);
+        valid = false;
       }
     }
 
-    if (!dataDecisionValue || dataDecisionValue.length === 0) {
-    setDdError(true);
-    valid = false;
-    }
-
-    if (dataDecisionValue && dataDecisionValue.some((item: any) => item.isOther === "Y")) {
-      if (!DecisionOther || DecisionOther.trim() === "") {
-        setDdOtherError(true);
-        valid = false;
-      } else {
-      }
-    }
-
+    console.log("🎯 [VALIDATION RESULT] valid =", valid);
     return valid;
   };
 
   const validateQCApprove = (): boolean => {
     if (isCallFuncLogOn)
-      console.log("🕑 ",dayjs().format("HH:mm:ss.SSS")," [Calling Function]  :  validateQCApprove");
+      console.log(
+        "🕑 ",
+        dayjs().format("HH:mm:ss.SSS"),
+        " [Calling Function]  :  validateQCApprove"
+      );
     let valid = true;
     // Clear ALL validation errors before validation
     setQcDetailError(false);
@@ -2280,7 +2402,11 @@ export default function Complaint() {
 
   const validateClose = (): boolean => {
     if (isCallFuncLogOn)
-      console.log("🕑 ",dayjs().format("HH:mm:ss.SSS")," [Calling Function]  :  validateClose");
+      console.log(
+        "🕑 ",
+        dayjs().format("HH:mm:ss.SSS"),
+        " [Calling Function]  :  validateClose"
+      );
     let valid = true;
     // Clear ALL validation errors before validation
     setCloseDetailError(false);
@@ -2319,9 +2445,14 @@ export default function Complaint() {
       "📡 Sending respondent_domain_id to LovAll_Get:",
       respondent_domain_id?.domain_id
     );
+    // const tempComplaintStatus = await LovAll_Get(
+    //   "complaint_status",
+    //   respondent_domain_id
+    // );
+
     const tempComplaintStatus = await LovAll_Get(
       "complaint_status",
-      respondent_domain_id
+      user[0]?.employee_domain
     );
     // console.log("🧩 tempComplaintStatus raw:", tempComplaintStatus);
     // console.log("💕 tempvalue 1 id", tempComplaintStatus[1]?.id);
@@ -2350,13 +2481,15 @@ export default function Complaint() {
         id: tempid,
         report_type: dataReportTypeValue?.id,
         cas_number: cas_number,
-        date_of_detection: date_of_detection
-          ? date_of_detection
-              .hour(dayjs().hour())
-              .minute(dayjs().minute())
-              .second(dayjs().second())
-              .format("YYYY-MM-DDTHH:mm:ss.SSS")
-          : null,
+        // date_of_detection: date_of_detection
+        date_of_detection:
+          date_of_detection && date_of_detection.isValid()
+            ? date_of_detection
+                .hour(dayjs().hour())
+                .minute(dayjs().minute())
+                .second(dayjs().second())
+                .format("YYYY-MM-DDTHH:mm:ss.SSS")
+            : null,
         request_name: user[0]?.employee_username || "",
         request_company_id: request_company_id?.company_id,
         request_domain_id: user[0]?.employee_domain,
@@ -2367,19 +2500,21 @@ export default function Complaint() {
         request_date: new Date().toISOString(),
         respondent_company_id: respondent_company_id?.company_id,
         respondent_domain_id: respondent_domain_id?.domain_id,
-        respondent_department_id: respondent_department_id?.department_id,
-        respondent_email: respondent_email,
-        product_name: product_name,
-        detail: detail,
+        respondent_department_id:
+          respondent_department_id?.department_id || null,
+        respondent_email: respondent_email || null,
+        product_name: product_name || null,
+        detail: detail || null,
         priority_level: datapriorityValue_Combobox,
-        respond_date_within: respond_date_within
-          ? respond_date_within
-              .hour(23)
-              .minute(59)
-              .second(59)
-              .format("YYYY-MM-DDTHH:mm:ss.SSS")
-          : null,
-        lot_no: lot_no,
+        respond_date_within:
+          respond_date_within && respond_date_within.isValid()
+            ? respond_date_within
+                .hour(23)
+                .minute(59)
+                .second(59)
+                .format("YYYY-MM-DDTHH:mm:ss.SSS")
+            : null,
+        lot_no: lot_no || null,
         complaint_status_id: tempComplaintStatus[0]?.id,
         create_by: user[0]?.employee_username || "",
         save_type: "save_draft",
@@ -2711,13 +2846,14 @@ export default function Complaint() {
         // Respondent Metadata
         respondent_company_id: respondent_company_id?.company_id,
         respondent_domain_id: respondent_domain_id?.domain_id,
-        respondent_department_id: respondent_department_id?.department_id,
-        respondent_email: respondent_email,
+        respondent_department_id:
+          respondent_department_id?.department_id || null,
+        respondent_email: respondent_email || null,
         respondent_other_name: respondent_other_name,
         respondent_other_email: respondent_other_email,
 
-        product_name: product_name,
-        detail: detail,
+        product_name: product_name || null,
+        detail: detail || null,
         priority_level: datapriorityValue_Combobox,
         respond_date_within: respond_date_within
           ? respond_date_within
@@ -2726,7 +2862,7 @@ export default function Complaint() {
               .second(dayjs().second())
               .format("YYYY-MM-DDTHH:mm:ss.SSS")
           : null,
-        lot_no: lot_no,
+        lot_no: lot_no || null,
         complaint_status_id: tempComplaintStatus[1]?.id,
         create_by: user[0]?.employee_username || "",
         save_type: "save_submit",
@@ -2887,11 +3023,12 @@ export default function Complaint() {
                 .format("YYYY-MM-DDTHH:mm:ss.SSS")
             : null,
           respondent_domain_id: respondent_domain_id?.domain_id,
-          respondent_department_id: respondent_department_id?.department_id,
-          product_name: product_name,
-          lot_no: lot_no,
-          respondent_email: respondent_email,
-          detail: detail,
+          respondent_department_id:
+            respondent_department_id?.department_id || null,
+          product_name: product_name || null,
+          lot_no: lot_no || null,
+          respondent_email: respondent_email || null,
+          detail: detail || null,
           priority_level:
             datapriorityValue_Combobox || dataelement?.priority_level,
           respond_date_within: respond_date_within
@@ -3005,11 +3142,12 @@ export default function Complaint() {
                 .format("YYYY-MM-DDTHH:mm:ss.SSS")
             : null,
           respondent_domain_id: respondent_domain_id?.domain_id,
-          respondent_department_id: respondent_department_id?.department_id,
-          product_name: product_name,
-          lot_no: lot_no,
-          respondent_email: respondent_email,
-          detail: detail,
+          respondent_department_id:
+            respondent_department_id?.department_id || null,
+          product_name: product_name || null,
+          lot_no: lot_no || null,
+          respondent_email: respondent_email || null,
+          detail: detail || null,
           priority_level:
             datapriorityValue_Combobox || dataelement?.priority_level,
           respond_date_within: respond_date_within
@@ -3396,14 +3534,13 @@ export default function Complaint() {
         ComplaintGet();
       }
     } else if (mode == "EXPLAIN") {
-
-    //   if (subMode == "QC") 
-    //   {
-    //   if (!validateQCApprove()) return;
-    //   }
-    //   else if (subMode == "CLOSE"){
-    //   if (!validateClose()) return;
-    // }
+      //   if (subMode == "QC")
+      //   {
+      //   if (!validateQCApprove()) return;
+      //   }
+      //   else if (subMode == "CLOSE"){
+      //   if (!validateClose()) return;
+      // }
       const tempid = uuidv4();
       const domainId = dataelement?.respondent_domain_id;
       console.log("📡 respondent_domain_id:", domainId);
@@ -3434,9 +3571,13 @@ export default function Complaint() {
           : 0;
       const nextSeq = maxApproveSeq + 1;
 
-    const approveInfo = (datastatus || []).filter((val: any) => val["lov_code"] === "APPROVED");
-    const approveSeq = approveInfo.filter((val: any) => val["lov5"] == user[0].role_id);
-      
+      const approveInfo = (datastatus || []).filter(
+        (val: any) => val["lov_code"] === "APPROVED"
+      );
+      const approveSeq = approveInfo.filter(
+        (val: any) => val["lov5"] == user[0].role_id
+      );
+
       // 🧩 สร้าง payload สำหรับ Approve
       const approvePayload = {
         ExplaintApproveModel: {
@@ -3445,8 +3586,8 @@ export default function Complaint() {
           approve_seq: approveSeq[0].lov3,
           complaint_status_id: tempComplaintStatus[3]?.id,
           approve_status: approveSelectionCode,
-          approve_detail: approve_detail || qcapprove_detail||null,
-          approve_note: approve_note || qcapprove_note ||null,
+          approve_detail: approve_detail || qcapprove_detail || null,
+          approve_note: approve_note || qcapprove_note || null,
           approve_name: user[0]?.employee_username || "",
           approve_company_id: approve_company_id?.company_id
             ? Number(approve_company_id.company_id)
@@ -3686,7 +3827,6 @@ export default function Complaint() {
         ComplaintGet();
       }
     } else if (mode == "APPROVE_QC") {
-
       if (!validateQCApprove()) return;
 
       const tempid = uuidv4();
@@ -3719,9 +3859,13 @@ export default function Complaint() {
           : 0;
       const nextSeq = maxApproveSeq + 1;
 
-    const approveInfo = (datastatus || []).filter((val: any) => val["lov_code"] === "APPROVED");
-    const approveSeq = approveInfo.filter((val: any) => val["lov5"] == user[0].role_id);
-      
+      const approveInfo = (datastatus || []).filter(
+        (val: any) => val["lov_code"] === "APPROVED"
+      );
+      const approveSeq = approveInfo.filter(
+        (val: any) => val["lov5"] == user[0].role_id
+      );
+
       // 🧩 สร้าง payload สำหรับ Approve
       const approvePayload = {
         ExplaintApproveModel: {
@@ -3730,8 +3874,8 @@ export default function Complaint() {
           approve_seq: approveSeq[0].lov3,
           complaint_status_id: tempComplaintStatus[4]?.id,
           approve_status: approveSelectionCode,
-          approve_detail: approve_detail || qcapprove_detail||null,
-          approve_note: approve_note || qcapprove_note ||null,
+          approve_detail: approve_detail || qcapprove_detail || null,
+          approve_note: approve_note || qcapprove_note || null,
           approve_name: user[0]?.employee_username || "",
           approve_company_id: approve_company_id?.company_id
             ? Number(approve_company_id.company_id)
@@ -3928,9 +4072,9 @@ export default function Complaint() {
         " [Calling Function]  :  ExplainAdd"
       );
 
-      if (!validateExplainAdd()) {
-        return;
-      }
+    if (!validateExplainAdd()) {
+      return;
+    }
 
     const tempid = uuidv4();
     console.log(
@@ -4424,7 +4568,7 @@ export default function Complaint() {
         dayjs().format("HH:mm:ss.SSS"),
         " [Calling Function]  :  ApproveQcAdd"
       );
-      
+
     //   if (!validateQCApprove()) {
     //   return;
     // }
@@ -4878,8 +5022,6 @@ export default function Complaint() {
         " [Calling Function]  :  CloseAdd"
       );
 
-      
-
     // const complaintId =
     //   dataelement?.id ??
     //   currentExplainForApproval?.complaint_id ??
@@ -4932,8 +5074,7 @@ export default function Complaint() {
       const response = await _POST(closePayload, "/Explain/CloseAdd");
 
       if (response && response.status === "success") {
-
-        const complaintId = currentExplainForApproval?.complaint_id
+        const complaintId = currentExplainForApproval?.complaint_id;
 
         const complaintEditPayload = {
           complaintModel: {
@@ -4947,9 +5088,15 @@ export default function Complaint() {
         };
 
         const complaintFormData = new FormData();
-        complaintFormData.append("complaintPayloadJson", JSON.stringify(complaintEditPayload));
+        complaintFormData.append(
+          "complaintPayloadJson",
+          JSON.stringify(complaintEditPayload)
+        );
 
-        const updateRes = await _POST_FORMDATA(complaintFormData, "/Complaint/ComplaintEdit");
+        const updateRes = await _POST_FORMDATA(
+          complaintFormData,
+          "/Complaint/ComplaintEdit"
+        );
 
         if (updateRes && updateRes.status === "success") {
           FullSweetalert({
@@ -5064,8 +5211,6 @@ export default function Complaint() {
   // };
 
   // -------- Approve Dialog Handlers --------
-
-  
 
   useEffect(() => {
     console.log("action11", action);
@@ -5301,11 +5446,13 @@ export default function Complaint() {
       const approveData = await ExplaintApprove_Get(explainData.id);
 
       if (approveData && approveData.length > 0) {
-
         // เตรียมตรวจสอบข้อมูลรายการอนุมัติ (เพื่อทำเงื่อนไข เปิด-ปิด กล่องแสดงผล)
         // approveData
-        setisApproveQcBoxHidden(true)
-        console.log("🎶🎶😉😉🤞 isApproveQcBoxHidden 1: ", isApproveQcBoxHidden)
+        setisApproveQcBoxHidden(true);
+        console.log(
+          "🎶🎶😉😉🤞 isApproveQcBoxHidden 1: ",
+          isApproveQcBoxHidden
+        );
 
         // หา QC approve record (approve_seq === 2)
         const qcApprove =
@@ -5361,8 +5508,11 @@ export default function Complaint() {
 
         console.log("📘 QC Approve data loaded:", qcApprove);
       } else {
-        setisApproveQcBoxHidden(false)
-        console.log("🎶🎶😉😉🤞 isApproveQcBoxHidden 2 : ", isApproveQcBoxHidden)
+        setisApproveQcBoxHidden(false);
+        console.log(
+          "🎶🎶😉😉🤞 isApproveQcBoxHidden 2 : ",
+          isApproveQcBoxHidden
+        );
       }
     }
 
@@ -5556,11 +5706,8 @@ export default function Complaint() {
     setOpenExplainApproveQc(true);
   };
 
-
-
-
-
-  const handleOnclickComplainCloseAdd = async (explainData: any) => {  //ADD
+  const handleOnclickComplainCloseAdd = async (explainData: any) => {
+    //ADD
     if (isCallFuncLogOn)
       console.log(
         "🕑 ",
@@ -5925,10 +6072,13 @@ export default function Complaint() {
         );
         setapprove_position(firstApprove?.approve_position || "");
         setapprove_email(firstApprove?.approve_email || "");
-        setapprove_date(firstApprove?.approve_date ? dayjs(firstApprove?.approve_date) : dayjs());
+        setapprove_date(
+          firstApprove?.approve_date
+            ? dayjs(firstApprove?.approve_date)
+            : dayjs()
+        );
         setapprove_detail(firstApprove?.approve_detail || "");
         setapprove_note(firstApprove?.approve_note || "");
-
       }
     };
     fetchSCApprove();
@@ -5944,7 +6094,7 @@ export default function Complaint() {
     lov_code: item.lov_code,
     lov4: item.lov4,
     displayText: item.lov4 ? `${item.lov_code} (${item.lov4})` : item.lov_code,
-}));
+  }));
 
   return (
     <>
@@ -6103,15 +6253,21 @@ export default function Complaint() {
                   datastatus: val?.id || "", // เก็บแค่ id เป็น string
                 })
               }
-            /> */}  
+            /> */}
             <AutocompleteComboBox
-              value={statusOptions?.find((item: any) => item.id === TextNameSearch.datastatus) || null}
+              value={
+                statusOptions?.find(
+                  (item: any) => item.id === TextNameSearch.datastatus
+                ) || null
+              }
               labelName="สถานะ (Status)"
               options={(datastatus || []).map((item: any) => ({
-              id: item.id, // เก็บ id ไว้
-              lov_code: item.lov_code,
-              lov4: item.lov4,
-              displayText: item.lov4 ? `${item.lov_code} (${item.lov4})` : item.lov_code,
+                id: item.id, // เก็บ id ไว้
+                lov_code: item.lov_code,
+                lov4: item.lov4,
+                displayText: item.lov4
+                  ? `${item.lov_code} (${item.lov4})`
+                  : item.lov_code,
               }))}
               column="displayText" // ใช้ displayText แสดงใน dropdown
               setvalue={(val) =>
@@ -6119,7 +6275,6 @@ export default function Complaint() {
                   ...TextNameSearch,
                   datastatus: val?.id || "", // ใช้ id จริง
                 })
-                
               }
             />
           </Grid>
@@ -6496,18 +6651,27 @@ export default function Complaint() {
             currentExplainForApproval={currentExplainForApproval}
             action={
               //ADD
-              action == "Explain" ? "ExplainRead"
-              : action == "ApproveSC" ? "ApproveScAdd"
-              // : action == "ApproveQC" ? "ApproveQcAdd"
-              : action == "Close" ? "CloseAdd"
-              : action === "CloseHistory" ? "ReadClose"
-              //READ
-              : action == "ReadApproveSC" ? "ApproveScRead"
-              : action == "ReadApproveQC" ? "ApproveQcRead"
-              : action == "ReadClose" ? "ReadClose"
-              : action == "ReadExplain" ? "ReadExplain"
-              : action === "CloseHistory" ? "ReadClose"
-              : "-"
+              action == "Explain"
+                ? "ExplainRead"
+                : action == "ApproveSC"
+                ? "ApproveScAdd"
+                : // : action == "ApproveQC" ? "ApproveQcAdd"
+                action == "Close"
+                ? "CloseAdd"
+                : action === "CloseHistory"
+                ? "ReadClose"
+                : //READ
+                action == "ReadApproveSC"
+                ? "ApproveScRead"
+                : action == "ReadApproveQC"
+                ? "ApproveQcRead"
+                : action == "ReadClose"
+                ? "ReadClose"
+                : action == "ReadExplain"
+                ? "ReadExplain"
+                : action === "CloseHistory"
+                ? "ReadClose"
+                : "-"
 
               // action == "ApproveSC" ? "ApproveScAdd"
               // : action == "ReadApproveSC" ? "ApproveScRead"
@@ -6518,14 +6682,14 @@ export default function Complaint() {
               // : action == "ReadExplain" ? "ReadExplain"
               // : action === "CloseHistory" ? "ReadClose"
             }
-          // {
-          // action={action == "ApproveSC" ? "ApproveScAdd"
-          //         : action == "ReadApproveSC" ? "ReadApproveSc"
-          //         : action == "ApproveQC" ? "ApproveQcAdd"
-          //         : action == "ReadApproveQC" ? "ReadApproveQc"
-          //         : action == "Close" ? "CloseAdd"
-          //         : "ReadApproveSc"
-          // }
+            // {
+            // action={action == "ApproveSC" ? "ApproveScAdd"
+            //         : action == "ReadApproveSC" ? "ReadApproveSc"
+            //         : action == "ApproveQC" ? "ApproveQcAdd"
+            //         : action == "ReadApproveQC" ? "ReadApproveQc"
+            //         : action == "Close" ? "CloseAdd"
+            //         : "ReadApproveSc"
+            // }
           />
         }
       />
@@ -6543,9 +6707,9 @@ export default function Complaint() {
         hideReject={true}
         buttonColor="success"
         element={
-        <ExplaintBody 
-         action="ExplainAdd" 
-          validateText={{
+          <ExplaintBody
+            action="ExplainAdd"
+            validateText={{
               Follow_up_Date: followUpDateError,
               ObsAnaly: obsAnalyError,
               Tu: toolUseError,
@@ -6564,11 +6728,11 @@ export default function Complaint() {
               setfollow_up_date(val);
               setFollowUpDateError(false);
             }}
-            onObsAnalyChange={(val) =>{
+            onObsAnalyChange={(val) => {
               setobservation_analysis(val);
               setObsAnalyError(false);
             }}
-            onRootCauseChange={(val) =>{
+            onRootCauseChange={(val) => {
               setroot_cause(val);
               setRootCauseError(false);
             }}
@@ -6594,8 +6758,8 @@ export default function Complaint() {
               setpreventive_action_plan(val);
               setPreventiveActionPlanError(false);
             }}
-
-        />}
+          />
+        }
       />
 
       <FuncDialog
@@ -6735,7 +6899,11 @@ export default function Complaint() {
         openBottonHidden={true}
         hideSaveDraft
         hideReject={approveSelectionCode === "APPROVE" || !approveSelectionCode}
-        hideSaveSubmit={approveSelectionCode === "ADD" || approveSelectionCode === "REJECT" || !approveSelectionCode}
+        hideSaveSubmit={
+          approveSelectionCode === "ADD" ||
+          approveSelectionCode === "REJECT" ||
+          !approveSelectionCode
+        }
         titlename={"Approve QC (QC ADD)// เพิ่มข้อมูล"}
         buttonText={"Approve"}
         handlefunction={ApproveQcAdd}
@@ -6849,14 +7017,16 @@ export default function Complaint() {
         titlename={"Close (CLOSE ADD) // ปิดรายการ"}
         buttonText={"CLOSE"}
         handlefunction={CloseAdd}
-        handlereject={() => ComplaintReturn("EXPLAIN","CLOSE")}
+        handlereject={() => ComplaintReturn("EXPLAIN", "CLOSE")}
         handleClose={handleClose}
         buttonColor="success"
         element={
           <ExplaintBody
             action="CloseAdd"
             handleOpenAdd={() => handleOnclickComplainCloseAdd(dataelement)}
-            onApproveChange={(value) => {setApproveSelectionCode(value?.lov_code ?? null);}}
+            onApproveChange={(value) => {
+              setApproveSelectionCode(value?.lov_code ?? null);
+            }}
             validateText={{
               Follow_up_Date: followUpDateError,
               ObsAnaly: obsAnalyError,
