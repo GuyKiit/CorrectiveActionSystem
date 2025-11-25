@@ -1460,11 +1460,7 @@ export default function ComplaintBody({
   React.useEffect(() => {
     console.log("🔄 explainList UPDATED:", explainList);
     if (explainList?.length > 0 && action != "Add") {
-      // const close = explainList[0];
-      // SC Approve = approve_seq = 1
-      const close = explainList?.find(
-        (x: any) => x.complaint_id === dataelement?.id 
-      );
+      const close = explainList[0];
 
       console.log("👉 SELECTED explain for close:", close);
 
@@ -1489,7 +1485,6 @@ export default function ComplaintBody({
       );
       setclose_detail(close?.close_detail ? close?.close_detail : "");
       setclose_note(close?.close_note ? close?.close_note : "");
-      console.log("explainList", explainList);
 
       console.log("💾2 close_name:", close?.close_name);
       console.log("💾2 close_company_id:", close?.close_company_id);
