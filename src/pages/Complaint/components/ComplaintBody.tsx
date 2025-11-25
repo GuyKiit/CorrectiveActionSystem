@@ -1460,7 +1460,11 @@ export default function ComplaintBody({
   React.useEffect(() => {
     console.log("🔄 explainList UPDATED:", explainList);
     if (explainList?.length > 0 && action != "Add") {
-      const close = explainList[0];
+      // const close = explainList[0];
+      // SC Approve = approve_seq = 1
+      const close = explainList?.find(
+        (x: any) => x.complaint_id === dataelement?.id 
+      );
 
       console.log("👉 SELECTED explain for close:", close);
 
