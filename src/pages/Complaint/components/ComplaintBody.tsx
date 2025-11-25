@@ -1429,18 +1429,34 @@ export default function ComplaintBody({
       const ct = setComplaintType(dataelement?.complaintType);
       setdataComplaintType(ct);
 
+      // ⭐ สร้าง reducedArray สำหรับ dataComplaintTypeValue_Combobox
+      // เพื่อให้ข้อมูลถูกส่งไปตอน save แม้ว่าจะไม่ได้คลิก checkbox
+      const ctReducedArray = ct.map((c: any) => ({
+        complaint_type_id: c.id,
+        label: c.lov1,
+        isOther: c.lov2,
+      }));
+      setdataComplaintTypeValue_Combobox(ctReducedArray);
+      console.log("🔄 Loaded Complaint Type reduced array:", ctReducedArray);
+
       // ถ้ามี complaintType ที่เป็น Other ให้ดึงค่ามา
       const otherCT = ct.find((el: any) => el.lov2 === "Y");
       setcompTypeOther(otherCT?.other || "");
 
       const rs = setComplaintRs(dataelement?.complaintRs);
-      // setdataComplaintRs(rs);
+      setdataComplaintRs(rs);
 
-      // // ⭐ กรองตาม report_type
-      // const filteredRS = rsData.filter(el => el.report_type === dataelement.report_type);
-      // setdataComplaintRs(filteredRS);
+      // ⭐ สร้าง reducedArray สำหรับ dataComplaintRsValue_Combobox
+      const rsReducedArray = rs.map((r: any) => ({
+        complaint_type_id: r.id,
+        label: r.lov1,
+        isOther: r.lov2,
+        isClause: r.lov3,
+      }));
+      setdataComplaintRsValue_Combobox(rsReducedArray);
+      console.log("🔄 Loaded Complaint RS reduced array:", rsReducedArray);
 
-      // ⭐ ใช้ filteredRS หา Other/Clause ไม่ใช่ rsData
+      // ⭐ ดึงค่า Other และ Clause จาก RS
       const otherRS = rs.find((el: any) => el.lov3 === "Other");
       setcompRsOther(otherRS?.other || "");
 
