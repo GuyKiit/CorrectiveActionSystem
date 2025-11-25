@@ -75,6 +75,8 @@ type Validate = {
   Ddother: boolean;
   Ca: boolean;
   Pap: boolean;
+  ScDetail: boolean;
+  ScNote: boolean;
   QcDetail: boolean;
   QcNote: boolean;
   CloseDetail: boolean;
@@ -118,6 +120,9 @@ interface ExplaintBody {
   handleOnclickExplainView?: (item: any) => void;
   handleOnclickExplainApproveSc?: (item: any) => void;
   onApproveChange?: (value: LovType | null) => void;
+
+  onSCDetailChange?: (value: string) => void;
+  onSCNoteChange?: (value: string) => void;
   onQCDetailChange?: (value: string) => void;
   onQCNoteChange?: (value: string) => void;
   onCloseDetailChange?: (value: string) => void;
@@ -184,6 +189,8 @@ export default function ExplaintBody({
   onPreventiveActionPlanChange,
 
   onApproveChange,
+  onSCDetailChange,
+  onSCNoteChange,
   onQCDetailChange,
   onQCNoteChange,
   onCloseDetailChange,
@@ -3197,6 +3204,9 @@ export default function ExplaintBody({
                           borderRadius: 2,
                           backgroundColor: "#fafafa",
                           mt: 2,
+                          border: validateText?.ScDetail
+                            ? "1px solid #f44336"
+                            : "1px solid #e0e0e0",
                         }}
                       >
                         <AccordionSummary
@@ -3232,7 +3242,12 @@ export default function ExplaintBody({
                                 <FullWidthTextArea
                                   value={approve_detail}
                                   labelName=""
-                                  onchange={(e) => setapprove_detail(e)}
+                                  onchange={(e) => {
+                                    setapprove_detail(e);
+                                    if (onSCDetailChange) {
+                                      onSCDetailChange(e);
+                                    }
+                                  }}
                                   bgcolorTextField={
                                     isActionExplainApproveScAdd ? false : true
                                   }
@@ -3246,6 +3261,12 @@ export default function ExplaintBody({
                                     isActionCloseAdd ||
                                     isActionReadClose ||
                                     isActionCloseHistory
+                                  }
+                                  Validate={validateText?.ScDetail || false}
+                                  validateTextLable={
+                                    validateText?.ScDetail
+                                      ? "กรุณากรอกหมายเหตุการอนุมัติ"
+                                      : ""
                                   }
                                 />
                               </Grid>
@@ -3264,6 +3285,9 @@ export default function ExplaintBody({
                           borderRadius: 2,
                           backgroundColor: "#fafafa",
                           mt: 2,
+                          border: validateText?.ScNote
+                            ? "1px solid #f44336"
+                            : "1px solid #e0e0e0",
                         }}
                       >
                         <AccordionSummary
@@ -3299,7 +3323,12 @@ export default function ExplaintBody({
                                 <FullWidthTextArea
                                   value={approve_note}
                                   labelName=""
-                                  onchange={(e) => setapprove_note(e)}
+                                  onchange={(e) => {
+                                    setapprove_note(e);
+                                    if (onSCNoteChange) {
+                                      onSCNoteChange(e);
+                                    }
+                                  }}
                                   bgcolorTextField={
                                     isActionExplainApproveScAdd ? false : true
                                   }
@@ -3313,6 +3342,12 @@ export default function ExplaintBody({
                                     isActionCloseAdd ||
                                     isActionReadClose ||
                                     isActionCloseHistory
+                                  }
+                                  Validate={validateText?.ScNote || false}
+                                  validateTextLable={
+                                    validateText?.ScNote
+                                      ? "กรุณากรอกหมายเหตุเพิ่มเติม"
+                                      : ""
                                   }
                                 />
                               </Grid>
@@ -3667,7 +3702,7 @@ export default function ExplaintBody({
                           borderRadius: 2,
                           backgroundColor: "#fafafa",
                           mt: 2,
-                          border: validateText?.QcNote
+                          border: validateText?.ScNote
                             ? "1px solid #f44336"
                             : "1px solid #e0e0e0",
                         }}

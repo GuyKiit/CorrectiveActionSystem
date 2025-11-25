@@ -48,14 +48,17 @@ export default function FuncDialog(props: FuncDialog) {
           width: props.modalWidth || "95%",
           maxWidth: props.modalWidth || "95%",
           height: props.modalHeight || "90vh",
-          maxHeight: props.modalHeight || "90vh"
+          maxHeight: props.modalHeight || "90vh",
         },
       }}
     >
       {/* Header */}
       <div className="px-5 flex justify-between items-start">
         <div className="pt-5 pb-5">
-          <label className="text-2xl sarabun-regular" style={{ fontSize: '18px' }}>
+          <label
+            className="text-2xl sarabun-regular"
+            style={{ fontSize: "18px" }}
+          >
             {props.titlename}
           </label>
         </div>
@@ -70,16 +73,15 @@ export default function FuncDialog(props: FuncDialog) {
             <CloseIcon />
           </IconButton>
         </div>
-
       </div>
 
       {/* Content */}
-      {props.element && (
-        <DialogContent dividers>{props.element}</DialogContent>
-      )}
+      {props.element && <DialogContent dividers>{props.element}</DialogContent>}
 
       {/* Actions */}
-      <DialogActions sx={{ justifyContent: "space-between", margin: 2, px: 3, pb: 3 }}>
+      <DialogActions
+        sx={{ justifyContent: "space-between", margin: 2, px: 3, pb: 3 }}
+      >
         {/* Left side - Save Draft */}
         <div style={{ display: "flex", gap: "8px" }}>
           {!props.hideSaveDraft && props.openBottonHidden && (
@@ -101,10 +103,8 @@ export default function FuncDialog(props: FuncDialog) {
           )}
         </div>
 
-
         {/* Right side - Save and Submit, Cancel */}
         <div className="flex gap-3">
-
           {!props.hideSaveSubmit && props.openBottonHidden && (
             <FullWidthButton
               handleonClick={props.handlefunction ?? props.handleClose}
@@ -120,9 +120,6 @@ export default function FuncDialog(props: FuncDialog) {
             variant_text="contained"
             colorname={"primary"}
           />
-
-          
-
         </div>
       </DialogActions>
     </BootstrapDialog>
