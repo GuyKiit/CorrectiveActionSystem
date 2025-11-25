@@ -75,6 +75,8 @@ type Validate = {
   Ddother: boolean;
   Ca: boolean;
   Pap: boolean;
+  ScDetail: boolean;
+  ScNote: boolean;
   QcDetail: boolean;
   QcNote: boolean;
   CloseDetail: boolean;
@@ -118,6 +120,9 @@ interface ExplaintBody {
   handleOnclickExplainView?: (item: any) => void;
   handleOnclickExplainApproveSc?: (item: any) => void;
   onApproveChange?: (value: LovType | null) => void;
+
+  onSCDetailChange?: (value: string) => void;
+  onSCNoteChange?: (value: string) => void;
   onQCDetailChange?: (value: string) => void;
   onQCNoteChange?: (value: string) => void;
   onCloseDetailChange?: (value: string) => void;
@@ -184,6 +189,8 @@ export default function ExplaintBody({
   onPreventiveActionPlanChange,
 
   onApproveChange,
+  onSCDetailChange,
+  onSCNoteChange,
   onQCDetailChange,
   onQCNoteChange,
   onCloseDetailChange,
@@ -3222,6 +3229,9 @@ export default function ExplaintBody({
                             borderRadius: 2,
                             backgroundColor: "#fafafa",
                             mt: 2,
+                            border: validateText?.ScDetail
+                            ? "1px solid #f44336"
+                            : "1px solid #e0e0e0",
                           }}
                         >
                           <AccordionSummary
@@ -3242,119 +3252,144 @@ export default function ExplaintBody({
                             </Typography>
                           </AccordionSummary>
 
-                          <AccordionDetails>
-                            <Box sx={{ mt: -3 }}>
-                              <Divider sx={{ my: 1 }} />
-                              <Grid
-                                container
-                                spacing={2}
-                                sx={{
-                                  justifyContent: "center",
-                                  alignItems: "flex-start",
-                                }}
-                              >
-                                <Grid size={12}>
-                                  <FullWidthTextArea
-                                    value={approve_detail}
-                                    labelName=""
-                                    onchange={(e) => setapprove_detail(e)}
-                                    bgcolorTextField={
-                                      isActionExplainApproveScAdd ? false : true
-                                    }
-                                    readonly={
-                                      isActionRead ||
-                                      isActionReadExplain ||
-                                      isActionExplainRead ||
-                                      isActionDelete ||
-                                      isActionExplainApproveScRead ||
-                                      isActionExplainApproveQcAdd ||
-                                      isActionExplainApproveQcRead ||
-                                      isActionCloseAdd ||
-                                      isActionReadClose ||
-                                      isActionCloseHistory
-                                    }
-                                  />
-                                </Grid>
-                              </Grid>
-                            </Box>
-                          </AccordionDetails>
-                        </Accordion>
-                      }
-                      {
-                        <Accordion
-                          expanded={isMinimizeotappOpen}
-                          onChange={() =>
-                            setisMinimizeOtappOpen(!isMinimizeotappOpen)
-                          }
-                          sx={{
-                            borderRadius: 2,
-                            backgroundColor: "#fafafa",
-                            mt: 2,
-                          }}
-                        >
-                          <AccordionSummary
-                            expandIcon={<ExpandMoreIcon />}
-                            aria-controls="detail-content"
-                            id="detail-header"
-                          >
-                            <Typography
-                              className="sarabun-regular-datatable"
+                        <AccordionDetails>
+                          <Box sx={{ mt: -3 }}>
+                            <Divider sx={{ my: 1 }} />
+                            <Grid
+                              container
+                              spacing={2}
                               sx={{
-                                fontSize: "18px",
-                                fontWeight: 600,
-                                color: "#333",
+                                justifyContent: "center",
+                                alignItems: "flex-start",
                               }}
                             >
-                              หมายเหตุเพิ่มเติม
-                              <span style={{ color: "red" }}> *</span>
-                            </Typography>
-                          </AccordionSummary>
-
-                          <AccordionDetails>
-                            <Box sx={{ mt: -3 }}>
-                              <Divider sx={{ my: 1 }} />
-                              <Grid
-                                container
-                                spacing={2}
-                                sx={{
-                                  justifyContent: "center",
-                                  alignItems: "flex-start",
-                                }}
-                              >
-                                <Grid size={12}>
-                                  <FullWidthTextArea
-                                    value={approve_note}
-                                    labelName=""
-                                    onchange={(e) => setapprove_note(e)}
-                                    bgcolorTextField={
-                                      isActionExplainApproveScAdd ? false : true
+                              <Grid size={12}>
+                                <FullWidthTextArea
+                                  value={approve_detail}
+                                  labelName=""
+                                  onchange={(e) => {
+                                    setapprove_detail(e);
+                                    if (onSCDetailChange) {
+                                      onSCDetailChange(e);
                                     }
-                                    readonly={
-                                      isActionRead ||
-                                      isActionReadExplain ||
-                                      isActionExplainRead ||
-                                      isActionDelete ||
-                                      isActionExplainApproveScRead ||
-                                      isActionExplainApproveQcAdd ||
-                                      isActionExplainApproveQcRead ||
-                                      isActionCloseAdd ||
-                                      isActionReadClose ||
-                                      isActionCloseHistory
-                                    }
-                                  />
-                                </Grid>
+                                  }}
+                                  bgcolorTextField={
+                                    isActionExplainApproveScAdd ? false : true
+                                  }
+                                  readonly={
+                                    isActionRead ||
+                                    isActionReadExplain ||
+                                    isActionExplainRead ||
+                                    isActionDelete ||
+                                    isActionExplainApproveScRead ||
+                                    isActionExplainApproveQcAdd ||
+                                    isActionExplainApproveQcRead ||
+                                    isActionCloseAdd ||
+                                    isActionReadClose ||
+                                    isActionCloseHistory
+                                  }
+                                  Validate={validateText?.ScDetail || false}
+                                  validateTextLable={
+                                    validateText?.ScDetail
+                                      ? "กรุณากรอกหมายเหตุการอนุมัติ"
+                                      : ""
+                                  }
+                                />
                               </Grid>
-                            </Box>
-                          </AccordionDetails>
-                        </Accordion>
-                      }
-                    </Grid>
-                  }
-                </Grid>
-              </AccordionDetails>
-            </Accordion>
-          </Paper>
-        )}
+                            </Grid>
+                          </Box>
+                        </AccordionDetails>
+                      </Accordion>
+                    }
+                    {
+                      <Accordion
+                        expanded={isMinimizeotappOpen}
+                        onChange={() =>
+                          setisMinimizeOtappOpen(!isMinimizeotappOpen)
+                        }
+                        sx={{
+                          borderRadius: 2,
+                          backgroundColor: "#fafafa",
+                          mt: 2,
+                          border: validateText?.ScNote
+                            ? "1px solid #f44336"
+                            : "1px solid #e0e0e0",
+                        }}
+                      >
+                        <AccordionSummary
+                          expandIcon={<ExpandMoreIcon />}
+                          aria-controls="detail-content"
+                          id="detail-header"
+                        >
+                          <Typography
+                            className="sarabun-regular-datatable"
+                            sx={{
+                              fontSize: "18px",
+                              fontWeight: 600,
+                              color: "#333",
+                            }}
+                          >
+                            หมายเหตุเพิ่มเติม
+                            <span style={{ color: "red" }}> *</span>
+                          </Typography>
+                        </AccordionSummary>
+
+                        <AccordionDetails>
+                          <Box sx={{ mt: -3 }}>
+                            <Divider sx={{ my: 1 }} />
+                            <Grid
+                              container
+                              spacing={2}
+                              sx={{
+                                justifyContent: "center",
+                                alignItems: "flex-start",
+                              }}
+                            >
+                              <Grid size={12}>
+                                <FullWidthTextArea
+                                  value={approve_note}
+                                  labelName=""
+                                  onchange={(e) => {
+                                    setapprove_note(e);
+                                    if (onSCNoteChange) {
+                                      onSCNoteChange(e);
+                                    }
+                                  }}
+                                  bgcolorTextField={
+                                    isActionExplainApproveScAdd ? false : true
+                                  }
+                                  readonly={
+                                    isActionRead ||
+                                    isActionReadExplain ||
+                                    isActionExplainRead ||
+                                    isActionDelete ||
+                                    isActionExplainApproveScRead ||
+                                    isActionExplainApproveQcAdd ||
+                                    isActionExplainApproveQcRead ||
+                                    isActionCloseAdd ||
+                                    isActionReadClose ||
+                                    isActionCloseHistory
+                                  }
+                                  Validate={validateText?.ScNote || false}
+                                  validateTextLable={
+                                    validateText?.ScNote
+                                      ? "กรุณากรอกหมายเหตุเพิ่มเติม"
+                                      : ""
+                                  }
+                                />
+                              </Grid>
+                            </Grid>
+                          </Box>
+                        </AccordionDetails>
+                      </Accordion>
+                    }
+                  </Grid>
+                }
+              </Grid>
+            </AccordionDetails>
+          </Accordion>
+        </Paper>
+      )}
 
       {/* //ส่วนของ Qc */}
       {(isActionExplainApproveQcAdd ||
@@ -3639,84 +3674,84 @@ export default function ExplaintBody({
                             </Typography>
                           </AccordionSummary>
 
-                          <AccordionDetails>
-                            <Box sx={{ mt: -3 }}>
-                              <Divider sx={{ my: 1 }} />
-                              <Grid
-                                container
-                                spacing={2}
-                                sx={{
-                                  justifyContent: "center",
-                                  alignItems: "flex-start",
-                                }}
-                              >
-                                <Grid size={12}>
-                                  <FullWidthTextArea
-                                    value={qcapprove_detail}
-                                    labelName=""
-                                    onchange={(e) => {
-                                      setqcapprove_detail(e);
-                                      if (onQCDetailChange) {
-                                        onQCDetailChange(e);
-                                      }
-                                    }}
-                                    bgcolorTextField={
-                                      isActionExplainApproveQcAdd ? false : true
-                                    }
-                                    readonly={
-                                      isActionRead ||
-                                      isActionReadExplain ||
-                                      isActionExplainRead ||
-                                      isActionDelete ||
-                                      isActionCloseAdd ||
-                                      isActionReadClose ||
-                                      isActionCloseHistory
-                                    }
-                                    Validate={validateText?.QcDetail || false}
-                                    validateTextLable={
-                                      validateText?.QcDetail
-                                        ? "กรุณากรอกหมายเหตุการอนุมัติ"
-                                        : ""
-                                    }
-                                  />
-                                </Grid>
-                              </Grid>
-                            </Box>
-                          </AccordionDetails>
-                        </Accordion>
-                      }
-                      {
-                        <Accordion
-                          expanded={isMinimizeotappOpen}
-                          onChange={() =>
-                            setisMinimizeOtappOpen(!isMinimizeotappOpen)
-                          }
-                          sx={{
-                            borderRadius: 2,
-                            backgroundColor: "#fafafa",
-                            mt: 2,
-                            border: validateText?.QcNote
-                              ? "1px solid #f44336"
-                              : "1px solid #e0e0e0",
-                          }}
-                        >
-                          <AccordionSummary
-                            expandIcon={<ExpandMoreIcon />}
-                            aria-controls="detail-content"
-                            id="detail-header"
-                          >
-                            <Typography
-                              className="sarabun-regular-datatable"
+                        <AccordionDetails>
+                          <Box sx={{ mt: -3 }}>
+                            <Divider sx={{ my: 1 }} />
+                            <Grid
+                              container
+                              spacing={2}
                               sx={{
-                                fontSize: "18px",
-                                fontWeight: 600,
-                                color: "#333",
+                                justifyContent: "center",
+                                alignItems: "flex-start",
                               }}
                             >
-                              หมายเหตุเพิ่มเติม
-                              <span style={{ color: "red" }}> *</span>
-                            </Typography>
-                          </AccordionSummary>
+                              <Grid size={12}>
+                                <FullWidthTextArea
+                                  value={qcapprove_detail}
+                                  labelName=""
+                                  onchange={(e) => {
+                                    setqcapprove_detail(e);
+                                    if (onQCDetailChange) {
+                                      onQCDetailChange(e);
+                                    }
+                                  }}
+                                  bgcolorTextField={
+                                    isActionExplainApproveQcAdd ? false : true
+                                  }
+                                  readonly={
+                                    isActionRead ||
+                                    isActionReadExplain ||
+                                    isActionExplainRead ||
+                                    isActionDelete ||
+                                    isActionCloseAdd ||
+                                    isActionReadClose ||
+                                    isActionCloseHistory
+                                  }
+                                  Validate={validateText?.QcDetail || false}
+                                  validateTextLable={
+                                    validateText?.QcDetail
+                                      ? "กรุณากรอกหมายเหตุการอนุมัติ"
+                                      : ""
+                                  }
+                                />
+                              </Grid>
+                            </Grid>
+                          </Box>
+                        </AccordionDetails>
+                      </Accordion>
+                    }
+                    {
+                      <Accordion
+                        expanded={isMinimizeotappOpen}
+                        onChange={() =>
+                          setisMinimizeOtappOpen(!isMinimizeotappOpen)
+                        }
+                        sx={{
+                          borderRadius: 2,
+                          backgroundColor: "#fafafa",
+                          mt: 2,
+                          border: validateText?.ScNote
+                            ? "1px solid #f44336"
+                            : "1px solid #e0e0e0",
+                        }}
+                      >
+                        <AccordionSummary
+                          expandIcon={<ExpandMoreIcon />}
+                          aria-controls="detail-content"
+                          id="detail-header"
+                        >
+                          <Typography
+                            className="sarabun-regular-datatable"
+                            sx={{
+                              fontSize: "18px",
+                              fontWeight: 600,
+                              color: "#333",
+                            }}
+                          >
+                            หมายเหตุเพิ่มเติม
+                            <span style={{ color: "red" }}> *</span>
+                          </Typography>
+                        </AccordionSummary>
 
                           <AccordionDetails>
                             <Box sx={{ mt: -3 }}>
