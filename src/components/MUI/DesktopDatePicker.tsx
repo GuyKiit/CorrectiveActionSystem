@@ -40,7 +40,7 @@ export default function DesktopDatePickers({
   return (
     <div style={{ width: "100%" }}>
       <label htmlFor="" className={`${required} fs-5 py-2 sarabun-regular`}>
-        {labelName}
+        {labelName} {required && <span style={{ color: 'red' }}> *</span>}
       </label>
       <LocalizationProvider
         dateAdapter={OverwriteAdapterDayjs}
@@ -49,7 +49,7 @@ export default function DesktopDatePickers({
       >
         <DesktopDatePicker
           sx={{
-            width: "100%", size: "small", bgcolor: bgcolorTextField ? grey[200] : null,
+            width: "100%", size: "small", bgcolor: readonly ? grey[200] : grey[50],
             "& .MuiOutlinedInput-root": {
               fontFamily: "Sarabun",
               "& .MuiOutlinedInput-notchedOutline": {
@@ -57,7 +57,7 @@ export default function DesktopDatePickers({
               },
               "&.Mui-focused": {
                 "& .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "info.main",
+                  borderColor: Validate ? "#d50000" : "info.main",
                 },
               },
             },
@@ -66,14 +66,23 @@ export default function DesktopDatePickers({
           format={dateFormat}
           value={value ? value : null}
           onChange={(newValue) => handleChangeDate(newValue)}
-          slotProps={{ textField: { size: "small" } }}
+          slotProps={{
+            textField: {
+              size: "small",
+              error: Validate,
+              inputProps: { readOnly: true },
+              onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => {
+                e.preventDefault();
+              },
+            },
+          }}
         />
       </LocalizationProvider>
-      {validateTextLable ? (
-          <label htmlFor="" className={`fs-7 py-1 sarabun-regular-lable-validate`}>
-            {validateTextLable}
-          </label>
-        ) : null}
+      {validateTextLable && (
+        <label className="fs-7 py-1 sarabun-regular-lable-validate" style={{ color: "red" }}>
+          {validateTextLable}
+        </label>
+      )}
     </div>
   );
 }

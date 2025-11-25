@@ -2,19 +2,48 @@ import React, { useEffect } from 'react';
 import { useAuth } from '../core/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { Box, Button, createTheme, CssBaseline, Grid, Paper, TextField, ThemeProvider, Typography } from '@mui/material';
+import { _GET_APP } from '../../service/mas';
 
 const defaultTheme = createTheme();
   //const [errorMessage, setErrorMessage] = React.useState("");
 const LoginSection: React.FC = () => {
   const { login, isAuthenticated, error } = useAuth();
+    const [applicationName, setApplicationName] = React.useState<string>("");
   const navigate = useNavigate();
   useEffect(() => {
     if (isAuthenticated) {
       navigate('/complaint');
-      // navigate('/dashboard');
+      // navigate('/report');
+      // navigate('/departmentsetting');
     }
     //setErrorMessage("")
   }, [isAuthenticated, navigate]);
+
+
+
+  let application: any[] = [];
+  React.useEffect(() => {
+    App_Get()
+  }, [])
+  const App_Get = async () => {
+ 
+    try {
+      let response = await _GET_APP({});
+      console.log(response, "response_App_Get");
+ 
+      if (Array.isArray(response?.data)) {
+        application = response.data.filter((item: any) => item.application_code === import.meta.env.VITE_APP_APPLICATION_CODE);
+        if (application) {
+          setApplicationName(application[0].application_name)
+ 
+        }
+      }
+    } catch (e) {
+      console.log("error App_Get", e);
+    }
+  };
+
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,7 +96,7 @@ const LoginSection: React.FC = () => {
             style={{ height: 80, marginBottom: 16 }}
           />
           <Typography component="h1" variant="h5">
-            {/* {applicationName} */}
+            {applicationName}
           </Typography>
           {/* <Typography component="h1" variant="h5">
             Sign In

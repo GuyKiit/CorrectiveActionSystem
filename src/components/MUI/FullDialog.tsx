@@ -17,14 +17,23 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 }));
 
 interface FuncDialog {
-  open: boolean;
+  open: any;
+  // close: any;
   handleClose: () => void;
   handlefunction?: () => void;
+  handlesavedraft?: () => void;
+  handlereject?: () => void;
   titlename?: string;
   dialogWidth?: "xs" | "sm" | "md" | "lg" | "xl";
   openBottonHidden?: boolean;
-  colorBotton?: string;
+  hideSaveDraft?: boolean;
+  hideReject?: boolean;
+  hideSaveSubmit?: boolean;
+  buttonText?: string;
+  buttonColor?: string;
   element?: React.ReactNode;
+  modalWidth?: string | number;
+  modalHeight?: string | number;
 }
 
 export default function FuncDialog(props: FuncDialog) {
@@ -35,13 +44,21 @@ export default function FuncDialog(props: FuncDialog) {
       onClose={props.handleClose}
       open={props.open}
       PaperProps={{
-        sx: { width: "100%", maxWidth: "100%" },
+        sx: {
+          width: props.modalWidth || "95%",
+          maxWidth: props.modalWidth || "95%",
+          height: props.modalHeight || "90vh",
+          maxHeight: props.modalHeight || "90vh",
+        },
       }}
     >
       {/* Header */}
       <div className="px-5 flex justify-between items-start">
         <div className="pt-5 pb-5">
-          <label className="text-2xl sarabun-regular">
+          <label
+            className="text-2xl sarabun-regular"
+            style={{ fontSize: "18px" }}
+          >
             {props.titlename}
           </label>
         </div>
@@ -56,42 +73,52 @@ export default function FuncDialog(props: FuncDialog) {
             <CloseIcon />
           </IconButton>
         </div>
-
       </div>
 
       {/* Content */}
-      {props.element && (
-        <DialogContent dividers>{props.element}</DialogContent>
-      )}
+      {props.element && <DialogContent dividers>{props.element}</DialogContent>}
 
       {/* Actions */}
-      <DialogActions sx={{ justifyContent: "flex-end", px: 3, pb: 3 }}>
-        <div>
-          {props.openBottonHidden && (
+      <DialogActions
+        sx={{ justifyContent: "space-between", margin: 2, px: 3, pb: 3 }}
+      >
+        {/* Left side - Save Draft */}
+        <div style={{ display: "flex", gap: "8px" }}>
+          {!props.hideSaveDraft && props.openBottonHidden && (
             <FullWidthButton
-              handleonClick={props.handlefunction ?? props.handleClose}
-              labelName={props.titlename ?? "บันทึก"}
+              handleonClick={props.handlesavedraft ?? props.handleClose}
+              labelName="Save Draft"
               variant_text="contained"
-              colorname={props.colorBotton ?? "primary"}
+              colorname={props.buttonColor ?? "primary"}
+            />
+          )}
+
+          {!props.hideReject && props.openBottonHidden && (
+            <FullWidthButton
+              handleonClick={props.handlereject ?? props.handleClose}
+              labelName="Reject"
+              variant_text="contained"
+              colorname="error"
             />
           )}
         </div>
-        <FullWidthButton
-          handleonClick={props.handleClose}
-          labelName="Cancel"
-          variant_text="outlined"
-          colorname="inherit"
-        />
-      </DialogActions>
 
-      <DialogActions sx={{ justifyContent: "space-between", px: 3, pb: 3 }}>
-        {/* ปุ่มซ้าย */}
-        <div>
+        {/* Right side - Save and Submit, Cancel */}
+        <div className="flex gap-3">
+          {!props.hideSaveSubmit && props.openBottonHidden && (
+            <FullWidthButton
+              handleonClick={props.handlefunction ?? props.handleClose}
+              labelName={props.buttonText ?? "SAVE & SUBMIT"}
+              variant_text="contained"
+              colorname={props.buttonColor ?? "primary"}
+            />
+          )}
+
           <FullWidthButton
-            handleonClick={props.handlefunction ?? props.handleClose}
-            labelName="Save Draft"
+            handleonClick={props.handleClose}
+            labelName="Cancel"
             variant_text="contained"
-            colorname={props.colorBotton ?? "primary"}
+            colorname={"primary"}
           />
         </div>
       </DialogActions>

@@ -219,7 +219,7 @@ export default function FuncDialogDemo() {
         titlename={'เพิ่มข้อมูล'}
         handleClose={handleClose}
         handlefunction={() => { }}
-        colorBotton="successTheme"
+        buttonColor="successTheme"
         element={<OrderInsert action="add"></OrderInsert>
         }
       >

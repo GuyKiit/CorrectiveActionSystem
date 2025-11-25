@@ -16,8 +16,22 @@ import { useAuth } from "../../auth/core/AuthContext";
 
 interface ActionManageCellProps {
   disabled?: boolean;
+  hiddenRead?: boolean;
   hiddenEdit?: boolean;
   hiddenDelete?: boolean;
+  hiddenExplain?: boolean;
+  hiddenReadExplain?: boolean;
+  hiddenApproveSC?: boolean;
+  hiddenReadApproveSC?: boolean;
+  hiddenApproveQC?: boolean;
+  hiddenReadApproveQC?: boolean;
+  hiddenClose?: boolean;
+  hiddenReadClose?: boolean;
+  hiddenCloseHistory?: boolean;
+  hiddenDepartmentAdd?: boolean;
+  hiddenDepartmentView?: boolean;
+  hiddenDepartmentEdit?: boolean;
+  hiddenDepartmentDelete?: boolean;
   chack_data?: 'Cutoff_Row' | 'CencalCutoff' | undefined;
   hadleOnclickMenu?: (value: string) => void;
 }
@@ -33,13 +47,33 @@ const ICONS_MAP: { [key: string]: ReactElement } = {
 };
 
 const ActionManageCell: React.FC<ActionManageCellProps> = (props) => {
-  const { disabled, chack_data, hadleOnclickMenu, hiddenEdit, hiddenDelete } = props;
+  const {
+    disabled,
+    chack_data,
+    hadleOnclickMenu,
+    hiddenRead,
+    hiddenEdit,
+    hiddenDelete,
+    hiddenExplain,
+    hiddenReadExplain,
+    hiddenApproveSC,
+    hiddenReadApproveSC,
+    hiddenApproveQC,
+    hiddenReadApproveQC,
+    hiddenClose,
+    hiddenReadClose,
+    hiddenCloseHistory,
+    hiddenDepartmentAdd,
+    hiddenDepartmentView,
+    hiddenDepartmentEdit,
+    hiddenDepartmentDelete
+  } = props;
   const { menuFuncData } = useAuth();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
+    setAnchorEl(event.currentTarget); 
   };
 
   const handleClose = () => {
@@ -62,8 +96,24 @@ const ActionManageCell: React.FC<ActionManageCellProps> = (props) => {
         }
       }}
       hidden={
-        (funcName === "EditShipment" && hiddenEdit) ||
-        (funcName === "Delete" && hiddenDelete)
+        (funcName === "View" && hiddenRead) ||                      // Complaint
+        (funcName === "Edit" && hiddenEdit) ||                      // Complaint
+        (funcName === "Delete" && hiddenDelete) ||                  // Complaint
+        (funcName === "Explain" && hiddenExplain) ||                // Explain
+        (funcName === "ApproveSC" && hiddenApproveSC) ||            // Approve
+        (funcName === "ApproveQC" && hiddenApproveQC) ||            // Approve
+        (funcName === "Close" && hiddenClose) ||                    // Close
+
+        (funcName === "ReadExplain" && hiddenReadExplain) ||        // ReadExplain
+        (funcName === "ReadApproveSC" && hiddenReadApproveSC) ||    // ReadApproveSC
+        (funcName === "ReadApproveQC" && hiddenReadApproveQC) ||    // ReadApproveQC
+        (funcName === "ReadClose" && hiddenReadClose) ||            // ReadClose
+        (funcName === "CloseHistory" && hiddenCloseHistory) ||      // CloseHistory
+
+        (funcName === "DepartmentAdd" && hiddenDepartmentAdd) ||    // DepartmentAdd
+        (funcName === "DepartmentView" && hiddenDepartmentView) ||  // DepartmentView
+        (funcName === "DepartmentEdit" && hiddenDepartmentEdit) ||  // DepartmentEdit
+        (funcName === "DepartmentDelete" && hiddenDepartmentDelete) // DepartmentDelete
       }
       // onMouseEnter={(e) => {
       //   if (hasSubMenu) {
@@ -79,15 +129,24 @@ const ActionManageCell: React.FC<ActionManageCellProps> = (props) => {
       {hasSubMenu && <span className="ml-auto">▶</span>}
     </MenuItem>
   );
-//  nsole.log(menuFuncData,'menuFuncDatamenuFuncDatamenuFuncDatamenuFuncDatamenuFuncDatamenuFuncDatamenuFuncDatamenuFuncDatamenuFuncDatamenuFuncDatamenuFuncData');
+  console.log(menuFuncData,'menuFuncData');
+  console.log(hiddenExplain,'hiddenExplain');
+  console.log(hiddenClose,'🎏🎏🎏hiddenClose');
   
-
+// console.log('CHECK DATE el in ActionManageCell', menuFuncData)
   const filteredMenu = (menuFuncData ?? [])
     .filter(el =>
-      el?.func_name &&
+      el?.func_name && el?.func_name !== "Add" &&
       el.menu_func_sequence !== 0 &&      
       (!chack_data || chack_data === el.func_name)
     )
+  //   // ✅ ลบรายการซ้ำ (func_name ซ้ำกัน)
+  // .reduce((acc: any[], curr: any) => {
+  //   if (!acc.some(item => item.func_name === curr.func_name)) {
+  //     acc.push(curr);
+  //   }
+  //   return acc;
+  // }, [])
     .sort((a, b) => (a ? a.menu_func_sequence ?? 9999 : 9999) - (b ? b.menu_func_sequence ?? 9999 : 9999));
 
   return (
@@ -139,6 +198,7 @@ const ActionManageCell: React.FC<ActionManageCellProps> = (props) => {
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
         {filteredMenu.map((el: any, index: number) =>
+
           renderMenuItem(
             el.func_name,
             el.display_name ?? "",

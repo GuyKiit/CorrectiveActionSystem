@@ -30,8 +30,9 @@ export default function DataTable({ colum, rows, titlename, noDataname = "ไม
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [searchQuery, setSearchQuery] = React.useState("");
 
-  console.log(colum,'colum');
-  
+  // console.log('[DataTable] colum : ', colum);
+
+
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
     property: keyof any
@@ -143,6 +144,7 @@ export default function DataTable({ colum, rows, titlename, noDataname = "ไม
     }
   };
 
+
   // Clear selected data when rows change
   React.useEffect(() => {
     setPage(1);
@@ -150,7 +152,7 @@ export default function DataTable({ colum, rows, titlename, noDataname = "ไม
   }, [rows]);
 
   return (
-    <div className="block w-full p-6  border-gray-200 rounded-lg shadow-sm" style={{ border: "2px solid #F29739" }}>
+    <div className="block w-full p-6  border-gray-200 rounded-lg shadow-sm" style={{ border: "2px solid #39a2f2" }}>
       {/* <div className="text-2xl text-center flex-grow">
         {titlename}
       </div> */}
@@ -159,7 +161,7 @@ export default function DataTable({ colum, rows, titlename, noDataname = "ไม
           {titlename}
         </label>
       </div>
-      <Divider className="mb-5" sx={{ my: 0.1, borderColor: "#F29739" }} />
+      <Divider className="mb-5" sx={{ my: 0.1, borderColor: "#39a2f2" }} />
       <div className="flex px-5 pt-5 items-center justify-between w-full">
         <div className="flex items-center">
           {buttonElement}
@@ -188,13 +190,13 @@ export default function DataTable({ colum, rows, titlename, noDataname = "ไม
       </div> */}
       <div className="p-5">
         <TableContainer className="border border-gray-300 rounded-lg">
-          <Table  aria-label="simple table">
+          <Table aria-label="simple table">
             <TableHead>
               <TableRow>
                 {select && (
                   <TableCell
                     //align={"center"}
-                  //padding={"none"}
+                    //padding={"none"}
                     sortDirection={orderBy === "id" ? order : false}
                     //sx={{ minWidth: 50 }}
                     className="border border-gray-500/10 bg-gray-50"
@@ -215,7 +217,7 @@ export default function DataTable({ colum, rows, titlename, noDataname = "ไม
                   </TableCell>
                 )}
                 {colum.map((headCell: any, index: number) => (
-                  
+
                   <TableCell
                     key={index}
                     align={headCell.numeric}
@@ -229,7 +231,7 @@ export default function DataTable({ colum, rows, titlename, noDataname = "ไม
                       onClick={(e) => handleRequestSort(e, headCell.columnName)}
                       sx={{}}
                     >
-                       <label className="text-gray-600 pl-5 text-center sarabun-regular">
+                      <label className="text-gray-600 pl-5 text-center sarabun-regular">
                         {headCell.label}
                       </label>
                       {orderBy === headCell.columnName ? (
@@ -242,9 +244,15 @@ export default function DataTable({ colum, rows, titlename, noDataname = "ไม
                 ))}
               </TableRow>
             </TableHead>
+
+
+
+
+
             <TableBody>
               {visibleRows &&
                 visibleRows.map((row: any, index: number) => {
+
                   return (
                     <TableRow
                       className={`hover:bg-blue-50`}
@@ -273,18 +281,31 @@ export default function DataTable({ colum, rows, titlename, noDataname = "ไม
                       {/* Render data cells for each column */}
                       {colum?.map((column: any, cellIndex: number) => {
                         const value = row[column.columnName];
+
                         return (
                           <TableCell
                             key={`${column.columnName}-${cellIndex}`}
-                            align={column.numeric}
+                            align={column.numeric || "center"}
                             className="border border-gray-500/10"
                           >
-                            <label className="text-gray-600">
-                              {value}
-                            </label>
+                            {/* ✅ 1. ถ้าเป็น React Element */}
+                            {React.isValidElement(value) ? (
+                              value
+                            ) :
+                              /* ✅ 2. ถ้าเป็น string HTML (มี <br/>) */
+                              typeof value === "string" && value.includes("<br") ? (
+                                <div
+                                  className="text-gray-600"
+                                  dangerouslySetInnerHTML={{ __html: value }}
+                                ></div>
+                              ) : (
+                                /* ✅ 3. ค่าธรรมดา */
+                                <div className="text-gray-600">{value ?? ""}</div>
+                              )}
                           </TableCell>
                         );
                       })}
+
                     </TableRow>
                   );
                 })}
@@ -300,6 +321,11 @@ export default function DataTable({ colum, rows, titlename, noDataname = "ไม
                 </TableRow>
               )}
             </TableBody>
+
+
+
+
+
           </Table>
         </TableContainer>
         <div>

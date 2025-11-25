@@ -2,16 +2,21 @@ import React, { createContext, FC, useContext, useState } from "react";
 import { initialListComplaint, ListComplaintContextProps } from "./model";
 import dayjs from "dayjs";
 import { setPriority } from "node:os";
+import { Launch } from "..";
 type WithChildren = {
     children: React.ReactNode
 }
 const ListComplaintContext = createContext<ListComplaintContextProps>(initialListComplaint);
 const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
+    const [dataelement, setdataelement] = React.useState<any>(initialListComplaint.dataelement);
     const [Complaint_no, setComplaint_no] = useState<any>(
         initialListComplaint.Complaint_no
     );
     const [no, setno] = useState<any>(
         initialListComplaint.no
+    );
+    const [id, setid] = useState<any>(
+        initialListComplaint.id
     );
     const [cas_number, setcas_number] = useState<any>(
         initialListComplaint.cas_number
@@ -19,8 +24,8 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
     const [doc_date, setdoc_date] = useState<dayjs.Dayjs>(
         dayjs(initialListComplaint.doc_date)
     );
-    const [date_of_detection, setdate_of_detection] = useState<dayjs.Dayjs>(
-        dayjs(initialListComplaint.date_of_detection)
+    const [date_of_detection, setdate_of_detection] = useState<dayjs.Dayjs | null>(
+        initialListComplaint.date_of_detection ? dayjs(initialListComplaint.date_of_detection) : null
     );
     const [request_name, setrequest_name] = useState<any>(
         initialListComplaint.request_name
@@ -40,6 +45,9 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
     const [request_email, setrequest_email] = useState<any>(
         initialListComplaint.request_email
     );
+    const [request_phone, setrequest_phone] = useState<any>(
+        initialListComplaint.request_phone
+    );
     const [request_date, setrequest_date] = useState<dayjs.Dayjs>(
         dayjs(initialListComplaint.request_date)
     );
@@ -57,9 +65,6 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
     );
     const [user_file_name, setuser_file_name] = useState<any>(
         initialListComplaint.user_file_name
-    );
-    const [area_of_detection_dept, setarea_of_detection_dept] = useState<any>(
-        initialListComplaint.area_of_detection_dept
     );
     const [product_name, setproduct_name] = useState<any>(
         initialListComplaint.product_name
@@ -112,6 +117,12 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
     const [complaint_status_id, setcomplaint_status_id] = useState<any>(
         initialListComplaint.complaint_status_id
     );
+    const [complaint_status_label, setcomplaint_status_label] = useState<any>(
+        initialListComplaint.complaint_status_label
+    );
+    const [step_label, setstep_label] = useState<any>(
+        initialListComplaint.step_label
+    );
     const [status_last_datetime, setstatus_last_datetime] = useState<dayjs.Dayjs>(
         dayjs(initialListComplaint.status_last_datetime)
     );
@@ -157,13 +168,10 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
     const [ComplaintStatusID_Combobox, setComplaintStatusID_Combobox] = useState<any>(
         initialListComplaint.ComplaintStatusID_Combobox
     );
-    const [dataReportType, setdataReportType] = useState<any>(
-        initialListComplaint.dataReportType
-    );
     const [dataReportTypeValue, setdataReportTypeValue] = useState<any>(
         initialListComplaint.dataReportTypeValue
     );
- 
+
     const [dataComplaintType_Combobox, setdataComplaintType_Combobox] = useState<any>(
         initialListComplaint.dataComplaintType_Combobox
     );
@@ -188,14 +196,23 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
     const [datapriority, setdatapriority] = useState<any>(
         initialListComplaint.datapriority
     );
+    const [datastatus, setdatastatus] = useState<any>(
+        initialListComplaint.datastatus
+    );
+    const [datastatusconfig, setdatastatusconfig] = useState<any>(
+        initialListComplaint.datastatusconfig
+    );
     const [PriorityLevel, setPriorityLevel] = useState<any>(
         initialListComplaint.PriorityLevel
     );
     const [other, setother] = useState<any>(
         initialListComplaint.other
     );
-     const [compTypeOther, setcompTypeOther] = useState<any>(
+    const [compTypeOther, setcompTypeOther] = useState<any>(
         initialListComplaint.compTypeOther
+    );
+    const [otherText, setotherText] = useState<any>(
+        initialListComplaint.otherText
     );
     const [compRsOther, setcompRsOther] = useState<any>(
         initialListComplaint.compRsOther
@@ -212,7 +229,35 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
     const [employee_tel, setemployee_tel] = useState<any>(
         initialListComplaint.employee_tel
     );
-    
+    const [report_type, setreport_type] = useState<any>(
+        initialListComplaint.report_type
+    );
+
+    //--------dataset-------
+    const [dataset_crosscompany, setdataset_crosscompany] = useState<any>(
+        initialListComplaint.dataset_crosscompany
+    );
+    const [dataset_reporttype, setdataset_reporttype] = useState<any>(
+        initialListComplaint.dataset_reporttype
+    );
+    const [dataset_company, setdataset_company] = useState<any>(
+        initialListComplaint.dataset_company
+    );
+    const [dataset_department, setdataset_department] = useState<any>(
+        initialListComplaint.dataset_department
+    );
+    const [dataset_domain, setdataset_domain] = useState<any>(
+        initialListComplaint.dataset_domain
+    );
+    const [dataset_domainrelate, setdataset_domainrelate] = useState<any>(
+        initialListComplaint.dataset_domainrelate
+    );
+    const [dataset_activeCompany, setdataset_activeCompany] = useState<any>(
+        initialListComplaint.dataset_activeCompany
+    );
+    const [dataset_roleProfile, setdataset_roleProfile] = useState<any>(
+        initialListComplaint.dataset_roleProfile
+    );
 
     const [dataComplaintTypeValue_Combobox, setdataComplaintTypeValue_Combobox] =
         useState<any[]>([]); // รับ array ของอะไรก็ได้
@@ -220,14 +265,288 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
     // const [selectedFile, setSelectedFile] = useState<any>(
     //     initialListComplaint.selectedFile
     // );
+    // State สำหรับเก็บไฟล์จริง
+    const [complaintFiles, setcomplaintFiles] = useState<File[]>([]); // state ไฟล์
 
-     
+
+
+    //--------Explaint-------
+    const [explainList, setExplainList] = useState<any>(
+        initialListComplaint.explainList
+    );
+    const [approveList, setApproveList] = useState<any>(
+        initialListComplaint.approveList
+    );
+    const [dataTooluse, setdataToolUse] = useState<any>(
+        initialListComplaint.dataTooluse
+    );
+    const [dataToolUse_Combobox, setdataToolUse_Combobox] = useState<any>(
+        initialListComplaint.dataToolUse_Combobox
+    );
+    const [dataTooluseValue, setdataToolUseValue] = useState<any>(
+        initialListComplaint.dataTooluseValue
+    );
+    const [dataToolUseValue_Combobox, setdataToolUseValue_Combobox] = useState<any>(
+        initialListComplaint.dataToolUseValue_Combobox
+    );
+    const [ToolOther, setToolOther] = useState<any>(
+        initialListComplaint.ToolOther
+    );
+    const [dataDecision_Combobox, setdataDecision_Combobox] = useState<any>(
+        initialListComplaint.dataDecision_Combobox
+    );
+    const [dataDecisionValue_Combobox, setdataDecisionValue_Combobox] = useState<any>(
+        initialListComplaint.dataDecisionValue_Combobox
+    );
+    const [dataDecision, setdataDecision] = useState<any>(
+        initialListComplaint.dataDecision
+    );
+    const [dataDecisionValue, setdataDecisionValue] = useState<any>(
+        initialListComplaint.dataDecisionValue
+    );
+    const [DecisionOther, setDecisionOther] = useState<any>(
+        initialListComplaint.DecisionOther
+    );
+    const [dataApprove_Combobox, setdataApprove_Combobox] = useState<any>(
+        initialListComplaint.dataApprove_Combobox
+    );
+    const [dataSectionapp, setdataSectionapp] = useState<any>(
+        initialListComplaint.dataSectionapp
+    );
+    const [dataSectionappValue, setdataSectionappValue] = useState<any>(
+        initialListComplaint.dataSectionappValue
+    );
+    const [dataQcapp, setdataQcapp] = useState<any>(
+        initialListComplaint.dataQcapp
+    );
+    const [dataQcappValue, setdataQcappValue] = useState<any>(
+        initialListComplaint.dataQcappValue
+    );
+    const [dataFuapp, setdataFuapp] = useState<any>(
+        initialListComplaint.dataFuapp
+    );
+    const [dataFuappValue, setdataFuappValue] = useState<any>(
+        initialListComplaint.dataFuappValue
+    );
+
+    const [explain_id, setexplain_id] = useState<any>(
+        initialListComplaint.explain_id
+    );
+    const [complaint_id, setcomplaint_id] = useState<any>(
+        initialListComplaint.complaint_id
+    );
+    const [explain_seq, setexplain_seq] = useState<any>(
+        initialListComplaint.explain_seq
+    );
+    const [observation_analysis, setobservation_analysis] = useState<any>(
+        initialListComplaint.observation_analysis
+    );
+    const [root_cause, setroot_cause] = useState<any>(
+        initialListComplaint.root_cause
+    );
+    const [corrective_action, setcorrective_action] = useState<any>(
+        initialListComplaint.corrective_action
+    );
+    const [preventive_action_plan, setpreventive_action_plan] = useState<any>(
+        initialListComplaint.preventive_action_plan
+    );
+    const [follow_up_date, setfollow_up_date] = useState<dayjs.Dayjs | null>(
+        dayjs(initialListComplaint.follow_up_date)
+    );
+    const [responsible_name, setresponsible_name] = useState<any>(
+        initialListComplaint.responsible_name
+    );
+    const [responsible_company_id, setresponsible_company_id] = useState<any>(
+        initialListComplaint.responsible_company_id
+    );
+    const [responsible_department_id, setresponsible_department_id] = useState<any>(
+        initialListComplaint.responsible_department_id
+    );
+    const [responsible_position, setresponsible_position] = useState<any>(
+        initialListComplaint.responsible_position
+    );
+    const [responsible_email, setresponsible_email] = useState<any>(
+        initialListComplaint.responsible_email
+    );
+    const [responsible_date, setresponsible_date] = useState<dayjs.Dayjs | null>(
+        dayjs(initialListComplaint.responsible_date)
+    );
+    const [close_status, setclose_status] = useState<any>(
+        initialListComplaint.close_status
+    );
+    const [close_name, setclose_name] = useState<any>(
+        initialListComplaint.close_name
+    );
+    const [close_company_id, setclose_company_id] = useState<any>(
+        initialListComplaint.close_company_id
+    );
+    const [close_department_id, setclose_department_id] = useState<any>(
+        initialListComplaint.close_department_id
+    );
+    const [close_position, setclose_position] = useState<any>(
+        initialListComplaint.close_position
+    );
+    const [close_email, setclose_email] = useState<any>(
+        initialListComplaint.close_email
+    );
+    const [close_date, setclose_date] = useState<dayjs.Dayjs | null>(
+        dayjs(initialListComplaint.close_date)
+    );
+    const [close_detail, setclose_detail] = useState<any>(
+        initialListComplaint.close_detail
+    );
+    const [close_note, setclose_note] = useState<any>(
+        initialListComplaint.close_note
+    );
+    const [return_detail, setreturn_detail] = useState<any>(
+        initialListComplaint.return_detail
+    );
+    const [return_name, setreturn_name] = useState<any>(
+        initialListComplaint.return_name
+    );
+    const [return_company_id, setreturn_company_id] = useState<any>(
+        initialListComplaint.return_company_id
+    );
+    const [return_department_id, setreturn_department_id] = useState<any>(
+        initialListComplaint.return_department_id
+    );
+    const [return_position, setreturn_position] = useState<any>(
+        initialListComplaint.return_position
+    );
+    const [return_email, setreturn_email] = useState<any>(
+        initialListComplaint.return_email
+    );
+    const [return_datetime, setreturn_datetime] = useState<dayjs.Dayjs>(
+        dayjs(initialListComplaint.return_datetime)
+    );
+    const [explain_record_status, setexplain_record_status] = useState<any>(
+        initialListComplaint.explain_record_status
+    );
+    const [explain_create_by, setexplain_create_by] = useState<any>(
+        initialListComplaint.explain_create_by
+    );
+    const [explain_create_datetime, setexplain_create_datetime] = useState<dayjs.Dayjs | null>(
+        dayjs(initialListComplaint.explain_create_datetime)
+    );
+    const [explain_update_by, setexplain_update_by] = useState<any>(
+        initialListComplaint.explain_update_by
+    );
+    const [explain_update_datetime, setexplain_update_datetime] = useState<dayjs.Dayjs>(
+        dayjs(initialListComplaint.explain_update_datetime)
+    );
+
+    const [approve_status, setapprove_status] = useState<any>(
+        initialListComplaint.approve_status
+    );
+    const [approve_detail, setapprove_detail] = useState<any>(
+        initialListComplaint.approve_detail
+    );
+    const [approve_note, setapprove_note] = useState<any>(
+        initialListComplaint.approve_note
+    );
+    const [approve_name, setapprove_name] = useState<any>(
+        initialListComplaint.approve_name
+    );
+    const [approve_company_id, setapprove_company_id] = useState<any>(
+        initialListComplaint.approve_company_id
+    );
+    const [approve_department_id, setapprove_department_id] = useState<any>(
+        initialListComplaint.approve_department_id
+    );
+    const [approve_position, setapprove_position] = useState<any>(
+        initialListComplaint.approve_position
+    );
+    const [approve_email, setapprove_email] = useState<any>(
+        initialListComplaint.approve_email
+    );
+    const [approve_date, setapprove_date] = useState<dayjs.Dayjs | null>(
+        dayjs(initialListComplaint.approve_date)
+    );
+    const [dataset_stepcomplaint, setdataset_stepcomplaint] = useState<any>(
+        initialListComplaint.dataset_stepcomplaint
+    );
+    const [dataset_complaintAction, setdataset_complaintAction] = useState<any>(
+        initialListComplaint.dataset_complaintAction
+    );
+    const [dataset_complaintActionNew, setdataset_complaintActionNew] = useState<any>(
+        initialListComplaint.dataset_complaintActionNew
+    );
+    const [dataset_complaintActionExplain, setdataset_complaintActionExplain] = useState<any>(
+        initialListComplaint.dataset_complaintActionExplain
+    );
+    const [dataset_complaintActionClose, setdataset_complaintActionClose] = useState<any>(
+        initialListComplaint.dataset_complaintActionClose
+    );
+    const [dataset_complaintActionApproveSC, setdataset_complaintActionApproveSC] = useState<any>(
+        initialListComplaint.dataset_complaintActionApproveSC
+    );
+    const [dataset_complaintActionApproveQC, setdataset_complaintActionApproveQC] = useState<any>(
+        initialListComplaint.dataset_complaintActionApproveQC
+    );
+    const [domainrelate, set_domainrelate] = useState<any>(
+        initialListComplaint.domainrelate
+    );
+    const [domainrelate_search, set_domainrelate_search] = useState<any>(
+        initialListComplaint.domainrelate_search
+    );
+    const [departmentrelate, set_departmentrelate] = useState<any>(
+        initialListComplaint.departmentrelate
+    );
+    const [departmentrelate_search, set_departmentrelate_search] = useState<any>(
+        initialListComplaint.departmentrelate_search
+    );
+    const [department, set_department] = useState<any>(
+        initialListComplaint.department
+    );
+    const [domain, set_domain] = useState<any>(
+        initialListComplaint.domain
+    );
+
+    const [qcapprove_name, setqcapprove_name] = useState<any>(
+        initialListComplaint.qcapprove_name
+    );
+    const [qcapprove_company_id, setqcapprove_company_id] = useState<any>(
+        initialListComplaint.qcapprove_company_id
+    );
+    const [qcapprove_department_id, setqcapprove_department_id] = useState<any>(
+        initialListComplaint.qcapprove_department_id
+    );
+    const [qcapprove_position, setqcapprove_position] = useState<any>(
+        initialListComplaint.qcapprove_position
+    );
+    const [qcapprove_email, setqcapprove_email] = useState<any>(
+        initialListComplaint.qcapprove_email
+    );
+    const [qcapprove_date, setqcapprove_date] = useState<dayjs.Dayjs | null>(
+        dayjs(initialListComplaint.qcapprove_date)
+    );
+    const [qcapprove_detail, setqcapprove_detail] = useState<any>(
+        initialListComplaint.qcapprove_detail
+    );
+    const [qcapprove_note, setqcapprove_note] = useState<any>(
+        initialListComplaint.qcapprove_note
+    );
+    
+    const [isApproveScBoxHidden, setisApproveScBoxHidden] = useState<boolean | undefined>(
+        false
+    );
+    const [isApproveQcBoxHidden, setisApproveQcBoxHidden] = useState<any>(
+        initialListComplaint.isApproveQcBoxHidden
+    );
+    const [isApproveCloseBoxHidden, setisApproveCloseBoxHidden] = useState<any>(
+        initialListComplaint.isApproveCloseBoxHidden
+    );
+    
 
     return (
         <ListComplaintContext.Provider
             value={{
+                dataelement,
+                setdataelement,
                 Complaint_no,
                 no,
+                id,
+                report_type,
                 cas_number,
                 doc_date,
                 date_of_detection,
@@ -237,12 +556,13 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 request_department_id,
                 request_position,
                 request_email,
-                area_of_detection_dept,
+                request_phone,
                 product_name,
                 detail,
                 user_file_name,
                 other,
                 compTypeOther,
+                otherText,
                 compRsOther,
                 photoOther,
                 clauseOther,
@@ -268,6 +588,8 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 acknowledge_email,
                 acknowledge_datetime,
                 complaint_status_id,
+                complaint_status_label,
+                step_label,
                 status_last_datetime,
                 return_from_status_id,
                 return_from_status_datetime,
@@ -280,10 +602,8 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 create_by,
                 create_datetime,
                 update_by,
-
                 update_datetime,
                 ComplaintStatusID_Combobox,
-                dataReportType,
                 dataReportTypeValue,
                 dataComplaintType_Combobox,
                 dataComplaintRs_Combobox,
@@ -293,13 +613,127 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 datapriority_Combobox,
                 datapriorityValue_Combobox,
                 datapriority,
+                datastatus,
+                datastatusconfig,
                 PriorityLevel,
-                employee_tel,
                 // ✅ expose state ออกมาให้ component อื่นใช้
                 dataComplaintTypeValue_Combobox,
 
+
+                //--------dataset-------
+                dataset_crosscompany,
+                dataset_reporttype,
+                dataset_company,
+                dataset_department,
+                dataset_domain,
+                dataset_domainrelate,
+                complaintFiles,
+                dataset_stepcomplaint,
+                dataset_complaintAction,
+                dataset_complaintActionNew,
+                dataset_complaintActionExplain,
+                dataset_complaintActionClose,
+                dataset_complaintActionApproveSC,
+                dataset_complaintActionApproveQC,
+                dataset_activeCompany,
+                dataset_roleProfile,
+                domainrelate,
+                domainrelate_search,
+                departmentrelate,
+                departmentrelate_search,
+                department,
+                domain,
+
+                //--------Explaint-------
+                explainList,
+                approveList,
+                dataTooluse,
+                dataToolUse_Combobox,
+                dataTooluseValue,
+                dataToolUseValue_Combobox,
+                dataDecision,
+                dataDecision_Combobox,
+                dataDecisionValue_Combobox,
+                dataDecisionValue,
+                ToolOther,
+                DecisionOther,
+                dataApprove_Combobox,
+                dataSectionapp,
+                dataSectionappValue,
+                dataQcapp,
+                dataQcappValue,
+                dataFuapp,
+                dataFuappValue,
+
+                explain_id,
+                complaint_id,
+                explain_seq,
+                observation_analysis,
+                root_cause,
+                corrective_action,
+                preventive_action_plan,
+                follow_up_date,
+                responsible_name,
+                responsible_company_id,
+                responsible_department_id,
+                responsible_position,
+                responsible_email,
+                responsible_date,
+                close_status,
+                close_name,
+                close_company_id,
+                close_department_id,
+                close_position,
+                close_email,
+                close_date,
+                return_detail,
+                return_name,
+                return_company_id,
+                return_department_id,
+                return_position,
+                return_email,
+                return_datetime,
+                explain_record_status,
+                explain_create_by,
+                explain_create_datetime,
+                explain_update_by,
+                explain_update_datetime,
+
+                approve_status,
+                approve_detail,
+                approve_note,
+                approve_name,
+                approve_company_id,
+                approve_department_id,
+                approve_position,
+                approve_email,
+                approve_date,
+
+                qcapprove_name,
+                qcapprove_company_id,
+                qcapprove_department_id,
+                qcapprove_position,
+                qcapprove_email,
+                qcapprove_date,
+                qcapprove_detail,
+                qcapprove_note,
+
+                close_detail,
+                close_note,
+
+                isApproveScBoxHidden,
+                setisApproveScBoxHidden,
+                isApproveQcBoxHidden,
+                setisApproveQcBoxHidden,
+                isApproveCloseBoxHidden,
+                setisApproveCloseBoxHidden,
+            
+
+
                 setComplaint_no,
                 setno,
+                setid,
+                setreport_type,
                 setcas_number,
                 setuser_file_name,
                 setdoc_date,
@@ -310,18 +744,18 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 setrequest_department_id,
                 setrequest_position,
                 setrequest_email,
+                setrequest_phone,
                 setother,
-                setemployee_tel,
                 // setdataComplaintType,
                 setrequest_date,
                 setrespondent_company_id,
                 setrespondent_domain_id,
                 setrespondent_department_id,
                 setrespondent_email,
-                setarea_of_detection_dept,
                 setproduct_name,
                 setdetail,
                 setcompTypeOther,
+                setotherText,
                 setcompRsOther,
                 setphotoOther,
                 setclauseOther,
@@ -341,6 +775,8 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 setacknowledge_email,
                 setacknowledge_datetime,
                 setcomplaint_status_id,
+                setcomplaint_status_label,
+                setstep_label,
                 setstatus_last_datetime,
                 setreturn_from_status_id,
                 setreturn_from_status_datetime,
@@ -355,7 +791,6 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 setupdate_by,
                 setupdate_datetime,
                 setComplaintStatusID_Combobox,
-                setdataReportType,
                 setdataReportTypeValue,
                 setdataComplaintType_Combobox,
                 setdataComplaintRs_Combobox,
@@ -365,8 +800,112 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 setdatapriority_Combobox,
                 setdatapriorityValue_Combobox,
                 setdatapriority,
+                setdatastatus,
+                setdatastatusconfig,
                 setPriorityLevel,
                 setdataComplaintTypeValue_Combobox,
+
+
+                //--------dataset-------
+                setdataset_crosscompany,
+                setdataset_reporttype,
+                setdataset_company,
+                setdataset_department,
+                setdataset_domain,
+                setdataset_domainrelate,
+                setcomplaintFiles,
+                setdataset_stepcomplaint,
+                setdataset_complaintAction,
+                setdataset_complaintActionNew,
+                setdataset_complaintActionExplain,
+                setdataset_complaintActionClose,
+                setdataset_complaintActionApproveSC,
+                setdataset_complaintActionApproveQC,
+                setdataset_activeCompany,
+                setdataset_roleProfile,
+                set_domainrelate,
+                set_domainrelate_search,
+                set_departmentrelate,
+                set_departmentrelate_search,
+                set_department,
+                set_domain,
+
+                //--------Explaint-------
+                setExplainList,
+                setApproveList,
+                setdataToolUse,
+                setdataToolUse_Combobox,
+                setdataToolUseValue,
+                setdataToolUseValue_Combobox,
+                setdataDecision_Combobox,
+                setdataDecisionValue_Combobox,
+                setdataDecision,
+                setdataDecisionValue,
+                setToolOther,
+                setDecisionOther,
+                setdataApprove_Combobox,
+                setdataSectionapp,
+                setdataSectionappValue,
+                setdataQcapp,
+                setdataQcappValue,
+                setdataFuapp,
+                setdataFuappValue,
+
+                setexplain_id,
+                setcomplaint_id,
+                setexplain_seq,
+                setobservation_analysis,
+                setroot_cause,
+                setcorrective_action,
+                setpreventive_action_plan,
+                setfollow_up_date,
+                setresponsible_name,
+                setresponsible_company_id,
+                setresponsible_department_id,
+                setresponsible_position,
+                setresponsible_email,
+                setresponsible_date,
+                setclose_status,
+                setclose_name,
+                setclose_company_id,
+                setclose_department_id,
+                setclose_position,
+                setclose_email,
+                setclose_date,
+                setreturn_detail,
+                setreturn_name,
+                setreturn_company_id,
+                setreturn_department_id,
+                setreturn_position,
+                setreturn_email,
+                setreturn_datetime,
+                setexplain_record_status,
+                setexplain_create_by,
+                setexplain_create_datetime,
+                setexplain_update_by,
+                setexplain_update_datetime,
+
+                setapprove_status,
+                setapprove_detail,
+                setapprove_note,
+                setapprove_name,
+                setapprove_company_id,
+                setapprove_department_id,
+                setapprove_position,
+                setapprove_email,
+                setapprove_date,
+
+                setqcapprove_name,
+                setqcapprove_company_id,
+                setqcapprove_department_id,
+                setqcapprove_position,
+                setqcapprove_email,
+                setqcapprove_date,
+                setqcapprove_detail,
+                setqcapprove_note,
+
+                setclose_detail,
+                setclose_note,
             }}
         >
             {children}
@@ -376,33 +915,3 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
 
 const useListComplaint = () => useContext(ListComplaintContext);
 export { ListComplaintProvider, useListComplaint };
-
-
-
-// const [complaintType, setComplaintType] = useState({
-//     Complaint_no: initialListComplaint.Complaint_no,
-//     no: initialListComplaint.no,
-//     complaint_id: initialListComplaint.complaint_id,
-//     Complaint_id: initialListComplaint.Complaint_id,
-//     record_status: initialListComplaint.record_status,
-//     create_by: initialListComplaint.create_by,
-//     create_datetime: initialListComplaint.create_datetime
-//       ? dayjs(initialListComplaint.create_datetime)
-//       : null,
-//     update_by: initialListComplaint.update_by,
-//     update_datetime: initialListComplaint.update_datetime
-//       ? dayjs(initialListComplaint.update_datetime)
-//       : null
-//   });
-
-//   const value: ListComplaintContextProps = {
-//     complaintType,
-//     setComplaintType
-//   };
-
-//   return (
-//     <ListComplaintContext.Provider value={value}>
-//       {children}
-//     </ListComplaintContext.Provider>
-//   );
-// };

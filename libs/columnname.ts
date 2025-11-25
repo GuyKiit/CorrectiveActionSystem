@@ -1,17 +1,63 @@
+import dayjs from "dayjs";
+
+export interface LovType {
+    id: string;
+    lov_id: string;
+    lov_group: string;
+    lov_type: string;
+    lov_code: string;
+    lov1: string;
+}
+
 export const Complaint_headCells = [
     {
-    columnName: 'ACTION',
-    numeric: 'center',
-    //disablePadding: true,
-    label: 'จัดการ',
-    //colWidth: 100
+        columnName: 'ACTION',
+        numeric: 'center',
+        //disablePadding: true,
+        label: 'จัดการ',
+        //colWidth: 100
     },
     {
-        columnName: 'id',
+        columnName: 'complaint_status_label',
+        numeric: 'center',
+        disablePadding: false,
+        label: 'สถานะ',
+        colWidth: 150,
+    },
+    {
+        columnName: 'step_label',
+        numeric: 'center',
+        disablePadding: false,
+        label: 'ขั้นตอน',
+        colWidth: 150,
+    },
+    {
+        columnName: 'approve_by',
+        numeric: 'center',
+        disablePadding: false,
+        label: 'อนุมัติโดย',
+        colWidth: 150,
+    },
+    {
+        columnName: 'request_department_name',
+        numeric: 'center',
+        disablePadding: false,
+        label: 'โรงงาน/แผนกต้นทาง',
+        colWidth: 150,
+    },
+    {
+        columnName: 'respondent_department_name',
+        numeric: 'center',
+        disablePadding: false,
+        label: 'โรงงาน/แผนกปลายทาง',
+        colWidth: 150,
+    },
+    {
+        columnName: 'report_code',
         numeric: 'center',
         disablePadding: true,
-        label: 'ID',
-        colWidth: 150
+        label: 'ประเภทเอกสาร',
+        colWidth: 150,
     },
     {
         columnName: 'cas_number',
@@ -21,24 +67,10 @@ export const Complaint_headCells = [
         colWidth: 150
     },
     {
-        columnName: 'lov.id',
-        numeric: 'center',
-        disablePadding: true,
-        label: 'Complaint Type',
-        colWidth: 150
-    },
-    {
         columnName: 'product_name',
         numeric: 'center',
         disablePadding: true,
-        label: 'Product Name',
-        colWidth: 150
-    },
-    {
-        columnName: 'doc_date',
-        numeric: 'center',
-        disablePadding: true,
-        label: 'Doc Date',
+        label: 'ชื่อสินค้า',
         colWidth: 150
     },
     {
@@ -49,25 +81,18 @@ export const Complaint_headCells = [
         colWidth: 150
     },
     {
-        columnName: 'record_status',
-        numeric: 'center',
-        disablePadding: false,
-        label: 'สถานะ',
-        colWidth: 150
-    },
-    {
-        columnName: 'create_by',
+        columnName: 'doc_date',
         numeric: 'center',
         disablePadding: true,
-        label: 'สร้างโดย',
-        colWidth: 150
+        label: 'วันที่ออกเอกสาร',
+        colWidth: 200,
     },
     {
-        columnName: 'create_datetime',
+        columnName: 'respond_date_within',
         numeric: 'center',
-        disablePadding: false,
-        label: 'วันที่สร้าง',
-        colWidth: 200
+        disablePadding: true,
+        label: 'ตอบกลับภายในวันที่',
+        colWidth: 200,
     },
     {
         columnName: 'update_by',
@@ -83,139 +108,72 @@ export const Complaint_headCells = [
         label: 'วันที่แก้ไข',
         colWidth: 200
     },
-    
+
 ]
-// export const Shipment_headCells = [
-// //   {
-// //     columnName: 'expand',
-// //     numeric: 'center',
-// //     disablePadding: true,
-// //     label: '', // ไม่มี label บนหัวตาราง
-// //     colWidth: 50,
-// //     isExpand: true, // ใช้ระบุว่า column นี้เป็นปุ่ม Expand
-// //   },
-//   {
-//     columnName: 'ACTION',
-//     numeric: 'center',
-//     //disablePadding: true,
-//     label: 'จัดการ',
-//     //colWidth: 100
-//   },
-//   {
-//     columnName: 'shipment_status_id',
-//     numeric: 'center',
-//     disablePadding: true,
-//     label: 'สถานะงาน',
-//     colWidth: 150
-//   },
-//   {
-//     columnName: 'no',
-//     numeric: 'center',
-//     disablePadding: true,
-//     label: 'เลขที่จัดส่ง',
-//     colWidth: 150
-//   },
-//   {
-//     columnName: 'transport_name',
-//     numeric: 'center',
-//     disablePadding: true,
-//     label: 'บริษัทขนส่ง',
-//     //colWidth: 170
-//   },
-//   {
-//     columnName: 'truck_plate_all',
-//     numeric: 'center',
-//     disablePadding: true,
-//     label: 'ทะเบียนแม่ / ลูก',
-//     //colWidth: 220
-//   },
-//   {
-//     columnName: 'truck_type_name',
-//     numeric: 'center',
-//     disablePadding: true,
-//     label: 'ประเภทรถ',
-//     colWidth: 150
-//   },
-//   {
-//     columnName: 'due_datetime',
-//     numeric: 'center',
-//     disablePadding: true,
-//     label: 'วันที่ส่งมอบ',
-//     colWidth: 150
-//   },
-// ];
 
-// export const ShipmentDetail_headCells = [
-// //   {
-// //     columnName: 'expand',
-// //     numeric: 'center',
-// //     disablePadding: true,
-// //     label: '', // ไม่มี label บนหัวตาราง
-// //     colWidth: 50,
-// //     isExpand: true, // ใช้ระบุว่า column นี้เป็นปุ่ม Expand
-// //   },
-//   {
-//     columnName: 'ACTION_DETAIL',
-//     numeric: 'center',
-//     disablePadding: true,
-//     label: 'จัดการ',
-//     //colWidth: 100
-//   },
-//   {
-//     columnName: 'order_status',
-//     numeric: 'center',
-//     disablePadding: true,
-//     label: 'สถานะงาน',
-//     colWidth: 150
-//   },
-//   {
-//     columnName: 'tms_shipment_no',
-//     numeric: 'center',
-//     disablePadding: true,
-//     label: 'เลขที่จัดส่ง',
-//     colWidth: 150
-//   },
-//   {
-//     columnName: 'order_po',
-//     numeric: 'center',
-//     disablePadding: true,
-//     label: 'PO',
-//     colWidth: 150
-//   },
-//   {
-//     columnName: 'order_do',
-//     numeric: 'center',
-//     disablePadding: true,
-//     label: 'DO',
-//     colWidth: 150
-//   },
-//     {
-//     columnName: 'cus_name',
-//     numeric: 'center',
-//     disablePadding: true,
-//     label: 'ลูกค้า',
-//     colWidth: 150
-//   },
-//   {
-//     columnName: 'cus_name',
-//     numeric: 'center',
-//     disablePadding: true,
-//     label: 'สินค้า',
-//     colWidth: 150
-//   },
-//   {
-//     columnName: 'qty',
-//     numeric: 'center',
-//     disablePadding: true,
-//     label: 'จำนวน',
-//     colWidth: 150
-//   },
-//   {
-//     columnName: 'pack_unit_name',
-//     numeric: 'center',
-//     disablePadding: true,
-//     label: 'หน่วย',
-//     colWidth: 150
-//   },
+export const Department_Setting_headCells = [
+    {
+        columnName: 'ACTION',
+        numeric: 'center',
+        //disablePadding: true,
+        label: 'จัดการ',
+        //colWidth: 100
+    },
+    {
+        columnName: 'user_id',
+        numeric: 'center',
+        disablePadding: false,
+        label: 'ชื่อ',
+        colWidth: 150,
+    },
+    {
+        columnName: 'company_name',
+        numeric: 'center',
+        disablePadding: false,
+        label: 'บริษัท',
+        colWidth: 150,
+    },
+    {
+        columnName: 'domain_id',
+        numeric: 'center',
+        disablePadding: false,
+        label: 'โดเมน',
+        colWidth: 150,
+    },
+    {
+        columnName: 'domain_dept_name',
+        numeric: 'center',
+        disablePadding: false,
+        label: 'แผนก',
+        colWidth: 150,
+    },
+    {
+        columnName: 'step',
+        numeric: 'center',
+        disablePadding: true,
+        label: 'สิทธิ์การอนุมัติ',
+        colWidth: 150,
+    },
+    {
+        columnName: 'dept_email',
+        numeric: 'center',
+        disablePadding: true,
+        label: 'อีเมล',
+        colWidth: 150
+    },
+    {
+        columnName: 'update_by',
+        numeric: 'center',
+        disablePadding: false,
+        label: 'แก้ไขโดย',
+        colWidth: 150
+    },
+    {
+        columnName: 'update_datetime',
+        numeric: 'center',
+        disablePadding: false,
+        label: 'วันที่แก้ไข',
+        colWidth: 200
+    },
 
-// ];
+]

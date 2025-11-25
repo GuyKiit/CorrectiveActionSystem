@@ -5,6 +5,7 @@ import { grey } from '@mui/material/colors';
 interface FullWidthTextField {
   value?: any;
   labelName: string;
+  placeholderlabel?: string;
   required?: string;
   disabled?: boolean;
   hidden?: boolean;
@@ -16,6 +17,7 @@ interface FullWidthTextField {
   endAdornment?: boolean;
   Validate?: boolean;
   validateTextLable?: string
+  readOnly?: boolean;
 }
 
 export default function FullWidthTextField(props: FullWidthTextField) {
@@ -37,9 +39,9 @@ export default function FullWidthTextField(props: FullWidthTextField) {
       </label>
       <TextField
         fullWidth
-        multiline
+        multiline    
         sx={{
-          bgcolor: props.readonly ? grey[300] : props.bgcolorTextField ? grey[100] : "",
+          bgcolor: props.readonly ? grey[200] : grey[50],
           "& .MuiOutlinedInput-root": {
             fontFamily: "Sarabun",
             "& .MuiOutlinedInput-notchedOutline": {
@@ -63,6 +65,7 @@ export default function FullWidthTextField(props: FullWidthTextField) {
         onChange={hedelonChange}
         onBlur={hedelonBlur}
         value={props.value ?? ""}
+        placeholder={props.placeholderlabel}
       />
       {props.validateTextLable && (
         <label className="fs-7 py-1 sarabun-regular-lable-validate">

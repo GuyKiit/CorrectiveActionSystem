@@ -4,7 +4,7 @@ import { grey } from "@mui/material/colors";
 
 
 interface AutocompleteComboBox {
-  value?: string;
+  value?: any;
   labelName: string;
   required?: string;
   disabled?: boolean;
@@ -17,6 +17,8 @@ interface AutocompleteComboBox {
   setvalue?: (value: any) => void;
   Validate?: boolean;
   validateTextLable?: string;
+  error?: boolean;
+  id?: string;
 }
 
 export default function AutocompleteComboBox(props: AutocompleteComboBox) {
@@ -44,7 +46,7 @@ export default function AutocompleteComboBox(props: AutocompleteComboBox) {
       </label>
       <Autocomplete
         sx={{
-          bgcolor: bgcolorTextField ? grey[200] : null,
+          bgcolor: readonly ? grey[200] : grey[50],
           width: "100%",
         }}
         disablePortal
@@ -65,6 +67,7 @@ export default function AutocompleteComboBox(props: AutocompleteComboBox) {
             {column && option[column] ? option[column] : ""}
             {ColumnConcat && option[ColumnConcat] ? ` ${option[ColumnConcat]}` : ""}
           </li>
+          
         )}
         onChange={handleOnchange}
         disabled={disabled}
@@ -75,11 +78,12 @@ export default function AutocompleteComboBox(props: AutocompleteComboBox) {
             placeholder="กรุณาเลือก"
             size="small"
             sx={{
-              bgcolor: props.bgcolorTextField ? grey[200] : "",
+              bgcolor: props.readonly ? grey[200] : grey[50],
               "& .MuiOutlinedInput-root": {
                 fontFamily: "Sarabun",
                 "& .MuiOutlinedInput-notchedOutline": {
                   borderColor: props.Validate ? "#d50000" : "",
+                  
                 },
                 "&.Mui-focused": {
                   "& .MuiOutlinedInput-notchedOutline": {
@@ -94,6 +98,7 @@ export default function AutocompleteComboBox(props: AutocompleteComboBox) {
       {validateTextLable ? (
         <label
           htmlFor=""
+          //font colo
           className={`fs-7 py-1 sarabun-regular-lable-validate`}
         >
           {validateTextLable}
