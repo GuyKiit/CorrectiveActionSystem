@@ -1380,7 +1380,7 @@ export default function ExplaintBody({
 
       // Close
       const close = explainList?.find(
-        (x: any) => x.complaint_id === dataelement?.id
+        (x: any) => x.complaint_id === dataelement?.complaint_id && ["REJECT", "APPROVE"].includes(x.close_status)
       );
       console.log("close", close);
 
@@ -1492,7 +1492,6 @@ export default function ExplaintBody({
           setqcapprove_note(dataelement.qcapprove_note);
         }
 
-
         // Set QC approve radio (dataQcapp) from dataelement
         // Try multiple possible field names for QC approve status
         const qcApproveStatus =
@@ -1522,6 +1521,23 @@ export default function ExplaintBody({
         //     );
         //   }
         // }
+//         if (close) {
+//   setclose_name(close?.close_name ?? "");
+//   setclose_company_id(
+//     dataset_company.find((c: any) => Number(c.company_id) === close.close_company_id) || null
+//   );
+//   setclose_department_id(
+//     dataset_department.find((d: any) => Number(d.department_id) === close.close_department_id) || null
+//   );
+//   setclose_position(close?.close_position ?? "");
+//   setclose_email(close?.close_email ?? "");
+//   setclose_date(close?.close_date ? dayjs(close.close_date) : null);
+//   setdataFuapp(
+//     dataApprove_Combobox.find((item: any) => item.lov_code === close.close_status) || null
+//   );
+//   setclose_detail(close?.close_detail ?? "");
+//   setclose_note(close?.close_note ?? "");
+// }
       }
       setFoundSC(scApprove || null);
       setFoundQC(qcApprove || null);
@@ -1544,6 +1560,39 @@ export default function ExplaintBody({
     // dataTooluse,
     // dataDecision,
   ]);
+  React.useEffect(() => {
+  if (!explainList || !dataelement) return;
+
+  const close = explainList.find(
+    (x: any) =>
+      x.complaint_id === dataelement?.complaint_id &&
+      ["REJECT", "APPROVE"].includes(x.close_status)
+  );
+
+  if (close) {
+    setclose_name(close.close_name || "");
+    setclose_company_id(
+      dataset_company.find((c:any) => Number(c.company_id) === close.close_company_id) || null
+    );
+    setclose_department_id(
+      dataset_department.find((d:any) => Number(d.department_id) === close.close_department_id) || null
+    );
+    setclose_position(close.close_position || "");
+    setclose_email(close.close_email || "");
+    setclose_date(dayjs(close.close_date));
+    setdataFuapp(
+      dataApprove_Combobox.find((item:any) => item.lov_code === close.close_status) || null
+    );
+    setclose_detail(close.close_detail || "");
+    setclose_note(close.close_note || "");
+  }
+}, [explainList, dataelement, dataset_company, dataset_department, dataApprove_Combobox]);
+  
+  useEffect(() => {
+  console.log("foundSC:", foundSC);
+  console.log("foundQC:", foundQC);
+  console.log("foundCLOSE:", foundCLOSE);
+}, [foundSC, foundQC, foundCLOSE]);
   // useEffect(() => {
   //   if (!currentExplainForApproval) return;
   //   const fetchApproveData = async () => {
@@ -3809,7 +3858,12 @@ export default function ExplaintBody({
         )}
 
       {/* //ส่วนของ Close */}
-      {isActionCloseAdd && (
+      {(isActionCloseAdd ||
+      (isActionReadExplain && foundCLOSE) ||
+      (isActionExplainRead && foundCLOSE) ||
+      (isActionExplainApproveScRead && foundCLOSE) ||
+      (isActionExplainApproveQcRead && foundCLOSE) 
+      ) && (
         <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>
           <Paper
             elevation={3}

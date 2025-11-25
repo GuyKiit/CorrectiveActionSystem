@@ -99,6 +99,7 @@ const ActionManageCell: React.FC<ActionManageCellProps> = (props) => {
         (funcName === "View" && hiddenRead) ||                      // Complaint
         (funcName === "Edit" && hiddenEdit) ||                      // Complaint
         (funcName === "Delete" && hiddenDelete) ||                  // Complaint
+        
         (funcName === "Explain" && hiddenExplain) ||                // Explain
         (funcName === "ApproveSC" && hiddenApproveSC) ||            // Approve
         (funcName === "ApproveQC" && hiddenApproveQC) ||            // Approve
