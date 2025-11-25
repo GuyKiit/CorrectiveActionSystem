@@ -3730,7 +3730,7 @@ export default function ExplaintBody({
                           borderRadius: 2,
                           backgroundColor: "#fafafa",
                           mt: 2,
-                          border: validateText?.ScNote
+                          border: validateText?.QcNote
                             ? "1px solid #f44336"
                             : "1px solid #e0e0e0",
                         }}

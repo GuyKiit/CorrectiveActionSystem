@@ -1999,6 +1999,180 @@ export default function Complaint() {
     return valid;
   };
 
+  const validateExplainAdd = (): boolean => {
+    if (isCallFuncLogOn)
+      console.log(
+        "🕑 ",
+        dayjs().format("HH:mm:ss.SSS"),
+        " [Calling Function]  :  validateExplainAdd"
+      );
+
+    let valid = true;
+
+    // Clear all validation errors
+    setFollowUpDateError(false);
+    setObsAnalyError(false);
+    setToolUseError(false);
+    setToolUseOtherError(false);
+    setRootCauseError(false);
+    setDdError(false);
+    setDdOtherError(false);
+    setCorrectiveActionError(false);
+    setPreventiveActionPlanError(false);
+
+    // Get report type code
+    const reportTypeCode =
+      dataReportTypeValue?.lov_code || dataelement?.report_type;
+    console.log("🔍 Report Type for validation:", reportTypeCode);
+
+    // Common validation: Follow-up Date (required for all types)
+    if (!follow_up_date) {
+      console.log("❌ Validation failed: follow_up_date is missing");
+      setFollowUpDateError(true);
+      valid = false;
+    }
+
+    // Type-specific validation
+    if (reportTypeCode === "OBS") {
+      // OBS: Only requires observation_analysis and follow_up_date
+      if (!observation_analysis || observation_analysis.trim() === "") {
+        console.log(
+          "❌ OBS Validation failed: observation_analysis is required"
+        );
+        setObsAnalyError(true);
+        valid = false;
+      }
+      console.log("✅ OBS validation complete");
+    } else if (reportTypeCode === "NCR") {
+      // NCR: Requires Tu (Tools Used), Rc (Root Cause), Dd (Decision/Disposition)
+
+      // Validate Tools Used
+      if (!dataTooluseValue || dataTooluseValue.length === 0) {
+        console.log("❌ NCR Validation failed: Tools Used is required");
+        setToolUseError(true);
+        valid = false;
+      }
+
+      if (
+        dataTooluseValue &&
+        dataTooluseValue.some((item: any) => item.isOther === "Y")
+      ) {
+        if (!ToolOther || ToolOther.trim() === "") {
+          console.log("❌ NCR Validation failed: ToolOther is required");
+          setToolUseOtherError(true);
+          valid = false;
+        }
+      }
+
+      // Validate Root Cause
+      if (!root_cause || root_cause.trim() === "") {
+        console.log("❌ NCR Validation failed: Root Cause is required");
+        setRootCauseError(true);
+        valid = false;
+      }
+
+      // Validate Decision/Disposition
+      if (!dataDecisionValue || dataDecisionValue.length === 0) {
+        console.log(
+          "❌ NCR Validation failed: Decision/Disposition is required"
+        );
+        setDdError(true);
+        valid = false;
+      }
+
+      if (
+        dataDecisionValue &&
+        dataDecisionValue.some((item: any) => item.isOther === "Y")
+      ) {
+        if (!DecisionOther || DecisionOther.trim() === "") {
+          console.log("❌ NCR Validation failed: DecisionOther is required");
+          setDdOtherError(true);
+          valid = false;
+        }
+      }
+    } else if (reportTypeCode === "CAR") {
+      // CAR: Requires Tu (Tools Used), Rc (Root Cause), Ca (Corrective Action)
+
+      // Validate Tools Used
+      if (!dataTooluseValue || dataTooluseValue.length === 0) {
+        console.log("❌ CAR Validation failed: Tools Used is required");
+        setToolUseError(true);
+        valid = false;
+      }
+
+      if (
+        dataTooluseValue &&
+        dataTooluseValue.some((item: any) => item.isOther === "Y")
+      ) {
+        if (!ToolOther || ToolOther.trim() === "") {
+          console.log("❌ CAR Validation failed: ToolOther is required");
+          setToolUseOtherError(true);
+          valid = false;
+        }
+      }
+
+      // Validate Root Cause
+      if (!root_cause || root_cause.trim() === "") {
+        console.log("❌ CAR Validation failed: Root Cause is required");
+        setRootCauseError(true);
+        valid = false;
+      }
+
+      // Validate Corrective Action
+      if (!corrective_action || corrective_action.trim() === "") {
+        console.log("❌ CAR Validation failed: Corrective Action is required");
+        setCorrectiveActionError(true);
+        valid = false;
+      }
+    } else if (reportTypeCode === "CPAR") {
+      // CPAR: Requires Tu (Tools Used), Rc (Root Cause), Ca (Corrective Action), Pap (Preventive Action Plan)
+
+      // Validate Tools Used
+      if (!dataTooluseValue || dataTooluseValue.length === 0) {
+        console.log("❌ CPAR Validation failed: Tools Used is required");
+        setToolUseError(true);
+        valid = false;
+      }
+
+      if (
+        dataTooluseValue &&
+        dataTooluseValue.some((item: any) => item.isOther === "Y")
+      ) {
+        if (!ToolOther || ToolOther.trim() === "") {
+          console.log("❌ CPAR Validation failed: ToolOther is required");
+          setToolUseOtherError(true);
+          valid = false;
+        }
+      }
+
+      // Validate Root Cause
+      if (!root_cause || root_cause.trim() === "") {
+        console.log("❌ CPAR Validation failed: Root Cause is required");
+        setRootCauseError(true);
+        valid = false;
+      }
+
+      // Validate Corrective Action
+      if (!corrective_action || corrective_action.trim() === "") {
+        console.log("❌ CPAR Validation failed: Corrective Action is required");
+        setCorrectiveActionError(true);
+        valid = false;
+      }
+
+      // Validate Preventive Action Plan
+      if (!preventive_action_plan || preventive_action_plan.trim() === "") {
+        console.log(
+          "❌ CPAR Validation failed: Preventive Action Plan is required"
+        );
+        setPreventiveActionPlanError(true);
+        valid = false;
+      }
+    }
+
+    console.log("🎯 [VALIDATION RESULT] valid =", valid);
+    return valid;
+  };
+
   const validateSCApprove = (): boolean => {
     if (isCallFuncLogOn)
       console.log(
@@ -2565,7 +2739,8 @@ export default function Complaint() {
     //console.log("📤 dataReportTypeValue.id:", dataReportTypeValue.id);
     //console.log("📤 dataReportTypeValue.lov_code:",dataReportTypeValue.lov_code);
     //console.log("📤 dataReportTypeValue.lov1:", dataReportTypeValue.lov1);
-    // setIsLoadingScreen(true);
+
+    setIsLoadingScreen(true);
 
     try {
       const response = await _POST_FORMDATA(
@@ -2608,10 +2783,9 @@ export default function Complaint() {
         " [Calling Function]  :  ComplaintEdit"
       );
 
-    // if (!validateBeforeEdit()) {
-    //   return;
-    // }
-
+    if (!validateSaveDraft()) {
+      return;
+    }
     console.log(
       "📡 Sending respondent_domain_id to LovAll_Get:",
       respondent_domain_id
@@ -3655,6 +3829,9 @@ export default function Complaint() {
 
   // CREATE - Add Complaint
   const ExplainAdd = async () => {
+    if (!validateExplainAdd()) {
+      return;
+    }
     if (isCallFuncLogOn)
       console.log(
         "🕑 ",
@@ -4155,10 +4332,6 @@ export default function Complaint() {
         " [Calling Function]  :  ApproveQcAdd"
       );
 
-    //   if (!validateQCApprove()) {
-    //   return;
-    // }
-
     const tempid = uuidv4();
 
     // ใช้ currentExplainForApproval เป็น source สำหรับ approve
@@ -4386,7 +4559,7 @@ export default function Complaint() {
     setOpenExplain(true);
   };
 
-  const handleOnclickCloseAddExplain = (data: any) => {
+  const handleOnclickCloseAddExplain = async (data: any) => {
     if (isCallFuncLogOn)
       console.log(
         "🕑 ",
@@ -4395,9 +4568,29 @@ export default function Complaint() {
       );
 
     //resetForm();
+
     setOpenExplainAdd(false);
-    setdataelement(data);
+    setIsLoadingScreen(true);
+
+    await Complaint_Get(data);
+
+    setIsLoadingScreen(false);
     setOpenExplain(true);
+  };
+
+  const handleOnclickCloseReadExplain = (data: any) => {
+    if (isCallFuncLogOn)
+      console.log(
+        "🕑 ",
+        dayjs().format("HH:mm:ss.SSS"),
+        " [Calling Function]  :  handleOnclickCloseReadExplain"
+      );
+
+    //resetForm();
+    setOpenReadExplain(false);
+    // setdataelement(data);
+    // Complaint_Get(data);
+    setOpenReadApproveSC(true);
   };
 
   const handleOnclickReadExplain = async (data: any) => {
@@ -6491,12 +6684,68 @@ export default function Complaint() {
         openBottonHidden={true}
         titlename={"[Explain] เพิ่มข้อมูล"}
         buttonText={"Save & Submit"}
+        // handleClose={handleClose}
         handleClose={() => handleOnclickCloseAddExplain(dataelement)}
         handlefunction={ExplainAdd}
         hideSaveDraft={true}
         hideReject={true}
         buttonColor="success"
-        element={<ExplaintBody action="ExplainAdd" />}
+        element={
+          <ExplaintBody
+            action="ExplainAdd"
+            validateText={{
+              Follow_up_Date: followUpDateError,
+              ObsAnaly: obsAnalyError,
+              Tu: toolUseError,
+              Tuother: toolUseOtherError,
+              Rc: rootCauseError,
+              Dd: ddError,
+              Ddother: ddOtherError,
+              Ca: correctiveActionError,
+              Pap: preventiveActionPlanError,
+              ScDetail: scDetailError,
+              ScNote: scNoteError,
+              QcDetail: qcDetailError,
+              QcNote: qcNoteError,
+              CloseDetail: closeDetailError,
+              CloseNote: closeNoteError,
+            }}
+            onFollowUpDateChange={(val) => {
+              setfollow_up_date(val);
+              setFollowUpDateError(false);
+            }}
+            onObsAnalyChange={(val) => {
+              setobservation_analysis(val);
+              setObsAnalyError(false);
+            }}
+            onRootCauseChange={(val) => {
+              setroot_cause(val);
+              setRootCauseError(false);
+            }}
+            onToolUseChange={(val) => {
+              setToolUseError(false);
+              setToolUseOtherError(false);
+            }}
+            onToolOtherChange={(val) => {
+              setToolUseOtherError(false);
+            }}
+            onDdChange={(val) => {
+              setDdError(false);
+              setDdOtherError(false);
+            }}
+            onDecisionOtherChange={(val) => {
+              setDdOtherError(false);
+            }}
+            onCorrectiveActionChange={(val) => {
+              setcorrective_action(val);
+              setCorrectiveActionError(false);
+            }}
+            onPreventiveActionPlanChange={(val) => {
+              setpreventive_action_plan(val);
+              setPreventiveActionPlanError(false);
+            }}
+          />
+        }
       />
 
       <FuncDialog
@@ -6504,7 +6753,8 @@ export default function Complaint() {
         dialogWidth="xl"
         openBottonHidden={false}
         titlename={"[Explain] ดูข้อมูล"}
-        handleClose={handleClose}
+        // handleClose={handleClose}
+        handleClose={() => handleOnclickCloseReadExplain(dataelement)}
         handlefunction={ExplainGet}
         buttonColor="success"
         element={
@@ -6554,7 +6804,7 @@ export default function Complaint() {
         titlename={"Approve Section Head (SC ADD) // เพิ่มข้อมูล"}
         buttonText={"Approve"}
         handlefunction={ApproveScAdd}
-        handlereject={() => ComplaintReturn("APPROVE_SC")}
+        handlereject={() => ComplaintReturn("APPR4OVE_SC")}
         handleClose={handleClose}
         buttonColor="success"
         element={
