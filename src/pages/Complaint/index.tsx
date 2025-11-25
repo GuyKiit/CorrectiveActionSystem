@@ -4676,8 +4676,8 @@ export default function Complaint() {
         close_position: user[0]?.employee_position || "",
         close_email: user[0]?.employee_email || "",
         close_status: approveSelectionCode,
-        close_detail: close_detail || null,
-        close_note: close_note || null,
+        close_detail: close_detail || "",
+        close_note: close_note || "",
       },
       CurrentAccessModel: {
         user_id: user[0]?.employee_username || "",
@@ -6599,7 +6599,7 @@ export default function Complaint() {
       {/* ------------------------------------------------------------------------------------------ */}
 
       {/* SC ADD */}
-      <FuncDialog
+      {/* <FuncDialog
         open={openExplainApproveSc}
         dialogWidth="xl"
         openBottonHidden={true}
@@ -6625,7 +6625,7 @@ export default function Complaint() {
             }}
           />
         }
-      /> 
+      />  */}
 
       {/* QC ADD */}
       <FuncDialog

@@ -1489,6 +1489,7 @@ export default function ComplaintBody({
       );
       setclose_detail(close?.close_detail ? close?.close_detail : "");
       setclose_note(close?.close_note ? close?.close_note : "");
+      console.log("explainList", explainList);
 
       console.log("💾2 close_name:", close?.close_name);
       console.log("💾2 close_company_id:", close?.close_company_id);
