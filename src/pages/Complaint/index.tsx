@@ -6665,7 +6665,7 @@ export default function Complaint() {
         titlename={"Approve Section Head (SC ADD) // เพิ่มข้อมูล"}
         buttonText={"Approve"}
         handlefunction={ApproveScAdd}
-        handlereject={() => ComplaintReturn("APPR4OVE_SC")}
+        handlereject={() => ComplaintReturn("APPROVE_SC")}
         handleClose={handleClose}
         buttonColor="success"
         element={
