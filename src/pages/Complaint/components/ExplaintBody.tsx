@@ -3774,7 +3774,10 @@ export default function ExplaintBody({
         )}
 
       {/* //ส่วนของ Close */}
-      {isActionCloseAdd && (
+      {(isActionCloseAdd ||
+      (isActionExplainApproveScRead && foundCLOSE) ||
+      (isActionExplainApproveQcRead && foundCLOSE) 
+      ) && (
         <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>
           <Paper
             elevation={3}

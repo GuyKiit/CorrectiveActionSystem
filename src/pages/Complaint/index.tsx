@@ -1718,6 +1718,7 @@ export default function Complaint() {
                           .includes(String(el.complaint_status_label))
                         && el.step_label === "COMPLAINT"
                         && tempApproveSeq == "2"
+                        && el.request_department_id == user[0]?.itasset_department_id
                       // ) &&
                       // splitNextStepName(el.approve_step
                     )) ??
