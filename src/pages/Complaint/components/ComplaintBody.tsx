@@ -1145,14 +1145,20 @@ export default function ComplaintBody({
   };
 
   // ⭐⭐⭐⭐⭐ Start : ==============================================================================================//
-  const effectRan = React.useRef(false); // ป้องกัน run ซ้ำใน dev mode
+  // const effectRan = React.useRef(false); // ป้องกัน run ซ้ำใน dev mode
+  const lastDataElement = React.useRef<any>(null); // Track last processed data
 
   // 🧩 1️⃣ โหลดข้อมูลหลัก (ReportType, Company, Domain, Department)
   React.useEffect(() => {
     if (!dataelement || action === "Add") return; // 👈 ป้องกันตอน New
 
-    if (effectRan.current) return;
-    effectRan.current = true;
+    // if (effectRan.current) return;
+    // effectRan.current = true;
+
+    // Prevent double invoke on same data object (Strict Mode protection)
+    // But allow run if dataelement object reference changes (e.g. Refresh/Cancel)
+    if (lastDataElement.current === dataelement) return;
+    lastDataElement.current = dataelement;
 
     const loadInitialData = async () => {
       try {
@@ -1521,43 +1527,103 @@ export default function ComplaintBody({
   }, [action, dataelement?.id, dataelement?.acknowledge_flag]);
 
   const setComplaintType = (data: any) => {
-    // if (true) console.log("🕑 ",dayjs().format("HH:mm:ss.SSS"), " [Calling Function]  :  setComplaintType");
+    console.log("🔍 setComplaintType input data:", data);
+    console.log("🔍 dataComplaintType_Combobox:", dataComplaintType_Combobox);
 
     const newData: any[] = [];
-    Array.isArray(data) &&
-      data.forEach((el) => {
-        const filter = dataComplaintType_Combobox.find(
-          (item: any) => item.id === el.complaint_type_id
-        );
 
-        if (filter) {
-          newData.push({
-            ...filter,
-            other: el.other || "", // ⭐ เก็บค่าข้อความ Other มาด้วย
-          });
-        }
-      });
+    if (!Array.isArray(data)) {
+      console.warn("⚠️ setComplaintType: data is not an array", data);
+      return newData;
+    }
+
+    data.forEach((el, index) => {
+      console.log(`🔍 Processing element ${index}:`, el);
+
+      // Try to find the complaint_type_id from the element
+      const typeId = el.complaint_type_id;
+
+      if (!typeId) {
+        console.warn(
+          `⚠️ setComplaintType: No complaint_type_id found in element ${index}`,
+          el
+        );
+        return;
+      }
+
+      const filter = dataComplaintType_Combobox.find(
+        (item: any) => item.id === typeId
+      );
+
+      if (filter) {
+        console.log(`✅ Found matching type for ID ${typeId}:`, filter);
+        newData.push({
+          ...filter,
+          other: el.other || "", // ⭐ เก็บค่าข้อความ Other มาด้วย
+        });
+      } else {
+        console.warn(
+          `⚠️ setComplaintType: No matching type found for ID ${typeId}`
+        );
+        console.warn(
+          `⚠️ Available IDs:`,
+          dataComplaintType_Combobox.map((item: any) => item.id)
+        );
+      }
+    });
+
+    console.log("🔍 setComplaintType output:", newData);
     return newData;
   };
 
   const setComplaintRs = (data: any) => {
-    // if (true)console.log("🕑 ",dayjs().format("HH:mm:ss.SSS")," [Calling Function]  :  setComplaintRs");
+    console.log("🔍 setComplaintRs input data:", data);
+    console.log("🔍 dataComplaintRs_Combobox:", dataComplaintRs_Combobox);
 
     const newData: any[] = [];
-    Array.isArray(data) &&
-      data.forEach((el) => {
-        const filter = dataComplaintRs_Combobox.find(
-          (item: any) => item.id === el.complaint_type_id
-        );
 
-        if (filter) {
-          newData.push({
-            ...filter,
-            other: el.other || "", // ⭐ เก็บค่าข้อความ Other มาด้วย
-            clause: el.clause || "",
-          });
-        }
-      });
+    if (!Array.isArray(data)) {
+      console.warn("⚠️ setComplaintRs: data is not an array", data);
+      return newData;
+    }
+
+    data.forEach((el, index) => {
+      console.log(`🔍 Processing RS element ${index}:`, el);
+
+      // Try to find the complaint_type_id from the element
+      const typeId = el.complaint_type_id;
+
+      if (!typeId) {
+        console.warn(
+          `⚠️ setComplaintRs: No complaint_type_id found in element ${index}`,
+          el
+        );
+        return;
+      }
+
+      const filter = dataComplaintRs_Combobox.find(
+        (item: any) => item.id === typeId
+      );
+
+      if (filter) {
+        console.log(`✅ Found matching RS for ID ${typeId}:`, filter);
+        newData.push({
+          ...filter,
+          other: el.other || "", // ⭐ เก็บค่าข้อความ Other มาด้วย
+          clause: el.clause || "",
+        });
+      } else {
+        console.warn(
+          `⚠️ setComplaintRs: No matching RS found for ID ${typeId}`
+        );
+        console.warn(
+          `⚠️ Available RS IDs:`,
+          dataComplaintRs_Combobox.map((item: any) => item.id)
+        );
+      }
+    });
+
+    console.log("🔍 setComplaintRs output:", newData);
     return newData;
   };
   const setPriorityLevel = (value: any) => {
