@@ -2966,10 +2966,9 @@ export default function ExplaintBody({
       {(isActionExplainApproveScAdd ||
         isActionExplainApproveQcAdd ||
         isActionCloseAdd ||
-        (isActionReadExplain && foundSC) ||
-        (isActionExplainRead && foundSC) ||
-        (isActionExplainReadApproveSc && foundSC) ||
-        (isActionExplainApproveScRead && foundSC) ||
+        isActionReadExplain ||
+        isActionExplainRead ||
+        (isActionExplainReadApproveSc && isApproveScBoxHidden) ||
         (isActionExplainReadApproveQc && isApproveQcBoxHidden) ||
         isActionExplainApproveQcRead ||
         isActionCloseHistory ||
@@ -3390,9 +3389,8 @@ export default function ExplaintBody({
       {/* //ส่วนของ Qc */}
       {(isActionExplainApproveQcAdd ||
         isActionExplainReadApproveQc ||
-        (isActionReadExplain && foundQC) ||
-        (isActionExplainRead && foundQC) ||
-        (isActionExplainApproveScRead && foundQC) ||
+        isActionReadExplain ||
+        isActionExplainRead ||
         isActionReadClose ||
         isActionCloseHistory ||
         isActionCloseAdd) && (
@@ -3726,7 +3724,7 @@ export default function ExplaintBody({
                           borderRadius: 2,
                           backgroundColor: "#fafafa",
                           mt: 2,
-                          border: validateText?.ScNote
+                          border: validateText?.QcNote
                             ? "1px solid #f44336"
                             : "1px solid #e0e0e0",
                         }}
@@ -3805,12 +3803,7 @@ export default function ExplaintBody({
       )}
 
       {/* //ส่วนของ Close */}
-      {(isActionCloseAdd ||
-      (isActionReadExplain && foundCLOSE) ||
-      (isActionExplainRead && foundCLOSE) ||
-      (isActionExplainApproveScRead && foundCLOSE) ||
-      (isActionExplainApproveQcRead && foundCLOSE) 
-      ) && (
+      {isActionCloseAdd && (
         <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>
           <Paper
             elevation={3}

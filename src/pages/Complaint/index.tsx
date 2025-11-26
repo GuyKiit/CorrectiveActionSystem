@@ -3423,12 +3423,15 @@ export default function Complaint() {
 
         if (response && response.status === "success") {
           // ✅ หลังบันทึก Approve สำเร็จ → อัปเดตสถานะ Complaint
+          // 🧩 ใช้ complaint_id จาก currentExplainForApproval แทน dataelement?.id
+          // เพราะ dataelement?.id อาจเป็น explain id แทน complaint id
           const complaintId =
             currentExplainForApproval?.complaint_id ?? dataelement?.id;
 
           const complaintReturnPayload = {
             ComplaintReturnModel: {
-              id: dataelement?.id,
+              id: complaintId,
+              explain_id: explainRootId,
               return_detail: approve_detail,
               return_name: user[0]?.employee_username || "",
               return_company_id: return_company_id?.company_id
@@ -3448,12 +3451,6 @@ export default function Complaint() {
             },
           };
 
-          // const complaintFormData = new FormData();
-          // complaintFormData.append(
-          //   "complaintPayloadJson",
-          //   JSON.stringify(complaintReturnPayload));
-
-          //const response = await _POST(approvePayload.ExplaintApproveModel,"/ExplaintApprove/ExplaintApproveAdd");
           const updateRes = await _POST(
             complaintReturnPayload,
             "/Complaint/ComplaintReturn"
@@ -3462,20 +3459,20 @@ export default function Complaint() {
           if (updateRes && updateRes.status === "success") {
             FullSweetalert({
               title: "Success",
-              text: `เธเธฑเธเธ—เธถเธเธเธฒเธฃเธญเธเธธเธกเธฑเธ•เธดเนเธฅเธฐเธญเธฑเธเน€เธ”เธ•เธชเธ–เธฒเธเธฐเธชเธณเน€เธฃเนเธ`,
+              text: `บันทึกการอนุมัติและอัปเดตสถานะสำเร็จ`,
               icon: "success",
             });
           } else {
             FullSweetalert({
               title: "Warning",
-              text: `เธเธฑเธเธ—เธถเธเธเธฒเธฃเธญเธเธธเธกเธฑเธ•เธดเธชเธณเน€เธฃเนเธ เนเธ•เนเนเธกเนเธชเธฒเธกเธฒเธฃเธ–เธญเธฑเธเน€เธ”เธ•เธชเธ–เธฒเธเธฐเนเธ”เน`,
+              text: `บันทึกการอนุมัติสำเร็จ แต่ไม่สามารถอัปเดตสถานะได้`,
               icon: "warning",
             });
           }
         } else {
           FullSweetalert({
             title: "Failed",
-            text: `เธเธฑเธเธ—เธถเธเธเธฒเธฃเธญเธเธธเธกเธฑเธ•เธดเนเธกเนเธชเธณเน€เธฃเนเธ`,
+            text: `บันทึกการอนุมัติไม่สำเร็จ`,
             icon: "error",
           });
         }
@@ -3483,7 +3480,7 @@ export default function Complaint() {
         console.error("Approve Upload failed:", error);
         FullSweetalert({
           title: "Error",
-          text: `เน€เธเธดเธ”เธเนเธญเธเธดเธ”เธเธฅเธฒเธ”เธฃเธฐเธซเธงเนเธฒเธเธเธฒเธฃเธเธฑเธเธ—เธถเธเธเธฒเธฃเธญเธเธธเธกเธฑเธ•เธด`,
+          text: `เกิดข้อผิดพลาดระหว่างการบันทึกการอนุมัติ`,
           icon: "error",
         });
       } finally {
