@@ -838,6 +838,15 @@ export default function Complaint() {
     setQcNoteError(false);
     setScDetailError(false);
     setScNoteError(false);
+    setFollowUpDateError(false);
+    setToolUseError(false);
+    setToolUseOtherError(false);
+    setDdError(false);
+    setDdOtherError(false);
+    setRootCauseError(false);
+    setObsAnalyError(false);
+    setCorrectiveActionError(false);
+    setPreventiveActionPlanError(false);
   };
 
   // Extract Report Type Function (from ComplaintRead.tsx)
@@ -3488,7 +3497,7 @@ export default function Complaint() {
         handleClose();
         ComplaintGet();
       }
-        } else if (mode == "APPROVE_QC") {
+    } else if (mode == "APPROVE_QC") {
       if (!validateQCApprove()) {
         return;
       }
