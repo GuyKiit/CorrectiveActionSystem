@@ -291,6 +291,7 @@ export default function ExplaintBody({
     DecisionOther,
 
     //Explaint
+    explainList,
     approveList,
     dataTooluse,
     dataToolUse_Combobox,
@@ -2965,9 +2966,10 @@ export default function ExplaintBody({
       {(isActionExplainApproveScAdd ||
         isActionExplainApproveQcAdd ||
         isActionCloseAdd ||
-        isActionReadExplain ||
-        isActionExplainRead ||
-        (isActionExplainReadApproveSc && isApproveScBoxHidden) ||
+        (isActionReadExplain && foundSC) ||
+        (isActionExplainRead && foundSC) ||
+        (isActionExplainReadApproveSc && foundSC) ||
+        (isActionExplainApproveScRead && foundSC) ||
         (isActionExplainReadApproveQc && isApproveQcBoxHidden) ||
         isActionExplainApproveQcRead ||
         isActionCloseHistory ||
@@ -3388,8 +3390,9 @@ export default function ExplaintBody({
       {/* //ส่วนของ Qc */}
       {(isActionExplainApproveQcAdd ||
         isActionExplainReadApproveQc ||
-        isActionReadExplain ||
-        isActionExplainRead ||
+        (isActionReadExplain && foundQC) ||
+        (isActionExplainRead && foundQC) ||
+        (isActionExplainApproveScRead && foundQC) ||
         isActionReadClose ||
         isActionCloseHistory ||
         isActionCloseAdd) && (
@@ -3723,7 +3726,7 @@ export default function ExplaintBody({
                           borderRadius: 2,
                           backgroundColor: "#fafafa",
                           mt: 2,
-                          border: validateText?.QcNote
+                          border: validateText?.ScNote
                             ? "1px solid #f44336"
                             : "1px solid #e0e0e0",
                         }}
@@ -3802,7 +3805,12 @@ export default function ExplaintBody({
       )}
 
       {/* //ส่วนของ Close */}
-      {isActionCloseAdd && (
+      {(isActionCloseAdd ||
+      (isActionReadExplain && foundCLOSE) ||
+      (isActionExplainRead && foundCLOSE) ||
+      (isActionExplainApproveScRead && foundCLOSE) ||
+      (isActionExplainApproveQcRead && foundCLOSE) 
+      ) && (
         <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>
           <Paper
             elevation={3}
