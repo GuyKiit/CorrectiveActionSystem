@@ -291,6 +291,7 @@ export default function ExplaintBody({
     DecisionOther,
 
     //Explaint
+    explainList,
     approveList,
     dataTooluse,
     dataToolUse_Combobox,
@@ -567,6 +568,10 @@ export default function ExplaintBody({
   // const [currentExplainForApproval, setCurrentExplainForApproval] = useState<any>(null);
   const [currentApproveData, setCurrentApproveData] = useState<any>(null);
   // const [approveList, setApproveList] = useState<any[]>([]);
+  const [foundSC, setFoundSC] = useState(null);
+  const [foundQC, setFoundQC] = useState(null);
+  const [foundCLOSE, setFoundCLOSE] = useState(null);
+
   // Function Handlers (On Change Event) ======================================================
   const handleReportTypeChange = (val: LovType | null) => {
     if (true)
@@ -1374,6 +1379,12 @@ export default function ExplaintBody({
       );
       console.log("scApprove", scApprove);
 
+      // Close
+      const close = explainList?.find(
+        (x: any) => x.complaint_id === dataelement?.complaint_id && ["REJECT", "APPROVE"].includes(x.close_status)
+      );
+      console.log("close", close);
+
       // Set explain fields
       setobservation_analysis(dataelement?.observation_analysis || "");
       setroot_cause(dataelement?.root_cause || "");
@@ -1506,6 +1517,12 @@ export default function ExplaintBody({
           }
         }
       }
+        setFoundSC(scApprove || null);
+      setFoundQC(qcApprove || null);
+      setFoundCLOSE(close || null);
+      console.log("foundSC:", foundSC);
+      console.log("foundQC:", foundQC);
+      console.log("foundCLOSE:", foundCLOSE);
 
       // Process ToolUse data - wait until combobox loaded
     }
@@ -1522,35 +1539,39 @@ export default function ExplaintBody({
     // dataTooluse,
     // dataDecision,
   ]);
-  // useEffect(() => {
-  //   if (!currentExplainForApproval) return;
-  //   const fetchApproveData = async () => {
-  //     const approveData = await ExplaintApprove_Get(currentExplainForApproval.id);
-  //     console.log("approveData", approveData);
+    React.useEffect(() => {
+  if (!explainList || !dataelement) return;
 
-  //     if (approveData?.length > 0) {
-  //       const firstApprove = approveData[0];
-  //       setCurrentApproveData(firstApprove); // 🔹 เก็บ approve data ทั้ง object
-  //       console.log("firstApprove", firstApprove);
-  //       const company =
-  //         dataset_company?.find((c: any) => Number(c.company_id) === Number(firstApprove?.approve_company_id)) || null;
-  //       setapprove_company_id(company);
-  //       const department =
-  //         dataset_department?.find((c: any) => Number(c.department_id) === Number(firstApprove?.approve_department_id)) || null;
-  //       setapprove_department_id(department);
-  //       console.log("approve_department_id",approve_department_id);
+  const close = explainList.find(
+    (x: any) =>
+      x.complaint_id === dataelement?.complaint_id &&
+      ["REJECT", "APPROVE"].includes(x.close_status)
+  );
 
-  //       setapprove_position(firstApprove.approve_position || "");
-  //       setapprove_email(firstApprove.approve_email || "");
-  //       // setapprove_note(firstApprove.approve_note || "");
-  //       // setapprove_detail(firstApprove.approve_detail || "");
-  //       if (firstApprove.approve_date) setapprove_date(dayjs(firstApprove.approve_date));
-  //       console.log("✅ Mappedddd approve data:", firstApprove);
-  //     }
-  //   };
-
-  //   fetchApproveData();
-  // }, [currentExplainForApproval]);
+  if (close) {
+    setclose_name(close.close_name || "");
+    setclose_company_id(
+      dataset_company.find((c:any) => Number(c.company_id) === close.close_company_id) || null
+    );
+    setclose_department_id(
+      dataset_department.find((d:any) => Number(d.department_id) === close.close_department_id) || null
+    );
+    setclose_position(close.close_position || "");
+    setclose_email(close.close_email || "");
+    setclose_date(dayjs(close.close_date));
+    setdataFuapp(
+      dataApprove_Combobox.find((item:any) => item.lov_code === close.close_status) || null
+    );
+    setclose_detail(close.close_detail || "");
+    setclose_note(close.close_note || "");
+  }
+}, [explainList, dataelement, dataset_company, dataset_department, dataApprove_Combobox]);
+  
+  useEffect(() => {
+  console.log("foundSC:", foundSC);
+  console.log("foundQC:", foundQC);
+  console.log("foundCLOSE:", foundCLOSE);
+}, [foundSC, foundQC, foundCLOSE]);
 
   // 🔹 Load QC approve data and radio when in CloseAdd mode
   useEffect(() => {
@@ -1748,7 +1769,7 @@ export default function ExplaintBody({
 
   React.useEffect(() => {
     console.log("🟣🟣🟣🟣🟣🟣 [7] 🟣🟣🟣🟣🟣🟣");
-    if (action === "ExplainRead" && dataelement?.id) {
+    if (action === "ExplainRead" || isActionExplainApproveScRead && dataelement?.id) {
       ComplaintFile_Get();
     }
   }, [action, dataelement]);
@@ -2941,12 +2962,14 @@ export default function ExplaintBody({
         )}
 
       {/* //ส่วนของ Section Head */}
+      {/* //ส่วนของ Section Head */}
       {(isActionExplainApproveScAdd ||
         isActionExplainApproveQcAdd ||
         isActionCloseAdd ||
-        isActionReadExplain ||
-        isActionExplainRead ||
-        (isActionExplainReadApproveSc && isApproveScBoxHidden) ||
+        (isActionReadExplain && foundSC) ||
+        (isActionExplainRead && foundSC) ||
+        (isActionExplainReadApproveSc && foundSC) ||
+        (isActionExplainApproveScRead && foundSC) ||
         (isActionExplainReadApproveQc && isApproveQcBoxHidden) ||
         isActionExplainApproveQcRead ||
         isActionCloseHistory ||
@@ -3367,8 +3390,9 @@ export default function ExplaintBody({
       {/* //ส่วนของ Qc */}
       {(isActionExplainApproveQcAdd ||
         isActionExplainReadApproveQc ||
-        isActionReadExplain ||
-        isActionExplainRead ||
+        (isActionReadExplain && foundQC) ||
+        (isActionExplainRead && foundQC) ||
+        (isActionExplainApproveScRead && foundQC) ||
         isActionReadClose ||
         isActionCloseHistory ||
         isActionCloseAdd) && (
@@ -3781,7 +3805,12 @@ export default function ExplaintBody({
       )}
 
       {/* //ส่วนของ Close */}
-      {isActionCloseAdd && (
+      {(isActionCloseAdd ||
+      (isActionReadExplain && foundCLOSE) ||
+      (isActionExplainRead && foundCLOSE) ||
+      (isActionExplainApproveScRead && foundCLOSE) ||
+      (isActionExplainApproveQcRead && foundCLOSE) 
+      ) && (
         <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>
           <Paper
             elevation={3}

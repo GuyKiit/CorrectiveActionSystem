@@ -283,6 +283,7 @@ export default function Complaint() {
     dataset_roleProfile,
     dataset_complaintActionApproveSC,
     dataset_complaintActionApproveQC,
+    dataset_crosscompany,
 
     // Temp Domain Variable
     domain,
@@ -435,6 +436,7 @@ export default function Complaint() {
     set_domainrelate,
     setdataset_complaintActionApproveSC,
     setdataset_complaintActionApproveQC,
+    setdataset_crosscompany,
 
     //set Explaint
     setExplainList,
@@ -1070,7 +1072,7 @@ export default function Complaint() {
         const dataset = {
           lov_group: user[0]?.itasset_company_id + ",VARIABLE_CONSTANT",
           lov_type:
-            "report_type,complaint_type,reference_standard,priority_level,attach_type,complaint_status,tool_use,decision_disposition,approve_select,complaint_step,complaint_action,active_company,role_profile",
+            "report_type,complaint_type,cross_company_check,reference_standard,priority_level,attach_type,complaint_status,tool_use,decision_disposition,approve_select,complaint_step,complaint_action,active_company,role_profile",
         };
         const response = await _POST(dataset, "/Lov/LovGet");
 
@@ -1100,6 +1102,7 @@ export default function Complaint() {
           setdataset_complaintAction?.(grouped["complaint_action"] || []);
           setdataset_activeCompany?.(grouped["active_company"] || []);
           setdataset_roleProfile?.(grouped["role_profile"] || []);
+          setdataset_crosscompany?.(grouped["cross_company_check"] || []);
 
           setdatastatus?.(
             grouped["complaint_status"].filter(
@@ -1729,9 +1732,10 @@ export default function Complaint() {
                       (mode: any) =>
                         mode.lov1
                           .split(",")
-                          .includes(String(el.complaint_status_label)) &&
-                        el.step_label === "COMPLAINT" &&
-                        tempApproveSeq == "2"
+                          .includes(String(el.complaint_status_label))
+                        && el.step_label === "COMPLAINT"
+                        && tempApproveSeq == "2"
+                        && el.request_department_id == user[0]?.itasset_department_id
                       // ) &&
                       // splitNextStepName(el.approve_step
                     )) ??
@@ -3246,6 +3250,142 @@ export default function Complaint() {
 
         if (response && response.status === "success") {
           // ✅ หลังบันทึก Approve สำเร็จ → อัปเดตสถานะ Complaint
+          const complaintId =
+            currentExplainForApproval?.complaint_id ?? dataelement?.id;
+
+          const complaintReturnPayload = {
+            ComplaintReturnModel: {
+              id: dataelement?.id,
+              return_detail: approve_detail,
+              return_name: user[0]?.employee_username || "",
+              return_company_id: return_company_id?.company_id
+                ? Number(return_company_id.company_id)
+                : user[0]?.itasset_company_id || "",
+              return_department_id: return_department_id?.department_id
+                ? Number(return_department_id.department_id)
+                : user[0]?.itasset_department_id || "",
+              return_position: user[0]?.employee_position || "",
+              return_email: user[0]?.employee_email || "",
+              return_from_status_id: tempComplaintStatus[2]?.id,
+              complaint_status_id: tempComplaintStatus[1]?.id,
+              mode: mode,
+            },
+            CurrentAccessModel: {
+              user_id: user[0]?.employee_username || "",
+            },
+          };
+
+          // const complaintFormData = new FormData();
+          // complaintFormData.append(
+          //   "complaintPayloadJson",
+          //   JSON.stringify(complaintReturnPayload));
+
+          //const response = await _POST(approvePayload.ExplaintApproveModel,"/ExplaintApprove/ExplaintApproveAdd");
+          const updateRes = await _POST(
+            complaintReturnPayload,
+            "/Complaint/ComplaintReturn"
+          );
+
+          if (updateRes && updateRes.status === "success") {
+            FullSweetalert({
+              title: "Success",
+              text: `เธเธฑเธเธ—เธถเธเธเธฒเธฃเธญเธเธธเธกเธฑเธ•เธดเนเธฅเธฐเธญเธฑเธเน€เธ”เธ•เธชเธ–เธฒเธเธฐเธชเธณเน€เธฃเนเธ`,
+              icon: "success",
+            });
+          } else {
+            FullSweetalert({
+              title: "Warning",
+              text: `เธเธฑเธเธ—เธถเธเธเธฒเธฃเธญเธเธธเธกเธฑเธ•เธดเธชเธณเน€เธฃเนเธ เนเธ•เนเนเธกเนเธชเธฒเธกเธฒเธฃเธ–เธญเธฑเธเน€เธ”เธ•เธชเธ–เธฒเธเธฐเนเธ”เน`,
+              icon: "warning",
+            });
+          }
+        } else {
+          FullSweetalert({
+            title: "Failed",
+            text: `เธเธฑเธเธ—เธถเธเธเธฒเธฃเธญเธเธธเธกเธฑเธ•เธดเนเธกเนเธชเธณเน€เธฃเนเธ`,
+            icon: "error",
+          });
+        }
+      } catch (error) {
+        console.error("Approve Upload failed:", error);
+        FullSweetalert({
+          title: "Error",
+          text: `เน€เธเธดเธ”เธเนเธญเธเธดเธ”เธเธฅเธฒเธ”เธฃเธฐเธซเธงเนเธฒเธเธเธฒเธฃเธเธฑเธเธ—เธถเธเธเธฒเธฃเธญเธเธธเธกเธฑเธ•เธด`,
+          icon: "error",
+        });
+      } finally {
+        setIsLoadingScreen(false);
+        handleClose();
+        ComplaintGet();
+      }
+    } else if (mode == "APPROVE_SC") {
+      const tempid = uuidv4();
+
+      // ๐งฉ Helper: เธซเธฒ explain_id เธ—เธตเนเนเธ—เนเธเธฃเธดเธเธเธฒเธ dataelement
+      const resolveExplainId = () => {
+        return currentExplainForApproval?.id;
+      };
+
+      const explainRootId = resolveExplainId();
+
+      // ๐งฉ เธซเธฒเธฅเธณเธ”เธฑเธ approve_seq เธฅเนเธฒเธชเธธเธ” เนเธฅเนเธงเน€เธเธดเนเธก +1
+      const currentApproveList = currentExplainForApproval?.approveList || [];
+      const maxApproveSeq =
+        currentApproveList.length > 0
+          ? Math.max(
+              ...currentApproveList.map(
+                (item: any) => parseInt(item.approve_seq, 10) || 0
+              )
+            )
+          : 0;
+      const nextSeq = maxApproveSeq + 1;
+
+      // ๐งฉ เธชเธฃเนเธฒเธ payload เธชเธณเธซเธฃเธฑเธ Approve
+      const approvePayload = {
+        ExplaintApproveModel: {
+          id: tempid,
+          explain_id: explainRootId,
+          approve_seq: nextSeq,
+          complaint_status_id: tempComplaintStatus[4]?.id,
+          approve_status: approveSelectionCode,
+          approve_detail: approve_detail || null,
+          approve_note: approve_note || null,
+          approve_name: user[0]?.employee_username || "",
+          approve_company_id: approve_company_id?.company_id
+            ? Number(approve_company_id.company_id)
+            : user[0]?.itasset_company_id || "",
+          approve_department_id: approve_department_id?.department_id
+            ? Number(approve_department_id.department_id)
+            : user[0]?.itasset_department_id || "",
+          approve_position: user[0]?.employee_position || "",
+          approve_email: user[0]?.employee_email || "",
+          approve_date: approve_date
+            ? approve_date
+                .hour(dayjs().hour())
+                .minute(dayjs().minute())
+                .second(dayjs().second())
+                .format("YYYY-MM-DDTHH:mm:ss")
+            : new Date().toISOString(),
+          create_by: user[0]?.employee_username || "",
+          domain_id: user[0]?.employee_domain || "",
+        },
+        CurrentAccessModel: {
+          user_id: user[0]?.employee_username || "",
+        },
+      };
+
+      setIsLoadingScreen(true);
+
+      try {
+        // ๐งฉ เธเธฑเธเธ—เธถเธเธเนเธญเธกเธนเธฅ Approve
+        const response = await _POST(
+          approvePayload.ExplaintApproveModel,
+          "/ExplaintApprove/ExplaintApproveAdd"
+        );
+
+        console.log(return_detail, "return_detail");
+
+        if (response && response.status === "success") {
           // 🧩 ใช้ complaint_id จาก currentExplainForApproval แทน dataelement?.id
           // เพราะ dataelement?.id อาจเป็น explain id แทน complaint id
           const complaintId =
@@ -6451,6 +6591,10 @@ export default function Complaint() {
         openBottonHidden={false}
         titlename={"[Explain] ดูข้อมูล"}
         handleClose={handleClose}
+<<<<<<< HEAD
+=======
+        // handleClose={() => handleOnclickCloseReadExplain(dataelement)}
+>>>>>>> 93bdca6 (Edit:Merge)
         handlefunction={ExplainGet}
         buttonColor="success"
         element={
