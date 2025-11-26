@@ -2892,6 +2892,9 @@ export default function Complaint() {
           formData.append("complaintFiles", fileItem.file);
         });
       }
+
+      setIsLoadingScreen(true);
+
       try {
         const response = await _POST_FORMDATA(
           formData,
@@ -6545,8 +6548,8 @@ export default function Complaint() {
         openBottonHidden={true}
         titlename={"[Explain] เพิ่มข้อมูล"}
         buttonText={"Save & Submit"}
-        // handleClose={handleClose}
-        handleClose={() => handleOnclickCloseAddExplain(dataelement)}
+        handleClose={handleClose}
+        // handleClose={() => handleOnclickCloseAddExplain(dataelement)}
         handlefunction={ExplainAdd}
         hideSaveDraft={true}
         hideReject={true}
@@ -6614,8 +6617,8 @@ export default function Complaint() {
         dialogWidth="xl"
         openBottonHidden={false}
         titlename={"[Explain] ดูข้อมูล"}
-        // handleClose={handleClose}
-        handleClose={() => handleOnclickCloseReadExplain(dataelement)}
+        handleClose={handleClose}
+        // handleClose={() => handleOnclickCloseReadExplain(dataelement)}
         handlefunction={ExplainGet}
         buttonColor="success"
         element={
