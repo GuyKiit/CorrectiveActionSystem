@@ -291,7 +291,6 @@ export default function ExplaintBody({
     DecisionOther,
 
     //Explaint
-    explainList,
     approveList,
     dataTooluse,
     dataToolUse_Combobox,
@@ -568,10 +567,6 @@ export default function ExplaintBody({
   // const [currentExplainForApproval, setCurrentExplainForApproval] = useState<any>(null);
   const [currentApproveData, setCurrentApproveData] = useState<any>(null);
   // const [approveList, setApproveList] = useState<any[]>([]);
-  const [foundSC, setFoundSC] = useState(null);
-  const [foundQC, setFoundQC] = useState(null);
-  const [foundCLOSE, setFoundCLOSE] = useState(null);
-
   // Function Handlers (On Change Event) ======================================================
   const handleReportTypeChange = (val: LovType | null) => {
     if (true)
@@ -1379,12 +1374,6 @@ export default function ExplaintBody({
       );
       console.log("scApprove", scApprove);
 
-      // Close
-      const close = explainList?.find(
-        (x: any) => x.complaint_id === dataelement?.complaint_id && ["REJECT", "APPROVE"].includes(x.close_status)
-      );
-      console.log("close", close);
-
       // Set explain fields
       setobservation_analysis(dataelement?.observation_analysis || "");
       setroot_cause(dataelement?.root_cause || "");
@@ -1443,86 +1432,80 @@ export default function ExplaintBody({
       // Load QC approve data from dataelement (for CloseAdd mode)
       if (isActionCloseAdd || isActionClose || isActionCloseHistory) {
         // Set QC approve name
-        if (dataelement?.qcapprove_name) {
-          setqcapprove_name(dataelement.qcapprove_name);
-        }
+        // if (dataelement?.qcapprove_name) {
+        //   setqcapprove_name(dataelement.qcapprove_name);
+        // }
 
-        // Set QC approve company
-        if (dataelement?.qcapprove_company_id) {
-          const qcCompany = dataset_company?.find(
-            (el: any) =>
-              String(el.company_id) === String(dataelement.qcapprove_company_id)
-          );
-          if (qcCompany) {
-            setqcapprove_company_id(qcCompany);
-          }
-        }
+        // // Set QC approve company
+        // if (dataelement?.qcapprove_company_id) {
+        //   const qcCompany = dataset_company?.find(
+        //     (el: any) =>
+        //       String(el.company_id) === String(dataelement.qcapprove_company_id)
+        //   );
+        //   if (qcCompany) {
+        //     setqcapprove_company_id(qcCompany);
+        //   }
+        // }
 
-        // Set QC approve department
-        if (dataelement?.qcapprove_department_id) {
-          const qcDepartment = dataset_department?.find(
-            (el: any) =>
-              String(el.department_id) ===
-              String(dataelement.qcapprove_department_id)
-          );
-          if (qcDepartment) {
-            setqcapprove_department_id(qcDepartment);
-          }
-        }
+        // // Set QC approve department
+        // if (dataelement?.qcapprove_department_id) {
+        //   const qcDepartment = dataset_department?.find(
+        //     (el: any) =>
+        //       String(el.department_id) ===
+        //       String(dataelement.qcapprove_department_id)
+        //   );
+        //   if (qcDepartment) {
+        //     setqcapprove_department_id(qcDepartment);
+        //   }
+        // }
 
-        // Set other QC approve fields
-        if (dataelement?.qcapprove_position) {
-          setqcapprove_position(dataelement.qcapprove_position);
-        }
-        if (dataelement?.qcapprove_email) {
-          setqcapprove_email(dataelement.qcapprove_email);
-        }
-        if (dataelement?.qcapprove_date) {
-          setqcapprove_date(dayjs(dataelement.qcapprove_date));
-        }
-        if (dataelement?.qcapprove_detail) {
-          setqcapprove_detail(dataelement.qcapprove_detail);
-        }
-        if (dataelement?.qcapprove_note) {
-          setqcapprove_note(dataelement.qcapprove_note);
-        }
+        // // Set other QC approve fields
+        // if (dataelement?.qcapprove_position) {
+        //   setqcapprove_position(dataelement.qcapprove_position);
+        // }
+        // if (dataelement?.qcapprove_email) {
+        //   setqcapprove_email(dataelement.qcapprove_email);
+        // }
+        // if (dataelement?.qcapprove_date) {
+        //   setqcapprove_date(dayjs(dataelement.qcapprove_date));
+        // }
+        // if (dataelement?.qcapprove_detail) {
+        //   setqcapprove_detail(dataelement.qcapprove_detail);
+        // }
+        // if (dataelement?.qcapprove_note) {
+        //   setqcapprove_note(dataelement.qcapprove_note);
+        // }
 
         // Set QC approve radio (dataQcapp) from dataelement
         // Try multiple possible field names for QC approve status
-        const qcApproveStatus =
-          dataelement?.qcapprove_status ||
-          dataelement?.qc_approve_status ||
-          dataelement?.qc_approve_status_code ||
-          dataelement?.approve_status_qc;
+        // const qcApproveStatus =
+        //   dataelement?.qcapprove_status ||
+        //   dataelement?.qc_approve_status ||
+        //   dataelement?.qc_approve_status_code ||
+        //   dataelement?.approve_status_qc;
 
-        if (qcApproveStatus && dataApprove_Combobox?.length > 0) {
-          const qcApproveItem = dataApprove_Combobox.find(
-            (item: LovType) =>
-              String(item.id) === String(qcApproveStatus) ||
-              item.lov_code === qcApproveStatus ||
-              String(item.lov_code) === String(qcApproveStatus) ||
-              item.lov1 === qcApproveStatus
-          );
-          if (qcApproveItem) {
-            setdataQcapp(qcApproveItem);
-            console.log(
-              "✅ QC Approve radio loaded from dataelement:",
-              qcApproveItem
-            );
-          } else {
-            console.log(
-              "⚠️ QC Approve item not found in dataelement for status:",
-              qcApproveStatus
-            );
-          }
-        }
+        // if (qcApproveStatus && dataApprove_Combobox?.length > 0) {
+        //   const qcApproveItem = dataApprove_Combobox.find(
+        //     (item: LovType) =>
+        //       String(item.id) === String(qcApproveStatus) ||
+        //       item.lov_code === qcApproveStatus ||
+        //       String(item.lov_code) === String(qcApproveStatus) ||
+        //       item.lov1 === qcApproveStatus
+        //   );
+        //   if (qcApproveItem) {
+        //     setdataQcapp(qcApproveItem);
+        //     console.log(
+        //       "✅ QC Approve radio loaded from dataelement:",
+        //       qcApproveItem
+        //     );
+        //   } else {
+        //     console.log(
+        //       "⚠️ QC Approve item not found in dataelement for status:",
+        //       qcApproveStatus
+        //     );
+        //   }
+        // }
       }
-        setFoundSC(scApprove || null);
-      setFoundQC(qcApprove || null);
-      setFoundCLOSE(close || null);
-      console.log("foundSC:", foundSC);
-      console.log("foundQC:", foundQC);
-      console.log("foundCLOSE:", foundCLOSE);
 
       // Process ToolUse data - wait until combobox loaded
     }
@@ -1539,39 +1522,35 @@ export default function ExplaintBody({
     // dataTooluse,
     // dataDecision,
   ]);
-    React.useEffect(() => {
-  if (!explainList || !dataelement) return;
+  // useEffect(() => {
+  //   if (!currentExplainForApproval) return;
+  //   const fetchApproveData = async () => {
+  //     const approveData = await ExplaintApprove_Get(currentExplainForApproval.id);
+  //     console.log("approveData", approveData);
 
-  const close = explainList.find(
-    (x: any) =>
-      x.complaint_id === dataelement?.complaint_id &&
-      ["REJECT", "APPROVE"].includes(x.close_status)
-  );
+  //     if (approveData?.length > 0) {
+  //       const firstApprove = approveData[0];
+  //       setCurrentApproveData(firstApprove); // 🔹 เก็บ approve data ทั้ง object
+  //       console.log("firstApprove", firstApprove);
+  //       const company =
+  //         dataset_company?.find((c: any) => Number(c.company_id) === Number(firstApprove?.approve_company_id)) || null;
+  //       setapprove_company_id(company);
+  //       const department =
+  //         dataset_department?.find((c: any) => Number(c.department_id) === Number(firstApprove?.approve_department_id)) || null;
+  //       setapprove_department_id(department);
+  //       console.log("approve_department_id",approve_department_id);
 
-  if (close) {
-    setclose_name(close.close_name || "");
-    setclose_company_id(
-      dataset_company.find((c:any) => Number(c.company_id) === close.close_company_id) || null
-    );
-    setclose_department_id(
-      dataset_department.find((d:any) => Number(d.department_id) === close.close_department_id) || null
-    );
-    setclose_position(close.close_position || "");
-    setclose_email(close.close_email || "");
-    setclose_date(dayjs(close.close_date));
-    setdataFuapp(
-      dataApprove_Combobox.find((item:any) => item.lov_code === close.close_status) || null
-    );
-    setclose_detail(close.close_detail || "");
-    setclose_note(close.close_note || "");
-  }
-}, [explainList, dataelement, dataset_company, dataset_department, dataApprove_Combobox]);
-  
-  useEffect(() => {
-  console.log("foundSC:", foundSC);
-  console.log("foundQC:", foundQC);
-  console.log("foundCLOSE:", foundCLOSE);
-}, [foundSC, foundQC, foundCLOSE]);
+  //       setapprove_position(firstApprove.approve_position || "");
+  //       setapprove_email(firstApprove.approve_email || "");
+  //       // setapprove_note(firstApprove.approve_note || "");
+  //       // setapprove_detail(firstApprove.approve_detail || "");
+  //       if (firstApprove.approve_date) setapprove_date(dayjs(firstApprove.approve_date));
+  //       console.log("✅ Mappedddd approve data:", firstApprove);
+  //     }
+  //   };
+
+  //   fetchApproveData();
+  // }, [currentExplainForApproval]);
 
   // 🔹 Load QC approve data and radio when in CloseAdd mode
   useEffect(() => {
@@ -1648,6 +1627,14 @@ export default function ExplaintBody({
     const tu = setExplainTU(rawTU);
     setdataToolUse(tu);
 
+    // Sync dataToolUseValue for validation
+    const reducedArrayTU = tu.map((t) => ({
+      explain_tu_id: t.id,
+      label: t.lov1,
+      isOther: t.lov2,
+    }));
+    setdataToolUseValue(reducedArrayTU);
+
     if (Array.isArray(dataelement?.tooluse)) {
       setdataTooluseCheckbox(setTooluse(dataelement.tooluse));
     }
@@ -1674,6 +1661,14 @@ export default function ExplaintBody({
 
     const dd = setExplainDD(rawDD);
     setdataDecision(dd);
+
+    // Sync dataDecisionValue for validation
+    const reducedArrayDD = dd.map((d) => ({
+      explain_dd_id: d.id,
+      label: d.lov1,
+      isOther: d.lov2,
+    }));
+    setdataDecisionValue(reducedArrayDD);
 
     const otherDD = dd.find((el: any) => el.lov2 === "Y");
     setDecisionOther(otherDD?.other || "");
@@ -1769,7 +1764,7 @@ export default function ExplaintBody({
 
   React.useEffect(() => {
     console.log("🟣🟣🟣🟣🟣🟣 [7] 🟣🟣🟣🟣🟣🟣");
-    if (action === "ExplainRead" || isActionExplainApproveScRead && dataelement?.id) {
+    if (action === "ExplainRead" || isActionExplainApproveScRead|| isActionExplainApproveQcRead || isActionReadClose && dataelement?.id) {
       ComplaintFile_Get();
     }
   }, [action, dataelement]);
@@ -1795,21 +1790,7 @@ export default function ExplaintBody({
         </label>
       </div>
       <Divider sx={{ my: 0.1, borderColor: "#F29739" }} />
-      <Grid container spacing={2} mt={2}>
-        <Grid size={6}>
-          {/* <AutocompleteComboBox
-            required="required"
-            value={dataReportTypeValue}
-            labelName={"ประเภทรายงาน (Report Type)"}
-            options={dataset_reporttype} // <-- แก้ตรงนี้
-            column="lov_code"
-            setvalue={handleReportTypeChange}
-            readonly={isActionRead ? true : isActionEdit ? true : isActionDelete ? true : readonlyTextField}
-            bgcolorTextField={isActionRead ? true : isActionEdit ? true : isActionDelete ? true : bgcolorTextField}
-
-          /> */}
-        </Grid>
-      </Grid>
+      <Grid container spacing={2} mt={2}></Grid>
 
       {/* ====== Dynamic ฟอร์ม สำหรับเลือกประเภทเอกสาร ====== */}
       {!isFormHidden &&
@@ -1887,20 +1868,7 @@ export default function ExplaintBody({
                       }
                       labelName="ชื่อผู้ดำเนินการ (Responsible Person)"
                       onchange={(e) => setresponsible_name(e.target.value)}
-                      readonly={
-                        isActionRead ||
-                        isActionDelete ||
-                        isActionExplainAdd ||
-                        isActionExplainApproveScAdd ||
-                        isActionExplainApproveScRead ||
-                        isActionExplainApproveQcAdd ||
-                        isActionReadExplain ||
-                        isActionExplainRead ||
-                        isActionExplainApproveQcRead ||
-                        isActionCloseAdd ||
-                        isActionReadClose ||
-                        isActionCloseHistory
-                      }
+                      readonly
                     />
                   </Grid>
                   <Grid size={4}>
@@ -1963,20 +1931,7 @@ export default function ExplaintBody({
                       labelName="อีเมล (Email)"
                       onchange={(e) => setresponsible_email(e.target.value)}
                       bgcolorTextField={isActionExplainAdd ? false : true}
-                      readonly={
-                        isActionRead ||
-                        isActionDelete ||
-                        isActionExplainAdd ||
-                        isActionExplainApproveScAdd ||
-                        isActionExplainApproveScRead ||
-                        isActionExplainApproveQcAdd ||
-                        isActionReadExplain ||
-                        isActionExplainRead ||
-                        isActionExplainApproveQcRead ||
-                        isActionCloseAdd ||
-                        isActionReadClose ||
-                        isActionCloseHistory
-                      }
+                      readonly
                     />
                   </Grid>
                   <Grid size={4}>
@@ -2001,20 +1956,7 @@ export default function ExplaintBody({
                         }
                       }}
                       bgcolorTextField={isActionAdd ? false : true}
-                      readonly={
-                        isActionRead ||
-                        isActionEdit ||
-                        isActionDelete ||
-                        isActionExplainApproveScAdd ||
-                        isActionExplainApproveScRead ||
-                        isActionExplainApproveQcAdd ||
-                        isActionReadExplain ||
-                        isActionExplainRead ||
-                        isActionExplainApproveQcRead ||
-                        isActionCloseAdd ||
-                        isActionReadClose ||
-                        isActionCloseHistory
-                      }
+                      readonly={!isActionExplainAdd}
                       Validate={validateText?.Follow_up_Date || false}
                       validateTextLable={
                         validateText?.Follow_up_Date
@@ -2114,19 +2056,7 @@ export default function ExplaintBody({
                                         onchange={() =>
                                           handleCheckboxChangeTU(item)
                                         }
-                                        readonly={
-                                          isActionRead ||
-                                          isActionDelete ||
-                                          isActionReadExplain ||
-                                          isActionExplainRead ||
-                                          isActionExplainApproveQcRead ||
-                                          isActionExplainApproveScAdd ||
-                                          isActionExplainApproveScRead ||
-                                          isActionExplainApproveQcAdd ||
-                                          isActionCloseAdd ||
-                                          isActionReadClose ||
-                                          isActionCloseHistory
-                                        }
+                                        readonly={!isActionExplainAdd}
                                         Validate={validateText?.Tu || false}
                                       />
                                     </Grid>
@@ -2153,11 +2083,12 @@ export default function ExplaintBody({
                                         ? false
                                         : true
                                     }
-                                    readonly={
-                                      isActionRead ||
-                                      isActionDelete ||
-                                      isActionExplainRead ||
-                                      isActionCloseAdd
+                                    readonly={!isActionExplainAdd}
+                                    Validate={validateText?.Tuother || false}
+                                    validateTextLable={
+                                      validateText?.Tuother
+                                        ? "กรุณาเลือกอื่นๆ"
+                                        : ""
                                     }
                                   />
                                 )}
@@ -2230,19 +2161,7 @@ export default function ExplaintBody({
                                       onchange={() =>
                                         handleCheckboxChangeDD(item)
                                       }
-                                      readonly={
-                                        isActionRead ||
-                                        isActionDelete ||
-                                        isActionReadExplain ||
-                                        isActionExplainRead ||
-                                        isActionExplainApproveQcRead ||
-                                        isActionExplainApproveScAdd ||
-                                        isActionExplainApproveScRead ||
-                                        isActionExplainApproveQcAdd ||
-                                        isActionCloseAdd ||
-                                        isActionReadClose ||
-                                        isActionCloseHistory
-                                      }
+                                      readonly={!isActionExplainAdd}
                                       Validate={validateText?.Dd || false}
                                     />
                                   </Grid>
@@ -2271,11 +2190,12 @@ export default function ExplaintBody({
                                         ? false
                                         : true
                                     }
-                                    readonly={
-                                      isActionRead ||
-                                      isActionDelete ||
-                                      isActionExplainRead ||
-                                      isActionCloseAdd
+                                    readonly={!isActionExplainAdd}
+                                    Validate={validateText?.Ddother || false}
+                                    validateTextLable={
+                                      validateText?.Ddother
+                                        ? "กรุณาเลือกอื่นๆ"
+                                        : ""
                                     }
                                   />
                                 )}
@@ -2358,18 +2278,7 @@ export default function ExplaintBody({
                                     ? false
                                     : true
                                 }
-                                readonly={
-                                  isActionRead ||
-                                  isActionDelete ||
-                                  isActionReadExplain ||
-                                  isActionReadExplain ||
-                                  isActionExplainRead ||
-                                  isActionExplainApproveScRead ||
-                                  isActionExplainApproveQcRead ||
-                                  isActionCloseAdd ||
-                                  isActionReadClose ||
-                                  isActionCloseHistory
-                                }
+                                readonly={!isActionExplainAdd}
                                 Validate={validateText?.ObsAnaly || false}
                                 validateTextLable={
                                   validateText?.ObsAnaly
@@ -2457,17 +2366,7 @@ export default function ExplaintBody({
                                     ? false
                                     : true
                                 }
-                                readonly={
-                                  isActionRead ||
-                                  isActionDelete ||
-                                  isActionReadExplain ||
-                                  isActionExplainRead ||
-                                  isActionExplainApproveScRead ||
-                                  isActionExplainApproveQcRead ||
-                                  isActionCloseAdd ||
-                                  isActionReadClose ||
-                                  isActionCloseHistory
-                                }
+                                readonly={!isActionExplainAdd}
                                 Validate={validateText?.Rc || false}
                                 validateTextLable={
                                   validateText?.Rc
@@ -2544,17 +2443,7 @@ export default function ExplaintBody({
                                     ? false
                                     : true
                                 }
-                                readonly={
-                                  isActionRead ||
-                                  isActionDelete ||
-                                  isActionReadExplain ||
-                                  isActionExplainRead ||
-                                  isActionExplainApproveScRead ||
-                                  isActionExplainApproveQcRead ||
-                                  isActionCloseAdd ||
-                                  isActionReadClose ||
-                                  isActionCloseHistory
-                                }
+                                readonly={!isActionExplainAdd}
                                 Validate={validateText?.Ca || false}
                                 validateTextLable={
                                   validateText?.Ca
@@ -2632,18 +2521,7 @@ export default function ExplaintBody({
                                     ? false
                                     : true
                                 }
-                                readonly={
-                                  isActionRead ||
-                                  isActionReadExplain ||
-                                  isActionExplainRead ||
-                                  isActionExplainApproveQcRead ||
-                                  isActionDelete ||
-                                  isActionExplainApproveScAdd ||
-                                  isActionExplainApproveScRead ||
-                                  isActionCloseAdd ||
-                                  isActionReadClose ||
-                                  isActionCloseHistory
-                                }
+                                readonly={!isActionExplainAdd}
                                 Validate={validateText?.Pap || false}
                                 validateTextLable={
                                   validateText?.Pap
@@ -2962,7 +2840,6 @@ export default function ExplaintBody({
         )}
 
       {/* //ส่วนของ Section Head */}
-      {/* //ส่วนของ Section Head */}
       {(isActionExplainApproveScAdd ||
         isActionExplainApproveQcAdd ||
         isActionCloseAdd ||
@@ -3181,17 +3058,7 @@ export default function ExplaintBody({
                                   value={item.id}
                                   control={<Radio />}
                                   label={item.lov1}
-                                  disabled={
-                                    isActionRead ||
-                                    isActionReadExplain ||
-                                    isActionExplainRead ||
-                                    isActionExplainApproveQcRead ||
-                                    isActionDelete ||
-                                    isActionExplainApproveQcAdd ||
-                                    isActionCloseAdd ||
-                                    isActionReadClose ||
-                                    isActionCloseHistory
-                                  }
+                                  disabled={!isActionExplainApproveScAdd}
                                   sx={{
                                     m: 1,
                                     px: 1,
@@ -3273,17 +3140,7 @@ export default function ExplaintBody({
                                   bgcolorTextField={
                                     isActionExplainApproveScAdd ? false : true
                                   }
-                                  readonly={
-                                    isActionRead ||
-                                    isActionReadExplain ||
-                                    isActionExplainRead ||
-                                    isActionDelete ||
-                                    isActionExplainApproveQcAdd ||
-                                    isActionExplainApproveQcRead ||
-                                    isActionCloseAdd ||
-                                    isActionReadClose ||
-                                    isActionCloseHistory
-                                  }
+                                  readonly={!isActionExplainApproveScAdd}
                                   Validate={validateText?.ScDetail || false}
                                   validateTextLable={
                                     validateText?.ScDetail
@@ -3354,17 +3211,7 @@ export default function ExplaintBody({
                                   bgcolorTextField={
                                     isActionExplainApproveScAdd ? false : true
                                   }
-                                  readonly={
-                                    isActionRead ||
-                                    isActionReadExplain ||
-                                    isActionExplainRead ||
-                                    isActionDelete ||
-                                    isActionExplainApproveQcAdd ||
-                                    isActionExplainApproveQcRead ||
-                                    isActionCloseAdd ||
-                                    isActionReadClose ||
-                                    isActionCloseHistory
-                                  }
+                                  readonly={!isActionExplainApproveScAdd}
                                   Validate={validateText?.ScNote || false}
                                   validateTextLable={
                                     validateText?.ScNote
@@ -3389,6 +3236,7 @@ export default function ExplaintBody({
       {/* //ส่วนของ Qc */}
       {(isActionExplainApproveQcAdd ||
         isActionExplainReadApproveQc ||
+        isActionExplainApproveQcRead ||
         isActionReadExplain ||
         isActionExplainRead ||
         isActionReadClose ||
@@ -3602,15 +3450,7 @@ export default function ExplaintBody({
                                   value={item.id}
                                   control={<Radio />}
                                   label={item.lov1}
-                                  disabled={
-                                    isActionRead ||
-                                    isActionReadExplain ||
-                                    isActionExplainRead ||
-                                    isActionDelete ||
-                                    isActionCloseAdd ||
-                                    isActionReadClose ||
-                                    isActionCloseHistory
-                                  }
+                                  disabled={!isActionExplainApproveQcAdd}
                                   sx={{
                                     m: 1,
                                     px: 1,
@@ -3692,15 +3532,7 @@ export default function ExplaintBody({
                                   bgcolorTextField={
                                     isActionExplainApproveQcAdd ? false : true
                                   }
-                                  readonly={
-                                    isActionRead ||
-                                    isActionReadExplain ||
-                                    isActionExplainRead ||
-                                    isActionDelete ||
-                                    isActionCloseAdd ||
-                                    isActionReadClose ||
-                                    isActionCloseHistory
-                                  }
+                                  readonly={!isActionExplainApproveQcAdd}
                                   Validate={validateText?.QcDetail || false}
                                   validateTextLable={
                                     validateText?.QcDetail
@@ -3771,16 +3603,7 @@ export default function ExplaintBody({
                                   bgcolorTextField={
                                     isActionExplainApproveQcAdd ? false : true
                                   }
-                                  readonly={
-                                    isActionRead ||
-                                    isActionReadExplain ||
-                                    isActionExplainRead ||
-                                    isActionDelete ||
-                                    isActionCloseAdd ||
-                                    isActionReadClose ||
-                                    isActionCloseHistory ||
-                                    isActionReadExplain
-                                  }
+                                  readonly={!isActionExplainApproveQcAdd}
                                   Validate={validateText?.QcNote || false}
                                   validateTextLable={
                                     validateText?.QcNote
@@ -3803,7 +3626,9 @@ export default function ExplaintBody({
       )}
 
       {/* //ส่วนของ Close */}
-      {isActionCloseAdd && (
+      {isActionExplainApproveQcRead ||
+      isActionCloseAdd 
+      && (
         <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>
           <Paper
             elevation={3}
@@ -4056,6 +3881,7 @@ export default function ExplaintBody({
                                       selectedItem ? { ...selectedItem } : null
                                     );
                                   }}
+                                  
                                 >
                                   {/* ให้ radio อยู่บรรทัดเดียวกัน */}
                                   {(filteredFuApprove || []).map(
@@ -4065,7 +3891,7 @@ export default function ExplaintBody({
                                         value={item.id}
                                         control={<Radio />}
                                         label={item.lov1}
-                                        // disabled={isActionRead || isActionDelete || isActionExplainApproveQcAdd}
+                                        disabled={!isActionCloseAdd}
                                         sx={{
                                           m: 1,
                                           px: 1,
