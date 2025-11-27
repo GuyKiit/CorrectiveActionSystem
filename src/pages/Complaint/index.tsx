@@ -1741,7 +1741,8 @@ export default function Complaint() {
                           .split(",")
                           .includes(String(el.complaint_status_label)) &&
                         el.step_label === "COMPLAINT" &&
-                        tempApproveSeq == "2"
+                        tempApproveSeq == "2" &&
+                         el.request_department_id == user[0]?.itasset_department_id
                       // ) &&
                       // splitNextStepName(el.approve_step
                     )) ??
@@ -5068,7 +5069,8 @@ export default function Complaint() {
       observation_analysis,
       root_cause,
     });
-
+    // Reset form ก่อน
+    resetForm();
     const complaintData = dataelement;
 
     console.log(
@@ -5191,9 +5193,9 @@ export default function Complaint() {
     } else {
       setdataelement(explainData);
     }
+    
     setOpenComplainCloseAdd(true);
-    // Reset form ก่อน
-    resetForm();
+    
   };
 
   //======================================================================================================
