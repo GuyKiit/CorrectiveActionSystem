@@ -291,6 +291,7 @@ export default function ExplaintBody({
     DecisionOther,
 
     //Explaint
+    explainList,
     approveList,
     dataTooluse,
     dataToolUse_Combobox,
@@ -567,6 +568,9 @@ export default function ExplaintBody({
   // const [currentExplainForApproval, setCurrentExplainForApproval] = useState<any>(null);
   const [currentApproveData, setCurrentApproveData] = useState<any>(null);
   // const [approveList, setApproveList] = useState<any[]>([]);
+  const [foundSC, setFoundSC] = useState(null);
+  const [foundQC, setFoundQC] = useState(null);
+  const [foundCLOSE, setFoundCLOSE] = useState(null);
   // Function Handlers (On Change Event) ======================================================
   const handleReportTypeChange = (val: LovType | null) => {
     if (true)
@@ -1249,27 +1253,28 @@ export default function ExplaintBody({
       const userDept = findDepartment(uidDeptId);
       if (userDept) setapprove_department_id(userDept);
       if (userDept) setclose_department_id(userDept);
-    } else if (dataelement) {
-      setclose_name(dataelement.close_name || "");
-      setapprove_position(dataelement.approve_position || "");
-      setclose_position(dataelement.close_position || "");
-      setapprove_email(dataelement.approve_email || "");
-      setclose_email(dataelement.close_email || "");
-      setapprove_date(
-        dataelement?.approve_date
-          ? dayjs(dataelement.setapprove_date, "DD-MM-YYYY")
-          : dayjs()
-      );
-      setqcapprove_date(
-        dataelement?.qcapprove_date
-          ? dayjs(dataelement.setqcapprove_date, "DD-MM-YYYY")
-          : dayjs()
-      );
-      setclose_date(
-        dataelement?.close_date
-          ? dayjs(dataelement.setclose_date, "DD-MM-YYYY")
-          : dayjs()
-      );
+    } 
+    else if (dataelement) {
+      // setclose_name(dataelement.close_name || "");
+      // setapprove_position(dataelement.approve_position || "");
+      // setclose_position(dataelement.close_position || "");
+      // setapprove_email(dataelement.approve_email || "");
+      // setclose_email(dataelement.close_email || "");
+      // setapprove_date(
+      //   dataelement?.approve_date
+      //     ? dayjs(dataelement.setapprove_date, "DD-MM-YYYY")
+      //     : dayjs()
+      // );
+      // setqcapprove_date(
+      //   dataelement?.qcapprove_date
+      //     ? dayjs(dataelement.setqcapprove_date, "DD-MM-YYYY")
+      //     : dayjs()
+      // );
+      // setclose_date(
+      //   dataelement?.close_date
+      //     ? dayjs(dataelement.setclose_date, "DD-MM-YYYY")
+      //     : dayjs()
+      // );
 
       // ถ้า dataelement มี company/department ให้แมปกับ dataset (ถ้า available)
       if (dataelement.approve_company_id && Array.isArray(dataset_company)) {
@@ -1322,7 +1327,7 @@ export default function ExplaintBody({
     if (
       dataelement &&
       (action === "ExplainAdd" ||
-        action === "ExplainRead" ||
+        isActionExplainRead ||
         isActionReadExplain ||
         isActionExplainApproveScAdd ||
         isActionExplainApproveQcAdd ||
@@ -1367,12 +1372,17 @@ export default function ExplaintBody({
       const scApprove = approveList?.find(
         (x: any) => x.explain_id === dataelement?.id && x.approve_seq === 1
       );
-
+      console.log("scApprove", scApprove);
       // QC Approve = approve_seq = 2
       const qcApprove = approveList?.find(
         (x: any) => x.explain_id === dataelement?.id && x.approve_seq === 2
       );
-      console.log("scApprove", scApprove);
+      console.log("qcApprove", qcApprove);
+
+      const closeItem = explainList?.find(
+      (x:any) => x.id === dataelement?.id && ["REJECT","ADD"].includes(x.close_status)
+      );
+      console.log("🔥 explainList", explainList);
 
       // Set explain fields
       setobservation_analysis(dataelement?.observation_analysis || "");
@@ -1432,57 +1442,63 @@ export default function ExplaintBody({
       // Load QC approve data from dataelement (for CloseAdd mode)
       if (isActionCloseAdd || isActionClose || isActionCloseHistory) {
         // Set QC approve name
-        // if (dataelement?.qcapprove_name) {
-        //   setqcapprove_name(dataelement.qcapprove_name);
-        // }
+        if (dataelement?.qcapprove_name) {
+          setqcapprove_name(dataelement.qcapprove_name);
+        }
 
-        // // Set QC approve company
-        // if (dataelement?.qcapprove_company_id) {
-        //   const qcCompany = dataset_company?.find(
-        //     (el: any) =>
-        //       String(el.company_id) === String(dataelement.qcapprove_company_id)
-        //   );
-        //   if (qcCompany) {
-        //     setqcapprove_company_id(qcCompany);
-        //   }
-        // }
+        // Set QC approve company
+        if (dataelement?.qcapprove_company_id) {
+          const qcCompany = dataset_company?.find(
+            (el: any) =>
+              String(el.company_id) === String(dataelement.qcapprove_company_id)
+          );
+          if (qcCompany) {
+            setqcapprove_company_id(qcCompany);
+          }
+        }
 
-        // // Set QC approve department
-        // if (dataelement?.qcapprove_department_id) {
-        //   const qcDepartment = dataset_department?.find(
-        //     (el: any) =>
-        //       String(el.department_id) ===
-        //       String(dataelement.qcapprove_department_id)
-        //   );
-        //   if (qcDepartment) {
-        //     setqcapprove_department_id(qcDepartment);
-        //   }
-        // }
+        // Set QC approve department
+        if (dataelement?.qcapprove_department_id) {
+          const qcDepartment = dataset_department?.find(
+            (el: any) =>
+              String(el.department_id) ===
+              String(dataelement.qcapprove_department_id)
+          );
+          if (qcDepartment) {
+            setqcapprove_department_id(qcDepartment);
+          }
+        }
+        // setdataQcapp(
+        //   dataApprove_Combobox.find(
+        //     (item: any) => item.lov_code === dataelement?.approve_status
+        //   ) || null
+        // );
 
-        // // Set other QC approve fields
-        // if (dataelement?.qcapprove_position) {
-        //   setqcapprove_position(dataelement.qcapprove_position);
-        // }
-        // if (dataelement?.qcapprove_email) {
-        //   setqcapprove_email(dataelement.qcapprove_email);
-        // }
-        // if (dataelement?.qcapprove_date) {
-        //   setqcapprove_date(dayjs(dataelement.qcapprove_date));
-        // }
-        // if (dataelement?.qcapprove_detail) {
-        //   setqcapprove_detail(dataelement.qcapprove_detail);
-        // }
-        // if (dataelement?.qcapprove_note) {
-        //   setqcapprove_note(dataelement.qcapprove_note);
-        // }
+
+        // Set other QC approve fields
+        if (dataelement?.qcapprove_position) {
+          setqcapprove_position(dataelement.qcapprove_position);
+        }
+        if (dataelement?.qcapprove_email) {
+          setqcapprove_email(dataelement.qcapprove_email);
+        }
+        if (dataelement?.qcapprove_date) {
+          setqcapprove_date(dayjs(dataelement.qcapprove_date));
+        }
+        if (dataelement?.qcapprove_detail) {
+          setqcapprove_detail(dataelement.qcapprove_detail);
+        }
+        if (dataelement?.qcapprove_note) {
+          setqcapprove_note(dataelement.qcapprove_note);
+        }
 
         // Set QC approve radio (dataQcapp) from dataelement
         // Try multiple possible field names for QC approve status
-        // const qcApproveStatus =
-        //   dataelement?.qcapprove_status ||
-        //   dataelement?.qc_approve_status ||
-        //   dataelement?.qc_approve_status_code ||
-        //   dataelement?.approve_status_qc;
+        const qcApproveStatus =
+          dataelement?.approve_status ||
+          dataelement?.qc_approve_status ||
+          dataelement?.qc_approve_status_code ||
+          dataelement?.approve_status_qc;
 
         // if (qcApproveStatus && dataApprove_Combobox?.length > 0) {
         //   const qcApproveItem = dataApprove_Combobox.find(
@@ -1505,8 +1521,30 @@ export default function ExplaintBody({
         //     );
         //   }
         // }
+//         if (close) {
+//   setclose_name(close?.close_name ?? "");
+//   setclose_company_id(
+//     dataset_company.find((c: any) => Number(c.company_id) === close.close_company_id) || null
+//   );
+//   setclose_department_id(
+//     dataset_department.find((d: any) => Number(d.department_id) === close.close_department_id) || null
+//   );
+//   setclose_position(close?.close_position ?? "");
+//   setclose_email(close?.close_email ?? "");
+//   setclose_date(close?.close_date ? dayjs(close.close_date) : null);
+//   setdataFuapp(
+//     dataApprove_Combobox.find((item: any) => item.lov_code === close.close_status) || null
+//   );
+//   setclose_detail(close?.close_detail ?? "");
+//   setclose_note(close?.close_note ?? "");
+// }
       }
-
+      setFoundSC(scApprove || null);
+      setFoundQC(qcApprove || null);
+      // setFoundCLOSE(close || null);
+      console.log("foundSC:", foundSC);
+      console.log("foundQC:", foundQC);
+      console.log("foundCLOSE:", foundCLOSE);
       // Process ToolUse data - wait until combobox loaded
     }
   }, [
@@ -1522,38 +1560,51 @@ export default function ExplaintBody({
     // dataTooluse,
     // dataDecision,
   ]);
-  // useEffect(() => {
-  //   if (!currentExplainForApproval) return;
-  //   const fetchApproveData = async () => {
-  //     const approveData = await ExplaintApprove_Get(currentExplainForApproval.id);
-  //     console.log("approveData", approveData);
+  React.useEffect(() => {
+  if (!explainList?.length || !dataelement) return;
 
-  //     if (approveData?.length > 0) {
-  //       const firstApprove = approveData[0];
-  //       setCurrentApproveData(firstApprove); // 🔹 เก็บ approve data ทั้ง object
-  //       console.log("firstApprove", firstApprove);
-  //       const company =
-  //         dataset_company?.find((c: any) => Number(c.company_id) === Number(firstApprove?.approve_company_id)) || null;
-  //       setapprove_company_id(company);
-  //       const department =
-  //         dataset_department?.find((c: any) => Number(c.department_id) === Number(firstApprove?.approve_department_id)) || null;
-  //       setapprove_department_id(department);
-  //       console.log("approve_department_id",approve_department_id);
+  const closeItem = explainList?.find(
+    (x:any) =>
+      x.id === dataelement?.id && 
+      ["REJECT", "ADD"].includes(x.close_status)
+  );
 
-  //       setapprove_position(firstApprove.approve_position || "");
-  //       setapprove_email(firstApprove.approve_email || "");
-  //       // setapprove_note(firstApprove.approve_note || "");
-  //       // setapprove_detail(firstApprove.approve_detail || "");
-  //       if (firstApprove.approve_date) setapprove_date(dayjs(firstApprove.approve_date));
-  //       console.log("✅ Mappedddd approve data:", firstApprove);
-  //     }
-  //   };
+  if (closeItem) {
+    setFoundCLOSE(closeItem);
 
-  //   fetchApproveData();
-  // }, [currentExplainForApproval]);
+    setclose_name(closeItem?.return_name ?? "");
+     console.log("closeItem", closeItem);           // ✅ ต้องมี object
+  console.log("closeItem.return_name", closeItem?.return_name ?? ""); // ✅ ต้องมีค่า
+    setclose_company_id(
+      dataset_company.find((c:any) => Number(c.company_id) === closeItem.return_company_id) || null
+    );
+    setclose_department_id(
+      dataset_department.find((d:any) => Number(d.department_id) === closeItem.return_department_id) || null
+    );
+    setclose_position(closeItem.return_position ?? "");
+    setclose_email(closeItem.return_email ?? "");
+    setclose_date(closeItem.return_datetime ? dayjs(closeItem.return_datetime) : null);
+    setdataFuapp(
+      dataApprove_Combobox.find((item:any) => item.lov_code === closeItem.close_status) || null
+    );
+    setclose_detail(closeItem.return_detail ?? "");
+    setclose_note(closeItem.return_note ?? "");
+  }
+}, [explainList, dataelement, dataset_company, dataset_department, dataApprove_Combobox]);
+
+  
+  useEffect(() => {
+  console.log("foundSC:", foundSC);
+  console.log("foundQC:", foundQC);
+  console.log("foundCLOSE:", foundCLOSE);
+  console.log("dataelement.id", dataelement?.id);
+console.log("dataelement.explain_id", dataelement?.explain_id);
+
+}, [foundSC, foundQC, foundCLOSE]);
+  
 
   // 🔹 Load QC approve data and radio when in CloseAdd mode
-  useEffect(() => {
+  React.useEffect(() => {
     if (
       !isActionCloseAdd ||
       !currentExplainForApproval ||
@@ -1572,26 +1623,26 @@ export default function ExplaintBody({
           (item: any) => item.approve_seq === 2
         );
 
-        if (qcApprove && qcApprove.approve_status) {
-          // Set QC approve radio (dataQcapp) from approve_status
-          const qcApproveItem = dataApprove_Combobox.find(
-            (item: any) =>
-              item.lov_code === qcApprove.approve_status ||
-              item.id === qcApprove.approve_status ||
-              String(item.id) === String(qcApprove.approve_status)
-          );
+        // if (qcApprove && qcApprove.approve_status) {
+        //   // Set QC approve radio (dataQcapp) from approve_status
+        //   const qcApproveItem = dataApprove_Combobox.find(
+        //     (item: any) =>
+        //       item.lov_code === qcApprove.approve_status ||
+        //       item.id === qcApprove.approve_status ||
+        //       String(item.id) === String(qcApprove.approve_status)
+        //   );
 
-          if (qcApproveItem) {
-            setdataQcapp(qcApproveItem);
-            console.log("✅ QC Approve radio loaded:", qcApproveItem);
-          } else {
-            console.log(
-              "⚠️ QC Approve item not found for status:",
-              qcApprove.approve_status
-            );
-            console.log("📋 Available approve items:", dataApprove_Combobox);
-          }
-        }
+        //   if (qcApproveItem) {
+        //     setdataQcapp(qcApproveItem);
+        //     console.log("✅ QC Approve radio loaded:", qcApproveItem);
+        //   } else {
+        //     console.log(
+        //       "⚠️ QC Approve item not found for status:",
+        //       qcApprove.approve_status
+        //     );
+        //     console.log("📋 Available approve items:", dataApprove_Combobox);
+        //   }
+        // }
       }
     };
 
@@ -1764,7 +1815,7 @@ export default function ExplaintBody({
 
   React.useEffect(() => {
     console.log("🟣🟣🟣🟣🟣🟣 [7] 🟣🟣🟣🟣🟣🟣");
-    if (action === "ExplainRead" || isActionExplainApproveScRead|| isActionExplainApproveQcRead || isActionReadClose && dataelement?.id) {
+    if ((isActionExplainRead || isActionReadExplain || isActionExplainApproveScRead|| isActionExplainApproveQcRead || isActionReadClose) && dataelement?.id) {
       ComplaintFile_Get();
     }
   }, [action, dataelement]);
@@ -1773,6 +1824,11 @@ export default function ExplaintBody({
 
   console.log("Actionnnnnnn", action);
   console.log("isActionExplainReadApproveSc", isActionExplainReadApproveSc);
+  console.log("isActionExplainRead", isActionExplainRead);
+
+  React.useEffect(() => {
+    console.log("🟣🟣🟣🟣🟣🟣 [8] 🟣🟣🟣🟣🟣🟣", );
+  },[close_name])
 
   return (
     <Box
@@ -2843,13 +2899,14 @@ export default function ExplaintBody({
       {(isActionExplainApproveScAdd ||
         isActionExplainApproveQcAdd ||
         isActionCloseAdd ||
-        isActionReadExplain ||
-        isActionExplainRead ||
-        (isActionExplainReadApproveSc && isApproveScBoxHidden) ||
+        (isActionReadExplain && foundSC) ||
+        (isActionExplainRead && foundSC) ||
+        (isActionExplainReadApproveSc && foundSC) ||
+        (isActionExplainApproveScRead && foundSC) ||
         (isActionExplainReadApproveQc && isApproveQcBoxHidden) ||
         isActionExplainApproveQcRead ||
         isActionCloseHistory ||
-        isActionReadClose) && (
+        isActionReadClose &&  foundSC) && (
         <Paper
           elevation={3}
           sx={{
@@ -3236,10 +3293,11 @@ export default function ExplaintBody({
       {/* //ส่วนของ Qc */}
       {(isActionExplainApproveQcAdd ||
         isActionExplainReadApproveQc ||
-        isActionExplainApproveQcRead ||
-        isActionReadExplain ||
-        isActionExplainRead ||
-        isActionReadClose ||
+        (isActionExplainApproveQcRead && foundQC) ||
+        (isActionReadExplain && foundQC) ||
+        (isActionExplainRead && foundQC) ||
+        (isActionExplainApproveScRead && foundQC) ||
+        (isActionReadClose && foundQC ) ||
         isActionCloseHistory ||
         isActionCloseAdd) && (
         <Paper
@@ -3626,9 +3684,14 @@ export default function ExplaintBody({
       )}
 
       {/* //ส่วนของ Close */}
-      {isActionExplainApproveQcRead ||
-      isActionCloseAdd 
-      && (
+      {(isActionCloseAdd ||
+      (isActionReadClose && foundCLOSE) ||
+      (isActionCloseHistory && foundCLOSE) ||
+      (isActionReadExplain && foundCLOSE) ||
+      (isActionExplainRead && foundCLOSE) ||
+      (isActionExplainApproveScRead && foundCLOSE) ||
+      (isActionExplainApproveQcRead && foundCLOSE) 
+      ) && (
         <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>
           <Paper
             elevation={3}
@@ -3971,6 +4034,9 @@ export default function ExplaintBody({
                                           onCloseDetailChange(e);
                                         }
                                       }}
+                                      bgcolorTextField={
+                                      isActionCloseAdd ? false : true
+                                    }
                                       readonly={!isActionCloseAdd}
                                       Validate={
                                         validateText?.CloseDetail || false
@@ -4039,6 +4105,9 @@ export default function ExplaintBody({
                                           onCloseNoteChange(e);
                                         }
                                       }}
+                                      bgcolorTextField={
+                                      isActionCloseAdd ? false : true
+                                    }
                                       readonly={!isActionCloseAdd}
                                       Validate={
                                         validateText?.CloseNote || false
