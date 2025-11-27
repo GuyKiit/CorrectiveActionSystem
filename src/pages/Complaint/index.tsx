@@ -1164,25 +1164,6 @@ export default function Complaint() {
     }
   };
 
-  // Function - Get Priority Levels
-  // const priority_Get = async () => {
-  //   if (isCallFuncLogOn) //console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  priority_Get");
-
-  //   try {
-  //     const dataset = {
-  //       lov_group: "21",
-  //       lov_type: "priority_level",
-  //     };
-  //     const response = await _POST(dataset, "/Lov/LovGet");
-  //     if (response && response.status === "success") {
-  //       // //console.log("❇️ Call [Lov/LovGet] -> priority_level :", response.data);
-  //       setdatapriority_Combobox && setdatapriority_Combobox(response.data);
-  //     }
-  //   } catch (e) {
-  //     //console.log("error:", e);
-  //   }
-  // };
-
   // Function - Get Domain
   const DomainGet = async () => {
     if (isCallFuncLogOn)
@@ -1894,11 +1875,6 @@ export default function Complaint() {
       valid = false;
     }
 
-    // if (!respondent_email || respondent_email.trim() === "") {
-    //   setEmailError(true);
-    //   valid = false;
-    // }
-
     if (
       !dataComplaintTypeValue_Combobox ||
       dataComplaintTypeValue_Combobox.length === 0
@@ -1921,7 +1897,6 @@ export default function Complaint() {
     }
 
     const reportTypeCode = dataReportTypeValue?.lov_code;
-    //console.log("🔍 Report Type Code:", reportTypeCode);
 
     // เฉพาะ NCR เท่านั้นที่ต้อง validate Complaint Rs
     if (reportTypeCode === "NCR") {
@@ -2796,13 +2771,26 @@ export default function Complaint() {
           )
         : null;
 
+        // Normalize date_of_detection ค่อยย้ายไปไว้ตรงกลาง
+        const normalizeDate = (val: any) => {
+        if (!val) return null;
+        if (val === "Invalid Date") return null;
+
+        const d = dayjs(val);
+        return d.isValid() ? d : null;
+        };
+
+
+      let raw_date_of_detection = date_of_detection;
+      let date_of_detection_normalized = normalizeDate(raw_date_of_detection);
+
       // สร้าง JSON payload
       const complaintPayload = {
         complaintModel: {
           id: dataelement?.id,
           mode: mode,
-          date_of_detection: date_of_detection
-            ? date_of_detection
+          date_of_detection: date_of_detection_normalized
+            ? date_of_detection_normalized
                 .hour(dayjs().hour())
                 .minute(dayjs().minute())
                 .second(dayjs().second())
@@ -5884,9 +5872,7 @@ export default function Complaint() {
         titlename={"[Complaint] แก้ไขข้อมูล"}
         buttonText={"Save & Submit"}
         handleClose={handleClose}
-        // handlefunction={ComplaintEdit}
         handlefunction={() => ComplaintEdit("SUBMIT")}
-        // handlesavedraft={ComplaintSavedraftEdit}
         handlesavedraft={() => ComplaintEdit("NEW")}
         hideSaveDraft={false}
         buttonColor="success"
@@ -6081,6 +6067,8 @@ export default function Complaint() {
           <ComplaintBody
             action="ReadApproveSC"
             handleOpenAdd={() => handleOnclickExplainAdd(dataelement)}
+            // openExplainView={openExplainView}
+            // handleCloseExplainView={handleClose}
             handleOnclickExplainView={(item) =>
               handleOnclickExplainView(item, "ApproveScRead")
             }
@@ -6100,6 +6088,8 @@ export default function Complaint() {
           <ComplaintBody
             action="ApproveQC"
             handleOpenAdd={() => handleOnclickExplainAdd(dataelement)}
+            // openExplainView={openExplainView}
+            // handleCloseExplainView={handleClose}
             handleOnclickExplainView={(item) =>
               handleOnclickExplainView(item, "ApproveQcRead")
             }
@@ -6119,6 +6109,8 @@ export default function Complaint() {
           <ComplaintBody
             action="ReadApproveQC"
             handleOpenAdd={() => handleOnclickExplainAdd(dataelement)}
+            // openExplainView={openExplainView}
+            // handleCloseExplainView={handleClose}
             handleOnclickExplainView={(item) =>
               handleOnclickExplainView(item, "ApproveQcRead")
             }
@@ -6138,6 +6130,8 @@ export default function Complaint() {
           <ComplaintBody
             action="Close"
             handleOpenAdd={() => handleOnclickExplainAdd(dataelement)}
+            // openExplainView={openExplainView}
+            // handleCloseExplainView={handleClose}
             handleOnclickExplainView={(item) =>
               handleOnclickExplainView(item, "ReadClose")
             }
@@ -6158,6 +6152,8 @@ export default function Complaint() {
           <ComplaintBody
             action="ReadClose"
             handleOpenAdd={() => handleOnclickExplainAdd(dataelement)}
+            // openExplainView={openExplainView}
+            // handleCloseExplainView={handleClose}
             handleOnclickExplainView={(item) =>
               handleOnclickExplainView(item, "ReadClose")
             }
@@ -6177,6 +6173,8 @@ export default function Complaint() {
           <ComplaintBody
             action="CloseHistory"
             handleOpenAdd={() => handleOnclickComplainCloseAdd(dataelement)}
+            // openExplainView={openExplainView}
+            // handleCloseExplainView={handleClose}
             handleOnclickExplainView={(item) =>
               handleOnclickExplainView(item, "CloseHistory")
             }
@@ -6360,34 +6358,6 @@ export default function Complaint() {
       {/* ------------------------------------------------------------------------------------------ */}
       {/* ------------------------------------------------------------------------------------------ */}
       {/* ------------------------------------------------------------------------------------------ */}
-
-      {/* <FuncDialog
-        open={openExplainApproveSc}
-        dialogWidth="xl"
-        openBottonHidden={true}
-        hideSaveDraft
-        hideReject={approveSelectionCode === "APPROVE" || !approveSelectionCode}
-        hideSaveSubmit={
-          approveSelectionCode === "ADD" ||
-          approveSelectionCode === "REJECT" ||
-          !approveSelectionCode
-        }
-        titlename={"Approve Section Head (SC ADD) // เพิ่มข้อมูล"}
-        buttonText={"Approve"}
-        handlefunction={ApproveScAdd}
-        handlereject={() => ComplaintReturn("EXPLAIN")}
-        handleClose={handleClose}
-        buttonColor="success"
-        element={
-          <ExplaintBody
-            action="ApproveSCAdd"
-            handleOpenAdd={() => handleOnclickExplainApproveSc(dataelement)}
-            onApproveChange={(value) => {
-              setApproveSelectionCode(value?.lov_code ?? null);
-            }}
-          />
-        }
-      /> */}
 
       {/* QC ADD */}
       <FuncDialog
