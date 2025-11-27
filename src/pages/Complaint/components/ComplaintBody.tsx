@@ -213,7 +213,10 @@ export default function ComplaintBody({
   const isActionAdd = action === "Add";
   const isActionEdit = action === "Edit";
   const isActionDelete = action === "Delete";
+
   const isActionExplain = action === "Explain";
+  const isActionReadExplain = action === "ReadExplain";
+
   const isActionClose = action === "Close";
   const isActionExplainApproveSc = action === "ApproveSC";
   const isActionExplainApproveQc = action === "ApproveQC";
@@ -1147,6 +1150,7 @@ export default function ComplaintBody({
   // ⭐⭐⭐⭐⭐ Start : ==============================================================================================//
   // const effectRan = React.useRef(false); // ป้องกัน run ซ้ำใน dev mode
   const lastDataElement = React.useRef<any>(null); // Track last processed data
+  const hasMappedDepartment = React.useRef(false); // Track if department has been mapped
 
   // 🧩 1️⃣ โหลดข้อมูลหลัก (ReportType, Company, Domain, Department)
   React.useEffect(() => {
@@ -1159,6 +1163,7 @@ export default function ComplaintBody({
     // But allow run if dataelement object reference changes (e.g. Refresh/Cancel)
     if (lastDataElement.current === dataelement) return;
     lastDataElement.current = dataelement;
+    hasMappedDepartment.current = false;
 
     const loadInitialData = async () => {
       try {
@@ -1240,6 +1245,7 @@ export default function ComplaintBody({
   React.useEffect(() => {
     const mapDepartment = async () => {
       if (
+        !hasMappedDepartment.current &&
         Array.isArray(dataset_department) &&
         dataset_department.length > 0 &&
         dataelement?.respondent_department_id
@@ -1264,6 +1270,7 @@ export default function ComplaintBody({
             dataelement.respondent_department_id
           );
         }
+        hasMappedDepartment.current = true;
       }
     };
 
@@ -1399,7 +1406,7 @@ export default function ComplaintBody({
       setrespond_date_within(
         dataelement?.respond_date_within
           ? dayjs(dataelement.respond_date_within, "DD-MM-YYYY")
-          : dayjs()
+          : null
       );
       setrequest_name(
         dataelement?.request_name ? dataelement?.request_name : ""
@@ -1529,7 +1536,7 @@ export default function ComplaintBody({
 
   React.useEffect(() => {
     const fetchAcknowlege = async () => {
-      if (isActionExplain && dataelement?.id) {
+      if ((isActionExplain || isActionReadExplain) && dataelement?.id) {
         if (dataelement?.acknowledge_flag == 0) {
           await Acknowledge_Update(dataelement);
         }
