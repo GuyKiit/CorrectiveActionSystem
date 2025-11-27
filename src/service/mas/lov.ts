@@ -159,7 +159,6 @@ export async function mas_DepartmentDomainGetAll(setmaster_department: (data: an
   }
 };
 
-
 export async function mas_DepartmentGet_Complaint(value: any, setdataset_department: (data: any) => void, isCallFuncLogOn: boolean, user: any) {
   if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  DepartmentDomainGet");
 
@@ -179,8 +178,12 @@ export async function mas_DepartmentGet_Complaint(value: any, setdataset_departm
       //   response.data
       // );
       if (Array.isArray(response.data)) {
+
+        console.log("response.data", response.data);
+        
+        const filterData = response.data.filter((item: any) => item.department_id != user[0]?.itasset_department_id);
         // เอา filter ออก → ใช้ทุกตัว
-        setdataset_department(response.data);
+        setdataset_department(filterData);
       }
 
 

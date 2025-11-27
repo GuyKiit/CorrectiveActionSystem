@@ -71,6 +71,7 @@ import {
   mas_DomainRelateGet,
 } from "../../../service/mas/lov";
 import { isAction } from "redux";
+import FuncDialog from "../../../components/MUI/FullDialog";
 
 type Validate = {
   Product_Group: boolean;
@@ -144,6 +145,8 @@ interface ComplaintBody {
   onPriorityChange?: (val: any) => void;
 
   handleOpenAdd?: () => void;
+  openExplainView?: boolean;
+  handleCloseExplainView?: () => void;
   handleOnclickExplainView?: (item: any, name: string) => void;
   handleOnclickExplainApproveSc?: (item: any) => void;
   handleOnclickExplainApproveQc?: (item: any) => void;
@@ -183,6 +186,8 @@ export default function ComplaintBody({
   validateText,
   onBlocksChange,
   validateDetailText,
+  // openExplainView,
+  // handleCloseExplainView,
 
   onReportTypeChange,
   onDateOfDetectionChange,
@@ -1477,6 +1482,7 @@ export default function ComplaintBody({
         ) || null;
 
       setdatapriority(selectedPriority);
+      setdatapriorityValue_Combobox(dataelement?.priority_level || "");
       setpriority_level(selectedPriority);
       if (dataelement?.report_type === "TRR_RT_NCR") {
         setIsRSHidden(false);
@@ -1663,6 +1669,7 @@ export default function ComplaintBody({
   };
 
   // #F29739
+  
 
   return (
     <Box
@@ -3905,6 +3912,18 @@ export default function ComplaintBody({
           </Paper>
         </Paper>
       )}
+
+       {/* <FuncDialog
+              open={openExplainView}
+              dialogWidth="md"
+              openBottonHidden={false}
+              titlename={"[Explain] ดูข้อมูล"}
+              handleClose={()=>handleCloseExplainView}
+              // handleClose={() => handleOnclickCloseReadExplain(dataelement)}
+              handlefunction={ExplainGet}
+              buttonColor="success"
+              
+            /> */}
     </Box>
   );
 }
