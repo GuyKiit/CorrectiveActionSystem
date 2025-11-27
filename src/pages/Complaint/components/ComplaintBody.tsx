@@ -506,9 +506,7 @@ export default function ComplaintBody({
   const [isMinimizepriorityOpen, setisMinimizePriorityOpen] = useState(
     action === "Explain" || action === "ApproveSCAdd" ? false : true
   );
-  const [isMinimizefileOpen, setisMinimizeFileOpen] = useState(
-    action === "Explain" || action === "ApproveSCAdd" ? false : true
-  );
+  const [isMinimizefileOpen, setisMinimizeFileOpen] = useState(true);
   const [isMinimizerespondOpen, setisMinimizeRespondOpen] = useState(true);
   const [isMinimizeexlistOpen, setisMinimizeExlistOpen] = useState(true);
   const [isMinimizecloseOpen, setisMinimizeCloseOpen] = useState(true);
@@ -579,6 +577,8 @@ export default function ComplaintBody({
     // เคลียร์ข้อมูลแผนกทันที (ทั้ง list และค่าเลือก)
     setdataset_department([]);
     setrespondent_department_id(null);
+    setrespondent_email("");
+
 
     if (!value) return;
 
@@ -961,7 +961,7 @@ export default function ComplaintBody({
       return null;
     }
 
-    setIsLoadingScreen(true);
+    setIsLoadingScreen(false);
     const dataset = { domain_dept_id: data.domain_dept_id };
     console.log("🧩 Payload ส่งเข้า SP :", dataset);
 

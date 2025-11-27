@@ -39,7 +39,7 @@ export default function FullWidthTextField(props: FullWidthTextField) {
       </label>
       <TextField
         fullWidth
-        multiline    
+        // multiline    
         sx={{
           bgcolor: props.readonly ? grey[200] : grey[50],
           "& .MuiOutlinedInput-root": {
