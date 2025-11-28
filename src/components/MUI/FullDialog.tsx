@@ -29,6 +29,9 @@ interface FuncDialog {
   hideSaveDraft?: boolean;
   hideReject?: boolean;
   hideSaveSubmit?: boolean;
+  disableReject?: boolean;
+  disableSaveSubmit?: boolean;
+  disabled?: boolean;
   buttonText?: string;
   buttonColor?: string;
   element?: React.ReactNode;
@@ -95,25 +98,44 @@ export default function FuncDialog(props: FuncDialog) {
 
           {!props.hideReject && props.openBottonHidden && (
             <FullWidthButton
+              disabled={props.disableReject}
               handleonClick={props.handlereject ?? props.handleClose}
               labelName="Reject"
               variant_text="contained"
               colorname="error"
             />
           )}
+
+          {/* <FullWidthButton
+            disabled={props.disableReject}
+            handleonClick={props.handlereject ?? props.handleClose}
+            labelName="Reject"
+            variant_text="contained"
+            colorname="error"
+            /> */}
+
+            
         </div>
+        
 
         {/* Right side - Save and Submit, Cancel */}
         <div className="flex gap-3">
           {!props.hideSaveSubmit && props.openBottonHidden && (
             <FullWidthButton
+              disabled={props.disableSaveSubmit}
               handleonClick={props.handlefunction ?? props.handleClose}
               labelName={props.buttonText ?? "SAVE & SUBMIT"}
               variant_text="contained"
               colorname={props.buttonColor ?? "primary"}
             />
           )}
-
+          {/* <FullWidthButton
+            disabled={props.disableSaveSubmit}
+            handleonClick={props.handlefunction ?? props.handleClose}
+            labelName="Approve"
+            variant_text="contained"
+            colorname={props.buttonColor ?? "primary"}
+            /> */}
           <FullWidthButton
             handleonClick={props.handleClose}
             labelName="Cancel"

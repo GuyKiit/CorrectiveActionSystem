@@ -103,7 +103,7 @@ export async function mas_DepartmentDomainGet(value: any, set_department: (data:
   if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  DepartmentDomainGet");
 
   console.log(value, "💚💚💚 value in mas_DepartmentDomainGet 💚💚💚");
-  
+
 
   try {
     const dataset = {
@@ -159,7 +159,7 @@ export async function mas_DepartmentDomainGetAll(setmaster_department: (data: an
   }
 };
 
-export async function mas_DepartmentGet_Complaint(value: any, setdataset_department: (data: any) => void, isCallFuncLogOn: boolean, user: any) {
+export async function mas_DepartmentGet_Complaint(value: any, setdataset_department: (data: any) => void, isCallFuncLogOn: boolean, user: any, action: string) {
   if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  DepartmentDomainGet");
 
   try {
@@ -172,21 +172,19 @@ export async function mas_DepartmentGet_Complaint(value: any, setdataset_departm
       dataset,
       "/Complaint/CasDepartmentDomainGet"
     );
-    if (response && response.status === "success") {
-      // console.log(
-      //   "❇️❇️❇️❇️❇️❇️❇️❇️ Call [Complaint/CasDepartmentDomainGet] -> Department_Domain_Get :",
-      //   response.data
-      // );
-      if (Array.isArray(response.data)) {
+    if (Array.isArray(response.data)) {
+      console.log("response.data", response.data);
 
-        console.log("response.data", response.data);
-        
-        const filterData = response.data.filter((item: any) => item.department_id != user[0]?.itasset_department_id);
-        // เอา filter ออก → ใช้ทุกตัว
-        setdataset_department(filterData);
+      let datasetToSet = response.data;
+
+      if (action === "Add") {
+        // ฟิลเตอร์เฉพาะ Add
+        datasetToSet = response.data.filter(
+          (item: any) => item.department_id != user[0]?.itasset_department_id
+        );
       }
 
-
+      setdataset_department(datasetToSet); // ✅ เรียกทุก action
     }
   } catch (e) {
     console.log("error:", e);

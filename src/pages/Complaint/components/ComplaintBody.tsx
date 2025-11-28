@@ -500,16 +500,16 @@ export default function ComplaintBody({
   // สร้าง state สำหรับควบคุม Accordion
   const [isMinimizedefaultOpen, setisMinimizeDefaultOpen] = useState(true);
   const [isMinimizetypeOpen, setisMinimizeTypeOpen] = useState(
-    action === "Explain" || action === "ApproveSCAdd" ? false : true
+    action !== "Add" && action !== "Edit" ? false : true
   );
   const [isMinimizersOpen, setisMinimizeRsOpen] = useState(
-    action === "Explain" || action === "ApproveSCAdd" ? false : true
+    action !== "Add" && action !== "Edit" ? false : true
   );
   const [isMinimizedetailOpen, setisMinimizeDetailOpen] = useState(
-    action === "Explain" || action === "ApproveSCAdd" ? false : true
+    action !== "Add" && action !== "Edit" ? false : true
   );
   const [isMinimizepriorityOpen, setisMinimizePriorityOpen] = useState(
-    action === "Explain" || action === "ApproveSCAdd" ? false : true
+    action !== "Add" && action !== "Edit" ? false : true
   );
   const [isMinimizefileOpen, setisMinimizeFileOpen] = useState(true);
   const [isMinimizerespondOpen, setisMinimizeRespondOpen] = useState(true);
@@ -596,7 +596,8 @@ export default function ComplaintBody({
       dataset,
       setdataset_department,
       isCallFuncLogOn,
-      user
+      user,
+      action
     );
   };
 
@@ -1235,13 +1236,15 @@ export default function ComplaintBody({
             },
             setdataset_department,
             isCallFuncLogOn,
-            user
+            user,
+            action
           );
         }
       } catch (err) {
         console.error("❌ loadInitialData error:", err);
       }
     };
+console.log("actionnnnn",action);
 
     loadInitialData();
   }, [dataelement]);
@@ -2007,7 +2010,6 @@ export default function ComplaintBody({
                     </Grid>
                     <Grid size={4}>
                       <FullWidthTextField
-                        required="required"
                         value={respondent_email}
                         labelName="อีเมล (Email)"
                         onchange={(e) => {
