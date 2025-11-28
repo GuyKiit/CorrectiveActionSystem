@@ -746,10 +746,10 @@ export default function Complaint() {
 
   const handleDomainChange = (value: any) => {
     // reset แผนกก่อนโหลดใหม่
-  setTextNameSearch(prev => ({
-    ...prev,
-    dataset_department: "", // เคลียร์ค่าเดิม
-  }));
+    setTextNameSearch((prev) => ({
+      ...prev,
+      dataset_department: "", // เคลียร์ค่าเดิม
+    }));
     if (value != null) {
       //console.log("😎😎", value);
       mas_DepartmentGet_Complaint(
@@ -758,11 +758,9 @@ export default function Complaint() {
         isCallFuncLogOn,
         user
       );
-      
     } else {
       setdataset_department([]);
       setrespondent_department_id(null);
-      
     }
     //console.log("@@@@@@@@@@@@second", domainrelate);
   };
@@ -1494,9 +1492,7 @@ export default function Complaint() {
       department_id: user[0]?.itasset_department_id,
       company_id: user[0]?.itasset_company_id, //@param Fixed
       //=======================================================
-      domain: TextNameSearch.domain
-        ? TextNameSearch.domain
-        : null,
+      domain: TextNameSearch.domain ? TextNameSearch.domain : null,
       department: TextNameSearch.dataset_department
         ? TextNameSearch.dataset_department
         : null,
@@ -1728,7 +1724,8 @@ export default function Complaint() {
                           .includes(String(el.complaint_status_label)) &&
                         el.step_label === "COMPLAINT" &&
                         tempApproveSeq == "2" &&
-                         el.request_department_id == user[0]?.itasset_department_id
+                        el.request_department_id ==
+                          user[0]?.itasset_department_id
                       // ) &&
                       // splitNextStepName(el.approve_step
                     )) ??
@@ -2771,15 +2768,14 @@ export default function Complaint() {
           )
         : null;
 
-        // Normalize date_of_detection ค่อยย้ายไปไว้ตรงกลาง
-        const normalizeDate = (val: any) => {
+      // Normalize date_of_detection ค่อยย้ายไปไว้ตรงกลาง
+      const normalizeDate = (val: any) => {
         if (!val) return null;
         if (val === "Invalid Date") return null;
 
         const d = dayjs(val);
         return d.isValid() ? d : null;
-        };
-
+      };
 
       let raw_date_of_detection = date_of_detection;
       let date_of_detection_normalized = normalizeDate(raw_date_of_detection);
@@ -4568,6 +4564,12 @@ export default function Complaint() {
     setfollow_up_date(null);
 
     setresponsible_date(dayjs()); // ตั้งค่าวันที่ชี้แจงเป็นวันปัจจุบัน
+    
+    // ✅ Save current complaint data before opening Explain Add
+    if (dataelement) {
+      setComplaintMainData(dataelement);
+    }
+    
     setOpenExplainAdd(true);
     // ใช้ข้อมูลที่ส่งมาจากหน้า Explain รายละเอียด
     if (data) {
@@ -4576,131 +4578,6 @@ export default function Complaint() {
       setdataelement(null);
     }
   };
-
-  // const handleOnclickExplainView = (data: any, name: string) => {
-  //   console.log("dataaaaaaaaaaaa", data);
-
-  //   setAction(name);
-  //   if (isCallFuncLogOn)
-  //     console.log("🕑 ",dayjs().format("HH:mm:ss.SSS")," [Calling Function]  :  handleOnclickExplainView");
-
-  //   // ตั้งค่า dataelement ก่อนเพื่อให้ useEffect ใน ExplaintBody ทำงานได้
-  //   setdataelement(data);
-
-  //   // ไม่ reset form ในโหมดดูข้อมูล เพื่อไม่ให้ dataReportTypeValue หาย
-  //   setOpenExplainView(true);
-
-  //   // ใช้ข้อมูลที่ส่งมาจากรายการ explain โดยตรง
-  //   if (data) {
-  //     //console.log("🔍 Setting explain data for View:", data);
-  //     //console.log("🔍 Explain data complaintType:", data.complaintType);
-  //     //console.log("🔍 Explain data complaintRs:", data.complaintRs);
-  //     //console.log("🔍 Explain data other:", data.other);
-
-  //     // Set ข้อมูล explain ลงใน context
-  //     setobservation_analysis(data.observation_analysis || "");
-  //     setroot_cause(data.root_cause || "");
-  //     setcorrective_action(data.corrective_action || "");
-  //     setpreventive_action_plan(data.preventive_action_plan || "");
-
-  //     // 🔧 เพิ่ม: ตั้งค่าการแสดง/ซ่อน sections ตาม report_type สำหรับ View mode
-  //     // ใช้ dataelement.report_type หรือ data.complaint.report_type ขึ้นกับโครงสร้างข้อมูล
-  //     const reportType =
-  //       data.complaint?.report_type ||
-  //       data.report_type ||
-  //       dataelement?.report_type;
-  //     //console.log("🔍 ExplainView - Setting visibility for report type:", reportType);
-
-  //     if (reportType && dataset_reporttype) {
-  //       const reportTypeObj = dataset_reporttype.find(
-  //         (item: any) => item.id === reportType || item.lov_code === reportType
-  //       );
-
-  //       if (reportTypeObj) {
-  //         //console.log("🔍 ExplainView - Found report type object:", reportTypeObj);
-  //         // บังคับส่งข้อมูลไปให้ ExplaintBody ผ่าน dataelement
-  //         const updatedDataElement = {
-  //           ...data,
-  //           report_type: reportTypeObj.lov_code,
-  //           _forceVisibilityUpdate: true, // flag เพื่อบังคับ update visibility
-  //         };
-  //         setdataelement(updatedDataElement);
-  //       }
-  //     }
-  //   }
-  //   // เปิด modal
-  //   // setOpenExplainApproveSc(true);
-  // };
-
-  //############################################################
-  // const handleOnclickExplainView = (data: any, name: string) => {
-  //   console.log("dataaaaaaaaaaaa", data);
-
-  //   setAction(name);
-  //   if (isCallFuncLogOn)
-  //     console.log(
-  //       "🕑 ",
-  //       dayjs().format("HH:mm:ss.SSS"),
-  //       " [Calling Function]  :  handleOnclickExplainView"
-  //     );
-
-  //   //console.log("🔍 handleOnclickExplainView called with data:", data);
-  //   // resetForm();
-  //   // ตั้งค่า dataelement ก่อนเพื่อให้ useEffect ใน ExplaintBody ทำงานได้
-  //   setdataelement(data);
-
-  //   // ไม่ reset form ในโหมดดูข้อมูล เพื่อไม่ให้ dataReportTypeValue หาย
-  //   // setOpenExplainView(true);
-
-  //   // ใช้ข้อมูลที่ส่งมาจากรายการ explain โดยตรง
-  //   if (data) {
-  //     //console.log("🔍 Setting explain data for View:", data);
-  //     //console.log("🔍 Explain data complaintType:", data.complaintType);
-  //     //console.log("🔍 Explain data complaintRs:", data.complaintRs);
-  //     //console.log("🔍 Explain data other:", data.other);
-
-  //     // Set ข้อมูล explain ลงใน context
-  //     setobservation_analysis(data.observation_analysis || "");
-  //     setroot_cause(data.root_cause || "");
-  //     setcorrective_action(data.corrective_action || "");
-  //     setpreventive_action_plan(data.preventive_action_plan || "");
-
-  //     // 🔧 เพิ่ม: ตั้งค่าการแสดง/ซ่อน sections ตาม report_type สำหรับ View mode
-  //     // ใช้ dataelement.report_type หรือ data.complaint.report_type ขึ้นกับโครงสร้างข้อมูล
-  //     const reportType =
-  //       data.complaint?.report_type ||
-  //       data.report_type ||
-  //       dataelement?.report_type;
-  //     //console.log("🔍 ExplainView - Setting visibility for report type:", reportType);
-
-  //     if (reportType && dataset_reporttype) {
-  //       const reportTypeObj = dataset_reporttype.find(
-  //         (item: any) => item.id === reportType || item.lov_code === reportType
-  //       );
-
-  //       if (reportTypeObj) {
-  //         //console.log("🔍 ExplainView - Found report type object:", reportTypeObj);
-  //         // บังคับส่งข้อมูลไปให้ ExplaintBody ผ่าน dataelement
-  //         const updatedDataElement = {
-  //           ...data,
-  //           report_type: reportTypeObj.lov_code,
-  //           _forceVisibilityUpdate: true, // flag เพื่อบังคับ update visibility
-  //         };
-  //         setdataelement(updatedDataElement);
-  //       }
-  //     }
-  //   }
-
-  //   if (name === "ReadApproveSC") {
-  //     // ถ้ามาโหมด ApproveSC → เปิด Dialog ที่ใช้สำหรับอนุมัติ
-  //     setOpenExplainApproveSc(true);
-  //   } else {
-  //     // ถ้ามาโหมดดูข้อมูลทั่วไป → เปิด Dialog แสดงเฉย ๆ
-  //     setOpenExplainView(true);
-  //   }
-  //   // เปิด modal
-  //   // setOpenExplainApproveSc(true);
-  // };
 
   const handleOnclickExplainView = async (explainData: any, name: string) => {
     console.log("handleOnclickExplainView", handleOnclickExplainView);
@@ -4730,9 +4607,6 @@ export default function Complaint() {
     };
 
     setCurrentExplainForApproval(approvalData);
-
-    // Reset form ก่อน
-    // resetForm();
 
     // ตั้งวันที่ approve
     setapprove_date(dayjs());
@@ -5186,9 +5060,8 @@ export default function Complaint() {
     } else {
       setdataelement(explainData);
     }
-    
+
     setOpenComplainCloseAdd(true);
-    
   };
 
   //======================================================================================================
@@ -5257,6 +5130,99 @@ export default function Complaint() {
     // ListSearchGet();
   };
 
+  // Close Explain View Dialog Handler (Back button behavior)
+  const handleCloseExplainView = () => {
+    if (isCallFuncLogOn)
+      console.log(
+        "🕑 ",
+        dayjs().format("HH:mm:ss.SSS"),
+        " [Calling Function]  :  handleCloseExplainView"
+      );
+    useEffect 
+    if (complaintMainData) {
+      setdataelement(complaintMainData);
+    }
+    
+    setOpenExplainView(false);
+  };
+
+
+  const handleCloseExplain = () => {
+    if (isCallFuncLogOn)
+      console.log(
+        "🕑 ",
+        dayjs().format("HH:mm:ss.SSS"),
+        " [Calling Function]  :  handleCloseExplain"
+      );
+    useEffect 
+    if (complaintMainData) {
+      setdataelement(complaintMainData);
+    }
+    
+    setOpenExplain(false);
+  };
+
+  const handleCloseExplainAdd = () => {
+    if (isCallFuncLogOn)
+      console.log(
+        "🕑 ",
+        dayjs().format("HH:mm:ss.SSS"),
+        " [Calling Function]  :  handleCloseExplainAdd"
+      );
+    
+    if (complaintMainData) {
+      // Force a new object reference to trigger useEffect in ComplaintBody
+      setdataelement({ ...complaintMainData, _forceUpdate: Date.now() });
+    }
+    setOpenExplainAdd(false);
+  };
+
+  const handleCloseApproveScAdd = () => {
+    if (isCallFuncLogOn)
+      console.log(
+        "🕑 ",
+        dayjs().format("HH:mm:ss.SSS"),
+        " [Calling Function]  :  handleCloseApproveScAdd"
+      );
+    
+    if (complaintMainData) {
+      // Force a new object reference to trigger useEffect in ComplaintBody
+      setdataelement({ ...complaintMainData, _forceUpdate: Date.now() });
+    }
+    setOpenExplainApproveSc(false);
+  };
+
+  const handleCloseApproveQcAdd = () => {
+    if (isCallFuncLogOn)
+      console.log(
+        "🕑 ",
+        dayjs().format("HH:mm:ss.SSS"),
+        " [Calling Function]  :  handleCloseApproveQcAdd"
+      );
+    
+    if (complaintMainData) {
+      // Force a new object reference to trigger useEffect in ComplaintBody
+      setdataelement({ ...complaintMainData, _forceUpdate: Date.now() });
+    }
+    setOpenExplainApproveQc(false);
+  };
+  
+  const handleCloseAdd = () => {
+    if (isCallFuncLogOn)
+      console.log(
+        "🕑 ",
+        dayjs().format("HH:mm:ss.SSS"),
+        " [Calling Function]  :  handleCloseAdd"
+      );
+    
+    if (complaintMainData) {
+      // Force a new object reference to trigger useEffect in ComplaintBody
+      setdataelement({ ...complaintMainData, _forceUpdate: Date.now() });
+    }
+    setOpenComplainClose(false);
+  };
+  
+  
   // Close Dialog Handler
   const handleClose = () => {
     if (isCallFuncLogOn)
@@ -5513,8 +5479,7 @@ export default function Complaint() {
             <AutocompleteComboBox
               value={
                 domain?.find(
-                  (item: any) =>
-                    item.domain_id === TextNameSearch.domain
+                  (item: any) => item.domain_id === TextNameSearch.domain
                 ) || null
               }
               labelName="โดเมน (Domain)"
@@ -6196,7 +6161,8 @@ export default function Complaint() {
         openBottonHidden={true}
         titlename={"[Explain] เพิ่มข้อมูล"}
         buttonText={"Save & Submit"}
-        handleClose={handleClose}
+        // handleClose={handleClose}
+        handleClose={handleCloseExplainAdd}
         // handleClose={() => handleOnclickCloseAddExplain(dataelement)}
         handlefunction={ExplainAdd}
         hideSaveDraft={true}
@@ -6265,8 +6231,7 @@ export default function Complaint() {
         dialogWidth="xl"
         openBottonHidden={false}
         titlename={"[Explain] ดูข้อมูล"}
-        handleClose={handleClose}
-        // handleClose={() => handleOnclickCloseReadExplain(dataelement)}
+        handleClose={handleCloseExplainView}
         handlefunction={ExplainGet}
         buttonColor="success"
         element={
@@ -6317,7 +6282,8 @@ export default function Complaint() {
         buttonText={"Approve"}
         handlefunction={ApproveScAdd}
         handlereject={() => ComplaintReturn("APPROVE_SC")}
-        handleClose={handleClose}
+        // handleClose={handleClose}
+        handleClose={handleCloseApproveScAdd}
         buttonColor="success"
         element={
           <ExplaintBody
@@ -6375,7 +6341,8 @@ export default function Complaint() {
         buttonText={"Approve"}
         handlefunction={ApproveQcAdd}
         handlereject={() => ComplaintReturn("APPROVE_QC")}
-        handleClose={handleClose}
+        // handleClose={handleClose}
+        handleClose={handleCloseApproveQcAdd}
         buttonColor="success"
         element={
           <ExplaintBody
@@ -6428,7 +6395,8 @@ export default function Complaint() {
         buttonText={"CLOSE"}
         handlefunction={CloseAdd}
         handlereject={() => ComplaintReturn("CLOSE")}
-        handleClose={handleClose}
+        // handleClose={handleClose}
+        handleClose={handleCloseAdd}
         buttonColor="success"
         element={
           <ExplaintBody

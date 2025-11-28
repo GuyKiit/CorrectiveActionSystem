@@ -584,7 +584,6 @@ export default function ComplaintBody({
     setrespondent_department_id(null);
     setrespondent_email("");
 
-
     if (!value) return;
 
     const dataset = {
@@ -1009,9 +1008,7 @@ export default function ComplaintBody({
         setIsLoadingScreen(false);
         setdataelement(response.data[0]);
       }
-    } catch (e) {
-      // console.log("error");
-    }
+    } catch (e) {}
   };
 
   // Function - Get Complaints
@@ -1097,7 +1094,15 @@ export default function ComplaintBody({
         return;
       }
 
-    setIsLoadingScreen(true);
+    // ✅ Safety Check: ป้องกันการเรียกด้วย Explain Data หรือข้อมูลที่ไม่ใช่ Complaint
+    if (dataelement?.complaint_id || !dataelement?.cas_number) {
+      console.log("⏭️ Skip ComplaintFile_Get - Invalid data type (likely Explain data)");
+      setFileList([]);
+      setcomplaintFiles([]);
+      return;
+    }
+
+    //setIsLoadingScreen(true);
     const dataset = {
       complaint_id: dataelement?.id,
       cf_type: "Complaint",
@@ -1105,7 +1110,6 @@ export default function ComplaintBody({
 
     try {
       let response = await _POST(dataset, "/ComplaintFile/ComplaintFileGet");
-      // console.log(response, "response_Get");
       if (response && response.status === "success") {
         setIsLoadingScreen(false);
         const responseData: any = [];
@@ -1144,7 +1148,6 @@ export default function ComplaintBody({
         setcomplaintFiles([]);
       }
     } catch (e) {
-      // console.log("Error getting files:", e);
       setFileList([]);
       setcomplaintFiles([]);
     } finally {
@@ -1160,6 +1163,12 @@ export default function ComplaintBody({
   // 🧩 1️⃣ โหลดข้อมูลหลัก (ReportType, Company, Domain, Department)
   React.useEffect(() => {
     if (!dataelement || action === "Add") return; // 👈 ป้องกันตอน New
+
+    // ✅ ป้องกันการทำงานเมื่อเป็น Explain Data (มี complaint_id)
+    if (dataelement?.complaint_id) {
+      console.log("⏭️ Skip master data load - dataelement is Explain data");
+      return;
+    }
 
     // if (effectRan.current) return;
     // effectRan.current = true;
@@ -1368,6 +1377,12 @@ export default function ComplaintBody({
   //////////////////////// Complaint Read //////////////////////////
   React.useEffect(() => {
     console.log("step: 5 เก็บข้อมูลเข้า ฺsetdataelement ใหม่ ", dataelement);
+    console.log("DEBUG DATAELEMENT FIELDS:", {
+      date_of_detection: dataelement?.date_of_detection,
+      product_name: dataelement?.product_name,
+      lot_no: dataelement?.lot_no,
+      respondent_email: dataelement?.respondent_email
+    });
     console.log("step: 5 เก็บข้อมูลเข้า ฺsetdataelement ใหม่ ", explainList);
     console.log("💾 close_name:", explainList?.close_name);
     console.log("💾 close_company_id:", explainList?.close_company_id);
@@ -1521,43 +1536,70 @@ export default function ComplaintBody({
       setclose_detail(close?.close_detail ? close?.close_detail : "");
       setclose_note(close?.close_note ? close?.close_note : "");
 
-      console.log("💾2 close_name:", close?.close_name);
-      console.log("💾2 close_company_id:", close?.close_company_id);
-      console.log("💾2 close_company_id:", close_company_id);
-      console.log("💾2 close_email:", close?.close_email);
-      console.log("💾2 close_department_id:", close?.close_department_id);
-      console.log("💾2 close_department_id:", close_department_id);
-      console.log("💾2 close_position:", close?.close_position);
-      console.log("💾2 close_detail:", close?.close_detail);
-      console.log("💾2 close_note:", close?.close_note);
+      // console.log("💾2 close_name:", close?.close_name);
+      // console.log("💾2 close_company_id:", close?.close_company_id);
+      // console.log("💾2 close_company_id:", close_company_id);
+      // console.log("💾2 close_email:", close?.close_email);
+      // console.log("💾2 close_department_id:", close?.close_department_id);
+      // console.log("💾2 close_department_id:", close_department_id);
+      // console.log("💾2 close_position:", close?.close_position);
+      // console.log("💾2 close_detail:", close?.close_detail);
+      // console.log("💾2 close_note:", close?.close_note);
     }
   }, [explainList, dataset_department]);
 
+  // ✅ ใช้ ref เพื่อเก็บ complaint ID ก่อนหน้า
+  const prevComplaintIdRef = React.useRef<string | null>(null);
+
   React.useEffect(() => {
-    if (!isActionAdd && dataelement?.id) {
+    const currentId = dataelement?.id;
+    
+    // ⚠️ ป้องกันการ fetch ซ้ำเมื่อ ID เหมือนเดิม
+    // เมื่อปิด ExplainView → setdataelement(complaintMainData) → dataelement object เปลี่ยนแต่ ID เหมือนเดิม
+    if (prevComplaintIdRef.current === currentId && currentId) {
+      console.log("⏭️ Skip fetch - same complaint ID:", currentId);
+      return;
+    }
+
+    if (!isActionAdd && currentId) {
+      // ✅ ตรวจสอบว่าเป็น Complaint Object จริงหรือไม่
+      // ถ้ามี complaint_id แสดงว่าเป็น Explain Data (ลูก) ที่ถูกส่งเข้ามาแทนที่ -> ข้ามการ fetch
+      // (Complaint Data จะไม่มี field complaint_id ในตัวเอง)
+      if (dataelement?.complaint_id) {
+        console.log("⏭️ Skip fetch - dataelement has complaint_id (is Explain data)");
+        return;
+      }
+
+      console.log("📥 Fetching data for complaint ID:", currentId);
       ComplaintFile_Get();
       ExplainGet();
+      prevComplaintIdRef.current = currentId; // บันทึก ID ปัจจุบัน
+    } else if (!currentId) {
+      // ถ้าไม่มี ID ให้ reset ref
+      prevComplaintIdRef.current = null;
     }
-  }, [action, dataelement?.id]);
+  }, [action, dataelement]); // ใช้ dataelement ทั้งหมดเป็น dependency
 
   React.useEffect(() => {
     const fetchAcknowlege = async () => {
-      if ((isActionExplain || isActionReadExplain) && dataelement?.id) {
+      if (
+        (isActionExplain ||
+          (isActionReadExplain &&
+            dataelement?.request_name != user[0].employee_username)) &&
+        dataelement?.id
+      ) {
         if (dataelement?.acknowledge_flag == 0) {
           await Acknowledge_Update(dataelement);
         }
-        await Complaint_Get(dataelement);
-        //await ComplaintFile_Get();
-        //await ExplainGet();
+        await Complaint_Get(dataelement); // ✅ Move inside: Only fetch if updated
       }
-      //updateAcknowledgeFlag
     };
     fetchAcknowlege();
   }, [action, dataelement?.id, dataelement?.acknowledge_flag]);
 
   const setComplaintType = (data: any) => {
-    console.log("🔍 setComplaintType input data:", data);
-    console.log("🔍 dataComplaintType_Combobox:", dataComplaintType_Combobox);
+    // console.log("🔍 setComplaintType input data:", data);
+    // console.log("🔍 dataComplaintType_Combobox:", dataComplaintType_Combobox);
 
     const newData: any[] = [];
 
@@ -1669,7 +1711,6 @@ export default function ComplaintBody({
   };
 
   // #F29739
-  
 
   return (
     <Box
@@ -3140,7 +3181,7 @@ export default function ComplaintBody({
 
                         {/* === ฝั่งขวา ปุ่ม Add === */}
                         {action !== "ReadExplain" &&
-                          dataelement?.complaint_status_label === "SUBMITED" &&
+                          (dataelement?.complaint_status_label === "SUBMITED" ) &&
                           dataelement?.step_label === "EXPLAIN" && (
                             <Button
                               variant="contained"
@@ -3913,7 +3954,7 @@ export default function ComplaintBody({
         </Paper>
       )}
 
-       {/* <FuncDialog
+      {/* <FuncDialog
               open={openExplainView}
               dialogWidth="md"
               openBottonHidden={false}
