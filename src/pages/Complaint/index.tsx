@@ -442,7 +442,6 @@ export default function Complaint() {
     setdataToolUse,
     setdataToolUse_Combobox,
     setToolOther,
-    setDecisionOther,
     dataSectionapp,
     setdataSectionapp,
     setdataQcapp,
@@ -579,7 +578,7 @@ export default function Complaint() {
   // Search Variables (from index.tsx)
   const [TextNameSearch, setTextNameSearch] = React.useState({
     dataset_company: "",
-    domain: "",
+    dataset_domainrelate: "",
     dataset_department: "",
     report_code: "",
     cas_number: "",
@@ -739,30 +738,26 @@ export default function Complaint() {
       mas_DomainRelateGet(value, set_domainrelate, isCallFuncLogOn);
     } else {
       setrespondent_domain_id(null);
-      setrespondent_department_id(null);
     }
     //console.log("@@@@@@@@@@@@second", dataset_domainrelate);
   };
 
   const handleDomainChange = (value: any) => {
-    // reset แผนกก่อนโหลดใหม่
-  setTextNameSearch(prev => ({
-    ...prev,
-    dataset_department: "", // เคลียร์ค่าเดิม
-  }));
+    //console.log('####### Onchange Domain Value [event] : ', value);
+    //console.log("@@@@@@@@@@@@First", dataset_domainrelate);
+
     if (value != null) {
       //console.log("😎😎", value);
       mas_DepartmentGet_Complaint(
         value,
         setdataset_department,
         isCallFuncLogOn,
-        user
+        user,
+        action
       );
-      
     } else {
       setdataset_department([]);
       setrespondent_department_id(null);
-      
     }
     //console.log("@@@@@@@@@@@@second", domainrelate);
   };
@@ -1164,6 +1159,25 @@ export default function Complaint() {
     }
   };
 
+  // Function - Get Priority Levels
+  // const priority_Get = async () => {
+  //   if (isCallFuncLogOn) //console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  priority_Get");
+
+  //   try {
+  //     const dataset = {
+  //       lov_group: "21",
+  //       lov_type: "priority_level",
+  //     };
+  //     const response = await _POST(dataset, "/Lov/LovGet");
+  //     if (response && response.status === "success") {
+  //       // //console.log("❇️ Call [Lov/LovGet] -> priority_level :", response.data);
+  //       setdatapriority_Combobox && setdatapriority_Combobox(response.data);
+  //     }
+  //   } catch (e) {
+  //     //console.log("error:", e);
+  //   }
+  // };
+
   // Function - Get Domain
   const DomainGet = async () => {
     if (isCallFuncLogOn)
@@ -1494,8 +1508,8 @@ export default function Complaint() {
       department_id: user[0]?.itasset_department_id,
       company_id: user[0]?.itasset_company_id, //@param Fixed
       //=======================================================
-      domain: TextNameSearch.domain
-        ? TextNameSearch.domain
+      domain: TextNameSearch.dataset_domainrelate
+        ? TextNameSearch.dataset_domainrelate
         : null,
       department: TextNameSearch.dataset_department
         ? TextNameSearch.dataset_department
@@ -1643,7 +1657,7 @@ export default function Complaint() {
                         mode.lov1
                           .split(",")
                           .includes(String(el.complaint_status_label)) &&
-                        el.step_label === "EXPLAIN"
+                        el.step_label == "EXPLAIN"
                     )) ??
                   false
                 }
@@ -1667,7 +1681,7 @@ export default function Complaint() {
                         mode.lov1
                           .split(",")
                           .includes(String(el.complaint_status_label)) &&
-                        el.step_label === "EXPLAIN"
+                        el.step_label == "EXPLAIN"
                       // ) &&
                       // splitNextStepName(el.approve_step
                     )) ??
@@ -1726,9 +1740,8 @@ export default function Complaint() {
                         mode.lov1
                           .split(",")
                           .includes(String(el.complaint_status_label)) &&
-                        el.step_label === "COMPLAINT" &&
-                        tempApproveSeq == "2" &&
-                         el.request_department_id == user[0]?.itasset_department_id
+                        el.step_label == "COMPLAINT" &&
+                        tempApproveSeq == "2"
                       // ) &&
                       // splitNextStepName(el.approve_step
                     )) ??
@@ -1845,11 +1858,7 @@ export default function Complaint() {
       return false; // หยุดการตรวจสอบส่วนอื่น
     }
 
-    // if (!date_of_detection) {
-    if (
-      !date_of_detection ||
-      (date_of_detection && !date_of_detection.isValid())
-    ) {
+    if (!date_of_detection) {
       setDateOfDetectionError(true);
       valid = false;
     }
@@ -1875,6 +1884,11 @@ export default function Complaint() {
       valid = false;
     }
 
+    // if (!respondent_email || respondent_email.trim() === "") {
+    //   setEmailError(true);
+    //   valid = false;
+    // }
+
     if (
       !dataComplaintTypeValue_Combobox ||
       dataComplaintTypeValue_Combobox.length === 0
@@ -1897,6 +1911,7 @@ export default function Complaint() {
     }
 
     const reportTypeCode = dataReportTypeValue?.lov_code;
+    //console.log("🔍 Report Type Code:", reportTypeCode);
 
     // เฉพาะ NCR เท่านั้นที่ต้อง validate Complaint Rs
     if (reportTypeCode === "NCR") {
@@ -2237,8 +2252,6 @@ export default function Complaint() {
     return valid;
   };
 
-  //========================= //MAIN FUNCTION //=========================//
-
   // CREATE -SaveDraft Add Complaint
   const ComplaintSavedraftAdd = async () => {
     if (isCallFuncLogOn)
@@ -2405,7 +2418,170 @@ export default function Complaint() {
     }
   };
 
+  // const ComplaintSavedraftEdit = async (mode: string) => {
+  //   if (isCallFuncLogOn)
+  //     console.log(
+  //       "🕑 ",
+  //       dayjs().format("HH:mm:ss.SSS"),
+  //       " [Calling Function]  :  ComplaintSavedraftEdit"
+  //     );
+
+  //   // สร้าง FormData
+  //   const formData = new FormData();
+
+  //   if (mode == "NEW") {
+  //     console.log("❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️");
+  //     const tempid = uuidv4();
+
+  //     //Function Split Domain (For using with Complaint Status)
+  //     // const tempComplaintStatus = splitByDot(user[0]?.employee_domain);
+  //     const tempComplaintStatus = await LovAll_Get("complaint_status");
+
+  //     // เตรียม Models
+  //     const complainttypeModel = dataComplaintTypeValue_Combobox
+  //       ? compTypeUpdateCompId(
+  //         dataComplaintTypeValue_Combobox,
+  //         tempid,
+  //         compTypeOther
+  //       )
+  //       : null;
+
+  //     const complaintRsModel = dataComplaintRsValue_Combobox
+  //       ? compRsUpdateCompId(
+  //         dataComplaintRsValue_Combobox,
+  //         tempid,
+  //         compRsOther,
+  //         clauseOther
+  //       )
+  //       : null;
+
+  //     // สร้าง JSON payload
+  //     const complaintPayload = {
+  //       complaintModel: {
+  //         id: dataelement?.id,
+  //         report_type: dataReportTypeValue?.id,
+  //         cas_number: cas_number,
+  //         date_of_detection: date_of_detection
+  //           ? date_of_detection
+  //             .hour(dayjs().hour())
+  //             .minute(dayjs().minute())
+  //             .second(dayjs().second())
+  //             .format("YYYY-MM-DDTHH:mm:ss.SSS")
+  //           : null,
+  //         request_name: user[0]?.employee_username || "",
+  //         request_company_id: request_company_id?.company_id,
+  //         // ? Number(request_company_id.company_id)
+  //         // : undefined,
+  //         request_domain_id: user[0]?.employee_domain,
+  //         request_department_id: user[0].itasset_department_id,
+  //         request_position: user[0]?.employee_position || "",
+  //         request_email: user[0]?.employee_email || "",
+  //         request_phone: user[0]?.employee_tel || "",
+  //         request_date: new Date().toISOString(),
+  //         respondent_company_id: respondent_company_id?.company_id,
+  //         // ? Number(respondent_company_id.company_id)
+  //         // : undefined,
+  //         respondent_domain_id: respondent_domain_id?.domain_id,
+  //         respondent_department_id: respondent_department_id?.department_id,
+  //         // ? Number(respondent_department_id.department_id)
+  //         // : undefined,
+  //         respondent_email: respondent_email,
+  //         respondent_other_name: respondent_other_name,
+  //         respondent_other_email: respondent_other_email,
+  //         product_name: product_name,
+  //         detail: detail,
+  //         //priority_level: datapriorityValue_Combobox,
+  //         priority_level:
+  //           datapriorityValue_Combobox || dataelement?.priority_level,
+  //         respond_date_within: respond_date_within
+  //           ? respond_date_within
+  //             .hour(dayjs().hour())
+  //             .minute(dayjs().minute())
+  //             .second(dayjs().second())
+  //             //.format("YYYY-MM-DDTHH:mm:ss.fff")
+  //             .format("YYYY-MM-DDTHH:mm:ss.SSS")
+  //           : null,
+  //         lot_no: lot_no,
+  //         complaint_status_id: tempComplaintStatus[0]?.id,
+  //         create_by: user[0]?.employee_username || "",
+  //         save_type: "save_draft_edit",
+  //         complaintType: complainttypeModel,
+  //         complaintRs: complaintRsModel,
+  //         complaintFile:
+  //           complaintFiles?.map((item: any, index: number) => {
+  //             return {
+  //               cf_type: "Complaint",
+  //               complaint_id: tempid,
+  //               complaint_at_id: item.attachmentType,
+  //               other: item.otherText?.trim() || null,
+  //               cf_file_seq: (index + 1).toString(),
+  //               user_file_name: item.file.name,
+  //               file_name: item.file.name,
+  //               file_type: item.file.type.split("/")[1] || "",
+  //               file_size: item.file.size.toString(),
+  //               record_status: true,
+  //               create_by: user[0]?.employee_username || "",
+  //               create_datetime: new Date().toISOString(),
+  //               remark: item.otherText || null,
+  //             };
+  //           }) || [],
+  //       },
+  //       RunningModel: {
+  //         code_group: dataReportTypeValue.lov_code,
+  //         code_type: dataReportTypeValue.lov1 + "-" + getPaddingYear(),
+  //         code_num: 1,
+  //       },
+  //       CurrentAccessModel: {
+  //         user_id: user[0]?.employee_username || "",
+  //       },
+  //     };
+
+  //     formData.append("complaintPayloadJson", JSON.stringify(complaintPayload));
+
+  //     // แนบไฟล์จริง
+  //     if (complaintFiles && complaintFiles.length > 0) {
+  //       complaintFiles.forEach((fileItem: any) => {
+  //         formData.append("complaintFiles", fileItem.file);
+  //       });
+  //     }
+
+  //     //console.log("📤 complaintPayloadSavedraft:", complaintPayload);
+  //     setIsLoadingScreen(true);
+
+  //     try {
+  //       const response = await _POST_FORMDATA(
+  //         formData,
+  //         "/Complaint/ComplaintEdit"
+  //       );
+  //       if (response && response.status === "success") {
+  //         FullSweetalert({
+  //           title: "Success",
+  //           text: `บันทึกข้อมูลสำเร็จ`,
+  //           icon: "success",
+  //         });
+  //         //console.log("✅ Complaint Add successfully:", response);
+  //       } else {
+  //         FullSweetalert({
+  //           title: "Failed",
+  //           text: `บันทึกไม่ข้อมูลสำเร็จ`,
+  //           icon: "error",
+  //         });
+  //         //console.log("⚠️ Add failed:", response);
+  //       }
+  //     } catch (error) {
+  //       console.error("Upload failed:", error);
+  //     } finally {
+  //       setIsLoadingScreen(false);
+  //       handleClose();
+
+  //       // Complaint_Get();
+  //       ComplaintGet();
+  //     }
+  //   }
+  // };
+
   // Function - Add Complaint
+
   const ComplaintAdd = async () => {
     if (isCallFuncLogOn)
       console.log(
@@ -2497,6 +2673,7 @@ export default function Complaint() {
         respondent_email: respondent_email,
         respondent_other_name: respondent_other_name,
         respondent_other_email: respondent_other_email,
+
         product_name: product_name,
         detail: detail,
         priority_level: datapriorityValue_Combobox,
@@ -2613,21 +2790,29 @@ export default function Complaint() {
         " [Calling Function]  :  ComplaintEdit"
       );
 
+    if (!validateSaveDraft()) {
+      return;
+    }
+    console.log(
+      "📡 Sending respondent_domain_id to LovAll_Get:",
+      respondent_domain_id
+    );
+    console.log(
+      "📡 Sending respondent_domain_id to LovAll_Get:",
+      respondent_domain_id?.domain_id
+    );
     const tempComplaintStatus = await LovAll_Get(
       "complaint_status",
       dataelement?.respondent_domain_id
     );
-    // console.log("💕 tempvalue 0 id", tempComplaintStatus[0]?.id);
-    // console.log("💕 tempvalue 1 id", tempComplaintStatus[1]?.id);
-    // console.log("💕 tempvalue 2 id", tempComplaintStatus[2]?.id);
-    // console.log("💕 tempvalue 3 id", tempComplaintStatus[3]?.id);
-    // console.log("💕 tempvalue 4 id", tempComplaintStatus[4]?.id);
+    console.log("💕 tempvalue 0 id", tempComplaintStatus[0]?.id);
+    console.log("💕 tempvalue 1 id", tempComplaintStatus[1]?.id);
+    console.log("💕 tempvalue 2 id", tempComplaintStatus[2]?.id);
+    console.log("💕 tempvalue 3 id", tempComplaintStatus[3]?.id);
+    console.log("💕 tempvalue 4 id", tempComplaintStatus[4]?.id);
 
     const formData = new FormData();
     if (mode == "SUBMIT") {
-      if (!validateBeforeAdd()) {
-        return;
-      }
       const tempid = uuidv4();
 
       // เตรียม Models
@@ -2654,9 +2839,9 @@ export default function Complaint() {
           mode: mode,
           date_of_detection: date_of_detection
             ? date_of_detection
-                .hour(dayjs().hour())
-                .minute(dayjs().minute())
-                .second(dayjs().second())
+                .hour(23)
+                .minute(59)
+                .second(59)
                 .format("YYYY-MM-DDTHH:mm:ss.SSS")
             : null,
           respondent_domain_id: respondent_domain_id?.domain_id,
@@ -2748,9 +2933,6 @@ export default function Complaint() {
         ComplaintGet();
       }
     } else if (mode == "NEW") {
-      if (!validateSaveDraft()) {
-        return;
-      }
       const tempid = uuidv4();
 
       // เตรียม Models
@@ -2771,29 +2953,16 @@ export default function Complaint() {
           )
         : null;
 
-        // Normalize date_of_detection ค่อยย้ายไปไว้ตรงกลาง
-        const normalizeDate = (val: any) => {
-        if (!val) return null;
-        if (val === "Invalid Date") return null;
-
-        const d = dayjs(val);
-        return d.isValid() ? d : null;
-        };
-
-
-      let raw_date_of_detection = date_of_detection;
-      let date_of_detection_normalized = normalizeDate(raw_date_of_detection);
-
       // สร้าง JSON payload
       const complaintPayload = {
         complaintModel: {
           id: dataelement?.id,
           mode: mode,
-          date_of_detection: date_of_detection_normalized
-            ? date_of_detection_normalized
-                .hour(dayjs().hour())
-                .minute(dayjs().minute())
-                .second(dayjs().second())
+          date_of_detection: date_of_detection
+            ? date_of_detection
+                .hour(23)
+                .minute(59)
+                .second(59)
                 .format("YYYY-MM-DDTHH:mm:ss.SSS")
             : null,
           respondent_domain_id: respondent_domain_id?.domain_id,
@@ -2925,12 +3094,14 @@ export default function Complaint() {
             text: `บันทึกข้อมูลสำเร็จ`,
             icon: "success",
           });
+          //console.log("✅ Complaint Add successfully:", response);
         } else {
           FullSweetalert({
             title: "Failed",
             text: `บันทึกไม่ข้อมูลสำเร็จ`,
             icon: "error",
           });
+          //console.log("⚠️ Add failed:", response);
         }
       } catch (error) {
         console.error("Upload failed:", error);
@@ -2996,6 +3167,8 @@ export default function Complaint() {
 
         ComplaintGet();
       }
+    } else if (mode == "APPROVEQC") {
+    } else if (mode == "CLOSE") {
     }
   };
 
@@ -3059,7 +3232,70 @@ export default function Complaint() {
     }
   };
 
-  // Function - Return Complaint
+  // READ - Preview Complaint (from ComplaintRead.tsx)
+  // const previewComplaint = async () => {
+  //   if (isCallFuncLogOn)
+  //     console.log(
+  //       "🕑 ",
+  //       dayjs().format("HH:mm:ss.SSS"),
+  //       " [Calling Function]  :  previewComplaint"
+  //     );
+
+  //   //console.log(dataelement, "dataelement");
+  //   //console.log("dataset_reporttype", dataset_reporttype);
+  //   //console.log("NCR TEST", extractReportType("TRR_RT_NCR"));
+  //   //console.log("OBS TEST", extractReportType("TRR_RT_OBS"));
+  //   //console.log("CAR TEST", extractReportType("TRR_RT_CAR"));
+  //   //console.log("CPAR TEST", extractReportType("TRR_RT_CPAR"));
+
+  //   if (dataelement) {
+  //     //console.log("dataelement.report_type", dataelement.report_type);
+
+  //     // setIsRSHidden(extractReportType(dataelement.report_type) != "NCR" ? true : false);
+
+  //     // แปลง priority text → id ของ RadioGroup
+  //     const selectedPriority = datapriority_Combobox.find(
+  //       (item: any) =>
+  //         item.lov_code === dataelement.priority_level ||
+  //         item.lov1 === dataelement.priority_level
+  //     );
+  //     setdataPriority(selectedPriority?.id || "");
+
+  //     //console.log("dataComplaintType_Combobox", dataComplaintType_Combobox);
+  //     //console.log("dataelement?.complaint_type_id", dataelement?.complaintType);
+  //     //console.log("dataelement?.complaint_type_id", dataelement?.complaintRs);
+  //     //console.log("dataelement?.complaint_at_id", dataelement?.complaintPhoto);
+  //     //console.log("dataelement?.priority_level", dataelement?.priority_level);
+
+  //     const data_ComplaintType = await setValueMas(
+  //       dataComplaintType_Combobox,
+  //       dataelement?.complaint_type_id,
+  //       "id"
+  //     );
+  //     const data_ComplaintRs = await setValueMas(
+  //       dataComplaintRs_Combobox,
+  //       dataelement?.complaint_type_id,
+  //       "id"
+  //     );
+  //     const data_ComplaintPhoto = await setValueMas(
+  //       dataphoto_Combobox,
+  //       dataelement?.complaint_at_id,
+  //       "id"
+  //     );
+  //     const data_Priority = await setValueMas(
+  //       datapriority_Combobox,
+  //       dataelement?.priority_level,
+  //       "id"
+  //     );
+
+  //     //console.log("data_ComplaintType", data_ComplaintType);
+  //     //console.log("data_ComplaintRs", data_ComplaintRs);
+  //     //console.log("data_ComplaintPhoto", data_ComplaintPhoto);
+  //     //console.log("data_Priority", data_Priority);
+  //     //console.log(dataset_reporttype);
+  //   }
+  // };
+
   const ComplaintReturn = async (mode: string) => {
     if (isCallFuncLogOn)
       console.log(
@@ -3080,19 +3316,48 @@ export default function Complaint() {
     console.log("💕 tempvalue 4 id", tempComplaintStatus[4]?.id);
     //posion
     const formData = new FormData();
-    if (mode == "EXPLAIN") {
-      const complaintReturnPayload = {
-        complaintReturnModel: {
-          id: dataelement?.id,
-          return_from_status_id: tempComplaintStatus[1]?.id,
-          complaint_status_id: tempComplaintStatus[0]?.id,
-          mode: mode,
-        },
+    // 🟡 STEP 1 : ถ้าเป็นโหมด "EXPLAIN" = ขอก่อนทำ
+    if (mode === "EXPLAIN") {
+      FullSweetalert({
+      title: "ยืนยันการ Reject?",
+      text: "คุณต้องการ Reject หรือไม่",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "ยืนยัน",
+      cancelButtonText: "ยกเลิก",
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#FF0000",
+    }).then((result) => {
+    if (result.isConfirmed) {
+      ComplaintReturn("EXPLAIN_CONFIRM");
+    }
+  });
 
-        CurrentAccessModel: {
-          user_id: user[0]?.employee_username || "",
-        },
-      };
+  return; // หยุดโค้ด ไม่ให้ทำงานต่อ
+}
+
+  // 🟢 STEP 2 : ถ้าเป็น "EXPLAIN_CONFIRM" = ทำงานจริง
+  if (mode === "EXPLAIN_CONFIRM") {
+
+    if (isCallFuncLogOn)
+      console.log("🕑 ", dayjs().format("HH:mm:ss.SSS"), " [ComplaintReturn] Confirm mode");
+
+    const tempComplaintStatus = await LovAll_Get(
+      "complaint_status",
+      user[0]?.employee_domain
+    );
+
+    const complaintReturnPayload = {
+      complaintReturnModel: {
+        id: dataelement?.id,
+        return_from_status_id: tempComplaintStatus[1]?.id,
+        complaint_status_id: tempComplaintStatus[0]?.id,
+        mode: "EXPLAIN",
+      },
+      CurrentAccessModel: {
+        user_id: user[0]?.employee_username || "",
+      },
+    };
 
       try {
         const response = await _POST(
@@ -3128,12 +3393,7 @@ export default function Complaint() {
       const tempid = uuidv4();
       const domainId = dataelement?.respondent_domain_id;
 
-      // 🧩 โหลดค่า Complaint Status ทั้งหมด (ของ respondent domain)
-      // const tempComplaintStatus = await LovAll_Get(
-      //   "complaint_status",
-      //   dataelement?.respondent_domain_id
-      // );
-
+      
       // console.log("📡 Current tempComplaintStatus:", tempComplaintStatus);
 
       // 🧩 Helper: หา explain_id ที่แท้จริงจาก dataelement
@@ -3475,23 +3735,21 @@ export default function Complaint() {
       );
 
     const tempid = uuidv4();
-
-    // console.log(
-    //   "📡 Sending respondent_domain_id to LovAll_Get:",
-    //   dataelement?.respondent_domain_id
-    // );
-    // console.log(
-    //   "📡 Sending respondent_domain_id to LovAll_Get:",
-    //   dataelement?.respondent_domain_id?.domain_id
-    // );
-    // console.log("🧩 tempComplaintStatus raw:", tempComplaintStatus);
-    // console.log("💕 tempvalue 1 id", tempComplaintStatus[1]?.id);
-    // console.log("💕 tempvalue 2 id", tempComplaintStatus[2]?.id);
-
+    console.log(
+      "📡 Sending respondent_domain_id to LovAll_Get:",
+      dataelement?.respondent_domain_id
+    );
+    console.log(
+      "📡 Sending respondent_domain_id to LovAll_Get:",
+      dataelement?.respondent_domain_id?.domain_id
+    );
     const tempComplaintStatus = await LovAll_Get(
       "complaint_status",
       dataelement?.respondent_domain_id
     );
+    // console.log("🧩 tempComplaintStatus raw:", tempComplaintStatus);
+    // console.log("💕 tempvalue 1 id", tempComplaintStatus[1]?.id);
+    // console.log("💕 tempvalue 2 id", tempComplaintStatus[2]?.id);
 
     const resolveComplaintId = () => {
       const el: any = dataelement || {};
@@ -3668,6 +3926,7 @@ export default function Complaint() {
     }
   };
 
+  
   const ApproveScAdd = async () => {
     if (isCallFuncLogOn)
       console.log(
@@ -3971,8 +4230,6 @@ export default function Complaint() {
     }
   };
 
-  // ========================= // //=========================//
-
   const handleOnclickMenuSync = () => {
     if (isCallFuncLogOn)
       console.log(
@@ -4004,9 +4261,6 @@ export default function Complaint() {
         dayjs().format("HH:mm:ss.SSS"),
         " [Calling Function]  :  Explaint_Get"
       );
-
-    //console.log("Read step:3 เรียกฟังก์ชั่น ดูข้อมูล handleOnclickMenuView ");
-    //console.log("Read step:3 ข้อมูลที่ได้จาก ListSearchGet ก่อนส่งเข้าฟังก์ชั่น Complaint_Get  ", data);
     resetForm();
     Complaint_Get(data);
     setOpenComplaintView(true); // แล้วค่อยเปิด Dialog
@@ -4019,9 +4273,6 @@ export default function Complaint() {
         dayjs().format("HH:mm:ss.SSS"),
         " [Calling Function]  :  handleOnclickComplaintEdit"
       );
-
-    //console.log("Edit step:3 เรียกฟังก์ชั่น ดูข้อมูล handleOnclickMenuEdit ");
-    //console.log("Edit step:3 ข้อมูลที่ได้จาก ListSearchGet ก่อนส่งเข้าฟังก์ชั่น Complaint_Get  ", data);
     resetForm();
     Complaint_Get(data);
     setOpenComplaintEdit(true);
@@ -4034,9 +4285,6 @@ export default function Complaint() {
         dayjs().format("HH:mm:ss.SSS"),
         " [Calling Function]  :  handleOnclickComplaintDelete"
       );
-
-    //console.log("Delete step:3 เรียกฟังก์ชั่น ดูข้อมูล handleOnclickMenuDelete ");
-    //console.log("Delete step:3 ข้อมูลที่ได้จาก ListSearchGet ก่อนส่งเข้าฟังก์ชั่น Complaint_Get  ", data);
     resetForm();
     Complaint_Get(data);
     setOpenComplaintDelete(true);
@@ -4052,7 +4300,6 @@ export default function Complaint() {
       );
 
     resetForm();
-    //console.log("checkkk",dataelement)
     setdataelement(data);
     setOpenExplain(true);
   };
@@ -4141,31 +4388,6 @@ export default function Complaint() {
     setOpenApproveSC(true);
   };
 
-  // const handleOnclickExplainApproveSc = (data: any) => {
-  //   if (isCallFuncLogOn)
-  //     console.log("🕑 ",dayjs().format("HH:mm:ss.SSS")," [Calling Function]  :  handleOnclickExplainApproveSc");
-
-  //   setCurrentExplainForApproval(data); // ✅ เก็บข้อมูล explain ที่จะอนุมัติไว้ใน state ใหม่
-  //   resetForm();
-  //   setapprove_date(dayjs());
-  //   setOpenExplainApproveSc(true);
-  // };
-
-  //======================================================================================================
-  //======================================================================================================
-  //======================================================================================================
-  //======================================================================================================
-  //======================================================================================================
-  //======================================================================================================
-  //======================================================================================================
-  //======================================================================================================
-  //======================================================================================================
-  //======================================================================================================
-  //======================================================================================================
-  //======================================================================================================
-  //======================================================================================================
-  //======================================================================================================
-
   const handleOnclickExplainApproveSc = (explainData: any) => {
     if (isCallFuncLogOn)
       console.log(
@@ -4230,21 +4452,6 @@ export default function Complaint() {
     setOpenExplainApproveSc(true);
   };
 
-  //======================================================================================================
-  //======================================================================================================
-  //======================================================================================================
-  //======================================================================================================
-  //======================================================================================================
-  //======================================================================================================
-  //======================================================================================================
-  //======================================================================================================
-  //======================================================================================================
-  //======================================================================================================
-  //======================================================================================================
-  //======================================================================================================
-  //======================================================================================================
-  //======================================================================================================
-
   // ------------------------------------------------------//
   const handleOnclickReadClose = async (data: any) => {
     if (isCallFuncLogOn)
@@ -4289,38 +4496,7 @@ export default function Complaint() {
     setdataelement(data);
   };
 
-  //   const handleOnclickComplainCloseAdd = (data: any) => {
-  //     //ADD
-  //     if (isCallFuncLogOn)
-  //       console.log("🕑 ", dayjs().format("HH:mm:ss.SSS"), " [Calling Function]  :  handleOnclickComplainCloseAdd");
-  //     console.log("🧩 Data received:", data);
-  //     console.log("🧑‍💼 User profile:", user[0]);
-  // }
-
-  //   setCurrentExplainForApproval(data);
-  //   resetForm();
-
-  //   // 🧩 เซตค่าฟิลด์เริ่มต้นจากโปรไฟล์ user
-  //   setclose_name(user[0]?.employee_username || "TEST USER");
-  //   console.log("💾 close_name set to:", user[0]?.employee_username || "TEST USER");
-  //   setclose_company_id({
-  //     company_id: user[0]?.itasset_company_id || null,
-  //     company_name: user[0]?.company_name || "",
-  //   });
-
-  //   setclose_department_id({
-  //     department_id: user[0]?.itasset_department_id || null,
-  //     department_name: user[0]?.department_name || "",
-  //   });
-  //   setclose_position(user[0]?.employee_position || "");
-  //   setclose_email(user[0]?.employee_email || "");
-  //   setclose_date(dayjs()); // วันที่ปิดรายการ = วันนี้
-
-  //   Complaint_Get(data);
-  //   setdataelement(data);
-  //   setOpenComplainCloseAdd(true);
-  // };
-
+  
   const CloseAdd = async () => {
     if (isCallFuncLogOn)
       console.log(
@@ -4329,22 +4505,12 @@ export default function Complaint() {
         " [Calling Function]  :  CloseAdd"
       );
 
-    // const complaintId =
-    //   dataelement?.id ??
-    //   currentExplainForApproval?.complaint_id ??
-    //   currentExplainForApproval?.id;
-
-    // 🧩 โหลดค่า Complaint Status ทั้งหมด โดยใช้โดเมนจาก ComplaintGet เป็นหลัก
-    // const domainForLov = dataelement?.domain_id ?? respondent_domain_id?.domain_id ?? user[0]?.employee_domain;
+    
     const tempComplaintStatus = await LovAll_Get(
       "complaint_status",
       user[0]?.employee_domain
     );
-    // console.log("👽👽👽 Current tempComplaintStatus:", tempComplaintStatus);
-    // console.log("👽👽👽 Current tempComplaintStatus[5].id:", tempComplaintStatus[5]?.id);
-    // console.log("👽👽👽complaint_status domain:", user[0]?.employee_domain);
-    // console.log("👽👽👽complaintId:", dataelement?.id);
-
+    
     // 🧩 Helper: หา explain_id ที่แท้จริงจาก dataelement
     const resolveExplainId = () => {
       return currentExplainForApproval?.id;
@@ -4483,39 +4649,7 @@ export default function Complaint() {
 
   // ------------------------------------------------------//
 
-  // const handleOnclickApproveQC = async (data: any, name: string) => {
-  //   setAction(name);
-  //   if (isCallFuncLogOn)
-  //     console.log("🕑 ",dayjs().format("HH:mm:ss.SSS")," [Calling Function]  :  handleOnclickApproveQC");
-
-  //   resetForm();
-  //   setOpenApproveQC(true);
-  //   setdataelement(data);
-  // };
-
-  // const handleOnclickApproveQC = async (data: any, name: string) => {
-  //   setAction(name);
-  //   if (isCallFuncLogOn)
-  //     console.log(
-  //       "🕑 ",
-  //       dayjs().format("HH:mm:ss.SSS"),
-  //       " [Calling Function]  :  handleOnclickApproveQC"
-  //     );
-
-  //   resetForm();
-  //   // ดึง complaint ข้อมูลจริงจาก API
-  //   const complaintData = await Complaint_Get(data);
-
-  // //   if (!complaintData) return;
-
-  // //   // เซ็ต state ของ complaint
-  // //   setdataelement(complaintData);
-
-  // //   // ดึง explain ของ complaint
-  // //   await Explain_Get(complaintData.id);
-
-  //   setOpenApproveQC(true);
-  // };
+  
 
   // -------- Approve Dialog Handlers --------
 
@@ -4576,131 +4710,6 @@ export default function Complaint() {
       setdataelement(null);
     }
   };
-
-  // const handleOnclickExplainView = (data: any, name: string) => {
-  //   console.log("dataaaaaaaaaaaa", data);
-
-  //   setAction(name);
-  //   if (isCallFuncLogOn)
-  //     console.log("🕑 ",dayjs().format("HH:mm:ss.SSS")," [Calling Function]  :  handleOnclickExplainView");
-
-  //   // ตั้งค่า dataelement ก่อนเพื่อให้ useEffect ใน ExplaintBody ทำงานได้
-  //   setdataelement(data);
-
-  //   // ไม่ reset form ในโหมดดูข้อมูล เพื่อไม่ให้ dataReportTypeValue หาย
-  //   setOpenExplainView(true);
-
-  //   // ใช้ข้อมูลที่ส่งมาจากรายการ explain โดยตรง
-  //   if (data) {
-  //     //console.log("🔍 Setting explain data for View:", data);
-  //     //console.log("🔍 Explain data complaintType:", data.complaintType);
-  //     //console.log("🔍 Explain data complaintRs:", data.complaintRs);
-  //     //console.log("🔍 Explain data other:", data.other);
-
-  //     // Set ข้อมูล explain ลงใน context
-  //     setobservation_analysis(data.observation_analysis || "");
-  //     setroot_cause(data.root_cause || "");
-  //     setcorrective_action(data.corrective_action || "");
-  //     setpreventive_action_plan(data.preventive_action_plan || "");
-
-  //     // 🔧 เพิ่ม: ตั้งค่าการแสดง/ซ่อน sections ตาม report_type สำหรับ View mode
-  //     // ใช้ dataelement.report_type หรือ data.complaint.report_type ขึ้นกับโครงสร้างข้อมูล
-  //     const reportType =
-  //       data.complaint?.report_type ||
-  //       data.report_type ||
-  //       dataelement?.report_type;
-  //     //console.log("🔍 ExplainView - Setting visibility for report type:", reportType);
-
-  //     if (reportType && dataset_reporttype) {
-  //       const reportTypeObj = dataset_reporttype.find(
-  //         (item: any) => item.id === reportType || item.lov_code === reportType
-  //       );
-
-  //       if (reportTypeObj) {
-  //         //console.log("🔍 ExplainView - Found report type object:", reportTypeObj);
-  //         // บังคับส่งข้อมูลไปให้ ExplaintBody ผ่าน dataelement
-  //         const updatedDataElement = {
-  //           ...data,
-  //           report_type: reportTypeObj.lov_code,
-  //           _forceVisibilityUpdate: true, // flag เพื่อบังคับ update visibility
-  //         };
-  //         setdataelement(updatedDataElement);
-  //       }
-  //     }
-  //   }
-  //   // เปิด modal
-  //   // setOpenExplainApproveSc(true);
-  // };
-
-  //############################################################
-  // const handleOnclickExplainView = (data: any, name: string) => {
-  //   console.log("dataaaaaaaaaaaa", data);
-
-  //   setAction(name);
-  //   if (isCallFuncLogOn)
-  //     console.log(
-  //       "🕑 ",
-  //       dayjs().format("HH:mm:ss.SSS"),
-  //       " [Calling Function]  :  handleOnclickExplainView"
-  //     );
-
-  //   //console.log("🔍 handleOnclickExplainView called with data:", data);
-  //   // resetForm();
-  //   // ตั้งค่า dataelement ก่อนเพื่อให้ useEffect ใน ExplaintBody ทำงานได้
-  //   setdataelement(data);
-
-  //   // ไม่ reset form ในโหมดดูข้อมูล เพื่อไม่ให้ dataReportTypeValue หาย
-  //   // setOpenExplainView(true);
-
-  //   // ใช้ข้อมูลที่ส่งมาจากรายการ explain โดยตรง
-  //   if (data) {
-  //     //console.log("🔍 Setting explain data for View:", data);
-  //     //console.log("🔍 Explain data complaintType:", data.complaintType);
-  //     //console.log("🔍 Explain data complaintRs:", data.complaintRs);
-  //     //console.log("🔍 Explain data other:", data.other);
-
-  //     // Set ข้อมูล explain ลงใน context
-  //     setobservation_analysis(data.observation_analysis || "");
-  //     setroot_cause(data.root_cause || "");
-  //     setcorrective_action(data.corrective_action || "");
-  //     setpreventive_action_plan(data.preventive_action_plan || "");
-
-  //     // 🔧 เพิ่ม: ตั้งค่าการแสดง/ซ่อน sections ตาม report_type สำหรับ View mode
-  //     // ใช้ dataelement.report_type หรือ data.complaint.report_type ขึ้นกับโครงสร้างข้อมูล
-  //     const reportType =
-  //       data.complaint?.report_type ||
-  //       data.report_type ||
-  //       dataelement?.report_type;
-  //     //console.log("🔍 ExplainView - Setting visibility for report type:", reportType);
-
-  //     if (reportType && dataset_reporttype) {
-  //       const reportTypeObj = dataset_reporttype.find(
-  //         (item: any) => item.id === reportType || item.lov_code === reportType
-  //       );
-
-  //       if (reportTypeObj) {
-  //         //console.log("🔍 ExplainView - Found report type object:", reportTypeObj);
-  //         // บังคับส่งข้อมูลไปให้ ExplaintBody ผ่าน dataelement
-  //         const updatedDataElement = {
-  //           ...data,
-  //           report_type: reportTypeObj.lov_code,
-  //           _forceVisibilityUpdate: true, // flag เพื่อบังคับ update visibility
-  //         };
-  //         setdataelement(updatedDataElement);
-  //       }
-  //     }
-  //   }
-
-  //   if (name === "ReadApproveSC") {
-  //     // ถ้ามาโหมด ApproveSC → เปิด Dialog ที่ใช้สำหรับอนุมัติ
-  //     setOpenExplainApproveSc(true);
-  //   } else {
-  //     // ถ้ามาโหมดดูข้อมูลทั่วไป → เปิด Dialog แสดงเฉย ๆ
-  //     setOpenExplainView(true);
-  //   }
-  //   // เปิด modal
-  //   // setOpenExplainApproveSc(true);
-  // };
 
   const handleOnclickExplainView = async (explainData: any, name: string) => {
     console.log("handleOnclickExplainView", handleOnclickExplainView);
@@ -4887,35 +4896,6 @@ export default function Complaint() {
     setOpenReadApproveSC(true); // แล้วค่อยเปิด Dialog
   };
 
-  // const handleOnclickExplainApproveSc = (data: any) => {
-  //   if (isCallFuncLogOn)
-  //     console.log(
-  //       "🕑 ",
-  //       dayjs().format("HH:mm:ss.SSS"),
-  //       " [Calling Function]  :  handleOnclickExplainApproveSc"
-  //     );
-
-  //   setCurrentExplainForApproval(data); // ✅ เก็บข้อมูล explain ที่จะอนุมัติไว้ใน state ใหม่
-  //   resetForm();
-  //   setapprove_date(dayjs());
-  //   setOpenExplainApproveSc(true);
-  // };
-
-  //======================================================================================================
-  //======================================================================================================
-  //======================================================================================================
-  //======================================================================================================
-  //======================================================================================================
-  //======================================================================================================
-  //======================================================================================================
-  //======================================================================================================
-  //======================================================================================================
-  //======================================================================================================
-  //======================================================================================================
-  //======================================================================================================
-  //======================================================================================================
-  //======================================================================================================
-
   const handleOnclickExplainApproveQc = async (explainData: any) => {
     if (isCallFuncLogOn)
       console.log(
@@ -5030,20 +5010,6 @@ export default function Complaint() {
     setOpenExplainApproveQc(true);
   };
 
-  //======================================================================================================
-  //======================================================================================================
-  //======================================================================================================
-  //======================================================================================================
-  //======================================================================================================
-  //======================================================================================================
-  //======================================================================================================
-  //======================================================================================================
-  //======================================================================================================
-  //======================================================================================================
-  //======================================================================================================
-  //======================================================================================================
-  //======================================================================================================
-  //======================================================================================================
 
   const handleOnclickComplainCloseAdd = async (explainData: any) => {
     //ADD
@@ -5062,8 +5028,7 @@ export default function Complaint() {
       observation_analysis,
       root_cause,
     });
-    // Reset form ก่อน
-    resetForm();
+
     const complaintData = dataelement;
 
     console.log(
@@ -5186,46 +5151,12 @@ export default function Complaint() {
     } else {
       setdataelement(explainData);
     }
-    
     setOpenComplainCloseAdd(true);
-    
+    // Reset form ก่อน
+    resetForm();
   };
 
-  //======================================================================================================
-  //======================================================================================================
-  //======================================================================================================
-  //======================================================================================================
-  //======================================================================================================
-  //======================================================================================================
-  //======================================================================================================
-  //======================================================================================================
-  //======================================================================================================
-  //======================================================================================================
-  //======================================================================================================
-  //======================================================================================================
-  //======================================================================================================
-  //======================================================================================================
-
-  // const handleOnclickMenuUpload = () => {
-  //   setOpenUpload(true);
-  // };
-
-  // const handleTableButtonClick = (func_name: string) => {
-  //   switch (func_name) {
-  //     case "Add":
-  //       handleOnclickComplaintAdd();
-  //       break;
-  //     case "Upload":
-  //       handleOnclickMenuUpload();
-  //       break;
-  //     case "Print":
-  //       //console.log("Print clicked");
-  //       break;
-  //     default:
-  //       console.warn("No handler for", func_name);
-  //   }
-  // };
-
+ 
   // Search Handlers
   const handleCloseSearch = () => {
     if (isCallFuncLogOn)
@@ -5243,7 +5174,7 @@ export default function Complaint() {
     setdocumentDateSearch(null);
     setTextNameSearch({
       dataset_company: "",
-      domain: "",
+      dataset_domainrelate: "",
       dataset_department: "",
       report_code: "",
       cas_number: "",
@@ -5354,7 +5285,8 @@ export default function Complaint() {
           },
           setdataset_department,
           user,
-          isCallFuncLogOn
+          isCallFuncLogOn,
+          action
         );
 
         // if (user?.[0]?.itasset_company_id) {
@@ -5512,19 +5444,19 @@ export default function Complaint() {
           <Grid size={4}>
             <AutocompleteComboBox
               value={
-                domain?.find(
+                dataset_domainrelate?.find(
                   (item: any) =>
-                    item.domain_id === TextNameSearch.domain
+                    item.domain_id === TextNameSearch.dataset_domainrelate
                 ) || null
               }
               labelName="โดเมน (Domain)"
-              options={domain || []}
+              options={dataset_domainrelate || []}
               column="domain_name"
               setvalue={(val) => {
                 handleDomainChange(val);
                 setTextNameSearch({
                   ...TextNameSearch,
-                  domain: val?.domain_id || "", // เก็บแค่ id เป็น string
+                  dataset_domainrelate: val?.domain_id || "", // เก็บแค่ id เป็น string
                 });
               }}
             />
@@ -5546,7 +5478,7 @@ export default function Complaint() {
                   dataset_department: val?.department_id || "", // เก็บแค่ id เป็น string
                 });
               }}
-              readonly={!TextNameSearch.domain}
+              readonly={!TextNameSearch.dataset_domainrelate}
             />
           </Grid>
 
@@ -5872,7 +5804,9 @@ export default function Complaint() {
         titlename={"[Complaint] แก้ไขข้อมูล"}
         buttonText={"Save & Submit"}
         handleClose={handleClose}
+        // handlefunction={ComplaintEdit}
         handlefunction={() => ComplaintEdit("SUBMIT")}
+        // handlesavedraft={ComplaintSavedraftEdit}
         handlesavedraft={() => ComplaintEdit("NEW")}
         hideSaveDraft={false}
         buttonColor="success"
@@ -6067,8 +6001,6 @@ export default function Complaint() {
           <ComplaintBody
             action="ReadApproveSC"
             handleOpenAdd={() => handleOnclickExplainAdd(dataelement)}
-            // openExplainView={openExplainView}
-            // handleCloseExplainView={handleClose}
             handleOnclickExplainView={(item) =>
               handleOnclickExplainView(item, "ApproveScRead")
             }
@@ -6088,8 +6020,6 @@ export default function Complaint() {
           <ComplaintBody
             action="ApproveQC"
             handleOpenAdd={() => handleOnclickExplainAdd(dataelement)}
-            // openExplainView={openExplainView}
-            // handleCloseExplainView={handleClose}
             handleOnclickExplainView={(item) =>
               handleOnclickExplainView(item, "ApproveQcRead")
             }
@@ -6109,8 +6039,6 @@ export default function Complaint() {
           <ComplaintBody
             action="ReadApproveQC"
             handleOpenAdd={() => handleOnclickExplainAdd(dataelement)}
-            // openExplainView={openExplainView}
-            // handleCloseExplainView={handleClose}
             handleOnclickExplainView={(item) =>
               handleOnclickExplainView(item, "ApproveQcRead")
             }
@@ -6130,8 +6058,6 @@ export default function Complaint() {
           <ComplaintBody
             action="Close"
             handleOpenAdd={() => handleOnclickExplainAdd(dataelement)}
-            // openExplainView={openExplainView}
-            // handleCloseExplainView={handleClose}
             handleOnclickExplainView={(item) =>
               handleOnclickExplainView(item, "ReadClose")
             }
@@ -6152,8 +6078,6 @@ export default function Complaint() {
           <ComplaintBody
             action="ReadClose"
             handleOpenAdd={() => handleOnclickExplainAdd(dataelement)}
-            // openExplainView={openExplainView}
-            // handleCloseExplainView={handleClose}
             handleOnclickExplainView={(item) =>
               handleOnclickExplainView(item, "ReadClose")
             }
@@ -6173,8 +6097,6 @@ export default function Complaint() {
           <ComplaintBody
             action="CloseHistory"
             handleOpenAdd={() => handleOnclickComplainCloseAdd(dataelement)}
-            // openExplainView={openExplainView}
-            // handleCloseExplainView={handleClose}
             handleOnclickExplainView={(item) =>
               handleOnclickExplainView(item, "CloseHistory")
             }
@@ -6307,12 +6229,10 @@ export default function Complaint() {
         dialogWidth="xl"
         openBottonHidden={true}
         hideSaveDraft
-        hideReject={approveSelectionCode === "APPROVE" || !approveSelectionCode}
-        hideSaveSubmit={
-          approveSelectionCode === "ADD" ||
-          approveSelectionCode === "REJECT" ||
-          !approveSelectionCode
-        }
+        hideReject={false}         // แสดงตลอด
+        hideSaveSubmit={false}     // แสดงตลอด
+        disableReject={!approveSelectionCode || (approveSelectionCode !== "ADD" && approveSelectionCode !== "REJECT") }
+        disableSaveSubmit={!approveSelectionCode || approveSelectionCode !== "APPROVE"}
         titlename={"Approve Section Head (SC ADD) // เพิ่มข้อมูล"}
         buttonText={"Approve"}
         handlefunction={ApproveScAdd}
@@ -6359,9 +6279,8 @@ export default function Complaint() {
       {/* ------------------------------------------------------------------------------------------ */}
       {/* ------------------------------------------------------------------------------------------ */}
 
-      {/* QC ADD */}
-      <FuncDialog
-        open={openExplainApproveQc}
+      {/* <FuncDialog
+        open={openExplainApproveSc}
         dialogWidth="xl"
         openBottonHidden={true}
         hideSaveDraft
@@ -6371,6 +6290,33 @@ export default function Complaint() {
           approveSelectionCode === "REJECT" ||
           !approveSelectionCode
         }
+        titlename={"Approve Section Head (SC ADD) // เพิ่มข้อมูล"}
+        buttonText={"Approve"}
+        handlefunction={ApproveScAdd}
+        handlereject={() => ComplaintReturn("EXPLAIN")}
+        handleClose={handleClose}
+        buttonColor="success"
+        element={
+          <ExplaintBody
+            action="ApproveSCAdd"
+            handleOpenAdd={() => handleOnclickExplainApproveSc(dataelement)}
+            onApproveChange={(value) => {
+              setApproveSelectionCode(value?.lov_code ?? null);
+            }}
+          />
+        }
+      /> */}
+
+      {/* QC ADD */}
+      <FuncDialog
+        open={openExplainApproveQc}
+        dialogWidth="xl"
+        openBottonHidden={true}
+        hideSaveDraft
+        hideReject={false}         // แสดงตลอด
+        hideSaveSubmit={false}     // แสดงตลอด
+        disableReject={!approveSelectionCode || (approveSelectionCode !== "ADD" && approveSelectionCode !== "REJECT") }
+        disableSaveSubmit={!approveSelectionCode || approveSelectionCode !== "APPROVE"}
         titlename={"Approve QC (QC ADD)// เพิ่มข้อมูล"}
         buttonText={"Approve"}
         handlefunction={ApproveQcAdd}
@@ -6418,12 +6364,10 @@ export default function Complaint() {
         dialogWidth="xl"
         openBottonHidden={true}
         hideSaveDraft
-        hideReject={approveSelectionCode === "APPROVE" || !approveSelectionCode}
-        hideSaveSubmit={
-          approveSelectionCode === "ADD" ||
-          approveSelectionCode === "REJECT" ||
-          !approveSelectionCode
-        }
+        hideReject={false}         // แสดงตลอด
+        hideSaveSubmit={false}     // แสดงตลอด
+        disableReject={!approveSelectionCode || (approveSelectionCode !== "ADD" && approveSelectionCode !== "REJECT") }
+        disableSaveSubmit={!approveSelectionCode || approveSelectionCode !== "APPROVE"}
         titlename={"Close (CLOSE ADD) // ปิดรายการ"}
         buttonText={"CLOSE"}
         handlefunction={CloseAdd}

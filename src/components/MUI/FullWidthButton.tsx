@@ -21,13 +21,14 @@ interface FullWidthButton {
   labelName: string | null;
   handleonClick: () => void;
   colorname: any;
+  disabled?: boolean;
   variant_text: "text" | "contained" | "outlined";
   IconComponent?: MUIIcon;
 
 }
 
 
-export default function FullWidthButton({ labelName, handleonClick, colorname = "success", IconComponent, variant_text = "contained" }: FullWidthButton) {
+export default function FullWidthButton({ labelName, handleonClick, colorname = "success", IconComponent, variant_text = "contained" , disabled = false}: FullWidthButton) {
 
   return (
     <div>
@@ -38,6 +39,7 @@ export default function FullWidthButton({ labelName, handleonClick, colorname = 
         color={colorname}
         sx={{fontWeight:"bold"}}
         onClick={handleonClick}
+        disabled={disabled}
         fullWidth
       >
         {labelName}

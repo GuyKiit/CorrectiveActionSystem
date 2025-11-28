@@ -1914,7 +1914,6 @@ console.log("dataelement.explain_id", dataelement?.explain_id);
                 <Grid container spacing={3}>
                   <Grid size={4}>
                     <FullWidthTextField
-                      required="required"
                       value={
                         isActionExplainAdd
                           ? user[0]?.employee_username || "-"
@@ -1929,7 +1928,6 @@ console.log("dataelement.explain_id", dataelement?.explain_id);
                   </Grid>
                   <Grid size={4}>
                     <FullWidthTextField
-                      required="required"
                       value={
                         isActionExplainAdd
                           ? user[0]?.itasset_company_name || "-"
@@ -1961,7 +1959,6 @@ console.log("dataelement.explain_id", dataelement?.explain_id);
                   </Grid>
                   <Grid size={4}>
                     <FullWidthTextField
-                      required="required"
                       value={
                         isActionExplainAdd
                           ? user[0]?.employee_position || "-"
@@ -1976,7 +1973,6 @@ console.log("dataelement.explain_id", dataelement?.explain_id);
                   </Grid>
                   <Grid size={4}>
                     <FullWidthTextField
-                      required="required"
                       value={
                         isActionExplainAdd
                           ? user[0]?.employee_email || "-"
@@ -1992,7 +1988,6 @@ console.log("dataelement.explain_id", dataelement?.explain_id);
                   </Grid>
                   <Grid size={4}>
                     <DesktopDatePickers
-                      required="required"
                       labelName={"วันที่ชี้แจง (Date)"}
                       value={responsible_date}
                       handleChange={(val) => setresponsible_date(val ?? null)}
@@ -2820,10 +2815,8 @@ console.log("dataelement.explain_id", dataelement?.explain_id);
                                           </IconButton>
 
                                           {/* //ปุ่มดาวน์โหลดไฟล์ */}
-                                          {(isActionReadExplain ||
-                                            isActionExplainApproveScRead ||
-                                            isActionExplainApproveScAdd ||
-                                            isActionExplainApproveQcRead) && (
+                                          {
+                                            (
                                             <IconButton
                                               color="primary"
                                               onClick={async () => {
@@ -2967,7 +2960,6 @@ console.log("dataelement.explain_id", dataelement?.explain_id);
               <Grid container spacing={3} sx={{ mt: 1 }}>
                 <Grid size={4}>
                   <FullWidthTextField
-                    required="required"
                     value={approve_name || ""}
                     labelName="ชื่อผู้อนุมัติ (Approved by)"
                     readonly
@@ -2975,7 +2967,6 @@ console.log("dataelement.explain_id", dataelement?.explain_id);
                 </Grid>
                 <Grid size={4}>
                   <AutocompleteComboBox
-                    required="required"
                     value={approve_company_id}
                     labelName={"บริษัท (Company)"}
                     options={dataset_company}
@@ -2987,7 +2978,6 @@ console.log("dataelement.explain_id", dataelement?.explain_id);
                 </Grid>
                 <Grid size={4}>
                   <AutocompleteComboBox
-                    required="required"
                     value={approve_department_id}
                     labelName={"แผนก (Department)"}
                     options={dataset_department}
@@ -2999,7 +2989,6 @@ console.log("dataelement.explain_id", dataelement?.explain_id);
                 </Grid>
                 <Grid size={4}>
                   <FullWidthTextField
-                    required="required"
                     value={approve_position || ""}
                     labelName="ตำแหน่ง (Position)"
                     readonly
@@ -3007,7 +2996,6 @@ console.log("dataelement.explain_id", dataelement?.explain_id);
                 </Grid>
                 <Grid size={4}>
                   <FullWidthTextField
-                    required="required"
                     value={approve_email || ""}
                     labelName="อีเมล (Email)"
                     readonly
@@ -3015,7 +3003,6 @@ console.log("dataelement.explain_id", dataelement?.explain_id);
                 </Grid>
                 <Grid size={4}>
                   <DesktopDatePickers
-                    required="required"
                     labelName={"วันที่อนุมัติ (Date)"}
                     value={approve_date}
                     handleChange={(val) => setapprove_date(val ?? null)}
@@ -3360,7 +3347,6 @@ console.log("dataelement.explain_id", dataelement?.explain_id);
               <Grid container spacing={3} sx={{ mt: 1 }}>
                 <Grid size={4}>
                   <FullWidthTextField
-                    required="required"
                     value={qcapprove_name}
                     labelName="ชื่อผู้อนุมัติ (Approved by)"
                     readonly
@@ -3368,7 +3354,6 @@ console.log("dataelement.explain_id", dataelement?.explain_id);
                 </Grid>
                 <Grid size={4}>
                   <AutocompleteComboBox
-                    required="required"
                     value={qcapprove_company_id}
                     labelName={"บริษัท (Company)"}
                     options={dataset_company}
@@ -3380,7 +3365,6 @@ console.log("dataelement.explain_id", dataelement?.explain_id);
                 </Grid>
                 <Grid size={4}>
                   <AutocompleteComboBox
-                    required="required"
                     value={qcapprove_department_id}
                     labelName={"แผนก (Department)"}
                     options={dataset_department}
@@ -3392,7 +3376,6 @@ console.log("dataelement.explain_id", dataelement?.explain_id);
                 </Grid>
                 <Grid size={4}>
                   <FullWidthTextField
-                    required="required"
                     value={qcapprove_position}
                     labelName="ตำแหน่ง (Position)"
                     readonly
@@ -3400,7 +3383,6 @@ console.log("dataelement.explain_id", dataelement?.explain_id);
                 </Grid>
                 <Grid size={4}>
                   <FullWidthTextField
-                    required="required"
                     value={qcapprove_email}
                     labelName="อีเมล (Email)"
                     readonly
@@ -3408,7 +3390,6 @@ console.log("dataelement.explain_id", dataelement?.explain_id);
                 </Grid>
                 <Grid size={4}>
                   <DesktopDatePickers
-                    required="required"
                     labelName={"วันที่อนุมัติ (Date)"}
                     value={qcapprove_date}
                     handleChange={(val) => setqcapprove_date(val ?? null)}
