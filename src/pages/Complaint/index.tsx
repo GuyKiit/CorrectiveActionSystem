@@ -743,9 +743,11 @@ export default function Complaint() {
   };
 
   const handleDomainChange = (value: any) => {
-    //console.log('####### Onchange Domain Value [event] : ', value);
-    //console.log("@@@@@@@@@@@@First", dataset_domainrelate);
-
+    // reset แผนกก่อนโหลดใหม่
+    setTextNameSearch((prev) => ({
+      ...prev,
+      dataset_department: "", // เคลียร์ค่าเดิม
+    }));
     if (value != null) {
       //console.log("😎😎", value);
       mas_DepartmentGet_Complaint(
@@ -1740,8 +1742,10 @@ export default function Complaint() {
                         mode.lov1
                           .split(",")
                           .includes(String(el.complaint_status_label)) &&
-                        el.step_label == "COMPLAINT" &&
-                        tempApproveSeq == "2"
+                        el.step_label === "COMPLAINT" &&
+                        tempApproveSeq == "2" &&
+                        el.request_department_id ==
+                          user[0]?.itasset_department_id
                       // ) &&
                       // splitNextStepName(el.approve_step
                     )) ??
@@ -2952,6 +2956,18 @@ export default function Complaint() {
             clauseOther
           )
         : null;
+
+      // Normalize date_of_detection ค่อยย้ายไปไว้ตรงกลาง
+      const normalizeDate = (val: any) => {
+        if (!val) return null;
+        if (val === "Invalid Date") return null;
+
+        const d = dayjs(val);
+        return d.isValid() ? d : null;
+      };
+
+      let raw_date_of_detection = date_of_detection;
+      let date_of_detection_normalized = normalizeDate(raw_date_of_detection);
 
       // สร้าง JSON payload
       const complaintPayload = {
@@ -4702,6 +4718,12 @@ export default function Complaint() {
     setfollow_up_date(null);
 
     setresponsible_date(dayjs()); // ตั้งค่าวันที่ชี้แจงเป็นวันปัจจุบัน
+    
+    // ✅ Save current complaint data before opening Explain Add
+    if (dataelement) {
+      setComplaintMainData(dataelement);
+    }
+    
     setOpenExplainAdd(true);
     // ใช้ข้อมูลที่ส่งมาจากหน้า Explain รายละเอียด
     if (data) {
@@ -4739,9 +4761,6 @@ export default function Complaint() {
     };
 
     setCurrentExplainForApproval(approvalData);
-
-    // Reset form ก่อน
-    // resetForm();
 
     // ตั้งวันที่ approve
     setapprove_date(dayjs());
@@ -5151,6 +5170,7 @@ export default function Complaint() {
     } else {
       setdataelement(explainData);
     }
+
     setOpenComplainCloseAdd(true);
     // Reset form ก่อน
     resetForm();
@@ -5188,6 +5208,99 @@ export default function Complaint() {
     // ListSearchGet();
   };
 
+  // Close Explain View Dialog Handler (Back button behavior)
+  const handleCloseExplainView = () => {
+    if (isCallFuncLogOn)
+      console.log(
+        "🕑 ",
+        dayjs().format("HH:mm:ss.SSS"),
+        " [Calling Function]  :  handleCloseExplainView"
+      );
+    useEffect 
+    if (complaintMainData) {
+      setdataelement(complaintMainData);
+    }
+    
+    setOpenExplainView(false);
+  };
+
+
+  const handleCloseExplain = () => {
+    if (isCallFuncLogOn)
+      console.log(
+        "🕑 ",
+        dayjs().format("HH:mm:ss.SSS"),
+        " [Calling Function]  :  handleCloseExplain"
+      );
+    useEffect 
+    if (complaintMainData) {
+      setdataelement(complaintMainData);
+    }
+    
+    setOpenExplain(false);
+  };
+
+  const handleCloseExplainAdd = () => {
+    if (isCallFuncLogOn)
+      console.log(
+        "🕑 ",
+        dayjs().format("HH:mm:ss.SSS"),
+        " [Calling Function]  :  handleCloseExplainAdd"
+      );
+    
+    if (complaintMainData) {
+      // Force a new object reference to trigger useEffect in ComplaintBody
+      setdataelement({ ...complaintMainData, _forceUpdate: Date.now() });
+    }
+    setOpenExplainAdd(false);
+  };
+
+  const handleCloseApproveScAdd = () => {
+    if (isCallFuncLogOn)
+      console.log(
+        "🕑 ",
+        dayjs().format("HH:mm:ss.SSS"),
+        " [Calling Function]  :  handleCloseApproveScAdd"
+      );
+    
+    if (complaintMainData) {
+      // Force a new object reference to trigger useEffect in ComplaintBody
+      setdataelement({ ...complaintMainData, _forceUpdate: Date.now() });
+    }
+    setOpenExplainApproveSc(false);
+  };
+
+  const handleCloseApproveQcAdd = () => {
+    if (isCallFuncLogOn)
+      console.log(
+        "🕑 ",
+        dayjs().format("HH:mm:ss.SSS"),
+        " [Calling Function]  :  handleCloseApproveQcAdd"
+      );
+    
+    if (complaintMainData) {
+      // Force a new object reference to trigger useEffect in ComplaintBody
+      setdataelement({ ...complaintMainData, _forceUpdate: Date.now() });
+    }
+    setOpenExplainApproveQc(false);
+  };
+  
+  const handleCloseAdd = () => {
+    if (isCallFuncLogOn)
+      console.log(
+        "🕑 ",
+        dayjs().format("HH:mm:ss.SSS"),
+        " [Calling Function]  :  handleCloseAdd"
+      );
+    
+    if (complaintMainData) {
+      // Force a new object reference to trigger useEffect in ComplaintBody
+      setdataelement({ ...complaintMainData, _forceUpdate: Date.now() });
+    }
+    setOpenComplainClose(false);
+  };
+  
+  
   // Close Dialog Handler
   const handleClose = () => {
     if (isCallFuncLogOn)
@@ -6118,7 +6231,8 @@ export default function Complaint() {
         openBottonHidden={true}
         titlename={"[Explain] เพิ่มข้อมูล"}
         buttonText={"Save & Submit"}
-        handleClose={handleClose}
+        // handleClose={handleClose}
+        handleClose={handleCloseExplainAdd}
         // handleClose={() => handleOnclickCloseAddExplain(dataelement)}
         handlefunction={ExplainAdd}
         hideSaveDraft={true}
@@ -6187,8 +6301,7 @@ export default function Complaint() {
         dialogWidth="xl"
         openBottonHidden={false}
         titlename={"[Explain] ดูข้อมูล"}
-        handleClose={handleClose}
-        // handleClose={() => handleOnclickCloseReadExplain(dataelement)}
+        handleClose={handleCloseExplainView}
         handlefunction={ExplainGet}
         buttonColor="success"
         element={
@@ -6237,7 +6350,8 @@ export default function Complaint() {
         buttonText={"Approve"}
         handlefunction={ApproveScAdd}
         handlereject={() => ComplaintReturn("APPROVE_SC")}
-        handleClose={handleClose}
+        // handleClose={handleClose}
+        handleClose={handleCloseApproveScAdd}
         buttonColor="success"
         element={
           <ExplaintBody
@@ -6321,7 +6435,8 @@ export default function Complaint() {
         buttonText={"Approve"}
         handlefunction={ApproveQcAdd}
         handlereject={() => ComplaintReturn("APPROVE_QC")}
-        handleClose={handleClose}
+        // handleClose={handleClose}
+        handleClose={handleCloseApproveQcAdd}
         buttonColor="success"
         element={
           <ExplaintBody
@@ -6372,7 +6487,8 @@ export default function Complaint() {
         buttonText={"CLOSE"}
         handlefunction={CloseAdd}
         handlereject={() => ComplaintReturn("CLOSE")}
-        handleClose={handleClose}
+        // handleClose={handleClose}
+        handleClose={handleCloseAdd}
         buttonColor="success"
         element={
           <ExplaintBody
