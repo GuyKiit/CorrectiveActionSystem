@@ -657,6 +657,7 @@ export default function Complaint() {
 
   // For On-Off Calling Function Log
   const [isCallFuncLogOn] = useState(true);
+  const [searchTrigger, setSearchTrigger] = useState(false);
 
   // const handleClose = () => {
   //   if (isCallFuncLogOn)
@@ -1824,6 +1825,13 @@ export default function Complaint() {
       //console.log("error");
     }
   };
+
+  useEffect(() => {
+  if (searchTrigger) {
+    ComplaintGet();
+    setSearchTrigger(false); // reset trigger เพื่อให้พร้อมใช้ครั้งถัดไป
+  }
+}, [searchTrigger, TextNameSearch]);
 
   const splitNextStepName = (str: string) => {
     const parts = str.split("_");
@@ -5204,7 +5212,8 @@ export default function Complaint() {
       datastatus: "",
       dataset_stepcomplaint: "",
     });
-    ComplaintGet();
+
+    setSearchTrigger(true);
     // ListSearchGet();
   };
 
