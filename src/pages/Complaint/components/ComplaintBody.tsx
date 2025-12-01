@@ -513,6 +513,11 @@ export default function ComplaintBody({
   const [isEmailHidden, setisEmailHidden] = useState(true);
   const [isPhoneHidden, setisPhoneHidden] = useState(true);
 
+  const lastFetchedDepartment = React.useRef<{
+    company: any;
+    domain: any;
+  } | null>(null);
+
   // สร้าง state สำหรับควบคุม Accordion
   const [isMinimizedefaultOpen, setisMinimizeDefaultOpen] = useState(true);
   const [isMinimizetypeOpen, setisMinimizeTypeOpen] = useState(
@@ -1254,16 +1259,35 @@ export default function ComplaintBody({
 
         // 5) โหลด Department
         if (dataelement?.respondent_department_id) {
-          await mas_DepartmentGet_Complaint(
-            {
-              domain_id: dataelement?.respondent_domain_id ?? null,
-              company_id: dataelement.respondent_company_id,
-            },
-            setdataset_department,
-            isCallFuncLogOn,
-            user,
-            action
-          );
+          const currentCompanyId =
+            dataelement.respondent_company_id?.company_id ??
+            dataelement.respondent_company_id;
+          const currentDomainId =
+            dataelement.respondent_domain_id?.domain_id ??
+            dataelement.respondent_domain_id ??
+            null;
+
+          const shouldFetch =
+            !lastFetchedDepartment.current ||
+            lastFetchedDepartment.current.company !== currentCompanyId ||
+            lastFetchedDepartment.current.domain !== currentDomainId;
+
+          if (shouldFetch) {
+            await mas_DepartmentGet_Complaint(
+              {
+                domain_id: dataelement?.respondent_domain_id ?? null,
+                company_id: dataelement.respondent_company_id,
+              },
+              setdataset_department,
+              isCallFuncLogOn,
+              user,
+              action
+            );
+            lastFetchedDepartment.current = {
+              company: currentCompanyId,
+              domain: currentDomainId,
+            };
+          }
         }
       } catch (err) {
         console.error("❌ loadInitialData error:", err);
