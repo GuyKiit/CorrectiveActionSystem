@@ -1284,7 +1284,8 @@ export default function ComplaintBody({
               },
               setdataset_department,
               isCallFuncLogOn,
-              user
+              user,
+              action
             );
             lastFetchedDepartment.current = {
               company: currentCompanyId,
