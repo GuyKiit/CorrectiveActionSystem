@@ -1,6 +1,7 @@
 import { Box, TextField } from "@mui/material";
 import InputAdornment from '@mui/material/InputAdornment';
 import { grey } from '@mui/material/colors';
+import { useEffect, useRef } from "react";
 
 interface FullWidthTextField {
   value?: any;
@@ -18,15 +19,25 @@ interface FullWidthTextField {
   Validate?: boolean;
   validateTextLable?: string
   readOnly?: boolean;
+  shouldFocusError?: boolean;
+  submitCount?: number;
 }
 
 export default function FullWidthTextField(props: FullWidthTextField) {
+  const inputRef = useRef<HTMLInputElement>(null);
+
   const hedelonChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     props.onchange && props.onchange(e.target.value);
   };
   const hedelonBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     props.onblur && props.onblur(e.target.value);
   };
+
+  useEffect(() => {
+    if (props.shouldFocusError && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [props.shouldFocusError, props.submitCount]);
 
   ////////////////////////////
   // ถ้า hidden = true จะไม่ render ทั้ง Box และ TextField
@@ -38,6 +49,7 @@ export default function FullWidthTextField(props: FullWidthTextField) {
         {props.labelName} {props.required && <span style={{ color: 'red' }}> *</span>}
       </label>
       <TextField
+        inputRef={inputRef}
         fullWidth
         // multiline    
         sx={{
@@ -75,4 +87,3 @@ export default function FullWidthTextField(props: FullWidthTextField) {
     </Box>
   );
 }
-//  

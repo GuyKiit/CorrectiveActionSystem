@@ -2706,11 +2706,9 @@ console.log("dataelement.explain_id", dataelement?.explain_id);
                                               color: "#484444ff",
                                             }}
                                           >
-                                            {(
-                                              item.file.size /
-                                              (1024 * 1024)
-                                            ).toFixed(2)}{" "}
-                                            MB
+                                            {item.file.size < 1024 * 1024
+                                              ? `${(item.file.size / 1024).toFixed(2)} KB`
+                                              : `${(item.file.size / (1024 * 1024)).toFixed(2)} MB`}
                                           </div>
                                           {photoType.id === "TRR_AT_4" && (
                                             <div

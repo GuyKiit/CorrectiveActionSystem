@@ -3,6 +3,8 @@ import Autocomplete from "@mui/material/Autocomplete";
 import { grey } from "@mui/material/colors";
 
 
+import React from "react";
+
 interface AutocompleteComboBox {
   value?: any;
   labelName: string;
@@ -19,6 +21,8 @@ interface AutocompleteComboBox {
   validateTextLable?: string;
   error?: boolean;
   id?: string;
+  shouldFocusError?: boolean;
+  submitCount?: number;
 }
 
 export default function AutocompleteComboBox(props: AutocompleteComboBox) {
@@ -34,7 +38,22 @@ export default function AutocompleteComboBox(props: AutocompleteComboBox) {
     bgcolorTextField,
     readonly,
     validateTextLable,
+    shouldFocusError,
+    submitCount,
   } = props;
+
+  //shouldFocusError
+  const inputRef = React.useRef<HTMLInputElement>(null);
+
+  React.useEffect(() => {
+    if (shouldFocusError && inputRef.current) {
+      // console.log(`[AutocompleteComboBox] Focusing on ${labelName} due to validation error`);
+      inputRef.current.focus();
+    }
+  }, [shouldFocusError, labelName, submitCount]);
+
+  ////////////////////////////////////
+
   const handleOnchange = (e: any, value: any) => {
     setvalue && setvalue(value)
   };
@@ -75,6 +94,17 @@ export default function AutocompleteComboBox(props: AutocompleteComboBox) {
         renderInput={(params) => (
           <TextField
             {...params}
+            inputRef={(ref: any) => {
+              inputRef.current = ref;
+
+              if (params.inputProps.ref) {
+                if (typeof params.inputProps.ref === "function") {
+                  params.inputProps.ref(ref);
+                } else {
+                  (params.inputProps.ref as any).current = ref;
+                }
+              }
+            }}
             placeholder="กรุณาเลือก"
             size="small"
             sx={{

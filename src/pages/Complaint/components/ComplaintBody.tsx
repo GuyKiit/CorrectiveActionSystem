@@ -152,6 +152,7 @@ interface ComplaintBody {
   handleOnclickExplainApproveQc?: (item: any) => void;
 
   handleOnclickComplainCloseAdd?: (item: any) => void;
+  submitCount?: number;
 }
 
 type LovType = {
@@ -198,6 +199,7 @@ export default function ComplaintBody({
   onRespondentDepartmentChange,
 
   onComplaintTypeChange,
+  submitCount,
   onOtherTypeChange,
 
   onComplaintRsChange,
@@ -430,6 +432,20 @@ export default function ComplaintBody({
   } = useListComplaint();
 
   const [previewFile, setPreviewFile] = useState<File | null>(null);
+  const complaintTypeRef = useRef<HTMLDivElement>(null);
+  const complaintRsRef = useRef<HTMLDivElement>(null);
+  const priorityRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (validateText?.Complaint_Type && complaintTypeRef.current) {
+      complaintTypeRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+    if (validateText?.Complaint_Rs && complaintRsRef.current) {
+      complaintRsRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+    if (validateText?.Priority && priorityRef.current) {
+      priorityRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, [validateText?.Complaint_Type, validateText?.Complaint_Rs, validateText?.Priority, submitCount]);
 
   const getPdfUrl = (file: File) => {
     if (file.type === "application/pdf") {
@@ -497,31 +513,19 @@ export default function ComplaintBody({
   const [isEmailHidden, setisEmailHidden] = useState(true);
   const [isPhoneHidden, setisPhoneHidden] = useState(true);
 
-  // Refs for caching and tracking
-  const lastDataElement = React.useRef<any>(null);
-  const hasMappedDepartment = React.useRef(false);
-  const lastFetchedDomainRelate = React.useRef<{
-    company: any;
-    domain: any;
-  } | null>(null);
-  const lastFetchedDepartment = React.useRef<{
-    company: any;
-    domain: any;
-  } | null>(null);
-
   // สร้าง state สำหรับควบคุม Accordion
   const [isMinimizedefaultOpen, setisMinimizeDefaultOpen] = useState(true);
   const [isMinimizetypeOpen, setisMinimizeTypeOpen] = useState(
-    action !== "Add" && action !== "Edit" ? false : true
+    action === "Explain" || action === "ApproveSCAdd" ? false : true
   );
   const [isMinimizersOpen, setisMinimizeRsOpen] = useState(
-    action !== "Add" && action !== "Edit" ? false : true
+    action === "Explain" || action === "ApproveSCAdd" ? false : true
   );
   const [isMinimizedetailOpen, setisMinimizeDetailOpen] = useState(
-    action !== "Add" && action !== "Edit" ? false : true
+    action === "Explain" || action === "ApproveSCAdd" ? false : true
   );
   const [isMinimizepriorityOpen, setisMinimizePriorityOpen] = useState(
-    action !== "Add" && action !== "Edit" ? false : true
+    action === "Explain" || action === "ApproveSCAdd" ? false : true
   );
   const [isMinimizefileOpen, setisMinimizeFileOpen] = useState(true);
   const [isMinimizerespondOpen, setisMinimizeRespondOpen] = useState(true);
@@ -1091,7 +1095,8 @@ export default function ComplaintBody({
 
   useEffect(() => {
     console.log("complaint_status_id", complaint_status_id);
-  }, [complaint_status_id]);
+  }),
+    [complaint_status_id];
 
   // READ - Get Complaints
   const ComplaintFile_Get = async () => {
@@ -1167,6 +1172,11 @@ export default function ComplaintBody({
     }
   };
 
+  // ⭐⭐⭐⭐⭐ Start : ==============================================================================================//
+  // const effectRan = React.useRef(false); // ป้องกัน run ซ้ำใน dev mode
+  const lastDataElement = React.useRef<any>(null); // Track last processed data
+  const hasMappedDepartment = React.useRef(false); // Track if department has been mapped
+
   // 🧩 1️⃣ โหลดข้อมูลหลัก (ReportType, Company, Domain, Department)
   React.useEffect(() => {
     if (!dataelement || action === "Add") return; // 👈 ป้องกันตอน New
@@ -1222,33 +1232,14 @@ export default function ComplaintBody({
 
         // 3) Domain relate
         if (dataelement?.respondent_company_id) {
-          const currentCompanyId =
-            dataelement.respondent_company_id?.company_id ??
-            dataelement.respondent_company_id;
-          const currentDomainId =
-            dataelement.respondent_domain_id?.domain_id ??
-            dataelement.respondent_domain_id ??
-            null;
-
-          const shouldFetch =
-            !lastFetchedDomainRelate.current ||
-            lastFetchedDomainRelate.current.company !== currentCompanyId ||
-            lastFetchedDomainRelate.current.domain !== currentDomainId;
-
-          if (shouldFetch) {
-            await mas_DomainRelateGet(
-              {
-                domain: dataelement?.respondent_domain_id ?? null,
-                company_id: dataelement.respondent_company_id,
-              },
-              set_domainrelate,
-              isCallFuncLogOn
-            );
-            lastFetchedDomainRelate.current = {
-              company: currentCompanyId,
-              domain: currentDomainId,
-            };
-          }
+          await mas_DomainRelateGet(
+            {
+              domain: dataelement?.respondent_domain_id ?? null,
+              company_id: dataelement.respondent_company_id,
+            },
+            set_domainrelate,
+            isCallFuncLogOn
+          );
         }
 
         // 4) Domain default
@@ -1263,40 +1254,21 @@ export default function ComplaintBody({
 
         // 5) โหลด Department
         if (dataelement?.respondent_department_id) {
-          const currentCompanyId =
-            dataelement.respondent_company_id?.company_id ??
-            dataelement.respondent_company_id;
-          const currentDomainId =
-            dataelement.respondent_domain_id?.domain_id ??
-            dataelement.respondent_domain_id ??
-            null;
-
-          const shouldFetch =
-            !lastFetchedDepartment.current ||
-            lastFetchedDepartment.current.company !== currentCompanyId ||
-            lastFetchedDepartment.current.domain !== currentDomainId;
-
-          if (shouldFetch) {
-            await mas_DepartmentGet_Complaint(
-              {
-                domain_id: dataelement?.respondent_domain_id ?? null,
-                company_id: dataelement.respondent_company_id,
-              },
-              setdataset_department,
-              isCallFuncLogOn,
-              user
-            );
-            lastFetchedDepartment.current = {
-              company: currentCompanyId,
-              domain: currentDomainId,
-            };
-          }
+          await mas_DepartmentGet_Complaint(
+            {
+              domain_id: dataelement?.respondent_domain_id ?? null,
+              company_id: dataelement.respondent_company_id,
+            },
+            setdataset_department,
+            isCallFuncLogOn,
+            user,
+            action
+          );
         }
       } catch (err) {
         console.error("❌ loadInitialData error:", err);
       }
     };
-console.log("actionnnnn",action);
 
     loadInitialData();
   }, [dataelement]);
@@ -1443,7 +1415,11 @@ console.log("actionnnnn",action);
           ? dayjs(dataelement.doc_date, "DD-MM-YYYY")
           : dayjs()
       );
-      setdate_of_detection(dayjs(dataelement?.date_of_detection));
+      setdate_of_detection(
+        dataelement?.date_of_detection
+          ? dayjs(dataelement.date_of_detection)
+          : null
+      );
 
       // Map respondent_department_id
       // console.log("🔍 Department mapping debug:", {respondent_department_id: dataelement.respondent_department_id,dataset_department_sample: dataset_department?.[0], });
@@ -1766,11 +1742,6 @@ console.log("actionnnnn",action);
         border: "2px solid #39a2f2",
         borderRadius: 2,
         backgroundColor: "#ffffff",
-        // boxShadow: '0 0 10px 2px rgba(0, 98, 233, 0.5)',
-        // transition: 'box-shadow 0.3s ease',
-        // '&:hover': {
-        //   boxShadow: '0 0 20px 4px rgba(0, 98, 233, 0.8)',
-        // },
       }}
     >
       <div className="px-2 pt-2 pb-5">
@@ -1785,32 +1756,17 @@ console.log("actionnnnn",action);
             required="required"
             value={dataReportTypeValue}
             labelName={"ประเภทรายงาน (Report Type)"}
-            options={dataset_reporttype} // <-- แก้ตรงนี้
-            column="lov_code"
+            // options={dataset_reporttype} // <-- แก้ตรงนี้
+            options={(dataset_reporttype || []).map((item: any) => ({
+                ...item, // ✅ เก็บค่าทุกอย่างของ item เดิมไว้ (รวมถึง lov4)
+                displayText: item.lov3
+                  ? `${item.lov_code} (${item.lov3})`
+                  : item.lov_code,
+              }))}
+            // column="lov_code"
+            column="displayText"
             setvalue={handleReportTypeChange}
-            // readonly={
-            //   isActionRead
-            //     ? true
-            //     : isActionEdit
-            //       ? true
-            //       : isActionDelete
-            //         ? true
-            //         : isActionDelete
-            //           ? true
-            //           : isActionExplain
-            //             ? true
-            //             : readonlyTextField
-            // }
             readonly={!isActionAdd}
-            // bgcolorTextField={
-            //   isActionRead
-            //     ? true
-            //     : isActionEdit
-            //       ? true
-            //       : isActionDelete
-            //         ? true
-            //         : bgcolorTextField
-            // }
             bgcolorTextField={!isActionAdd}
             Validate={validateText?.Report_Type || false}
             validateTextLable={
@@ -1889,6 +1845,7 @@ console.log("actionnnnn",action);
                     readonly={!isActionAdd && !isActionEdit}
                     required="required"
                     Validate={validateText?.Respondent_Department || false}
+                    shouldFocusError={validateText?.Respondent_Department}
                     validateTextLable={
                       validateText?.Respondent_Department
                         ? "กรุณาเลือกโดเมน"
@@ -1975,11 +1932,13 @@ console.log("actionnnnn",action);
                         bgcolorTextField={action === "Add" ? false : true}
                         readonly={!isActionAdd && !isActionEdit}
                         Validate={validateText?.Date_of_Detection || false}
+                        shouldFocusError={validateText?.Date_of_Detection}
                         validateTextLable={
                           validateText?.Date_of_Detection
                             ? "กรุณาเลือกวันที่พบปัญหา"
                             : ""
                         }
+                        submitCount={submitCount}
                       />
                     </Grid>
                     <Grid size={4}>
@@ -1987,9 +1946,7 @@ console.log("actionnnnn",action);
                         key={respondent_domain_id?.domain_id || "no-domain"}
                         required="required"
                         value={respondent_department_id}
-                        labelName={
-                          "แผนกที่พบปัญหา (Department / Area of Detection)"
-                        }
+                        labelName={"แผนกที่พบปัญหา (Department / Area of Detection)"}
                         options={dataset_department}
                         column="department_name"
                         setvalue={async (val) => {
@@ -2044,11 +2001,13 @@ console.log("actionnnnn",action);
                           !respondent_domain_id
                         }
                         Validate={validateText?.Department_Area || false}
+                        shouldFocusError={validateText?.Department_Area}
                         validateTextLable={
                           validateText?.Department_Area
                             ? "กรุณาเลือกแผนกที่พบปัญหา"
                             : ""
                         }
+                        submitCount={submitCount}
                       />
                     </Grid>
                     <Grid size={4}>
@@ -2065,11 +2024,13 @@ console.log("actionnnnn",action);
                         //readonly={isActionRead || isActionDelete || isActionExplain}
                         readonly={!isActionAdd && !isActionEdit}
                         Validate={validateText?.Product_Name || false}
+                        shouldFocusError={validateText?.Product_Name}
                         validateTextLable={
                           validateText?.Product_Name
                             ? "กรุณากรอกชื่อสินค้า"
                             : ""
                         }
+                        submitCount={submitCount}
                       />
                     </Grid>
                     <Grid size={4}>
@@ -2087,13 +2048,16 @@ console.log("actionnnnn",action);
                         //readonly={isActionRead || isActionDelete || isActionExplain}
                         readonly={!isActionAdd && !isActionEdit}
                         Validate={validateText?.Lot_No || false}
+                        shouldFocusError={validateText?.Lot_No}
                         validateTextLable={
                           validateText?.Lot_No ? "กรุณากรอก Lot No./Bag No" : ""
                         }
+                        submitCount={submitCount}
                       />
                     </Grid>
                     <Grid size={4}>
                       <FullWidthTextField
+                        required="required"
                         value={respondent_email}
                         labelName="อีเมล (Email)"
                         onchange={(e) => {
@@ -2164,6 +2128,7 @@ console.log("actionnnnn",action);
                               expandIcon={<ExpandMoreIcon />}
                               aria-controls="reference-standard-content"
                               id="reference-standard-header"
+                              ref={complaintTypeRef}
                             >
                               <Typography
                                 className="sarabun-regular-datatable"
@@ -2227,9 +2192,12 @@ console.log("actionnnnn",action);
                                           : true
                                       }
                                       readonly={!isActionAdd && !isActionEdit}
+                                      shouldFocusError={validateText?.Other_Type}
+                                      submitCount={submitCount}
                                       Validate={
                                         validateText?.Other_Type || false
                                       }
+
                                       validateTextLable={
                                         validateText?.Other_Type
                                           ? "กรุณากรอกรายละเอียด"
@@ -2239,6 +2207,7 @@ console.log("actionnnnn",action);
                                   )}
                                 </Box>
                               </Box>
+
                               {validateText?.Complaint_Type && (
                                 <label
                                   className="fs-7 py-1 sarabun-regular-lable-validate"
@@ -2271,6 +2240,7 @@ console.log("actionnnnn",action);
                               expandIcon={<ExpandMoreIcon />}
                               aria-controls="reference-standard-content"
                               id="reference-standard-header"
+                              ref={complaintRsRef}
                             >
                               <Typography
                                 className="sarabun-regular-datatable"
@@ -2360,6 +2330,8 @@ console.log("actionnnnn",action);
                                           : true
                                       }
                                       readonly={!isActionAdd && !isActionEdit}
+                                      shouldFocusError={validateText?.Other_Rs}
+                                      submitCount={submitCount}
                                       Validate={validateText?.Other_Rs || false}
                                       validateTextLable={
                                         validateText?.Other_Rs
@@ -2444,14 +2416,15 @@ console.log("actionnnnn",action);
                                       ? false
                                       : true
                                   }
-                                  //readonly={isActionRead || isActionDelete || isActionExplain}
                                   readonly={!isActionAdd && !isActionEdit}
                                   Validate={validateText?.Detail || false}
+                                  shouldFocusError={validateText?.Detail}
                                   validateTextLable={
                                     validateText?.Detail
                                       ? "กรุณากรอกรายละเอียด (Detail)"
                                       : ""
                                   }
+                                  submitCount={submitCount}
                                 />
                               </Grid>
                             </Grid>
@@ -2479,6 +2452,7 @@ console.log("actionnnnn",action);
                             expandIcon={<ExpandMoreIcon />}
                             aria-controls="reference-standard-content"
                             id="reference-standard-header"
+                            ref={priorityRef}
                           >
                             <Typography
                               className="sarabun-regular-datatable"
@@ -2669,6 +2643,7 @@ console.log("actionnnnn",action);
                                 </Box>
                               </Grid>
                             </Grid>
+                            
                             {validateText?.Priority && (
                               <label
                                 className="fs-7 py-1 sarabun-regular-lable-validate"
@@ -2813,11 +2788,9 @@ console.log("actionnnnn",action);
                                               color: "#484444ff",
                                             }}
                                           >
-                                            {(
-                                              item.file.size /
-                                              (1024 * 1024)
-                                            ).toFixed(2)}{" "}
-                                            MB
+                                            {item.file.size < 1024 * 1024
+                                              ? `${(item.file.size / 1024).toFixed(2)} KB`
+                                              : `${(item.file.size / (1024 * 1024)).toFixed(2)} MB`}
                                           </div>
                                           {photoType.id === "TRR_AT_4" && (
                                             <div
