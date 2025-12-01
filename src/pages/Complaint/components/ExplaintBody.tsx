@@ -2899,7 +2899,7 @@ console.log("dataelement.explain_id", dataelement?.explain_id);
         (isActionExplainRead && foundSC) ||
         (isActionExplainReadApproveSc && foundSC) ||
         (isActionExplainApproveScRead && foundSC) ||
-        (isActionExplainReadApproveQc && isApproveQcBoxHidden) ||
+        (isActionExplainReadApproveQc && foundSC) ||
         isActionExplainApproveQcRead ||
         isActionCloseHistory ||
         isActionReadClose &&  foundSC) && (
@@ -3282,13 +3282,13 @@ console.log("dataelement.explain_id", dataelement?.explain_id);
 
       {/* //ส่วนของ Qc */}
       {(isActionExplainApproveQcAdd ||
-        isActionExplainReadApproveQc ||
+        (isActionExplainReadApproveQc && foundQC) ||
         (isActionExplainApproveQcRead && foundQC) ||
         (isActionReadExplain && foundQC) ||
         (isActionExplainRead && foundQC) ||
         (isActionExplainApproveScRead && foundQC) ||
         (isActionReadClose && foundQC ) ||
-        isActionCloseHistory ||
+        (isActionCloseHistory && foundQC ) ||
         isActionCloseAdd) && (
         <Paper
           elevation={3}

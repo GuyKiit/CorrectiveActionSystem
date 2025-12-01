@@ -578,7 +578,7 @@ export default function Complaint() {
   // Search Variables (from index.tsx)
   const [TextNameSearch, setTextNameSearch] = React.useState({
     dataset_company: "",
-    dataset_domainrelate: "",
+    dataset_domain: "",
     dataset_department: "",
     report_code: "",
     cas_number: "",
@@ -1510,8 +1510,8 @@ export default function Complaint() {
       department_id: user[0]?.itasset_department_id,
       company_id: user[0]?.itasset_company_id, //@param Fixed
       //=======================================================
-      domain: TextNameSearch.dataset_domainrelate
-        ? TextNameSearch.dataset_domainrelate
+      domain: TextNameSearch.dataset_domain
+        ? TextNameSearch.dataset_domain
         : null,
       department: TextNameSearch.dataset_department
         ? TextNameSearch.dataset_department
@@ -5194,7 +5194,7 @@ export default function Complaint() {
     setdocumentDateSearch(null);
     setTextNameSearch({
       dataset_company: "",
-      dataset_domainrelate: "",
+      dataset_domain: "",
       dataset_department: "",
       report_code: "",
       cas_number: "",
@@ -5202,9 +5202,8 @@ export default function Complaint() {
       lot_no: "",
       datastatus: "",
       dataset_stepcomplaint: "",
-      // request_department_id: ""
     });
-    // Complaint_Get()
+    ComplaintGet();
     // ListSearchGet();
   };
 
@@ -5557,19 +5556,19 @@ export default function Complaint() {
           <Grid size={4}>
             <AutocompleteComboBox
               value={
-                dataset_domainrelate?.find(
+                domain?.find(
                   (item: any) =>
-                    item.domain_id === TextNameSearch.dataset_domainrelate
+                    item.domain_id === TextNameSearch.dataset_domain
                 ) || null
               }
               labelName="โดเมน (Domain)"
-              options={dataset_domainrelate || []}
+              options={domain || []}
               column="domain_name"
               setvalue={(val) => {
                 handleDomainChange(val);
                 setTextNameSearch({
                   ...TextNameSearch,
-                  dataset_domainrelate: val?.domain_id || "", // เก็บแค่ id เป็น string
+                  dataset_domain: val?.domain_id || "", // เก็บแค่ id เป็น string
                 });
               }}
             />
@@ -5591,7 +5590,7 @@ export default function Complaint() {
                   dataset_department: val?.department_id || "", // เก็บแค่ id เป็น string
                 });
               }}
-              readonly={!TextNameSearch.dataset_domainrelate}
+              readonly={!TextNameSearch.dataset_domain}
             />
           </Grid>
 
@@ -5796,7 +5795,7 @@ export default function Complaint() {
         hideSaveDraft={!dataReportTypeValue}
         hideSaveSubmit={!dataReportTypeValue}
         titlename={"[Complaint] เพิ่มข้อมูล"}
-        buttonText={"Save & Submit"}
+        buttonText={"บันทึกและส่ง"}
         handleClose={handleClose}
         handlefunction={ComplaintAdd}
         handlesavedraft={ComplaintSavedraftAdd}
@@ -5915,7 +5914,7 @@ export default function Complaint() {
         openBottonHidden={true}
         hideReject={true}
         titlename={"[Complaint] แก้ไขข้อมูล"}
-        buttonText={"Save & Submit"}
+        buttonText={"บันทึกและส่ง"}
         handleClose={handleClose}
         // handlefunction={ComplaintEdit}
         handlefunction={() => ComplaintEdit("SUBMIT")}
@@ -6024,7 +6023,7 @@ export default function Complaint() {
         openBottonHidden={true}
         hideReject={true}
         titlename={"[Complaint] ลบข้อมูล"}
-        buttonText={"Delete"}
+        buttonText={"ลบข้อมูล"}
         handleClose={handleClose}
         handlefunction={ComplaintDelete}
         buttonColor="error"
