@@ -90,7 +90,7 @@ export default function FuncDialog(props: FuncDialog) {
           {!props.hideSaveDraft && props.openBottonHidden && (
             <FullWidthButton
               handleonClick={props.handlesavedraft ?? props.handleClose}
-              labelName="Save Draft"
+              labelName="ร่างแบบฟอร์ม"
               variant_text="contained"
               colorname={props.buttonColor ?? "primary"}
             />
