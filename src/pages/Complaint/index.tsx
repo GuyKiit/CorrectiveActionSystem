@@ -4928,28 +4928,28 @@ export default function Complaint() {
         " [Calling Function]  :  handleOnclickComplainCloseAdd"
       );
 
-    console.log("🧩 Data received:", data);
-    console.log("🧑‍💼 User profile:", user[0]);
-    console.log("🧪 ExplaintBody loaded", {
-      action,
-      dataelement,
-      observation_analysis,
-      root_cause,
-    });
+    // console.log("🧩 Data received:", data);
+    // console.log("🧑‍💼 User profile:", user[0]);
+    // console.log("🧪 ExplaintBody loaded", {
+    //   action,
+    //   dataelement,
+    //   observation_analysis,
+    //   root_cause,
+    // });
     // Reset form ก่อน
     resetForm();
     const complaintData = dataelement;
 
-    console.log(
-      "😡😡😡😡😡😡😡😡 #1 dataelement",
-      dataelement,
-      "😡😡😡😡😡😡😡😡"
-    );
-    console.log(
-      "🌐🌐🌐🌐🌐🌐🌐🌐 explainData",
-      explainData,
-      "🌐🌐🌐🌐🌐🌐🌐🌐"
-    );
+    // console.log(
+    //   "😡😡😡😡😡😡😡😡 #1 dataelement",
+    //   dataelement,
+    //   "😡😡😡😡😡😡😡😡"
+    // );
+    // console.log(
+    //   "🌐🌐🌐🌐🌐🌐🌐🌐 explainData",
+    //   explainData,
+    //   "🌐🌐🌐🌐🌐🌐🌐🌐"
+    // );
 
     // เก็บ complaint หลัก
     setComplaintMainData(complaintData);
@@ -5147,21 +5147,6 @@ export default function Complaint() {
   };
 
 
-  const handleCloseExplain = () => {
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  handleCloseExplain"
-      );
-    useEffect 
-    if (complaintMainData) {
-      setdataelement(complaintMainData);
-    }
-    
-    setOpenExplain(false);
-  };
-
   const handleCloseExplainAdd = () => {
     if (isCallFuncLogOn)
       console.log(
@@ -5215,13 +5200,17 @@ export default function Complaint() {
         " [Calling Function]  :  handleCloseAdd"
       );
     
-    if (complaintMainData) {
+  //  useEffect 
+  //   if (complaintMainData) {
+  //     setdataelement(complaintMainData);
+    
+  if (complaintMainData) {
       // Force a new object reference to trigger useEffect in ComplaintBody
       setdataelement({ ...complaintMainData, _forceUpdate: Date.now() });
     }
-    setOpenComplainClose(false);
+    
+    setOpenComplainCloseAdd(false);
   };
-  
   
   // Close Dialog Handler
   const handleClose = () => {
@@ -5257,6 +5246,7 @@ export default function Complaint() {
     //setdataFuapp(null); // รีเซ็ตค่า Approve ที่เลือกไว้
     // resetForm();
   };
+
 
   // Set Data Handler
   const setData = (data: any) => {
@@ -6034,9 +6024,7 @@ export default function Complaint() {
             handleOpenAdd={() => handleOnclickExplainAdd(dataelement)}
             // openExplainView={openExplainView}
             // handleCloseExplainView={handleClose}
-            handleOnclickExplainView={(item) =>
-              handleOnclickExplainView(item, "ApproveScRead")
-            }
+            handleOnclickExplainView={(item) => handleOnclickExplainView(item, "ApproveScRead")}
             handleOnclickExplainApproveSc={handleOnclickExplainApproveSc}
           />
         }
@@ -6138,12 +6126,9 @@ export default function Complaint() {
           <ComplaintBody
             action="CloseHistory"
             handleOpenAdd={() => handleOnclickComplainCloseAdd(dataelement)}
-            // openExplainView={openExplainView}
-            // handleCloseExplainView={handleClose}
             handleOnclickExplainView={(item) =>
               handleOnclickExplainView(item, "CloseHistory")
             }
-            // handleOnclickExplainApproveSc={handleOnclickExplainApproveSc}
           />
         }
       />

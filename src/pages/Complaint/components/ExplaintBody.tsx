@@ -860,7 +860,7 @@ export default function ExplaintBody({
       return;
     }
 
-    setIsLoadingScreen(true);
+    // setIsLoadingScreen(true);
     const dataset = {
       explain_id: dataelement?.id,
       cf_type: "Explain",

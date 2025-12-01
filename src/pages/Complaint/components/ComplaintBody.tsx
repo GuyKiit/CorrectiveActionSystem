@@ -497,6 +497,18 @@ export default function ComplaintBody({
   const [isEmailHidden, setisEmailHidden] = useState(true);
   const [isPhoneHidden, setisPhoneHidden] = useState(true);
 
+  // Refs for caching and tracking
+  const lastDataElement = React.useRef<any>(null);
+  const hasMappedDepartment = React.useRef(false);
+  const lastFetchedDomainRelate = React.useRef<{
+    company: any;
+    domain: any;
+  } | null>(null);
+  const lastFetchedDepartment = React.useRef<{
+    company: any;
+    domain: any;
+  } | null>(null);
+
   // สร้าง state สำหรับควบคุม Accordion
   const [isMinimizedefaultOpen, setisMinimizeDefaultOpen] = useState(true);
   const [isMinimizetypeOpen, setisMinimizeTypeOpen] = useState(
@@ -1078,8 +1090,7 @@ export default function ComplaintBody({
 
   useEffect(() => {
     console.log("complaint_status_id", complaint_status_id);
-  }),
-    [complaint_status_id];
+  }, [complaint_status_id]);
 
   // READ - Get Complaints
   const ComplaintFile_Get = async () => {
@@ -1155,11 +1166,6 @@ export default function ComplaintBody({
     }
   };
 
-  // ⭐⭐⭐⭐⭐ Start : ==============================================================================================//
-  // const effectRan = React.useRef(false); // ป้องกัน run ซ้ำใน dev mode
-  const lastDataElement = React.useRef<any>(null); // Track last processed data
-  const hasMappedDepartment = React.useRef(false); // Track if department has been mapped
-
   // 🧩 1️⃣ โหลดข้อมูลหลัก (ReportType, Company, Domain, Department)
   React.useEffect(() => {
     if (!dataelement || action === "Add") return; // 👈 ป้องกันตอน New
@@ -1215,14 +1221,33 @@ export default function ComplaintBody({
 
         // 3) Domain relate
         if (dataelement?.respondent_company_id) {
-          await mas_DomainRelateGet(
-            {
-              domain: dataelement?.respondent_domain_id ?? null,
-              company_id: dataelement.respondent_company_id,
-            },
-            set_domainrelate,
-            isCallFuncLogOn
-          );
+          const currentCompanyId =
+            dataelement.respondent_company_id?.company_id ??
+            dataelement.respondent_company_id;
+          const currentDomainId =
+            dataelement.respondent_domain_id?.domain_id ??
+            dataelement.respondent_domain_id ??
+            null;
+
+          const shouldFetch =
+            !lastFetchedDomainRelate.current ||
+            lastFetchedDomainRelate.current.company !== currentCompanyId ||
+            lastFetchedDomainRelate.current.domain !== currentDomainId;
+
+          if (shouldFetch) {
+            await mas_DomainRelateGet(
+              {
+                domain: dataelement?.respondent_domain_id ?? null,
+                company_id: dataelement.respondent_company_id,
+              },
+              set_domainrelate,
+              isCallFuncLogOn
+            );
+            lastFetchedDomainRelate.current = {
+              company: currentCompanyId,
+              domain: currentDomainId,
+            };
+          }
         }
 
         // 4) Domain default
@@ -1237,15 +1262,34 @@ export default function ComplaintBody({
 
         // 5) โหลด Department
         if (dataelement?.respondent_department_id) {
-          await mas_DepartmentGet_Complaint(
-            {
-              domain_id: dataelement?.respondent_domain_id ?? null,
-              company_id: dataelement.respondent_company_id,
-            },
-            setdataset_department,
-            isCallFuncLogOn,
-            user
-          );
+          const currentCompanyId =
+            dataelement.respondent_company_id?.company_id ??
+            dataelement.respondent_company_id;
+          const currentDomainId =
+            dataelement.respondent_domain_id?.domain_id ??
+            dataelement.respondent_domain_id ??
+            null;
+
+          const shouldFetch =
+            !lastFetchedDepartment.current ||
+            lastFetchedDepartment.current.company !== currentCompanyId ||
+            lastFetchedDepartment.current.domain !== currentDomainId;
+
+          if (shouldFetch) {
+            await mas_DepartmentGet_Complaint(
+              {
+                domain_id: dataelement?.respondent_domain_id ?? null,
+                company_id: dataelement.respondent_company_id,
+              },
+              setdataset_department,
+              isCallFuncLogOn,
+              user
+            );
+            lastFetchedDepartment.current = {
+              company: currentCompanyId,
+              domain: currentDomainId,
+            };
+          }
         }
       } catch (err) {
         console.error("❌ loadInitialData error:", err);
