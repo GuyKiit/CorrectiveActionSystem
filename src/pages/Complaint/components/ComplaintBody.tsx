@@ -437,24 +437,49 @@ export default function ComplaintBody({
   const complaintTypeRef = useRef<HTMLDivElement>(null);
   const complaintRsRef = useRef<HTMLDivElement>(null);
   const priorityRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    if (validateText?.Complaint_Type && complaintTypeRef.current) {
-      complaintTypeRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
-    }
-    if (validateText?.Complaint_Rs && complaintRsRef.current) {
-      complaintRsRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
-    }
-    if (validateText?.Priority && priorityRef.current) {
-      priorityRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
-    }
-  }, [validateText?.Complaint_Type, validateText?.Complaint_Rs, validateText?.Priority, submitCount]);
+  const [firstErrorField, setFirstErrorField] = useState<string | null>(null);
 
-  const getPdfUrl = (file: File) => {
-    if (file.type === "application/pdf") {
-      return URL.createObjectURL(file);
+  useEffect(() => {
+    if (!validateText) return;
+
+    // Define the order of fields from top to bottom based on Validate type
+    const fieldOrder: (keyof Validate)[] = [
+      "Product_Group",
+      "Report_Type",
+      "Respondent_Department",
+      "Date_of_Detection",
+      "Department_Area",
+      "Product_Name",
+      "Lot_No",
+      "Email",
+      "Complaint_Type",
+      "Other_Type",
+      "Complaint_Rs",
+      "Clause_Rs",
+      "Other_Rs",
+      "Detail",
+      "Priority",
+    ];
+
+    // Find the first field that has an error
+    const firstError = fieldOrder.find((field) => validateText[field]);
+
+    if (firstError) {
+      setFirstErrorField(firstError);
+      
+      // Handle scrolling for Accordions
+      if (firstError === "Complaint_Type" && complaintTypeRef.current) {
+        complaintTypeRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+      } else if (firstError === "Complaint_Rs" && complaintRsRef.current) {
+        complaintRsRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+      } else if (firstError === "Priority" && priorityRef.current) {
+        priorityRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    } else {
+      setFirstErrorField(null);
     }
-    return null;
-  };
+  }, [submitCount]);
+
 
   // Utility Variables ======================================================
   const { Customer } = useData();
@@ -1805,6 +1830,7 @@ export default function ComplaintBody({
             readonly={!isActionAdd}
             bgcolorTextField={!isActionAdd}
             Validate={validateText?.Report_Type || false}
+            shouldFocusError={firstErrorField === "Report_Type"}
             validateTextLable={
               validateText?.Report_Type
                 ? "กรุณาเลือกประเภทรายงาน (Report Type)"
@@ -1881,7 +1907,7 @@ export default function ComplaintBody({
                     readonly={!isActionAdd && !isActionEdit}
                     required="required"
                     Validate={validateText?.Respondent_Department || false}
-                    shouldFocusError={validateText?.Respondent_Department}
+                    shouldFocusError={firstErrorField === "Respondent_Department"}
                     validateTextLable={
                       validateText?.Respondent_Department
                         ? "กรุณาเลือกโดเมน"
@@ -1968,7 +1994,7 @@ export default function ComplaintBody({
                         bgcolorTextField={action === "Add" ? false : true}
                         readonly={!isActionAdd && !isActionEdit}
                         Validate={validateText?.Date_of_Detection || false}
-                        shouldFocusError={validateText?.Date_of_Detection}
+                        shouldFocusError={firstErrorField === "Date_of_Detection"}
                         validateTextLable={
                           validateText?.Date_of_Detection
                             ? "กรุณาเลือกวันที่พบปัญหา"
@@ -2037,7 +2063,7 @@ export default function ComplaintBody({
                           !respondent_domain_id
                         }
                         Validate={validateText?.Department_Area || false}
-                        shouldFocusError={validateText?.Department_Area}
+                        shouldFocusError={firstErrorField === "Department_Area"}
                         validateTextLable={
                           validateText?.Department_Area
                             ? "กรุณาเลือกแผนกที่พบปัญหา"
@@ -2060,7 +2086,7 @@ export default function ComplaintBody({
                         //readonly={isActionRead || isActionDelete || isActionExplain}
                         readonly={!isActionAdd && !isActionEdit}
                         Validate={validateText?.Product_Name || false}
-                        shouldFocusError={validateText?.Product_Name}
+                        shouldFocusError={firstErrorField === "Product_Name"}
                         validateTextLable={
                           validateText?.Product_Name
                             ? "กรุณากรอกชื่อสินค้า"
@@ -2084,7 +2110,7 @@ export default function ComplaintBody({
                         //readonly={isActionRead || isActionDelete || isActionExplain}
                         readonly={!isActionAdd && !isActionEdit}
                         Validate={validateText?.Lot_No || false}
-                        shouldFocusError={validateText?.Lot_No}
+                        shouldFocusError={firstErrorField === "Lot_No"}
                         validateTextLable={
                           validateText?.Lot_No ? "กรุณากรอก Lot No./Bag No" : ""
                         }
@@ -2104,9 +2130,11 @@ export default function ComplaintBody({
                         }}
                         readonly
                         Validate={validateText?.Email || false}
+                        shouldFocusError={firstErrorField === "Email"}
                         validateTextLable={
                           validateText?.Email ? "กรุณากรอกอีเมล" : ""
                         }
+                        submitCount={submitCount}
                       />
                     </Grid>
                   </Grid>
@@ -2228,12 +2256,10 @@ export default function ComplaintBody({
                                           : true
                                       }
                                       readonly={!isActionAdd && !isActionEdit}
-                                      shouldFocusError={validateText?.Other_Type}
+                                      // shouldFocusError={validateText?.Other_Type}
                                       submitCount={submitCount}
-                                      Validate={
-                                        validateText?.Other_Type || false
-                                      }
-
+                                      Validate={validateText?.Other_Type || false}
+                                      shouldFocusError={firstErrorField === "Other_Type"}
                                       validateTextLable={
                                         validateText?.Other_Type
                                           ? "กรุณากรอกรายละเอียด"
@@ -2336,9 +2362,8 @@ export default function ComplaintBody({
                                           : true
                                       }
                                       readonly={!isActionAdd && !isActionEdit}
-                                      Validate={
-                                        validateText?.Clause_Rs || false
-                                      }
+                                      Validate={validateText?.Clause_Rs || false}
+                                      shouldFocusError={firstErrorField === "Clause_Rs"}
                                       validateTextLable={
                                         validateText?.Clause_Rs
                                           ? "กรุณากรอกรายละเอียด Clause"
@@ -2366,7 +2391,7 @@ export default function ComplaintBody({
                                           : true
                                       }
                                       readonly={!isActionAdd && !isActionEdit}
-                                      shouldFocusError={validateText?.Other_Rs}
+                                      shouldFocusError={firstErrorField === "Other_Rs"}
                                       submitCount={submitCount}
                                       Validate={validateText?.Other_Rs || false}
                                       validateTextLable={
@@ -2454,7 +2479,7 @@ export default function ComplaintBody({
                                   }
                                   readonly={!isActionAdd && !isActionEdit}
                                   Validate={validateText?.Detail || false}
-                                  shouldFocusError={validateText?.Detail}
+                                  shouldFocusError={firstErrorField === "Detail"}
                                   validateTextLable={
                                     validateText?.Detail
                                       ? "กรุณากรอกรายละเอียด (Detail)"
