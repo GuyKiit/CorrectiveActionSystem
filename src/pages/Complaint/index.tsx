@@ -542,6 +542,7 @@ export default function Complaint() {
   const [successCardOpen, setSuccessCardOpen] = React.useState(false);
   const [successCardMessage, setSuccessCardMessage] = React.useState("");
   const [openAddlist, setOpenAddlist] = React.useState(false);
+  const [submitCount, setSubmitCount] = React.useState(0);
 
   // const [explainList, setExplainList] = useState<any[]>([]);
   // const [approveList, setApproveList] = useState<any[]>([]);
@@ -1846,6 +1847,7 @@ export default function Complaint() {
         dayjs().format("HH:mm:ss.SSS"),
         " [Calling Function]  :  validateBeforeAdd"
       );
+    setSubmitCount(prev => prev + 1);
     let valid = true;
     // Clear ALL validation errors before validation
     setReportTypeError(false);
@@ -1870,7 +1872,7 @@ export default function Complaint() {
       return false; // หยุดการตรวจสอบส่วนอื่น
     }
 
-    if (!date_of_detection) {
+    if (!date_of_detection || !date_of_detection.isValid()) {
       setDateOfDetectionError(true);
       valid = false;
     }
@@ -2802,9 +2804,7 @@ export default function Complaint() {
         " [Calling Function]  :  ComplaintEdit"
       );
 
-    if (!validateSaveDraft()) {
-      return;
-    }
+    
     console.log(
       "📡 Sending respondent_domain_id to LovAll_Get:",
       respondent_domain_id
@@ -2826,6 +2826,9 @@ export default function Complaint() {
     const formData = new FormData();
     if (mode == "SUBMIT") {
       const tempid = uuidv4();
+      if (!validateBeforeAdd()) {
+        return;
+      }
 
       // เตรียม Models
       const complainttypeModel = dataComplaintTypeValue_Combobox
@@ -2945,6 +2948,9 @@ export default function Complaint() {
         ComplaintGet();
       }
     } else if (mode == "NEW") {
+      if (!validateSaveDraft()) {
+      return;
+    }
       const tempid = uuidv4();
 
       // เตรียม Models
@@ -5803,6 +5809,7 @@ export default function Complaint() {
         element={
           <ComplaintBody
             action="Add"
+            submitCount={submitCount}
             validateDetailText={blockValidateErrors}
             handleOpenAdd={handleOpenAddList}
             validateText={{
@@ -5925,6 +5932,7 @@ export default function Complaint() {
         element={
           <ComplaintBody
             action="Edit"
+            submitCount={submitCount}
             onBlocksChange={(data) => setComplaintBlocks(data)}
             validateDetailText={blockValidateErrors}
             handleOpenAdd={handleOpenAddList}

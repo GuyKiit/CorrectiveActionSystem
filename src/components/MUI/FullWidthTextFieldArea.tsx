@@ -1,6 +1,7 @@
 import { Box, TextField } from "@mui/material";
 import InputAdornment from '@mui/material/InputAdornment';
 import { grey } from '@mui/material/colors';
+import { useEffect, useRef } from "react";
 
 interface FullWidthTextArea {
   value?: any;
@@ -14,12 +15,21 @@ interface FullWidthTextArea {
   endAdornment?: boolean;
   Validate?: boolean;
   validateTextLable?: string
+  shouldFocusError?: boolean;
+  submitCount?: number;
 }
 
 export default function FullWidthTextArea(props: FullWidthTextArea) {
+ const inputRef = useRef<HTMLInputElement>(null);
  const hedelonChange = (e: React.ChangeEvent<HTMLInputElement>) => { 
   props.onchange && props.onchange(e.target.value) 
 }
+
+useEffect(() => {
+    if (props.shouldFocusError && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [props.shouldFocusError, props.submitCount]);
   return (
     <>
       <Box>
@@ -27,6 +37,7 @@ export default function FullWidthTextArea(props: FullWidthTextArea) {
           {props.labelName}
         </label>
         <TextField
+          inputRef={inputRef}
           fullWidth
           multiline
           rows={4}

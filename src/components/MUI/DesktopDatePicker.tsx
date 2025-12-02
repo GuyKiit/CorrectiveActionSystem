@@ -6,6 +6,7 @@ import "dayjs/locale/en";
 import LocalizedFormat from "dayjs/plugin/buddhistEra";
 import OverwriteAdapterDayjs from "../dataAdapter";
 import { grey } from "@mui/material/colors";
+import React from "react";
 
 dayjs.locale("en");
 dayjs.extend(LocalizedFormat);
@@ -19,6 +20,8 @@ interface DesktopDatePickers {
   handleChange?: (val: dayjs.Dayjs | undefined | null) => void;
   Validate?: boolean
   validateTextLable?: string
+  shouldFocusError?: boolean;
+  submitCount?: number;
 }
 
 export default function DesktopDatePickers({
@@ -30,8 +33,17 @@ export default function DesktopDatePickers({
   Validate,
   validateTextLable,
   handleChange,
+  shouldFocusError,
+  submitCount,
 }: DesktopDatePickers) {
   const dateFormat = "DD/MM/YYYY";
+  const inputRef = React.useRef<HTMLInputElement>(null);
+
+  React.useEffect(() => {
+    if (shouldFocusError && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [shouldFocusError, submitCount]);
 
   const handleChangeDate = (val: any) => {
     handleChange && handleChange(val);
@@ -70,6 +82,7 @@ export default function DesktopDatePickers({
             textField: {
               size: "small",
               error: Validate,
+              inputRef: inputRef,
               inputProps: { readOnly: true },
               onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => {
                 e.preventDefault();
