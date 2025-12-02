@@ -1338,7 +1338,7 @@ export default function ExplaintBody({
         isActionExplainApproveQcRead ||
         isActionClose ||
         isActionCloseAdd ||
-        isActionReadClose)
+        isActionReadClose )
     ) {
       // Set basic information
       setresponsible_name(
@@ -1417,10 +1417,11 @@ export default function ExplaintBody({
         setapprove_note(scApprove?.approve_note || "");
       }
 
-      // setdataSectionapp(dataApprove_Combobox.find((item: any) => item.lov_code === scApprove?.approve_status) || null);
+      
+      console.log("scApprove?.approve_note", scApprove?.approve_note);
       console.log("scApprove?.approve_detail", scApprove?.approve_detail);
-      console.log("scApprove?.approve_name", scApprove?.approve_name);
-      console.log("scApprove?.approve_status", scApprove?.approve_status);
+      console.log("scApprove?.approve_email", scApprove?.approve_email);
+      console.log("scApprove?.approve_position", scApprove?.approve_position);
 
       // setdataSectionapp(dataApprove_Combobox.find((item: any) => item.lov_code === approveList[1]?.approve_status) || null);
       // setqcapprove_detail(approveList[1]?.approve_detail || "");
@@ -1442,15 +1443,15 @@ export default function ExplaintBody({
       // Load QC approve data from dataelement (for CloseAdd mode)
       if (isActionCloseAdd || isActionClose || isActionCloseHistory) {
         // Set QC approve name
-        if (dataelement?.qcapprove_name) {
-          setqcapprove_name(dataelement.qcapprove_name);
+        if (qcApprove?.approve_name) {
+          setqcapprove_name(qcApprove.approve_name);
         }
 
         // Set QC approve company
-        if (dataelement?.qcapprove_company_id) {
+        if (qcApprove?.approve_company_id) {
           const qcCompany = dataset_company?.find(
             (el: any) =>
-              String(el.company_id) === String(dataelement.qcapprove_company_id)
+              String(el.company_id) === String(qcApprove.approve_company_id)
           );
           if (qcCompany) {
             setqcapprove_company_id(qcCompany);
@@ -1458,38 +1459,38 @@ export default function ExplaintBody({
         }
 
         // Set QC approve department
-        if (dataelement?.qcapprove_department_id) {
+        if (qcApprove?.approve_department_id) {
           const qcDepartment = dataset_department?.find(
             (el: any) =>
               String(el.department_id) ===
-              String(dataelement.qcapprove_department_id)
+              String(qcApprove.approve_department_id)
           );
           if (qcDepartment) {
             setqcapprove_department_id(qcDepartment);
           }
         }
-        // setdataQcapp(
-        //   dataApprove_Combobox.find(
-        //     (item: any) => item.lov_code === dataelement?.approve_status
-        //   ) || null
-        // );
+        setdataQcapp(
+          dataApprove_Combobox.find(
+            (item: any) => item.lov_code === qcApprove?.approve_status
+          ) || null
+        );
 
 
         // Set other QC approve fields
-        if (dataelement?.qcapprove_position) {
-          setqcapprove_position(dataelement.qcapprove_position);
+        if (qcApprove?.approve_position) {
+          setqcapprove_position(qcApprove.approve_position);
         }
-        if (dataelement?.qcapprove_email) {
-          setqcapprove_email(dataelement.qcapprove_email);
+        if (qcApprove?.approve_email) {
+          setqcapprove_email(qcApprove.approve_email);
         }
-        if (dataelement?.qcapprove_date) {
-          setqcapprove_date(dayjs(dataelement.qcapprove_date));
+        if (qcApprove?.approve_date) {
+          setqcapprove_date(dayjs(qcApprove.approve_date));
         }
-        if (dataelement?.qcapprove_detail) {
-          setqcapprove_detail(dataelement.qcapprove_detail);
+        if (qcApprove?.approve_detail) {
+          setqcapprove_detail(qcApprove.approve_detail);
         }
-        if (dataelement?.qcapprove_note) {
-          setqcapprove_note(dataelement.qcapprove_note);
+        if (qcApprove?.approve_note) {
+          setqcapprove_note(qcApprove.approve_note);
         }
 
         // Set QC approve radio (dataQcapp) from dataelement

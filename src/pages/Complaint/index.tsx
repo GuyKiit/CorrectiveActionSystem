@@ -5487,15 +5487,15 @@ export default function Complaint() {
         const firstApprove = approveData.find(
           (x: any) => x.explain_id === dataelement?.id && x.approve_seq === 1
         );
-        setapprove_position(firstApprove?.approve_position || "");
-        setapprove_email(firstApprove?.approve_email || "");
-        setapprove_date(
-          firstApprove?.approve_date
-            ? dayjs(firstApprove?.approve_date)
-            : dayjs()
-        );
-        setapprove_detail(firstApprove?.approve_detail || "");
-        setapprove_note(firstApprove?.approve_note || "");
+        // setapprove_position(firstApprove?.approve_position || "");
+        // setapprove_email(firstApprove?.approve_email || "");
+        // setapprove_date(
+        //   firstApprove?.approve_date
+        //     ? dayjs(firstApprove?.approve_date)
+        //     : dayjs()
+        // );
+        // setapprove_detail(firstApprove?.approve_detail || "");
+        // setapprove_note(firstApprove?.approve_note || "");
       }
     };
     fetchSCApprove();
