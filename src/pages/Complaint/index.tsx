@@ -5923,9 +5923,7 @@ export default function Complaint() {
         titlename={"[Complaint] แก้ไขข้อมูล"}
         buttonText={"บันทึกและส่ง"}
         handleClose={handleClose}
-        // handlefunction={ComplaintEdit}
         handlefunction={() => ComplaintEdit("SUBMIT")}
-        // handlesavedraft={ComplaintSavedraftEdit}
         handlesavedraft={() => ComplaintEdit("NEW")}
         hideSaveDraft={false}
         buttonColor="success"
@@ -6237,9 +6235,7 @@ export default function Complaint() {
         openBottonHidden={true}
         titlename={"[Explain] เพิ่มข้อมูล"}
         buttonText={"Save & Submit"}
-        // handleClose={handleClose}
         handleClose={handleCloseExplainAdd}
-        // handleClose={() => handleOnclickCloseAddExplain(dataelement)}
         handlefunction={ExplainAdd}
         hideSaveDraft={true}
         hideReject={true}
