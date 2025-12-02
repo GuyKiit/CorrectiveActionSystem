@@ -1216,7 +1216,15 @@ export default function ComplaintBody({
                 item.lov_code === dataelement.report_type ||
                 item.id === dataelement.report_type
             );
-          if (defaultVal) setdataReportTypeValue(defaultVal);
+            // if (defaultVal) setdataReportTypeValue(defaultVal);
+          if (defaultVal) {
+            setdataReportTypeValue({
+              ...defaultVal,
+              displayText: defaultVal.lov3
+                ? `${defaultVal.lov_code} (${defaultVal.lov3})`
+                : defaultVal.lov_code,
+            });
+          }
         }
 
         // 2) Company
