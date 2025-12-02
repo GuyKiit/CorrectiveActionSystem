@@ -2650,6 +2650,8 @@ console.log("dataelement.explain_id", dataelement?.explain_id);
                               options={(filteredphoto || []).map((p: any) => ({
                                 id: p.id,
                                 lov1: p.lov1,
+                                lov_code: p.lov_code,
+                                lov2: p.lov2,
                               }))}
                               action={action}
                               isViewMode={isViewMode}
