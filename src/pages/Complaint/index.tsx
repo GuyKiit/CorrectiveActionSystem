@@ -281,6 +281,7 @@ export default function Complaint() {
     dataset_complaintActionClose,
     dataset_activeCompany,
     dataset_roleProfile,
+    dataset_configfile,
     dataset_complaintActionApproveSC,
     dataset_complaintActionApproveQC,
 
@@ -425,6 +426,7 @@ export default function Complaint() {
     setdataset_reporttype,
     setdataset_activeCompany,
     setdataset_roleProfile,
+    setdataset_configfile,
     setdataset_department,
     setdataset_company,
     set_domain,
@@ -1082,9 +1084,9 @@ export default function Complaint() {
     } else {
       try {
         const dataset = {
-          lov_group: user[0]?.itasset_company_id + ",VARIABLE_CONSTANT",
+          lov_group: user[0]?.itasset_company_id + ",VARIABLE_CONSTANT" + ",SYSTEM",
           lov_type:
-            "report_type,complaint_type,reference_standard,priority_level,attach_type,complaint_status,tool_use,decision_disposition,approve_select,complaint_step,complaint_action,active_company,role_profile",
+            "report_type,complaint_type,reference_standard,priority_level,attach_type,complaint_status,tool_use,decision_disposition,approve_select,complaint_step,complaint_action,active_company,role_profile,config_file",
         };
         const response = await _POST(dataset, "/Lov/LovGet");
 
@@ -1114,6 +1116,7 @@ export default function Complaint() {
           setdataset_complaintAction?.(grouped["complaint_action"] || []);
           setdataset_activeCompany?.(grouped["active_company"] || []);
           setdataset_roleProfile?.(grouped["role_profile"] || []);
+          setdataset_configfile?.(grouped["config_file"] || []);
 
           setdatastatus?.(
             grouped["complaint_status"].filter(
@@ -1151,7 +1154,7 @@ export default function Complaint() {
             '⚠️⚠️⚠️⚠️ [grouped["complaint_status"]] :',
             grouped["complaint_status"]
           );
-          //console.log('⚠️⚠️⚠️⚠️ [grouped["active_company"]] :', grouped["active_company"])
+          console.log('⚠️⚠️⚠️⚠️ [grouped["config_file"]] :', grouped["config_file"])
           console.log(
             '⚠️⚠️⚠️⚠️ grouped["cross_company_check"] :',
             grouped["cross_company_check"]
@@ -5487,15 +5490,15 @@ export default function Complaint() {
         const firstApprove = approveData.find(
           (x: any) => x.explain_id === dataelement?.id && x.approve_seq === 1
         );
-        setapprove_position(firstApprove?.approve_position || "");
-        setapprove_email(firstApprove?.approve_email || "");
-        setapprove_date(
-          firstApprove?.approve_date
-            ? dayjs(firstApprove?.approve_date)
-            : dayjs()
-        );
-        setapprove_detail(firstApprove?.approve_detail || "");
-        setapprove_note(firstApprove?.approve_note || "");
+        // setapprove_position(firstApprove?.approve_position || "");
+        // setapprove_email(firstApprove?.approve_email || "");
+        // setapprove_date(
+        //   firstApprove?.approve_date
+        //     ? dayjs(firstApprove?.approve_date)
+        //     : dayjs()
+        // );
+        // setapprove_detail(firstApprove?.approve_detail || "");
+        // setapprove_note(firstApprove?.approve_note || "");
       }
     };
     fetchSCApprove();

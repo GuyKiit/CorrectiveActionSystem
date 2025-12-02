@@ -258,6 +258,9 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
     const [dataset_roleProfile, setdataset_roleProfile] = useState<any>(
         initialListComplaint.dataset_roleProfile
     );
+    const [dataset_configfile, setdataset_configfile] = useState<any>(
+        initialListComplaint.dataset_configfile
+    );
 
     const [dataComplaintTypeValue_Combobox, setdataComplaintTypeValue_Combobox] =
         useState<any[]>([]); // รับ array ของอะไรก็ได้
@@ -637,6 +640,7 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 dataset_complaintActionApproveQC,
                 dataset_activeCompany,
                 dataset_roleProfile,
+                dataset_configfile,
                 domainrelate,
                 domainrelate_search,
                 departmentrelate,
@@ -823,6 +827,7 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 setdataset_complaintActionApproveQC,
                 setdataset_activeCompany,
                 setdataset_roleProfile,
+                setdataset_configfile,
                 set_domainrelate,
                 set_domainrelate_search,
                 set_departmentrelate,

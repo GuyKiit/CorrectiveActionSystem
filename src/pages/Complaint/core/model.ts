@@ -102,6 +102,7 @@ export type ListComplaintContextProps = {
     dataset_complaintActionClose?: any
     dataset_activeCompany?: any
     dataset_roleProfile?: any
+    dataset_configfile?: any
     domainrelate?: any
     domainrelate_search?: any
     departmentrelate?: any
@@ -300,6 +301,7 @@ export type ListComplaintContextProps = {
     setdataset_complaintActionClose: Dispatch<SetStateAction<any>>
     setdataset_activeCompany: Dispatch<SetStateAction<any>>
     setdataset_roleProfile: Dispatch<SetStateAction<any>>
+    setdataset_configfile: Dispatch<SetStateAction<any>>
     set_domainrelate: Dispatch<SetStateAction<any>>;
     set_domainrelate_search: Dispatch<SetStateAction<any>>;
     set_departmentrelate: Dispatch<SetStateAction<any>>;
@@ -489,6 +491,7 @@ export const initialListComplaint: ListComplaintContextProps = {
     setdataset_complaintActionClose: () => { },
     setdataset_activeCompany: () => { },
     setdataset_roleProfile: () => { },
+    setdataset_configfile: () => { },
     set_domainrelate: () => { },
     set_domainrelate_search: () => { },
     set_departmentrelate: () => { },

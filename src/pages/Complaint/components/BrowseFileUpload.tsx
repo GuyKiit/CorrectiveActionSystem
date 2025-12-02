@@ -2,6 +2,7 @@ import React, { ChangeEvent, useRef, useState, useEffect } from "react";
 import { MenuItem, Select, TextField } from "@mui/material";
 import DriveFolderUploadIcon from "@mui/icons-material/DriveFolderUpload";
 import Swal from "sweetalert2";
+import FullSweetalert from "../../../components/MUI/Sweetalert";
 
 export interface ComplaintFile {
   file: File;
@@ -21,9 +22,10 @@ interface BrowseFileUploadProps {
   setFileName: (val: string | undefined) => void;
   required?: string;
   validate?: boolean;
-  options?: Array<{ id: string; lov1: string }>;
+  options?: Array<{ id: string; lov1: string; lov_code: string; lov2: string }>;
   action?: string;
   isViewMode?: boolean;
+  grouped?: { [key: string]: any[] };
 }
 
 const allowedTypes = [
@@ -44,6 +46,7 @@ export default function BrowseFileUpload({
   options = [],
   action,
   isViewMode,
+  grouped,
 }: BrowseFileUploadProps) {
 
   const isActionAdd = action === "Add";
@@ -55,7 +58,7 @@ export default function BrowseFileUpload({
   const [attachmentType, setAttachmentType] = useState<string>("");
   const [otherText, setOtherText] = useState<string>("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-
+  
 
   // เมื่อผู้ใช้เลือกไฟล์
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -63,13 +66,12 @@ export default function BrowseFileUpload({
     const fileObj = event.target.files[0];
     const sizeInMB = fileObj.size / (1024 * 1024);
     if (sizeInMB > 5) {
-    Swal.fire({
+    FullSweetalert({
       icon: "error",
       title: "ไฟล์มีขนาดใหญ่เกินไป!",
       text: `ไฟล์ ${fileObj.name} มีขนาด ${sizeInMB.toFixed(2)} MB (จำกัดไม่เกิน 5 MB)`,
       confirmButtonColor: "#d33",
       confirmButtonText: "ตกลง",
-      target: (event.target.closest('.MuiDialog-root') as HTMLElement) || 'body'
     }).then(() => {
       setAttachmentType("");
       setOtherText("");
@@ -77,6 +79,30 @@ export default function BrowseFileUpload({
     
     event.target.value = ""; // ล้างค่า input เพื่อให้เลือกไฟล์ใหม่ได้
     return;
+  }
+
+    const fileConfig = grouped?.["config_file"]?.find(
+    (c: any) => c.lov_code === "CheckTypeFileImage"
+  );
+    const isValidateEnabled = fileConfig?.lov2 === "Y";
+    const allowedExt = fileConfig?.lov1
+    ?.split(",")
+    .map((x:any) => x.trim().toLowerCase()) || [];
+
+    if (isValidateEnabled) {
+    const fileExt = (fileObj.name.split(".").pop() || "").toLowerCase();
+
+
+    if (!allowedExt.includes(fileExt)) {
+      FullSweetalert({
+        icon: "error",
+        title: "ประเภทไฟล์ไม่ถูกต้อง!",
+        text: `รองรับเฉพาะไฟล์: ${allowedExt.join(", ")}`,
+        confirmButtonText: "ตกลง",
+      });
+      event.target.value = "";
+      return;
+    }
   }
 
     setSelectedFile(fileObj);

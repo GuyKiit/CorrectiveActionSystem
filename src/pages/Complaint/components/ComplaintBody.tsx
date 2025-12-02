@@ -334,6 +334,7 @@ export default function ComplaintBody({
     department,
     domain,
     explainList,
+    dataset_configfile,
 
     setComplaint_no,
     setno,
@@ -429,6 +430,7 @@ export default function ComplaintBody({
     set_department,
     set_domain,
     setExplainList,
+    setdataset_configfile,
   } = useListComplaint();
 
   const [previewFile, setPreviewFile] = useState<File | null>(null);
@@ -540,7 +542,9 @@ export default function ComplaintBody({
   const [isMinimizedeapp2Open, setisMinimizeDeapp2Open] = useState(true);
   const [isMinimizeotapp2Open, setisMinimizeOtapp2Open] = useState(true);
   const isCrossCompany = dataset_crosscompany?.[0]?.lov_code == "1";
-
+  const grouped = {
+  config_file: dataset_configfile || [],
+};
   // Check Acknowledge flag =========================================================
   const updateAcknowledgeFlag = (value: any) => {
     // console.log("####### Onchange Company Value [event] : ", value);
@@ -2756,7 +2760,10 @@ export default function ComplaintBody({
                               options={(filteredphoto || []).map((p: any) => ({
                                 id: p.id,
                                 lov1: p.lov1,
+                                lov2: "Y",
+                                lov_code: "CheckTypeFileImage",
                               }))}
+                              grouped={grouped}
                               action={action}
                             />
 
