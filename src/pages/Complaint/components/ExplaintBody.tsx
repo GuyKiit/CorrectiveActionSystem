@@ -360,6 +360,7 @@ export default function ExplaintBody({
     isApproveScBoxHidden,
     isApproveQcBoxHidden,
     isApproveCloseBoxHidden,
+    dataset_configfile,
 
     setcas_number,
     setdoc_date,
@@ -466,7 +467,7 @@ export default function ExplaintBody({
     setisApproveScBoxHidden,
     setisApproveQcBoxHidden,
     setisApproveCloseBoxHidden,
-
+    setdataset_configfile,
     setdataFuapp,
   } = useListComplaint();
 
@@ -571,6 +572,9 @@ export default function ExplaintBody({
   const [foundSC, setFoundSC] = useState(null);
   const [foundQC, setFoundQC] = useState(null);
   const [foundCLOSE, setFoundCLOSE] = useState(null);
+  const grouped = {
+  config_file: dataset_configfile || [],
+};
   // Function Handlers (On Change Event) ======================================================
   const handleReportTypeChange = (val: LovType | null) => {
     if (true)
@@ -2647,12 +2651,13 @@ console.log("dataelement.explain_id", dataelement?.explain_id);
                             <BrowseFileUpload
                               setFile={handleFileChange}
                               setFileName={() => {}}
-                              options={(filteredphoto || []).map((p: any) => ({
+                               options={(filteredphoto || []).map((p: any) => ({
                                 id: p.id,
                                 lov1: p.lov1,
-                                lov_code: p.lov_code,
-                                lov2: p.lov2,
+                                lov2: "Y",
+                                lov_code: "CheckTypeFileImage",
                               }))}
+                              grouped={grouped}
                               action={action}
                               isViewMode={isViewMode}
                             />
