@@ -141,6 +141,8 @@ interface ExplaintBody {
   isViewMode?: boolean;
   currentExplainForApproval?: any;
   complaint_status_lable?: any;
+
+  submitCount?: number;
 }
 
 type LovType = {
@@ -198,6 +200,8 @@ export default function ExplaintBody({
 
   isViewMode = false,
   complaint_status_lable,
+
+  submitCount,
 }: ExplaintBody) {
   // const isActionRead =
   //   action === "Read" || action === "ExplainRead" || isViewMode;
@@ -633,6 +637,52 @@ export default function ExplaintBody({
     setresponsible_date(null);
     setfollow_up_date(null);
   };
+
+
+  const TuRef = useRef<HTMLDivElement>(null);
+  const DdRef = useRef<HTMLDivElement>(null);
+  // const priorityRef = useRef<HTMLDivElement>(null);
+
+  const [firstErrorField, setFirstErrorField] = useState<string | null>(null);
+
+  useEffect(() => {
+      if (!validateText) return;
+  
+      // Define the order of fields from top to bottom based on Validate type
+      const fieldOrder: (keyof Validate)[] = [
+        "Follow_up_Date",
+        "Tu",
+        "Tuother",
+        "Dd",
+        "Ddother",
+        "Rc",
+        "ObsAnaly",
+        "Ca",
+        "Pap",
+        "ScDetail",
+        "ScNote",
+        "QcDetail",
+        "QcNote",
+        "CloseDetail",
+        "CloseNote",
+      ];
+  
+      // Find the first field that has an error
+      const firstError = fieldOrder.find((field) => validateText[field]);
+  
+      if (firstError) {
+        setFirstErrorField(firstError);
+        
+        // Handle scrolling for Accordions
+        if (firstError === "Tu" && TuRef.current) {
+          TuRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+        } else if (firstError === "Dd" && DdRef.current) {
+          DdRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+      } else {
+        setFirstErrorField(null);
+      }
+    }, [submitCount]);
 
   // CheckBox Tool used
   const handleCheckboxChangeTU = (item: LovType) => {
@@ -2019,6 +2069,8 @@ console.log("dataelement.explain_id", dataelement?.explain_id);
                           ? "กรุณาเลือกวันที่ตรวจติดตามผล"
                           : ""
                       }
+                      shouldFocusError={firstErrorField === "Follow_up_Date"}
+                      submitCount={submitCount}
                     />
                   </Grid>
                 </Grid>
@@ -2077,6 +2129,7 @@ console.log("dataelement.explain_id", dataelement?.explain_id);
                             expandIcon={<ExpandMoreIcon />}
                             aria-controls="complaint-type-content"
                             id="complaint-type-header"
+                            ref={TuRef}
                           >
                             <Typography
                               className="sarabun-regular-datatable"
@@ -2146,6 +2199,9 @@ console.log("dataelement.explain_id", dataelement?.explain_id);
                                         ? "กรุณาเลือกอื่นๆ"
                                         : ""
                                     }
+                                    shouldFocusError={firstErrorField === "Tuother"}
+                                    submitCount={submitCount}
+
                                   />
                                 )}
                               </Box>
@@ -2182,6 +2238,7 @@ console.log("dataelement.explain_id", dataelement?.explain_id);
                             expandIcon={<ExpandMoreIcon />}
                             aria-controls="reference-standard-content"
                             id="reference-standard-header"
+                            ref={DdRef}
                           >
                             <Typography
                               className="sarabun-regular-datatable"
@@ -2253,6 +2310,8 @@ console.log("dataelement.explain_id", dataelement?.explain_id);
                                         ? "กรุณาเลือกอื่นๆ"
                                         : ""
                                     }
+                                    shouldFocusError={firstErrorField === "Ddother"}
+                                    submitCount={submitCount}
                                   />
                                 )}
                               </Box>
@@ -2262,7 +2321,7 @@ console.log("dataelement.explain_id", dataelement?.explain_id);
                                 className="fs-7 py-1 sarabun-regular-lable-validate"
                                 style={{ color: "red" }}
                               >
-                                กรุณาเลือกเครื่องมือที่ใช้ (Decision on
+                                กรุณาเลือกการตัดสินใจเกี่ยวกับแนวทางการจัดการ (Decision on
                                 Disposition)
                               </label>
                             )}
@@ -2341,15 +2400,8 @@ console.log("dataelement.explain_id", dataelement?.explain_id);
                                     ? "กรุณากรอกการวิเคราะห์เบื้องต้นของข้อสังเกต"
                                     : ""
                                 }
-
-                                // onchange={(e) => {
-                                //     setqcapprove_note(e)
-                                //     if (onQCNoteChange) {
-                                //       onQCNoteChange(e);
-                                //     }
-                                //   }}
-                                //   bgcolorTextField={isActionExplainApproveQcAdd ? false : true}
-                                //   readonly={isActionRead || isActionExplainRead || isActionDelete || isActionCloseAdd || isActionExplainRead}
+                                shouldFocusError={firstErrorField === "ObsAnaly"}
+                                submitCount={submitCount}
                               />
                             </Grid>
                           </Grid>
@@ -2429,6 +2481,8 @@ console.log("dataelement.explain_id", dataelement?.explain_id);
                                     ? "กรุณากรอกคำอธิบายการวิเคราะห์ (Root Cause)"
                                     : ""
                                 }
+                                shouldFocusError={firstErrorField === "Rc"}
+                                submitCount={submitCount}
                               />
                             </Grid>
                           </Grid>
@@ -2506,6 +2560,8 @@ console.log("dataelement.explain_id", dataelement?.explain_id);
                                     ? "กรุณากรอกการดำเนินการแก้ไข (Corrective Action)"
                                     : ""
                                 }
+                                shouldFocusError={firstErrorField === "Ca"}
+                                submitCount={submitCount}
                               />
                             </Grid>
                           </Grid>
@@ -2584,6 +2640,8 @@ console.log("dataelement.explain_id", dataelement?.explain_id);
                                     ? "กรุณากรอกแผนการป้องกันไม่ให้ปัญหาเกิดขึ้นซ้ำ (Preventive Action Plan)"
                                     : ""
                                 }
+                                shouldFocusError={firstErrorField === "Pap"}
+                                submitCount={submitCount}
                               />
                             </Grid>
                           </Grid>
@@ -3200,6 +3258,8 @@ console.log("dataelement.explain_id", dataelement?.explain_id);
                                       ? "กรุณากรอกหมายเหตุการอนุมัติ"
                                       : ""
                                   }
+                                  shouldFocusError={firstErrorField === "ScDetail"}
+                                  submitCount={submitCount}
                                 />
                               </Grid>
                             </Grid>
@@ -3271,6 +3331,8 @@ console.log("dataelement.explain_id", dataelement?.explain_id);
                                       ? "กรุณากรอกหมายเหตุเพิ่มเติม"
                                       : ""
                                   }
+                                  shouldFocusError={firstErrorField === "ScNote"}
+                                  submitCount={submitCount}
                                 />
                               </Grid>
                             </Grid>
@@ -3587,6 +3649,8 @@ console.log("dataelement.explain_id", dataelement?.explain_id);
                                       ? "กรุณากรอกหมายเหตุการอนุมัติ"
                                       : ""
                                   }
+                                  shouldFocusError={firstErrorField === "QcDetail"}
+                                  submitCount={submitCount}
                                 />
                               </Grid>
                             </Grid>
@@ -3658,6 +3722,8 @@ console.log("dataelement.explain_id", dataelement?.explain_id);
                                       ? "กรุณากรอกหมายเหตุเพิ่มเติม"
                                       : ""
                                   }
+                                  shouldFocusError={firstErrorField === "QcNote"}
+                                  submitCount={submitCount}
                                 />
                               </Grid>
                             </Grid>
@@ -4040,6 +4106,8 @@ console.log("dataelement.explain_id", dataelement?.explain_id);
                                           ? "กรุณากรอกหมายเหตุการปิดรายการ"
                                           : ""
                                       }
+                                      shouldFocusError={firstErrorField === "CloseDetail"}
+                                      submitCount={submitCount}
                                     />
                                   </Grid>
                                 </Grid>
@@ -4111,6 +4179,8 @@ console.log("dataelement.explain_id", dataelement?.explain_id);
                                           ? "กรุณากรอกหมายเหตุเพิ่มเติม"
                                           : ""
                                       }
+                                      shouldFocusError={firstErrorField === "CloseNote"}
+                                      submitCount={submitCount}
                                     />
                                   </Grid>
                                 </Grid>

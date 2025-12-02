@@ -1901,11 +1901,6 @@ export default function Complaint() {
       valid = false;
     }
 
-    // if (!respondent_email || respondent_email.trim() === "") {
-    //   setEmailError(true);
-    //   valid = false;
-    // }
-
     if (
       !dataComplaintTypeValue_Combobox ||
       dataComplaintTypeValue_Combobox.length === 0
@@ -1922,8 +1917,6 @@ export default function Complaint() {
       if (!compTypeOther || compTypeOther.trim() === "") {
         setOtherTypeError(true);
         valid = false;
-      } else {
-        ////console.log("✅ Other Type validation passed");
       }
     }
 
@@ -2031,8 +2024,8 @@ export default function Complaint() {
         " [Calling Function]  :  validateExplainAdd"
       );
 
+    setSubmitCount(prev => prev + 1);
     let valid = true;
-
     // Clear all validation errors
     setFollowUpDateError(false);
     setObsAnalyError(false);
@@ -2204,6 +2197,7 @@ export default function Complaint() {
         dayjs().format("HH:mm:ss.SSS"),
         " [Calling Function]  :  validateSCApprove"
       );
+    setSubmitCount(prev => prev + 1);
     let valid = true;
     // Clear ALL validation errors before validation
     setScDetailError(false);
@@ -2228,6 +2222,7 @@ export default function Complaint() {
         dayjs().format("HH:mm:ss.SSS"),
         " [Calling Function]  :  validateQCApprove"
       );
+    setSubmitCount(prev => prev + 1);
     let valid = true;
     // Clear ALL validation errors before validation
     setQcDetailError(false);
@@ -2252,6 +2247,7 @@ export default function Complaint() {
         dayjs().format("HH:mm:ss.SSS"),
         " [Calling Function]  :  validateClose"
       );
+    setSubmitCount(prev => prev + 1);
     let valid = true;
     // Clear ALL validation errors before validation
     setCloseDetailError(false);
@@ -3757,6 +3753,7 @@ export default function Complaint() {
 
   // CREATE - Add Complaint
   const ExplainAdd = async () => {
+    setSubmitCount((prev) => prev + 1);
     if (!validateExplainAdd()) {
       return;
     }
@@ -3961,6 +3958,7 @@ export default function Complaint() {
 
   
   const ApproveScAdd = async () => {
+    setSubmitCount((prev) => prev + 1);
     if (isCallFuncLogOn)
       console.log(
         "🕑 ",
@@ -4113,6 +4111,7 @@ export default function Complaint() {
   };
 
   const ApproveQcAdd = async () => {
+    setSubmitCount((prev) => prev + 1);
     if (isCallFuncLogOn)
       console.log(
         "🕑 ",
@@ -4531,6 +4530,7 @@ export default function Complaint() {
 
   
   const CloseAdd = async () => {
+    setSubmitCount((prev) => prev + 1);
     if (isCallFuncLogOn)
       console.log(
         "🕑 ",
@@ -5048,7 +5048,6 @@ export default function Complaint() {
 
 
   const handleOnclickComplainCloseAdd = async (explainData: any) => {
-    //ADD
     if (isCallFuncLogOn)
       console.log(
         "🕑 ",
@@ -5271,6 +5270,7 @@ export default function Complaint() {
       setdataelement({ ...complaintMainData, _forceUpdate: Date.now() });
     }
     setOpenExplainApproveSc(false);
+    setApproveSelectionCode(null);
   };
 
   const handleCloseApproveQcAdd = () => {
@@ -5286,6 +5286,7 @@ export default function Complaint() {
       setdataelement({ ...complaintMainData, _forceUpdate: Date.now() });
     }
     setOpenExplainApproveQc(false);
+    setApproveSelectionCode(null);
   };
   
   const handleCloseAdd = () => {
@@ -5306,6 +5307,9 @@ export default function Complaint() {
     }
     
     setOpenComplainCloseAdd(false);
+    setApproveSelectionCode(null);
+    setCloseDetailError(false);
+    setCloseNoteError(false);
   };
   
   // Close Dialog Handler
@@ -6301,6 +6305,7 @@ export default function Complaint() {
               setpreventive_action_plan(val);
               setPreventiveActionPlanError(false);
             }}
+            submitCount={submitCount}
           />
         }
       />
@@ -6359,7 +6364,6 @@ export default function Complaint() {
         buttonText={"Approve"}
         handlefunction={ApproveScAdd}
         handlereject={() => ComplaintReturn("APPROVE_SC")}
-        // handleClose={handleClose}
         handleClose={handleCloseApproveScAdd}
         buttonColor="success"
         element={
@@ -6394,6 +6398,7 @@ export default function Complaint() {
               setapprove_note(val);
               setScNoteError(false);
             }}
+            submitCount={submitCount}
           />
         }
       />
@@ -6401,34 +6406,6 @@ export default function Complaint() {
       {/* ------------------------------------------------------------------------------------------ */}
       {/* ------------------------------------------------------------------------------------------ */}
       {/* ------------------------------------------------------------------------------------------ */}
-
-      {/* <FuncDialog
-        open={openExplainApproveSc}
-        dialogWidth="xl"
-        openBottonHidden={true}
-        hideSaveDraft
-        hideReject={approveSelectionCode === "APPROVE" || !approveSelectionCode}
-        hideSaveSubmit={
-          approveSelectionCode === "ADD" ||
-          approveSelectionCode === "REJECT" ||
-          !approveSelectionCode
-        }
-        titlename={"Approve Section Head (SC ADD) // เพิ่มข้อมูล"}
-        buttonText={"Approve"}
-        handlefunction={ApproveScAdd}
-        handlereject={() => ComplaintReturn("EXPLAIN")}
-        handleClose={handleClose}
-        buttonColor="success"
-        element={
-          <ExplaintBody
-            action="ApproveSCAdd"
-            handleOpenAdd={() => handleOnclickExplainApproveSc(dataelement)}
-            onApproveChange={(value) => {
-              setApproveSelectionCode(value?.lov_code ?? null);
-            }}
-          />
-        }
-      /> */}
 
       {/* QC ADD */}
       <FuncDialog
@@ -6479,6 +6456,7 @@ export default function Complaint() {
               setqcapprove_note(val);
               setQcNoteError(false);
             }}
+            submitCount={submitCount}
           />
         }
       />
@@ -6531,6 +6509,7 @@ export default function Complaint() {
               setclose_note(val);
               setCloseNoteError(false);
             }}
+            submitCount={submitCount}
           />
         }
       />
