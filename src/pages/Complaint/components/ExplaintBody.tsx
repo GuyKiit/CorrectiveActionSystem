@@ -1885,6 +1885,24 @@ console.log("dataelement.explain_id", dataelement?.explain_id);
     console.log("🟣🟣🟣🟣🟣🟣 [8] 🟣🟣🟣🟣🟣🟣", );
   },[close_name])
 
+  const getApproveDetailLabel = (approveData: any) => {
+    if (!approveData) return "หมายเหตุการอนุมัติ";
+    
+    // Check lov2 for REJECT status as per user request
+    if (approveData.lov2 === "REJECT") {
+      return "หมายเหตุการปฏิเสธ";
+    }
+    else if (approveData.lov2 === "APPROVE") {
+      return "หมายเหตุการอนุมัติ";
+    }
+    // Fallback for legacy or other codes if needed (preserving user's manual "ADD" check if relevant, but prioritizing lov2)
+    // const code = approveData.lov_code?.toUpperCase();
+    // if (code === "ADD" || code === "REJECT") {
+    //    return "หมายเหตุการไม่อนุมัติ";
+    // }
+    // return "หมายเหตุการอนุมัติ";
+  };
+
   return (
     <Box
       sx={{
@@ -3222,7 +3240,8 @@ console.log("dataelement.explain_id", dataelement?.explain_id);
                               color: "#333",
                             }}
                           >
-                            หมายเหตุการอนุมัติ
+                            {/* //หมายเหตุการอนุมัติ */}
+                            {getApproveDetailLabel(dataSectionapp)}
                             <span style={{ color: "red" }}> *</span>
                           </Typography>
                         </AccordionSummary>
@@ -3255,7 +3274,8 @@ console.log("dataelement.explain_id", dataelement?.explain_id);
                                   Validate={validateText?.ScDetail || false}
                                   validateTextLable={
                                     validateText?.ScDetail
-                                      ? "กรุณากรอกหมายเหตุการอนุมัติ"
+                                      // ? "กรุณากรอกหมายเหตุการอนุมัติ"
+                                      ? `กรุณากรอก${getApproveDetailLabel(dataSectionapp)}`
                                       : ""
                                   }
                                   shouldFocusError={firstErrorField === "ScDetail"}
@@ -3613,7 +3633,8 @@ console.log("dataelement.explain_id", dataelement?.explain_id);
                               color: "#333",
                             }}
                           >
-                            หมายเหตุการอนุมัติ
+                            {/* หมายเหตุการอนุมัติ */}
+                            {getApproveDetailLabel(dataQcapp)}
                             <span style={{ color: "red" }}> *</span>
                           </Typography>
                         </AccordionSummary>
@@ -3646,7 +3667,8 @@ console.log("dataelement.explain_id", dataelement?.explain_id);
                                   Validate={validateText?.QcDetail || false}
                                   validateTextLable={
                                     validateText?.QcDetail
-                                      ? "กรุณากรอกหมายเหตุการอนุมัติ"
+                                      // ? "กรุณากรอกหมายเหตุการอนุมัติ"
+                                      ? `กรุณากรอก${getApproveDetailLabel(dataQcapp)}`
                                       : ""
                                   }
                                   shouldFocusError={firstErrorField === "QcDetail"}
