@@ -2431,168 +2431,6 @@ export default function Complaint() {
     }
   };
 
-  // const ComplaintSavedraftEdit = async (mode: string) => {
-  //   if (isCallFuncLogOn)
-  //     console.log(
-  //       "🕑 ",
-  //       dayjs().format("HH:mm:ss.SSS"),
-  //       " [Calling Function]  :  ComplaintSavedraftEdit"
-  //     );
-
-  //   // สร้าง FormData
-  //   const formData = new FormData();
-
-  //   if (mode == "NEW") {
-  //     console.log("❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️");
-  //     const tempid = uuidv4();
-
-  //     //Function Split Domain (For using with Complaint Status)
-  //     // const tempComplaintStatus = splitByDot(user[0]?.employee_domain);
-  //     const tempComplaintStatus = await LovAll_Get("complaint_status");
-
-  //     // เตรียม Models
-  //     const complainttypeModel = dataComplaintTypeValue_Combobox
-  //       ? compTypeUpdateCompId(
-  //         dataComplaintTypeValue_Combobox,
-  //         tempid,
-  //         compTypeOther
-  //       )
-  //       : null;
-
-  //     const complaintRsModel = dataComplaintRsValue_Combobox
-  //       ? compRsUpdateCompId(
-  //         dataComplaintRsValue_Combobox,
-  //         tempid,
-  //         compRsOther,
-  //         clauseOther
-  //       )
-  //       : null;
-
-  //     // สร้าง JSON payload
-  //     const complaintPayload = {
-  //       complaintModel: {
-  //         id: dataelement?.id,
-  //         report_type: dataReportTypeValue?.id,
-  //         cas_number: cas_number,
-  //         date_of_detection: date_of_detection
-  //           ? date_of_detection
-  //             .hour(dayjs().hour())
-  //             .minute(dayjs().minute())
-  //             .second(dayjs().second())
-  //             .format("YYYY-MM-DDTHH:mm:ss.SSS")
-  //           : null,
-  //         request_name: user[0]?.employee_username || "",
-  //         request_company_id: request_company_id?.company_id,
-  //         // ? Number(request_company_id.company_id)
-  //         // : undefined,
-  //         request_domain_id: user[0]?.employee_domain,
-  //         request_department_id: user[0].itasset_department_id,
-  //         request_position: user[0]?.employee_position || "",
-  //         request_email: user[0]?.employee_email || "",
-  //         request_phone: user[0]?.employee_tel || "",
-  //         request_date: new Date().toISOString(),
-  //         respondent_company_id: respondent_company_id?.company_id,
-  //         // ? Number(respondent_company_id.company_id)
-  //         // : undefined,
-  //         respondent_domain_id: respondent_domain_id?.domain_id,
-  //         respondent_department_id: respondent_department_id?.department_id,
-  //         // ? Number(respondent_department_id.department_id)
-  //         // : undefined,
-  //         respondent_email: respondent_email,
-  //         respondent_other_name: respondent_other_name,
-  //         respondent_other_email: respondent_other_email,
-  //         product_name: product_name,
-  //         detail: detail,
-  //         //priority_level: datapriorityValue_Combobox,
-  //         priority_level:
-  //           datapriorityValue_Combobox || dataelement?.priority_level,
-  //         respond_date_within: respond_date_within
-  //           ? respond_date_within
-  //             .hour(dayjs().hour())
-  //             .minute(dayjs().minute())
-  //             .second(dayjs().second())
-  //             //.format("YYYY-MM-DDTHH:mm:ss.fff")
-  //             .format("YYYY-MM-DDTHH:mm:ss.SSS")
-  //           : null,
-  //         lot_no: lot_no,
-  //         complaint_status_id: tempComplaintStatus[0]?.id,
-  //         create_by: user[0]?.employee_username || "",
-  //         save_type: "save_draft_edit",
-  //         complaintType: complainttypeModel,
-  //         complaintRs: complaintRsModel,
-  //         complaintFile:
-  //           complaintFiles?.map((item: any, index: number) => {
-  //             return {
-  //               cf_type: "Complaint",
-  //               complaint_id: tempid,
-  //               complaint_at_id: item.attachmentType,
-  //               other: item.otherText?.trim() || null,
-  //               cf_file_seq: (index + 1).toString(),
-  //               user_file_name: item.file.name,
-  //               file_name: item.file.name,
-  //               file_type: item.file.type.split("/")[1] || "",
-  //               file_size: item.file.size.toString(),
-  //               record_status: true,
-  //               create_by: user[0]?.employee_username || "",
-  //               create_datetime: new Date().toISOString(),
-  //               remark: item.otherText || null,
-  //             };
-  //           }) || [],
-  //       },
-  //       RunningModel: {
-  //         code_group: dataReportTypeValue.lov_code,
-  //         code_type: dataReportTypeValue.lov1 + "-" + getPaddingYear(),
-  //         code_num: 1,
-  //       },
-  //       CurrentAccessModel: {
-  //         user_id: user[0]?.employee_username || "",
-  //       },
-  //     };
-
-  //     formData.append("complaintPayloadJson", JSON.stringify(complaintPayload));
-
-  //     // แนบไฟล์จริง
-  //     if (complaintFiles && complaintFiles.length > 0) {
-  //       complaintFiles.forEach((fileItem: any) => {
-  //         formData.append("complaintFiles", fileItem.file);
-  //       });
-  //     }
-
-  //     //console.log("📤 complaintPayloadSavedraft:", complaintPayload);
-  //     setIsLoadingScreen(true);
-
-  //     try {
-  //       const response = await _POST_FORMDATA(
-  //         formData,
-  //         "/Complaint/ComplaintEdit"
-  //       );
-  //       if (response && response.status === "success") {
-  //         FullSweetalert({
-  //           title: "Success",
-  //           text: `บันทึกข้อมูลสำเร็จ`,
-  //           icon: "success",
-  //         });
-  //         //console.log("✅ Complaint Add successfully:", response);
-  //       } else {
-  //         FullSweetalert({
-  //           title: "Failed",
-  //           text: `บันทึกไม่ข้อมูลสำเร็จ`,
-  //           icon: "error",
-  //         });
-  //         //console.log("⚠️ Add failed:", response);
-  //       }
-  //     } catch (error) {
-  //       console.error("Upload failed:", error);
-  //     } finally {
-  //       setIsLoadingScreen(false);
-  //       handleClose();
-
-  //       // Complaint_Get();
-  //       ComplaintGet();
-  //     }
-  //   }
-  // };
-
   // Function - Add Complaint
 
   const ComplaintAdd = async () => {
@@ -2850,6 +2688,7 @@ export default function Complaint() {
       const complaintPayload = {
         complaintModel: {
           id: dataelement?.id,
+          cas_number: dataelement?.cas_number,
           mode: mode,
           date_of_detection: date_of_detection
             ? date_of_detection
@@ -2986,6 +2825,7 @@ export default function Complaint() {
       const complaintPayload = {
         complaintModel: {
           id: dataelement?.id,
+          cas_number: dataelement?.cas_number,
           mode: mode,
           date_of_detection: date_of_detection
             ? date_of_detection
@@ -3053,7 +2893,6 @@ export default function Complaint() {
         });
       }
 
-      //console.log("📤 complaintPayloadSavedraft:", complaintPayload);
       setIsLoadingScreen(true);
 
       try {
@@ -3067,14 +2906,12 @@ export default function Complaint() {
             text: `บันทึกข้อมูลสำเร็จ`,
             icon: "success",
           });
-          //console.log("✅ Complaint Add successfully:", response);
         } else {
           FullSweetalert({
             title: "Failed",
             text: `บันทึกไม่ข้อมูลสำเร็จ`,
             icon: "error",
           });
-          //console.log("⚠️ Add failed:", response);
         }
       } catch (error) {
         console.error("Upload failed:", error);
@@ -3084,121 +2921,7 @@ export default function Complaint() {
 
         ComplaintGet();
       }
-    } else if (mode == "EXPLAIN") {
-      console.log("🔧 Updating complaint status to EXPLAIN...");
-      // สร้าง JSON payload
-      const complaintPayload = {
-        complaintModel: {
-          id: dataelement?.id,
-          mode: mode,
-          complaint_status_id: tempComplaintStatus[2]?.id,
-        },
-
-        CurrentAccessModel: {
-          user_id: user[0]?.employee_username || "",
-        },
-      };
-      console.log("💬 tempComplaintStatus: ", tempComplaintStatus);
-
-      formData.append("complaintPayloadJson", JSON.stringify(complaintPayload));
-
-      // แนบไฟล์จริง
-      if (complaintFiles && complaintFiles.length > 0) {
-        complaintFiles.forEach((fileItem: any) => {
-          formData.append("complaintFiles", fileItem.file);
-        });
-      }
-
-      //console.log("📤 complaintPayloadSavedraft:", complaintPayload);
-      setIsLoadingScreen(true);
-
-      try {
-        const response = await _POST_FORMDATA(
-          formData,
-          "/Complaint/ComplaintEdit"
-        );
-        if (response && response.status === "success") {
-          FullSweetalert({
-            title: "Success",
-            text: `บันทึกข้อมูลสำเร็จ`,
-            icon: "success",
-          });
-          //console.log("✅ Complaint Add successfully:", response);
-        } else {
-          FullSweetalert({
-            title: "Failed",
-            text: `บันทึกไม่ข้อมูลสำเร็จ`,
-            icon: "error",
-          });
-          //console.log("⚠️ Add failed:", response);
-        }
-      } catch (error) {
-        console.error("Upload failed:", error);
-      } finally {
-        setIsLoadingScreen(false);
-        handleClose();
-
-        ComplaintGet();
-      }
-    } else if (mode == "APPROVE_SC") {
-      console.log("🔧 Updating complaint status to EXPLAIN...");
-      // สร้าง JSON payload
-      const complaintPayload = {
-        complaintModel: {
-          id: dataelement?.id,
-          mode: mode,
-          complaint_status_id: tempComplaintStatus[3]?.id,
-        },
-
-        CurrentAccessModel: {
-          user_id: user[0]?.employee_username || "",
-        },
-      };
-      console.log("💬 tempComplaintStatus: ", tempComplaintStatus);
-
-      formData.append("complaintPayloadJson", JSON.stringify(complaintPayload));
-
-      // แนบไฟล์จริง
-      if (complaintFiles && complaintFiles.length > 0) {
-        complaintFiles.forEach((fileItem: any) => {
-          formData.append("complaintFiles", fileItem.file);
-        });
-      }
-
-      //console.log("📤 complaintPayloadSavedraft:", complaintPayload);
-      setIsLoadingScreen(true);
-
-      try {
-        const response = await _POST_FORMDATA(
-          formData,
-          "/Complaint/ComplaintEdit"
-        );
-        if (response && response.status === "success") {
-          FullSweetalert({
-            title: "Success",
-            text: `บันทึกข้อมูลสำเร็จ`,
-            icon: "success",
-          });
-          //console.log("✅ Complaint Add successfully:", response);
-        } else {
-          FullSweetalert({
-            title: "Failed",
-            text: `บันทึกไม่ข้อมูลสำเร็จ`,
-            icon: "error",
-          });
-          //console.log("⚠️ Add failed:", response);
-        }
-      } catch (error) {
-        console.error("Upload failed:", error);
-      } finally {
-        setIsLoadingScreen(false);
-        handleClose();
-
-        ComplaintGet();
-      }
-    } else if (mode == "APPROVEQC") {
-    } else if (mode == "CLOSE") {
-    }
+    } 
   };
 
   // Function - Delete Complaint
@@ -3260,70 +2983,6 @@ export default function Complaint() {
       ComplaintGet();
     }
   };
-
-  // READ - Preview Complaint (from ComplaintRead.tsx)
-  // const previewComplaint = async () => {
-  //   if (isCallFuncLogOn)
-  //     console.log(
-  //       "🕑 ",
-  //       dayjs().format("HH:mm:ss.SSS"),
-  //       " [Calling Function]  :  previewComplaint"
-  //     );
-
-  //   //console.log(dataelement, "dataelement");
-  //   //console.log("dataset_reporttype", dataset_reporttype);
-  //   //console.log("NCR TEST", extractReportType("TRR_RT_NCR"));
-  //   //console.log("OBS TEST", extractReportType("TRR_RT_OBS"));
-  //   //console.log("CAR TEST", extractReportType("TRR_RT_CAR"));
-  //   //console.log("CPAR TEST", extractReportType("TRR_RT_CPAR"));
-
-  //   if (dataelement) {
-  //     //console.log("dataelement.report_type", dataelement.report_type);
-
-  //     // setIsRSHidden(extractReportType(dataelement.report_type) != "NCR" ? true : false);
-
-  //     // แปลง priority text → id ของ RadioGroup
-  //     const selectedPriority = datapriority_Combobox.find(
-  //       (item: any) =>
-  //         item.lov_code === dataelement.priority_level ||
-  //         item.lov1 === dataelement.priority_level
-  //     );
-  //     setdataPriority(selectedPriority?.id || "");
-
-  //     //console.log("dataComplaintType_Combobox", dataComplaintType_Combobox);
-  //     //console.log("dataelement?.complaint_type_id", dataelement?.complaintType);
-  //     //console.log("dataelement?.complaint_type_id", dataelement?.complaintRs);
-  //     //console.log("dataelement?.complaint_at_id", dataelement?.complaintPhoto);
-  //     //console.log("dataelement?.priority_level", dataelement?.priority_level);
-
-  //     const data_ComplaintType = await setValueMas(
-  //       dataComplaintType_Combobox,
-  //       dataelement?.complaint_type_id,
-  //       "id"
-  //     );
-  //     const data_ComplaintRs = await setValueMas(
-  //       dataComplaintRs_Combobox,
-  //       dataelement?.complaint_type_id,
-  //       "id"
-  //     );
-  //     const data_ComplaintPhoto = await setValueMas(
-  //       dataphoto_Combobox,
-  //       dataelement?.complaint_at_id,
-  //       "id"
-  //     );
-  //     const data_Priority = await setValueMas(
-  //       datapriority_Combobox,
-  //       dataelement?.priority_level,
-  //       "id"
-  //     );
-
-  //     //console.log("data_ComplaintType", data_ComplaintType);
-  //     //console.log("data_ComplaintRs", data_ComplaintRs);
-  //     //console.log("data_ComplaintPhoto", data_ComplaintPhoto);
-  //     //console.log("data_Priority", data_Priority);
-  //     //console.log(dataset_reporttype);
-  //   }
-  // };
 
   const ComplaintReturn = async (mode: string) => {
     if (isCallFuncLogOn)
@@ -3579,8 +3238,8 @@ export default function Complaint() {
           approve_seq: approveSeq[0].lov3,
           complaint_status_id: tempComplaintStatus[4]?.id,
           approve_status: approveSelectionCode,
-          approve_detail: approve_detail || null,
-          approve_note: approve_note || null,
+          approve_detail: qcapprove_detail || null,
+          approve_note: qcapprove_note || null,
           approve_name: user[0]?.employee_username || "",
           approve_company_id: approve_company_id?.company_id
             ? Number(approve_company_id.company_id)
@@ -3956,7 +3615,6 @@ export default function Complaint() {
     }
   };
 
-  
   const ApproveScAdd = async () => {
     setSubmitCount((prev) => prev + 1);
     if (isCallFuncLogOn)

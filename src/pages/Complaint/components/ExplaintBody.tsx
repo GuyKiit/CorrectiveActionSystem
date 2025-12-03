@@ -1372,11 +1372,11 @@ export default function ExplaintBody({
     console.log("ขั้นตอน: 5 เก็บข้อมูลเข้า ฺเต็dataelement ใหม่ ", dataelement);
     console.log("ขั้นตอน: 5 เก็บข้อมูลเข้า approveList ใหม่ ", approveList);
     // console.log("ขั้นตอน: 5 ", approveList[0].approve_name);
-    console.log("ขั้นตอน: 5 ", approve_email);
-    console.log("ขั้นตอน: 5 ", approve_company_id);
-    console.log("ขั้นตอน: 5 ", approve_department_id);
-    console.log("action", action);
-    console.log("approve_note", approve_note);
+    // console.log("ขั้นตอน: 5 ", approve_email);
+    // console.log("ขั้นตอน: 5 ", approve_company_id);
+    // console.log("ขั้นตอน: 5 ", approve_department_id);
+    // console.log("action", action);
+    // console.log("approve_note", approve_note);
 
     if (
       dataelement &&
@@ -1426,7 +1426,7 @@ export default function ExplaintBody({
       const scApprove = approveList?.find(
         (x: any) => x.explain_id === dataelement?.id && x.approve_seq === 1
       );
-      console.log("scApprove", scApprove);
+      // console.log("scApprove", scApprove);
       // QC Approve = approve_seq = 2
       const qcApprove = approveList?.find(
         (x: any) => x.explain_id === dataelement?.id && x.approve_seq === 2
@@ -1467,15 +1467,18 @@ export default function ExplaintBody({
         setapprove_company_id;
         setapprove_position(scApprove?.approve_position || "");
         setapprove_email(scApprove?.approve_email || "");
+        if (scApprove?.approve_date) {
+          setapprove_date(dayjs(scApprove.approve_date));
+        }
         setapprove_detail(scApprove?.approve_detail || "");
         setapprove_note(scApprove?.approve_note || "");
       }
 
       
-      console.log("scApprove?.approve_note", scApprove?.approve_note);
-      console.log("scApprove?.approve_detail", scApprove?.approve_detail);
-      console.log("scApprove?.approve_email", scApprove?.approve_email);
-      console.log("scApprove?.approve_position", scApprove?.approve_position);
+      // console.log("scApprove?.approve_note", scApprove?.approve_note);
+      // console.log("scApprove?.approve_detail", scApprove?.approve_detail);
+      // console.log("scApprove?.approve_email", scApprove?.approve_email);
+      // console.log("scApprove?.approve_position", scApprove?.approve_position);
 
       // setdataSectionapp(dataApprove_Combobox.find((item: any) => item.lov_code === approveList[1]?.approve_status) || null);
       // setqcapprove_detail(approveList[1]?.approve_detail || "");
@@ -1615,6 +1618,7 @@ export default function ExplaintBody({
     // dataTooluse,
     // dataDecision,
   ]);
+
   React.useEffect(() => {
   if (!explainList?.length || !dataelement) return;
 
@@ -2064,7 +2068,6 @@ console.log("dataelement.explain_id", dataelement?.explain_id);
                       labelName={"วันที่ชี้แจง (Date)"}
                       value={responsible_date}
                       handleChange={(val) => setresponsible_date(val ?? null)}
-                      //bgcolorTextField={isActionExplainAdd ? false : true}
                       readonly
                     />
                   </Grid>

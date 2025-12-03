@@ -285,6 +285,8 @@ export default function DepartmentSetting() {
 
   };
 
+  const [validateStep, setValidateStep] = useState<{ [step: string]: boolean }>({});
+
   // Function - Validate before Add Complaint
     const validateBeforeAdd = (): boolean => {
       if (isCallFuncLogOn)
@@ -300,6 +302,7 @@ export default function DepartmentSetting() {
       setDepartmentAreaError(false);
       setEmailAreaError(false);
       setStepAreaError(false);
+      setValidateStep({});
     
 
     // Validate 
@@ -322,6 +325,32 @@ export default function DepartmentSetting() {
       setEmailAreaError(true);
       valid = false;
     }
+
+    //////////////////////////////02122025/////////////////////////////////
+    // Validate Approval Steps
+    const approveRows = datastatus.filter(
+      (item: any) =>
+        item.lov_code === "APPROVED" &&
+        item.lov7 === dept_domain?.domain_id
+    );
+
+    const newValidateStep: { [step: string]: boolean } = {};
+    approveRows.forEach((row: any) => {
+      const stepKey = row.lov3;
+      if (stepKey === "1") {
+        if (!sectionApprove) {
+          newValidateStep[stepKey] = true;
+          valid = false;
+        }
+      } else if (stepKey === "2") {
+        if (!qcApprove) {
+          newValidateStep[stepKey] = true;
+          valid = false;
+        }
+      }
+    });
+    setValidateStep(newValidateStep);
+//////////////////////////////02122025/////////////////////////////////
 
     return valid;
   };
@@ -1520,6 +1549,7 @@ export default function DepartmentSetting() {
               step: stepAreaError,
 
             }}
+            validateStep={validateStep}
             onCompanyAreaChange={(val) => {
               setdept_company(val);
               setCompanyAreaError(false);
@@ -1535,6 +1565,10 @@ export default function DepartmentSetting() {
             onEmailAreaChange={(val) => {
               setdept_email(val);
               setEmailAreaError(false);
+            }}
+            onSectionAreaChange={(val) => {
+              setsectionApprove(val);
+              setUsernameAreaError(false);
             }}
           />
 
