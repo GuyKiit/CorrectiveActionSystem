@@ -255,6 +255,7 @@ export default function Complaint() {
     dataphoto_Combobox,
     datapriorityValue_Combobox,
     datastatus,
+    datastatusCrossDomain,
     datastatusconfig,
     datapriority_Combobox,
     datapriority,
@@ -413,6 +414,7 @@ export default function Complaint() {
     setdataComplaintTypeValue_Combobox,
     setdataComplaintRs_Combobox,
     setdatastatus,
+    setdatastatusCrossDomain,
     setdatastatusconfig,
     setdataComplaintRsValue_Combobox,
     setdataphoto_Combobox,
@@ -1117,7 +1119,7 @@ export default function Complaint() {
           setdataset_activeCompany?.(grouped["active_company"] || []);
           setdataset_roleProfile?.(grouped["role_profile"] || []);
           setdataset_configfile?.(grouped["config_file"] || []);
-
+          setdatastatusCrossDomain?.(grouped["complaint_status"] || []);
           setdatastatus?.(
             grouped["complaint_status"].filter(
               (item: any) => item.lov7 === user[0].employee_domain
@@ -1126,27 +1128,27 @@ export default function Complaint() {
 
           setdataset_complaintActionNew(
             grouped["complaint_action"].filter(
-              (item: any) => item.lov_code === "ACTION_NEW"
+              (item: any) => item.lov_code === "ACTION_NEW" && item.lov_group == user[0].itasset_company_id
             )
           );
           setdataset_complaintActionExplain(
             grouped["complaint_action"].filter(
-              (item: any) => item.lov_code === "ACTION_EXPLAIN"
+              (item: any) => item.lov_code === "ACTION_EXPLAIN" && item.lov_group == user[0].itasset_company_id
             )
           );
           setdataset_complaintActionApproveSC(
             grouped["complaint_action"].filter(
-              (item: any) => item.lov_code === "ACTION_APPROVE_SC"
+              (item: any) => item.lov_code === "ACTION_APPROVE_SC" && item.lov_group == user[0].itasset_company_id
             )
           );
           setdataset_complaintActionApproveQC(
             grouped["complaint_action"].filter(
-              (item: any) => item.lov_code === "ACTION_APPROVE_QC"
+              (item: any) => item.lov_code === "ACTION_APPROVE_QC" && item.lov_group == user[0].itasset_company_id
             )
           );
           setdataset_complaintActionClose(
             grouped["complaint_action"].filter(
-              (item: any) => item.lov_code === "ACTION_CLOSE"
+              (item: any) => item.lov_code === "ACTION_CLOSE" && item.lov_group == user[0].itasset_company_id
             )
           );
 
@@ -1567,11 +1569,19 @@ export default function Complaint() {
           console.log("filteredData", filteredData);
 
           filteredData.forEach((el: any) => {
-            const tempApproveInfo = (datastatus || []).filter(
+
+            const tempDataStatus = (datastatusCrossDomain || []).filter(
+              //const tempApproveInfo = datastatus.filter(
+              (val: any) =>
+                val["lov7"] == el.respondent_domain_id
+            );
+
+            const tempApproveInfo = (tempDataStatus || []).filter(
               //const tempApproveInfo = datastatus.filter(
               (val: any) =>
                 val["id"] == el.complaint_status_id && val["lov3"] !== null
             );
+
             const tempApproveSeq =
               tempApproveInfo.length > 0 ? tempApproveInfo[0]["lov3"] : null;
 
@@ -1792,7 +1802,9 @@ export default function Complaint() {
             );
             const tempRolename = tempRoleUser[0].lov_code;
 
-            // console.log("🦄🦄🦄🦄🦄🦄 tempApproveSeq : ", tempApproveSeq);
+            console.log("🦄🦄🦄🦄🦄🦄 tempApproveSeq : ", tempApproveSeq);
+            console.log("🎶🎶🎶🎶🎶 tempApproveSeq : ", el.cas_number);
+            // console.log("4️⃣4️⃣🤍🤍5️⃣5️⃣ dataset_complaintActionApproveQC : ", dataset_complaintActionApproveQC);
             // console.log("🎆 🎆 🎆 🎆 complaint_status_label:", el.complaint_status_label);
             // console.log("🎆 🎆 🎆 🎆 setdataset_roleProfile :", dataset_roleProfile);
             // console.log("🎆 🎆 🎆 🎆 el :", el);

@@ -1629,6 +1629,7 @@ export default function ExplaintBody({
 
     setclose_name(closeItem?.return_name ?? "");
      console.log("closeItem", closeItem);           // ✅ ต้องมี object
+     console.log("dataset_department", dataset_department);           // ✅ ต้องมี object
   console.log("closeItem.return_name", closeItem?.return_name ?? ""); // ✅ ต้องมีค่า
     setclose_company_id(
       dataset_company.find((c:any) => Number(c.company_id) === closeItem.return_company_id) || null
