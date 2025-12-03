@@ -310,7 +310,8 @@ const handleStepSelected = (stepKey: string, value: any) => {
       setDomainAreaError(false);
       setDepartmentAreaError(false);
       setEmailAreaError(false);
-      setStepAreaError({})
+      setStepAreaError(false);
+      setValidateStep({});
     
 
     // Validate 
@@ -333,17 +334,32 @@ const handleStepSelected = (stepKey: string, value: any) => {
       setEmailAreaError(true);
       valid = false;
     }
-    let newStepErrors: { [step: string]: boolean } = {};
-  approveRows.forEach((row) => {
-  const stepKey = row.lov3;
-  const selected = stepValues[stepKey]; // <-- เอาตัวนี้เลย
-  if (!selected?.employee_username) {
-    newStepErrors[stepKey] = true;
-    valid = false;
-  }
-});
-  setStepAreaError(newStepErrors);
 
+    //////////////////////////////02122025/////////////////////////////////
+    // Validate Approval Steps
+    const approveRows = datastatus.filter(
+      (item: any) =>
+        item.lov_code === "APPROVED" &&
+        item.lov7 === dept_domain?.domain_id
+    );
+
+    const newValidateStep: { [step: string]: boolean } = {};
+    approveRows.forEach((row: any) => {
+      const stepKey = row.lov3;
+      if (stepKey === "1") {
+        if (!sectionApprove) {
+          newValidateStep[stepKey] = true;
+          valid = false;
+        }
+      } else if (stepKey === "2") {
+        if (!qcApprove) {
+          newValidateStep[stepKey] = true;
+          valid = false;
+        }
+      }
+    });
+    setValidateStep(newValidateStep);
+//////////////////////////////02122025/////////////////////////////////
 
     return valid;
   };
