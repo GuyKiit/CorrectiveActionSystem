@@ -7,6 +7,8 @@ import Avatar from "@mui/material/Avatar";
 import PersonAdd from "@mui/icons-material/PersonAdd";
 import Settings from "@mui/icons-material/Settings";
 import Logout from "@mui/icons-material/Logout";
+import MenuBook from "@mui/icons-material/MenuBook";
+import SearchOff from "@mui/icons-material/SearchOff";
 import { useAuth } from "../../../auth/core/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { IconButton, Dialog, DialogContent, Typography, Box, Button } from "@mui/material";
@@ -23,6 +25,9 @@ export default function Profile({ isOpen }: Profile) {
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
   const open = Boolean(anchorEl);
   const [profileModalOpen, setProfileModalOpen] = React.useState(false);
+  const [manualGuideOpen, setManualGuideOpen] = React.useState(false);
+  const manualGuideUrl = null;
+  // const manualGuideUrl = "https://intra-tools.trrgroup.com/storage/AVL/PROD/doc_form/TRR-Business-Ethics-for-partners.pdf";
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -173,7 +178,44 @@ export default function Profile({ isOpen }: Profile) {
                 fontWeight: 500,
                 color: '#374151'
               }}>
-                Profile
+                โปรไฟล์
+                {/* Profile */}
+              </Typography>
+            </MenuItem>
+
+            <MenuItem 
+              onClick={() => {
+                setManualGuideOpen(true);
+                handleClose();
+              }}
+              sx={{
+                mx: 1,
+                my: 0.5,
+                borderRadius: 2,
+                minHeight: 48,
+                '&:hover': {
+                  backgroundColor: 'rgba(99, 102, 241, 0.08)',
+                  '& .MuiListItemIcon-root': {
+                    color: '#6366f1'
+                  },
+                  '& .MuiTypography-root': {
+                    color: '#6366f1'
+                  }
+                }
+              }}
+            >
+              <ListItemIcon sx={{ 
+                minWidth: 40,
+                color: '#6b7280'
+              }}>
+                <MenuBook fontSize="small" />
+              </ListItemIcon>
+              <Typography variant="body2" sx={{ 
+                fontWeight: 500,
+                color: '#374151'
+              }}>
+                คู่มือการใช้งาน
+                {/* Manual Guide */}
               </Typography>
             </MenuItem>
 
@@ -205,7 +247,8 @@ export default function Profile({ isOpen }: Profile) {
                 fontWeight: 500,
                 color: '#374151'
               }}>
-                Sign Out
+                ออกจากระบบ
+                {/* Sign Out */}
               </Typography>
             </MenuItem>
           </Box>
@@ -424,6 +467,74 @@ export default function Profile({ isOpen }: Profile) {
               </Box>
             </Box>
 
+          </Box>
+        </DialogContent>
+      </Dialog>
+
+      {/* Manual Guide PDF Modal */}
+      <Dialog
+        open={manualGuideOpen}
+        onClose={() => setManualGuideOpen(false)}
+        maxWidth="xl"
+        fullWidth
+        PaperProps={{
+          sx: {
+            borderRadius: 3,
+            overflow: 'hidden',
+            height: '90vh',
+            background: '#fff',
+            m: { xs: 1, md: 2, lg: 4 }
+          }
+        }}
+      >
+        <DialogContent sx={{ p: 0, position: 'relative', height: '100%', display: 'flex', flexDirection: 'column' }}>
+          {/* Header/Close Button */}
+          <Box sx={{ 
+            p: 2, 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            alignItems: 'center',
+            borderBottom: '1px solid #e5e7eb',
+            backgroundColor: '#f9fafb'
+          }}>
+            <Typography variant="h6" sx={{ fontWeight: 600, color: '#111827' }}>
+              คู่มือการใช้งาน
+              {/* Manual Guide */}
+            </Typography>
+            <IconButton
+              onClick={() => setManualGuideOpen(false)}
+              sx={{
+                color: '#6b7280',
+                '&:hover': {
+                  backgroundColor: '#f3f4f6',
+                  color: '#111827'
+                }
+              }}
+            >
+              <CloseIcon />
+            </IconButton>
+          </Box>
+
+          {/* PDF Iframe or Empty State */}
+          <Box sx={{ flex: 1, bgcolor: '#f3f4f6', p: 0, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            {manualGuideUrl ? (
+              <iframe
+                src={manualGuideUrl}
+                width="100%"
+                height="100%"
+                style={{ border: 'none' }}
+                title="Manual Guide PDF"
+              />
+            ) : (
+              <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+                <SearchOff sx={{ fontSize: 150, color: '#e5e7eb' }} />
+                <br></br>
+                <Typography variant="h6" sx={{ color: '#9ca3af', fontStyle: 'italic' }}>
+                  ไม่พบคู่มือการใช้งานในระบบ
+                  {/* Manual Guide is Empty */}
+                </Typography>
+              </Box>
+            )}
           </Box>
         </DialogContent>
       </Dialog>
