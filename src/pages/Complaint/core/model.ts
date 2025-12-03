@@ -79,6 +79,7 @@ export type ListComplaintContextProps = {
     datapriorityValue_Combobox?: any
     datapriority?: any
     datastatus?: any
+    datastatusCrossDomain?: any
     datastatusconfig?: any
     PriorityLevel?: any
     compTypeOther?: any
@@ -282,6 +283,7 @@ export type ListComplaintContextProps = {
     setdatapriorityValue_Combobox: Dispatch<SetStateAction<any>>
     setdatapriority: Dispatch<SetStateAction<any>>
     setdatastatus: Dispatch<SetStateAction<any>>
+    setdatastatusCrossDomain: Dispatch<SetStateAction<any>>
     setdatastatusconfig: Dispatch<SetStateAction<any>>
     setPriorityLevel: Dispatch<SetStateAction<any>>
     // setSelectedFile: Dispatch<SetStateAction<File>>
@@ -473,6 +475,7 @@ export const initialListComplaint: ListComplaintContextProps = {
     setdatapriorityValue_Combobox: () => { },
     setdatapriority: () => { },
     setdatastatus: () => { },
+    setdatastatusCrossDomain: () => { },
     setdatastatusconfig: () => { },
     setPriorityLevel: () => { },
 

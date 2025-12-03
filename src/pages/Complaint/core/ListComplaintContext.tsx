@@ -199,6 +199,9 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
     const [datastatus, setdatastatus] = useState<any>(
         initialListComplaint.datastatus
     );
+    const [datastatusCrossDomain, setdatastatusCrossDomain] = useState<any>(
+        initialListComplaint.datastatusCrossDomain
+    );
     const [datastatusconfig, setdatastatusconfig] = useState<any>(
         initialListComplaint.datastatusconfig
     );
@@ -617,6 +620,7 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 datapriorityValue_Combobox,
                 datapriority,
                 datastatus,
+                datastatusCrossDomain,
                 datastatusconfig,
                 PriorityLevel,
                 // ✅ expose state ออกมาให้ component อื่นใช้
@@ -805,6 +809,7 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 setdatapriorityValue_Combobox,
                 setdatapriority,
                 setdatastatus,
+                setdatastatusCrossDomain,
                 setdatastatusconfig,
                 setPriorityLevel,
                 setdataComplaintTypeValue_Combobox,

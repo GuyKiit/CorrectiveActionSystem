@@ -103,12 +103,14 @@ interface DepartmentSettingBody {
     validateText?: Validate;
     validateDetailText?: { [index: number]: detail };
     validateStep?: { [step: string]: boolean };
+    onStepSelected?: (stepKey: string, value: any) => void;
     onBlocksChange?: (blocks: Block[]) => void;
     handleOpenAdd?: () => void;
     onCompanyAreaChange?: (val: any) => void;
     onDomainAreaChange?: (val: any) => void;
     onDepartmentAreaChange?: (val: any) => void;
     onEmailAreaChange?: (val: any) => void;
+    onStepAreaChange?: (stepKey: string) => void;
     onSectionAreaChange?: (val: any) => void;
     onQcAreaChange?: (val: any) => void;
 }
@@ -149,8 +151,10 @@ export default function DepartmentSettingBody({
     onDomainAreaChange,
     onDepartmentAreaChange,
     onEmailAreaChange,
+    onStepAreaChange,
     onSectionAreaChange,
     onQcAreaChange,
+    onStepSelected,
 }: DepartmentSettingBody) {
     const isActionRead = action === "Read" || action === "ExplainRead";
     const isActionAdd = action === "Add";
@@ -250,6 +254,10 @@ export default function DepartmentSettingBody({
     const [request_department_id, setrequest_department_id] = React.useState<{ itasset_department_id: number; itasset_department_name: string; } | null>(null);
     const [dataDecision, setdataDecision] = useState<LovType[]>([]);
     const [approveStates, setApproveStates] = useState<Record<string, any>>({});
+    const [stepValues, setStepValues] = useState<Record<string, any>>({});
+    const [stepAreaError, setStepAreaError] = useState<{ [step: string]: boolean }>({});
+
+    
     // const [dept_domain, setdept_domain] = useState<any>(null);
     // const [sectionApprove, setsectionApprove] = useState<any>(null);
     // const [qcApprove, setqcApprove] = useState<any>(null);
@@ -343,6 +351,10 @@ export default function DepartmentSettingBody({
 
 
     };
+const handleStepSelected = (stepKey: string, value: any) => {
+  setStepValues(prev => ({ ...prev, [stepKey]: value }));
+  setStepAreaError(prev => ({ ...prev, [stepKey]: false })); // clear validation
+};
 
     //========================================================================================
 
@@ -765,16 +777,7 @@ console.log("🚀 validateText.Company_Area (Body) =", validateText?.Company_Are
                         approveRows.map((row: any) => {
                             const stepKey = row["lov3"]; // lov3 คือ step
                             // Map step → state dynamically
-                            const valueMap: Record<string, any> = {
-                                "1": sectionApprove,
-                                "2": qcApprove,
-                                // ถ้ามี step เพิ่มเติม ให้เพิ่มที่นี่
-                            };
-                            const setValueMap: Record<string, Function> = {
-                                "1": setsectionApprove,
-                                "2": setqcApprove,
-                                // เพิ่ม step ใหม่ตามต้องการ
-                            };
+                            
 
                             return (
                                 <Grid container spacing={3} paddingTop={3} key={uuidv4()}>
@@ -799,7 +802,7 @@ console.log("🚀 validateText.Company_Area (Body) =", validateText?.Company_Are
                                     <Grid size={7}>
                                         <AutocompleteComboBox
                                             required="required"
-                                            value={valueMap[stepKey] || null}
+                                            value={stepValues[stepKey] || null}
                                             labelName="ชื่อ (Username)"
                                             options={
                                                 Array.isArray(username)
@@ -821,23 +824,16 @@ console.log("🚀 validateText.Company_Area (Body) =", validateText?.Company_Are
                                                 );
 
                                                 // 2️⃣ ถ้าไม่เจอ username เดิม ให้ fallback ใช้ id ของ step เดิม
-                                                const stepId =
-                                                    matched?.id ||
-                                                    dataelement?.deptApproveSetup?.find((i: any) => i.step === stepKey)?.id;
-
-                                                const newVal = { ...val, deptApproveSetup_id: stepId || null };
+                                                const stepId = matched?.id || dataelement?.deptApproveSetup?.find((i:any) => i.step === stepKey)?.id;
+                                                const newVal = val ? { ...val, deptApproveSetup_id: stepId || null } : null;
                                                 console.log(`🎯 step ${stepKey} → deptApproveSetup_id:`, stepId);
 
-                                                setValueMap[stepKey]?.(newVal);
+                                                handleStepSelected(stepKey, newVal);
                                             }}
                                             bgcolorTextField={action === "Add" ? false : isActionEdit ? false : true}
                                             readonly={isActionRead || isActionDelete || !dept_domain}
-                                            Validate={validateStep?.[stepKey] || false}
-                                            validateTextLable={
-                                                validateStep?.[stepKey]
-                                                    ? "กรุณาเลือกชื่อผู้อนุมัติ"
-                                                    : ""
-                                            }
+                                            Validate={stepAreaError[stepKey] || false} // ✅ แสดง error
+                                            validateTextLable={stepAreaError[stepKey] ? "กรุณาเลือกชื่อผู้อนุมัติ" : ""}
                                         />
                                     </Grid>
                                 </Grid>
