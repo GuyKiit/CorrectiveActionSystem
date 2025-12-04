@@ -212,19 +212,6 @@ export default function FuncDialogDemo() {
         submitLabel="ยืนยัน"
       />
 
-      {/* <FuncDialog
-        open={open}
-        dialogWidth="xl"
-        openBottonHidden={true}
-        titlename={'เพิ่มข้อมูล'}
-        handleClose={handleClose}
-        handlefunction={() => { }}
-        buttonColor="successTheme"
-        element={<OrderInsert action="add"></OrderInsert>
-        }
-      >
-      </FuncDialog> */}
-
       <Button
         onClick={handleOpen}>55555</Button>
       <BasicTable></BasicTable>
