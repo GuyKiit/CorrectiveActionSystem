@@ -87,6 +87,32 @@ export default function Profile({ isOpen }: Profile) {
     handleUrlChange({ target: { value: currentUser?.employee_image } });
   }, [currentUser?.employee_image]);
 
+  const [isIdle, setIsIdle] = useState(false);
+
+  React.useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+
+    const handleMouseMove = () => {
+      setIsIdle(false);
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        setIsIdle(true);
+      }, 600000); // 10 minutes
+    };
+
+    // Initialize timer on mount
+    timeoutId = setTimeout(() => {
+      setIsIdle(true);
+    }, 600000);
+
+    window.addEventListener('mousemove', handleMouseMove);
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      clearTimeout(timeoutId);
+    };
+  }, []);
+
   return (
     <>
       <div className={`duration-300 ${isOpen ? 'mr-0' : 'mr-0'}`}>
@@ -125,7 +151,10 @@ export default function Profile({ isOpen }: Profile) {
           </Avatar>}
 
           {/* Online indicator */}
-          <div className="absolute bottom-1 right-1 w-4 h-4 bg-green-400 border-2 border-white rounded-full"></div>
+          <div className="absolute bottom-1 right-1 w-4 h-4 flex items-center justify-center">
+            <span className={`absolute h-full w-full rounded-full animate-ping ${isIdle ? 'bg-[#ffc559]' : 'bg-green-400'}`} style={{ animationDuration: '2s' }}></span>
+            <span className={`relative rounded-full h-4 w-4 border-2 border-white ${isIdle ? 'bg-[#ffc559]' : 'bg-green-400'}`}></span>
+          </div>
         </IconButton>
 
         <Menu
