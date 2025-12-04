@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Divider from "@mui/material/Divider";
@@ -13,10 +13,31 @@ import { useAuth } from "../../../auth/core/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { IconButton, Dialog, DialogContent, Typography, Box, Button } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
+import defaultUserImage from "../../../assets/img/default_user_image.png";
 
 interface Profile {
   isOpen: boolean;
 }
+
+const isDefaultPhotoUrl = (url: string) => {
+    if (!url || typeof url !== 'string') {
+      return false;
+    }
+
+    // Define the target filename we are looking for
+    const targetFilename = "nophoto.png";
+
+    // 1. Split the URL path by '/'
+    // Example: "http://.../TRRGROUP.COM/nophoto.png" -> ["http:", "", "dev-web.trrgroup.com", "empimage", "TRRGROUP.COM", "nophoto.png"]
+    const parts = url.split('/');
+
+    // 2. Get the last part (the filename)
+    const filename = parts[parts.length - 1];
+
+    // 3. Compare the extracted filename with the target filename.
+    // We convert both to lowercase to handle potential casing differences robustly.
+    return filename.toLowerCase() === targetFilename.toLowerCase();
+  };
 
 export default function Profile({ isOpen }: Profile) {
   const { userData, logout } = useAuth();
@@ -25,6 +46,7 @@ export default function Profile({ isOpen }: Profile) {
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
   const open = Boolean(anchorEl);
   const [profileModalOpen, setProfileModalOpen] = React.useState(false);
+  const [isDefaultPhoto, setIsDefaultPhoto] = React.useState(false);
   const [manualGuideOpen, setManualGuideOpen] = React.useState(false);
   const manualGuideUrl = null;
   // const manualGuideUrl = "https://intra-tools.trrgroup.com/storage/AVL/PROD/doc_form/TRR-Business-Ethics-for-partners.pdf";
@@ -34,6 +56,7 @@ export default function Profile({ isOpen }: Profile) {
   };
 
   const handleClose = () => {
+    console.log("#### userData : ", userData?.[0]);
     setAnchorEl(null);
   };
 
@@ -50,6 +73,20 @@ export default function Profile({ isOpen }: Profile) {
     handleClose();
   };
 
+  const handleUrlChange = (e: { target: any; }) => {
+    const userImageUrl = e.target.value;
+  
+    // For check default photo
+    const isDefault = isDefaultPhotoUrl(userImageUrl);
+    
+    // Set default photo toggle (Check default photo)
+    setIsDefaultPhoto(isDefault); 
+  };
+
+  React.useEffect(() => {
+    handleUrlChange({ target: { value: currentUser?.employee_image } });
+  }, [currentUser?.employee_image]);
+
   return (
     <>
       <div className={`duration-300 ${isOpen ? 'mr-0' : 'mr-0'}`}>
@@ -62,8 +99,8 @@ export default function Profile({ isOpen }: Profile) {
             }
           }}
         >
-          <Avatar
-            src={currentUser?.employee_image ? currentUser?.employee_image : ""}
+          {isDefaultPhoto ? <Avatar
+            src={defaultUserImage}
             alt={currentUser?.employee_fname_en && currentUser?.employee_lname_en ? currentUser?.employee_fname_en + " " + currentUser?.employee_lname_en : "User"}
             sx={{
               width: 72,
@@ -74,6 +111,19 @@ export default function Profile({ isOpen }: Profile) {
           >
             {currentUser?.employee_fname_en?.charAt(0) || "U"}
           </Avatar>
+          : <Avatar
+            src={currentUser?.employee_image === null ? defaultUserImage : currentUser?.employee_image}
+            alt={currentUser?.employee_fname_en && currentUser?.employee_lname_en ? currentUser?.employee_fname_en + " " + currentUser?.employee_lname_en : "User"}
+            sx={{
+              width: 72,
+              height: 72,
+              border: '2px solid rgba(139, 69, 19, 0.3)',
+              position: 'relative'
+            }}
+          >
+            {currentUser?.employee_fname_en?.charAt(0) || "U"}
+          </Avatar>}
+
           {/* Online indicator */}
           <div className="absolute bottom-1 right-1 w-4 h-4 bg-green-400 border-2 border-white rounded-full"></div>
         </IconButton>
@@ -116,9 +166,10 @@ export default function Profile({ isOpen }: Profile) {
           {/* User Info Header */}
           <Box sx={{ px: 3, py: 2, borderBottom: '1px solid rgba(241, 243, 244, 0.8)' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-              <Avatar 
-                src={currentUser?.employee_image ? currentUser?.employee_image : ""} 
-                sx={{ 
+              {isDefaultPhoto ? <Avatar
+                src={defaultUserImage}
+                alt={currentUser?.employee_fname_en && currentUser?.employee_lname_en ? currentUser?.employee_fname_en + " " + currentUser?.employee_lname_en : "User"}
+                sx={{
                   width: 48, 
                   height: 48,
                   border: '2px solid rgba(255, 255, 255, 0.6)',
@@ -127,6 +178,19 @@ export default function Profile({ isOpen }: Profile) {
               >
                 {currentUser?.employee_fname_en?.charAt(0) || "U"}
               </Avatar>
+              : <Avatar
+                src={currentUser?.employee_image === null ? defaultUserImage : currentUser?.employee_image}
+                alt={currentUser?.employee_fname_en && currentUser?.employee_lname_en ? currentUser?.employee_fname_en + " " + currentUser?.employee_lname_en : "User"}
+                sx={{
+                  width: 72,
+                  height: 72,
+                  border: '2px solid rgba(139, 69, 19, 0.3)',
+                  position: 'relative'
+                }}
+              >
+                {currentUser?.employee_fname_en?.charAt(0) || "U"}
+              </Avatar>}
+
               <Box sx={{ flex: 1 }}>
                 <Typography variant="subtitle1" sx={{ 
                   fontWeight: 600, 
@@ -307,10 +371,9 @@ export default function Profile({ isOpen }: Profile) {
           <Box sx={{ p: 4, textAlign: 'center', maxHeight: '90vh', overflow: 'hidden' }}>
             {/* Profile Avatar */}
             <Box sx={{ mb: 3 }}>
-              <Avatar
-                src={currentUser?.employee_image ? currentUser?.employee_image : ""}
-                alt={currentUser?.employee_fname_en && currentUser?.employee_lname_en ? 
-                  `${currentUser?.employee_fname_en} ${currentUser?.employee_lname_en}` : "User"}
+              {isDefaultPhoto ? <Avatar
+                src={defaultUserImage}
+                alt={currentUser?.employee_fname_en && currentUser?.employee_lname_en ? currentUser?.employee_fname_en + " " + currentUser?.employee_lname_en : "User"}
                 sx={{
                   width: 250,
                   height: 250,
@@ -324,6 +387,22 @@ export default function Profile({ isOpen }: Profile) {
               >
                 {currentUser?.employee_fname_en?.charAt(0) || "U"}
               </Avatar>
+              : <Avatar
+                src={currentUser?.employee_image === null ? defaultUserImage : currentUser?.employee_image}
+                alt={currentUser?.employee_fname_en && currentUser?.employee_lname_en ? currentUser?.employee_fname_en + " " + currentUser?.employee_lname_en : "User"}
+                sx={{
+                  width: 250,
+                  height: 250,
+                  margin: '0 auto',
+                  border: '3px solid rgba(255, 255, 255, 0.6)',
+                  borderColor: 'rgba(194, 195, 196, 0.4)',
+                  boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
+                  backgroundColor: 'rgba(249, 250, 251, 0.8)',
+                  backdropFilter: 'blur(10px)'
+                }}
+              >
+                {currentUser?.employee_fname_en?.charAt(0) || "U"}
+              </Avatar>}
             </Box>
 
             {/* User Info */}
