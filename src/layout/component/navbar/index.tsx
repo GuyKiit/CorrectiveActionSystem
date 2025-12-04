@@ -11,10 +11,18 @@ interface NavbarProps {
 }
 
 export default function Navbar({ isOpen, setIsOpen }: NavbarProps) {
-  const { userData, logout } = useAuth();
+  const { userData,infoData, logout } = useAuth();
   const currentUser = userData?.[0];
+  const currentInfo = infoData?.[0];
   const [notifications] = useState(5);
   
+  const navbarGradient =
+    import.meta.env.VITE_NAVBAR_GRADIENT || process.env.REACT_APP_NAVBAR_GRADIENT ||
+    'linear-gradient(180deg, #FFFFFF 0%, #B3E5FC 100%)';
+
+  const navbarTextColor =
+    import.meta.env.VITE_NAVBAR_TEXT_COLOR || process.env.REACT_APP_NAVBAR_TEXT_COLOR ||
+    '#1565C0';
   // Mock user data - replace with actual user data from your auth context
   // const userData = {
   //   name: "Jakkapob Sirirungsakulwong",
@@ -31,9 +39,11 @@ export default function Navbar({ isOpen, setIsOpen }: NavbarProps) {
   return (
     <>
       <nav className="fixed top-0 z-50 w-full" style={{ 
-        background: 'white',
-        boxShadow: '0 4px 20px rgba(168,168,168,0.3)',
-        minHeight: '80px'
+        background: navbarGradient,
+        boxShadow: '0 3px 15px rgba(0, 0, 0, 0.3)',
+        // boxShadow: '0 4px 20px rgba(168,168,168,0.3)',
+        minHeight: '80px',
+        transition: 'background 0.3s ease-in-out'
       }}>
         <div className="px-6 py-5 lg:px-8 lg:py-5">
           <div className="flex items-center justify-between h-full">
