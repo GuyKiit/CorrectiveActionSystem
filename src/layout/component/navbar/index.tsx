@@ -52,13 +52,13 @@ export default function Navbar({ isOpen, setIsOpen }: NavbarProps) {
                 aria-label="open sidebar"
                 onClick={() => setIsOpen(!isOpen)}
                 sx={{
-                  color: '#8B4513',
-                  border: '1px solid rgba(139, 69, 19, 0.3)',
+                  color: '#000000',
+                  border: '1px solid rgba(0, 0, 0, 0.3)',
                   borderRadius: '12px',
                   padding: '12px',
                   '&:hover': {
-                    backgroundColor: 'rgba(139, 69, 19, 0.1)',
-                    borderColor: 'rgba(139, 69, 19, 0.5)'
+                    backgroundColor: 'rgba(0, 0, 0, 0.1)',
+                    borderColor: 'rgba(0, 0, 0, 0.5)'
                   }
                 }}
               >

@@ -105,7 +105,7 @@ export default function Profile({ isOpen }: Profile) {
             sx={{
               width: 72,
               height: 72,
-              border: '2px solid rgba(139, 69, 19, 0.3)',
+              border: '2px solid rgba(0, 0, 0, 0.2)',
               position: 'relative'
             }}
           >
@@ -117,7 +117,7 @@ export default function Profile({ isOpen }: Profile) {
             sx={{
               width: 72,
               height: 72,
-              border: '2px solid rgba(139, 69, 19, 0.3)',
+              border: '2px solid rgba(0, 0, 0, 0.2)',
               position: 'relative'
             }}
           >
@@ -184,7 +184,7 @@ export default function Profile({ isOpen }: Profile) {
                 sx={{
                   width: 72,
                   height: 72,
-                  border: '2px solid rgba(139, 69, 19, 0.3)',
+                  border: '2px solid rgba(0, 0, 0, 0.2)',
                   position: 'relative'
                 }}
               >
