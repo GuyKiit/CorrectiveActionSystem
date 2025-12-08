@@ -110,6 +110,7 @@ export type ListComplaintContextProps = {
     departmentrelate_search?: any
     department?: any
     domain?: any
+    casuserdept?: any
 
     dataset_complaintActionApproveSC?: any
     dataset_complaintActionApproveQC?: any
@@ -310,6 +311,7 @@ export type ListComplaintContextProps = {
     set_departmentrelate_search: Dispatch<SetStateAction<any>>;
     set_department: Dispatch<SetStateAction<any>>;
     set_domain: Dispatch<SetStateAction<any>>;
+    set_casuserdept: Dispatch<SetStateAction<any>>;
 
     setdataset_complaintActionApproveSC: Dispatch<SetStateAction<any>>
     setdataset_complaintActionApproveQC: Dispatch<SetStateAction<any>>
@@ -501,6 +503,7 @@ export const initialListComplaint: ListComplaintContextProps = {
     set_departmentrelate_search: () => { },
     set_department: () => { },
     set_domain: () => { },
+    set_casuserdept: () => { },
 
     setdataset_complaintActionApproveSC: () => { },
     setdataset_complaintActionApproveQC: () => { },
