@@ -739,14 +739,20 @@ export default function Complaint() {
   // EVENT HANDLERS (On Change Functions)
   // =====================================================================================================
 
-  const handleCompanyChange = (value: any) => {
-    if (value != null) {
-      mas_DomainRelateGet(value, set_domainrelate, isCallFuncLogOn);
-    } else {
-      setrespondent_domain_id(null);
-    }
-    //console.log("@@@@@@@@@@@@second", dataset_domainrelate);
-  };
+  const handleCompanyChange = async (value: any) => {
+  if (value) {
+    mas_DomainRelateGet(
+  value?.company_id, 
+  set_domainrelate,
+  user,
+  isCallFuncLogOn
+);
+  }
+
+  // clear ค่า domain กับ department
+  setrespondent_domain_id(null);
+  setdataset_department([]);
+};
 
   const handleDomainChange = (value: any) => {
     // reset แผนกก่อนโหลดใหม่
@@ -1278,7 +1284,7 @@ export default function Complaint() {
         // //console.log("❇️ Call [Complaint/CasDomainGet] -> DomainRelateGet :",response.data);
 
         console.log(
-          "❇️ Call [Complaint/DomainRelateGet] -> DomainRelateGet :",
+          "❇️❇️❇️❇️ Call [Complaint/DomainRelateGet] -> DomainRelateGet :",
           response.data
         );
         if (Array.isArray(response.data)) {
@@ -5073,22 +5079,18 @@ export default function Complaint() {
           user,
           isCallFuncLogOn
         );
-        await mas_DepartmentGet_Complaint(
-          {
-            domain_id: dataelement?.respondent_domain_id ?? null,
-            company_id: dataelement?.respondent_company_id,
-          },
-          setdataset_department,
-          user,
-          isCallFuncLogOn,
-          action
-        );
-
-        // if (user?.[0]?.itasset_company_id) {
-
-        // }
-
-        //console.log("useEffect done");
+        if (dataelement?.respondent_domain_id) {
+          await mas_DepartmentGet_Complaint(
+            {
+              domain_id: dataelement.respondent_domain_id,
+              company_id: dataelement.respondent_company_id,
+            },
+            setdataset_department,
+            user,
+            isCallFuncLogOn,
+            action
+          );
+        }
       } catch (err) {
         console.error(err);
       }
@@ -5177,7 +5179,42 @@ export default function Complaint() {
     };
     fetchSCApprove();
   }, [currentExplainForApproval, dataApprove_Combobox]);
+  React.useEffect(() => {
+  if (!TextNameSearch.dataset_company && user[0]?.itasset_company_id) {
+    setTextNameSearch(prev => ({
+      ...prev,
+      dataset_company: user[0].itasset_company_id
+    }));
+  }
+}, [user]);
+React.useEffect(() => {
+  if (!TextNameSearch.dataset_company) return;
 
+  mas_DomainRelateGet(
+    TextNameSearch.dataset_company,
+    set_domainrelate,
+    user,
+    isCallFuncLogOn
+  );
+}, [TextNameSearch.dataset_company]);
+React.useEffect(() => {
+  if (!Array.isArray(domainrelate) || domainrelate.length === 0) return;
+}, [domainrelate]);
+
+React.useEffect(() => {
+  if (!TextNameSearch.dataset_domain) return;
+
+  mas_DepartmentGet_Complaint(
+    {
+      domain_id: TextNameSearch.dataset_domain,
+      company_id: TextNameSearch.dataset_company,
+    },
+    setdataset_department,
+    isCallFuncLogOn,
+    user,
+    "Search"
+  );
+}, [TextNameSearch.dataset_domain]);
   // =====================================================================================================
   // RETURN SECTION - RENDER COMPONENT
   // =====================================================================================================
@@ -5213,13 +5250,11 @@ export default function Complaint() {
               value={
                 dataset_company?.find(
                   (item: any) =>
-                    String(item.company_id) ===
-                    String(TextNameSearch.dataset_company)
+                    String(item.company_id) === String(TextNameSearch.dataset_company)
                 ) ||
                 dataset_company?.find(
                   (item: any) =>
-                    String(item.company_id) ===
-                    String(user[0]?.itasset_company_id)
+                    String(item.company_id) === String(user[0]?.itasset_company_id)
                 ) ||
                 null
               }
@@ -5227,25 +5262,25 @@ export default function Complaint() {
               options={dataset_company || []}
               column="company_name"
               setvalue={(val) => {
-                handleCompanyChange(val);
+                handleCompanyChange(val);   // ⭐ เรียกใหม่ตามรูปแบบเดียวกับที่แก้
                 setTextNameSearch({
                   ...TextNameSearch,
-                  dataset_company: val?.company_id || "", // เก็บแค่ id เป็น string
+                  dataset_company: val?.company_id || ""
                 });
               }}
-              readonly
+              // readonly
             />
           </Grid>
           <Grid size={4}>
             <AutocompleteComboBox
               value={
-                domain?.find(
+                domainrelate?.find(
                   (item: any) =>
                     item.domain_id === TextNameSearch.dataset_domain
                 ) || null
               }
               labelName="โดเมน (Domain)"
-              options={domain || []}
+              options={domainrelate || []}
               column="domain_name"
               setvalue={(val) => {
                 handleDomainChange(val);

@@ -166,8 +166,8 @@ export default function DepartmentSetting() {
     approve_id,
     dept_setup_id,
     step,
-    // sectionApprove,
-    // qcApprove,
+    sectionApprove,
+    qcApprove,
     dept_company,
     dept_domain,
     
@@ -180,8 +180,8 @@ export default function DepartmentSetting() {
     setapprove_id,
     setdept_setup_id,
     setstep,
-    // setsectionApprove,
-    // setqcApprove,
+    setsectionApprove,
+    setqcApprove,
     setdept_company,
     setdept_domain,
 
@@ -272,13 +272,11 @@ export default function DepartmentSetting() {
   const [departmentAreaError, setDepartmentAreaError] = useState(false);
   const [emailAreaError, setEmailAreaError] = useState(false);
   const [usernameAreaError, setUsernameAreaError] = useState(false);
-  const [stepValues, setStepValues] = useState<Record<string, any>>({});
-  const [stepAreaError, setStepAreaError] = useState<{ [step: string]: boolean }>({});
-  const [stepSelectedValues, setStepSelectedValues] = useState<Record<string, any>>({});
-
+  const [stepAreaError, setStepAreaError] = useState(false);
+  
   // For On-Off Calling Function Log
   const [isCallFuncLogOn] = useState(true);
-  
+
   // Reset Form Function (from index.tsx)
   const resetSearchTable = () => {
     setdocumentDateSearch(null);
@@ -286,16 +284,7 @@ export default function DepartmentSetting() {
     setEndDateSearch(null);
 
   };
-  const [approveRows, setApproveRows] = useState<any[]>([]);
-  const [sectionApprove, setsectionApprove] = useState<any>(null);
-  const [qcApprove, setqcApprove] = useState<any>(null);
-  
-const handleStepSelected = (stepKey: string, value: any) => {
-  setStepSelectedValues(prev => ({ ...prev, [stepKey]: value }));
 
-  // clear validation ของ step
-  setStepAreaError(prev => ({ ...prev, [stepKey]: false }));
-};
   // Function - Validate before Add Complaint
     const validateBeforeAdd = (): boolean => {
       if (isCallFuncLogOn)
@@ -311,7 +300,6 @@ const handleStepSelected = (stepKey: string, value: any) => {
       setDepartmentAreaError(false);
       setEmailAreaError(false);
       setStepAreaError(false);
-      setValidateStep({});
     
 
     // Validate 
@@ -334,32 +322,6 @@ const handleStepSelected = (stepKey: string, value: any) => {
       setEmailAreaError(true);
       valid = false;
     }
-
-    //////////////////////////////02122025/////////////////////////////////
-    // Validate Approval Steps
-    const approveRows = datastatus.filter(
-      (item: any) =>
-        item.lov_code === "APPROVED" &&
-        item.lov7 === dept_domain?.domain_id
-    );
-
-    const newValidateStep: { [step: string]: boolean } = {};
-    approveRows.forEach((row: any) => {
-      const stepKey = row.lov3;
-      if (stepKey === "1") {
-        if (!sectionApprove) {
-          newValidateStep[stepKey] = true;
-          valid = false;
-        }
-      } else if (stepKey === "2") {
-        if (!qcApprove) {
-          newValidateStep[stepKey] = true;
-          valid = false;
-        }
-      }
-    });
-    setValidateStep(newValidateStep);
-//////////////////////////////02122025/////////////////////////////////
 
     return valid;
   };
@@ -746,7 +708,250 @@ const handleStepSelected = (stepKey: string, value: any) => {
     }
   };
 
- 
+  //   // Function - Validate before Add Complaint
+  //   const validateBeforeAdd = (): boolean => {
+  //     if (isCallFuncLogOn) //console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  validateBeforeAdd");
+  //     let valid = true;
+  //     // Clear ALL validation errors before validation
+  //     setReportTypeError(false);
+  //     setRespondentDepartmentError(false);
+  //     setDateOfDetectionError(false);
+  //     setDepartmentAreaError(false);
+  //     setProductNameError(false);
+  //     setLotNoError(false);
+  //     setEmailError(false);
+  //     setComplaintTypeError(false);
+  //     setOtherTypeError(false);
+  //     setComplaintRsError(false);
+  //     setOtherRsError(false);
+  //     setClauseRsError(false);
+  //     setDetailError(false);
+  //     setPriorityError(false);
+
+  //     // Validate Report Type - ตรวจสอบก่อนและถ้าไม่มีให้ return false ทันที
+  //     if (!dataReportTypeValue || !dataReportTypeValue.id) {
+  //       setReportTypeError(true);
+  //       document.getElementById("reportTypeField")?.focus();
+  //       return false; // หยุดการตรวจสอบส่วนอื่น
+  //     }
+
+  //     // Validate Date of Detection
+  //     if (!date_of_detection) {
+  //       setDateOfDetectionError(true);
+  //       valid = false;
+  //     }
+
+  //     // Validate Department/Area of Detection
+  //     if (!respondent_department_id || !respondent_department_id.department_id) {
+  //       setDepartmentAreaError(true);
+  //       valid = false;
+  //     }
+
+  //     // Validate Product Name
+  //     if (!product_name || product_name.trim() === "") {
+  //       setProductNameError(true);
+  //       valid = false;
+  //     }
+
+  //     // Validate Lot no
+  //     if (!lot_no || lot_no.trim() === "") {
+  //       setLotNoError(true);
+  //       valid = false;
+  //     }
+
+  //     // Validate Email
+  //     if (!respondent_email || respondent_email.trim() === "") {
+  //       setEmailError(true);
+  //       valid = false;
+  //     }
+
+  //     // Validate Complaint Type
+  //     if (!dataComplaintTypeValue_Combobox || dataComplaintTypeValue_Combobox.length === 0) {
+  //       setComplaintTypeError(true);
+  //       valid = false;
+  //     } else {
+  //     }
+
+  //     // Validate Other Type (if complaint type has "Other" selected)
+  //     if (dataComplaintTypeValue_Combobox && dataComplaintTypeValue_Combobox.some((item: any) => item.isOther === "Y")) {
+  //       if (!compTypeOther || compTypeOther.trim() === "") {
+  //         setOtherTypeError(true);
+  //         valid = false;
+  //       } else {
+  //         ////console.log("✅ Other Type validation passed");
+  //       }
+  //     }
+
+
+  //     // Validate Rs 
+  //     const reportTypeCode = dataReportTypeValue?.lov_code;
+  //     //console.log("🔍 Report Type Code:", reportTypeCode);
+
+  //     // เฉพาะ NCR เท่านั้นที่ต้อง validate Complaint Rs
+  //     if (reportTypeCode === "NCR") {
+  //       if (!dataComplaintRsValue_Combobox || dataComplaintRsValue_Combobox.length === 0) {
+  //         setComplaintRsError(true);
+  //         valid = false;
+  //       }
+  //     }
+
+  //     // Validate Other Rs 
+  //     if (reportTypeCode === "NCR" && dataComplaintRsValue_Combobox && dataComplaintRsValue_Combobox.some((item: any) => item.isClause === "Other")) {
+  //       if (!compRsOther || compRsOther.trim() === "") {
+  //         setOtherRsError(true);
+  //         valid = false;
+  //       }
+  //     }
+
+  //     // Validate Clause Rs
+  //     if (reportTypeCode === "NCR" && dataComplaintRsValue_Combobox && dataComplaintRsValue_Combobox.some((item: any) => item.isClause === "Clause")) {
+  //       if (!clauseOther || clauseOther.trim() === "") {
+  //         setClauseRsError(true);
+  //         valid = false;
+  //       }
+  //     }
+
+  //     // Validate Detail
+  //     if (!detail || detail.trim() === "") {
+  //       setDetailError(true);
+  //       valid = false;
+  //     }
+
+  //     // Validate Priority
+  //     if (!datapriorityValue_Combobox || datapriorityValue_Combobox.trim() === "") {
+  //       setPriorityError(true);
+  //       valid = false;
+  //     } 
+
+  //     return valid;
+  //   }
+
+  //   //validate Edit
+  //   const validateBeforeEdit = (): boolean => {
+  //     if (isCallFuncLogOn) //console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  validateBeforeEdit");
+  //     let valid = true;
+  //     setReportTypeError(false);
+  //     setRespondentDepartmentError(false);
+  //     setDateOfDetectionError(false);
+  //     setDepartmentAreaError(false);
+  //     setProductNameError(false);
+  //     setLotNoError(false);
+  //     setEmailError(false);
+  //     setComplaintTypeError(false);
+  //     setOtherTypeError(false);
+  //     setComplaintRsError(false);
+  //     setOtherRsError(false);
+  //     setClauseRsError(false);
+  //     setDetailError(false);
+  //     setPriorityError(false);
+
+  //     // Validate Report Type - ตรวจสอบก่อนและถ้าไม่มีให้ return false ทันที
+  //     if (!dataReportTypeValue || !dataReportTypeValue.id) {
+  //       //console.log("❌ Report Type validation failed");
+  //       setReportTypeError(true);
+  //       document.getElementById("reportTypeField")?.focus();
+  //       return false; 
+  //     }
+  //     //console.log("✅ Report Type validation passed");
+
+  //     // Validate Date of Detection
+  //     if (!date_of_detection) {
+  //       setDateOfDetectionError(true);
+  //       valid = false;
+  //     }
+
+  //     // Validate Department/Area of Detection
+  //     if (!respondent_department_id || !respondent_department_id.department_id) {
+  //       setDepartmentAreaError(true);
+  //       valid = false;
+  //     }
+
+  //     // Validate Product Name
+  //     if (!product_name || product_name.trim() === "") {
+  //       setProductNameError(true);
+  //       valid = false;
+  //     }
+
+  //     // Validate Lot no
+  //     if (!lot_no || lot_no.trim() === "") {
+  //       setLotNoError(true);
+  //       valid = false;
+  //     }
+
+  //     // Validate Email
+  //     if (!respondent_email || respondent_email.trim() === "") {
+  //       setEmailError(true);
+  //       valid = false;
+  //     }
+
+  //     // Validate Complaint Type
+  //     if (!dataComplaintTypeValue_Combobox || dataComplaintTypeValue_Combobox.length === 0) {
+  //       //console.log("❌ Complaint Type validation failed");
+  //       setComplaintTypeError(true);
+  //       valid = false;
+  //     } else {
+  //       //console.log("✅ Complaint Type validation passed");
+  //     }
+
+  //     // Validate Other Type (if complaint type has "Other" selected)
+  //     if (dataComplaintTypeValue_Combobox && dataComplaintTypeValue_Combobox.some((item: any) => item.isOther === "Y")) {
+  //       if (!compTypeOther || compTypeOther.trim() === "") {
+  //         //console.log("❌ Other Type validation failed");
+  //         setOtherTypeError(true);
+  //         valid = false;
+  //       } else {
+  //         //console.log("✅ Other Type validation passed");
+  //       }
+  //     }
+
+
+  //     // Validate Rs 
+  //     const reportTypeCode = dataReportTypeValue?.lov_code;
+  //     //console.log("🔍 Report Type Code:", reportTypeCode);
+
+  //     // เฉพาะ NCR เท่านั้นที่ต้อง validate Complaint Rs
+  //     if (reportTypeCode === "NCR") {
+  //       if (!dataComplaintRsValue_Combobox || dataComplaintRsValue_Combobox.length === 0) {
+  //         //console.log("❌ Complaint Rs validation failed for NCR");
+  //         setComplaintRsError(true);
+  //         valid = false;
+  //       } else {
+  //         //console.log("✅ Complaint Rs validation passed for NCR");
+  //       }
+  //     } else {
+  //       //console.log("✅ Complaint Rs validation skipped for", reportTypeCode);
+  //     }
+
+  //     // Validate Other Rs 
+  //     if (reportTypeCode === "NCR" && dataComplaintRsValue_Combobox && dataComplaintRsValue_Combobox.some((item: any) => item.isClause === "Other")) {
+  //       if (!compRsOther || compRsOther.trim() === "") {
+  //         //console.log("❌ Other Rs validation failed for NCR");
+  //         setOtherRsError(true);
+  //         valid = false;
+  //       } else {
+  //         //console.log("✅ Other Rs validation passed for NCR");
+  //       }
+  //     }
+
+  //     // Validate Clause Rs
+  //     if (reportTypeCode === "NCR" && dataComplaintRsValue_Combobox && dataComplaintRsValue_Combobox.some((item: any) => item.isClause === "Clause")) {
+  //       if (!clauseOther || clauseOther.trim() === "") {
+  //         //console.log("❌ Clause Rs validation failed for NCR");
+  //         setClauseRsError(true);
+  //         valid = false;
+  //       } else {
+  //         //console.log("✅ Clause Rs validation passed for NCR");
+  //       }
+  //     }
+
+  //     // Validate Detail
+  //     if (!detail || detail.trim() === "") {
+  //       setDetailError(true);
+  //       valid = false;
+  //     }
+
+
+
 
 
   // Function - Add DepartmentSetting
@@ -944,13 +1149,66 @@ const handleStepSelected = (stepKey: string, value: any) => {
     }
   };
 
-  
+  // // Function - Delete Complaint
+  // const ComplaintDelete = async () => {
+  //   if (isCallFuncLogOn) console.log("🕑 ",dayjs().format('HH:mm:ss.SSS')," [Calling Function]  :  ComplaintDelete");
+
+  //   // สร้าง JSON payload
+  //   const complaintPayload = {
+  //     ComplaintModel: {
+  //       id: dataelement?.id,
+  //     },
+  //     CurrentAccessModel: {
+  //       user_id: user[0]?.employee_username || '',
+  //     }
+  //   };
+
+  //   console.log("📤 complaintPayload:", complaintPayload);
+  //   setIsLoadingScreen(true);
+
+  //   try {
+  //     let response = await _POST(complaintPayload, "/Complaint/ComplaintDelete");
+  //     if (response && response.status === "success") {
+  //       FullSweetalert({
+  //         title: 'Success',
+  //         text: `บันทึกข้อมูลสำเร็จ`,
+  //         icon: 'success'
+  //       });
+  //       console.log("✅ Complaint edittt successfully:", response);
+  //     } else {
+  //       FullSweetalert({
+  //         title: 'Failed',
+  //         text: `บันทึกไม่ข้อมูลสำเร็จ`,
+  //         icon: 'error'
+  //       });
+  //       console.log("⚠️ Edit failed:", response);
+  //     }
+  //   } catch (error) {
+  //     console.error("Upload failed:", error);
+  //   } finally {
+  //     setIsLoadingScreen(false);
+  //     handleClose();
+  //     FullSweetalert({
+  //       title: 'Success',
+  //       text: `ลบข้อมูลสำเร็จ`,
+  //       icon: 'success'
+  //     });
+  //     // Complaint_Get();
+  //     DeptSearchGet();
+  //   }
+  // };
+
   // =====================================================================================================
   // EVENT HANDLERS (from index.tsx)
   // =====================================================================================================
 
   // Dialog Handlers
 
+  // const handleOnclickMenuSync = () => {
+  //   if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  handleOnclickMenuSync");
+
+  //   // setOpenSync(true);
+  // };
 
   const handleOnclickDepartmentSettingAdd = () => {
     if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  handleOnclickDepartmentSettingAdd");
@@ -1015,7 +1273,29 @@ const handleStepSelected = (stepKey: string, value: any) => {
   // USEEFFECT - INITIALIZATION (from index.tsx and ComplaintRead.tsx)
   // =====================================================================================================
 
-  
+  //   // Initialize data on component mount
+  //   useEffect(() => {
+  //   const fetchData = async () => {
+  //     //console.log("useEffect start");
+
+  //     await LovAll_Get();
+  //     resetSearchTable();
+  //     await DeptSetupGet();
+  //     await UsernameGet();
+  //     await mas_DomainGetAll(setmaster_domain, isCallFuncLogOn);
+  //     await mas_DepartmentDomainGetAll(setmaster_department, isCallFuncLogOn);
+  //     await mas_UsernameGetAll(setmaster_user, isCallFuncLogOn);
+
+  //     //console.log("#################### master_domain", master_domain);
+  //     //console.log("#################### master_department", master_department);
+  //     //console.log("#################### master_user", master_user);
+
+  //     Checkdata(); // ตอนนี้ state ถูกอัปเดตแล้ว
+  //     //console.log("Checkdata done");
+  //   };
+
+  //   fetchData();
+  // }, []);
 
   // Initialize data on component mount
   const effectRan = React.useRef(false); // ป้องกัน run ซ้ำใน dev mode
@@ -1237,9 +1517,9 @@ const handleStepSelected = (stepKey: string, value: any) => {
               Department_Area: departmentAreaError,
               Email_Area: emailAreaError,
               Username_Area: usernameAreaError,
+              step: stepAreaError,
+
             }}
-            validateStep={stepAreaError}          // ✅ Step validation state
-            onStepSelected={handleStepSelected}   // ✅ Callback เมื่อเลือก step
             onCompanyAreaChange={(val) => {
               setdept_company(val);
               setCompanyAreaError(false);
@@ -1256,10 +1536,9 @@ const handleStepSelected = (stepKey: string, value: any) => {
               setdept_email(val);
               setEmailAreaError(false);
             }}
-            onStepAreaChange={(stepKey) => {     // ✅ callback ล้าง validation step เมื่อ user แก้
-              setStepAreaError(prev => ({ ...prev, [stepKey]: false }));
-            }}
           />
+
+
         }
       />
 
@@ -1285,6 +1564,8 @@ const handleStepSelected = (stepKey: string, value: any) => {
             Department_Area: departmentAreaError,
             Email_Area: emailAreaError,
             Username_Area: usernameAreaError,
+            step: stepAreaError,
+
           }}
           onCompanyAreaChange={(val) => {
             setdept_company(val);
