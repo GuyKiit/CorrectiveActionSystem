@@ -577,7 +577,7 @@ export default function ComplaintBody({
     // console.log("Render check respondent_domain_id:", respondent_domain_id);
 
     if (value != null) {
-      mas_DomainRelateGet(value, set_domainrelate, isCallFuncLogOn);
+      mas_DomainRelateGet(value, set_domainrelate,user , isCallFuncLogOn);
     } else {
       setrespondent_domain_id(null);
     }
@@ -588,7 +588,7 @@ export default function ComplaintBody({
   const handleCompanyChange = (value: any) => {
     if (value != null) {
       // เรียก fetch domain ของ company ทั้งหมด
-      mas_DomainGet(value.company_id, set_domain, user, isCallFuncLogOn);
+      mas_DomainRelateGet(value.company_id, set_domainrelate, user, isCallFuncLogOn);
 
       // เคลียร์ domain ที่เลือกก่อน
       setrespondent_domain_id(null);
@@ -597,36 +597,12 @@ export default function ComplaintBody({
       setdataset_department([]);
       setrespondent_department_id(null);
     } else {
-      set_domain([]);
+      set_domainrelate([]);
       setrespondent_domain_id(null);
       setdataset_department([]);
       setrespondent_department_id(null);
     }
   };
-
-  // isAcknowledge
-
-  // const handleDomainChange = (value: any) => {
-  //   // console.log("####### Onchange Domain Value [event] : ", value);
-  //   // console.log("@@@@@@@@@@@@First", dataset_domainrelate);
-
-  //   if (value != null) {
-  //     const dataset = {
-  //       domain_id: respondent_domain_id?.domain_id || value.domain_id,
-  //       company_id: respondent_company_id?.company_id || value.company_id,
-  //     };
-  //     // console.log("😎😎", dataset);
-
-  //     setrespondent_department_id(null);
-  //     mas_DepartmentGet_Complaint(dataset, setdataset_department, isCallFuncLogOn, user);
-  //   } else {
-  //     setdataset_department([]);
-  //     setrespondent_department_id(null);
-  //   }
-  //   // เคลียร์ค่าแผนกทุกครั้งที่เปลี่ยนโดเมน
-  //   setrespondent_department_id(null);
-  //   // console.log("@@@@@@@@@@@@second", domainrelate);
-  // };
 
   const handleDomainChange = async (value: any) => {
     // เคลียร์ข้อมูลแผนกทันที (ทั้ง list และค่าเลือก)
@@ -638,7 +614,7 @@ export default function ComplaintBody({
 
     const dataset = {
       domain_id: value.domain_id,
-      company_id: value.company_id,
+      company_id: respondent_company_id?.company_id,
     };
 
     await mas_DepartmentGet_Complaint(
@@ -1210,6 +1186,16 @@ export default function ComplaintBody({
   // const effectRan = React.useRef(false); // ป้องกัน run ซ้ำใน dev mode
   const lastDataElement = React.useRef<any>(null); // Track last processed data
   const hasMappedDepartment = React.useRef(false); // Track if department has been mapped
+  React.useEffect(() => {
+    if (respondent_company_id) {
+      mas_DomainRelateGet(
+        respondent_company_id.company_id,
+        set_domainrelate,
+        user,
+        isCallFuncLogOn
+      );
+    }
+  }, [respondent_company_id]);
 
   // 🧩 1️⃣ โหลดข้อมูลหลัก (ReportType, Company, Domain, Department)
   React.useEffect(() => {
@@ -1273,26 +1259,22 @@ export default function ComplaintBody({
         }
 
         // 3) Domain relate
-        if (dataelement?.respondent_company_id) {
           await mas_DomainRelateGet(
-            {
-              domain: dataelement?.respondent_domain_id ?? null,
-              company_id: dataelement.respondent_company_id,
-            },
-            set_domainrelate,
-            isCallFuncLogOn
-          );
-        }
+          dataelement.respondent_company_id?.company_id ?? dataelement.respondent_company_id,
+          set_domainrelate,
+          user,
+          isCallFuncLogOn
+        );
 
-        // 4) Domain default
-        if (Array.isArray(domain) && dataelement?.respondent_domain_id) {
-          const mappedDomain = await setValueMas(
-            domain,
-            dataelement.respondent_domain_id,
-            "domain_id"
-          );
-          if (mappedDomain) setrespondent_domain_id(mappedDomain);
-        }
+        // // 4) Domain default
+        // if (Array.isArray(domainrelate) && dataelement?.respondent_domain_id) {
+        //   const mappedDomain = await setValueMas(
+        //     domainrelate,
+        //     dataelement.respondent_domain_id,
+        //     "domain_id"
+        //   );
+        //   if (mappedDomain) setrespondent_domain_id(mappedDomain);
+        // }
 
         // 5) โหลด Department
         if (dataelement?.respondent_department_id) {
@@ -1333,6 +1315,52 @@ export default function ComplaintBody({
 
     loadInitialData();
   }, [dataelement]);
+
+  React.useEffect(() => {
+  if (
+    Array.isArray(domainrelate) &&
+    domainrelate.length > 0 &&
+    dataelement?.respondent_domain_id
+  ) {
+    const run = async () => {
+      const mapped = await setValueMas(
+        domainrelate,
+        dataelement.respondent_domain_id,
+        "domain_id"
+      );
+
+      if (mapped) {
+        setrespondent_domain_id(mapped);
+        console.log("🎯 domain mapped:", mapped);
+      }
+    };
+
+    run();
+  }
+}, [domainrelate, dataelement?.respondent_domain_id]);
+
+React.useEffect(() => {
+  if (
+    Array.isArray(dataset_department) &&
+    dataset_department.length > 0 &&
+    dataelement?.respondent_department_id
+  ) {
+    const run = async () => {
+      const mappedDept = await setValueMas(
+        dataset_department,
+        dataelement.respondent_department_id,
+        "department_id"
+      );
+
+      if (mappedDept) {
+        setrespondent_department_id(mappedDept);
+        console.log("🏬 Department mapped:", mappedDept);
+      }
+    };
+
+    run();
+  }
+}, [dataset_department, dataelement?.respondent_department_id]);
 
   // 🧩 2️⃣ เมื่อ dataset_department พร้อมจริง → map default
   React.useEffect(() => {
@@ -1599,12 +1627,12 @@ export default function ComplaintBody({
 
       setclose_name(close?.close_name || "");
       setclose_company_id(
-        dataset_company.find(
+        dataset_company?.find(
           (c: any) => Number(c.company_id) == close.close_company_id
         ) || null
       );
       setclose_department_id(
-        dataset_department.find(
+        dataset_department?.find(
           (d: any) => Number(d.department_id) == close.close_department_id
         ) || null
       );
@@ -1887,7 +1915,7 @@ export default function ComplaintBody({
                   <AutocompleteComboBox
                     value={respondent_domain_id}
                     labelName={"โดเมน (Domain)"}
-                    options={domain}
+                    options={domainrelate}
                     column="domain_name"
                     // setvalue={(v) => setrespondent_company_id(v)}
                     setvalue={(val) => {

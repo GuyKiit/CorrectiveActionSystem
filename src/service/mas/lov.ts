@@ -71,14 +71,15 @@ export async function mas_DomainGetAll(setmaster_domain: (data: any) => void, is
 }
 
 // Function - Get DomainRelate
-export async function mas_DomainRelateGet(value: any, set_domainrelate: (data: any) => void, isCallFuncLogOn: boolean) {
+export async function mas_DomainRelateGet(company_id: any, set_domainrelate: (data: any) => void, user : any, isCallFuncLogOn: boolean) {
   if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  DomainRelateGet");
 
   try {
     const dataset = {
-      domain: value.domain,
-      company_id: value.company_id,
+      domain: user[0]?.employee_domain,
+      company_id: company_id,
     };
+    
     const response = await _POST(dataset, "/Complaint/CasDomainRelateGet");
     if (response && response.status === "success") {
       // console.log("❇️ Call [Complaint/CasDomainGet] -> DomainRelateGet :",response.data);

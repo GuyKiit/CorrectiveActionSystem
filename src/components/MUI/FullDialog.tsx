@@ -46,14 +46,14 @@ export default function FuncDialog(props: FuncDialog) {
       maxWidth={props.dialogWidth || "xl"}
       // onClose={props.handleClose}
       open={props.open}
-      // PaperProps={{
-      //   sx: {
-      //     width: props.modalWidth || "95%",
-      //     maxWidth: props.modalWidth || "95%",
-      //     height: props.modalHeight || "90vh",
-      //     maxHeight: props.modalHeight || "90vh",
-      //   },
-      // }}
+      PaperProps={{
+        sx: {
+          width: props.modalWidth || "95%",
+          maxWidth: props.modalWidth || "95%",
+          height: props.modalHeight || "90vh",
+          maxHeight: props.modalHeight || "90vh",
+        },
+      }}
     >
       {/* Header */}
       <div className="px-5 flex justify-between items-start">
