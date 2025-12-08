@@ -39,8 +39,6 @@ export default function DesktopDatePickers({
   const dateFormat = "DD/MM/YYYY";
   const inputRef = React.useRef<HTMLInputElement>(null);
 
-  const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
-
   React.useEffect(() => {
     if (shouldFocusError && inputRef.current) {
       inputRef.current.focus();
@@ -67,11 +65,11 @@ export default function DesktopDatePickers({
             "& .MuiOutlinedInput-root": {
               fontFamily: "Sarabun",
               "& .MuiOutlinedInput-notchedOutline": {
-                borderColor: Validate || errorMessage ? "#d50000" : "",
+                borderColor: Validate ? "#d50000" : "",
               },
               "&.Mui-focused": {
                 "& .MuiOutlinedInput-notchedOutline": {
-                  borderColor: Validate || errorMessage ? "#d50000" : "info.main",
+                  borderColor: Validate ? "#d50000" : "info.main",
                 },
               },
             },
@@ -80,54 +78,24 @@ export default function DesktopDatePickers({
           format={dateFormat}
           value={value ? value : null}
           onChange={(newValue) => handleChangeDate(newValue)}
-          onError={(newError) => {
-            if (newError) {
-              setErrorMessage("กรุณากรอกวันที่ให้ถูกต้อง");
-            } else {
-              setErrorMessage(null);
-            }
-          }}
           slotProps={{
             textField: {
               size: "small",
-              error: Validate || !!errorMessage,
-              // helperText: errorMessage,
+              error: Validate,
               inputRef: inputRef,
-              // inputProps: { readOnly: true },
+              inputProps: { readOnly: true },
               onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => {
-                 // Allow navigation keys, backspace, delete, tab
-                 if (
-                  [
-                    "Backspace",
-                    "Delete",
-                    "ArrowLeft",
-                    "ArrowRight",
-                    "Tab",
-                    "Home",
-                    "End",
-                  ].includes(e.key)
-                ) {
-                  return;
-                }
-
-                // Allow numbers and slash
-                if (/^[0-9/]$/.test(e.key)) {
-                  return;
-                }
-
-                // Block everything else
                 e.preventDefault();
               },
             },
           }}
         />
       </LocalizationProvider>
-      {(errorMessage || validateTextLable) && (
+      {validateTextLable && (
         <label className="fs-7 py-1 sarabun-regular-lable-validate" style={{ color: "red" }}>
-          {errorMessage || validateTextLable}
+          {validateTextLable}
         </label>
       )}
-      
     </div>
   );
 }

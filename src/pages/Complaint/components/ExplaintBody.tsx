@@ -304,9 +304,9 @@ export default function ExplaintBody({
     dataDecisionValue_Combobox,
 
     dataSectionapp,
+    dataQcapp,
     dataApprove_Combobox,
     dataSectionappValue,
-    dataQcapp,
     dataQcappValue,
     explain_id,
     complaint_id,
@@ -1906,6 +1906,18 @@ console.log("dataelement.explain_id", dataelement?.explain_id);
     //    return "หมายเหตุการไม่อนุมัติ";
     // }
     // return "หมายเหตุการอนุมัติ";
+  };
+
+  const getCloseDetailLabel = (approveData: any) => {
+    if (!approveData) return "หมายเหตุการปิด";
+    
+    // Check lov2 for REJECT status as per user request
+    if (approveData.lov2 === "REJECT") {
+      return "หมายเหตุการปฏิเสธ";
+    }
+    else if (approveData.lov2 === "APPROVE") {
+      return "หมายเหตุการปิดรายการ";
+    }
   };
 
   return (
@@ -4093,7 +4105,8 @@ console.log("dataelement.explain_id", dataelement?.explain_id);
                                     color: "#333",
                                   }}
                                 >
-                                  หมายเหตุการปิดรายการ
+                                  {/* หมายเหตุการปิดรายการ */}
+                                  {getCloseDetailLabel(dataFuapp)}
                                   <span style={{ color: "red" }}> *</span>
                                 </Typography>
                               </AccordionSummary>
