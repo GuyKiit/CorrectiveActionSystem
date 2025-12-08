@@ -496,6 +496,9 @@ export default function Complaint() {
     setclose_detail,
     setclose_note,
 
+    casuserdept,
+    set_casuserdept,
+
     isApproveScBoxHidden,
     setisApproveScBoxHidden,
     isApproveQcBoxHidden,
@@ -1374,7 +1377,31 @@ export default function Complaint() {
   // =====================================================================================================
   // API FUNCTIONS - CRUD OPERATIONS
   // =====================================================================================================
+// const CasUserDept_Get = async (data: any) => {
+//     if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  CasUserDept_Get");
 
+//     setIsLoadingScreen(true)
+//     const dataset = {
+//       id: data.id,
+//       user_id: user[0]?.employee_username,
+//       domain: user[0]?.employee_domain,
+//     };
+
+//     try {
+//       let response = await _POST(dataset, "/CasUserDept/CasUserDeptGet");
+//       if (response && response.status === "success") {
+//         setIsLoadingScreen(false);
+//         set_casuserdept(response.data[0])
+//         console.log("casuserdept",response.data[0]);
+        
+//       }
+//       else {
+//         set_casuserdept(null)
+//       }
+//     } catch (e) {
+//       console.error("error", e);
+//     }
+//   };
   // Function - Get Complaints
   const Complaint_Get = async (data: any) => {
     if (isCallFuncLogOn)
@@ -5046,17 +5073,7 @@ export default function Complaint() {
   // Initialize data on component mount
   React.useEffect(() => {
     resetSearchTable();
-    // Complaint_Get();
-    // ListSearchGet();
-    // ReportType_Get();
-    // ComplaintType_Get();
-    // ComplaintRs_Get();
-    // photo_Get();
-    // priority_Get();
-    // DomainGet();
-    // DepartmentDomainGet();
-    // CompanyGet();
-    // complaint_status_Get();
+    // CasUserDept_Get(data);
   }, []);
 
   const effectRan = React.useRef(false); // ป้องกัน run ซ้ำใน dev mode
@@ -5268,7 +5285,7 @@ React.useEffect(() => {
                   dataset_company: val?.company_id || ""
                 });
               }}
-              // readonly
+              readonly
             />
           </Grid>
           <Grid size={4}>

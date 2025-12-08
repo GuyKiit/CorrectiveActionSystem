@@ -542,6 +542,9 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
     const [isApproveCloseBoxHidden, setisApproveCloseBoxHidden] = useState<any>(
         initialListComplaint.isApproveCloseBoxHidden
     );
+    const [casuserdept, set_casuserdept] = useState<any>(
+        initialListComplaint.casuserdept
+    );
     
 
     return (
@@ -725,6 +728,7 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 qcapprove_date,
                 qcapprove_detail,
                 qcapprove_note,
+                casuserdept,
 
                 close_detail,
                 close_note,
@@ -813,7 +817,7 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 setdatastatusconfig,
                 setPriorityLevel,
                 setdataComplaintTypeValue_Combobox,
-
+                set_casuserdept,
 
                 //--------dataset-------
                 setdataset_crosscompany,
@@ -839,6 +843,7 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 set_departmentrelate_search,
                 set_department,
                 set_domain,
+                
 
                 //--------Explaint-------
                 setExplainList,
