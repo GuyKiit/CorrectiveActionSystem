@@ -3571,6 +3571,9 @@ export default function Complaint() {
             cf_type: "Explain",
             complaint_id: complaintRootId,
             complaint_at_id: item.attachmentType,
+            other:item.attachmentType === "TRR_AT_4"
+                    ? item.otherText?.trim() || null
+                    : null,
             explain_id: tempid,
             cf_file_seq: (index + 1).toString(),
             user_file_name: item.file.name,
