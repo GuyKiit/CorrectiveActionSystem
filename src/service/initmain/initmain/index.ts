@@ -60,8 +60,6 @@ export function updateSessionStorageCurrentAccess(current_access_key: string, cu
     }
 }
 
-
-
 /**
  * Retrieves the currentAccessObject from sessionStorage.
  * If no data exists, it returns a default object with user_id, app_name, and event_name.

@@ -14,6 +14,7 @@
     "build-prod": "tsc && vite build --mode prod",
     "build-deploy-dev(backup)": "tsc && vite build --mode dev && copy web.config build\\DEV\\dist && xcopy /E /I build\\DEV\\dist \\\\10.100.77.240\\deploy_web_dev\\CAS\\WEB\\dist",
     "build-deploy-dev": "powershell -Command \"& { $currentDate = Get-Date -Format yyyyMMdd; $path = '\\\\10.100.77.240\\deploy_web_dev\\CAS\\WEB\\dist'; $backupPath = \\\"${path}_$currentDate\\\"; if (Test-Path $backupPath) { Write-Host 'Backup already exists for today. Skipping backup...'; } else { Write-Host 'Creating backup at' $backupPath; xcopy /E /I /Y $path $backupPath | Out-Host; } }\" && tsc && vite build --mode dev && copy web.config build\\DEV\\dist && xcopy /E /I build\\DEV\\dist \\\\10.100.77.240\\deploy_web_dev\\CAS\\WEB\\dist",
+    "build-deploy-dev-macos": "node scripts/deploy.js",
     "build-deploy-uat": "powershell -Command \"& { $currentDate = Get-Date -Format yyyyMMdd; $path = '\\\\10.100.77.243\\WEB_UAT\\HQ\\CAS\\WEB\\dist'; $backupPath = \\\"${path}_$currentDate\\\"; if (Test-Path $backupPath) { Write-Host 'Backup already exists for today. Skipping backup...'; } else { Write-Host 'Creating backup at' $backupPath; xcopy /E /I /Y $path $backupPath | Out-Host; } }\" && tsc && vite build --mode uat && copy web.config build\\UAT\\dist && xcopy /E /I build\\UAT\\dist \\\\10.100.77.243\\WEB_UAT\\HQ\\CAS\\WEB\\dist",
     "lint": "eslint .",
     "preview": "vite preview"
