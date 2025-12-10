@@ -32,6 +32,7 @@ interface ActionManageCellProps {
   hiddenDepartmentView?: boolean;
   hiddenDepartmentEdit?: boolean;
   hiddenDepartmentDelete?: boolean;
+  role_id?: string;
   chack_data?: 'Cutoff_Row' | 'CencalCutoff' | undefined;
   hadleOnclickMenu?: (value: string) => void;
 }
@@ -66,7 +67,8 @@ const ActionManageCell: React.FC<ActionManageCellProps> = (props) => {
     hiddenDepartmentAdd,
     hiddenDepartmentView,
     hiddenDepartmentEdit,
-    hiddenDepartmentDelete
+    hiddenDepartmentDelete,
+    role_id,
   } = props;
   const { menuFuncData } = useAuth();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -136,11 +138,13 @@ const ActionManageCell: React.FC<ActionManageCellProps> = (props) => {
   
 // console.log('CHECK DATE el in ActionManageCell', menuFuncData)
   const filteredMenu = (menuFuncData ?? [])
+  
     .filter(el =>
       el?.func_name && el?.func_name !== "Add" &&
       el.menu_func_sequence !== 0 &&      
       (!chack_data || chack_data === el.func_name)
     )
+    
   //   // ✅ ลบรายการซ้ำ (func_name ซ้ำกัน)
   // .reduce((acc: any[], curr: any) => {
   //   if (!acc.some(item => item.func_name === curr.func_name)) {
@@ -150,6 +154,7 @@ const ActionManageCell: React.FC<ActionManageCellProps> = (props) => {
   // }, [])
     .sort((a, b) => (a ? a.menu_func_sequence ?? 9999 : 9999) - (b ? b.menu_func_sequence ?? 9999 : 9999));
 
+  console.log(role_id,'role_id', filteredMenu,'filteredMenu');
   return (
     <div>
       <IconButton

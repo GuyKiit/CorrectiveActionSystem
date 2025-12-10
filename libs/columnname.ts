@@ -120,13 +120,6 @@ export const Department_Setting_headCells = [
         //colWidth: 100
     },
     {
-        columnName: 'user_id',
-        numeric: 'center',
-        disablePadding: false,
-        label: 'ชื่อ',
-        colWidth: 150,
-    },
-    {
         columnName: 'company_name',
         numeric: 'center',
         disablePadding: false,
@@ -145,13 +138,6 @@ export const Department_Setting_headCells = [
         numeric: 'center',
         disablePadding: false,
         label: 'แผนก',
-        colWidth: 150,
-    },
-    {
-        columnName: 'step',
-        numeric: 'center',
-        disablePadding: true,
-        label: 'สิทธิ์การอนุมัติ',
         colWidth: 150,
     },
     {
