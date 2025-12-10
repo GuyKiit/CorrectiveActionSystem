@@ -216,6 +216,9 @@ export default function ComplaintBody({
 
   handleOnclickComplainCloseAdd,
 }: ComplaintBody) {
+
+
+
   const isActionRead = action === "Read";
   const isActionAdd = action === "Add";
   const isActionEdit = action === "Edit";
@@ -1824,10 +1827,11 @@ React.useEffect(() => {
   // #F29739
 
   return (
-    <Box
-      sx={{
-        p: 2,
-        mb: 2,
+      <Box
+        id="complaint-content-capture"  
+        sx={{
+          p: 2,
+          mb: 2,
         border: "2px solid #39a2f2",
         borderRadius: 2,
         backgroundColor: "#ffffff",
