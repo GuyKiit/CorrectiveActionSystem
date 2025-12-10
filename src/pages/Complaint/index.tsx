@@ -611,7 +611,7 @@ export default function Complaint() {
   const [dataComplaintType, setdataComplaintType] = useState<LovType[]>([]);
   const [dataComplaintRs, setdataComplaintRs] = useState<LovType[]>([]);
   const [dataComplaintphoto, setdataComplaintphoto] = useState<LovType[]>([]);
-  const [dataPriority, setdataPriority] = useState<string>("");
+  // const [dataPriority, setdataPriority] = useState<string>("");
   const [filteredComplaintType, setFilteredComplaintType] = useState<LovType[]>(
     []
   );
@@ -2643,7 +2643,6 @@ export default function Complaint() {
       },
     };
     //console.log("complaintFile:", complaintPayload.complaintModel.complaintFile);
-
     // สร้าง FormData
     const formData = new FormData();
     formData.append("complaintPayloadJson", JSON.stringify(complaintPayload));
@@ -2679,7 +2678,7 @@ export default function Complaint() {
         <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
           <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ประเภทรายงาน (Report Type)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${report_type || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${dataReportTypeValue?.lov4 || "-"}</td>
           </tr>
            <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">CAS Number</td>
@@ -2687,7 +2686,7 @@ export default function Complaint() {
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ระดับความสำคัญ (Priority)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${datapriority?.find((d: any) => d.id === priority_level)?.lov2 || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${datapriority?.lov2 || "-"}</td>
           </tr>      
           <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ตอบกลับภายในวันที่ (Response Date)</td>
