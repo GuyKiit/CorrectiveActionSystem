@@ -2633,6 +2633,16 @@ export default function Complaint() {
     // --------------------------------------------------------------------------------
     // [NEW LOGIC] Generate HTML for Email Body (Respondent Department)
     // --------------------------------------------------------------------------------
+    
+
+    // แนบไฟล์จริง
+    if (complaintFiles && complaintFiles.length > 0) {
+      complaintFiles.forEach((fileItem: any) => {
+        formData.append("complaintFiles", fileItem.file);
+      });
+    }
+
+
     const emailBodyHtml = `
       <div style="font-family: Arial, sans-serif; color: #333;">
         <p>
@@ -2709,15 +2719,7 @@ export default function Complaint() {
 
     formData.append("emailBody", emailBodyHtml);
     console.log("📧 Email HTML generated and appended to formData");
-
-    // แนบไฟล์จริง
-    if (complaintFiles && complaintFiles.length > 0) {
-      complaintFiles.forEach((fileItem: any) => {
-        formData.append("complaintFiles", fileItem.file);
-      });
-    }
-
-
+    
     setIsLoadingScreen(true);
 
     try {
