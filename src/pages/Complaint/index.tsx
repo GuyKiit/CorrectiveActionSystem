@@ -3,6 +3,9 @@ import { _GET, _POST, _POST_FORMDATA, _POST_SYS_API } from "../../service/mas";
 import { _formatNumber, conCatDateTime } from "../../../libs/datacontrol";
 import { setValueMas } from "../../../libs/setvaluecallback";
 import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+dayjs.extend(customParseFormat);
+
 import {
   Alert,
   Snackbar,
@@ -611,7 +614,7 @@ export default function Complaint() {
   const [dataComplaintType, setdataComplaintType] = useState<LovType[]>([]);
   const [dataComplaintRs, setdataComplaintRs] = useState<LovType[]>([]);
   const [dataComplaintphoto, setdataComplaintphoto] = useState<LovType[]>([]);
-  const [dataPriority, setdataPriority] = useState<string>("");
+  // const [dataPriority, setdataPriority] = useState<string>("");
   const [filteredComplaintType, setFilteredComplaintType] = useState<LovType[]>(
     []
   );
@@ -2343,23 +2346,11 @@ export default function Complaint() {
 
     const tempid = uuidv4();
 
-    //Function Split Domain (For using with Complaint Status)
-    //const tempComplaintStatus = splitByDot(user[0]?.employee_domain);
-    console.log(
-      "📡 Sending respondent_domain_id to LovAll_Get:",
-      respondent_domain_id
-    );
-    console.log(
-      "📡 Sending respondent_domain_id to LovAll_Get:",
-      respondent_domain_id?.domain_id
-    );
     const tempComplaintStatus = await LovAll_Get(
       "complaint_status",
       respondent_domain_id
     );
-    // console.log("🧩 tempComplaintStatus raw:", tempComplaintStatus);
-    // console.log("💕 tempvalue 1 id", tempComplaintStatus[1]?.id);
-    // console.log("💕 tempvalue 2 id", tempComplaintStatus[2]?.id);
+
     // เตรียม Models
     const complainttypeModel = dataComplaintTypeValue_Combobox
       ? compTypeUpdateCompId(
@@ -2460,7 +2451,6 @@ export default function Complaint() {
       });
     }
 
-    //console.log("📤 complaintPayloadSavedraft:", complaintPayload);
     setIsLoadingScreen(true);
 
     try {
@@ -2474,28 +2464,23 @@ export default function Complaint() {
           text: `บันทึกข้อมูลสำเร็จ`,
           icon: "success",
         });
-        //console.log("✅ Complaint Add successfully:", response);
       } else {
         FullSweetalert({
           title: "Failed",
           text: `บันทึกไม่ข้อมูลสำเร็จ`,
           icon: "error",
         });
-        //console.log("⚠️ Add failed:", response);
       }
     } catch (error) {
       console.error("Upload failed:", error);
     } finally {
-      setIsLoadingScreen(false);
       handleClose();
-
-      // Complaint_Get();
       ComplaintGet();
+      setIsLoadingScreen(false);
     }
   };
 
   // Function - Add Complaint
-
   const ComplaintAdd = async () => {
     if (isCallFuncLogOn)
       console.log(
@@ -2522,16 +2507,6 @@ export default function Complaint() {
       "complaint_status",
       respondent_domain_id
     );
-    console.log("🧩 tempComplaintStatus raw:", tempComplaintStatus);
-    console.log("💕 tempvalue 1 id", tempComplaintStatus[1]?.id);
-    console.log("💕 tempvalue 2 id", tempComplaintStatus[2]?.id);
-
-    // const tempComplaintStatus = await LovAll_Get("complaint_status", dataelement?.respondent_domain_id);
-    // // console.log("💕 tempvalue", tempvalue);
-    // console.log("💕 tempvalue 0", tempComplaintStatus[0]);
-    // console.log("💕 tempvalue 1", tempComplaintStatus[1]);
-    // console.log("💕 tempvalue 1 id", tempComplaintStatus[1]?.id);
-    // console.log("💕 tempvalue 2 id", tempComplaintStatus[2]?.id);
 
     const tempid = uuidv4();
 
@@ -2556,7 +2531,6 @@ export default function Complaint() {
       )
       : null;
 
-    console.log("💕#### tempvalue 1 id", tempComplaintStatus[1]?.id);
     // สร้าง JSON payload
     const complaintPayload = {
       complaintModel: {
@@ -2643,7 +2617,6 @@ export default function Complaint() {
       },
     };
     //console.log("complaintFile:", complaintPayload.complaintModel.complaintFile);
-
     // สร้าง FormData
     const formData = new FormData();
     formData.append("complaintPayloadJson", JSON.stringify(complaintPayload));
@@ -2660,7 +2633,6 @@ export default function Complaint() {
       });
     }
 
-
     const emailBodyHtml = `
       <div style="font-family: Arial, sans-serif; color: #333;">
         <p>
@@ -2670,26 +2642,13 @@ export default function Complaint() {
         แจ้งเตือนปัญหาข้อร้องเรียน มีรายละเอียดดังต่อไปนี้
       </p>
         <br />
-        <h2 style="color: #2196f3; border-bottom: 2px solid #2196f3; padding-bottom: 10px;">
-          แผนกผู้ทำการออกเอกสาร (Reporting Department)
-        </h2>
-         <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
-          <tr>
-            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ชื่อผู้ออกเอกสาร (Reported by)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_username || "-"}</td>
-          </tr>
-          <tr>
-            <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">แผนกที่รายงาน (Department)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.itasset_department_name || "-"}</td>
-          </tr>
-        </table>
         <h2 style="color: #d32f2f; border-bottom: 2px solid #d32f2f; padding-bottom: 10px;">
           แผนกผู้ถูกร้องเรียน (Respondent Department)
         </h2>
         <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
           <tr>
-            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ประเภทรายงาน (Report Type)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${report_type || "-"}</td>
+            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">ประเภทรายงาน (Report Type)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${dataReportTypeValue?.lov4 || "-"}</td>
           </tr>
            <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">CAS Number</td>
@@ -2697,7 +2656,7 @@ export default function Complaint() {
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ระดับความสำคัญ (Priority)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${datapriority_Combobox?.find((d: any) => d.id === (datapriorityValue_Combobox || priority_level))?.lov2 || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${datapriority?.lov2 || "-"}</td>
           </tr>      
           <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ตอบกลับภายในวันที่ (Response Date)</td>
@@ -2720,23 +2679,44 @@ export default function Complaint() {
             <td style="padding: 8px; border: 1px solid #ddd;">${product_name || "-"}</td>
           </tr>
           <tr>
-            <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">รายละเอียด (Detail)</td>
+            <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">รายละเอียด (Detail)</td>
             <td style="padding: 8px; border: 1px solid #ddd;">${detail || "-"}</td>
           </tr>
         </table>
-        <div style="margin-top: 20px; font-size: 12px; color: #333;">
-          ขอแสดงความนับถือ,<br />
+        <h2 style="color: #2196f3; border-bottom: 2px solid #2196f3; padding-bottom: 10px;">
+          ผู้ทำการออกเอกสาร (Reporting Department)
+        </h2>
+         <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+          <tr>
+            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ชื่อผู้ออกเอกสาร (Reported by)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_fname_th  || ""} ${user[0]?.employee_lname_th || ""} (${user[0]?.employee_username || "-"})</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ตำแหน่ง (Position)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_position || "-"}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">แผนก (Department)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.itasset_department_name || "-"}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">โรงงาน (Factory)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_domain || "-"}</td>
+          </tr>
+
+        </table> 
+        <p style="margin-top: 20px; font-size: 14px; color: #000000;">
+        ขอแสดงความนับถือ,<br />
           CAS - Corrective Action System<br />
           Thai Roong Ruang Sugar Group
           <br /><br /><br />
           ****************************************************************************************<br />
           อีเมลฉบับนี้ เป็นการจัดส่งผ่านระบบอัติโนมัติ โดยท่านไม่สามารถตอบกลับผ่านเมลนี้ได้
-        </div>
+      </p>
       </div>
     `;
 
     formData.append("emailBody", emailBodyHtml);
-    console.log("📧 Email HTML generated and appended to formData");
     
     setIsLoadingScreen(true);
 
@@ -2751,23 +2731,19 @@ export default function Complaint() {
           text: `บันทึกข้อมูลสำเร็จ`,
           icon: "success",
         });
-        //console.log("✅ Complaint Add successfully:", response);
       } else {
         FullSweetalert({
           title: "Failed",
           text: `บันทึกไม่ข้อมูลสำเร็จ`,
           icon: "error",
         });
-        //console.log("⚠️ Add failed:", response);
       }
     } catch (error) {
       console.error("Upload failed:", error);
     } finally {
-      setIsLoadingScreen(false);
       handleClose();
-
-      // Complaint_Get();
       ComplaintGet();
+      setIsLoadingScreen(false);
     }
   };
 
@@ -2781,24 +2757,10 @@ export default function Complaint() {
         " [Calling Function]  :  ComplaintEdit"
       );
 
-
-    console.log(
-      "📡 Sending respondent_domain_id to LovAll_Get:",
-      respondent_domain_id
-    );
-    console.log(
-      "📡 Sending respondent_domain_id to LovAll_Get:",
-      respondent_domain_id?.domain_id
-    );
     const tempComplaintStatus = await LovAll_Get(
       "complaint_status",
       dataelement?.respondent_domain_id
     );
-    console.log("💕 tempvalue 0 id", tempComplaintStatus[0]?.id);
-    console.log("💕 tempvalue 1 id", tempComplaintStatus[1]?.id);
-    console.log("💕 tempvalue 2 id", tempComplaintStatus[2]?.id);
-    console.log("💕 tempvalue 3 id", tempComplaintStatus[3]?.id);
-    console.log("💕 tempvalue 4 id", tempComplaintStatus[4]?.id);
 
     const formData = new FormData();
     if (mode == "SUBMIT") {
@@ -2830,6 +2792,7 @@ export default function Complaint() {
           id: dataelement?.id,
           cas_number: dataelement?.cas_number,
           mode: mode,
+          save_type: "save_submit",
           date_of_detection: date_of_detection
             ? date_of_detection
               .hour(23)
@@ -2895,6 +2858,91 @@ export default function Complaint() {
           formData.append("complaintFiles", fileItem.file);
         });
       }
+
+      const emailBodyHtml = `
+      <div style="font-family: Arial, sans-serif; color: #333;">
+        <p>
+        เรียน เจ้าหน้าที่ฝ่าย${respondent_department_id?.department_name || "-"}
+      </p>
+      <p style="margin-top: 5px;">
+        แจ้งเตือนปัญหาข้อร้องเรียน มีรายละเอียดดังต่อไปนี้
+      </p>
+        <br />
+        <h2 style="color: #d32f2f; border-bottom: 2px solid #d32f2f; padding-bottom: 10px;">
+          แผนกผู้ถูกร้องเรียน (Respondent Department)
+        </h2>
+        <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+          <tr>
+            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">ประเภทรายงาน (Report Type)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${dataReportTypeValue?.lov4 || "-"}</td>
+          </tr>
+           <tr>
+            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">CAS Number</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${cas_number || "-"}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ระดับความสำคัญ (Priority)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${datapriority?.lov2 || "-"}</td>
+          </tr>      
+          <tr>
+            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ตอบกลับภายในวันที่ (Response Date)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${respond_date_within ? respond_date_within.format("DD/MM/YYYY") : "-"}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">Lot No./Bag No</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${lot_no || "-"}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">วันที่พบปัญหา (Date of Detection)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${date_of_detection ? date_of_detection.format("DD/MM/YYYY") : "-"}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">แผนกที่พบปัญหา (Department / Area of Detection)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${respondent_department_id?.department_name || "-"}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">ชื่อสินค้า (Product Name)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${product_name || "-"}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">รายละเอียด (Detail)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${detail || "-"}</td>
+          </tr>
+        </table>
+        <h2 style="color: #2196f3; border-bottom: 2px solid #2196f3; padding-bottom: 10px;">
+          ผู้ทำการออกเอกสาร (Reporting Department)
+        </h2>
+         <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+          <tr>
+            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ชื่อผู้ออกเอกสาร (Reported by)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_fname_th  || ""} ${user[0]?.employee_lname_th || ""} (${user[0]?.employee_username || "-"})</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ตำแหน่ง (Position)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_position || "-"}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">แผนก (Department)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.itasset_department_name || "-"}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">โรงงาน (Factory)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_domain || "-"}</td>
+          </tr>
+
+        </table> 
+        <p style="margin-top: 20px; font-size: 14px; color: #000000;">
+        ขอแสดงความนับถือ,<br />
+          CAS - Corrective Action System<br />
+          Thai Roong Ruang Sugar Group
+          <br /><br /><br />
+          ****************************************************************************************<br />
+          อีเมลฉบับนี้ เป็นการจัดส่งผ่านระบบอัติโนมัติ โดยท่านไม่สามารถตอบกลับผ่านเมลนี้ได้
+      </p>
+      </div>
+    `;
+
+    formData.append("emailBody", emailBodyHtml);
 
       setIsLoadingScreen(true);
 
@@ -2967,6 +3015,7 @@ export default function Complaint() {
           id: dataelement?.id,
           cas_number: dataelement?.cas_number,
           mode: mode,
+          save_type: "save_draft",
           date_of_detection: date_of_detection
             ? date_of_detection
               .hour(23)
@@ -3040,6 +3089,7 @@ export default function Complaint() {
           formData,
           "/Complaint/ComplaintEdit"
         );
+        console.log("Response: ", response);
         if (response && response.status === "success") {
           FullSweetalert({
             title: "Success",
@@ -3049,7 +3099,7 @@ export default function Complaint() {
         } else {
           FullSweetalert({
             title: "Failed",
-            text: `บันทึกไม่ข้อมูลสำเร็จ`,
+            text: `บันทึกข้อมูลไม่สำเร็จ`,
             icon: "error",
           });
         }
@@ -3058,9 +3108,9 @@ export default function Complaint() {
       } finally {
         setIsLoadingScreen(false);
         handleClose();
-
         ComplaintGet();
       }
+      
     }
   };
 
@@ -3137,11 +3187,6 @@ export default function Complaint() {
       user[0]?.employee_domain
     );
 
-    console.log("💕 tempvalue 0 id", tempComplaintStatus[0]?.id);
-    console.log("💕 tempvalue 1 id", tempComplaintStatus[1]?.id);
-    console.log("💕 tempvalue 2 id", tempComplaintStatus[2]?.id);
-    console.log("💕 tempvalue 3 id", tempComplaintStatus[3]?.id);
-    console.log("💕 tempvalue 4 id", tempComplaintStatus[4]?.id);
     //posion
     const formData = new FormData();
     // 🟡 STEP 1 : ถ้าเป็นโหมด "EXPLAIN" = ขอก่อนทำ
@@ -3175,6 +3220,48 @@ export default function Complaint() {
         user[0]?.employee_domain
       );
 
+      const emailBodyHtml = `
+      <div style="font-family: Arial, sans-serif; color: #333;">
+        <p>
+        เรียน เจ้าหน้าที่ฝ่าย${request_department_id?.department_name || "-"}
+      </p>
+      <p style="margin-top: 5px;">
+        แจ้งเตือนรับทราบ เพื่อพิจารณายกเลิก หรือ แก้ไข
+      </p>
+        <br />
+        <h2 style="color: #2196f3; border-bottom: 2px solid #2196f3; padding-bottom: 10px;">
+          ผู้ทำการส่งกลับ (Return by)
+        </h2>
+         <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+          <tr>
+            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ชื่อผู้ส่งกลับ(Return by)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_fname_th  || ""} ${user[0]?.employee_lname_th || ""} (${user[0]?.employee_username || "-"})</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ตำแหน่ง (Position)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_position || "-"}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">แผนก (Department)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.itasset_department_name || "-"}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">โรงงาน (Factory)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_domain || "-"}</td>
+          </tr>
+
+        </table> 
+        <p style="margin-top: 20px; font-size: 14px; color: #000000;">
+        ขอแสดงความนับถือ,<br />
+          CAS - Corrective Action System<br />
+          Thai Roong Ruang Sugar Group
+          <br /><br /><br />
+          ****************************************************************************************<br />
+          อีเมลฉบับนี้ เป็นการจัดส่งผ่านระบบอัติโนมัติ โดยท่านไม่สามารถตอบกลับผ่านเมลนี้ได้
+      </p>
+      </div>
+    `;
+
       const complaintReturnPayload = {
         complaintReturnModel: {
           id: dataelement?.id,
@@ -3185,8 +3272,13 @@ export default function Complaint() {
         CurrentAccessModel: {
           user_id: user[0]?.employee_username || "",
         },
+        emailBody: emailBodyHtml 
       };
+      
+       
 
+    // formData.append("emailBody", emailBodyHtml);
+      
       try {
         const response = await _POST(
           complaintReturnPayload,
@@ -3564,21 +3656,11 @@ export default function Complaint() {
       );
 
     const tempid = uuidv4();
-    console.log(
-      "📡 Sending respondent_domain_id to LovAll_Get:",
-      dataelement?.respondent_domain_id
-    );
-    console.log(
-      "📡 Sending respondent_domain_id to LovAll_Get:",
-      dataelement?.respondent_domain_id?.domain_id
-    );
+
     const tempComplaintStatus = await LovAll_Get(
       "complaint_status",
       dataelement?.respondent_domain_id
     );
-    // console.log("🧩 tempComplaintStatus raw:", tempComplaintStatus);
-    // console.log("💕 tempvalue 1 id", tempComplaintStatus[1]?.id);
-    // console.log("💕 tempvalue 2 id", tempComplaintStatus[2]?.id);
 
     const resolveComplaintId = () => {
       const el: any = dataelement || {};
@@ -3693,6 +3775,165 @@ export default function Complaint() {
         formData.append("explainFiles", fileItem.file);
       });
     }
+
+    // ✅ เตรียมข้อมูลสำหรับ Email Body (ดึงจาก dataelement เพราะ State อาจจะว่างในโหมด Explain)
+    console.log("📧 Validating Email Data (ExplainAdd):", dataelement);
+    console.log("📧 PriorityLevel List:", PriorityLevel);
+    console.log("📧 dataelement?.priority_level:", dataelement?.priority_level);
+    console.log("📧 dataelement?.respond_date_within:", dataelement?.respond_date_within);
+
+    // Helper เฉพาะกิจสำหรับ Email Body
+    const safeFormatDate = (val: any) => {
+        if (!val) return "-";
+        let d = dayjs(val);
+        if (!d.isValid()) {
+             d = dayjs(val, ["DD-MM-YYYY", "DD/MM/YYYY", "YYYY-MM-DD"]);
+        }
+        return d.isValid() ? d.format("DD/MM/YYYY") : "-";
+    };
+
+    const email_reportType = dataset_reporttype?.find((x: any) => x.id == dataelement?.report_type)?.lov4 || "-";
+    const email_casNumber = dataelement?.cas_number || "-";
+    
+    // ลองหาทั้งจาก priority_level และ datapriority (เผื่อกรณีชื่อตัวแปรไม่ตรง)
+    const email_priority_id = dataelement?.priority_level?.lov2 || dataelement?.datapriority?.lov2; 
+    // const email_priority = PriorityLevel?.find((x: any) => x.id == email_priority_id || x.lov1 == email_priority_id)?.lov2 || "-";
+    
+
+    const email_responseDate = safeFormatDate(dataelement?.respond_date_within);
+    const email_lotNo = dataelement?.lot_no || "-";
+    const email_detectionDate = safeFormatDate(dataelement?.date_of_detection);
+    const email_deptName = dataset_department?.find((x: any) => x.department_id == dataelement?.respondent_department_id)?.department_name || dataelement?.respondent_department_name || "-";
+    const email_productName = dataelement?.product_name || "-";
+    const email_detail = dataelement?.detail || "-";
+    const email_respondent_department_name = dataset_department?.find((x: any) => x.department_id == dataelement?.respondent_department_id)?.department_name || dataelement?.respondent_department_name || "-";
+
+
+    const emailBodyHtml = `
+      <div style="font-family: Arial, sans-serif; color: #333;">
+        <p>
+        เรียน หัวหน้าฝ่าย${email_respondent_department_name}
+      </p>
+      <p style="margin-top: 5px;">
+        แจ้งเตือนปัญหาข้อร้องเรียน มีรายละเอียดดังต่อไปนี้
+      </p>
+        <br />
+        <h2 style="color: #d32f2f; border-bottom: 2px solid #d32f2f; padding-bottom: 10px;">
+          แผนกผู้ถูกร้องเรียน (Respondent Department)
+        </h2>
+        <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+          <tr>
+            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">ประเภทรายงาน (Report Type)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${email_reportType}</td>
+          </tr>
+           <tr>
+            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">CAS Number</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${email_casNumber}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ระดับความสำคัญ (Priority)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${email_priority_id}</td>
+          </tr>      
+          <tr>
+            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ตอบกลับภายในวันที่ (Response Date)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${email_responseDate}</td>
+          </tr>    
+          <tr>
+            <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">Lot No./Bag No</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${email_lotNo}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">วันที่พบปัญหา (Date of Detection)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${email_detectionDate}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">แผนกที่พบปัญหา (Department / Area of Detection)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${email_deptName}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">ชื่อสินค้า (Product Name)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${email_productName}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">รายละเอียด (Detail)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${email_detail}</td>
+          </tr>
+        </table>
+        <h2 style="color: #ff9800; border-bottom: 2px solid #ff9800; padding-bottom: 10px;">
+          รายละเอียดคำชี้แจง (Explain Detail)
+        </h2>
+        <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+          <tr>
+            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">วันที่ชี้แจง (Date)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${responsible_date ? responsible_date.format("DD/MM/YYYY") : "-"}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">กำหนดวันตรวจติดตามผลวันที่ (Follow-up Date)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${follow_up_date ? follow_up_date.format("DD/MM/YYYY") : "-"}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">การวิเคราะห์เบื้องต้นของข้อสังเกต (ObAnalysis)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${observation_analysis || "-"}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">เครื่องมือที่ใช้ (Tools Used)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${ExplainTuModel || "-"}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">คำอธิบายการวิเคราะห์ (Root Cause)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${root_cause || "-"}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">การตัดสินใจเกี่ยวกับแนวทางการจัดการ (ของเสีย / สินค้าที่ไม่ผ่านเกณฑ์)  (Decision on Disposition)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${ExplainDdModel || "-"}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">การดำเนินการแก้ไข (Corrective Action)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${corrective_action || "-"}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">การดำเนินการแก้ไข (Corrective Action)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${corrective_action || "-"}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">แผนการป้องกันไม่ให้ปัญหาเกิดขึ้นซ้ำ (Preventive Action Plan)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${preventive_action_plan || "-"}</td>
+          </tr>
+        </table>
+        <h2 style="color: #d32f2f; border-bottom: 2px solid #d32f2f; padding-bottom: 10px;">
+          ผู้ทำการชี้แจง (Explainer)
+        </h2>
+         <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+          <tr>
+            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ชื่อผู้ชี้แจง (Explain by)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_fname_th  || ""} ${user[0]?.employee_lname_th || ""} (${user[0]?.employee_username || "-"})</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ตำแหน่ง (Position)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_position || "-"}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">แผนก (Department)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.itasset_department_name || "-"}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">โรงงาน (Factory)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_domain || "-"}</td>
+          </tr>
+
+        </table> 
+        <p style="margin-top: 20px; font-size: 14px; color: #000000;">
+        ขอแสดงความนับถือ,<br />
+          CAS - Corrective Action System<br />
+          Thai Roong Ruang Sugar Group
+          <br /><br /><br />
+          ****************************************************************************************<br />
+          อีเมลฉบับนี้ เป็นการจัดส่งผ่านระบบอัติโนมัติ โดยท่านไม่สามารถตอบกลับผ่านเมลนี้ได้
+      </p>
+      </div>
+    `;
+
+    formData.append("emailBody", emailBodyHtml);
 
     setIsLoadingScreen(true);
 
