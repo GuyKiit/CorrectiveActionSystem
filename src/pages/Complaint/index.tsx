@@ -186,7 +186,6 @@ export default function Complaint() {
   const { menuFuncData, userData } = useAuth();
   const { Customer, ProductGroup, CustomerAddress } = useData();
 
-  const isItAdmin = String(user?.[0]?.role_id) === "6380";
 
   // =====================================================================================================
   // CONTEXT VARIABLES
@@ -356,6 +355,7 @@ export default function Complaint() {
     qcapprove_date,
     qcapprove_detail,
     qcapprove_note,
+    dataset_crosscompany,
 
     // Setter Functions
     setComplaint_no,
@@ -497,6 +497,7 @@ export default function Complaint() {
     setclose_date,
     setclose_detail,
     setclose_note,
+    setdataset_crosscompany,
 
     casuserdept,
     set_casuserdept,
@@ -668,6 +669,17 @@ export default function Complaint() {
   // For On-Off Calling Function Log
   const [isCallFuncLogOn] = useState(true);
   const [searchTrigger, setSearchTrigger] = useState(false);
+
+  const isCrossCompany = dataset_crosscompany?.[0]?.lov_code == "1";
+  const grouped = {
+  config_file: dataset_configfile || [],
+};
+
+  const tempRoleUser = dataset_roleProfile?.filter(
+              (item: any) => item.lov1 === String(user[0]?.role_id)
+            );
+  const isItAdmin = tempRoleUser?.[0]?.lov_code === "it_admin";
+            
 
   // const handleClose = () => {
   //   if (isCallFuncLogOn)
@@ -1048,13 +1060,49 @@ export default function Complaint() {
   // =====================================================================================================
 
   // Function - Get LOV Master Data
-  const LovAll_Get = async (mode?: any, respondent_domain_id?: any) => {
+  const LovAll_Get = async (mode?: any, respondent_domain_id?: any, isItAdmin?: boolean) => {
+
+    console.log("4️⃣4️⃣4️⃣ [mode] : ", mode, "// [isItAdmin] : ", isItAdmin);
+
     if (isCallFuncLogOn)
       console.log(
         "🕑 ",
         dayjs().format("HH:mm:ss.SSS"),
         " [Calling Function]  :  LovAll_Get"
       );
+
+    if (mode == "get_role") {
+      try {
+        const dataset = {
+          lov_type: "role_profile",
+        };
+        const response = await _POST(dataset, "/Lov/LovGet");
+
+        if (response && response.status === "success") {
+          const lovData = response.data || [];
+          console.log(
+            "❇️❇️❇️❇️❇️❇️❇️ Call [Lov/LovGet] -> LovAll_Get :",
+            response.data
+          );
+          
+          console.log('⚠️⚠️❇️❇️⚠️⚠️ [lovData] :', lovData);
+          console.log('⚠️⚠️⚠️⚠️ [grouped["lovData"]] :', lovData);
+
+          setdataset_roleProfile?.(lovData);
+
+          const tempRoleUser = lovData?.filter(
+              (item: any) => item.lov1 === String(user[0]?.role_id)
+            );
+          const tempCheckItAdmin = tempRoleUser?.[0]?.lov_code === "it_admin";
+
+          return tempCheckItAdmin;
+
+          // return grouped["complaint_status"].filter((item: any) => item.lov7 === respondent_domain_id?.domain_id)
+        }
+      } catch (e) {
+        //console.log("error:", e);
+      }
+    }
 
     if (mode == "complaint_status") {
       try {
@@ -1083,12 +1131,12 @@ export default function Complaint() {
           }, {});
 
           // return grouped["complaint_status"].filter((item: any) => item.lov7 === respondent_domain_id?.domain_id)
-          return grouped["complaint_status"].filter(
-            (item: any) =>
-              item.lov7 ===
-              (typeof respondent_domain_id === "object"
-                ? respondent_domain_id?.domain_id
-                : respondent_domain_id)
+          return isItAdmin
+            ? grouped["complaint_status"]   // 🔥 admin เห็นทุก domain
+            : grouped["complaint_status"].filter(
+            (item: any) => item.lov7 === (typeof respondent_domain_id === "object"
+            ? respondent_domain_id?.domain_id
+            : respondent_domain_id)
           );
         }
       } catch (e) {
@@ -1096,16 +1144,46 @@ export default function Complaint() {
       }
     } else {
       try {
-        const dataset = {
-          lov_group: user[0]?.itasset_company_id + ",VARIABLE_CONSTANT" + ",SYSTEM",
-          lov_type:
-            "report_type,complaint_type,reference_standard,priority_level,attach_type,complaint_status,tool_use,decision_disposition,approve_select,complaint_step,complaint_action,active_company,role_profile,config_file",
-        };
+
+        console.log("💚💚💚💚💚💚💚💚 isItAdmin :", isItAdmin);
+        const dataset = isItAdmin ?
+          {
+            lov_type: "report_type,complaint_type,reference_standard,priority_level,attach_type,complaint_status,tool_use,decision_disposition,approve_select,complaint_step,complaint_action,active_company,role_profile,config_file",
+          }
+          :
+          {
+            lov_group: user[0]?.itasset_company_id + ",VARIABLE_CONSTANT" + ",SYSTEM",
+            lov_type: "report_type,complaint_type,reference_standard,priority_level,attach_type,complaint_status,tool_use,decision_disposition,approve_select,complaint_step,complaint_action,active_company,role_profile,config_file",
+          }
+
+
+        // const dataset = {
+
+        //   lov_type:
+        //     "report_type,complaint_type,reference_standard,priority_level,attach_type,complaint_status,tool_use,decision_disposition,approve_select,complaint_step,complaint_action,active_company,role_profile,config_file",
+          
+        //   lov_group: user[0]?.itasset_company_id + ",VARIABLE_CONSTANT" + ",SYSTEM",
+        //   lov_type:
+        //     "report_type,complaint_type,reference_standard,priority_level,attach_type,complaint_status,tool_use,decision_disposition,approve_select,complaint_step,complaint_action,active_company,role_profile,config_file",
+        
+        // };
+
+        // if (isItAdmin) {
+        //   dataset = {
+        //     lov_type: "report_type,complaint_type,reference_standard,priority_level,attach_type,complaint_status,tool_use,decision_disposition,approve_select,complaint_step,complaint_action,active_company,role_profile,config_file",
+        //   }
+        // } else {
+        //   dataset = {
+        //     lov_group: user[0]?.itasset_company_id + ",VARIABLE_CONSTANT" + ",SYSTEM",
+        //     lov_type: "report_type,complaint_type,reference_standard,priority_level,attach_type,complaint_status,tool_use,decision_disposition,approve_select,complaint_step,complaint_action,active_company,role_profile,config_file",
+        //   }
+        // }
+
         const response = await _POST(dataset, "/Lov/LovGet");
 
         if (response && response.status === "success") {
           const lovData = response.data || [];
-          //console.log("❇️❇️❇️❇️❇️❇️❇️ Call [Lov/LovGet] -> LovAll_Get :", response.data);
+          console.log("❇️❇️❇️❇️❇️❇️❇️ Call [Lov/LovGet] -> LovAll_Get :", response.data);
 
           // ✅ จัดกลุ่มตาม lov_type
           const grouped = lovData.reduce((acc: any, item: any) => {
@@ -1114,10 +1192,29 @@ export default function Complaint() {
             return acc;
           }, {});
 
+          console.log('💚💚 [response] : ', response);
+          console.log('💚💚 [response.data] : ', response.data);
+          
+          console.log('⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️');
+          console.log('⚠️⚠️⚠️⚠️ [grouped["report_type"]] :', grouped["report_type"]);
+          console.log('⚠️⚠️⚠️⚠️ [grouped["complaint_type"]] :', grouped["complaint_type"]);
+          console.log('⚠️⚠️⚠️⚠️ [grouped["reference_standard"]] :', grouped["reference_standard"]);
+          console.log('⚠️⚠️⚠️⚠️ [grouped["priority_level"]] :', grouped["priority_level"]);
+          console.log('⚠️⚠️⚠️⚠️ [grouped["attach_type"]] :', grouped["attach_type"]);
+          console.log('⚠️⚠️⚠️⚠️ [grouped["tool_use"]] :', grouped["tool_use"]);
+          console.log('⚠️⚠️⚠️⚠️ [grouped["decision_disposition"]] :', grouped["decision_disposition"]);
+          console.log('⚠️⚠️⚠️⚠️ [grouped["approve_select"]] :', grouped["approve_select"]);
+          console.log('⚠️⚠️⚠️⚠️ [grouped["complaint_step"]] :', grouped["complaint_step"]);
+          console.log('⚠️⚠️⚠️⚠️ [grouped["complaint_action"]] :', grouped["complaint_action"]);
+          console.log('⚠️⚠️⚠️⚠️ [grouped["active_company"]] :', grouped["active_company"]);
+          console.log('⚠️⚠️⚠️⚠️ [grouped["role_profile"]] :', grouped["role_profile"]);
+          console.log('⚠️⚠️⚠️⚠️ [grouped["config_file"]] :', grouped["config_file"]);
+          console.log('⚠️⚠️⚠️⚠️ [grouped["complaint_status"]] :', grouped["complaint_status"]);
+          console.log('⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️');
+
           // ตัวอย่างการ set state
           setdataset_reporttype?.(grouped["report_type"] || []);
           setdataComplaintType_Combobox?.(grouped["complaint_type"] || []);
-          setdataComplaintRs_Combobox?.(grouped["reference_standard"] || []);
           setdataComplaintRs_Combobox?.(grouped["reference_standard"] || []);
           setdatapriority_Combobox?.(grouped["priority_level"] || []);
           setdataphoto_Combobox?.(grouped["attach_type"] || []);
@@ -1131,47 +1228,54 @@ export default function Complaint() {
           setdataset_roleProfile?.(grouped["role_profile"] || []);
           setdataset_configfile?.(grouped["config_file"] || []);
           setdatastatusCrossDomain?.(grouped["complaint_status"] || []);
+
           setdatastatus?.(
+            isItAdmin
+            ? grouped["complaint_status"] :
             grouped["complaint_status"].filter(
               (item: any) => item.lov7 === user[0].employee_domain
             )
           );
 
           setdataset_complaintActionNew(
+            isItAdmin
+            ? grouped["complaint_action"] :
             grouped["complaint_action"].filter(
-              (item: any) => item.lov_code === "ACTION_NEW" //&& item.lov_group == user[0].itasset_company_id
+              (item: any) => item.lov_code === "ACTION_NEW" && item.lov_group == user[0].itasset_company_id
             )
           );
           setdataset_complaintActionExplain(
+            isItAdmin
+            ? grouped["complaint_action"] :
             grouped["complaint_action"].filter(
-              (item: any) => item.lov_code === "ACTION_EXPLAIN" //&& item.lov_group == user[0].itasset_company_id
+              (item: any) => item.lov_code === "ACTION_EXPLAIN" && item.lov_group == user[0].itasset_company_id
             )
           );
           setdataset_complaintActionApproveSC(
+            isItAdmin
+            ? grouped["complaint_action"] :
             grouped["complaint_action"].filter(
-              (item: any) => item.lov_code === "ACTION_APPROVE_SC" //&& item.lov_group == user[0].itasset_company_id
+              (item: any) => item.lov_code === "ACTION_APPROVE_SC" && item.lov_group == user[0].itasset_company_id
             )
           );
           setdataset_complaintActionApproveQC(
+            isItAdmin
+            ? grouped["complaint_action"] :
             grouped["complaint_action"].filter(
-              (item: any) => item.lov_code === "ACTION_APPROVE_QC" //&& item.lov_group == user[0].itasset_company_id
+              (item: any) => item.lov_code === "ACTION_APPROVE_QC" && item.lov_group == user[0].itasset_company_id
             )
           );
           setdataset_complaintActionClose(
+            isItAdmin
+            ? grouped["complaint_action"] :
             grouped["complaint_action"].filter(
-              (item: any) => item.lov_code === "ACTION_CLOSE" //&& item.lov_group == user[0].itasset_company_id
+              (item: any) => item.lov_code === "ACTION_CLOSE" && item.lov_group == user[0].itasset_company_id
             )
           );
 
-          console.log(
-            '⚠️⚠️⚠️⚠️ [grouped["complaint_status"]] :',
-            grouped["complaint_status"]
-          );
-          console.log('⚠️⚠️⚠️⚠️ [grouped["config_file"]] :', grouped["config_file"])
-          console.log(
-            '⚠️⚠️⚠️⚠️ grouped["cross_company_check"] :',
-            grouped["cross_company_check"]
-          );
+          // console.log('⚠️⚠️⚠️⚠️ [grouped["complaint_status"]] :', grouped["complaint_status"]);
+          // console.log('⚠️⚠️⚠️⚠️ [grouped["config_file"]] :', grouped["config_file"])
+          // console.log('⚠️⚠️⚠️⚠️ grouped["cross_company_check"] :', grouped["cross_company_check"]);
         }
       } catch (e) {
         //console.log("error:", e);
@@ -1343,39 +1447,39 @@ export default function Complaint() {
   // };
 
   // Function - Get Complaints
-  const Dept_setup_By_Domain_dept_id_Get = async (data: any) => {
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  Dept_setup_By_Domain_dept_id_Get"
-      );
+  // const Dept_setup_By_Domain_dept_id_Get = async (data: any) => {
+  //   if (isCallFuncLogOn)
+  //     console.log(
+  //       "🕑 ",
+  //       dayjs().format("HH:mm:ss.SSS"),
+  //       " [Calling Function]  :  Dept_setup_By_Domain_dept_id_Get"
+  //     );
 
-    setIsLoadingScreen(true);
-    const dataset = {
-      domain_dept_id: data.domain_dept_id,
-    };
+  //   setIsLoadingScreen(true);
+  //   const dataset = {
+  //     domain_dept_id: data.domain_dept_id,
+  //   };
 
-    try {
-      let response = await _POST(
-        dataset,
-        "/DeptSetup/DeptSetupByDomaindeptidGet"
-      );
-      if (
-        response &&
-        response.status === "success" &&
-        response.data?.length > 0
-      ) {
-        setIsLoadingScreen(false);
-        setdataelement(response.data[0]);
-        return response.data[0]; // 👈 คืนค่าข้อมูลกลับไป (สำคัญ)
-      } else {
-        setdataelement(null);
-      }
-    } catch (e) {
-      console.error("error", e);
-    }
-  };
+  //   try {
+  //     let response = await _POST(
+  //       dataset,
+  //       "/DeptSetup/DeptSetupByDomaindeptidGet"
+  //     );
+  //     if (
+  //       response &&
+  //       response.status === "success" &&
+  //       response.data?.length > 0
+  //     ) {
+  //       setIsLoadingScreen(false);
+  //       setdataelement(response.data[0]);
+  //       return response.data[0]; // 👈 คืนค่าข้อมูลกลับไป (สำคัญ)
+  //     } else {
+  //       setdataelement(null);
+  //     }
+  //   } catch (e) {
+  //     console.error("error", e);
+  //   }
+  // };
   // =====================================================================================================
   // API FUNCTIONS - CRUD OPERATIONS
   // =====================================================================================================
@@ -1847,11 +1951,7 @@ export default function Complaint() {
             el.ACTION = ACTION;
 
             // Prepare Role From Role Profile
-            const tempRoleUser = dataset_roleProfile.filter(
-              (item: any) => item.lov1 === String(user[0].role_id)
-            );
-            const tempRolename = tempRoleUser[0].lov_code;
-
+            
             console.log("🦄🦄🦄🦄🦄🦄 tempApproveSeq : ", tempApproveSeq);
             console.log("🎶🎶🎶🎶🎶 tempApproveSeq : ", el.cas_number);
             console.log("🎶🎶🎶🎶🎶 isItAdmin : ", isItAdmin);
@@ -1862,7 +1962,8 @@ export default function Complaint() {
             // console.log("🎆 🎆 🎆 🎆 user[0] :", user[0]);
             // console.log("🎆 🎆 🎆 🎆 tempRoleUser :", tempRoleUser);
 
-            //console.log(el.step_label)
+            console.log("tempRoleUser tempRoleUser : ", tempRoleUser);
+            // console.log(el.step_label)
 
             // For Display Status on Datatable [NEW, SUBMITED, EXPLAINED, APPROVED, CLOSED]
             el.complaint_status_label = (
@@ -1870,7 +1971,7 @@ export default function Complaint() {
                 label={`${el.complaint_status_label}`}
                 acknowledge={el.acknowledge_flag}
                 step={`${el.step_label}`}
-                role={tempRolename}
+                role={tempRoleUser}
                 approveseq={tempApproveSeq}
                 userdept={user[0]?.itasset_department_id}
                 requestdept={el.request_department_id}
@@ -5183,7 +5284,9 @@ export default function Complaint() {
     const fetchData = async () => {
       try {
         //console.log("useEffect start");
-        await LovAll_Get();
+        const tempCheckItAdmin = await LovAll_Get('get_role');
+        console.log("😎🥰 tempCheckItAdmin", tempCheckItAdmin);
+        await LovAll_Get(null, null, tempCheckItAdmin);
         await DomainRelateGet();
         // await DepartmentDomainGet();
 
@@ -5382,7 +5485,7 @@ export default function Complaint() {
                   dataset_company: val?.company_id || ""
                 });
               }}
-              readonly
+              readonly = {!isItAdmin}
             />
           </Grid>
           <Grid size={4}>
@@ -5635,6 +5738,7 @@ export default function Complaint() {
         element={
           <ComplaintBody
             action="Add"
+            isItAdmin={isItAdmin}
             submitCount={submitCount}
             validateDetailText={blockValidateErrors}
             handleOpenAdd={handleOpenAddList}
@@ -5737,7 +5841,10 @@ export default function Complaint() {
         titlename={"[Complaint] ดูข้อมูล"}
         handleClose={handleClose}
         buttonColor="success"
-        element={<ComplaintBody action="Read" />}
+        element={<ComplaintBody
+          action="Read"
+          isItAdmin={isItAdmin}
+        />}
       />
 
       {/* For Status [NEW] */}
@@ -5756,6 +5863,7 @@ export default function Complaint() {
         element={
           <ComplaintBody
             action="Edit"
+            isItAdmin={isItAdmin}
             submitCount={submitCount}
             onBlocksChange={(data) => setComplaintBlocks(data)}
             validateDetailText={blockValidateErrors}
@@ -5859,7 +5967,10 @@ export default function Complaint() {
         handleClose={handleClose}
         handlefunction={ComplaintDelete}
         buttonColor="error"
-        element={<ComplaintBody action="Delete" />}
+        element={<ComplaintBody
+          action="Delete"
+          isItAdmin={isItAdmin}
+        />}
       />
 
       {/* // ===================================================================================================== */}
@@ -5883,6 +5994,7 @@ export default function Complaint() {
         element={
           <ComplaintBody
             action="Explain"
+            isItAdmin={isItAdmin}
             handleOpenAdd={() => handleOnclickExplainAdd(dataelement)}
             handleOnclickExplainView={(item) =>
               handleOnclickExplainView(item, "ExplainRead")
@@ -5905,6 +6017,7 @@ export default function Complaint() {
         element={
           <ComplaintBody
             action="ReadExplain"
+            isItAdmin={isItAdmin}
             handleOpenAdd={() => handleOnclickExplainAdd(dataelement)}
             handleOnclickExplainView={(item) =>
               handleOnclickExplainView(item, "ReadExplain")
@@ -5925,6 +6038,7 @@ export default function Complaint() {
         element={
           <ComplaintBody
             action="ApproveSC"
+            isItAdmin={isItAdmin}
             handleOpenAdd={() => handleOnclickExplainAdd(dataelement)}
             handleOnclickExplainView={(item) =>
               handleOnclickExplainView(item, "ApproveScRead")
@@ -5944,6 +6058,7 @@ export default function Complaint() {
         element={
           <ComplaintBody
             action="ReadApproveSC"
+            isItAdmin={isItAdmin}
             handleOpenAdd={() => handleOnclickExplainAdd(dataelement)}
             // openExplainView={openExplainView}
             // handleCloseExplainView={handleClose}
@@ -5963,6 +6078,7 @@ export default function Complaint() {
         element={
           <ComplaintBody
             action="ApproveQC"
+            isItAdmin={isItAdmin}
             handleOpenAdd={() => handleOnclickExplainAdd(dataelement)}
             handleOnclickExplainView={(item) =>
               handleOnclickExplainView(item, "ApproveQcRead")
@@ -5982,6 +6098,7 @@ export default function Complaint() {
         element={
           <ComplaintBody
             action="ReadApproveQC"
+            isItAdmin={isItAdmin}
             handleOpenAdd={() => handleOnclickExplainAdd(dataelement)}
             handleOnclickExplainView={(item) =>
               handleOnclickExplainView(item, "ApproveQcRead")
@@ -6001,6 +6118,7 @@ export default function Complaint() {
         element={
           <ComplaintBody
             action="Close"
+            isItAdmin={isItAdmin}
             handleOpenAdd={() => handleOnclickExplainAdd(dataelement)}
             handleOnclickExplainView={(item) =>
               handleOnclickExplainView(item, "ReadClose")
@@ -6021,6 +6139,7 @@ export default function Complaint() {
         element={
           <ComplaintBody
             action="ReadClose"
+            isItAdmin={isItAdmin}
             handleOpenAdd={() => handleOnclickExplainAdd(dataelement)}
             handleOnclickExplainView={(item) =>
               handleOnclickExplainView(item, "ReadClose")
@@ -6040,6 +6159,7 @@ export default function Complaint() {
         element={
           <ComplaintBody
             action="CloseHistory"
+            isItAdmin={isItAdmin}
             handleOpenAdd={() => handleOnclickComplainCloseAdd(dataelement)}
             handleOnclickExplainView={(item) =>
               handleOnclickExplainView(item, "CloseHistory")
@@ -6068,6 +6188,7 @@ export default function Complaint() {
         buttonColor="success"
         element={
           <ExplaintBody
+          isItAdmin={isItAdmin}
             action="ExplainAdd"
             validateText={{
               Follow_up_Date: followUpDateError,
@@ -6135,6 +6256,7 @@ export default function Complaint() {
         buttonColor="success"
         element={
           <ExplaintBody
+          isItAdmin={isItAdmin}
             complaint_status_lable={dataelement?.complaint_status_lable}
             currentExplainForApproval={currentExplainForApproval}
             action={
@@ -6183,6 +6305,7 @@ export default function Complaint() {
         buttonColor="success"
         element={
           <ExplaintBody
+          isItAdmin={isItAdmin}
             action="ApproveSCAdd"
             handleOpenAdd={() => handleOnclickExplainApproveSc(dataelement)}
             onApproveChange={(value) => {
@@ -6241,6 +6364,7 @@ export default function Complaint() {
         buttonColor="success"
         element={
           <ExplaintBody
+          isItAdmin={isItAdmin}
             action="ApproveQCAdd"
             handleOpenAdd={() => handleOnclickExplainApproveQc(dataelement)}
             onApproveChange={(value) => {
@@ -6294,6 +6418,7 @@ export default function Complaint() {
         buttonColor="success"
         element={
           <ExplaintBody
+          isItAdmin={isItAdmin}
             action="CloseAdd"
             handleOpenAdd={() => handleOnclickComplainCloseAdd(dataelement)}
             onApproveChange={(value) => {

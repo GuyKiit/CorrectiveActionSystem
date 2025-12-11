@@ -116,6 +116,7 @@ type Block = {
 
 interface ComplaintBody {
   action: string;
+  isItAdmin: boolean;
   disableTextField?: boolean;
   readonlyTextField?: boolean;
   bgcolorTextField?: boolean;
@@ -167,6 +168,7 @@ type LovType = {
   lov4: string;
   lov5: string;
   lov6: string;
+  lov7: string;
 };
 
 type FileData = {
@@ -181,6 +183,7 @@ type FileData = {
 
 export default function ComplaintBody({
   action,
+  isItAdmin,
   readonlyTextField,
   bgcolorTextField,
   isAcknowledge,
@@ -680,6 +683,17 @@ export default function ComplaintBody({
         setrequest_company_id(mappedCompany); // ค่า default ของ Combobox
       }
     }
+    if (Array.isArray(domainrelate)) {
+      const mappedCompany = await setValueMas(
+        domainrelate,
+        user[0]?.employee_domain,
+        "domain_id"
+      );
+
+      if (mappedCompany) {
+        setrequest_domain_id(mappedCompany); // ค่า default ของ Combobox
+      }
+    }
 
     setcas_number("");
 
@@ -710,7 +724,7 @@ export default function ComplaintBody({
     // setrequest_department_id(dataset_department[0]);
     setrequest_email("");
     setrequest_phone("");
-    setrequest_domain_id(dataset_company[0]);
+    // setrequest_domain_id(dataset_company[0]);
     // setrequest_company_id(dataset_company[0]);
     setFileList([]);
     setcomplaintFiles([]);
@@ -1133,7 +1147,7 @@ export default function ComplaintBody({
       setcomplaintFiles([]);
       return;
     }
-
+    
     //setIsLoadingScreen(true);
     const dataset = {
       complaint_id: dataelement?.id,
@@ -1222,32 +1236,77 @@ export default function ComplaintBody({
     hasMappedDepartment.current = false;
 
     const loadInitialData = async () => {
+
+      console.log("🕑🕑🕑🕑🕑🕑🕑🕑 [Calling Check isItAdmin]  : ", isItAdmin, "🕑🕑🕑🕑🕑🕑🕑🕑");
+
       try {
+        //========================================================================================================================
         // 1) Report Type
-        if (Array.isArray(dataset_reporttype) && dataelement?.report_type) {
-          const defaultVal =
+        //========================================================================================================================
+        if (isItAdmin) {
+
+          if (dataelement.report_type) {
+
+            const defaultVal =
             (await setValueMas(
-              dataset_reporttype,
-              dataelement.report_type,
-              "id"
-            )) ||
-            dataset_reporttype.find(
-              (item: LovType) =>
-                item.lov_code === dataelement.report_type ||
-                item.id === dataelement.report_type
-            );
-            // f (defaultVal) setdataReportTypeValue(defaultVal);
-          if (defaultVal) {
-            setdataReportTypeValue({
-              ...defaultVal,
-              displayText: defaultVal.lov3
-                ? `${defaultVal.lov_code} (${defaultVal.lov3})`
-                : defaultVal.lov_code,
-            });
+                dataset_reporttype,
+                dataelement.report_type,
+                "id"
+              )) ||
+              dataset_reporttype.find(
+                (item: LovType) =>
+                  item.lov_code === dataelement.report_type ||
+                  item.id === dataelement.report_type
+              );
+              // f (defaultVal) setdataReportTypeValue(defaultVal);
+            if (defaultVal) {
+              setdataReportTypeValue({
+                ...defaultVal,
+                displayText: defaultVal.lov3
+                  ? `${defaultVal.lov_code} (${defaultVal.lov3})`
+                  : defaultVal.lov_code,
+              });
+            }
+
+            // setdataReportTypeValue({
+            //   ...defaultVal,
+            //   displayText: defaultVal.lov3
+            //     ? `${defaultVal.lov_code} (${defaultVal.lov3})`
+            //     : defaultVal.lov_code,
+            // });
+          }
+
+          console.log("🕑🕑🕑 [dataelement.report_type]  : ", dataelement.report_type, "🕑🕑🕑");
+          console.log("🕑🕑🕑 [dataset_reporttype]  : ", dataset_reporttype, "🕑🕑🕑");
+          
+        } else {
+          if (Array.isArray(dataset_reporttype) && dataelement?.report_type) {
+            const defaultVal =
+            (await setValueMas(
+                dataset_reporttype,
+                dataelement.report_type,
+                "id"
+              )) ||
+              dataset_reporttype.find(
+                (item: LovType) =>
+                  item.lov_code === dataelement.report_type ||
+                  item.id === dataelement.report_type
+              );
+              // f (defaultVal) setdataReportTypeValue(defaultVal);
+            if (defaultVal) {
+              setdataReportTypeValue({
+                ...defaultVal,
+                displayText: defaultVal.lov3
+                  ? `${defaultVal.lov_code} (${defaultVal.lov3})`
+                  : defaultVal.lov_code,
+              });
+            }
           }
         }
 
+        //========================================================================================================================
         // 2) Company
+        //========================================================================================================================
         if (
           Array.isArray(dataset_company) &&
           dataelement?.respondent_company_id
@@ -1263,32 +1322,38 @@ export default function ComplaintBody({
           }
         }
 
+        //========================================================================================================================
         // 3) Domain relate
+        //========================================================================================================================
           await mas_DomainRelateGet(
-          dataelement.respondent_company_id?.company_id ?? dataelement.respondent_company_id,
+            dataelement.respondent_company_id?.company_id ?? dataelement.respondent_company_id,
           set_domainrelate,
           user,
           isCallFuncLogOn
         );
 
+        //========================================================================================================================
         // // 4) Domain default
-        // if (Array.isArray(domainrelate) && dataelement?.respondent_domain_id) {
-        //   const mappedDomain = await setValueMas(
-        //     domainrelate,
-        //     dataelement.respondent_domain_id,
-        //     "domain_id"
-        //   );
-        //   if (mappedDomain) setrespondent_domain_id(mappedDomain);
-        // }
-
+        //========================================================================================================================
+        if (Array.isArray(domainrelate) && dataelement?.request_domain_id) {
+          const mappedDomain = await setValueMas(
+            domainrelate,
+            dataelement.request_domain_id,
+            "domain_id"
+          );
+          if (mappedDomain) setrequest_domain_id(mappedDomain);
+        }
+        
+        //========================================================================================================================
         // 5) โหลด Department
+        //========================================================================================================================
         if (dataelement?.respondent_department_id) {
           const currentCompanyId =
-            dataelement.respondent_company_id?.company_id ??
-            dataelement.respondent_company_id;
+          dataelement.respondent_company_id?.company_id ??
+          dataelement.respondent_company_id;
           const currentDomainId =
-            dataelement.respondent_domain_id?.domain_id ??
-            dataelement.respondent_domain_id ??
+          dataelement.respondent_domain_id?.domain_id ??
+          dataelement.respondent_domain_id ??
             null;
 
           const shouldFetch =
@@ -1409,9 +1474,17 @@ React.useEffect(() => {
   React.useEffect(() => {
     if (!Array.isArray(datapriority_Combobox)) return;
 
-    const newFilteredPriority = datapriority_Combobox.filter(
+    console.log("🕑🕑🕑🕑🕑🕑🕑🕑 [datapriority_Combobox]  : ", datapriority_Combobox, "🕑🕑🕑🕑🕑🕑🕑🕑");
+
+    const newFilteredPriority =
+    isItAdmin ?
+    datapriority_Combobox.filter(
+      (item: LovType) => item.lov_type === "priority_level" && item.lov7 == dataelement?.request_domain_id
+    )
+    :
+    datapriority_Combobox.filter(
       (item: LovType) => item.lov_type === "priority_level"
-    );
+    )
 
     setFilteredpriority((prev) =>
       JSON.stringify(prev) !== JSON.stringify(newFilteredPriority)
@@ -1435,9 +1508,16 @@ React.useEffect(() => {
     const val = dataReportTypeValue;
 
     // Approve
-    const newFilteredFuApprove = (dataApprove_Combobox || []).filter(
+    const newFilteredFuApprove = 
+    isItAdmin ?
+    (dataApprove_Combobox || []).filter(
+      (item: LovType) => item.lov_type === "approve_select" && item.lov7 == dataelement?.request_domain_id
+    )
+    :
+    (dataApprove_Combobox || []).filter(
       (item: LovType) => item.lov_type === "approve_select"
-    );
+    )
+
     setFilteredFuApprove((prev) =>
       JSON.stringify(prev) !== JSON.stringify(newFilteredFuApprove)
         ? newFilteredFuApprove
@@ -1895,14 +1975,34 @@ React.useEffect(() => {
                 <span style={{ color: "red" }}> *</span>
               </Typography>
             </AccordionSummary>
-
             <AccordionDetails>
               <Divider sx={{ my: 1 }} />
               <Grid container spacing={2}>
                 <Grid size={3} mt={2}>
+                  <FullWidthTextField
+                    value={cas_number || "AUTO"}
+                    labelName="CAS Number"
+                    onchange={(e) => {
+                      setcas_number(e);
+                    }}
+                    readonly
+                  />
+                </Grid>
+                <Grid size={3} mt={2}>
+                  <DesktopDatePickers
+                    labelName={"วันที่ออกเอกสาร (Document Issuance Date)"}
+                    value={doc_date}
+                    handleChange={(val: dayjs.Dayjs | null | undefined) => {
+                      if (val) setdoc_date(val); // ถ้า val เป็น null/undefined จะไม่เซ็ต
+                    }}
+                    bgcolorTextField={true}
+                    readonly
+                  />
+                </Grid>
+                <Grid size={3} mt={2}>
                   <AutocompleteComboBox
                     value={respondent_company_id}
-                    labelName={"โรงงาน (Factory)"}
+                    labelName={"บริษัท (Company)"}
                     options={dataset_company}
                     column="company_name"
                     // setvalue={(v) => setrespondent_company_id(v)}
@@ -1920,7 +2020,7 @@ React.useEffect(() => {
                 <Grid size={3} mt={2}>
                   <AutocompleteComboBox
                     value={respondent_domain_id}
-                    labelName={"โดเมน (Domain)"}
+                    labelName={"โรงงาน (Factory)"}
                     options={domainrelate}
                     column="domain_name"
                     // setvalue={(v) => setrespondent_company_id(v)}
@@ -1947,27 +2047,6 @@ React.useEffect(() => {
                         ? "กรุณาเลือกโดเมน"
                         : ""
                     }
-                  />
-                </Grid>
-                <Grid size={3} mt={2}>
-                  <FullWidthTextField
-                    value={cas_number || "AUTO"}
-                    labelName="CAS Number"
-                    onchange={(e) => {
-                      setcas_number(e);
-                    }}
-                    readonly
-                  />
-                </Grid>
-                <Grid size={3} mt={2}>
-                  <DesktopDatePickers
-                    labelName={"วันที่ออกเอกสาร (Document Issuance Date)"}
-                    value={doc_date}
-                    handleChange={(val: dayjs.Dayjs | null | undefined) => {
-                      if (val) setdoc_date(val); // ถ้า val เป็น null/undefined จะไม่เซ็ต
-                    }}
-                    bgcolorTextField={true}
-                    readonly
                   />
                 </Grid>
                 <Paper
@@ -2153,7 +2232,6 @@ React.useEffect(() => {
                     </Grid>
                     <Grid size={4}>
                       <FullWidthTextField
-                        required="required"
                         value={respondent_email}
                         labelName="อีเมล (Email)"
                         onchange={(e) => {
@@ -3204,11 +3282,11 @@ React.useEffect(() => {
                         </Grid>
                         <Grid size={4}>
                           <AutocompleteComboBox
-                            value={request_company_id}
+                            value={request_domain_id}
                             labelName={"โรงงาน (Factory)"}
-                            options={dataset_company}
-                            column="company_name"
-                            setvalue={(v) => setrequest_company_id(v)}
+                            options={domainrelate}
+                            column="domain_name"
+                            setvalue={(v) => setrequest_domain_id(v)}
                             bgcolorTextField={true}
                             readonly
                           />
