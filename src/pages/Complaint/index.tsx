@@ -2817,7 +2817,7 @@ export default function Complaint() {
          <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
           <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ชื่อผู้ออกเอกสาร (Reported by)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_fname_th  || ""} ${user[0]?.employee_lname_th || ""} (${user[0]?.employee_username || "-"})</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_fname_th ? (user[0]?.employee_fname_th + " " + (user[0]?.employee_lname_th || "")) : ((user[0]?.employee_fname_en || "") + " " + (user[0]?.employee_lname_en || ""))} (${user[0]?.employee_username || "-"})</td>
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ตำแหน่ง (Position)</td>
@@ -2829,7 +2829,7 @@ export default function Complaint() {
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">โรงงาน (Factory)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_domain || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.itasset_company_name || "-"}</td>
           </tr>
 
         </table> 
@@ -2849,12 +2849,20 @@ export default function Complaint() {
     
     setIsLoadingScreen(true);
 
+      let response;
+
     try {
       const response = await _POST_FORMDATA(
         formData,
         "/Complaint/ComplaintAdd"
       );
-      if (response && response.status === "success") {
+    } catch (error) {
+      console.error("Upload failed:", error);
+      response = { status: "failed" };
+    } 
+      setIsLoadingScreen(false);
+
+      if ( response?.status === "success") {
         FullSweetalert({
           title: "Success",
           text: `บันทึกข้อมูลสำเร็จ`,
@@ -2867,13 +2875,9 @@ export default function Complaint() {
           icon: "error",
         });
       }
-    } catch (error) {
-      console.error("Upload failed:", error);
-    } finally {
       handleClose();
       ComplaintGet();
-      setIsLoadingScreen(false);
-    }
+
   };
 
   // Function - Edit Complaint
@@ -3058,7 +3062,7 @@ export default function Complaint() {
          <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
           <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ชื่อผู้ออกเอกสาร (Reported by)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_fname_th  || ""} ${user[0]?.employee_lname_th || ""} (${user[0]?.employee_username || "-"})</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_fname_th ? (user[0]?.employee_fname_th + " " + (user[0]?.employee_lname_th || "")) : ((user[0]?.employee_fname_en || "") + " " + (user[0]?.employee_lname_en || ""))} (${user[0]?.employee_username || "-"})</td>
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ตำแหน่ง (Position)</td>
@@ -3070,7 +3074,7 @@ export default function Complaint() {
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">โรงงาน (Factory)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_domain || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.itasset_company_name || "-"}</td>
           </tr>
 
         </table> 
@@ -3368,10 +3372,12 @@ export default function Complaint() {
         user[0]?.employee_domain
       );
 
+      const email_requrst_department_name = dataelement?.request_department_name || dataset_department?.find((x: any) => x.department_id == dataelement?.request_department_id)?.department_name || dataelement?.request_department_id || "-";
+      
       const emailBodyHtml = `
       <div style="font-family: Arial, sans-serif; color: #333;">
         <p>
-        เรียน เจ้าหน้าที่ฝ่าย${request_department_id?.department_name || "-"}
+        เรียน เจ้าหน้าที่ฝ่าย${email_requrst_department_name || "-"}
       </p>
       <p style="margin-top: 5px;">
         แจ้งเตือนรับทราบ เพื่อพิจารณายกเลิก หรือ แก้ไข
@@ -3395,7 +3401,7 @@ export default function Complaint() {
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">โรงงาน (Factory)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_domain || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.itasset_company_name || "-"}</td>
           </tr>
 
         </table> 
@@ -3423,8 +3429,6 @@ export default function Complaint() {
         emailBody: emailBodyHtml 
       };
       
-       
-
     // formData.append("emailBody", emailBodyHtml);
       
       try {
@@ -3949,12 +3953,7 @@ export default function Complaint() {
 
     const email_reportType = dataset_reporttype?.find((x: any) => x.id == dataelement?.report_type)?.lov4 || "-";
     const email_casNumber = dataelement?.cas_number || "-";
-    
-    // ลองหาทั้งจาก priority_level และ datapriority (เผื่อกรณีชื่อตัวแปรไม่ตรง)
     const email_priority_id = dataelement?.priority_level?.lov2 || dataelement?.datapriority?.lov2; 
-    // const email_priority = PriorityLevel?.find((x: any) => x.id == email_priority_id || x.lov1 == email_priority_id)?.lov2 || "-";
-    
-
     const email_responseDate = safeFormatDate(dataelement?.respond_date_within);
     const email_lotNo = dataelement?.lot_no || "-";
     const email_detectionDate = safeFormatDate(dataelement?.date_of_detection);
@@ -3963,6 +3962,17 @@ export default function Complaint() {
     const email_detail = dataelement?.detail || "-";
     const email_respondent_department_name = dataset_department?.find((x: any) => x.department_id == dataelement?.respondent_department_id)?.department_name || dataelement?.respondent_department_name || "-";
 
+    const email_toolsUsed = dataTooluseValue?.map((item: any) => {
+      const label = item.label || item.lov1 || item.name || "-";
+      const otherText = (item.isOther === "Y" && ToolOther) ? " " + ToolOther : "";
+      return "- " + label + otherText;
+    }).join("<br/>") || "-";
+
+    const email_decision = dataDecisionValue?.map((item: any) => {
+      const label = item.label || item.lov1 || item.name || "-";
+      const otherText = (item.isOther === "Y" && DecisionOther) ? " " + DecisionOther : "";
+      return "- " + label + otherText;
+    }).join("<br/>") || "-";
 
     const emailBodyHtml = `
       <div style="font-family: Arial, sans-serif; color: #333;">
@@ -3973,47 +3983,6 @@ export default function Complaint() {
         แจ้งเตือนปัญหาข้อร้องเรียน มีรายละเอียดดังต่อไปนี้
       </p>
         <br />
-        <h2 style="color: #d32f2f; border-bottom: 2px solid #d32f2f; padding-bottom: 10px;">
-          แผนกผู้ถูกร้องเรียน (Respondent Department)
-        </h2>
-        <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
-          <tr>
-            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">ประเภทรายงาน (Report Type)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${email_reportType}</td>
-          </tr>
-           <tr>
-            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">CAS Number</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${email_casNumber}</td>
-          </tr>
-          <tr>
-            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ระดับความสำคัญ (Priority)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${email_priority_id}</td>
-          </tr>      
-          <tr>
-            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ตอบกลับภายในวันที่ (Response Date)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${email_responseDate}</td>
-          </tr>    
-          <tr>
-            <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">Lot No./Bag No</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${email_lotNo}</td>
-          </tr>
-          <tr>
-            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">วันที่พบปัญหา (Date of Detection)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${email_detectionDate}</td>
-          </tr>
-          <tr>
-            <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">แผนกที่พบปัญหา (Department / Area of Detection)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${email_deptName}</td>
-          </tr>
-          <tr>
-            <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">ชื่อสินค้า (Product Name)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${email_productName}</td>
-          </tr>
-          <tr>
-            <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">รายละเอียด (Detail)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${email_detail}</td>
-          </tr>
-        </table>
         <h2 style="color: #ff9800; border-bottom: 2px solid #ff9800; padding-bottom: 10px;">
           รายละเอียดคำชี้แจง (Explain Detail)
         </h2>
@@ -4032,7 +4001,7 @@ export default function Complaint() {
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">เครื่องมือที่ใช้ (Tools Used)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${ExplainTuModel || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${email_toolsUsed}</td>
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">คำอธิบายการวิเคราะห์ (Root Cause)</td>
@@ -4040,7 +4009,7 @@ export default function Complaint() {
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">การตัดสินใจเกี่ยวกับแนวทางการจัดการ (ของเสีย / สินค้าที่ไม่ผ่านเกณฑ์)  (Decision on Disposition)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${ExplainDdModel || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${email_decision}</td>
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">การดำเนินการแก้ไข (Corrective Action)</td>
@@ -4190,21 +4159,74 @@ export default function Complaint() {
     const approveSeq = approveInfo.filter(
       (val: any) => val["lov5"] == user[0].role_id
     );
-    // console.log("datastatus", datastatus);
-    // console.log("🤑🤑approveSeq", approveInfo);
-    // console.log("🤑🤑🤑🤑🤑🤑🤑", approveSeq[0].lov3);
 
     // หา explain_id และ nextSeq
     const explainRootId = approvalSource.id;
     const currentApproveList = approvalSource?.approveList || [];
-    const nextSeq =
-      (currentApproveList.length > 0
-        ? Math.max(
-          ...currentApproveList.map(
-            (item: any) => parseInt(item.approve_seq, 10) || 0
-          )
-        )
-        : 0) + 1;
+
+    // หา display text สำหรับ email
+    const selectedApproveItem = (dataApprove_Combobox || []).find(
+      (item: any) => item.lov_code === approveSelectionCode
+    );
+    const approveDisplayText = selectedApproveItem?.lov1 || approveSelectionCode || "-";
+
+    const emailBodyHtml = `
+      <div style="font-family: Arial, sans-serif; color: #333;">
+        <p>
+        เรียน ผู้จัดการคุณภาพ (QC)
+      </p>
+      <p style="margin-top: 5px;">
+        แจ้งเตือนปัญหาข้อร้องเรียน มีรายละเอียดดังต่อไปนี้
+      </p>
+        <br />
+        <h2 style="color: #95cc97ff; border-bottom: 2px solid #95cc97ff; padding-bottom: 10px;">
+          รายละเอียดการอนุมัติ (Approval Details)
+        </h2>
+        <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+          <tr>
+            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">Approve หัวหน้าส่วน (Section Approve)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${approveDisplayText || "-"}</td>
+          </tr>
+           <tr>
+            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">หมายเหตุการอนุมัติ</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${approve_detail || "-"}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">หมายเหตุเพิ่มเติม</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${approve_note || "-"}</td>
+          </tr>
+        </table> 
+        <h2 style="color: #64c768ff; border-bottom: 2px solid #64c768ff; padding-bottom: 10px;">
+          ข้อมูลผู้รับรอง (Section Head)
+        </h2>
+        <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+          <tr>
+            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">ชื่อผู้อนุมัติ (Approved by)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_fname_th  || ""} ${user[0]?.employee_lname_th || ""} (${user[0]?.employee_username || "-"})</td>
+          </tr>
+           <tr>
+            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ตำแหน่ง (Position)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_position || "-"}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">แผนก (Department)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.itasset_department_name || "-"}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">โรงงาน (Factory)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_domain || "-"}</td>
+          </tr>
+        </table> 
+        <p style="margin-top: 20px; font-size: 14px; color: #000000;">
+        ขอแสดงความนับถือ,<br />
+          CAS - Corrective Action System<br />
+          Thai Roong Ruang Sugar Group
+          <br /><br /><br />
+          ****************************************************************************************<br />
+          อีเมลฉบับนี้ เป็นการจัดส่งผ่านระบบอัติโนมัติ โดยท่านไม่สามารถตอบกลับผ่านเมลนี้ได้
+      </p>
+      </div>
+    `;
 
     const approvePayload = {
       ExplaintApproveModel: {
@@ -4233,11 +4255,12 @@ export default function Complaint() {
           : new Date().toISOString(),
         create_by: user[0]?.employee_username || "",
         domain_id: user[0]?.employee_domain || "",
-        respondent_domain_id: approvalSource?.respondent_domain_id, // ✅ เพิ่ม field นี้
+        respondent_domain_id: approvalSource?.respondent_domain_id, 
       },
       CurrentAccessModel: {
         user_id: user[0]?.employee_username || "",
       },
+      emailBody: emailBodyHtml 
     };
 
     setIsLoadingScreen(true);
@@ -4245,12 +4268,11 @@ export default function Complaint() {
     try {
       // 🧩 บันทึกข้อมูล Approve
       const response = await _POST(
-        approvePayload.ExplaintApproveModel,
+        approvePayload,
         "/ExplaintApprove/ExplaintApproveAdd"
       );
 
       if (response && response.status === "success") {
-        // ✅ หลังบันทึก Approve สำเร็จ → อัปเดตสถานะ Complaint
         const complaintEditPayload = {
           ComplaintModel: {
             id: currentExplainForApproval?.complaint_id,
@@ -4342,21 +4364,73 @@ export default function Complaint() {
     const approveSeq = approveInfo.filter(
       (val: any) => val["lov5"] == user[0].role_id
     );
-    // console.log("datastatus", datastatus);
-    // console.log("🤑🤑approveSeq", approveInfo);
-    // console.log("🤑🤑🤑🤑🤑🤑🤑", approveSeq[0].lov3);
-
     // หา explain_id และ nextSeq
     const explainRootId = approvalSource.id;
     const currentApproveList = approvalSource?.approveList || [];
-    const nextSeq =
-      (currentApproveList.length > 0
-        ? Math.max(
-          ...currentApproveList.map(
-            (item: any) => parseInt(item.approve_seq, 10) || 0
-          )
-        )
-        : 0) + 1;
+
+
+    const selectedApproveItem = (dataApprove_Combobox || []).find(
+      (item: any) => item.lov_code === approveSelectionCode
+    );
+    const approveDisplayText = selectedApproveItem?.lov1 || approveSelectionCode || "-";
+
+    const emailBodyHtml = `
+      <div style="font-family: Arial, sans-serif; color: #333;">
+        <p>
+        เรียน เจ้าหน้าที่ฝ่าย
+      </p>
+      <p style="margin-top: 5px;">
+        แจ้งเตือนปัญหาข้อร้องเรียน มีรายละเอียดดังต่อไปนี้
+      </p>
+        <br />
+        <h2 style="color: #95cc97ff; border-bottom: 2px solid #95cc97ff; padding-bottom: 10px;">
+          รายละเอียดการอนุมัติ (Approval Details)
+        </h2>
+        <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+          <tr>
+            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">Approve หัวหน้าส่วน (Section Approve)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${approveDisplayText || "-"}</td>
+          </tr>
+           <tr>
+            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">หมายเหตุการอนุมัติ</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${qcapprove_detail || "-"}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">หมายเหตุเพิ่มเติม</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${qcapprove_note || "-"}</td>
+          </tr>
+        </table> 
+        <h2 style="color: #64c768ff; border-bottom: 2px solid #64c768ff; padding-bottom: 10px;">
+          ข้อมูลผู้รับรอง (Section Head)
+        </h2>
+        <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+          <tr>
+            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">ชื่อผู้อนุมัติ (Approved by)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_fname_th  || ""} ${user[0]?.employee_lname_th || ""} (${user[0]?.employee_username || "-"})</td>
+          </tr>
+           <tr>
+            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ตำแหน่ง (Position)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_position || "-"}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">แผนก (Department)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.itasset_department_name || "-"}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">โรงงาน (Factory)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_domain || "-"}</td>
+          </tr>
+        </table> 
+        <p style="margin-top: 20px; font-size: 14px; color: #000000;">
+        ขอแสดงความนับถือ,<br />
+          CAS - Corrective Action System<br />
+          Thai Roong Ruang Sugar Group
+          <br /><br /><br />
+          ****************************************************************************************<br />
+          อีเมลฉบับนี้ เป็นการจัดส่งผ่านระบบอัติโนมัติ โดยท่านไม่สามารถตอบกลับผ่านเมลนี้ได้
+      </p>
+      </div>
+    `;
 
     const approvePayload = {
       ExplaintApproveModel: {
@@ -4390,6 +4464,7 @@ export default function Complaint() {
       CurrentAccessModel: {
         user_id: user[0]?.employee_username || "",
       },
+      emailBody: emailBodyHtml 
     };
 
     setIsLoadingScreen(true);
@@ -4397,7 +4472,7 @@ export default function Complaint() {
     try {
       // 🧩 บันทึกข้อมูล Approve
       const response = await _POST(
-        approvePayload.ExplaintApproveModel,
+        approvePayload,
         "/ExplaintApprove/ExplaintApproveAdd"
       );
 
