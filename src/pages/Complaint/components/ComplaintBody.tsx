@@ -1021,18 +1021,122 @@ export default function ComplaintBody({
 
   const Acknowledge_Update = async (data: any) => {
     // if (isCallFuncLogOn)console.log("🕑 ", dayjs().format("HH:mm:ss.SSS"), " [Calling Function]  :  Acknowledge_Update");
+    const safeFormatDate = (val: any) => {
+            if (!val) return "-";
+            let d = dayjs(val);
+            if (!d.isValid()) {
+                 d = dayjs(val, ["DD-MM-YYYY", "DD/MM/YYYY", "YYYY-MM-DD"]);
+            }
+            return d.isValid() ? d.format("DD/MM/YYYY") : "-";
+        };
+    const email_reportType = dataset_reporttype?.find((x: any) => x.id == dataelement?.report_type)?.lov4 || "-";
+    const email_casNumber = dataelement?.cas_number || "-";
+    const email_priority_id = dataelement?.priority_level?.lov2 || dataelement?.datapriority?.lov2; 
+    const email_responseDate = safeFormatDate(dataelement?.respond_date_within);
+    const email_lotNo = dataelement?.lot_no || "-";
+    const email_detectionDate = safeFormatDate(dataelement?.date_of_detection);
+    const email_deptName = dataset_department?.find((x: any) => x.department_id == dataelement?.respondent_department_id)?.department_name || dataelement?.respondent_department_name || "-";
+    const email_productName = dataelement?.product_name || "-";
+    const email_detail = dataelement?.detail || "-";
+    const email_requrst_department_name = dataelement?.request_department_name || dataset_department?.find((x: any) => x.department_id == dataelement?.request_department_id)?.department_name || dataelement?.request_department_id || "-";
+    const email_request_name = dataelement?.request_name || "-";
 
-    // setIsLoadingScreen(true)
+    const emailBodyHtml = `
+      <div style="font-family: Arial, sans-serif; color: #333;">
+        <p>
+        เรียน เจ้าหน้าที่ฝ่าย${email_requrst_department_name || "-"}
+      </p>
+      <p style="margin-top: 5px;">
+        เรียนมาเพื่อทราบว่า คุณ ${email_request_name || "-"} ได้ตอบรับและยืนยันการรับทราบรายละเอียดข้อร้องเรียน CAS No.${email_casNumber || "-"} เรียบร้อยแล้ว
+      </p>
+        <br />
+        <h2 style="color: #d32f2f; border-bottom: 2px solid #d32f2f; padding-bottom: 10px;">
+          แผนกผู้ถูกร้องเรียน (Respondent Department)
+        </h2>
+        <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+          <tr>
+            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">ประเภทรายงาน (Report Type)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${email_reportType?.lov4 || "-"}</td>
+          </tr>
+           <tr>
+            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">CAS Number</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${email_casNumber || "-"}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ระดับความสำคัญ (Priority)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${email_priority_id || "-"}</td>
+          </tr>      
+          <tr>
+            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ตอบกลับภายในวันที่ (Response Date)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${email_responseDate || "-"}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">Lot No./Bag No</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${email_lotNo || "-"}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">วันที่พบปัญหา (Date of Detection)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${email_detectionDate || "-"}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">แผนกที่พบปัญหา (Department / Area of Detection)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${email_deptName || "-"}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">ชื่อสินค้า (Product Name)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${email_productName || "-"}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">รายละเอียด (Detail)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${email_detail || "-"}</td>
+          </tr>
+        </table>
+        <h2 style="color: #2196f3; border-bottom: 2px solid #2196f3; padding-bottom: 10px;">
+          ผู้ตอบรับและยืนยันการรับทราบ (Received and duly noted)
+        </h2>
+         <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+          <tr>
+            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ชื่อผู้ออกเอกสาร (Reported by)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_fname_th ? (user[0]?.employee_fname_th + " " + (user[0]?.employee_lname_th || "")) : ((user[0]?.employee_fname_en || "") + " " + (user[0]?.employee_lname_en || ""))} (${user[0]?.employee_username || "-"})</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ตำแหน่ง (Position)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_position || "-"}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">แผนก (Department)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.itasset_department_name || "-"}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">โรงงาน (Factory)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.itasset_company_name || "-"}</td>
+          </tr>
+
+        </table> 
+        <p style="margin-top: 20px; font-size: 14px; color: #000000;">
+        ขอแสดงความนับถือ,<br />
+          CAS - Corrective Action System<br />
+          Thai Roong Ruang Sugar Group
+          <br /><br /><br />
+          ****************************************************************************************<br />
+          อีเมลฉบับนี้ เป็นการจัดส่งผ่านระบบอัติโนมัติ โดยท่านไม่สามารถตอบกลับผ่านเมลนี้ได้
+      </p>
+      </div>
+    `;
+
     const dataset = {
-      id: data.id,
-      acknowledge_flag: data.acknowledge_flag,
-      acknowledge_name: user[0]?.employee_username,
-      acknowledge_company_id: user[0]?.itasset_company_id,
-      acknowledge_department_id: user[0]?.itasset_department_id,
-      acknowledge_position: user[0]?.employee_position,
-      acknowledge_email: user[0]?.employee_email,
-      update_by: user[0]?.employee_username,
-    };
+  AcknowledgeModel: {
+    id: data.id,
+    acknowledge_flag: data.acknowledge_flag,
+    acknowledge_name: user[0]?.employee_username,
+    acknowledge_company_id: user[0]?.itasset_company_id,
+    acknowledge_department_id: user[0]?.itasset_department_id,
+    acknowledge_position: user[0]?.employee_position,
+    acknowledge_email: user[0]?.employee_email,
+    update_by: user[0]?.employee_username,
+  },
+  emailBody: emailBodyHtml,  // 👈 อยู่นอก AcknowledgeModel
+};
 
     try {
       let response = await _POST(dataset, "/Acknowledge/AcknowledgeEdit");
