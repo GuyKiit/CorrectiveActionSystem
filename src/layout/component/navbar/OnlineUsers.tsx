@@ -67,7 +67,7 @@ export default function OnlineUsers() {
   const user_current_count = async () => {
     try {
       const dataset = {app_name: import.meta.env.VITE_APP_APPLICATION_CODE || 'CAS'}
-      console.log("🚀 [user_current_count] Starting fetch with dataset:", dataset);
+      // console.log("🚀 [user_current_count] Starting fetch with dataset:", dataset);
       
       const response = await _POST_LOG(
         dataset,
@@ -75,16 +75,16 @@ export default function OnlineUsers() {
         // "http://trr-api.trrgroup.com/api_sys_log/syslog/sys_current_access_count"
       );
 
-      console.log("🔍 [user_current_count] Response:", response);
+      // console.log("🔍 [user_current_count] Response:", response);
 
       response.data.forEach((data: any) => {
-        console.log("🔍🔍🔍🔍🔍 [last_update] Response:", data.last_update);
-        console.log("📧📧📧📧📧 [email] Response:", data.email);
-        console.log("👤👤👤👤👤 [employee_url] Response:", data.employee_url);
+        // console.log("🔍🔍🔍🔍🔍 [last_update] Response:", data.last_update);
+        // console.log("📧📧📧📧📧 [email] Response:", data.email);
+        // console.log("👤👤👤👤👤 [employee_url] Response:", data.employee_url);
       });
 
       if (response && response.status === "Success") {
-        console.log("🍀🍀🍀🍀🍀🍀 CHECK [response] : ", response);
+        // console.log("🍀🍀🍀🍀🍀🍀 CHECK [response] : ", response);
         const mappedUsers = response.data.map((val: any) => ({
           id: val.user_id,
           name: val.user_id, // Or fetch name if available
@@ -98,7 +98,7 @@ export default function OnlineUsers() {
         
         // Filter duplicates if needed, similar to legacy code
         const uniqueUsers = mappedUsers.filter((v: any, i: number, a: any[]) => a.findIndex((t: any) => (t.id === v.id)) === i);
-        console.log("🍀🍀🍀🍀🍀🍀 CHECK [uniqueUsers] : ", uniqueUsers);
+        // console.log("🍀🍀🍀🍀🍀🍀 CHECK [uniqueUsers] : ", uniqueUsers);
         setUsers(uniqueUsers);
       }
     } catch (e) {

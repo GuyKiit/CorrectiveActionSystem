@@ -886,12 +886,12 @@ export default function Complaint() {
 
   // Extract Report Type Function (from ComplaintRead.tsx)
   const extractReportType = (code?: string): string => {
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  extractReportType"
-      );
+    // if (isCallFuncLogOn)
+    //   console.log(
+    //     "🕑 ",
+    //     dayjs().format("HH:mm:ss.SSS"),
+    //     " [Calling Function]  :  extractReportType"
+    //   );
 
     if (!code) return "";
     const prefix = "TRR_RT_";
@@ -904,23 +904,23 @@ export default function Complaint() {
 
   // Handle Change Functions (from ComplaintRead.tsx)
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  handleChange"
-      );
+    // if (isCallFuncLogOn)
+    //   console.log(
+    //     "🕑 ",
+    //     dayjs().format("HH:mm:ss.SSS"),
+    //     " [Calling Function]  :  handleChange"
+    //   );
 
     setValue(newValue);
   };
 
   const splitByDot = (str: any) => {
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  splitByDot"
-      );
+    // if (isCallFuncLogOn)
+    //   console.log(
+    //     "🕑 ",
+    //     dayjs().format("HH:mm:ss.SSS"),
+    //     " [Calling Function]  :  splitByDot"
+    //   );
 
     return str.split(".");
   };
@@ -931,12 +931,12 @@ export default function Complaint() {
     complaintid: string,
     compTypeOther: string
   ) {
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  compTypeUpdateCompId"
-      );
+    // if (isCallFuncLogOn)
+    //   console.log(
+    //     "🕑 ",
+    //     dayjs().format("HH:mm:ss.SSS"),
+    //     " [Calling Function]  :  compTypeUpdateCompId"
+    //   );
 
     const updatedData = dataComplaintTypeValue_Combobox.map((item: any) => {
       return {
@@ -954,12 +954,12 @@ export default function Complaint() {
     compRsOther: string,
     clauseOther: string
   ) {
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  compRsUpdateCompId"
-      );
+    // if (isCallFuncLogOn)
+    //   console.log(
+    //     "🕑 ",
+    //     dayjs().format("HH:mm:ss.SSS"),
+    //     " [Calling Function]  :  compRsUpdateCompId"
+    //   );
 
     const updatedData = dataComplaintRsValue_Combobox.map((item: any) => {
       return {
@@ -977,12 +977,12 @@ export default function Complaint() {
     complaintid: string,
     phoTypeOther: string
   ) {
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  compFileUpdateCompId"
-      );
+    // if (isCallFuncLogOn)
+    //   console.log(
+    //     "🕑 ",
+    //     dayjs().format("HH:mm:ss.SSS"),
+    //     " [Calling Function]  :  compFileUpdateCompId"
+    //   );
 
     const updatedData = dataphotoValue_Combobox.map((item: any) => {
       return {
@@ -995,12 +995,12 @@ export default function Complaint() {
   }
 
   function getPaddingYear() {
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  getPaddingYear"
-      );
+    // if (isCallFuncLogOn)
+    //   console.log(
+    //     "🕑 ",
+    //     dayjs().format("HH:mm:ss.SSS"),
+    //     " [Calling Function]  :  getPaddingYear"
+    //   );
 
     const paddingYear = String(new Date().getFullYear() % 100).padStart(2, "0");
 
@@ -1017,12 +1017,12 @@ export default function Complaint() {
     explain_id: string,
     ToolOther: string
   ) {
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  expToolUpdateCompId"
-      );
+    // if (isCallFuncLogOn)
+    //   console.log(
+    //     "🕑 ",
+    //     dayjs().format("HH:mm:ss.SSS"),
+    //     " [Calling Function]  :  expToolUpdateCompId"
+    //   );
 
     const updatedData = dataTooluseValue.map((item: any) => {
       return {
@@ -1039,12 +1039,12 @@ export default function Complaint() {
     explain_id: string,
     DecisionOther: string
   ) {
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  expDecisionUpdateCompId"
-      );
+    // if (isCallFuncLogOn)
+    //   console.log(
+    //     "🕑 ",
+    //     dayjs().format("HH:mm:ss.SSS"),
+    //     " [Calling Function]  :  expDecisionUpdateCompId"
+    //   );
 
     const updatedData = dataDecisionValue.map((item: any) => {
       return {
@@ -1065,14 +1065,14 @@ export default function Complaint() {
   // Function - Get LOV Master Data
   const LovAll_Get = async (mode?: any, respondent_domain_id?: any, isItAdmin?: boolean) => {
 
-    console.log("4️⃣4️⃣4️⃣ [mode] : ", mode, "// [isItAdmin] : ", isItAdmin);
+    // console.log("4️⃣4️⃣4️⃣ [mode] : ", mode, "// [isItAdmin] : ", isItAdmin);
 
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  LovAll_Get"
-      );
+    // if (isCallFuncLogOn)
+    //   console.log(
+    //     "🕑 ",
+    //     dayjs().format("HH:mm:ss.SSS"),
+    //     " [Calling Function]  :  LovAll_Get"
+    //   );
 
     if (mode == "get_role") {
       try {
@@ -1083,13 +1083,13 @@ export default function Complaint() {
 
         if (response && response.status === "success") {
           const lovData = response.data || [];
-          console.log(
-            "❇️❇️❇️❇️❇️❇️❇️ Call [Lov/LovGet] -> LovAll_Get :",
-            response.data
-          );
+          // console.log(
+          //   "❇️❇️❇️❇️❇️❇️❇️ Call [Lov/LovGet] -> LovAll_Get :",
+          //   response.data
+          // );
           
-          console.log('⚠️⚠️❇️❇️⚠️⚠️ [lovData] :', lovData);
-          console.log('⚠️⚠️⚠️⚠️ [grouped["lovData"]] :', lovData);
+          // console.log('⚠️⚠️❇️❇️⚠️⚠️ [lovData] :', lovData);
+          // console.log('⚠️⚠️⚠️⚠️ [grouped["lovData"]] :', lovData);
 
           setdataset_roleProfile?.(lovData);
 
@@ -1121,10 +1121,10 @@ export default function Complaint() {
 
         if (response && response.status === "success") {
           const lovData = response.data || [];
-          console.log(
-            "❇️❇️❇️❇️❇️❇️❇️ Call [Lov/LovGet] -> LovAll_Get :",
-            response.data
-          );
+          // console.log(
+          //   "❇️❇️❇️❇️❇️❇️❇️ Call [Lov/LovGet] -> LovAll_Get :",
+          //   response.data
+          // );
 
           // ✅ จัดกลุ่มตาม lov_type
           const grouped = lovData.reduce((acc: any, item: any) => {
@@ -1148,7 +1148,7 @@ export default function Complaint() {
     } else {
       try {
 
-        console.log("💚💚💚💚💚💚💚💚 isItAdmin :", isItAdmin);
+        // console.log("💚💚💚💚💚💚💚💚 isItAdmin :", isItAdmin);
         const dataset = isItAdmin ?
           {
             lov_type: "report_type,complaint_type,reference_standard,priority_level,attach_type,complaint_status,tool_use,decision_disposition,approve_select,complaint_step,complaint_action,active_company,role_profile,config_file",
@@ -1186,7 +1186,7 @@ export default function Complaint() {
 
         if (response && response.status === "success") {
           const lovData = response.data || [];
-          console.log("❇️❇️❇️❇️❇️❇️❇️ Call [Lov/LovGet] -> LovAll_Get :", response.data);
+          // console.log("❇️❇️❇️❇️❇️❇️❇️ Call [Lov/LovGet] -> LovAll_Get :", response.data);
 
           // ✅ จัดกลุ่มตาม lov_type
           const grouped = lovData.reduce((acc: any, item: any) => {
@@ -1195,25 +1195,25 @@ export default function Complaint() {
             return acc;
           }, {});
 
-          console.log('💚💚 [response] : ', response);
-          console.log('💚💚 [response.data] : ', response.data);
+          // console.log('💚💚 [response] : ', response);
+          // console.log('💚💚 [response.data] : ', response.data);
           
-          console.log('⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️');
-          console.log('⚠️⚠️⚠️⚠️ [grouped["report_type"]] :', grouped["report_type"]);
-          console.log('⚠️⚠️⚠️⚠️ [grouped["complaint_type"]] :', grouped["complaint_type"]);
-          console.log('⚠️⚠️⚠️⚠️ [grouped["reference_standard"]] :', grouped["reference_standard"]);
-          console.log('⚠️⚠️⚠️⚠️ [grouped["priority_level"]] :', grouped["priority_level"]);
-          console.log('⚠️⚠️⚠️⚠️ [grouped["attach_type"]] :', grouped["attach_type"]);
-          console.log('⚠️⚠️⚠️⚠️ [grouped["tool_use"]] :', grouped["tool_use"]);
-          console.log('⚠️⚠️⚠️⚠️ [grouped["decision_disposition"]] :', grouped["decision_disposition"]);
-          console.log('⚠️⚠️⚠️⚠️ [grouped["approve_select"]] :', grouped["approve_select"]);
-          console.log('⚠️⚠️⚠️⚠️ [grouped["complaint_step"]] :', grouped["complaint_step"]);
-          console.log('⚠️⚠️⚠️⚠️ [grouped["complaint_action"]] :', grouped["complaint_action"]);
-          console.log('⚠️⚠️⚠️⚠️ [grouped["active_company"]] :', grouped["active_company"]);
-          console.log('⚠️⚠️⚠️⚠️ [grouped["role_profile"]] :', grouped["role_profile"]);
-          console.log('⚠️⚠️⚠️⚠️ [grouped["config_file"]] :', grouped["config_file"]);
-          console.log('⚠️⚠️⚠️⚠️ [grouped["complaint_status"]] :', grouped["complaint_status"]);
-          console.log('⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️');
+          // console.log('⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️');
+          // console.log('⚠️⚠️⚠️⚠️ [grouped["report_type"]] :', grouped["report_type"]);
+          // console.log('⚠️⚠️⚠️⚠️ [grouped["complaint_type"]] :', grouped["complaint_type"]);
+          // console.log('⚠️⚠️⚠️⚠️ [grouped["reference_standard"]] :', grouped["reference_standard"]);
+          // console.log('⚠️⚠️⚠️⚠️ [grouped["priority_level"]] :', grouped["priority_level"]);
+          // console.log('⚠️⚠️⚠️⚠️ [grouped["attach_type"]] :', grouped["attach_type"]);
+          // console.log('⚠️⚠️⚠️⚠️ [grouped["tool_use"]] :', grouped["tool_use"]);
+          // console.log('⚠️⚠️⚠️⚠️ [grouped["decision_disposition"]] :', grouped["decision_disposition"]);
+          // console.log('⚠️⚠️⚠️⚠️ [grouped["approve_select"]] :', grouped["approve_select"]);
+          // console.log('⚠️⚠️⚠️⚠️ [grouped["complaint_step"]] :', grouped["complaint_step"]);
+          // console.log('⚠️⚠️⚠️⚠️ [grouped["complaint_action"]] :', grouped["complaint_action"]);
+          // console.log('⚠️⚠️⚠️⚠️ [grouped["active_company"]] :', grouped["active_company"]);
+          // console.log('⚠️⚠️⚠️⚠️ [grouped["role_profile"]] :', grouped["role_profile"]);
+          // console.log('⚠️⚠️⚠️⚠️ [grouped["config_file"]] :', grouped["config_file"]);
+          // console.log('⚠️⚠️⚠️⚠️ [grouped["complaint_status"]] :', grouped["complaint_status"]);
+          // console.log('⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️');
 
           // ตัวอย่างการ set state
           setdataset_reporttype?.(grouped["report_type"] || []);
@@ -1240,37 +1240,43 @@ export default function Complaint() {
             )
           );
 
+          const filterAction = (code: string) => {
+            return grouped["complaint_action"].filter(
+              (item: any) => item.lov_code === code
+            );
+          };
+
           setdataset_complaintActionNew(
             isItAdmin
-            ? grouped["complaint_action"] :
+            ? filterAction("ACTION_NEW") :
             grouped["complaint_action"].filter(
               (item: any) => item.lov_code === "ACTION_NEW" && item.lov_group == user[0].itasset_company_id
             )
           );
           setdataset_complaintActionExplain(
             isItAdmin
-            ? grouped["complaint_action"] :
+            ? filterAction("ACTION_EXPLAIN") :
             grouped["complaint_action"].filter(
               (item: any) => item.lov_code === "ACTION_EXPLAIN" && item.lov_group == user[0].itasset_company_id
             )
           );
           setdataset_complaintActionApproveSC(
             isItAdmin
-            ? grouped["complaint_action"] :
+            ? filterAction("ACTION_APPROVE_SC") :
             grouped["complaint_action"].filter(
               (item: any) => item.lov_code === "ACTION_APPROVE_SC" && item.lov_group == user[0].itasset_company_id
             )
           );
           setdataset_complaintActionApproveQC(
             isItAdmin
-            ? grouped["complaint_action"] :
+            ? filterAction("ACTION_APPROVE_QC") :
             grouped["complaint_action"].filter(
               (item: any) => item.lov_code === "ACTION_APPROVE_QC" && item.lov_group == user[0].itasset_company_id
             )
           );
           setdataset_complaintActionClose(
             isItAdmin
-            ? grouped["complaint_action"] :
+            ? filterAction("ACTION_CLOSE") :
             grouped["complaint_action"].filter(
               (item: any) => item.lov_code === "ACTION_CLOSE" && item.lov_group == user[0].itasset_company_id
             )
@@ -1307,12 +1313,12 @@ export default function Complaint() {
 
   // Function - Get Domain
   const DomainGet = async () => {
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  DomainGet"
-      );
+    // if (isCallFuncLogOn)
+    //   console.log(
+    //     "🕑 ",
+    //     dayjs().format("HH:mm:ss.SSS"),
+    //     " [Calling Function]  :  DomainGet"
+    //   );
 
     try {
       const dataset = {
@@ -1379,12 +1385,12 @@ export default function Complaint() {
   };
   // Function - Get DomainRelate
   const DomainRelateGet = async () => {
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  DomainRelateGet"
-      );
+    // if (isCallFuncLogOn)
+    //   console.log(
+    //     "🕑 ",
+    //     dayjs().format("HH:mm:ss.SSS"),
+    //     " [Calling Function]  :  DomainRelateGet"
+    //   );
 
     try {
       const dataset = {
@@ -1395,10 +1401,10 @@ export default function Complaint() {
       if (response && response.status === "success") {
         // //console.log("❇️ Call [Complaint/CasDomainGet] -> DomainRelateGet :",response.data);
 
-        console.log(
-          "❇️❇️❇️❇️ Call [Complaint/DomainRelateGet] -> DomainRelateGet :",
-          response.data
-        );
+        // console.log(
+        //   "❇️❇️❇️❇️ Call [Complaint/DomainRelateGet] -> DomainRelateGet :",
+        //   response.data
+        // );
         if (Array.isArray(response.data)) {
           // let domain = response.data.filter(
           //   (item: any) => item.domain_id === user[0]?.employee_domain
@@ -1513,12 +1519,12 @@ export default function Complaint() {
   //   };
   // Function - Get Complaints
   const Complaint_Get = async (data: any) => {
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  Complaint_Get"
-      );
+    // if (isCallFuncLogOn)
+    //   console.log(
+    //     "🕑 ",
+    //     dayjs().format("HH:mm:ss.SSS"),
+    //     " [Calling Function]  :  Complaint_Get"
+    //   );
 
     setIsLoadingScreen(true);
     const dataset = {
@@ -1537,7 +1543,7 @@ export default function Complaint() {
       if (response && response.status === "success") {
         setIsLoadingScreen(false);
         setdataelement(response.data[0]);
-        console.log("response.data[0]", response.data[0]);
+        // console.log("response.data[0]", response.data[0]);
 
         setcomplaint_status_id(response.data[0]?.complaint_status_id);
         return response.data[0];
@@ -1548,12 +1554,12 @@ export default function Complaint() {
   };
 
   const ExplainGet = async () => {
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  ExplainGet"
-      );
+    // if (isCallFuncLogOn)
+    //   console.log(
+    //     "🕑 ",
+    //     dayjs().format("HH:mm:ss.SSS"),
+    //     " [Calling Function]  :  ExplainGet"
+    //   );
 
     if (!dataelement?.id) {
       //console.log("No complaint ID, skipping explain fetch");
@@ -1595,7 +1601,7 @@ export default function Complaint() {
     setIsLoadingScreen(true);
     try {
       const response = await _POST({ complaint_id }, "/Explain/ExplainGet");
-      console.log("📡 Response Explaint_Get:", response.data);
+      // console.log("📡 Response Explaint_Get:", response.data);
 
       if (response?.status === "success") {
         setExplainList(response.data || []);
@@ -1608,12 +1614,12 @@ export default function Complaint() {
   };
 
   const ExplaintApprove_Get = async (explain_id: string) => {
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        "[Calling Function] : ExplaintApprove_Get"
-      );
+    // if (isCallFuncLogOn)
+    //   console.log(
+    //     "🕑 ",
+    //     dayjs().format("HH:mm:ss.SSS"),
+    //     "[Calling Function] : ExplaintApprove_Get"
+    //   );
 
     if (!explain_id) return [];
 
@@ -1625,7 +1631,7 @@ export default function Complaint() {
         dataset,
         "/ExplaintApprove/ExplaintApproveGet"
       );
-      console.log("📡 Response ExplaintApprove_Get:", response.data);
+      // console.log("📡 Response ExplaintApprove_Get:", response.data);
 
       if (response?.status === "success") {
         setApproveList(response.data || []);
@@ -1642,13 +1648,13 @@ export default function Complaint() {
 
   // Function - Search Complaints
   const ComplaintGet = async () => {
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  ComplaintGet"
-      );
-    console.log("step:2 เรียกฟังก์ชั่น ComplaintGet ใหม่");
+    // if (isCallFuncLogOn)
+    //   console.log(
+    //     "🕑 ",
+    //     dayjs().format("HH:mm:ss.SSS"),
+    //     " [Calling Function]  :  ComplaintGet"
+    //   );
+    // console.log("step:2 เรียกฟังก์ชั่น ComplaintGet ใหม่");
     //console.log("⭐️⭐️⭐️⭐️ CHECK DATA COMPLAINT ACTION : ", dataset_complaintAction, "⭐️⭐️⭐️");
 
     setIsLoadingScreen(true);
@@ -1684,20 +1690,20 @@ export default function Complaint() {
         : null,
     };
 
-    console.log("step:2 dataset ก่อนส่ง API /Complaint/ComplaintGet ", dataset);
+    // console.log("step:2 dataset ก่อนส่ง API /Complaint/ComplaintGet ", dataset);
     try {
       let response = await _POST(dataset, "/Complaint/ComplaintGet");
-      console.log(
-        "step:2 ผลลัพธ์ที่ได้จาก API /Complaint/ComplaintGet ",
-        dataset
-      );
+      // console.log(
+      //   "step:2 ผลลัพธ์ที่ได้จาก API /Complaint/ComplaintGet ",
+      //   dataset
+      // );
 
       if (response && response.status === "success") {
         setIsLoadingScreen(false);
         const responseData: any = [];
 
         if (Array.isArray(response.data)) {
-          console.log("@@@@@@@@        @@@@@@@@", response.data);
+          // console.log("@@@@@@@@        @@@@@@@@", response.data);
           // 🔹 กรองข้อมูลก่อน
           const filteredData = response.data.filter(
             (item: any) =>
@@ -1708,7 +1714,7 @@ export default function Complaint() {
                 item.complaint_status_label !== "NEW")
           );
 
-          console.log("filteredData", filteredData);
+          // console.log("filteredData", filteredData);
 
           filteredData.forEach((el: any) => {
 
@@ -1939,15 +1945,15 @@ export default function Complaint() {
               />
             );
 
-            console.log(" ");
-            console.log("🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞");
-            console.log("🤞🤞dataset_complaintActionNew",dataset_complaintActionNew);
-            console.log("🤞🤞dataset_complaintActionExplain",dataset_complaintActionExplain);
-            console.log("🤞🤞dataset_complaintActionApproveSC",dataset_complaintActionApproveSC);
-            console.log("🤞🤞dataset_complaintActionApproveQC",dataset_complaintActionApproveQC);
-            console.log("🤞🤞dataset_complaintActionClose",dataset_complaintActionClose);
-            console.log("🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞");
-            console.log(" ");
+            // console.log(" ");
+            // console.log("🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞");
+            // console.log("🤞🤞dataset_complaintActionNew",dataset_complaintActionNew);
+            // console.log("🤞🤞dataset_complaintActionExplain",dataset_complaintActionExplain);
+            // console.log("🤞🤞dataset_complaintActionApproveSC",dataset_complaintActionApproveSC);
+            // console.log("🤞🤞dataset_complaintActionApproveQC",dataset_complaintActionApproveQC);
+            // console.log("🤞🤞dataset_complaintActionClose",dataset_complaintActionClose);
+            // console.log("🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞");
+            // console.log(" ");
             
 
             el.approve_by = el.approve_by.replace(/\s*\(/, "<br/>(");
@@ -1955,9 +1961,9 @@ export default function Complaint() {
 
             // Prepare Role From Role Profile
             
-            console.log("🦄🦄🦄🦄🦄🦄 tempApproveSeq : ", tempApproveSeq);
-            console.log("🎶🎶🎶🎶🎶 tempApproveSeq : ", el.cas_number);
-            console.log("🎶🎶🎶🎶🎶 isItAdmin : ", isItAdmin);
+            // console.log("🦄🦄🦄🦄🦄🦄 tempApproveSeq : ", tempApproveSeq);
+            // console.log("🎶🎶🎶🎶🎶 tempApproveSeq : ", el.cas_number);
+            // console.log("🎶🎶🎶🎶🎶 isItAdmin : ", isItAdmin);
             // console.log("4️⃣4️⃣🤍🤍5️⃣5️⃣ dataset_complaintActionApproveQC : ", dataset_complaintActionApproveQC);
             // console.log("🎆 🎆 🎆 🎆 complaint_status_label:", el.complaint_status_label);
             // console.log("🎆 🎆 🎆 🎆 setdataset_roleProfile :", dataset_roleProfile);
@@ -1965,7 +1971,7 @@ export default function Complaint() {
             // console.log("🎆 🎆 🎆 🎆 user[0] :", user[0]);
             // console.log("🎆 🎆 🎆 🎆 tempRoleUser :", tempRoleUser);
 
-            console.log("tempRoleUser tempRoleUser : ", tempRoleUser);
+            // console.log("tempRoleUser tempRoleUser : ", tempRoleUser);
             // console.log(el.step_label)
 
             // For Display Status on Datatable [NEW, SUBMITED, EXPLAINED, APPROVED, CLOSED]
@@ -2011,12 +2017,12 @@ export default function Complaint() {
 
   // Function - Validate before Add Complaint
   const validateBeforeAdd = (): boolean => {
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  validateBeforeAdd"
-      );
+    // if (isCallFuncLogOn)
+    //   console.log(
+    //     "🕑 ",
+    //     dayjs().format("HH:mm:ss.SSS"),
+    //     " [Calling Function]  :  validateBeforeAdd"
+    //   );
     setSubmitCount(prev => prev + 1);
     let valid = true;
     // Clear ALL validation errors before validation
@@ -2148,12 +2154,12 @@ export default function Complaint() {
 
   //validate Edit
   const validateSaveDraft = (): boolean => {
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  validateSaveDraft"
-      );
+    // if (isCallFuncLogOn)
+    //   console.log(
+    //     "🕑 ",
+    //     dayjs().format("HH:mm:ss.SSS"),
+    //     " [Calling Function]  :  validateSaveDraft"
+    //   );
     let valid = true;
 
     setRespondentDepartmentError(false);
@@ -2184,12 +2190,12 @@ export default function Complaint() {
   };
 
   const validateExplainAdd = (): boolean => {
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  validateExplainAdd"
-      );
+    // if (isCallFuncLogOn)
+    //   console.log(
+    //     "🕑 ",
+    //     dayjs().format("HH:mm:ss.SSS"),
+    //     " [Calling Function]  :  validateExplainAdd"
+    //   );
 
     setSubmitCount(prev => prev + 1);
     let valid = true;
@@ -2207,11 +2213,11 @@ export default function Complaint() {
     // Get report type code
     const reportTypeCode =
       dataReportTypeValue?.lov_code || dataelement?.report_type;
-    console.log("🔍 Report Type for validation:", reportTypeCode);
+    // console.log("🔍 Report Type for validation:", reportTypeCode);
 
     // Common validation: Follow-up Date (required for all types)
     if (!follow_up_date) {
-      console.log("❌ Validation failed: follow_up_date is missing");
+      // console.log("❌ Validation failed: follow_up_date is missing");
       setFollowUpDateError(true);
       valid = false;
     }
@@ -2220,19 +2226,19 @@ export default function Complaint() {
     if (reportTypeCode === "OBS") {
       // OBS: Only requires observation_analysis and follow_up_date
       if (!observation_analysis || observation_analysis.trim() === "") {
-        console.log(
-          "❌ OBS Validation failed: observation_analysis is required"
-        );
+        // console.log(
+        //   "❌ OBS Validation failed: observation_analysis is required"
+        // );
         setObsAnalyError(true);
         valid = false;
       }
-      console.log("✅ OBS validation complete");
+      // console.log("✅ OBS validation complete");
     } else if (reportTypeCode === "NCR") {
       // NCR: Requires Tu (Tools Used), Rc (Root Cause), Dd (Decision/Disposition)
 
       // Validate Tools Used
       if (!dataTooluseValue || dataTooluseValue.length === 0) {
-        console.log("❌ NCR Validation failed: Tools Used is required");
+        // console.log("❌ NCR Validation failed: Tools Used is required");
         setToolUseError(true);
         valid = false;
       }
@@ -2242,7 +2248,7 @@ export default function Complaint() {
         dataTooluseValue.some((item: any) => item.isOther === "Y")
       ) {
         if (!ToolOther || ToolOther.trim() === "") {
-          console.log("❌ NCR Validation failed: ToolOther is required");
+          // console.log("❌ NCR Validation failed: ToolOther is required");
           setToolUseOtherError(true);
           valid = false;
         }
@@ -2250,16 +2256,16 @@ export default function Complaint() {
 
       // Validate Root Cause
       if (!root_cause || root_cause.trim() === "") {
-        console.log("❌ NCR Validation failed: Root Cause is required");
+        // console.log("❌ NCR Validation failed: Root Cause is required");
         setRootCauseError(true);
         valid = false;
       }
 
       // Validate Decision/Disposition
       if (!dataDecisionValue || dataDecisionValue.length === 0) {
-        console.log(
-          "❌ NCR Validation failed: Decision/Disposition is required"
-        );
+        // console.log(
+        //   "❌ NCR Validation failed: Decision/Disposition is required"
+        // );
         setDdError(true);
         valid = false;
       }
@@ -2269,7 +2275,7 @@ export default function Complaint() {
         dataDecisionValue.some((item: any) => item.isOther === "Y")
       ) {
         if (!DecisionOther || DecisionOther.trim() === "") {
-          console.log("❌ NCR Validation failed: DecisionOther is required");
+          // console.log("❌ NCR Validation failed: DecisionOther is required");
           setDdOtherError(true);
           valid = false;
         }
@@ -2279,7 +2285,7 @@ export default function Complaint() {
 
       // Validate Tools Used
       if (!dataTooluseValue || dataTooluseValue.length === 0) {
-        console.log("❌ CAR Validation failed: Tools Used is required");
+        // console.log("❌ CAR Validation failed: Tools Used is required");
         setToolUseError(true);
         valid = false;
       }
@@ -2289,7 +2295,7 @@ export default function Complaint() {
         dataTooluseValue.some((item: any) => item.isOther === "Y")
       ) {
         if (!ToolOther || ToolOther.trim() === "") {
-          console.log("❌ CAR Validation failed: ToolOther is required");
+          // console.log("❌ CAR Validation failed: ToolOther is required");
           setToolUseOtherError(true);
           valid = false;
         }
@@ -2297,14 +2303,14 @@ export default function Complaint() {
 
       // Validate Root Cause
       if (!root_cause || root_cause.trim() === "") {
-        console.log("❌ CAR Validation failed: Root Cause is required");
+        // console.log("❌ CAR Validation failed: Root Cause is required");
         setRootCauseError(true);
         valid = false;
       }
 
       // Validate Corrective Action
       if (!corrective_action || corrective_action.trim() === "") {
-        console.log("❌ CAR Validation failed: Corrective Action is required");
+        // console.log("❌ CAR Validation failed: Corrective Action is required");
         setCorrectiveActionError(true);
         valid = false;
       }
@@ -2313,7 +2319,7 @@ export default function Complaint() {
 
       // Validate Tools Used
       if (!dataTooluseValue || dataTooluseValue.length === 0) {
-        console.log("❌ CPAR Validation failed: Tools Used is required");
+        // console.log("❌ CPAR Validation failed: Tools Used is required");
         setToolUseError(true);
         valid = false;
       }
@@ -2323,7 +2329,7 @@ export default function Complaint() {
         dataTooluseValue.some((item: any) => item.isOther === "Y")
       ) {
         if (!ToolOther || ToolOther.trim() === "") {
-          console.log("❌ CPAR Validation failed: ToolOther is required");
+          // console.log("❌ CPAR Validation failed: ToolOther is required");
           setToolUseOtherError(true);
           valid = false;
         }
@@ -2331,39 +2337,39 @@ export default function Complaint() {
 
       // Validate Root Cause
       if (!root_cause || root_cause.trim() === "") {
-        console.log("❌ CPAR Validation failed: Root Cause is required");
+        // console.log("❌ CPAR Validation failed: Root Cause is required");
         setRootCauseError(true);
         valid = false;
       }
 
       // Validate Corrective Action
       if (!corrective_action || corrective_action.trim() === "") {
-        console.log("❌ CPAR Validation failed: Corrective Action is required");
+        // console.log("❌ CPAR Validation failed: Corrective Action is required");
         setCorrectiveActionError(true);
         valid = false;
       }
 
       // Validate Preventive Action Plan
       if (!preventive_action_plan || preventive_action_plan.trim() === "") {
-        console.log(
-          "❌ CPAR Validation failed: Preventive Action Plan is required"
-        );
+        // console.log(
+        //   "❌ CPAR Validation failed: Preventive Action Plan is required"
+        // );
         setPreventiveActionPlanError(true);
         valid = false;
       }
     }
 
-    console.log("🎯 [VALIDATION RESULT] valid =", valid);
+    // console.log("🎯 [VALIDATION RESULT] valid =", valid);
     return valid;
   };
 
   const validateSCApprove = (): boolean => {
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  validateSCApprove"
-      );
+    // if (isCallFuncLogOn)
+    //   console.log(
+    //     "🕑 ",
+    //     dayjs().format("HH:mm:ss.SSS"),
+    //     " [Calling Function]  :  validateSCApprove"
+    //   );
     setSubmitCount(prev => prev + 1);
     let valid = true;
     // Clear ALL validation errors before validation
@@ -2383,12 +2389,12 @@ export default function Complaint() {
   };
 
   const validateQCApprove = (): boolean => {
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  validateQCApprove"
-      );
+    // if (isCallFuncLogOn)
+    //   console.log(
+    //     "🕑 ",
+    //     dayjs().format("HH:mm:ss.SSS"),
+    //     " [Calling Function]  :  validateQCApprove"
+    //   );
     setSubmitCount(prev => prev + 1);
     let valid = true;
     // Clear ALL validation errors before validation
@@ -2408,12 +2414,12 @@ export default function Complaint() {
   };
 
   const validateClose = (): boolean => {
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  validateClose"
-      );
+    // if (isCallFuncLogOn)
+    //   console.log(
+    //     "🕑 ",
+    //     dayjs().format("HH:mm:ss.SSS"),
+    //     " [Calling Function]  :  validateClose"
+    //   );
     setSubmitCount(prev => prev + 1);
     let valid = true;
     // Clear ALL validation errors before validation
@@ -2434,12 +2440,12 @@ export default function Complaint() {
 
   // CREATE -SaveDraft Add Complaint
   const ComplaintSavedraftAdd = async () => {
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  ComplaintSavedraftAdd"
-      );
+    // if (isCallFuncLogOn)
+    //   console.log(
+    //     "🕑 ",
+    //     dayjs().format("HH:mm:ss.SSS"),
+    //     " [Calling Function]  :  ComplaintSavedraftAdd"
+    //   );
 
     if (!validateSaveDraft()) {
       return;
@@ -2447,6 +2453,16 @@ export default function Complaint() {
 
     const tempid = uuidv4();
 
+    //Function Split Domain (For using with Complaint Status)
+    //const tempComplaintStatus = splitByDot(user[0]?.employee_domain);
+    // console.log(
+    //   "📡 Sending respondent_domain_id to LovAll_Get:",
+    //   respondent_domain_id
+    // );
+    // console.log(
+    //   "📡 Sending respondent_domain_id to LovAll_Get:",
+    //   respondent_domain_id?.domain_id
+    // );
     const tempComplaintStatus = await LovAll_Get(
       "complaint_status",
       respondent_domain_id
@@ -2583,12 +2599,12 @@ export default function Complaint() {
 
   // Function - Add Complaint
   const ComplaintAdd = async () => {
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  ComplaintAdd"
-      );
+    // if (isCallFuncLogOn)
+    //   console.log(
+    //     "🕑 ",
+    //     dayjs().format("HH:mm:ss.SSS"),
+    //     " [Calling Function]  :  ComplaintAdd"
+    //   );
 
     if (!validateBeforeAdd()) {
       return;
@@ -2596,18 +2612,28 @@ export default function Complaint() {
 
     // Get LOV
     //let tempComplaintStatus: any
-    console.log(
-      "📡 Sending respondent_domain_id to LovAll_Get:",
-      respondent_domain_id
-    );
-    console.log(
-      "📡 Sending respondent_domain_id to LovAll_Get:",
-      respondent_domain_id?.domain_id
-    );
+    // console.log(
+    //   "📡 Sending respondent_domain_id to LovAll_Get:",
+    //   respondent_domain_id
+    // );
+    // console.log(
+    //   "📡 Sending respondent_domain_id to LovAll_Get:",
+    //   respondent_domain_id?.domain_id
+    // );
     const tempComplaintStatus = await LovAll_Get(
       "complaint_status",
       respondent_domain_id
     );
+    // console.log("🧩 tempComplaintStatus raw:", tempComplaintStatus);
+    // console.log("💕 tempvalue 1 id", tempComplaintStatus[1]?.id);
+    // console.log("💕 tempvalue 2 id", tempComplaintStatus[2]?.id);
+
+    // const tempComplaintStatus = await LovAll_Get("complaint_status", dataelement?.respondent_domain_id);
+    // // console.log("💕 tempvalue", tempvalue);
+    // console.log("💕 tempvalue 0", tempComplaintStatus[0]);
+    // console.log("💕 tempvalue 1", tempComplaintStatus[1]);
+    // console.log("💕 tempvalue 1 id", tempComplaintStatus[1]?.id);
+    // console.log("💕 tempvalue 2 id", tempComplaintStatus[2]?.id);
 
     const tempid = uuidv4();
 
@@ -2632,6 +2658,7 @@ export default function Complaint() {
       )
       : null;
 
+    // console.log("💕#### tempvalue 1 id", tempComplaintStatus[1]?.id);
     // สร้าง JSON payload
     const complaintPayload = {
       complaintModel: {
@@ -2818,6 +2845,7 @@ export default function Complaint() {
     `;
 
     formData.append("emailBody", emailBodyHtml);
+    // console.log("📧 Email HTML generated and appended to formData");
     
     setIsLoadingScreen(true);
 
@@ -2850,18 +2878,32 @@ export default function Complaint() {
 
   // Function - Edit Complaint
   const ComplaintEdit = async (mode: string) => {
-    console.log("💬 Mode received:", mode);
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  ComplaintEdit"
-      );
+    // console.log("💬 Mode received:", mode);
+    // if (isCallFuncLogOn)
+    //   console.log(
+    //     "🕑 ",
+    //     dayjs().format("HH:mm:ss.SSS"),
+    //     " [Calling Function]  :  ComplaintEdit"
+    //   );
 
+
+    // console.log(
+    //   "📡 Sending respondent_domain_id to LovAll_Get:",
+    //   respondent_domain_id
+    // );
+    // console.log(
+    //   "📡 Sending respondent_domain_id to LovAll_Get:",
+    //   respondent_domain_id?.domain_id
+    // );
     const tempComplaintStatus = await LovAll_Get(
       "complaint_status",
       dataelement?.respondent_domain_id
     );
+    // console.log("💕 tempvalue 0 id", tempComplaintStatus[0]?.id);
+    // console.log("💕 tempvalue 1 id", tempComplaintStatus[1]?.id);
+    // console.log("💕 tempvalue 2 id", tempComplaintStatus[2]?.id);
+    // console.log("💕 tempvalue 3 id", tempComplaintStatus[3]?.id);
+    // console.log("💕 tempvalue 4 id", tempComplaintStatus[4]?.id);
 
     const formData = new FormData();
     if (mode == "SUBMIT") {
@@ -3217,12 +3259,12 @@ export default function Complaint() {
 
   // Function - Delete Complaint
   const ComplaintDelete = async () => {
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  ComplaintDelete"
-      );
+    // if (isCallFuncLogOn)
+    //   console.log(
+    //     "🕑 ",
+    //     dayjs().format("HH:mm:ss.SSS"),
+    //     " [Calling Function]  :  ComplaintDelete"
+    //   );
 
     // สร้าง JSON payload
     const complaintPayload = {
@@ -3276,18 +3318,23 @@ export default function Complaint() {
   };
 
   const ComplaintReturn = async (mode: string) => {
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  ComplaintReturn"
-      );
+    // if (isCallFuncLogOn)
+    //   console.log(
+    //     "🕑 ",
+    //     dayjs().format("HH:mm:ss.SSS"),
+    //     " [Calling Function]  :  ComplaintReturn"
+    //   );
 
     const tempComplaintStatus = await LovAll_Get(
       "complaint_status",
       user[0]?.employee_domain
     );
 
+    // console.log("💕 tempvalue 0 id", tempComplaintStatus[0]?.id);
+    // console.log("💕 tempvalue 1 id", tempComplaintStatus[1]?.id);
+    // console.log("💕 tempvalue 2 id", tempComplaintStatus[2]?.id);
+    // console.log("💕 tempvalue 3 id", tempComplaintStatus[3]?.id);
+    // console.log("💕 tempvalue 4 id", tempComplaintStatus[4]?.id);
     //posion
     const formData = new FormData();
     // 🟡 STEP 1 : ถ้าเป็นโหมด "EXPLAIN" = ขอก่อนทำ
@@ -3313,8 +3360,8 @@ export default function Complaint() {
     // 🟢 STEP 2 : ถ้าเป็น "EXPLAIN_CONFIRM" = ทำงานจริง
     if (mode === "EXPLAIN_CONFIRM") {
 
-      if (isCallFuncLogOn)
-        console.log("🕑 ", dayjs().format("HH:mm:ss.SSS"), " [ComplaintReturn] Confirm mode");
+      // if (isCallFuncLogOn)
+      //   console.log("🕑 ", dayjs().format("HH:mm:ss.SSS"), " [ComplaintReturn] Confirm mode");
 
       const tempComplaintStatus = await LovAll_Get(
         "complaint_status",
@@ -3391,14 +3438,14 @@ export default function Complaint() {
             text: `บันทึกข้อมูลสำเร็จ`,
             icon: "success",
           });
-          console.log("✅ Complaint Add successfully:", response);
+          // console.log("✅ Complaint Add successfully:", response);
         } else {
           FullSweetalert({
             title: "Failed",
             text: `บันทึกไม่ข้อมูลสำเร็จ`,
             icon: "error",
           });
-          console.log("⚠️ Add failed:", response);
+          // console.log("⚠️ Add failed:", response);
         }
       } catch (error) {
         console.error("Upload failed:", error);
@@ -3474,7 +3521,7 @@ export default function Complaint() {
           "/ExplaintApprove/ExplaintApproveAdd"
         );
 
-        console.log(return_detail, "return_detail");
+        // console.log(return_detail, "return_detail");
 
         if (response && response.status === "success") {
           // ✅ หลังบันทึก Approve สำเร็จ → อัปเดตสถานะ Complaint
@@ -3724,17 +3771,17 @@ export default function Complaint() {
             text: `บันทึกข้อมูลสำเร็จ`,
             icon: "success",
           });
-          console.log("✅ Complaint Add successfully:", response);
+          // console.log("✅ Complaint Add successfully:", response);
         } else {
           FullSweetalert({
             title: "Failed",
             text: `บันทึกไม่ข้อมูลสำเร็จ`,
             icon: "error",
           });
-          console.log("⚠️ Add failed:", response);
+          // console.log("⚠️ Add failed:", response);
         }
       } catch (error) {
-        console.error("Upload failed:", error);
+        // console.error("Upload failed:", error);
       } finally {
         setIsLoadingScreen(false);
         handleClose();
@@ -3749,15 +3796,22 @@ export default function Complaint() {
     if (!validateExplainAdd()) {
       return;
     }
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  ExplainAdd"
-      );
+    // if (isCallFuncLogOn)
+    //   console.log(
+    //     "🕑 ",
+    //     dayjs().format("HH:mm:ss.SSS"),
+    //     " [Calling Function]  :  ExplainAdd"
+    //   );
 
     const tempid = uuidv4();
-
+    // console.log(
+    //   "📡 Sending respondent_domain_id to LovAll_Get:",
+    //   dataelement?.respondent_domain_id
+    // );
+    // console.log(
+    //   "📡 Sending respondent_domain_id to LovAll_Get:",
+    //   dataelement?.respondent_domain_id?.domain_id
+    // );
     const tempComplaintStatus = await LovAll_Get(
       "complaint_status",
       dataelement?.respondent_domain_id
@@ -4102,12 +4156,12 @@ export default function Complaint() {
 
   const ApproveScAdd = async () => {
     setSubmitCount((prev) => prev + 1);
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  ApproveScAdd"
-      );
+    // if (isCallFuncLogOn)
+    //   console.log(
+    //     "🕑 ",
+    //     dayjs().format("HH:mm:ss.SSS"),
+    //     " [Calling Function]  :  ApproveScAdd"
+    //   );
 
     const tempid = uuidv4();
 
@@ -4255,12 +4309,12 @@ export default function Complaint() {
 
   const ApproveQcAdd = async () => {
     setSubmitCount((prev) => prev + 1);
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  ApproveQcAdd"
-      );
+    // if (isCallFuncLogOn)
+    //   console.log(
+    //     "🕑 ",
+    //     dayjs().format("HH:mm:ss.SSS"),
+    //     " [Calling Function]  :  ApproveQcAdd"
+    //   );
 
     const tempid = uuidv4();
 
@@ -4406,23 +4460,23 @@ export default function Complaint() {
   };
 
   const handleOnclickMenuSync = () => {
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  handleOnclickMenuSync"
-      );
+    // if (isCallFuncLogOn)
+    //   console.log(
+    //     "🕑 ",
+    //     dayjs().format("HH:mm:ss.SSS"),
+    //     " [Calling Function]  :  handleOnclickMenuSync"
+    //   );
 
     // setOpenSync(true);
   };
 
   const handleOnclickComplaintAdd = () => {
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  handleOnclickComplaintAdd"
-      );
+    // if (isCallFuncLogOn)
+    //   console.log(
+    //     "🕑 ",
+    //     dayjs().format("HH:mm:ss.SSS"),
+    //     " [Calling Function]  :  handleOnclickComplaintAdd"
+    //   );
 
     resetForm();
     setdataelement(null);
@@ -4430,36 +4484,36 @@ export default function Complaint() {
   };
 
   const handleOnclickComplaintView = async (data: any) => {
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  Explaint_Get"
-      );
+    // if (isCallFuncLogOn)
+    //   console.log(
+    //     "🕑 ",
+    //     dayjs().format("HH:mm:ss.SSS"),
+    //     " [Calling Function]  :  Explaint_Get"
+    //   );
     resetForm();
     Complaint_Get(data);
     setOpenComplaintView(true); // แล้วค่อยเปิด Dialog
   };
 
   const handleOnclickComplaintEdit = (data: any) => {
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  handleOnclickComplaintEdit"
-      );
+    // if (isCallFuncLogOn)
+    //   console.log(
+    //     "🕑 ",
+    //     dayjs().format("HH:mm:ss.SSS"),
+    //     " [Calling Function]  :  handleOnclickComplaintEdit"
+    //   );
     resetForm();
     Complaint_Get(data);
     setOpenComplaintEdit(true);
   };
 
   const handleOnclickComplaintDelete = (data: any) => {
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  handleOnclickComplaintDelete"
-      );
+    // if (isCallFuncLogOn)
+    //   console.log(
+    //     "🕑 ",
+    //     dayjs().format("HH:mm:ss.SSS"),
+    //     " [Calling Function]  :  handleOnclickComplaintDelete"
+    //   );
     resetForm();
     Complaint_Get(data);
     setOpenComplaintDelete(true);
@@ -4467,12 +4521,12 @@ export default function Complaint() {
 
   // -------- Explain Dialog Handlers --------
   const handleOnclickExplain = (data: any) => {
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  handleOnclickExplain"
-      );
+    // if (isCallFuncLogOn)
+    //   console.log(
+    //     "🕑 ",
+    //     dayjs().format("HH:mm:ss.SSS"),
+    //     " [Calling Function]  :  handleOnclickExplain"
+    //   );
 
     resetForm();
     setdataelement(data);
@@ -4480,12 +4534,12 @@ export default function Complaint() {
   };
 
   const handleOnclickCloseAddExplain = async (data: any) => {
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  handleOnclickCloseAddExplain"
-      );
+    // if (isCallFuncLogOn)
+    //   console.log(
+    //     "🕑 ",
+    //     dayjs().format("HH:mm:ss.SSS"),
+    //     " [Calling Function]  :  handleOnclickCloseAddExplain"
+    //   );
 
     //resetForm();
 
@@ -4499,12 +4553,12 @@ export default function Complaint() {
   };
 
   const handleOnclickCloseReadExplain = (data: any) => {
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  handleOnclickCloseReadExplain"
-      );
+    // if (isCallFuncLogOn)
+    //   console.log(
+    //     "🕑 ",
+    //     dayjs().format("HH:mm:ss.SSS"),
+    //     " [Calling Function]  :  handleOnclickCloseReadExplain"
+    //   );
 
     //resetForm();
     setOpenReadExplain(false);
@@ -4514,12 +4568,12 @@ export default function Complaint() {
   };
 
   const handleOnclickReadExplain = async (data: any) => {
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  handleOnclickReadExplain"
-      );
+    // if (isCallFuncLogOn)
+    //   console.log(
+    //     "🕑 ",
+    //     dayjs().format("HH:mm:ss.SSS"),
+    //     " [Calling Function]  :  handleOnclickReadExplain"
+    //   );
     // ดึง complaint ข้อมูลจริงจาก API
     // const complaintData = await Complaint_Get(data);
 
@@ -4541,12 +4595,12 @@ export default function Complaint() {
 
   const handleOnclickApproveSC = async (data: any, name: string) => {
     setAction(name);
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  handleOnclickApproveSC"
-      );
+    // if (isCallFuncLogOn)
+    //   console.log(
+    //     "🕑 ",
+    //     dayjs().format("HH:mm:ss.SSS"),
+    //     " [Calling Function]  :  handleOnclickApproveSC"
+    //   );
 
     resetForm();
     // ดึง complaint ข้อมูลจริงจาก API
@@ -4564,12 +4618,12 @@ export default function Complaint() {
   };
 
   const handleOnclickExplainApproveSc = (explainData: any) => {
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑",
-        dayjs().format("HH:mm:ss.SSS"),
-        "[Calling Function] : handleOnclickExplainApproveSc"
-      );
+    // if (isCallFuncLogOn)
+    //   console.log(
+    //     "🕑",
+    //     dayjs().format("HH:mm:ss.SSS"),
+    //     "[Calling Function] : handleOnclickExplainApproveSc"
+    //   );
     const complaintData = dataelement;
     // เก็บ complaint หลัก
     setComplaintMainData(complaintData);
@@ -4629,12 +4683,12 @@ export default function Complaint() {
 
   // ------------------------------------------------------//
   const handleOnclickReadClose = async (data: any) => {
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  handleOnclickReadClose"
-      );
+    // if (isCallFuncLogOn)
+    //   console.log(
+    //     "🕑 ",
+    //     dayjs().format("HH:mm:ss.SSS"),
+    //     " [Calling Function]  :  handleOnclickReadClose"
+    //   );
 
     //console.log("Read step:3 เรียกฟังก์ชั่น ดูข้อมูล handleOnclickMenuView ");
     //console.log("Read step:3 ข้อมูลที่ได้จาก ListSearchGet ก่อนส่งเข้าฟังก์ชั่น Complaint_Get  ", data);
@@ -4658,12 +4712,12 @@ export default function Complaint() {
   const handleOnclickComplainClose = (data: any, name: string) => {
     //READ
     setAction(name);
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  handleOnclickComplainClose"
-      );
+    // if (isCallFuncLogOn)
+    //   console.log(
+    //     "🕑 ",
+    //     dayjs().format("HH:mm:ss.SSS"),
+    //     " [Calling Function]  :  handleOnclickComplainClose"
+    //   );
 
     resetForm();
     Complaint_Get(data);
@@ -4674,12 +4728,12 @@ export default function Complaint() {
 
   const CloseAdd = async () => {
     setSubmitCount((prev) => prev + 1);
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  CloseAdd"
-      );
+    // if (isCallFuncLogOn)
+    //   console.log(
+    //     "🕑 ",
+    //     dayjs().format("HH:mm:ss.SSS"),
+    //     " [Calling Function]  :  CloseAdd"
+    //   );
 
 
     const tempComplaintStatus = await LovAll_Get(
@@ -4781,12 +4835,12 @@ export default function Complaint() {
     }
   };
   const handleOnclickCloseHistory = async (data: any) => {
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  handleOnclickCloseHistory"
-      );
+    // if (isCallFuncLogOn)
+    //   console.log(
+    //     "🕑 ",
+    //     dayjs().format("HH:mm:ss.SSS"),
+    //     " [Calling Function]  :  handleOnclickCloseHistory"
+    //   );
     // ดึง complaint ข้อมูลจริงจาก API
     // const complaintData = await Complaint_Get(data);
 
@@ -4810,12 +4864,12 @@ export default function Complaint() {
   // -------------------------  QC  ---------------------------//
   const handleOnclickApproveQC = async (data: any, name: string) => {
     setAction(name);
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  handleOnclickApproveQC"
-      );
+    // if (isCallFuncLogOn)
+    //   console.log(
+    //     "🕑 ",
+    //     dayjs().format("HH:mm:ss.SSS"),
+    //     " [Calling Function]  :  handleOnclickApproveQC"
+    //   );
 
     resetForm();
     Complaint_Get(data);
@@ -4830,16 +4884,16 @@ export default function Complaint() {
   // -------- Approve Dialog Handlers --------
 
   useEffect(() => {
-    console.log("action11", action);
+    // console.log("action11", action);
   }, [action]);
 
   const handleOnclickReadApproveQC = async (data: any) => {
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  handleOnclickReadApproveQC"
-      );
+    // if (isCallFuncLogOn)
+    //   console.log(
+    //     "🕑 ",
+    //     dayjs().format("HH:mm:ss.SSS"),
+    //     " [Calling Function]  :  handleOnclickReadApproveQC"
+    //   );
 
     //console.log("Read step:3 เรียกฟังก์ชั่น ดูข้อมูล handleOnclickMenuView ");
     //console.log("Read step:3 ข้อมูลที่ได้จาก ListSearchGet ก่อนส่งเข้าฟังก์ชั่น Complaint_Get  ", data);
@@ -4860,12 +4914,12 @@ export default function Complaint() {
   };
 
   const handleOnclickExplainAdd = (data: any) => {
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  handleOnclickExplainAdd"
-      );
+    // if (isCallFuncLogOn)
+    //   console.log(
+    //     "🕑 ",
+    //     dayjs().format("HH:mm:ss.SSS"),
+    //     " [Calling Function]  :  handleOnclickExplainAdd"
+    //   );
 
     resetForm();
     setroot_cause("");
@@ -4894,20 +4948,20 @@ export default function Complaint() {
   };
 
   const handleOnclickExplainView = async (explainData: any, name: string) => {
-    console.log("handleOnclickExplainView", handleOnclickExplainView);
+    // console.log("handleOnclickExplainView", handleOnclickExplainView);
 
-    console.log("dataaaaaaaaaaaa", data);
-    console.log("dataaaaaaaaaaaa", explainData);
+    // console.log("dataaaaaaaaaaaa", data);
+    // console.log("dataaaaaaaaaaaa", explainData);
 
     setAction(name);
-    console.log("nameeeeeee", name);
+    // console.log("nameeeeeee", name);
 
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  handleOnclickExplainView"
-      );
+    // if (isCallFuncLogOn)
+    //   console.log(
+    //     "🕑 ",
+    //     dayjs().format("HH:mm:ss.SSS"),
+    //     " [Calling Function]  :  handleOnclickExplainView"
+    //   );
 
     const complaintData = dataelement;
 
@@ -4944,10 +4998,10 @@ export default function Complaint() {
         // เตรียมตรวจสอบข้อมูลรายการอนุมัติ (เพื่อทำเงื่อนไข เปิด-ปิด กล่องแสดงผล)
         // approveData
         setisApproveQcBoxHidden(true);
-        console.log(
-          "🎶🎶😉😉🤞 isApproveQcBoxHidden 1: ",
-          isApproveQcBoxHidden
-        );
+        // console.log(
+        //   "🎶🎶😉😉🤞 isApproveQcBoxHidden 1: ",
+        //   isApproveQcBoxHidden
+        // );
 
         // หา QC approve record (approve_seq === 2)
         const qcApprove =
@@ -5001,13 +5055,13 @@ export default function Complaint() {
         );
         // Note: QC approve radio (dataQcapp) will be set in ExplaintBody.tsx from dataelement
 
-        console.log("📘 QC Approve data loaded:", qcApprove);
+        // console.log("📘 QC Approve data loaded:", qcApprove);
       } else {
         setisApproveQcBoxHidden(false);
-        console.log(
-          "🎶🎶😉😉🤞 isApproveQcBoxHidden 2 : ",
-          isApproveQcBoxHidden
-        );
+        // console.log(
+        //   "🎶🎶😉😉🤞 isApproveQcBoxHidden 2 : ",
+        //   isApproveQcBoxHidden
+        // );
       }
     }
 
@@ -5021,8 +5075,8 @@ export default function Complaint() {
       const reportTypeObj = dataset_reporttype.find(
         (item: any) => item.id === reportType || item.lov_code === reportType
       );
-      console.log("reportTypeObj line 5004", reportTypeObj);
-      console.log("explainData line 5004", explainData);
+      // console.log("reportTypeObj line 5004", reportTypeObj);
+      // console.log("explainData line 5004", explainData);
 
       if (reportTypeObj) {
         setdataelement({
@@ -5031,11 +5085,11 @@ export default function Complaint() {
           _forceVisibilityUpdate: Date.now(),
         });
       } else {
-        console.log("call from line 5013", dataelement);
+        // console.log("call from line 5013", dataelement);
         setdataelement(explainData);
       }
     } else {
-      console.log("call from line 5017", dataelement);
+      // console.log("call from line 5017", dataelement);
       setdataelement(explainData);
     }
 
@@ -5050,12 +5104,12 @@ export default function Complaint() {
   };
 
   const handleOnclickReadApproveSC = async (data: any) => {
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  handleOnclickReadApproveSC"
-      );
+    // if (isCallFuncLogOn)
+    //   console.log(
+    //     "🕑 ",
+    //     dayjs().format("HH:mm:ss.SSS"),
+    //     " [Calling Function]  :  handleOnclickReadApproveSC"
+    //   );
 
     //console.log("Read step:3 เรียกฟังก์ชั่น ดูข้อมูล handleOnclickMenuView ");
     //console.log("Read step:3 ข้อมูลที่ได้จาก ListSearchGet ก่อนส่งเข้าฟังก์ชั่น Complaint_Get  ", data);
@@ -5076,18 +5130,18 @@ export default function Complaint() {
   };
 
   const handleOnclickExplainApproveQc = async (explainData: any) => {
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑",
-        dayjs().format("HH:mm:ss.SSS"),
-        "[Calling Function] : handleOnclickExplainApproveQc"
-      );
-    console.log("🧪 ExplaintBody loaded", {
-      action,
-      dataelement,
-      observation_analysis,
-      root_cause,
-    });
+    // if (isCallFuncLogOn)
+    //   console.log(
+    //     "🕑",
+    //     dayjs().format("HH:mm:ss.SSS"),
+    //     "[Calling Function] : handleOnclickExplainApproveQc"
+    //   );
+    // console.log("🧪 ExplaintBody loaded", {
+    //   action,
+    //   dataelement,
+    //   observation_analysis,
+    //   root_cause,
+    // });
 
     const complaintData = dataelement;
 
@@ -5152,12 +5206,12 @@ export default function Complaint() {
         if (firstApprove.approve_date)
           setqcapprove_date(dayjs(firstApprove.approve_date));
         // console.log("📘 Fetching approve data for explain_id:", approveData.approve_name);
-        console.log(
-          "📘 Fetching approve data for explain_id:",
-          qcapprove_department_id
-        );
-        console.log("📘 dataset_department:", dataset_department);
-        console.log("📘 dataset_company:", dataset_company);
+        // console.log(
+        //   "📘 Fetching approve data for explain_id:",
+        //   qcapprove_department_id
+        // );
+        // console.log("📘 dataset_department:", dataset_department);
+        // console.log("📘 dataset_company:", dataset_company);
       }
     }
 
@@ -5191,12 +5245,12 @@ export default function Complaint() {
 
 
   const handleOnclickComplainCloseAdd = async (explainData: any) => {
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  handleOnclickComplainCloseAdd"
-      );
+    // if (isCallFuncLogOn)
+    //   console.log(
+    //     "🕑 ",
+    //     dayjs().format("HH:mm:ss.SSS"),
+    //     " [Calling Function]  :  handleOnclickComplainCloseAdd"
+    //   );
 
     // console.log("🧩 Data received:", data);
     // console.log("🧑‍💼 User profile:", user[0]);
@@ -5303,7 +5357,7 @@ export default function Complaint() {
         );
         // Note: QC approve radio (dataQcapp) will be set in ExplaintBody.tsx from dataelement
 
-        console.log("📘 QC Approve data loaded:", qcApprove);
+        // console.log("📘 QC Approve data loaded:", qcApprove);
       }
     }
 
@@ -5527,7 +5581,7 @@ export default function Complaint() {
       try {
         //console.log("useEffect start");
         const tempCheckItAdmin = await LovAll_Get('get_role');
-        console.log("😎🥰 tempCheckItAdmin", tempCheckItAdmin);
+        // console.log("😎🥰 tempCheckItAdmin", tempCheckItAdmin);
         await LovAll_Get(null, null, tempCheckItAdmin);
         await DomainRelateGet();
         // await DepartmentDomainGet();
@@ -5738,7 +5792,7 @@ export default function Complaint() {
                     item.domain_id === TextNameSearch.dataset_domain
                 ) || null
               }
-              labelName="โดเมน (Domain)"
+              labelName="โรงงาน (Factory)"
               options={domainrelate || []}
               column="domain_name"
               setvalue={(val) => {

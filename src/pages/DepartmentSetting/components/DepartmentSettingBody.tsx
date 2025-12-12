@@ -478,7 +478,7 @@ export default function DepartmentSettingBody({
 
     ////////////////////// DepartmentSetting Read //////////////////////////
     React.useEffect(() => {
-        console.log("⭐step: 5 เก็บข้อมูลเข้า ฺsetdataelement ใหม่ ")
+        // console.log("⭐step: 5 เก็บข้อมูลเข้า ฺsetdataelement ใหม่ ")
 
         if (dataelement && action != "Add") {
 
@@ -509,7 +509,7 @@ export default function DepartmentSettingBody({
         );
     }, [datastatus, dept_domain]);
     
-console.log("🚀 validateText.Company_Area (Body) =", validateText?.Company_Area);
+// console.log("🚀 validateText.Company_Area (Body) =", validateText?.Company_Area);
 
 
     return (
@@ -583,8 +583,8 @@ console.log("🚀 validateText.Company_Area (Body) =", validateText?.Company_Are
                                 options={company}
                                 column="company_name"
                                 setvalue={(val) => {
-                                    console.log("เลือกบริษัท:", val);
-                                    console.log("🚀 validateText.Company_Area (Body) =", validateText?.Company_Area);
+                                    // console.log("เลือกบริษัท:", val);
+                                    // console.log("🚀 validateText.Company_Area (Body) =", validateText?.Company_Area);
                                     setdept_company(val);
                                     handleCompanyChange(val);
                                     onCompanyAreaChange?.(val);
@@ -605,7 +605,7 @@ console.log("🚀 validateText.Company_Area (Body) =", validateText?.Company_Are
                                 options={domain}
                                 column="domain_name"
                                 setvalue={(val) => {
-                                    console.log("Domain selected:", val?.domain_name);
+                                    // console.log("Domain selected:", val?.domain_name);
                                     setdept_domain(val);
                                     handleDomainChange(val);
                                     if (onDomainAreaChange) {

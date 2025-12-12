@@ -16,7 +16,7 @@ export async function setValueMas(dataMas: any[], value: any, colname: any) {
 
   // filter array ตามค่า
   const valueMas = dataMas.filter((el: any) => el[colname] == value);
-  console.log("setValueMas result:", valueMas);
+  // console.log("setValueMas result:", valueMas);
 
   // คืน object ตัวแรก (เหมือนเดิม)
   return valueMas[0];

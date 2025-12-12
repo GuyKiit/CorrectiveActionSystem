@@ -1013,15 +1013,15 @@ export default function ComplaintBody({
 
     setIsLoadingScreen(false);
     const dataset = { domain_dept_id: data.domain_dept_id };
-    console.log("🧩 Payload ส่งเข้า SP :", dataset);
+    // console.log("🧩 Payload ส่งเข้า SP :", dataset);
 
     try {
       const response = await _POST(
         dataset,
         "/DeptSetup/DeptSetupByDomaindeptidGet"
       );
-      console.log("📥 DeptSetup Response (full):", response);
-      console.log("🧩 Payload ส่งเข้า SP :", dataset);
+      // console.log("📥 DeptSetup Response (full):", response);
+      // console.log("🧩 Payload ส่งเข้า SP :", dataset);
 
       // คืน response ทั้งก้อน ให้ caller เลือกเอา element ที่ต้องการ
       return response || null;
@@ -1106,15 +1106,15 @@ export default function ComplaintBody({
 
     try {
       let response = await _POST(dataset, "/Explain/ExplainGet");
-      console.log("ExplainGet response:", response);
+      // console.log("ExplainGet response:", response);
       if (response && response.status === "success") {
         setIsLoadingScreen(false);
         setExplainList(response.data || []);
         setcomplaint_status_id(dataelement?.complaint_status_id);
-        console.log("dataelementdataelement", dataelement);
+        // console.log("dataelementdataelement", dataelement);
 
-        console.log("Explain list:", response.data);
-        console.log("explainList list:", explainList);
+        // console.log("Explain list:", response.data);
+        // console.log("explainList list:", explainList);
       }
     } catch (e) {
       // console.log("ExplainGet error:", e);
@@ -1123,7 +1123,7 @@ export default function ComplaintBody({
   };
 
   useEffect(() => {
-    console.log("complaint_status_id", complaint_status_id);
+    // console.log("complaint_status_id", complaint_status_id);
   }),
     [complaint_status_id];
 
@@ -1142,7 +1142,7 @@ export default function ComplaintBody({
 
     // ✅ Safety Check: ป้องกันการเรียกด้วย Explain Data หรือข้อมูลที่ไม่ใช่ Complaint
     if (dataelement?.complaint_id || !dataelement?.cas_number) {
-      console.log("⏭️ Skip ComplaintFile_Get - Invalid data type (likely Explain data)");
+      // console.log("⏭️ Skip ComplaintFile_Get - Invalid data type (likely Explain data)");
       setFileList([]);
       setcomplaintFiles([]);
       return;
@@ -1222,7 +1222,7 @@ export default function ComplaintBody({
 
     // ✅ ป้องกันการทำงานเมื่อเป็น Explain Data (มี complaint_id)
     if (dataelement?.complaint_id) {
-      console.log("⏭️ Skip master data load - dataelement is Explain data");
+      // console.log("⏭️ Skip master data load - dataelement is Explain data");
       return;
     }
 
@@ -1237,7 +1237,7 @@ export default function ComplaintBody({
 
     const loadInitialData = async () => {
 
-      console.log("🕑🕑🕑🕑🕑🕑🕑🕑 [Calling Check isItAdmin]  : ", isItAdmin, "🕑🕑🕑🕑🕑🕑🕑🕑");
+      // console.log("🕑🕑🕑🕑🕑🕑🕑🕑 [Calling Check isItAdmin]  : ", isItAdmin, "🕑🕑🕑🕑🕑🕑🕑🕑");
 
       try {
         //========================================================================================================================
@@ -1276,8 +1276,8 @@ export default function ComplaintBody({
             // });
           }
 
-          console.log("🕑🕑🕑 [dataelement.report_type]  : ", dataelement.report_type, "🕑🕑🕑");
-          console.log("🕑🕑🕑 [dataset_reporttype]  : ", dataset_reporttype, "🕑🕑🕑");
+          // console.log("🕑🕑🕑 [dataelement.report_type]  : ", dataelement.report_type, "🕑🕑🕑");
+          // console.log("🕑🕑🕑 [dataset_reporttype]  : ", dataset_reporttype, "🕑🕑🕑");
           
         } else {
           if (Array.isArray(dataset_reporttype) && dataelement?.report_type) {
@@ -1387,27 +1387,41 @@ export default function ComplaintBody({
   }, [dataelement]);
 
   React.useEffect(() => {
-  if (
-    Array.isArray(domainrelate) &&
-    domainrelate.length > 0 &&
-    dataelement?.respondent_domain_id
-  ) {
-    const run = async () => {
-      const mapped = await setValueMas(
-        domainrelate,
-        dataelement.respondent_domain_id,
-        "domain_id"
-      );
+  if (Array.isArray(domainrelate) && domainrelate.length > 0) {
 
-      if (mapped) {
-        setrespondent_domain_id(mapped);
-        console.log("🎯 domain mapped:", mapped);
+    const run = async () => {
+      // แมป respondent_domain_id
+      if (dataelement?.respondent_domain_id) {
+        const mappedRespondent = await setValueMas(
+          domainrelate,
+          dataelement.respondent_domain_id,
+          "domain_id"
+        );
+
+        if (mappedRespondent) {
+          setrespondent_domain_id(mappedRespondent);
+          // console.log("🎯 respondent domain mapped:", mappedRespondent);
+        }
+      }
+
+      // แมป request_domain_id
+      if (dataelement?.request_domain_id) {
+        const mappedRequest = await setValueMas(
+          domainrelate,
+          dataelement.request_domain_id,
+          "domain_id"
+        );
+
+        if (mappedRequest) {
+          setrequest_domain_id(mappedRequest);
+          // console.log("🎯 request domain mapped:", mappedRequest);
+        }
       }
     };
 
     run();
   }
-}, [domainrelate, dataelement?.respondent_domain_id]);
+}, [domainrelate, dataelement?.respondent_domain_id, dataelement?.request_domain_id]);
 
 React.useEffect(() => {
   if (
@@ -1424,7 +1438,7 @@ React.useEffect(() => {
 
       if (mappedDept) {
         setrespondent_department_id(mappedDept);
-        console.log("🏬 Department mapped:", mappedDept);
+        // console.log("🏬 Department mapped:", mappedDept);
       }
     };
 
@@ -1441,10 +1455,10 @@ React.useEffect(() => {
         dataset_department.length > 0 &&
         dataelement?.respondent_department_id
       ) {
-        console.log("🏬 Mapping department (ready):", {
-          target: dataelement.respondent_department_id,
-          dataset: dataset_department.map((d: any) => d.department_id),
-        });
+        // console.log("🏬 Mapping department (ready):", {
+        //   target: dataelement.respondent_department_id,
+        //   dataset: dataset_department.map((d: any) => d.department_id),
+        // });
 
         const mappedDept = await setValueMas(
           dataset_department,
@@ -1454,7 +1468,7 @@ React.useEffect(() => {
 
         if (mappedDept) {
           setrespondent_department_id(mappedDept);
-          console.log("✅ Department mapped:", mappedDept);
+          // console.log("✅ Department mapped:", mappedDept);
         } else {
           console.warn(
             "⚠️ Department not found:",
@@ -1474,7 +1488,7 @@ React.useEffect(() => {
   React.useEffect(() => {
     if (!Array.isArray(datapriority_Combobox)) return;
 
-    console.log("🕑🕑🕑🕑🕑🕑🕑🕑 [datapriority_Combobox]  : ", datapriority_Combobox, "🕑🕑🕑🕑🕑🕑🕑🕑");
+    // console.log("🕑🕑🕑🕑🕑🕑🕑🕑 [datapriority_Combobox]  : ", datapriority_Combobox, "🕑🕑🕑🕑🕑🕑🕑🕑");
 
     const newFilteredPriority =
     isItAdmin ?
@@ -1568,21 +1582,9 @@ React.useEffect(() => {
 
   //////////////////////// Complaint Read //////////////////////////
   React.useEffect(() => {
-    console.log("step: 5 เก็บข้อมูลเข้า ฺsetdataelement ใหม่ ", dataelement);
-    console.log("DEBUG DATAELEMENT FIELDS:", {
-      date_of_detection: dataelement?.date_of_detection,
-      product_name: dataelement?.product_name,
-      lot_no: dataelement?.lot_no,
-      respondent_email: dataelement?.respondent_email
-    });
-    console.log("step: 5 เก็บข้อมูลเข้า ฺsetdataelement ใหม่ ", explainList);
-    console.log("💾 close_name:", explainList?.close_name);
-    console.log("💾 close_company_id:", explainList?.close_company_id);
-    console.log("💾 close_email:", explainList?.close_email);
-    console.log("💾 product_name:", dataelement?.product_name);
+    // console.log("step: 5 เก็บข้อมูลเข้า ฺsetdataelement ใหม่ ", dataelement); //✅
 
     if (dataelement && action != "Add") {
-      // setrespondent_company_id(dataset_company.find((el: any) => String(el.itasset_company_id) === String(dataelement.respondent_company_id?.company_id)));
       setcas_number(dataelement?.cas_number || "");
       setdoc_date(
         dataelement?.doc_date
@@ -1594,16 +1596,6 @@ React.useEffect(() => {
           ? dayjs(dataelement.date_of_detection)
           : null
       );
-
-      // Map respondent_department_id
-      // console.log("🔍 Department mapping debug:", {respondent_department_id: dataelement.respondent_department_id,dataset_department_sample: dataset_department?.[0], });
-
-      // const foundDept = dataset_department.find((el: any) => {
-      //   return String(el.department_id) === String(dataelement.respondent_department_id);
-      // });
-
-      // console.log("🎯 Found department:", foundDept);
-      // setrespondent_department_id(foundDept || null);
 
       setproduct_name(
         dataelement?.product_name ? dataelement?.product_name : ""
@@ -1660,7 +1652,7 @@ React.useEffect(() => {
         isOther: c.lov2,
       }));
       setdataComplaintTypeValue_Combobox(ctReducedArray);
-      console.log("🔄 Loaded Complaint Type reduced array:", ctReducedArray);
+      // console.log("🔄 Loaded Complaint Type reduced array:", ctReducedArray);
 
       // ถ้ามี complaintType ที่เป็น Other ให้ดึงค่ามา
       const otherCT = ct.find((el: any) => el.lov2 === "Y");
@@ -1677,7 +1669,7 @@ React.useEffect(() => {
         isClause: r.lov3,
       }));
       setdataComplaintRsValue_Combobox(rsReducedArray);
-      console.log("🔄 Loaded Complaint RS reduced array:", rsReducedArray);
+      // console.log("🔄 Loaded Complaint RS reduced array:", rsReducedArray);
 
       // ⭐ ดึงค่า Other และ Clause จาก RS
       const otherRS = rs.find((el: any) => el.lov3 === "Other");
@@ -1704,11 +1696,11 @@ React.useEffect(() => {
   }, [dataelement, dataset_reporttype, dataset_company]);
 
   React.useEffect(() => {
-    console.log("🔄 explainList UPDATED:", explainList);
+    // console.log("🔄 explainList UPDATED:", explainList);
     if (explainList?.length > 0 && action != "Add") {
       const close = explainList[0];
 
-      console.log("👉 SELECTED explain for close:", close);
+      //console.log("👉 SELECTED explain for close:", close);
 
       setclose_name(close?.close_name || "");
       setclose_company_id(
@@ -1753,7 +1745,7 @@ React.useEffect(() => {
     // ⚠️ ป้องกันการ fetch ซ้ำเมื่อ ID เหมือนเดิม
     // เมื่อปิด ExplainView → setdataelement(complaintMainData) → dataelement object เปลี่ยนแต่ ID เหมือนเดิม
     if (prevComplaintIdRef.current === currentId && currentId) {
-      console.log("⏭️ Skip fetch - same complaint ID:", currentId);
+      // console.log("⏭️ Skip fetch - same complaint ID:", currentId);
       return;
     }
 
@@ -1762,11 +1754,11 @@ React.useEffect(() => {
       // ถ้ามี complaint_id แสดงว่าเป็น Explain Data (ลูก) ที่ถูกส่งเข้ามาแทนที่ -> ข้ามการ fetch
       // (Complaint Data จะไม่มี field complaint_id ในตัวเอง)
       if (dataelement?.complaint_id) {
-        console.log("⏭️ Skip fetch - dataelement has complaint_id (is Explain data)");
+        // console.log("⏭️ Skip fetch - dataelement has complaint_id (is Explain data)");
         return;
       }
 
-      console.log("📥 Fetching data for complaint ID:", currentId);
+      // console.log("📥 Fetching data for complaint ID:", currentId);
       ComplaintFile_Get();
       ExplainGet();
       prevComplaintIdRef.current = currentId; // บันทึก ID ปัจจุบัน
@@ -1805,7 +1797,7 @@ React.useEffect(() => {
     }
 
     data.forEach((el, index) => {
-      console.log(`🔍 Processing element ${index}:`, el);
+      // console.log(`🔍 Processing element ${index}:`, el);
 
       // Try to find the complaint_type_id from the element
       const typeId = el.complaint_type_id;
@@ -1823,7 +1815,7 @@ React.useEffect(() => {
       );
 
       if (filter) {
-        console.log(`✅ Found matching type for ID ${typeId}:`, filter);
+        // console.log(`✅ Found matching type for ID ${typeId}:`, filter);
         newData.push({
           ...filter,
           other: el.other || "", // ⭐ เก็บค่าข้อความ Other มาด้วย
@@ -1839,13 +1831,13 @@ React.useEffect(() => {
       }
     });
 
-    console.log("🔍 setComplaintType output:", newData);
+    // console.log("🔍 setComplaintType output:", newData);
     return newData;
   };
 
   const setComplaintRs = (data: any) => {
-    console.log("🔍 setComplaintRs input data:", data);
-    console.log("🔍 dataComplaintRs_Combobox:", dataComplaintRs_Combobox);
+    // console.log("🔍 setComplaintRs input data:", data);
+    // console.log("🔍 dataComplaintRs_Combobox:", dataComplaintRs_Combobox);
 
     const newData: any[] = [];
 
@@ -1855,7 +1847,7 @@ React.useEffect(() => {
     }
 
     data.forEach((el, index) => {
-      console.log(`🔍 Processing RS element ${index}:`, el);
+      // console.log(`🔍 Processing RS element ${index}:`, el);
 
       // Try to find the complaint_type_id from the element
       const typeId = el.complaint_type_id;
@@ -1873,7 +1865,7 @@ React.useEffect(() => {
       );
 
       if (filter) {
-        console.log(`✅ Found matching RS for ID ${typeId}:`, filter);
+        // console.log(`✅ Found matching RS for ID ${typeId}:`, filter);
         newData.push({
           ...filter,
           other: el.other || "", // ⭐ เก็บค่าข้อความ Other มาด้วย
@@ -1890,7 +1882,7 @@ React.useEffect(() => {
       }
     });
 
-    console.log("🔍 setComplaintRs output:", newData);
+    // console.log("🔍 setComplaintRs output:", newData);
     return newData;
   };
   const setPriorityLevel = (value: any) => {
@@ -2007,11 +1999,11 @@ React.useEffect(() => {
                     column="company_name"
                     // setvalue={(v) => setrespondent_company_id(v)}
                     setvalue={(val) => {
-                      console.log("Company selected:", val?.company_name);
+                      //console.log("Company selected:", val?.company_name);
                       handleCompanyChange(val);
 
                       setrespondent_company_id(val);
-                      console.log("cccccc", val);
+                      //console.log("cccccc", val);
                     }}
                     bgcolorTextField={true}
                     readonly={!isActionAdd || !isCrossCompany}
@@ -2025,13 +2017,13 @@ React.useEffect(() => {
                     column="domain_name"
                     // setvalue={(v) => setrespondent_company_id(v)}
                     setvalue={(val) => {
-                      console.log("Domain selected:", val?.domain_name);
-                      console.log("Domain selected:", val?.domain_id);
-                      console.log("😍val:", val);
+                      //console.log("Domain selected:", val?.domain_name);
+                      //console.log("Domain selected:", val?.domain_id);
+                      //console.log("😍val:", val);
                       handleDomainChange(val);
 
                       setrespondent_domain_id(val);
-                      console.log("cccccc", val);
+                      //console.log("cccccc", val);
 
                       if (onRespondentDepartmentChange) {
                         onRespondentDepartmentChange(val);
@@ -2125,12 +2117,12 @@ React.useEffect(() => {
                         options={dataset_department}
                         column="department_name"
                         setvalue={async (val) => {
-                          console.log(
-                            "Selected value:",
-                            val,
-                            "respondent_department_id :",
-                            respondent_department_id
-                          );
+                          // console.log(
+                          //   "Selected value:",
+                          //   val,
+                          //   "respondent_department_id :",
+                          //   respondent_department_id
+                          // );
                           setrespondent_department_id(val);
 
                           // ✅ ดึงข้อมูล Email จากแผนกที่เลือก
@@ -2152,12 +2144,12 @@ React.useEffect(() => {
 
                           const email = found?.dept_email ?? "ไม่พบ Email";
 
-                          console.log(
-                            "📧 Selected dept email extracted:",
-                            email,
-                            "from",
-                            found
-                          );
+                          // console.log(
+                          //   "📧 Selected dept email extracted:",
+                          //   email,
+                          //   "from",
+                          //   found
+                          // );
                           setrespondent_email(email);
                           if (!val) {
                             setrespondent_email("");
@@ -2692,10 +2684,10 @@ React.useEffect(() => {
                                               datapriority?.id === item.id
                                             }
                                             onChange={(e) => {
-                                              console.log(
-                                                "🎯 Priority radio clicked:",
-                                                item
-                                              );
+                                              // console.log(
+                                              //   "🎯 Priority radio clicked:",
+                                              //   item
+                                              // );
                                               setdatapriority(item);
                                               setdatapriorityValue_Combobox(
                                                 item.id
@@ -2712,20 +2704,20 @@ React.useEffect(() => {
                                               if (onPriorityChange) {
                                                 onPriorityChange(item);
                                               }
-                                              console.log(
-                                                "เลือก priority:",
-                                                item.lov_code,
-                                                "Days:",
-                                                days
-                                              );
-                                              console.log(
-                                                "เลือก datapriority?.id:",
-                                                item.id
-                                              );
-                                              console.log(
-                                                "datapriorityValue_Combobox set to:",
-                                                item.id
-                                              );
+                                              // console.log(
+                                              //   "เลือก priority:",
+                                              //   item.lov_code,
+                                              //   "Days:",
+                                              //   days
+                                              // );
+                                              // console.log(
+                                              //   "เลือก datapriority?.id:",
+                                              //   item.id
+                                              // );
+                                              // console.log(
+                                              //   "datapriorityValue_Combobox set to:",
+                                              //   item.id
+                                              // );
                                             }}
                                             // disabled={
                                             //   isActionRead ||
@@ -2996,17 +2988,17 @@ React.useEffect(() => {
                                                       f.attachmentType ===
                                                         item.attachmentType
                                                   );
-                                                console.log(
-                                                  "🔍 Remove file debug:",
-                                                  {
-                                                    itemName: item.file.name,
-                                                    itemType:
-                                                      item.attachmentType,
-                                                    actualIndex,
-                                                    fileListLength:
-                                                      fileList.length,
-                                                  }
-                                                );
+                                                // console.log(
+                                                //   "🔍 Remove file debug:",
+                                                //   {
+                                                //     itemName: item.file.name,
+                                                //     itemType:
+                                                //       item.attachmentType,
+                                                //     actualIndex,
+                                                //     fileListLength:
+                                                //       fileList.length,
+                                                //   }
+                                                // );
                                                 if (actualIndex !== -1) {
                                                   handleRemoveFile(actualIndex);
                                                 }
@@ -3021,18 +3013,18 @@ React.useEffect(() => {
                                           <IconButton
                                             color="primary"
                                             onClick={() => {
-                                              console.log(
-                                                "full_path:",
-                                                item.full_path
-                                              );
-                                              console.log(
-                                                "file type:",
-                                                typeof item.file
-                                              );
-                                              console.log(
-                                                "file instanceof File:",
-                                                item.file instanceof File
-                                              );
+                                              // console.log(
+                                              //   "full_path:",
+                                              //   item.full_path
+                                              // );
+                                              // console.log(
+                                              //   "file type:",
+                                              //   typeof item.file
+                                              // );
+                                              // console.log(
+                                              //   "file instanceof File:",
+                                              //   item.file instanceof File
+                                              // );
 
                                               // ตรวจสอบว่าเป็นไฟล์ใหม่ (ไม่มี full_path) หรือไฟล์เก่า (มี full_path)
                                               if (item.full_path) {
@@ -3059,9 +3051,9 @@ React.useEffect(() => {
                                                   1000
                                                 );
                                               } else {
-                                                console.log(
-                                                  "Cannot preview file - no full_path or File object"
-                                                );
+                                                // console.log(
+                                                //   "Cannot preview file - no full_path or File object"
+                                                // );
                                               }
                                             }}
                                           >
@@ -3620,7 +3612,7 @@ React.useEffect(() => {
                                             onClick={(e) => {
                                               e.stopPropagation();
                                               // console.log("🧩 handleOnclickExplainView click:", { action, item });
-                                              console.log("🧩 item:", { item });
+                                              // console.log("🧩 item:", { item });
                                               handleOnclickExplainView &&
                                                 handleOnclickExplainView(
                                                   item,

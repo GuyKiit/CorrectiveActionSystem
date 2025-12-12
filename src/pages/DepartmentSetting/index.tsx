@@ -630,7 +630,7 @@ export default function DepartmentSetting() {
     //console.log("step:2 dataset ก่อนส่ง API /DeptSearch/DeptSearchGet ", dataset);
     try {
       let response = await _POST(dataset, "/DeptSetup/DeptSetupGet");
-      console.log("step:2 ผลลัพธ์ที่ได้จาก API /DeptSetup/DeptSetupGet ", response);
+      // console.log("step:2 ผลลัพธ์ที่ได้จาก API /DeptSetup/DeptSetupGet ", response);
       if (response && response.status === "success") {
 
         setIsLoadingScreen(false);
@@ -859,7 +859,7 @@ useEffect(() => {
   
   const handleOnclickDepartmentSettingAdd = () => {
     if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  handleOnclickDepartmentSettingAdd");
-    console.log("⭐step:3 เรียกฟังก์ชั่น ดูข้อมูล handleOnclickDepartmentSettingAdd ");
+    // console.log("⭐step:3 เรียกฟังก์ชั่น ดูข้อมูล handleOnclickDepartmentSettingAdd ");
     resetForm();
     setdataelement(null);
     setOpenDepartmentSettingAdd(true);
@@ -867,7 +867,7 @@ useEffect(() => {
 
   const handleOnclickDepartmentSettingView = (data: any) => {
     if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  handleOnclickDepartmentSettingView");
-    console.log("⭐step:3 เรียกฟังก์ชั่น ดูข้อมูล handleOnclickMenuView ", data);
+    // console.log("⭐step:3 เรียกฟังก์ชั่น ดูข้อมูล handleOnclickMenuView ", data);
     resetForm();
     Dept_setup_Get(data);
     setOpenDepartmentSettingView(true); // แล้วค่อยเปิด Dialog
@@ -875,7 +875,7 @@ useEffect(() => {
 
   const handleOnclickDepartmentSettingEdit = (data: any) => {
     if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  handleOnclickDepartmentSettingEdit");
-    console.log("⭐step:3 เรียกฟังก์ชั่น ดูข้อมูล handleOnclickDepartmentSettingEdit ", data);
+    // console.log("⭐step:3 เรียกฟังก์ชั่น ดูข้อมูล handleOnclickDepartmentSettingEdit ", data);
     resetForm();
     Dept_setup_Get(data);
     setOpenDepartmentSettingEdit(true);
@@ -883,7 +883,7 @@ useEffect(() => {
 
   const handleOnclickDepartmentSettingDelete = (data: any) => {
     if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  handleOnclickDepartmentSettingDelete");
-    console.log("⭐step:3 เรียกฟังก์ชั่น ดูข้อมูล handleOnclickDepartmentSettingDelete ", data);
+    // console.log("⭐step:3 เรียกฟังก์ชั่น ดูข้อมูล handleOnclickDepartmentSettingDelete ", data);
 
     resetForm();
     Dept_setup_Get(data);
@@ -931,7 +931,7 @@ useEffect(() => {
 
     const fetchData = async () => {
       try {
-        console.log("⭐Step [0] useEffect start");
+        // console.log("⭐Step [0] useEffect start");
         await LovAll_Get();                     // ไม่มี signal
         await resetSearchTable();
         await DeptSetupGet();
@@ -949,7 +949,7 @@ useEffect(() => {
   //ใช้สำหรับตอน Add
   React.useEffect(() => {
     if (dataset_activeCompany) {
-      console.log("⭐Step [1] ใช้สำหรับตอน Add 🔁 ActiveCompany พร้อมแล้ว → เรียก CompanyGet()");
+      // console.log("⭐Step [1] ใช้สำหรับตอน Add 🔁 ActiveCompany พร้อมแล้ว → เรียก CompanyGet()");
       CompanyGet();
     }
   }, [dataset_activeCompany]);
