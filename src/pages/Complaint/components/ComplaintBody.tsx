@@ -373,7 +373,6 @@ export default function ComplaintBody({
     setclauseOther,
     setphotoOther,
     setphoTypeOther,
-    setdatapriority,
 
     setreference_standard_other,
     setacknowledge_flag,
@@ -407,6 +406,7 @@ export default function ComplaintBody({
     setdataComplaintRsValue_Combobox,
     setdataphoto_Combobox,
     setdataphotoValue_Combobox,
+    setdatapriority,
     setdatapriority_Combobox,
     setdatapriorityValue_Combobox,
     setdataApprove_Combobox,
@@ -505,7 +505,7 @@ export default function ComplaintBody({
   const [dataComplaintType, setdataComplaintType] = useState<LovType[]>([]);
   const [dataComplaintRs, setdataComplaintRs] = useState<LovType[]>([]);
   const [dataphoto, setdataphoto] = useState<LovType[]>([]);
-  // const [datapriority, setdatapriority] = useState<LovType | null>(null);
+  //const [datapriority, setdatapriority] = useState<LovType | null>(null);
   const [files, setFiles] = useState<File[]>([]);
   const [fileAttachmentTypes, setFileAttachmentTypes] = useState<{
     [fileIndex: number]: string;
