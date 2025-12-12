@@ -56,7 +56,7 @@ export default function Profile({ isOpen }: Profile) {
   };
 
   const handleClose = () => {
-    console.log("#### userData : ", userData?.[0]);
+    // console.log("#### userData : ", userData?.[0]);
     setAnchorEl(null);
   };
 

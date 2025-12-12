@@ -132,9 +132,9 @@ const ActionManageCell: React.FC<ActionManageCellProps> = (props) => {
       {hasSubMenu && <span className="ml-auto">▶</span>}
     </MenuItem>
   );
-  console.log(menuFuncData,'menuFuncData');
-  console.log(hiddenExplain,'hiddenExplain');
-  console.log(hiddenClose,'🎏🎏🎏hiddenClose');
+  // console.log(menuFuncData,'menuFuncData');
+  // console.log(hiddenExplain,'hiddenExplain');
+  // console.log(hiddenClose,'🎏🎏🎏hiddenClose');
   
 // console.log('CHECK DATE el in ActionManageCell', menuFuncData)
   const filteredMenu = (menuFuncData ?? [])
@@ -154,7 +154,7 @@ const ActionManageCell: React.FC<ActionManageCellProps> = (props) => {
   // }, [])
     .sort((a, b) => (a ? a.menu_func_sequence ?? 9999 : 9999) - (b ? b.menu_func_sequence ?? 9999 : 9999));
 
-  console.log(role_id,'role_id', filteredMenu,'filteredMenu');
+  // console.log(role_id,'role_id', filteredMenu,'filteredMenu');
   return (
     <div>
       <IconButton

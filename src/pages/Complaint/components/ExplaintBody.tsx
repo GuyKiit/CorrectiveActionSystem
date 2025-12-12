@@ -173,16 +173,10 @@ type FileData = {
 export default function ExplaintBody({
   action,
   isItAdmin,
-  readonlyTextField,
-  bgcolorTextField,
   validateText,
-  onBlocksChange,
-  validateDetailText,
-  handleOpenAdd,
-  handleOnclickExplainView,
-  handleOnclickExplainApproveSc,
   currentExplainForApproval,
-
+  isViewMode = false,
+//====================Validate==================================//
   onFollowUpDateChange,
   onObsAnalyChange,
   onToolUseChange,
@@ -192,7 +186,6 @@ export default function ExplaintBody({
   onRootCauseChange,
   onCorrectiveActionChange,
   onPreventiveActionPlanChange,
-
   onApproveChange,
   onSCDetailChange,
   onSCNoteChange,
@@ -200,9 +193,18 @@ export default function ExplaintBody({
   onQCNoteChange,
   onCloseDetailChange,
   onCloseNoteChange,
+//====================Validate==================================//
 
-  isViewMode = false,
+//=======================Other=============================//
+  
   complaint_status_lable,
+  readonlyTextField,
+  bgcolorTextField,
+  onBlocksChange,
+  handleOpenAdd,
+  handleOnclickExplainView,
+  handleOnclickExplainApproveSc,
+  //=======================Other=============================//
 
   submitCount,
 }: ExplaintBody) {
@@ -232,49 +234,9 @@ export default function ExplaintBody({
   const isActionCloseAdd = action === "CloseAdd";
   const isActionReadClose = action === "ReadClose";
   const isActionCloseHistory = action === "CloseHistoryRead";
-  // const isActionRead = action === "Read" || isViewMode;
-  // const isActionAdd = action === "Add";
-  // const isActionEdit = action === "Edit";
-  // const isActionDelete = action === "Delete";
-  // // =====================================================
-  // const isActionExplain = action === "Explain";
-  // const isActionExplainAdd = action === "ExplainAdd";
-  // const isActionReadExplain = action === "ExplainRead";
-  // // =====================================================
-  // const isActionExplainApproveSc = action === "ApproveSC";
-  // const isActionExplainApproveScAdd = action === "ApproveScAdd";
-  // const isActionExplainReadApproveSc = action === "ReadApproveSc";
-  // // =====================================================
-  // const isActionExplainApproveQc = action === "ApproveQC";
-  // const isActionExplainApproveQcAdd = action === "ApproveQcAdd";
-  // const isActionExplainReadApproveQc = action === "ReadApproveQc";
-  // // =====================================================
-  // const isActionClose = action === "Close";
-  // const isActionCloseAdd = action === "CloseAdd";
-  // const isActionReadClose = action === "ReadClose";
-  // const isActionCloseHistory = action === "CloseHistory";
-
-  // ตั้งค่า isROOTHidden เป็น false เมื่ออยู่ในโหมดดูข้อมูล
-  React.useEffect(() => {
-    console.log("🟣🟣🟣🟣🟣🟣 [1] 🟣🟣🟣🟣🟣🟣");
-    if (action === "ExplainRead" || isViewMode) {
-      // setIsROOTHidden(false);
-    }
-  }, [action, isViewMode]);
-
+  // =====================================================
   const user = cleanAccessData("userSession");
-
-  const [openConfirm, setOpenConfirm] = useState(false);
-  const [deleteIndex, setDeleteIndex] = useState<number | null>(null);
-
-  // const handleConfirmDelete = () => {
-  //   if (deleteIndex !== null) {
-  //     handleRemoveFile(deleteIndex);
-  //     setDeleteIndex(null);
-  //   }
-  //   setOpenConfirm(false);
-  // };
-
+//⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐//
   const {
     dataelement,
     date_of_detection,
@@ -477,47 +439,26 @@ export default function ExplaintBody({
     setdataset_configfile,
     setdataFuapp,
   } = useListComplaint();
-
-  const [previewFile, setPreviewFile] = useState<File | null>(null);
-
-  const getPdfUrl = (file: File) => {
-    if (file.type === "application/pdf") {
-      return URL.createObjectURL(file);
-    }
-    return null;
-  };
-
-  // Utility Variables ======================================================
+ //⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐//
+    // Utility Variables ======================================================
   const { Customer } = useData();
   const { setIsLoadingScreen } = useLayout();
 
   // For On-Off Calling Function Log
   const [isCallFuncLogOn] = useState(true);
-
   // Get Master Variables ======================================================
-  const [filteredComplaintType, setFilteredComplaintType] = useState<LovType[]>(
-    []
-  );
-  const [filteredComplaintRs, setFilteredComplaintRs] = useState<LovType[]>([]);
-  const [filteredpriority, setFilteredpriority] = useState<LovType[]>([]);
+
   const [filteredphoto, setFilteredphoto] = useState<LovType[]>([]);
   const [filteredTooluse, setFilteredTooluse] = useState<LovType[]>([]);
   const [filteredDecision, setFilteredDecision] = useState<LovType[]>([]);
   const [filteredSecApprove, setFilteredSecApprove] = useState<LovType[]>([]);
   const [filteredQcApprove, setFilteredQcApprove] = useState<LovType[]>([]);
-  const [filteredFuApprove, setFilteredFuApprove] = useState<LovType[]>([]);
+  const [test, setTest] = useState<LovType[]>([]);
+  const [filteredFuApprove, setFilteredFuApprove] = useState<LovType[]>([]);//⭐
   // Value Variables ======================================================
   const [dataComplaintType, setdataComplaintType] = useState<LovType[]>([]);
-  const [dataComplaintRs, setdataComplaintRs] = useState<LovType[]>([]);
   const [dataphoto, setdataphoto] = useState<LovType[]>([]);
   const [datapriority, setdatapriority] = useState<LovType | null>(null);
-  const [files, setFiles] = useState<File[]>([]);
-  const [fileAttachmentTypes, setFileAttachmentTypes] = useState<{
-    [fileIndex: number]: string;
-  }>({});
-  const [fileOtherTexts, setFileOtherTexts] = useState<{
-    [fileIndex: number]: string;
-  }>({});
   const [fileList, setFileList] = useState<FileData[]>([]);
   const [request_department_id, setrequest_department_id] = React.useState<{
     itasset_department_id: number;
@@ -533,27 +474,6 @@ export default function ExplaintBody({
   const [isPAPHidden, setIsPAPHidden] = useState(true);
   const [isOBSAHidden, setIsOBSAHidden] = useState(true);
   const [isROOTHidden, setIsROOTHidden] = useState(false);
-  const [isApprovalHidden, setIsApprovalHidden] = useState(false);
-
-  const [isCasNumberHidden, setisCasNumberHidden] = useState(true);
-  const [isFactoryHidden, setisFactoryHidden] = useState(true);
-  const [isAreaOfDetectionHidden, setisAreaOfDetectionHidden] = useState(true);
-  const [isProductHidden, setisProductHidden] = useState(true);
-  const [isLotNoHidden, setisLotNoHidden] = useState(true);
-  const [isAttachmentsHidden, setisAttachmentsHidden] = useState(true);
-  const [isDocumentIssuanceHidden, setisDocumentIssuanceHidden] =
-    useState(true);
-  const [isDateOfDetection, setisDateOfDetection] = useState(true);
-  const [isRequiredResponseDateHidden, setisRequiredResponseDateHidden] =
-    useState(true);
-  const [isCTHidden, setisCTHidden] = useState(true);
-  const [isDetailHidden, setisDetailHidden] = useState(true);
-  const [isPriority, setisPriority] = useState(true);
-  const [isReportedByHidden, setisReportedByHidden] = useState(true);
-  const [isPositionHidden, setisPositionHidden] = useState(true);
-  const [isDepartmentHidden, setisDepartmentHidden] = useState(true);
-  const [isEmailHidden, setisEmailHidden] = useState(true);
-  const [isPhoneHidden, setisPhoneHidden] = useState(true);
 
   // สร้าง state สำหรับควบคุม Accordion
   const [isMinimizetoolOpen, setisMinimizeToolOpen] = useState(true);
@@ -565,89 +485,32 @@ export default function ExplaintBody({
   const [isMinimizefileOpen, setisMinimizeFileOpen] = useState(true);
   const [isMinimizesectionappOpen, setisMinimizeSectionappOpen] =
     useState(true);
-  const [isMinimizeqcappOpen, setisMinimizeQcappOpen] = useState(true);
   const [isMinimizedeappOpen, setisMinimizeDeappOpen] = useState(true);
   const [isMinimizeotappOpen, setisMinimizeOtappOpen] = useState(true);
   const [isMinimizedeapp2Open, setisMinimizeDeapp2Open] = useState(true);
-  const [isMinimizeotapp2Open, setisMinimizeOtapp2Open] = useState(true);
 
   const [isMinimizefuappOpen, setisMinimizeFuappOpen] = useState(true);
   const [isMinimizecloseOpen, setisMinimizeCloseOpen] = useState(true);
-  // const [currentExplainForApproval, setCurrentExplainForApproval] = useState<any>(null);
-  const [currentApproveData, setCurrentApproveData] = useState<any>(null);
-  // const [approveList, setApproveList] = useState<any[]>([]);
   const [foundSC, setFoundSC] = useState(null);
   const [foundQC, setFoundQC] = useState(null);
   const [foundCLOSE, setFoundCLOSE] = useState(null);
   const grouped = {
   config_file: dataset_configfile || [],
 };
-  // Function Handlers (On Change Event) ======================================================
-  const handleReportTypeChange = (val: LovType | null) => {
-    if (true)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  handleReportTypeChange"
-      );
-    console.log(": 😒Step : 01 handleReportTypeChange", val);
-
-    const code = val?.lov_code || "";
-
-    setIsFormHidden(["CAR", "OBS", "CPAR", "NCR"].includes(code));
-
-    // Use the centralized visibility function
-    setVisibilityByReportType(code);
-    setdataReportTypeValue(val);
-
-    setrespondent_domain_id(dataset_company[0]);
-    setrespondent_company_id(dataset_company[0]);
-    setcas_number("");
-
-    setdate_of_detection(null);
-    setrespondent_department_id(null);
-    setproduct_name("");
-    setlot_no("");
-    setrespondent_email("");
-    setdataComplaintTypeValue_Combobox(null);
-    setdataComplaintType([]);
-    setcompTypeOther("");
-    setdataComplaintRsValue_Combobox(null);
-    setcompRsOther("");
-    setclauseOther("");
-    setdetail("");
-    setdatapriorityValue_Combobox(null);
-    setdatapriority(null);
-    setrespond_date_within(null);
-    setdataphotoValue_Combobox(null);
-    setdataphoto([]);
-    setotherText("");
-    setphoTypeOther("");
-
-    setrequest_name("");
-    setrequest_position("");
-    setrequest_department_id(user);
-    setrequest_email("");
-    setrequest_phone("");
-    setrequest_domain_id(dataset_company[0]);
-    setrequest_company_id(dataset_company[0]);
-    setFileList([]);
-    setcomplaintFiles([]);
-    setdataToolUseValue(null);
-    setdataToolUse([]);
-    setdataDecision([]);
-
-    setresponsible_date(null);
-    setfollow_up_date(null);
-  };
-
 
   const TuRef = useRef<HTMLDivElement>(null);
   const DdRef = useRef<HTMLDivElement>(null);
-  // const priorityRef = useRef<HTMLDivElement>(null);
-
   const [firstErrorField, setFirstErrorField] = useState<string | null>(null);
-
+  //================================================================================================================================================//
+  
+  // ตั้งค่า isROOTHidden เป็น false เมื่ออยู่ในโหมดดูข้อมูล
+  React.useEffect(() => {
+    //console.log("Step:0",action, isViewMode);
+    if (action === "ExplainRead" || isViewMode) {
+      // setIsROOTHidden(false);
+    }
+  }, [action, isViewMode]);
+//=====================Validate================================//
   useEffect(() => {
       if (!validateText) return;
   
@@ -686,15 +549,15 @@ export default function ExplaintBody({
         setFirstErrorField(null);
       }
     }, [submitCount]);
-
+//=====================Validate================================//
   // CheckBox Tool used
   const handleCheckboxChangeTU = (item: LovType) => {
-    if (true)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  handleCheckboxChangeTU"
-      );
+    // if (true)
+    //   console.log(
+    //     "🕑 ",
+    //     dayjs().format("HH:mm:ss.SSS"),
+    //     " [Calling Function]  :  handleCheckboxChangeTU"
+    //   );
 
     setdataToolUse((prev: LovType[] = []) => {
       let newData: LovType[];
@@ -729,7 +592,6 @@ export default function ExplaintBody({
   };
 
   const setVisibilityByReportType = (reportTypeCode: string) => {
-    console.log("👌👌👌👌👌 CHECK VALUE : ", reportTypeCode, "👌👌👌👌👌");
 
     setIsTUHidden(["OBS"].includes(reportTypeCode));
 
@@ -742,33 +604,17 @@ export default function ExplaintBody({
     setIsPAPHidden(["NCR", "OBS", "CAR"].includes(reportTypeCode));
 
     setIsOBSAHidden(["NCR", "CAR", "CPAR"].includes(reportTypeCode));
-
-    console.log(
-      "👌👌👌👌👌 TRUE OR FALSE #1 : ",
-      ["OBS"].includes(reportTypeCode),
-      "👌👌👌👌👌"
-    );
-    console.log(
-      "👌👌👌👌👌 TRUE OR FALSE #2 : ",
-      ["NCR", "OBS"].includes(reportTypeCode),
-      "👌👌👌👌👌"
-    );
-    console.log("👌👌👌👌👌 IsTUHidden : ", isTUHidden, "👌👌👌👌👌");
-    console.log("👌👌👌👌👌 IsDDHidden : ", isDDHidden, "👌👌👌👌👌");
-    console.log("👌👌👌👌👌 IsROOTHidden : ", isROOTHidden, "👌👌👌👌👌");
-    console.log("👌👌👌👌👌 IsCAHidden : ", isCAHidden, "👌👌👌👌👌");
-    console.log("👌👌👌👌👌 IsPAPHidden : ", isPAPHidden, "👌👌👌👌👌");
-    console.log("👌👌👌👌👌 IsOBSAHidden : ", isOBSAHidden, "👌👌👌👌👌");
+   
   };
 
   // Check Box DD
   const handleCheckboxChangeDD = (item: LovType) => {
-    if (true)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  handleCheckboxChangeDD"
-      );
+    // if (true)
+    //   console.log(
+    //     "🕑 ",
+    //     dayjs().format("HH:mm:ss.SSS"),
+    //     " [Calling Function]  :  handleCheckboxChangeDD"
+    //   );
 
     setdataDecision((prev: LovType[] = []) => {
       //console.log("💚💚item", item);
@@ -820,27 +666,14 @@ export default function ExplaintBody({
     return newData;
   };
 
-  // ฟังก์ชัน handleCheckboxChangeTooluse
-  const handleCheckboxChangeTooluse = (item: LovType) => {
-    setdataTooluseCheckbox((prev: LovType[] = []) => {
-      let newData: LovType[];
-      if (prev.some((c) => c.id === item.id)) {
-        newData = prev.filter((c) => c.id !== item.id);
-      } else {
-        newData = [...prev, item];
-      }
-      return newData;
-    });
-  };
-
   // รับ ComplaintFile[] จาก BrowseFileUpload
   const handleFileChange = (fileArray: ComplaintFile[]) => {
-    if (true)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  handleFileChange"
-      );
+    // if (true)
+    //   console.log(
+    //     "🕑 ",
+    //     dayjs().format("HH:mm:ss.SSS"),
+    //     " [Calling Function]  :  handleFileChange"
+    //   );
 
     if (!fileArray || fileArray.length === 0) return;
     const updatedList = [...fileList, ...fileArray];
@@ -850,12 +683,12 @@ export default function ExplaintBody({
 
   // Functions (Initial, Calculation or ETC.) =================================================
   const resetForm = () => {
-    if (true)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  resetForm"
-      );
+    // if (true)
+    //   console.log(
+    //     "🕑 ",
+    //     dayjs().format("HH:mm:ss.SSS"),
+    //     " [Calling Function]  :  resetForm"
+    //   );
 
     setdataReportTypeValue("");
     setcas_number("");
@@ -883,12 +716,12 @@ export default function ExplaintBody({
 
   // ลบไฟล์
   const handleRemoveFile = (index: number) => {
-    if (true)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  handleRemoveFile"
-      );
+    // if (true)
+    //   console.log(
+    //     "🕑 ",
+    //     dayjs().format("HH:mm:ss.SSS"),
+    //     " [Calling Function]  :  handleRemoveFile"
+    //   );
 
     setFileList((prev) => {
       const updatedList = prev.filter((_, i) => i !== index);
@@ -896,22 +729,22 @@ export default function ExplaintBody({
     });
   };
   useEffect(() => {
-    console.log("🟣🟣🟣🟣🟣🟣 [2] 🟣🟣🟣🟣🟣🟣");
+    //console.log("Step:01", filteredTooluse, fileList);
     setcomplaintFiles(fileList); // sync
   }, [fileList, filteredTooluse]);
 
   // Get File
   const ComplaintFile_Get = async () => {
-    if (true)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  ComplaintFile_Get"
-      );
+    // if (true)
+    //   console.log(
+    //     "🕑 ",
+    //     dayjs().format("HH:mm:ss.SSS"),
+    //     " [Calling Function]  :  ComplaintFile_Get"
+    //   );
 
     // ตรวจสอบว่ามี dataelement?.id หรือไม่  ไม่error หากไม่มีไฟล์
     if (!dataelement?.id) {
-      console.log("No complaint ID, skipping file fetch");
+      // console.log("No complaint ID, skipping file fetch");
       setFileList([]);
       setcomplaintFiles([]);
       return;
@@ -925,16 +758,16 @@ export default function ExplaintBody({
 
     try {
       let response = await _POST(dataset, "/ComplaintFile/ComplaintFileGet");
-      console.log(response, "response_Get");
+      //console.log(response, "response_Get");
       if (response && response.status === "success") {
         setIsLoadingScreen(false);
         const responseData: any = [];
 
         if (Array.isArray(response.data) && response.data.length > 0) {
-          console.log(
-            "################# FILE #######################:",
-            response.data
-          ); // เช็คว่ามีกี่แถวจริง ๆ
+          // console.log(
+          //   "################# FILE #######################:",
+          //   response.data
+          // ); // เช็คว่ามีกี่แถวจริง ๆ
 
           const mappedFiles: ComplaintFile[] = response.data.map(
             (file: any) => ({
@@ -956,18 +789,18 @@ export default function ExplaintBody({
           setcomplaintFiles(mappedFiles);
         } else {
           // ไม่มีไฟล์
-          console.log("No files found");
+          // console.log("No files found");
           setFileList([]);
           setcomplaintFiles([]);
         }
       } else {
         // Response ไม่สำเร็จ
-        console.log("Failed to get files:", response);
+        // console.log("Failed to get files:", response);
         setFileList([]);
         setcomplaintFiles([]);
       }
     } catch (e) {
-      console.log("Error getting files:", e);
+      // console.log("Error getting files:", e);
       setFileList([]);
       setcomplaintFiles([]);
     } finally {
@@ -975,12 +808,12 @@ export default function ExplaintBody({
     }
   };
   const ExplaintApprove_Get = async (explain_id: string) => {
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        "[Calling Function] : ExplaintApprove_Get"
-      );
+    // if (isCallFuncLogOn)
+    //   console.log(
+    //     "🕑 ",
+    //     dayjs().format("HH:mm:ss.SSS"),
+    //     "[Calling Function] : ExplaintApprove_Get"
+    //   );
 
     if (!explain_id) return [];
 
@@ -992,7 +825,7 @@ export default function ExplaintBody({
         dataset,
         "/ExplaintApprove/ExplaintApproveGet"
       );
-      console.log("📡 Response ExplaintApprove_Get:", response.data);
+      //console.log("📡 Response ExplaintApprove_Get:", response.data);
 
       if (response?.status === "success") {
         setApproveList(response.data || []);
@@ -1007,12 +840,64 @@ export default function ExplaintBody({
     }
   };
 
-  //===================================================================================================
-  //===================================================================================================
+  const setExplainDD = (data: any) => {
+    // if (true)
+    //   console.log(
+    //     "🕑 ",
+    //     dayjs().format("HH:mm:ss.SSS"),
+    //     " [Calling Function]  :  setExplainDD"
+    //   );
+
+    const newData: any[] = [];
+    Array.isArray(data) &&
+      data.forEach((el) => {
+        const filter = dataDecision_Combobox.find(
+          (item: any) => item.id === el.explain_dd_id
+        );
+
+        if (filter) {
+          newData.push({
+            ...filter,
+            other: el.other || "", // ⭐ เก็บค่าข้อความ Other มาด้วย
+          });
+        }
+      });
+    return newData;
+  };
+  
+  const getApproveDetailLabel = (approveData: any) => {
+    if (!approveData) return "หมายเหตุการอนุมัติ";
+    
+    // Check lov2 for REJECT status as per user request
+    if (approveData.lov2 === "REJECT") {
+      return "หมายเหตุการปฏิเสธ";
+    }
+    else if (approveData.lov2 === "APPROVE") {
+      return "หมายเหตุการอนุมัติ";
+    }
+    // Fallback for legacy or other codes if needed (preserving user's manual "ADD" check if relevant, but prioritizing lov2)
+    // const code = approveData.lov_code?.toUpperCase();
+    // if (code === "ADD" || code === "REJECT") {
+    //    return "หมายเหตุการไม่อนุมัติ";
+    // }
+    // return "หมายเหตุการอนุมัติ";
+  };
+
+  const getCloseDetailLabel = (approveData: any) => {
+    if (!approveData) return "หมายเหตุการปิด";
+    
+    // Check lov2 for REJECT status as per user request
+    if (approveData.lov2 === "REJECT") {
+      return "หมายเหตุการปฏิเสธ";
+    }
+    else if (approveData.lov2 === "APPROVE") {
+      return "หมายเหตุการปิดรายการ";
+    }
+  };
   //===================================================================================================
 
   React.useEffect(() => {
-    console.log("🟣🟣🟣🟣🟣🟣 [3] 🟣🟣🟣🟣🟣🟣");
+    //console.log("Step:02", action, dataelement);
     const updateData = async () => {
       // ================================
       // Map ค่า default ของ company
@@ -1038,12 +923,12 @@ export default function ExplaintBody({
         Array.isArray(dataset_department) &&
         dataelement?.respondent_department_id
       ) {
-        console.log(
-          "🗺️ Looking for department with ID:",
-          dataelement.respondent_department_id
-        );
-        console.log("🗺️ Available departments:", dataset_department);
-        console.log("🗺️🗺️🗺️ filteredTooluse:", filteredTooluse);
+        // console.log(
+        //   "🗺️ Looking for department with ID:",
+        //   dataelement.respondent_department_id
+        // );
+        // console.log("🗺️ Available departments:", dataset_department);
+        // console.log("🗺️🗺️🗺️ filteredTooluse:", filteredTooluse);
 
         const mappedDept = await setValueMas(
           dataset_department,
@@ -1051,7 +936,7 @@ export default function ExplaintBody({
           "department_id"
         );
 
-        console.log("🗺️ Mapped department result:", mappedDept);
+        // console.log("🗺️ Mapped department result:", mappedDept);
         if (mappedDept) {
           setrespondent_department_id(mappedDept); // ค่า default ของ Combobox
         } else {
@@ -1101,11 +986,11 @@ export default function ExplaintBody({
         Array.isArray(dataset_department) &&
         dataelement?.responsible_department_id
       ) {
-        console.log(
-          "🗺️ Looking for department with ID:",
-          dataelement.responsible_department_id
-        );
-        console.log("😡 Available departments:", dataset_department);
+        // console.log(
+        //   "🗺️ Looking for department with ID:",
+        //   dataelement.responsible_department_id
+        // );
+        // console.log("😡 Available departments:", dataset_department);
 
         const mappedDept = await setValueMas(
           dataset_department,
@@ -1113,7 +998,7 @@ export default function ExplaintBody({
           "department_id"
         );
 
-        console.log("🗺️ Mapped department result:", mappedDept);
+        // console.log("🗺️ Mapped department result:", mappedDept);
         if (mappedDept) {
           setresponsible_department_id(mappedDept); // ค่า default ของ Combobox
         } else {
@@ -1144,89 +1029,76 @@ export default function ExplaintBody({
             !dataReportTypeValue ||
             dataReportTypeValue.id !== defaultVal.id
           ) {
-            console.log("🔍 ExplaintBody - Setting Report Type:", defaultVal);
+            // console.log("🔍 ExplaintBody - Setting Report Type:", defaultVal);
             setdataReportTypeValue(defaultVal);
           }
         } else {
-          console.log(
-            "🔍 ExplaintBody - No matching Report Type found for:",
-            dataelement?.report_type
-          );
+          // console.log(
+          //   "🔍 ExplaintBody - No matching Report Type found for:",
+          //   dataelement?.report_type
+          // );
         }
       }
       
       // Always prepare Follow-up approve options (not dependent on report type)
-      const fuApproveAll = (dataApprove_Combobox || []).filter(
-        (item: LovType) => item.lov_type === "approve_select"
-      );
-      setFilteredFuApprove((prev: LovType[]) => {
-        if (JSON.stringify(prev) !== JSON.stringify(fuApproveAll))
-          return fuApproveAll;
-        return prev;
-      });
+      // const fuApproveAll = (dataApprove_Combobox || []).filter(
+      //   (item: LovType) => item.lov_type === "approve_select"
+      // );
+      // setFilteredFuApprove((prev: LovType[]) => {
+      //   if (JSON.stringify(prev) !== JSON.stringify(fuApproveAll))
+      //     return fuApproveAll;
+      //   return prev;
+      // });
 
       // 4) ถ้ามี dataReportTypeValue (จาก state หรือ เพิ่ง set ข้างบน) ให้กรอง complaint/attach/reference
       const reportTypeToUse = dataReportTypeValue; // ใช้ state ปัจจุบัน (ซึ่งเราเพิ่งอาจจะ set)
       if (reportTypeToUse) {
         const val = reportTypeToUse;
-        console.log("### CHECK [val] : ", val);
+        // console.log("Step:04### CHECK [val] : ", val);
 
-        const newFilteredSecApprove = 
+        // const newFilteredSecApprove = (dataApprove_Combobox || []).filter(
+        //   (item: LovType) => item.lov_type === "approve_select"
+        // );
+        // setFilteredSecApprove((prev: LovType[]) => {
+        //   if (JSON.stringify(prev) !== JSON.stringify(newFilteredSecApprove))
+        //     return newFilteredSecApprove;
+        //   return prev;
+        // });
+
+        // const newFilteredQcApprove = (dataApprove_Combobox || []).filter(
+        //   (item: LovType) => item.lov_type === "approve_select"
+        // );
+        // setFilteredQcApprove((prev: LovType[]) => {
+        //   if (JSON.stringify(prev) !== JSON.stringify(newFilteredQcApprove))
+        //     return newFilteredQcApprove;
+        //   return prev;
+        // });
+
+        // // Follow-up approve options
+        // const newFilteredFuApprove = (dataApprove_Combobox || []).filter(
+        //   (item: LovType) => item.lov_type === "approve_select" 
+        // );
+
+        // setFilteredFuApprove((prev: LovType[]) => {
+        //   if (JSON.stringify(prev) !== JSON.stringify(newFilteredFuApprove))
+        //     return newFilteredFuApprove;
+        //   return prev;
+        // });
+
+        const newFilteredToolUse = 
         isItAdmin ?
-        (dataApprove_Combobox || []).filter(
-          (item: LovType) => item.lov_type === "approve_select" && item.lov_group == dataelement?.responsible_company_id
+        (dataToolUse_Combobox || []).filter(
+          (item: LovType) => item.lov_type === "tool_use" && item.lov_group == dataelement?.responsible_company_id
         )
         :
-        (dataApprove_Combobox || []).filter(
-          (item: LovType) => item.lov_type === "approve_select"
-        );
-        setFilteredSecApprove((prev: LovType[]) => {
-          if (JSON.stringify(prev) !== JSON.stringify(newFilteredSecApprove))
-            return newFilteredSecApprove;
-          return prev;
-        });
-
-        const newFilteredQcApprove = 
-        isItAdmin ?
-        (dataApprove_Combobox || []).filter(
-          (item: LovType) => item.lov_type === "approve_select" && item.lov_group == dataelement?.responsible_company_id
-        )
-        :
-        (dataApprove_Combobox || []).filter(
-          (item: LovType) => item.lov_type === "approve_select"
-        );
-        setFilteredQcApprove((prev: LovType[]) => {
-          if (JSON.stringify(prev) !== JSON.stringify(newFilteredQcApprove))
-            return newFilteredQcApprove;
-          return prev;
-        });
-
-        // Follow-up approve options
-        const newFilteredFuApprove = 
-        isItAdmin ?
-        (dataApprove_Combobox || []).filter(
-          (item: LovType) => item.lov_type === "approve_select" && item.lov_group == dataelement?.responsible_company_id
-        )
-        :
-        (dataApprove_Combobox || []).filter(
-          (item: LovType) => item.lov_type === "approve_select" 
-        );
-
-        setFilteredFuApprove((prev: LovType[]) => {
-          if (JSON.stringify(prev) !== JSON.stringify(newFilteredFuApprove))
-            return newFilteredFuApprove;
-          return prev;
-        });
-
-        const newFilteredToolUse = (dataToolUse_Combobox || []).filter(
+        (dataToolUse_Combobox || []).filter(
           (item: LovType) => item.lov_type === "tool_use"
-        );
+        )
         setFilteredTooluse((prev: LovType[]) => {
           if (JSON.stringify(prev) !== JSON.stringify(newFilteredToolUse))
             return newFilteredToolUse;
           return prev;
         });
-        console.log("### CHECK VALUE [filteredTooluse] : ", filteredTooluse);
 
         const newFilteredPhoto = (dataphoto_Combobox || []).filter(
           (item: LovType) => item.lov_type === "attach_type"
@@ -1238,9 +1110,18 @@ export default function ExplaintBody({
         });
 
         if (val.lov_code === "NCR") {
-          const newFilteredDecision = (dataDecision_Combobox || []).filter(
+          const newFilteredDecision = 
+        isItAdmin ?
+          (dataDecision_Combobox || []).filter(
+            (item: LovType) => item.lov_type === "decision_disposition" && item.lov_group == dataelement?.responsible_company_id
+          )
+          :
+          (dataDecision_Combobox || []).filter(
             (item: LovType) => item.lov_type === "decision_disposition"
-          );
+          )
+
+        // console.log("t1 : ", filteredDecision);
+        // console.log("t2 : ", dataelement);
           setFilteredDecision((prev: LovType[]) => {
             if (JSON.stringify(prev) !== JSON.stringify(newFilteredDecision))
               return newFilteredDecision;
@@ -1256,6 +1137,7 @@ export default function ExplaintBody({
         setFilteredQcApprove([]);
         setFilteredSecApprove([]);
         setFilteredphoto([]);
+        
         // หมายเหตุ: filteredpriority เรา update ข้างบนแล้ว
       }
     };
@@ -1281,7 +1163,7 @@ export default function ExplaintBody({
 
   ////////////////////////// Set ค่า User Approve  //////////////////////////
   React.useEffect(() => {
-    console.log("🟣🟣🟣🟣🟣🟣 [4] 🟣🟣🟣🟣🟣🟣");
+    //console.log("Step:03", action, dataelement, approveList);
     if (!user?.[0]) return; // รอ user โหลดก่อน
 
     // Variable
@@ -1390,15 +1272,7 @@ export default function ExplaintBody({
 
   //////////////////////// Approve Read //////////////////////////
   React.useEffect(() => {
-    console.log("🟣🟣🟣🟣🟣🟣 [5] 🟣🟣🟣🟣🟣🟣");
-    console.log("🥰ขั้นตอน: 5 เก็บข้อมูลเข้า ฺเต็dataelement ใหม่ ", dataelement);
-    console.log("ขั้นตอน: 5 เก็บข้อมูลเข้า approveList ใหม่ ", approveList);
-    // console.log("ขั้นตอน: 5 ", approveList[0].approve_name);
-    // console.log("ขั้นตอน: 5 ", approve_email);
-    // console.log("ขั้นตอน: 5 ", approve_company_id);
-    // console.log("ขั้นตอน: 5 ", approve_department_id);
-    // console.log("action", action);
-    // console.log("approve_note", approve_note);
+    // console.log("Step:02", action, dataelement, approveList);
 
     if (
       dataelement &&
@@ -1453,12 +1327,12 @@ export default function ExplaintBody({
       const qcApprove = approveList?.find(
         (x: any) => x.explain_id === dataelement?.id && x.approve_seq === 2
       );
-      console.log("qcApprove", qcApprove);
+      // console.log("qcApprove", qcApprove);
 
       const closeItem = explainList?.find(
       (x:any) => x.id === dataelement?.id && ["REJECT","ADD"].includes(x.close_status)
       );
-      console.log("🔥 explainList", explainList);
+      // console.log("🔥 explainList", explainList);
 
       // Set explain fields
       setobservation_analysis(dataelement?.observation_analysis || "");
@@ -1495,16 +1369,6 @@ export default function ExplaintBody({
         setapprove_detail(scApprove?.approve_detail || "");
         setapprove_note(scApprove?.approve_note || "");
       }
-
-      
-      // console.log("scApprove?.approve_note", scApprove?.approve_note);
-      // console.log("scApprove?.approve_detail", scApprove?.approve_detail);
-      // console.log("scApprove?.approve_email", scApprove?.approve_email);
-      // console.log("scApprove?.approve_position", scApprove?.approve_position);
-
-      // setdataSectionapp(dataApprove_Combobox.find((item: any) => item.lov_code === approveList[1]?.approve_status) || null);
-      // setqcapprove_detail(approveList[1]?.approve_detail || "");
-      console.log("qcapprove_detail", qcapprove_detail);
 
       // Set visibility based on report type from dataelement
       if (dataelement.report_type) {
@@ -1548,12 +1412,28 @@ export default function ExplaintBody({
             setqcapprove_department_id(qcDepartment);
           }
         }
-        setdataQcapp(
-          dataApprove_Combobox.find(
-            (item: any) => item.lov_code === qcApprove?.approve_status
-          ) || null
-        );
 
+        // Set QC approve radio (dataQcapp) with filtering logic      
+        let result = null;
+              
+        if (isItAdmin) {
+          // ✅ เฉพาะ IT Admin: กรองตาม approve_company_id → lov_group
+          const approveCompanyId = qcApprove?.approve_company_id;
+        
+          result =
+            dataApprove_Combobox
+              .filter((item: any) => Number(item.lov_group) === Number(approveCompanyId))
+              .find((item: any) => item.lov_code === qcApprove?.approve_status) || null;
+        
+        } else {
+          // ✅ แบบเดิม: จับแค่ lov_code
+          result =
+            dataApprove_Combobox.find(
+              (item: any) => item.lov_code === qcApprove?.approve_status
+            ) || null;
+        }
+      
+        setdataQcapp(result);
 
         // Set other QC approve fields
         if (qcApprove?.approve_position) {
@@ -1570,62 +1450,45 @@ export default function ExplaintBody({
         }
         if (qcApprove?.approve_note) {
           setqcapprove_note(qcApprove.approve_note);
-        }
-
-        // Set QC approve radio (dataQcapp) from dataelement
-        // Try multiple possible field names for QC approve status
-        const qcApproveStatus =
-          dataelement?.approve_status ||
-          dataelement?.qc_approve_status ||
-          dataelement?.qc_approve_status_code ||
-          dataelement?.approve_status_qc;
-
-        // if (qcApproveStatus && dataApprove_Combobox?.length > 0) {
-        //   const qcApproveItem = dataApprove_Combobox.find(
-        //     (item: LovType) =>
-        //       String(item.id) === String(qcApproveStatus) ||
-        //       item.lov_code === qcApproveStatus ||
-        //       String(item.lov_code) === String(qcApproveStatus) ||
-        //       item.lov1 === qcApproveStatus
-        //   );
-        //   if (qcApproveItem) {
-        //     setdataQcapp(qcApproveItem);
-        //     console.log(
-        //       "✅ QC Approve radio loaded from dataelement:",
-        //       qcApproveItem
-        //     );
-        //   } else {
-        //     console.log(
-        //       "⚠️ QC Approve item not found in dataelement for status:",
-        //       qcApproveStatus
-        //     );
-        //   }
-        // }
-//         if (close) {
-//   setclose_name(close?.close_name ?? "");
-//   setclose_company_id(
-//     dataset_company.find((c: any) => Number(c.company_id) === close.close_company_id) || null
-//   );
-//   setclose_department_id(
-//     dataset_department.find((d: any) => Number(d.department_id) === close.close_department_id) || null
-//   );
-//   setclose_position(close?.close_position ?? "");
-//   setclose_email(close?.close_email ?? "");
-//   setclose_date(close?.close_date ? dayjs(close.close_date) : null);
-//   setdataFuapp(
-//     dataApprove_Combobox.find((item: any) => item.lov_code === close.close_status) || null
-//   );
-//   setclose_detail(close?.close_detail ?? "");
-//   setclose_note(close?.close_note ?? "");
-// }
+        }        
       }
       setFoundSC(scApprove || null);
       setFoundQC(qcApprove || null);
-      // setFoundCLOSE(close || null);
-      console.log("foundSC:", foundSC);
-      console.log("foundQC:", foundQC);
-      console.log("foundCLOSE:", foundCLOSE);
+    
       // Process ToolUse data - wait until combobox loaded
+      // Filter Sec Approve
+      const secFiltered = isItAdmin
+        ? dataApprove_Combobox.filter(
+            (item:any) =>
+              item.lov_type === "approve_select" &&
+              item.lov_group == (scApprove?.approve_company_id ?? "")
+          )
+        : dataApprove_Combobox.filter(
+            (item:any) => item.lov_type === "approve_select"
+          );
+        
+      setFilteredSecApprove(secFiltered);
+        
+      // Filter QC Approve
+      const qcFiltered = isItAdmin
+  ? (
+      qcApprove?.approve_company_id
+        ? dataApprove_Combobox.filter(
+            (item:any) =>
+              item.lov_type === "approve_select" &&
+              item.lov_group == qcApprove.approve_company_id
+          )
+        : dataApprove_Combobox.filter(
+            (item:any) => item.lov_type === "approve_select"
+          )
+    )
+  : dataApprove_Combobox.filter(
+      (item:any) => item.lov_type === "approve_select"
+    );
+// console.log("Step:03 qcFilteredqcFiltered",qcFiltered);
+setTest(qcFiltered)
+setFilteredQcApprove(qcFiltered);
+
     }
   }, [
     dataelement,
@@ -1636,12 +1499,11 @@ export default function ExplaintBody({
     isActionCloseAdd,
     isActionClose,
     isActionCloseHistory,
-    approveList,
-    // dataTooluse,
-    // dataDecision,
+    approveList, 
   ]);
 
   React.useEffect(() => {
+
   if (!explainList?.length || !dataelement) return;
 
   const closeItem = explainList?.find(
@@ -1654,9 +1516,6 @@ export default function ExplaintBody({
     setFoundCLOSE(closeItem);
 
     setclose_name(closeItem?.return_name ?? "");
-     console.log("closeItem", closeItem);           // ✅ ต้องมี object
-     console.log("dataset_department", dataset_department);           // ✅ ต้องมี object
-  console.log("closeItem.return_name", closeItem?.return_name ?? ""); // ✅ ต้องมีค่า
     setclose_company_id(
       dataset_company.find((c:any) => Number(c.company_id) === closeItem.return_company_id) || null
     );
@@ -1676,17 +1535,13 @@ export default function ExplaintBody({
 
   
   useEffect(() => {
-  console.log("foundSC:", foundSC);
-  console.log("foundQC:", foundQC);
-  console.log("foundCLOSE:", foundCLOSE);
-  console.log("dataelement.id", dataelement?.id);
-console.log("dataelement.explain_id", dataelement?.explain_id);
 
 }, [foundSC, foundQC, foundCLOSE]);
-  
+ 
 
   // 🔹 Load QC approve data and radio when in CloseAdd mode
   React.useEffect(() => {
+    
     if (
       !isActionCloseAdd ||
       !currentExplainForApproval ||
@@ -1703,28 +1558,7 @@ console.log("dataelement.explain_id", dataelement?.explain_id);
         // หา QC approve record (approve_seq === 2)
         const qcApprove = approveData.find(
           (item: any) => item.approve_seq === 2
-        );
-
-        // if (qcApprove && qcApprove.approve_status) {
-        //   // Set QC approve radio (dataQcapp) from approve_status
-        //   const qcApproveItem = dataApprove_Combobox.find(
-        //     (item: any) =>
-        //       item.lov_code === qcApprove.approve_status ||
-        //       item.id === qcApprove.approve_status ||
-        //       String(item.id) === String(qcApprove.approve_status)
-        //   );
-
-        //   if (qcApproveItem) {
-        //     setdataQcapp(qcApproveItem);
-        //     console.log("✅ QC Approve radio loaded:", qcApproveItem);
-        //   } else {
-        //     console.log(
-        //       "⚠️ QC Approve item not found for status:",
-        //       qcApprove.approve_status
-        //     );
-        //     console.log("📋 Available approve items:", dataApprove_Combobox);
-        //   }
-        // }
+        );      
       }
     };
 
@@ -1732,6 +1566,8 @@ console.log("dataelement.explain_id", dataelement?.explain_id);
   }, [isActionCloseAdd, currentExplainForApproval, dataApprove_Combobox]);
 
   React.useEffect(() => {
+
+    
     if (
       !dataelement ||
       !(dataelement?.ToolUse || dataelement?.tooluse || dataelement?.explainTu)
@@ -1742,10 +1578,10 @@ console.log("dataelement.explain_id", dataelement?.explain_id);
       Array.isArray(dataToolUse_Combobox) && dataToolUse_Combobox.length > 0;
     if (!isComboReady) return;
 
-    console.log("🔧 [Effect: ToolUse prefill check]", {
-      isComboReady,
-      currentSelected: (dataTooluse || []).length,
-    });
+    // console.log("🔧 [Effect: ToolUse prefill check]", {
+    //   isComboReady,
+    //   currentSelected: (dataTooluse || []).length,
+    // });
 
     if (dataTooluse && dataTooluse.length > 0) return; // กัน loop
 
@@ -1777,6 +1613,7 @@ console.log("dataelement.explain_id", dataelement?.explain_id);
   }, [dataelement, dataToolUse_Combobox]); // ✅ แค่สองตัวนี้
 
   React.useEffect(() => {
+    //console.log("Step:09", dataelement, dataDecision_Combobox);
     if (!dataelement || !(dataelement?.Decision || dataelement?.explainDd))
       return;
 
@@ -1809,13 +1646,11 @@ console.log("dataelement.explain_id", dataelement?.explain_id);
 
   // Debug useEffect for dataTooluseCheckbox state changes
   React.useEffect(() => {
-    console.log("🟣🟣🟣🟣🟣🟣 [6] 🟣🟣🟣🟣🟣🟣");
-    console.log("🔧 dataTooluseCheckbox state changed:", dataTooluseCheckbox);
+    //console.log("step:10 dataTooluseCheckbox changed:", dataTooluseCheckbox);
   }, [dataTooluseCheckbox]);
 
   React.useEffect(() => {
-    console.log("🟣🟣🟣🟣🟣🟣 [7] 🟣🟣🟣🟣🟣🟣");
-    console.log("🟡 current action:", action);
+    //console.log("step:11 Action change detected:", action);
     if (
       (action === "ExplainRead" ||
         action === "ApproveSCAdd" ||
@@ -1827,19 +1662,19 @@ console.log("dataelement.explain_id", dataelement?.explain_id);
     }
   }, [action, dataelement]);
   const setExplainTU = (data: any) => {
-    if (true)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  setExplainTU"
-      );
-    console.log("🔍 setExplainTU input data:", data);
-    console.log("🔍 dataToolUse_Combobox available:", dataToolUse_Combobox);
+    // if (true)
+      // console.log(
+      //   "🕑 ",
+      //   dayjs().format("HH:mm:ss.SSS"),
+      //   " [Calling Function]  :  setExplainTU"
+      // );
+    // console.log("🔍 setExplainTU input data:", data);
+    // console.log("🔍 dataToolUse_Combobox available:", dataToolUse_Combobox);
 
     const newData: any[] = [];
     if (Array.isArray(data)) {
       data.forEach((el, index) => {
-        console.log(`🔍 Processing Tools Used item ${index}:`, el);
+        //console.log(`🔍 Processing Tools Used item ${index}:`, el);
         // Support multiple possible key names from API: explain_tu_id, tool_use_id, id
         const targetId =
           (el &&
@@ -1849,14 +1684,14 @@ console.log("dataelement.explain_id", dataelement?.explain_id);
         const filter = dataToolUse_Combobox.find(
           (item: any) => String(item.id) === String(targetId)
         );
-        console.log(`🔍 Found matching tool for ${targetId}:`, filter);
+        //console.log(`🔍 Found matching tool for ${targetId}:`, filter);
 
         if (filter) {
           const processedItem = {
             ...filter,
             other: el.other || "", // ⭐ เก็บค่าข้อความ Other มาด้วย
           };
-          console.log(`🔍 Adding processed item:`, processedItem);
+          //console.log(`🔍 Adding processed item:`, processedItem);
           newData.push(processedItem);
         } else {
           console.warn(`🚫 No matching tool found for targetId: ${targetId}`);
@@ -1866,81 +1701,21 @@ console.log("dataelement.explain_id", dataelement?.explain_id);
       console.warn("🚫 setExplainTU input data is not an array:", data);
     }
 
-    console.log("🔍 setExplainTU returning:", newData);
-    return newData;
-  };
-
-  const setExplainDD = (data: any) => {
-    if (true)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  setExplainDD"
-      );
-
-    const newData: any[] = [];
-    Array.isArray(data) &&
-      data.forEach((el) => {
-        const filter = dataDecision_Combobox.find(
-          (item: any) => item.id === el.explain_dd_id
-        );
-
-        if (filter) {
-          newData.push({
-            ...filter,
-            other: el.other || "", // ⭐ เก็บค่าข้อความ Other มาด้วย
-          });
-        }
-      });
+    //console.log("🔍 setExplainTU returning:", newData);
     return newData;
   };
 
   React.useEffect(() => {
-    console.log("🟣🟣🟣🟣🟣🟣 [7] 🟣🟣🟣🟣🟣🟣");
+    //console.log("Step:12 Action change detected for ComplaintFile_Get:", action);
     if ((isActionExplainRead || isActionReadExplain || isActionExplainApproveScRead|| isActionExplainApproveQcRead || isActionReadClose) && dataelement?.id) {
       ComplaintFile_Get();
     }
   }, [action, dataelement]);
 
-  console.log("complaint_status_id", complaint_status_id);
-
-  console.log("Actionnnnnnn", action);
-  console.log("isActionExplainReadApproveSc", isActionExplainReadApproveSc);
-  console.log("isActionExplainRead", isActionExplainRead);
 
   React.useEffect(() => {
-    console.log("🟣🟣🟣🟣🟣🟣 [8] 🟣🟣🟣🟣🟣🟣", );
+  //   //console.log("Step:13 close_name changed detected:", close_name);
   },[close_name])
-
-  const getApproveDetailLabel = (approveData: any) => {
-    if (!approveData) return "หมายเหตุการอนุมัติ";
-    
-    // Check lov2 for REJECT status as per user request
-    if (approveData.lov2 === "REJECT") {
-      return "หมายเหตุการปฏิเสธ";
-    }
-    else if (approveData.lov2 === "APPROVE") {
-      return "หมายเหตุการอนุมัติ";
-    }
-    // Fallback for legacy or other codes if needed (preserving user's manual "ADD" check if relevant, but prioritizing lov2)
-    // const code = approveData.lov_code?.toUpperCase();
-    // if (code === "ADD" || code === "REJECT") {
-    //    return "หมายเหตุการไม่อนุมัติ";
-    // }
-    // return "หมายเหตุการอนุมัติ";
-  };
-
-  const getCloseDetailLabel = (approveData: any) => {
-    if (!approveData) return "หมายเหตุการปิด";
-    
-    // Check lov2 for REJECT status as per user request
-    if (approveData.lov2 === "REJECT") {
-      return "หมายเหตุการปฏิเสธ";
-    }
-    else if (approveData.lov2 === "APPROVE") {
-      return "หมายเหตุการปิดรายการ";
-    }
-  };
 
   return (
     <Box
@@ -2862,17 +2637,17 @@ console.log("dataelement.explain_id", dataelement?.explain_id);
                                                       f.attachmentType ===
                                                         item.attachmentType
                                                   );
-                                                console.log(
-                                                  "🔍 Remove file debug:",
-                                                  {
-                                                    itemName: item.file.name,
-                                                    itemType:
-                                                      item.attachmentType,
-                                                    actualIndex,
-                                                    fileListLength:
-                                                      fileList.length,
-                                                  }
-                                                );
+                                                // console.log(
+                                                //   "🔍 Remove file debug:",
+                                                //   {
+                                                //     itemName: item.file.name,
+                                                //     itemType:
+                                                //       item.attachmentType,
+                                                //     actualIndex,
+                                                //     fileListLength:
+                                                //       fileList.length,
+                                                //   }
+                                                // );
                                                 if (actualIndex !== -1) {
                                                   handleRemoveFile(actualIndex);
                                                 }
@@ -2887,18 +2662,18 @@ console.log("dataelement.explain_id", dataelement?.explain_id);
                                           <IconButton
                                             color="primary"
                                             onClick={() => {
-                                              console.log(
-                                                "full_path:",
-                                                item.full_path
-                                              );
-                                              console.log(
-                                                "file type:",
-                                                typeof item.file
-                                              );
-                                              console.log(
-                                                "file instanceof File:",
-                                                item.file instanceof File
-                                              );
+                                              // console.log(
+                                              //   "full_path:",
+                                              //   item.full_path
+                                              // );
+                                              // console.log(
+                                              //   "file type:",
+                                              //   typeof item.file
+                                              // );
+                                              // console.log(
+                                              //   "file instanceof File:",
+                                              //   item.file instanceof File
+                                              // );
 
                                               // ตรวจสอบว่าเป็นไฟล์ใหม่ (ไม่มี full_path) หรือไฟล์เก่า (มี full_path)
                                               if (item.full_path) {
@@ -2925,9 +2700,9 @@ console.log("dataelement.explain_id", dataelement?.explain_id);
                                                   1000
                                                 );
                                               } else {
-                                                console.log(
-                                                  "Cannot preview file - no full_path or File object"
-                                                );
+                                                // console.log(
+                                                //   "Cannot preview file - no full_path or File object"
+                                                // );
                                               }
                                             }}
                                           >
@@ -3218,7 +2993,7 @@ console.log("dataelement.explain_id", dataelement?.explain_id);
                               );
                             }}
                           >
-                            {(dataApprove_Combobox || []).map(
+                            {(filteredSecApprove || []).map(
                               (item: LovType) => (
                                 <FormControlLabel
                                   key={item.id}
@@ -3611,34 +3386,46 @@ console.log("dataelement.explain_id", dataelement?.explain_id);
                               );
                             }}
                           >
-                            {(dataApprove_Combobox || []).map(
-                              (item: LovType) => (
-                                <FormControlLabel
-                                  key={item.id}
-                                  value={item.id}
-                                  control={<Radio />}
-                                  label={item.lov1}
-                                  disabled={!isActionExplainApproveQcAdd}
-                                  sx={{
-                                    m: 1,
-                                    px: 1,
-                                    py: 1,
-                                    borderRadius: 2,
-                                    border:
-                                      dataQcapp?.id === item.id
-                                        ? "2px solid #4caf50"
-                                        : "none",
-                                    bgcolor:
-                                      dataQcapp?.id === item.id
-                                        ? "#d0f0c0"
-                                        : "#f5f5f5",
-                                    "&:hover": {
-                                      bgcolor: "#c8e6c9",
-                                    },
-                                  }}
-                                />
-                              )
-                            )}
+                          {(() => {
+                              // console.log("ss1:", dataQcapp);
+                              // console.log("ss2:", filteredQcApprove);
+                              return null;
+                            })()}
+                            {(filteredQcApprove || []).map((item: LovType, index: number) => {
+  
+                            // console.log("Step:01 🟦 QC Approve Render:", {
+                            //   index,
+                            //   item_id: item.id,
+                            //   item_lov1: item.lov1,
+                            //   selected_id: dataQcapp?.id,
+                            //   isSelected: dataQcapp?.id === item.id,
+                            //   isDisabled: !isActionExplainApproveQcAdd,
+                            // });
+                          
+                            return (
+                              <FormControlLabel
+                                key={item.id}
+                                value={item.id}
+                                control={<Radio />}
+                                label={item.lov1}
+                                disabled={!isActionExplainApproveQcAdd}
+                                sx={{
+                                  m: 1,
+                                  px: 1,
+                                  py: 1,
+                                  borderRadius: 2,
+                                  border:
+                                    dataQcapp?.id === item.id ? "2px solid #4caf50" : "none",
+                                  bgcolor:
+                                    dataQcapp?.id === item.id ? "#d0f0c0" : "#f5f5f5",
+                                  "&:hover": {
+                                    bgcolor: "#c8e6c9",
+                                  },
+                                }}
+                              />
+                            );
+                          })}
+
                           </RadioGroup>
                         </Box>
                       </AccordionDetails>

@@ -20,7 +20,7 @@ const unread = "#FE97B0";
 
 export default function BasicChips(props: BasicChips) {
 
-  console.log("💚💚💚💚 BasicChips props:", props);
+  // console.log("💚💚💚💚 BasicChips props:", props);
 
   const allColorMap: Record<string, string> = {
     NEW: "#7db6fa",
