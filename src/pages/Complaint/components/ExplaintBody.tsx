@@ -108,6 +108,7 @@ type Block = {
 
 interface ExplaintBody {
   action: string;
+  isItAdmin: boolean;
   disableTextField?: boolean;
   readonlyTextField?: boolean;
   bgcolorTextField?: boolean;
@@ -157,6 +158,7 @@ type LovType = {
   lov4: string;
   lov5: string;
   lov6: string;
+  lov7: string;
 };
 
 type FileData = {
@@ -170,6 +172,7 @@ type FileData = {
 
 export default function ExplaintBody({
   action,
+  isItAdmin,
   readonlyTextField,
   bgcolorTextField,
   validateText,
@@ -1151,7 +1154,7 @@ export default function ExplaintBody({
           );
         }
       }
-
+      
       // Always prepare Follow-up approve options (not dependent on report type)
       const fuApproveAll = (dataApprove_Combobox || []).filter(
         (item: LovType) => item.lov_type === "approve_select"
@@ -1168,7 +1171,13 @@ export default function ExplaintBody({
         const val = reportTypeToUse;
         console.log("### CHECK [val] : ", val);
 
-        const newFilteredSecApprove = (dataApprove_Combobox || []).filter(
+        const newFilteredSecApprove = 
+        isItAdmin ?
+        (dataApprove_Combobox || []).filter(
+          (item: LovType) => item.lov_type === "approve_select" && item.lov_group == dataelement?.responsible_company_id
+        )
+        :
+        (dataApprove_Combobox || []).filter(
           (item: LovType) => item.lov_type === "approve_select"
         );
         setFilteredSecApprove((prev: LovType[]) => {
@@ -1177,7 +1186,13 @@ export default function ExplaintBody({
           return prev;
         });
 
-        const newFilteredQcApprove = (dataApprove_Combobox || []).filter(
+        const newFilteredQcApprove = 
+        isItAdmin ?
+        (dataApprove_Combobox || []).filter(
+          (item: LovType) => item.lov_type === "approve_select" && item.lov_group == dataelement?.responsible_company_id
+        )
+        :
+        (dataApprove_Combobox || []).filter(
           (item: LovType) => item.lov_type === "approve_select"
         );
         setFilteredQcApprove((prev: LovType[]) => {
@@ -1187,9 +1202,16 @@ export default function ExplaintBody({
         });
 
         // Follow-up approve options
-        const newFilteredFuApprove = (dataApprove_Combobox || []).filter(
-          (item: LovType) => item.lov_type === "approve_select"
+        const newFilteredFuApprove = 
+        isItAdmin ?
+        (dataApprove_Combobox || []).filter(
+          (item: LovType) => item.lov_type === "approve_select" && item.lov_group == dataelement?.responsible_company_id
+        )
+        :
+        (dataApprove_Combobox || []).filter(
+          (item: LovType) => item.lov_type === "approve_select" 
         );
+
         setFilteredFuApprove((prev: LovType[]) => {
           if (JSON.stringify(prev) !== JSON.stringify(newFilteredFuApprove))
             return newFilteredFuApprove;
@@ -1369,7 +1391,7 @@ export default function ExplaintBody({
   //////////////////////// Approve Read //////////////////////////
   React.useEffect(() => {
     console.log("🟣🟣🟣🟣🟣🟣 [5] 🟣🟣🟣🟣🟣🟣");
-    console.log("ขั้นตอน: 5 เก็บข้อมูลเข้า ฺเต็dataelement ใหม่ ", dataelement);
+    console.log("🥰ขั้นตอน: 5 เก็บข้อมูลเข้า ฺเต็dataelement ใหม่ ", dataelement);
     console.log("ขั้นตอน: 5 เก็บข้อมูลเข้า approveList ใหม่ ", approveList);
     // console.log("ขั้นตอน: 5 ", approveList[0].approve_name);
     // console.log("ขั้นตอน: 5 ", approve_email);
