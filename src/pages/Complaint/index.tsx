@@ -6676,7 +6676,7 @@ export default function Complaint() {
         disableReject={!approveSelectionCode || (approveSelectionCode !== "ADD" && approveSelectionCode !== "REJECT")}
         disableSaveSubmit={!approveSelectionCode || approveSelectionCode !== "APPROVE"}
         titlename={"Approve Section Head (SC ADD) // เพิ่มข้อมูล"}
-        buttonText={"Approve"}
+        buttonText={"อนุมัติ"}
         handlefunction={ApproveScAdd}
         handlereject={() => ComplaintReturn("APPROVE_SC")}
         handleClose={handleCloseApproveScAdd}
@@ -6734,7 +6734,7 @@ export default function Complaint() {
         disableReject={!approveSelectionCode || (approveSelectionCode !== "ADD" && approveSelectionCode !== "REJECT")}
         disableSaveSubmit={!approveSelectionCode || approveSelectionCode !== "APPROVE"}
         titlename={"Approve QC (QC ADD)// เพิ่มข้อมูล"}
-        buttonText={"Approve"}
+        buttonText={"อนุมัติ"}
         handlefunction={ApproveQcAdd}
         handlereject={() => ComplaintReturn("APPROVE_QC")}
         // handleClose={handleClose}
@@ -6788,7 +6788,7 @@ export default function Complaint() {
         disableReject={!approveSelectionCode || (approveSelectionCode !== "ADD" && approveSelectionCode !== "REJECT")}
         disableSaveSubmit={!approveSelectionCode || approveSelectionCode !== "APPROVE"}
         titlename={"Close (CLOSE ADD) // ปิดรายการ"}
-        buttonText={"CLOSE"}
+        buttonText={"ปิดรายการ"}
         handlefunction={CloseAdd}
         handlereject={() => ComplaintReturn("CLOSE")}
         // handleClose={handleClose}

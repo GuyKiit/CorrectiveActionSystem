@@ -184,7 +184,8 @@ export async function mas_DepartmentGet_Complaint(value: any, setdataset_departm
           (item: any) => item.department_id != user[0]?.itasset_department_id
         );
       }
-
+      console.log("response.data",response.data);
+      
       setdataset_department(response.data); // ✅ เรียกทุก action
       setdataset_department_respondent(datasetToSet); // ✅ เรียกทุก action
     }

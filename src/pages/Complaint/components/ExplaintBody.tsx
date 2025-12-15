@@ -1793,7 +1793,7 @@ export default function ExplaintBody({
                       margin: 0,
                     }}
                   >
-                    ข้อมูลผู้ชี้แจง // {action}
+                    ข้อมูลผู้ชี้แจง 
                   </label>
                 </Box>
                 <Grid container spacing={3}>

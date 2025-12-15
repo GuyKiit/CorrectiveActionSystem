@@ -2192,7 +2192,7 @@ React.useEffect(() => {
                         margin: 0,
                       }}
                     >
-                      แผนกผู้ถูกร้องเรียน (Respondent Department) + {action}
+                      แผนกผู้ถูกร้องเรียน (Respondent Department)
                     </label>
                   </Box>
                   <Grid container spacing={3}>
