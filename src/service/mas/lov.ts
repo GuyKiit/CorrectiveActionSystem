@@ -160,7 +160,7 @@ export async function mas_DepartmentDomainGetAll(setmaster_department: (data: an
   }
 };
 
-export async function mas_DepartmentGet_Complaint(value: any, setdataset_department: (data: any) => void, isCallFuncLogOn: boolean, user: any, action: string) {
+export async function mas_DepartmentGet_Complaint(value: any, setdataset_department: (data: any) => void, setdataset_department_respondent: (data: any) => void, isCallFuncLogOn: boolean, user: any, action: string) {
   if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  DepartmentDomainGet");
 
   try {
@@ -185,7 +185,8 @@ export async function mas_DepartmentGet_Complaint(value: any, setdataset_departm
         );
       }
 
-      setdataset_department(datasetToSet); // ✅ เรียกทุก action
+      setdataset_department(response.data); // ✅ เรียกทุก action
+      setdataset_department_respondent(datasetToSet); // ✅ เรียกทุก action
     }
   } catch (e) {
     console.log("error:", e);

@@ -249,6 +249,9 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
     const [dataset_department, setdataset_department] = useState<any>(
         initialListComplaint.dataset_department
     );
+    const [dataset_department_respondent, setdataset_department_respondent] = useState<any>(
+        initialListComplaint.dataset_department_respondent
+    );
     const [dataset_domain, setdataset_domain] = useState<any>(
         initialListComplaint.dataset_domain
     );
@@ -635,6 +638,7 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 dataset_reporttype,
                 dataset_company,
                 dataset_department,
+                dataset_department_respondent,
                 dataset_domain,
                 dataset_domainrelate,
                 complaintFiles,
@@ -824,6 +828,7 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 setdataset_reporttype,
                 setdataset_company,
                 setdataset_department,
+                setdataset_department_respondent,
                 setdataset_domain,
                 setdataset_domainrelate,
                 setcomplaintFiles,
