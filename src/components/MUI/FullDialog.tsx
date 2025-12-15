@@ -100,7 +100,7 @@ export default function FuncDialog(props: FuncDialog) {
             <FullWidthButton
               disabled={props.disableReject}
               handleonClick={props.handlereject ?? props.handleClose}
-              labelName="Reject"
+              labelName="ปฏิเสธ"
               variant_text="contained"
               colorname="error"
             />
@@ -138,7 +138,7 @@ export default function FuncDialog(props: FuncDialog) {
             /> */}
           <FullWidthButton
             handleonClick={props.handleClose}
-            labelName="Cancel"
+            labelName="ยกเลิก"
             variant_text="contained"
             colorname={"primary"}
           />
