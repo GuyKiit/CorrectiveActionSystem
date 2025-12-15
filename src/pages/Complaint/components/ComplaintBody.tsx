@@ -1313,16 +1313,42 @@ export default function ComplaintBody({
   const lastDataElement = React.useRef<any>(null); // Track last processed data
   const hasMappedDepartment = React.useRef(false); // Track if department has been mapped
   React.useEffect(() => {
-    if (respondent_company_id) {
-      mas_DomainRelateGet(
-        respondent_company_id.company_id,
-        set_domainrelate,
-        user,
-        isCallFuncLogOn
-      );
-    }
-  }, [respondent_company_id]);
+  if (respondent_company_id?.company_id) {
+    mas_DomainRelateGet(
+      respondent_company_id.company_id,
+      set_domainrelate,
+      user,
+      isCallFuncLogOn
+    );
 
+    // reset domain ทุกครั้งที่ company เปลี่ยน
+    setrespondent_domain_id(null);
+  }
+}, [respondent_company_id]);
+React.useEffect(() => {
+  if (
+    Array.isArray(domainrelate) &&
+    domainrelate.length > 0 &&
+    dataelement?.respondent_domain_id &&
+    !respondent_domain_id
+  ) {
+    const mappedDomain = domainrelate.find(
+      (item: any) =>
+        String(item.domain_id) ===
+        String(
+          dataelement.respondent_domain_id?.domain_id ??
+          dataelement.respondent_domain_id
+        )
+    );
+
+    console.log("🟢 mappedDomain:", mappedDomain);
+
+    if (mappedDomain) {
+      setrespondent_domain_id(mappedDomain);
+      handleDomainChange(mappedDomain);
+    }
+  }
+}, [domainrelate, dataelement]);
   // 🧩 1️⃣ โหลดข้อมูลหลัก (ReportType, Company, Domain, Department)
   React.useEffect(() => {
     if (!dataelement || action === "Add") return; // 👈 ป้องกันตอน New

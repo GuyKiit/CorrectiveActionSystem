@@ -5774,13 +5774,17 @@ export default function Complaint() {
     fetchSCApprove();
   }, [currentExplainForApproval, dataApprove_Combobox]);
   React.useEffect(() => {
-    if (!TextNameSearch.dataset_company && user[0]?.itasset_company_id) {
-      setTextNameSearch(prev => ({
-        ...prev,
-        dataset_company: user[0].itasset_company_id
-      }));
-    }
-  }, [user]);
+  if (!TextNameSearch.dataset_company && user[0]?.itasset_company_id) {
+    setTextNameSearch(prev => ({
+      ...prev,
+      dataset_company: user[0].itasset_company_id,
+      dataset_domain: ""   // ⭐ สำคัญมาก
+    }));
+
+    set_domainrelate([]); // ⭐ กัน domain เก่าค้าง
+  }
+}, [user]);
+  
   React.useEffect(() => {
     if (!TextNameSearch.dataset_company) return;
 
@@ -5794,6 +5798,28 @@ export default function Complaint() {
   React.useEffect(() => {
     if (!Array.isArray(domainrelate) || domainrelate.length === 0) return;
   }, [domainrelate]);
+
+  React.useEffect(() => {
+  if (
+    !TextNameSearch.dataset_domain &&
+    Array.isArray(domainrelate) &&
+    domainrelate.length > 0 &&
+    user[0]?.domain_name
+  ) {
+    const autoDomain = domainrelate.find(
+      (item: any) =>
+        String(item.domain_name) === String(user[0].domain_name)
+    );
+    if (autoDomain) {
+      setTextNameSearch(prev => ({
+        ...prev,
+        dataset_domain: autoDomain.domain_id
+      }));
+
+      handleDomainChange(autoDomain);
+    }
+  }
+}, [domainrelate, user]);
 
   React.useEffect(() => {
     if (!TextNameSearch.dataset_domain) return;
@@ -5872,7 +5898,12 @@ export default function Complaint() {
                 domainrelate?.find(
                   (item: any) =>
                     item.domain_id === TextNameSearch.dataset_domain
-                ) || null
+                ) || 
+                domainrelate?.find(
+                  (item: any) =>
+                    String(item.domain_id) === String(user[0]?.domain_name)
+                ) ||
+                null
               }
               labelName="โรงงาน (Factory)"
               options={domainrelate || []}
@@ -5884,6 +5915,7 @@ export default function Complaint() {
                   dataset_domain: val?.domain_id || "", // เก็บแค่ id เป็น string
                 });
               }}
+              readonly = {!isItAdmin}
             />
           </Grid>
           <Grid size={4}>
