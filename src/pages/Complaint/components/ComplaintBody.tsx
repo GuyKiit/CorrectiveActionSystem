@@ -1873,6 +1873,9 @@ React.useEffect(() => {
   }, [action, dataelement]); // ใช้ dataelement ทั้งหมดเป็น dependency
 
   React.useEffect(() => {
+    if (isItAdmin) return;
+
+
     const fetchAcknowlege = async () => {
       if (
         (isActionExplain ||
@@ -1887,7 +1890,7 @@ React.useEffect(() => {
       }
     };
     fetchAcknowlege();
-  }, [action, dataelement?.id, dataelement?.acknowledge_flag]);
+  }, [action, dataelement?.id, dataelement?.acknowledge_flag , isItAdmin]);
 
   const setComplaintType = (data: any) => {
     // console.log("🔍 setComplaintType input data:", data);
