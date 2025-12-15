@@ -1958,7 +1958,7 @@ export default function Complaint() {
 
             el.approve_by = el.approve_by.replace(/\s*\(/, "<br/>(");
             el.ACTION = ACTION;
-
+            const tempRolename = tempRoleUser[0].lov_code;
             // Prepare Role From Role Profile
             
             // console.log("🦄🦄🦄🦄🦄🦄 tempApproveSeq : ", tempApproveSeq);
@@ -1972,6 +1972,7 @@ export default function Complaint() {
             // console.log("🎆 🎆 🎆 🎆 tempRoleUser :", tempRoleUser);
 
             // console.log("tempRoleUser tempRoleUser : ", tempRoleUser);
+            // console.log("tempRolename tempRolename : ", tempRolename);
             // console.log(el.step_label)
 
             // For Display Status on Datatable [NEW, SUBMITED, EXPLAINED, APPROVED, CLOSED]
@@ -1980,7 +1981,7 @@ export default function Complaint() {
                 label={`${el.complaint_status_label}`}
                 acknowledge={el.acknowledge_flag}
                 step={`${el.step_label}`}
-                role={tempRoleUser}
+                role={tempRolename}
                 approveseq={tempApproveSeq}
                 userdept={user[0]?.itasset_department_id}
                 requestdept={el.request_department_id}
@@ -2852,7 +2853,7 @@ export default function Complaint() {
       let response;
 
     try {
-      const response = await _POST_FORMDATA(
+       response = await _POST_FORMDATA(
         formData,
         "/Complaint/ComplaintAdd"
       );
@@ -2861,7 +2862,6 @@ export default function Complaint() {
       response = { status: "failed" };
     } 
       setIsLoadingScreen(false);
-
       if ( response?.status === "success") {
         FullSweetalert({
           title: "Success",
@@ -2869,6 +2869,7 @@ export default function Complaint() {
           icon: "success",
         });
       } else {
+        
         FullSweetalert({
           title: "Failed",
           text: `บันทึกไม่ข้อมูลสำเร็จ`,
