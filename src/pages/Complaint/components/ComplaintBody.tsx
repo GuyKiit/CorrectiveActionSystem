@@ -332,6 +332,7 @@ export default function ComplaintBody({
     dataset_reporttype,
     dataset_company,
     dataset_department,
+    dataset_department_respondent,
     dataset_domain,
     dataset_domainrelate,
     complaintFiles,
@@ -429,6 +430,7 @@ export default function ComplaintBody({
     setdataset_reporttype,
     setdataset_company,
     setdataset_department,
+    setdataset_department_respondent,
     setdataset_domain,
     setdataset_domainrelate,
     setcomplaintFiles,
@@ -628,6 +630,7 @@ export default function ComplaintBody({
     await mas_DepartmentGet_Complaint(
       dataset,
       setdataset_department,
+      setdataset_department_respondent,
       isCallFuncLogOn,
       user,
       action
@@ -1472,6 +1475,7 @@ export default function ComplaintBody({
                 company_id: dataelement.respondent_company_id,
               },
               setdataset_department,
+              setdataset_department_respondent,
               isCallFuncLogOn,
               user,
               action
@@ -2221,7 +2225,7 @@ React.useEffect(() => {
                         required="required"
                         value={respondent_department_id}
                         labelName={"แผนกที่พบปัญหา (Department / Area of Detection)"}
-                        options={dataset_department}
+                        options={dataset_department_respondent}
                         column="department_name"
                         setvalue={async (val) => {
                           // console.log(

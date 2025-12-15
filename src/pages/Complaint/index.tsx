@@ -276,6 +276,7 @@ export default function Complaint() {
     // Dataset Variables
     dataset_reporttype,
     dataset_department,
+    dataset_department_respondent, 
     dataset_company,
     dataset_domain,
     dataset_domainrelate,
@@ -435,6 +436,7 @@ export default function Complaint() {
     setdataset_roleProfile,
     setdataset_configfile,
     setdataset_department,
+    setdataset_department_respondent,
     setdataset_company,
     set_domain,
     setdataset_domain,
@@ -785,6 +787,7 @@ export default function Complaint() {
       mas_DepartmentGet_Complaint(
         value,
         setdataset_department,
+        setdataset_department_respondent,
         isCallFuncLogOn,
         user,
         action
@@ -5676,6 +5679,7 @@ export default function Complaint() {
               company_id: dataelement.respondent_company_id,
             },
             setdataset_department,
+            setdataset_department_respondent,
             user,
             isCallFuncLogOn,
             action
@@ -5800,6 +5804,7 @@ export default function Complaint() {
         company_id: TextNameSearch.dataset_company,
       },
       setdataset_department,
+      setdataset_department_respondent,
       isCallFuncLogOn,
       user,
       "Search"
