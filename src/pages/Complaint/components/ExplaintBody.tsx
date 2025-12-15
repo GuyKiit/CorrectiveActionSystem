@@ -1062,16 +1062,16 @@ export default function ExplaintBody({
           );
           setFilteredSecApprove(newFilteredSecApprove);
         }
-
-        // const newFilteredQcApprove = (dataApprove_Combobox || []).filter(
-        //   (item: LovType) => item.lov_type === "approve_select"
-        // );
-        // setFilteredQcApprove((prev: LovType[]) => {
-        //   if (JSON.stringify(prev) !== JSON.stringify(newFilteredQcApprove))
-        //     return newFilteredQcApprove;
-        //   return prev;
-        // });
-
+        if (!isItAdmin) {
+        const newFilteredQcApprove = (dataApprove_Combobox || []).filter(
+          (item: LovType) => item.lov_type === "approve_select"
+        );
+        setFilteredQcApprove((prev: LovType[]) => {
+          if (JSON.stringify(prev) !== JSON.stringify(newFilteredQcApprove))
+            return newFilteredQcApprove;
+          return prev;
+        });
+      }
         // // Follow-up approve options
         if (!isItAdmin) {
         const newFilteredFuApprove = (dataApprove_Combobox || []).filter(
