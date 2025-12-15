@@ -3522,7 +3522,7 @@ export default function Complaint() {
       try {
         // 🧩 บันทึกข้อมูล Approve
         const response = await _POST(
-          approvePayload.ExplaintApproveModel,
+          approvePayload,
           "/ExplaintApprove/ExplaintApproveAdd"
         );
 
@@ -3654,7 +3654,7 @@ export default function Complaint() {
       try {
         // 🧩 บันทึกข้อมูล Approve
         const response = await _POST(
-          approvePayload.ExplaintApproveModel,
+          approvePayload,
           "/ExplaintApprove/ExplaintApproveAdd"
         );
 
@@ -4267,6 +4267,7 @@ export default function Complaint() {
     setIsLoadingScreen(true);
 
     try {
+      
       // 🧩 บันทึกข้อมูล Approve
       const response = await _POST(
         approvePayload,
