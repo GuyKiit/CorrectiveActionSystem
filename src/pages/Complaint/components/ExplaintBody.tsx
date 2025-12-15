@@ -1056,14 +1056,12 @@ export default function ExplaintBody({
         const val = reportTypeToUse;
         // console.log("Step:04### CHECK [val] : ", val);
 
-        // const newFilteredSecApprove = (dataApprove_Combobox || []).filter(
-        //   (item: LovType) => item.lov_type === "approve_select"
-        // );
-        // setFilteredSecApprove((prev: LovType[]) => {
-        //   if (JSON.stringify(prev) !== JSON.stringify(newFilteredSecApprove))
-        //     return newFilteredSecApprove;
-        //   return prev;
-        // });
+        if (!isItAdmin) {
+          const newFilteredSecApprove = (dataApprove_Combobox || []).filter(
+          (item: LovType) => item.lov_type === "approve_select"
+          );
+          setFilteredSecApprove(newFilteredSecApprove);
+        }
 
         // const newFilteredQcApprove = (dataApprove_Combobox || []).filter(
         //   (item: LovType) => item.lov_type === "approve_select"
@@ -1075,15 +1073,17 @@ export default function ExplaintBody({
         // });
 
         // // Follow-up approve options
-        // const newFilteredFuApprove = (dataApprove_Combobox || []).filter(
-        //   (item: LovType) => item.lov_type === "approve_select" 
-        // );
+        if (!isItAdmin) {
+        const newFilteredFuApprove = (dataApprove_Combobox || []).filter(
+          (item: LovType) => item.lov_type === "approve_select" 
+        );
 
-        // setFilteredFuApprove((prev: LovType[]) => {
-        //   if (JSON.stringify(prev) !== JSON.stringify(newFilteredFuApprove))
-        //     return newFilteredFuApprove;
-        //   return prev;
-        // });
+        setFilteredFuApprove((prev: LovType[]) => {
+          if (JSON.stringify(prev) !== JSON.stringify(newFilteredFuApprove))
+            return newFilteredFuApprove;
+          return prev;
+        });
+      }
 
         const newFilteredToolUse = 
         isItAdmin ?
@@ -1485,10 +1485,7 @@ export default function ExplaintBody({
   : dataApprove_Combobox.filter(
       (item:any) => item.lov_type === "approve_select"
     );
-// console.log("Step:03 qcFilteredqcFiltered",qcFiltered);
-setTest(qcFiltered)
-setFilteredQcApprove(qcFiltered);
-
+    setFilteredQcApprove(qcFiltered);
     }
   }, [
     dataelement,
@@ -1500,6 +1497,7 @@ setFilteredQcApprove(qcFiltered);
     isActionClose,
     isActionCloseHistory,
     approveList, 
+    // isItAdmin,
   ]);
 
   React.useEffect(() => {
@@ -3055,7 +3053,7 @@ setFilteredQcApprove(qcFiltered);
                           >
                             {/* //หมายเหตุการอนุมัติ */}
                             {getApproveDetailLabel(dataSectionapp)}
-                            <span style={{ color: "red" }}> *</span>
+                             {dataSectionapp?.lov_code !== "APPROVE" && (<span style={{ color: "red" }}> *</span>)}
                           </Typography>
                         </AccordionSummary>
 
@@ -3129,7 +3127,7 @@ setFilteredQcApprove(qcFiltered);
                             }}
                           >
                             หมายเหตุเพิ่มเติม
-                            <span style={{ color: "red" }}> *</span>
+                            {dataSectionapp?.lov_code !== "APPROVE" && (<span style={{ color: "red" }}> *</span>)}
                           </Typography>
                         </AccordionSummary>
 
@@ -3460,7 +3458,7 @@ setFilteredQcApprove(qcFiltered);
                           >
                             {/* หมายเหตุการอนุมัติ */}
                             {getApproveDetailLabel(dataQcapp)}
-                            <span style={{ color: "red" }}> *</span>
+                            {dataQcapp?.lov_code !== "APPROVE" && (<span style={{ color: "red" }}> *</span>)}
                           </Typography>
                         </AccordionSummary>
 
@@ -3534,7 +3532,7 @@ setFilteredQcApprove(qcFiltered);
                             }}
                           >
                             หมายเหตุเพิ่มเติม
-                            <span style={{ color: "red" }}> *</span>
+                            {dataQcapp?.lov_code !== "APPROVE" && (<span style={{ color: "red" }}> *</span>)}
                           </Typography>
                         </AccordionSummary>
 
@@ -3916,7 +3914,7 @@ setFilteredQcApprove(qcFiltered);
                                 >
                                   {/* หมายเหตุการปิดรายการ */}
                                   {getCloseDetailLabel(dataFuapp)}
-                                  <span style={{ color: "red" }}> *</span>
+                                  {dataFuapp?.lov_code !== "APPROVE" && (<span style={{ color: "red" }}> *</span>)}
                                 </Typography>
                               </AccordionSummary>
 
@@ -3990,7 +3988,7 @@ setFilteredQcApprove(qcFiltered);
                                 }}
                               >
                                 หมายเหตุเพิ่มเติม
-                                <span style={{ color: "red" }}> *</span>
+                                {dataFuapp?.lov_code !== "APPROVE" && (<span style={{ color: "red" }}> *</span>)}
                               </Typography>
                             </AccordionSummary>
 
