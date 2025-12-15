@@ -37,6 +37,7 @@ interface FuncDialog {
   element?: React.ReactNode;
   modalWidth?: string | number;
   modalHeight?: string | number;
+  cancelText?: string;
 }
 
 export default function FuncDialog(props: FuncDialog) {
@@ -113,10 +114,7 @@ export default function FuncDialog(props: FuncDialog) {
             variant_text="contained"
             colorname="error"
             /> */}
-
-            
         </div>
-        
 
         {/* Right side - Save and Submit, Cancel */}
         <div className="flex gap-3">
@@ -138,7 +136,7 @@ export default function FuncDialog(props: FuncDialog) {
             /> */}
           <FullWidthButton
             handleonClick={props.handleClose}
-            labelName="Cancel"
+            labelName={props.cancelText ?? "Cancel"}
             variant_text="contained"
             colorname={"primary"}
           />

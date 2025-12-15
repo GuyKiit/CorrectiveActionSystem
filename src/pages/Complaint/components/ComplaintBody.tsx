@@ -2122,20 +2122,20 @@ React.useEffect(() => {
                     labelName={"โรงงาน (Factory)"}
                     options={domainrelate}
                     column="domain_name"
-                    // setvalue={(v) => setrespondent_company_id(v)}
-                    setvalue={(val) => {
-                      //console.log("Domain selected:", val?.domain_name);
-                      //console.log("Domain selected:", val?.domain_id);
-                      //console.log("😍val:", val);
-                      handleDomainChange(val);
+                    setvalue={(v) => setrespondent_company_id(v)}
+                    // setvalue={(val) => {
+                    //   //console.log("Domain selected:", val?.domain_name);
+                    //   //console.log("Domain selected:", val?.domain_id);
+                    //   //console.log("😍val:", val);
+                    //   handleDomainChange(val);
 
-                      setrespondent_domain_id(val);
-                      //console.log("cccccc", val);
+                    //   setrespondent_domain_id(val);
+                    //   //console.log("cccccc", val);
 
-                      if (onRespondentDepartmentChange) {
-                        onRespondentDepartmentChange(val);
-                      }
-                    }}
+                    //   if (onRespondentDepartmentChange) {
+                    //     onRespondentDepartmentChange(val);
+                    //   }
+                    // }}
                     bgcolorTextField={true}
                     readonly={!isActionAdd && !isActionEdit}
                     required="required"
