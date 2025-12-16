@@ -2515,8 +2515,8 @@ export default function Complaint() {
         respondent_domain_id: respondent_domain_id?.domain_id,
         respondent_department_id: respondent_department_id?.department_id,
         respondent_email: respondent_email,
-        product_name: product_name,
-        detail: detail,
+        product_name: product_name || null,
+        detail: detail || null,
         priority_level: datapriorityValue_Combobox,
         respond_date_within: respond_date_within
           ? respond_date_within
@@ -2525,7 +2525,7 @@ export default function Complaint() {
             .second(59)
             .format("YYYY-MM-DDTHH:mm:ss.SSS")
           : null,
-        lot_no: lot_no,
+        lot_no: lot_no || null,
         complaint_status_id: tempComplaintStatus[0]?.id,
         create_by: user[0]?.employee_username || "",
         save_type: "save_draft",
@@ -2694,7 +2694,7 @@ export default function Complaint() {
         respondent_company_id: respondent_company_id?.company_id,
         respondent_domain_id: respondent_domain_id?.domain_id,
         respondent_department_id: respondent_department_id?.department_id,
-        respondent_email: respondent_email,
+        respondent_email: respondent_email ? respondent_email : null,
         respondent_other_name: respondent_other_name,
         respondent_other_email: respondent_other_email,
 
@@ -2956,7 +2956,7 @@ export default function Complaint() {
           respondent_domain_id: respondent_domain_id?.domain_id,
           respondent_department_id: respondent_department_id?.department_id,
           product_name: product_name,
-          lot_no: lot_no,
+          lot_no: lot_no || "",
           respondent_email: respondent_email,
           detail: detail,
           priority_level:
@@ -6600,7 +6600,7 @@ export default function Complaint() {
         dialogWidth="xl"
         openBottonHidden={true}
         titlename={"เพิ่มข้อมูลชี้แจง"}
-        buttonText={"Save & Submit"}
+        buttonText={"บันทึกและส่ง"}
         handleClose={handleCloseExplainAdd}
         handlefunction={ExplainAdd}
         hideSaveDraft={true}
