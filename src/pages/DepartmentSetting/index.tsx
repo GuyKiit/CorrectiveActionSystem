@@ -657,7 +657,7 @@ export default function DepartmentSetting() {
                 // hiddenEdit={el.complaint_status_label == 'SUBMIT'}
 
                 // For show menu function from [DepartmentSetting] menu 
-                hiddenDepartmentAdd={false}
+                hiddenDepartmentAdd={true}
                 hiddenDepartmentView={false}
                 hiddenDepartmentEdit={false}
                 hiddenDepartmentDelete={false}
