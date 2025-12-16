@@ -133,7 +133,7 @@ export async function mas_DepartmentDomainGet(value: any, set_department: (data:
 };
 
 export async function mas_DepartmentDomainGetAll(setmaster_department: (data: any) => void, isCallFuncLogOn: boolean) {
-  if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  DepartmentDomainGet");
+  if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  DepartmentDomainGetAll");
   try {
     const dataset = {
       // domain_id: value.domain_id,
@@ -161,12 +161,12 @@ export async function mas_DepartmentDomainGetAll(setmaster_department: (data: an
 };
 
 export async function mas_DepartmentGet_Complaint(value: any, setdataset_department: (data: any) => void, setdataset_department_respondent: (data: any) => void, isCallFuncLogOn: boolean, user: any, action: string) {
-  if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  DepartmentDomainGet");
+  if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  DepartmentGet_Complaint");
 
   try {
     const dataset = {
       domain_id: value.domain_id,
-      company_id: value.company_id,
+      company_id: value.company_id ?? user[0]?.itasset_company_id
       // company_id: value.company_id,
     };
     const response = await _POST(

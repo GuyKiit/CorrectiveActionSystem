@@ -501,6 +501,15 @@ export default function ExplaintBody({
   const TuRef = useRef<HTMLDivElement>(null);
   const DdRef = useRef<HTMLDivElement>(null);
   const [firstErrorField, setFirstErrorField] = useState<string | null>(null);
+  const isApprovesc = dataSectionapp?.lov_code === "APPROVE";
+  const showPlaceholderscdetail = isActionExplainApproveScAdd && !approve_detail;
+  const showPlaceholderscnote = isActionExplainApproveScAdd && !approve_note;
+  const isApproveqmr = dataQcapp?.lov_code === "APPROVE";
+  const showPlaceholderqmrdetail = isActionExplainApproveQcAdd && !qcapprove_detail;
+  const showPlaceholderqmrnote = isActionExplainApproveQcAdd && !qcapprove_note;
+  const isApproveFu = dataFuapp?.lov_code === "APPROVE";
+  const showPlaceholderclosedetail = isActionCloseAdd && !close_detail;
+  const showPlaceholderclosenote = isActionCloseAdd && !close_note;
   //================================================================================================================================================//
   
   // ตั้งค่า isROOTHidden เป็น false เมื่ออยู่ในโหมดดูข้อมูล
@@ -2211,6 +2220,7 @@ export default function ExplaintBody({
                               <FullWidthTextArea
                                 value={observation_analysis}
                                 labelName=""
+                                placeholderlabel="กรุณากรอกรายละเอียด"
                                 onchange={(e) => {
                                   setobservation_analysis(e);
                                   if (onObsAnalyChange) {
@@ -2290,6 +2300,7 @@ export default function ExplaintBody({
                               <FullWidthTextArea
                                 value={root_cause}
                                 labelName=""
+                                placeholderlabel="กรุณากรอกรายละเอียด"
                                 onchange={(e) => {
                                   setroot_cause(e);
                                   if (onRootCauseChange) {
@@ -2369,6 +2380,7 @@ export default function ExplaintBody({
                               <FullWidthTextArea
                                 value={corrective_action}
                                 labelName=""
+                                placeholderlabel="กรุณากรอกรายละเอียด"
                                 onchange={(e) => {
                                   setcorrective_action(e);
                                   if (onCorrectiveActionChange) {
@@ -2449,6 +2461,7 @@ export default function ExplaintBody({
                               <FullWidthTextArea
                                 value={preventive_action_plan}
                                 labelName=""
+                                placeholderlabel="กรุณากรอกรายละเอียด"
                                 onchange={(e) => {
                                   setpreventive_action_plan(e);
                                   if (onPreventiveActionPlanChange) {
@@ -2847,7 +2860,7 @@ export default function ExplaintBody({
                       color: "#2e7d32",
                     }}
                   >
-                    ข้อมูลผู้รับรอง (Section Head)
+                    ข้อมูลหัวหน้าส่วน (Section Head)
                   </Typography>
                 </Box>
               </Box>
@@ -2964,7 +2977,7 @@ export default function ExplaintBody({
                             color: "#333",
                           }}
                         >
-                          Approve หัวหน้าส่วน (Section Approve)
+                          อนุมัติ หัวหน้าส่วน (Section Approve)
                           <span style={{ color: "red" }}> *</span>
                         </Typography>
                       </AccordionSummary>
@@ -3075,6 +3088,13 @@ export default function ExplaintBody({
                                 <FullWidthTextArea
                                   value={approve_detail}
                                   labelName=""
+                                  placeholderlabel={
+                                    showPlaceholderscdetail
+                                      ? isApprovesc
+                                          ? `${getApproveDetailLabel(dataSectionapp)} (ถ้ามี)`
+                                          : `กรอก${getApproveDetailLabel(dataSectionapp)}`
+                                      : ""
+                                  }
                                   onchange={(e) => {
                                     setapprove_detail(e);
                                     if (onSCDetailChange) {
@@ -3149,6 +3169,13 @@ export default function ExplaintBody({
                                 <FullWidthTextArea
                                   value={approve_note}
                                   labelName=""
+                                  placeholderlabel={
+                                   showPlaceholderscnote
+                                     ? isApprovesc
+                                         ? "หมายเหตุเพิ่มเติม (ถ้ามี)"
+                                         : "กรอกหมายเหตุเพิ่มเติม"
+                                     : ""
+                                 }
                                   onchange={(e) => {
                                     setapprove_note(e);
                                     if (onSCNoteChange) {
@@ -3240,7 +3267,7 @@ export default function ExplaintBody({
                       color: "#2e7d32",
                     }}
                   >
-                    ข้อมูลผู้รับรอง (QC)
+                    ข้อมูลผู้อำนวยการโรงงาน (QMR)
                   </Typography>
                 </Box>
               </Box>
@@ -3357,7 +3384,7 @@ export default function ExplaintBody({
                             color: "#333",
                           }}
                         >
-                          Approve ผู้จัดการคุณภาพ (QC)
+                          อนุมัติ ผู้อำนวยการโรงงาน (QMR Approve)
                           <span style={{ color: "red" }}> *</span>
                         </Typography>
                       </AccordionSummary>
@@ -3480,6 +3507,13 @@ export default function ExplaintBody({
                                 <FullWidthTextArea
                                   value={qcapprove_detail}
                                   labelName=""
+                                  placeholderlabel={
+                                    showPlaceholderqmrdetail
+                                      ? isApproveqmr
+                                          ? `${getApproveDetailLabel(dataQcapp)} (ถ้ามี)`
+                                          : `กรอก${getApproveDetailLabel(dataQcapp)}`
+                                      : ""
+                                  }
                                   onchange={(e) => {
                                     setqcapprove_detail(e);
                                     if (onQCDetailChange) {
@@ -3554,6 +3588,13 @@ export default function ExplaintBody({
                                 <FullWidthTextArea
                                   value={qcapprove_note}
                                   labelName=""
+                                   placeholderlabel={
+                                   showPlaceholderqmrnote
+                                     ? isApproveqmr
+                                         ? "หมายเหตุเพิ่มเติม (ถ้ามี)"
+                                         : "กรอกหมายเหตุเพิ่มเติม"
+                                     : ""
+                                 }
                                   onchange={(e) => {
                                     setqcapprove_note(e);
                                     if (onQCNoteChange) {
@@ -3937,6 +3978,13 @@ export default function ExplaintBody({
                                     <FullWidthTextArea
                                       value={close_detail || return_detail}
                                       labelName=""
+                                      placeholderlabel={
+                                      showPlaceholderclosedetail
+                                      ? isApproveFu
+                                          ? `${getApproveDetailLabel(dataFuapp)} (ถ้ามี)`
+                                          : `กรอก${getApproveDetailLabel(dataFuapp)}`
+                                      : ""
+                                  }
                                       onchange={(e) => {
                                         setclose_detail(e);
                                         if (onCloseDetailChange) {
@@ -4010,6 +4058,13 @@ export default function ExplaintBody({
                                     <FullWidthTextArea
                                       value={close_note}
                                       labelName=""
+                                      placeholderlabel={
+                                          showPlaceholderclosenote
+                                          ? isApproveFu
+                                          ? "หมายเหตุเพิ่มเติม (ถ้ามี)"
+                                           : "กรอกหมายเหตุเพิ่มเติม"
+                                          : ""
+                                    }
                                       onchange={(e) => {
                                         setclose_note(e);
                                         if (onCloseNoteChange) {
