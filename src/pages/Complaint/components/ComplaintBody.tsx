@@ -821,38 +821,38 @@ export default function ComplaintBody({
     });
   };
 
-  const handleCheckboxChangePhotoType = (item: LovType) => {
-    // if (true)console.log("🕑 ",dayjs().format("HH:mm:ss.SSS")," [Calling Function]  :  handleCheckboxChangePhotoType");
+  // const handleCheckboxChangePhotoType = (item: LovType) => {
+  //   // if (true)console.log("🕑 ",dayjs().format("HH:mm:ss.SSS")," [Calling Function]  :  handleCheckboxChangePhotoType");
 
-    setdataphoto((prev: LovType[] = []) => {
-      let newData: LovType[];
+  //   setdataphoto((prev: LovType[] = []) => {
+  //     let newData: LovType[];
 
-      if (prev.some((pho) => pho.id === item.id)) {
-        // ถ้ามีอยู่แล้ว → เอาออก
-        newData = [];
+  //     if (prev.some((pho) => pho.id === item.id)) {
+  //       // ถ้ามีอยู่แล้ว → เอาออก
+  //       newData = [];
 
-        // ถ้าเอาออกแล้วเป็น Other → เคลียร์ค่า
-        if (item.id === "TRR_AT_4") {
-          setphoTypeOther("");
-        }
-      } else {
-        // เพิ่ม object แบบเต็ม
-        newData = [item];
-      }
+  //       // ถ้าเอาออกแล้วเป็น Other → เคลียร์ค่า
+  //       if (item.id === "TRR_AT_4") {
+  //         setphoTypeOther("");
+  //       }
+  //     } else {
+  //       // เพิ่ม object แบบเต็ม
+  //       newData = [item];
+  //     }
 
-      // สร้าง array ลดรูปสำหรับ context
-      const reducedArray = newData.map((pho) => ({
-        complaint_at_id: pho.id,
-        label: pho.lov1,
-      }));
+  //     // สร้าง array ลดรูปสำหรับ context
+  //     const reducedArray = newData.map((pho) => ({
+  //       complaint_at_id: pho.id,
+  //       label: pho.lov1,
+  //     }));
 
-      // console.log("Reduced array:", reducedArray);
+  //     // console.log("Reduced array:", reducedArray);
 
-      setdataphotoValue_Combobox(reducedArray);
+  //     setdataphotoValue_Combobox(reducedArray);
 
-      return newData;
-    });
-  };
+  //     return newData;
+  //   });
+  // };
 
   // รับ ComplaintFile[] จาก BrowseFileUpload
   const handleFileChange = (fileArray: ComplaintFile[]) => {
@@ -2167,20 +2167,20 @@ React.useEffect(() => {
                     labelName={"โรงงาน (Factory)"}
                     options={domainrelate}
                     column="domain_name"
-                    // setvalue={(v) => setrespondent_company_id(v)}
-                    setvalue={(val) => {
-                      //console.log("Domain selected:", val?.domain_name);
-                      //console.log("Domain selected:", val?.domain_id);
-                      //console.log("😍val:", val);
-                      handleDomainChange(val);
+                    setvalue={(v) => setrespondent_company_id(v)}
+                    // setvalue={(val) => {
+                    //   //console.log("Domain selected:", val?.domain_name);
+                    //   //console.log("Domain selected:", val?.domain_id);
+                    //   //console.log("😍val:", val);
+                    //   handleDomainChange(val);
 
-                      setrespondent_domain_id(val);
-                      //console.log("cccccc", val);
+                    //   setrespondent_domain_id(val);
+                    //   //console.log("cccccc", val);
 
-                      if (onRespondentDepartmentChange) {
-                        onRespondentDepartmentChange(val);
-                      }
-                    }}
+                    //   if (onRespondentDepartmentChange) {
+                    //     onRespondentDepartmentChange(val);
+                    //   }
+                    // }}
                     bgcolorTextField={true}
                     readonly={!isActionAdd || !isCrossCompany}
                     required="required"
@@ -3052,11 +3052,12 @@ React.useEffect(() => {
                             <BrowseFileUpload
                               setFile={handleFileChange}
                               setFileName={() => {}}
-                              options={(filteredphoto || []).map((p: any) => ({
+                                options={(filteredphoto || []).map((p: any) => ({
                                 id: p.id,
                                 lov1: p.lov1,
-                                lov2: "Y",
+                                lov2: p.lov2,
                                 lov_code: "CheckTypeFileImage",
+                                isOther: p.lov2, // Use lov2 as isOther logic for 'Other' field
                               }))}
                               grouped={grouped}
                               action={action}
@@ -3118,7 +3119,7 @@ React.useEffect(() => {
                                               ? `${(item.file.size / 1024).toFixed(2)} KB`
                                               : `${(item.file.size / (1024 * 1024)).toFixed(2)} MB`}
                                           </div>
-                                          {photoType.id === "TRR_AT_4" && (
+                                          {photoType.lov2 === "Y" && (
                                             <div
                                               style={{
                                                 fontSize: "15px",

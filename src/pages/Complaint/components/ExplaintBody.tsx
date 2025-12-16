@@ -2543,7 +2543,8 @@ export default function ExplaintBody({
                                options={(filteredphoto || []).map((p: any) => ({
                                 id: p.id,
                                 lov1: p.lov1,
-                                lov2: "Y",
+                                lov2: p.lov2,
+                                isOther: p.lov2,
                                 lov_code: "CheckTypeFileImage",
                               }))}
                               grouped={grouped}
@@ -2607,7 +2608,7 @@ export default function ExplaintBody({
                                               ? `${(item.file.size / 1024).toFixed(2)} KB`
                                               : `${(item.file.size / (1024 * 1024)).toFixed(2)} MB`}
                                           </div>
-                                          {photoType.id === "TRR_AT_4" && (
+                                          {photoType.lov2 === "Y" && (
                                             <div
                                               style={{
                                                 fontSize: "15px",

@@ -2534,11 +2534,15 @@ export default function Complaint() {
         // เพิ่ม complaintFile
         complaintFile:
           complaintFiles?.map((item: any, index: number) => {
+            const isOther = dataphoto_Combobox?.find(
+              (opt: any) => opt.id === item.attachmentType
+            )?.lov2 === "Y";
+
             return {
               cf_type: "Complaint",
               complaint_id: tempid,
               complaint_at_id: item.attachmentType,
-              other: item.otherText?.trim() || null,
+              other: isOther ? item.otherText?.trim() || null : null,
               cf_file_seq: (index + 1).toString(),
               user_file_name: item.file.name,
               file_name: item.file.name,
@@ -2547,7 +2551,7 @@ export default function Complaint() {
               record_status: true,
               create_by: user[0]?.employee_username || "",
               create_datetime: new Date().toISOString(),
-              remark: item.otherText || null,
+              remark: isOther ? item.otherText?.trim() || null : null,
             };
           }) || [],
       },
@@ -2714,30 +2718,28 @@ export default function Complaint() {
         complaintRs: complaintRsModel,
 
         // เพิ่ม complaintFile
-        complaintFile:
-          complaintFiles?.map((item: any, index: number) => {
-            return {
-              cf_type: "Complaint",
-              complaint_id: tempid,
-              complaint_at_id: item.attachmentType,
-              other:
-                item.attachmentType === "TRR_AT_4"
-                  ? item.otherText?.trim() || null
-                  : null,
-              cf_file_seq: (index + 1).toString(),
-              user_file_name: item.file.name,
-              file_name: item.file.name,
-              file_type: item.file.type.split("/")[1] || "",
-              file_size: item.file.size.toString(),
-              record_status: true,
-              create_by: user[0]?.employee_username || "",
-              create_datetime: new Date().toISOString(),
-              remark:
-                item.attachmentType === "TRR_AT_4"
-                  ? item.otherText?.trim() || null
-                  : null,
-            };
-          }) || [],
+            complaintFile:
+              complaintFiles?.map((item: any, index: number) => {
+                const isOther = dataphoto_Combobox?.find(
+                  (opt: any) => opt.id === item.attachmentType
+                )?.lov2 === "Y";
+
+                return {
+                  cf_type: "Complaint",
+                  complaint_id: tempid,
+                  complaint_at_id: item.attachmentType,
+                  other: isOther ? item.otherText?.trim() || null : null,
+                  cf_file_seq: (index + 1).toString(),
+                  user_file_name: item.file.name,
+                  file_name: item.file.name,
+                  file_type: item.file.type.split("/")[1] || "",
+                  file_size: item.file.size.toString(),
+                  record_status: true,
+                  create_by: user[0]?.employee_username || "",
+                  create_datetime: new Date().toISOString(),
+                  remark: isOther ? item.otherText?.trim() || null : null,
+                };
+              }) || [],
       },
       RunningModel: {
         code_group: dataReportTypeValue.lov_code,
@@ -2971,15 +2973,15 @@ export default function Complaint() {
           complaintRs: complaintRsModel,
           complaintFile:
             complaintFiles?.map((item: any, index: number) => {
+               const isOther = dataphoto_Combobox?.find(
+                  (opt: any) => opt.id === item.attachmentType
+                )?.lov2 === "Y";
               return {
                 id: item.id || undefined,
                 cf_type: "Complaint",
                 complaint_id: dataelement?.id,
                 complaint_at_id: item.attachmentType,
-                other:
-                  item.attachmentType === "TRR_AT_4"
-                    ? item.otherText?.trim() || null
-                    : null,
+                other: isOther ? item.otherText?.trim() || null : null,
                 cf_file_seq: (index + 1).toString(),
                 user_file_name: item.file.name,
                 file_name: item.file.name,
@@ -2988,10 +2990,7 @@ export default function Complaint() {
                 record_status: true,
                 create_by: user[0]?.employee_username || "",
                 create_datetime: new Date().toISOString(),
-                remark:
-                  item.attachmentType === "TRR_AT_4"
-                    ? item.otherText?.trim() || null
-                    : null,
+                remark: isOther ? item.otherText?.trim() || null : null,
               };
             }) || [],
         },
@@ -3200,7 +3199,9 @@ export default function Complaint() {
                 complaint_id: dataelement?.id,
                 complaint_at_id: item.attachmentType,
                 other:
-                  item.attachmentType === "TRR_AT_4"
+                  dataphoto_Combobox?.find(
+                    (opt: any) => opt.id === item.attachmentType
+                  )?.lov2 === "Y"
                     ? item.otherText?.trim() || null
                     : null,
                 cf_file_seq: (index + 1).toString(),
@@ -3212,7 +3213,9 @@ export default function Complaint() {
                 create_by: user[0]?.employee_username || "",
                 create_datetime: new Date().toISOString(),
                 remark:
-                  item.attachmentType === "TRR_AT_4"
+                  dataphoto_Combobox?.find(
+                    (opt: any) => opt.id === item.attachmentType
+                  )?.lov2 === "Y"
                     ? item.otherText?.trim() || null
                     : null,
               };
@@ -3911,9 +3914,12 @@ export default function Complaint() {
             cf_type: "Explain",
             complaint_id: complaintRootId,
             complaint_at_id: item.attachmentType,
-            other:item.attachmentType === "TRR_AT_4"
-                    ? item.otherText?.trim() || null
-                    : null,
+            other:
+              dataphoto_Combobox?.find(
+                (opt: any) => opt.id === item.attachmentType
+              )?.lov2 === "Y"
+                ? item.otherText?.trim() || null
+                : null,
             explain_id: tempid,
             cf_file_seq: (index + 1).toString(),
             user_file_name: item.file.name,
@@ -6142,7 +6148,7 @@ export default function Complaint() {
         hideReject={true}
         hideSaveDraft={!dataReportTypeValue}
         hideSaveSubmit={!dataReportTypeValue}
-        titlename={"[Complaint] เพิ่มข้อมูล"}
+        titlename={"สร้างรายการข้อร้องเรียน"}
         buttonText={"บันทึกและส่ง"}
         handleClose={handleClose}
         handlefunction={ComplaintAdd}
@@ -6251,7 +6257,7 @@ export default function Complaint() {
         open={openComplaintView}
         dialogWidth="xl"
         openBottonHidden={false}
-        titlename={"[Complaint] ดูข้อมูล"}
+        titlename={"รายการข้อร้องเรียน"}
         handleClose={handleClose}
         buttonColor="success"
         element={<ComplaintBody
@@ -6266,7 +6272,7 @@ export default function Complaint() {
         dialogWidth="xl"
         openBottonHidden={true}
         hideReject={true}
-        titlename={"[Complaint] แก้ไขข้อมูล"}
+        titlename={"แก้ไขข้อมูลรายการข้อร้องเรียน"}
         buttonText={"บันทึกและส่ง"}
         handleClose={handleClose}
         handlefunction={() => ComplaintEdit("SUBMIT")}
@@ -6375,7 +6381,7 @@ export default function Complaint() {
         hideSaveDraft={true}
         openBottonHidden={true}
         hideReject={true}
-        titlename={"[Complaint] ลบข้อมูล"}
+        titlename={"ลบรายการข้อร้องเรียน"}
         buttonText={"ลบข้อมูล"}
         handleClose={handleClose}
         handlefunction={ComplaintDelete}
@@ -6400,7 +6406,7 @@ export default function Complaint() {
         hideSaveDraft={true}
         hideSaveSubmit={true}
         hideReject={hideReject}
-        titlename={"[Complaint] ข้อมูลและรายละเอียด"}
+        titlename={"รายละเอียดข้อร้องเรียน"}
         handleClose={handleClose}
         handlereject={() => ComplaintReturn("EXPLAIN")}
         buttonColor="success"
@@ -6424,8 +6430,9 @@ export default function Complaint() {
         hideSaveDraft={true}
         hideSaveSubmit={true}
         hideReject={true}
-        titlename={"[Complaint] ข้อมูลและรายละเอียด"}
+        titlename={"ข้อมูลและรายละเอียด"}
         handleClose={handleClose}
+        cancelText="ปิด"
         buttonColor="success"
         element={
           <ComplaintBody
@@ -6445,7 +6452,7 @@ export default function Complaint() {
         open={openApproveSC}
         dialogWidth="xl"
         openBottonHidden={false}
-        titlename={"Explain (SC READ) // รายละเอียด"}
+        titlename={"รายละเอียด"}
         handleClose={handleClose}
         buttonColor="success"
         element={
@@ -6465,7 +6472,7 @@ export default function Complaint() {
         open={openReadApproveSC}
         dialogWidth="xl"
         openBottonHidden={false}
-        titlename={"ApproveSC // ดูรายละเอียด"}
+        titlename={"ดูรายละเอียด"}
         handleClose={handleClose}
         buttonColor="success"
         element={
@@ -6485,7 +6492,7 @@ export default function Complaint() {
         open={openApproveQC}
         dialogWidth="xl"
         openBottonHidden={false}
-        titlename={"Explain (QC READ) // รายละเอียด"}
+        titlename={"รายละเอียด"}
         handleClose={handleClose}
         buttonColor="success"
         element={
@@ -6505,7 +6512,7 @@ export default function Complaint() {
         open={openReadApproveQC}
         dialogWidth="xl"
         openBottonHidden={false}
-        titlename={"ApproveQC // ดูรายละเอียด"}
+        titlename={"ดูรายละเอียด"}
         handleClose={handleClose}
         buttonColor="success"
         element={
@@ -6525,7 +6532,7 @@ export default function Complaint() {
         open={openComplainClose}
         dialogWidth="xl"
         openBottonHidden={false}
-        titlename={"Close (CLOSE READ) // ปิดรายการ"}
+        titlename={"ปิดรายการข้อร้องเรียน"}
         handleClose={handleClose}
         buttonColor="success"
         element={
@@ -6546,7 +6553,7 @@ export default function Complaint() {
         open={openReadClose}
         dialogWidth="xl"
         openBottonHidden={false}
-        titlename={"ReadClose // ดูรายละเอียด"}
+        titlename={"ดูรายละเอียด"}
         handleClose={handleClose}
         buttonColor="success"
         element={
@@ -6566,7 +6573,7 @@ export default function Complaint() {
         open={openCloseHistory}
         dialogWidth="xl"
         openBottonHidden={false}
-        titlename={"CloseHistory // ดูรายละเอียด"}
+        titlename={"ดูรายละเอียด"}
         handleClose={handleClose}
         buttonColor="success"
         element={
@@ -6592,7 +6599,7 @@ export default function Complaint() {
         open={openExplainAdd}
         dialogWidth="xl"
         openBottonHidden={true}
-        titlename={"[Explain] เพิ่มข้อมูล"}
+        titlename={"เพิ่มข้อมูลชี้แจง"}
         buttonText={"Save & Submit"}
         handleClose={handleCloseExplainAdd}
         handlefunction={ExplainAdd}
@@ -6663,7 +6670,7 @@ export default function Complaint() {
         open={openExplainView}
         dialogWidth="xl"
         openBottonHidden={false}
-        titlename={"[Explain] ดูข้อมูล"}
+        titlename={"ดูข้อมูล"}
         handleClose={handleCloseExplainView}
         handlefunction={ExplainGet}
         buttonColor="success"
@@ -6710,7 +6717,7 @@ export default function Complaint() {
         hideSaveSubmit={false}     // แสดงตลอด
         disableReject={!approveSelectionCode || (approveSelectionCode !== "ADD" && approveSelectionCode !== "REJECT")}
         disableSaveSubmit={!approveSelectionCode || approveSelectionCode !== "APPROVE"}
-        titlename={"Approve Section Head (SC ADD) // เพิ่มข้อมูล"}
+        titlename={"อนุมติรายการหัวหน้าแผนก"}
         buttonText={"อนุมัติ"}
         handlefunction={ApproveScAdd}
         handlereject={() => ComplaintReturn("APPROVE_SC")}
@@ -6768,7 +6775,7 @@ export default function Complaint() {
         hideSaveSubmit={false}     // แสดงตลอด
         disableReject={!approveSelectionCode || (approveSelectionCode !== "ADD" && approveSelectionCode !== "REJECT")}
         disableSaveSubmit={!approveSelectionCode || approveSelectionCode !== "APPROVE"}
-        titlename={"Approve QC (QC ADD)// เพิ่มข้อมูล"}
+        titlename={"อนุมติรายการผู้จัดการโรงงาน"}
         buttonText={"อนุมัติ"}
         handlefunction={ApproveQcAdd}
         handlereject={() => ComplaintReturn("APPROVE_QC")}
@@ -6822,7 +6829,7 @@ export default function Complaint() {
         hideSaveSubmit={false}     // แสดงตลอด
         disableReject={!approveSelectionCode || (approveSelectionCode !== "ADD" && approveSelectionCode !== "REJECT")}
         disableSaveSubmit={!approveSelectionCode || approveSelectionCode !== "APPROVE"}
-        titlename={"Close (CLOSE ADD) // ปิดรายการ"}
+        titlename={"ปิดรายการคำชี้แจง"}
         buttonText={"ปิดรายการ"}
         handlefunction={CloseAdd}
         handlereject={() => ComplaintReturn("CLOSE")}
