@@ -2294,7 +2294,7 @@ React.useEffect(() => {
                             arr ??
                             null;
 
-                          const email = found?.dept_email ?? "ไม่พบ Email";
+                          const email = found?.dept_email ;
 
                           // console.log(
                           //   "📧 Selected dept email extracted:",
@@ -2380,6 +2380,7 @@ React.useEffect(() => {
                       <FullWidthTextField
                         value={respondent_email}
                         labelName="อีเมล (Email)"
+                        placeholderlabel="ไม่พบ E-Mail"
                         onchange={(e) => {
                           setrespondent_email(e);
                           if (onEmailChange) {

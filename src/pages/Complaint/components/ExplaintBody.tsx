@@ -2290,6 +2290,7 @@ export default function ExplaintBody({
                               <FullWidthTextArea
                                 value={root_cause}
                                 labelName=""
+                                placeholderlabel="กรุณากรอกคำอธิบายการวิเคราะห์ (Root Cause)"
                                 onchange={(e) => {
                                   setroot_cause(e);
                                   if (onRootCauseChange) {
@@ -2369,6 +2370,7 @@ export default function ExplaintBody({
                               <FullWidthTextArea
                                 value={corrective_action}
                                 labelName=""
+                                placeholderlabel="กรุณากรอกการดำเนินการแก้ไข (Corrective Action)"
                                 onchange={(e) => {
                                   setcorrective_action(e);
                                   if (onCorrectiveActionChange) {
@@ -2449,6 +2451,7 @@ export default function ExplaintBody({
                               <FullWidthTextArea
                                 value={preventive_action_plan}
                                 labelName=""
+                                placeholderlabel="กรุณากรอกแผนการป้องกันไม่ให้ปัญหาเกิดขึ้นซ้ำ (Preventive Action Plan)"
                                 onchange={(e) => {
                                   setpreventive_action_plan(e);
                                   if (onPreventiveActionPlanChange) {
