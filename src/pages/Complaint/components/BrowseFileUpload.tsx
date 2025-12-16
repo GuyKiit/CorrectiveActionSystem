@@ -22,7 +22,7 @@ interface BrowseFileUploadProps {
   setFileName: (val: string | undefined) => void;
   required?: string;
   validate?: boolean;
-  options?: Array<{ id: string; lov1: string; lov_code: string; lov2: string }>;
+  options?: Array<{ id: string; lov1: string; lov_code: string; lov2: string; isOther?: string }>;
   action?: string;
   isViewMode?: boolean;
   grouped?: { [key: string]: any[] };
@@ -59,6 +59,10 @@ export default function BrowseFileUpload({
   const [otherText, setOtherText] = useState<string>("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   
+  // Debug logging
+  // console.log("BrowseFileUpload options:", options);
+  // console.log("BrowseFileUpload attachmentType:", attachmentType);
+  // console.log("Selected option:", options?.find((opt) => opt.id === attachmentType));
 
   // เมื่อผู้ใช้เลือกไฟล์
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -113,13 +117,19 @@ export default function BrowseFileUpload({
   // เมื่อเลือกประเภทไฟล์หรือกรอก otherText ให้สร้าง object แล้วส่งกลับ parent
   useEffect(() => {
     if (!selectedFile || !attachmentType) return;
-    if (attachmentType === "TRR_AT_4" && !otherText.trim()) return; // ต้องกรอก otherText
+    const selectedOption = options.find((opt) => opt.id === attachmentType);
+    const isOther = selectedOption?.isOther === 'Y';
+    
+    if (isOther && !otherText.trim()) return; // ต้องกรอก otherText
 
     const newFile: ComplaintFile = {
       file: selectedFile,
       original_file_name: selectedFile.name,
       attachmentType,
-      otherText: attachmentType === "TRR_AT_4" ? otherText : undefined,
+      otherText: (() => {
+        const selectedOption = options.find((opt) => opt.id === attachmentType);
+        return selectedOption?.isOther === "Y" ? otherText : undefined;
+      })(),
     };
     setFile([...(file ?? []), newFile]);
     setSelectedFile(null);
@@ -150,13 +160,14 @@ export default function BrowseFileUpload({
               onChange={(e) => {
                 const value = e.target.value as string;
                 setAttachmentType(value);
-                if (value !== "TRR_AT_4") {
+                const selectedOption = options.find((opt) => opt.id === value);
+                if (selectedOption?.isOther !== "Y") {
                   setOtherText("");
                 }
               }}
               sx={{ flex: 1, backgroundColor: "#fff" }}
             >
-              <MenuItem value="">
+              <MenuItem value="" sx={{ display: "none" }}>
                 <em>-- เลือกรูปแบบเอกสาร --</em>
               </MenuItem>
               {options.map((opt) => (
@@ -166,7 +177,7 @@ export default function BrowseFileUpload({
               ))}
             </Select>
 
-            {attachmentType === "TRR_AT_4" && (
+            {options.find((opt) => opt.id === attachmentType)?.isOther === "Y" && (
               <TextField
                 size="small"
                 placeholder="โปรดระบุ..."
@@ -182,14 +193,15 @@ export default function BrowseFileUpload({
             <a
               className={`py-1 px-2 rounded-sm flex items-center gap-1 ${
                 attachmentType &&
-                (attachmentType !== "TRR_AT_4" || otherText.trim())
+                (options.find((opt) => opt.id === attachmentType)?.isOther !== "Y" || otherText.trim())
                   ? "bg-green-300 cursor-pointer"
                   : "bg-gray-200 cursor-not-allowed"
               }`}
               onClick={() => {
+                const isOther = options.find((opt) => opt.id === attachmentType)?.isOther === "Y";
                 if (
                   !attachmentType ||
-                  (attachmentType === "TRR_AT_4" && !otherText.trim())
+                  (isOther && !otherText.trim())
                 )
                   return;
                 startUploadFile();

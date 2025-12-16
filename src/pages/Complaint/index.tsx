@@ -2531,11 +2531,15 @@ export default function Complaint() {
         // เพิ่ม complaintFile
         complaintFile:
           complaintFiles?.map((item: any, index: number) => {
+            const isOther = dataphoto_Combobox?.find(
+              (opt: any) => opt.id === item.attachmentType
+            )?.lov2 === "Y";
+
             return {
               cf_type: "Complaint",
               complaint_id: tempid,
               complaint_at_id: item.attachmentType,
-              other: item.otherText?.trim() || null,
+              other: isOther ? item.otherText?.trim() || null : null,
               cf_file_seq: (index + 1).toString(),
               user_file_name: item.file.name,
               file_name: item.file.name,
@@ -2544,7 +2548,7 @@ export default function Complaint() {
               record_status: true,
               create_by: user[0]?.employee_username || "",
               create_datetime: new Date().toISOString(),
-              remark: item.otherText || null,
+              remark: isOther ? item.otherText?.trim() || null : null,
             };
           }) || [],
       },
@@ -2711,30 +2715,28 @@ export default function Complaint() {
         complaintRs: complaintRsModel,
 
         // เพิ่ม complaintFile
-        complaintFile:
-          complaintFiles?.map((item: any, index: number) => {
-            return {
-              cf_type: "Complaint",
-              complaint_id: tempid,
-              complaint_at_id: item.attachmentType,
-              other:
-                item.attachmentType === "TRR_AT_4"
-                  ? item.otherText?.trim() || null
-                  : null,
-              cf_file_seq: (index + 1).toString(),
-              user_file_name: item.file.name,
-              file_name: item.file.name,
-              file_type: item.file.type.split("/")[1] || "",
-              file_size: item.file.size.toString(),
-              record_status: true,
-              create_by: user[0]?.employee_username || "",
-              create_datetime: new Date().toISOString(),
-              remark:
-                item.attachmentType === "TRR_AT_4"
-                  ? item.otherText?.trim() || null
-                  : null,
-            };
-          }) || [],
+            complaintFile:
+              complaintFiles?.map((item: any, index: number) => {
+                const isOther = dataphoto_Combobox?.find(
+                  (opt: any) => opt.id === item.attachmentType
+                )?.lov2 === "Y";
+
+                return {
+                  cf_type: "Complaint",
+                  complaint_id: tempid,
+                  complaint_at_id: item.attachmentType,
+                  other: isOther ? item.otherText?.trim() || null : null,
+                  cf_file_seq: (index + 1).toString(),
+                  user_file_name: item.file.name,
+                  file_name: item.file.name,
+                  file_type: item.file.type.split("/")[1] || "",
+                  file_size: item.file.size.toString(),
+                  record_status: true,
+                  create_by: user[0]?.employee_username || "",
+                  create_datetime: new Date().toISOString(),
+                  remark: isOther ? item.otherText?.trim() || null : null,
+                };
+              }) || [],
       },
       RunningModel: {
         code_group: dataReportTypeValue.lov_code,
@@ -2968,15 +2970,15 @@ export default function Complaint() {
           complaintRs: complaintRsModel,
           complaintFile:
             complaintFiles?.map((item: any, index: number) => {
+               const isOther = dataphoto_Combobox?.find(
+                  (opt: any) => opt.id === item.attachmentType
+                )?.lov2 === "Y";
               return {
                 id: item.id || undefined,
                 cf_type: "Complaint",
                 complaint_id: dataelement?.id,
                 complaint_at_id: item.attachmentType,
-                other:
-                  item.attachmentType === "TRR_AT_4"
-                    ? item.otherText?.trim() || null
-                    : null,
+                other: isOther ? item.otherText?.trim() || null : null,
                 cf_file_seq: (index + 1).toString(),
                 user_file_name: item.file.name,
                 file_name: item.file.name,
@@ -2985,10 +2987,7 @@ export default function Complaint() {
                 record_status: true,
                 create_by: user[0]?.employee_username || "",
                 create_datetime: new Date().toISOString(),
-                remark:
-                  item.attachmentType === "TRR_AT_4"
-                    ? item.otherText?.trim() || null
-                    : null,
+                remark: isOther ? item.otherText?.trim() || null : null,
               };
             }) || [],
         },
@@ -3197,7 +3196,9 @@ export default function Complaint() {
                 complaint_id: dataelement?.id,
                 complaint_at_id: item.attachmentType,
                 other:
-                  item.attachmentType === "TRR_AT_4"
+                  dataphoto_Combobox?.find(
+                    (opt: any) => opt.id === item.attachmentType
+                  )?.lov2 === "Y"
                     ? item.otherText?.trim() || null
                     : null,
                 cf_file_seq: (index + 1).toString(),
@@ -3209,7 +3210,9 @@ export default function Complaint() {
                 create_by: user[0]?.employee_username || "",
                 create_datetime: new Date().toISOString(),
                 remark:
-                  item.attachmentType === "TRR_AT_4"
+                  dataphoto_Combobox?.find(
+                    (opt: any) => opt.id === item.attachmentType
+                  )?.lov2 === "Y"
                     ? item.otherText?.trim() || null
                     : null,
               };
@@ -3908,9 +3911,12 @@ export default function Complaint() {
             cf_type: "Explain",
             complaint_id: complaintRootId,
             complaint_at_id: item.attachmentType,
-            other:item.attachmentType === "TRR_AT_4"
-                    ? item.otherText?.trim() || null
-                    : null,
+            other:
+              dataphoto_Combobox?.find(
+                (opt: any) => opt.id === item.attachmentType
+              )?.lov2 === "Y"
+                ? item.otherText?.trim() || null
+                : null,
             explain_id: tempid,
             cf_file_seq: (index + 1).toString(),
             user_file_name: item.file.name,
