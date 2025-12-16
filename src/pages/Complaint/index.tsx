@@ -3635,8 +3635,8 @@ export default function Complaint() {
           approve_company_id: approve_company_id?.company_id
             ? Number(approve_company_id.company_id)
             : user[0]?.itasset_company_id || "",
-          approve_department_id: approve_department_id?.department_id
-            ? Number(approve_department_id.department_id)
+          approve_department_id: qcapprove_department_id?.department_id
+            ? Number(qcapprove_department_id.department_id)
             : user[0]?.itasset_department_id || "",
           approve_position: user[0]?.employee_position || "",
           approve_email: user[0]?.employee_email || "",
