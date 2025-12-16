@@ -6,6 +6,7 @@ import { useEffect, useRef } from "react";
 interface FullWidthTextArea {
   value?: any;
   labelName: string;
+  placeholderlabel?: string;
   required?: string;
   disabled?: boolean;
   onchange?: (value: any) => void;
@@ -41,6 +42,7 @@ useEffect(() => {
           fullWidth
           multiline
           rows={4}
+          placeholder={props.placeholderlabel}
           sx={{
             bgcolor: props.bgcolorTextField ? grey[200] : null,
             "& .MuiOutlinedInput-root": {
