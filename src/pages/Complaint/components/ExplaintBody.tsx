@@ -2725,8 +2725,8 @@ export default function ExplaintBody({
                                           </IconButton>
 
                                           {/* //ปุ่มดาวน์โหลดไฟล์ */}
-                                          {
-                                            (
+                                          
+                                            {!isActionExplainAdd && (
                                             <IconButton
                                               color="primary"
                                               onClick={async () => {
