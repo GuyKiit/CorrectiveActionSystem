@@ -1322,33 +1322,48 @@ export default function ComplaintBody({
     );
 
     // reset domain ทุกครั้งที่ company เปลี่ยน
-    setrespondent_domain_id(null);
+    // setrespondent_domain_id(null);
   }
 }, [respondent_company_id]);
+
 React.useEffect(() => {
   if (
+    !respondent_domain_id &&
     Array.isArray(domainrelate) &&
     domainrelate.length > 0 &&
-    dataelement?.respondent_domain_id &&
-    !respondent_domain_id
+    user?.[0]?.employee_domain
   ) {
-    const mappedDomain = domainrelate.find(
+    const autoDomain = domainrelate.find(
       (item: any) =>
-        String(item.domain_id) ===
-        String(
-          dataelement.respondent_domain_id?.domain_id ??
-          dataelement.respondent_domain_id
-        )
+        String(item.domain_id) === String(user[0].employee_domain)
     );
 
-    console.log("🟢 mappedDomain:", mappedDomain);
+    if (autoDomain) {
+      console.log("🎯 Auto domain from employee_domain:", autoDomain);
 
-    if (mappedDomain) {
-      setrespondent_domain_id(mappedDomain);
-      handleDomainChange(mappedDomain);
+      setrespondent_domain_id(autoDomain);
+      handleDomainChange(autoDomain);
+      onRespondentDepartmentChange?.(autoDomain);
     }
   }
-}, [domainrelate, dataelement]);
+}, [domainrelate, respondent_domain_id, user]);
+
+React.useEffect(() => {
+  if (!respondent_domain_id) return;
+
+  mas_DepartmentGet_Complaint(
+    {
+      domain_id: respondent_domain_id.domain_id,
+      company_id: respondent_company_id?.company_id,
+    },
+    setdataset_department,
+    setdataset_department_respondent,
+    isCallFuncLogOn,
+    user,
+    action
+  );
+}, [respondent_domain_id]);
+
   // 🧩 1️⃣ โหลดข้อมูลหลัก (ReportType, Company, Domain, Department)
   React.useEffect(() => {
     if (!dataelement || action === "Add") return; // 👈 ป้องกันตอน New
@@ -2167,7 +2182,7 @@ React.useEffect(() => {
                       }
                     }}
                     bgcolorTextField={true}
-                    readonly={!isActionAdd && !isActionEdit}
+                    readonly={!isActionAdd || !isCrossCompany}
                     required="required"
                     Validate={validateText?.Respondent_Department || false}
                     shouldFocusError={firstErrorField === "Respondent_Department"}
