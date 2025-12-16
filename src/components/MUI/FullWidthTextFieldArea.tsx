@@ -6,6 +6,7 @@ import { useEffect, useRef } from "react";
 interface FullWidthTextArea {
   value?: any;
   labelName: string;
+  placeholderlabel?: string;
   required?: string;
   disabled?: boolean;
   onchange?: (value: any) => void;
@@ -67,6 +68,7 @@ useEffect(() => {
           // size="small"
           disabled={props.disabled}
           onChange={hedelonChange}
+          placeholder={props.placeholderlabel}
           value={props.value !== undefined && props.value !== null ? props.value : ""}
         />
         {props.validateTextLable ? (
