@@ -1393,7 +1393,7 @@ export default function ExplaintBody({
       }
 
       // Load QC approve data from dataelement (for CloseAdd mode)
-      if (isActionCloseAdd || isActionClose || isActionCloseHistory) {
+      if (isActionCloseAdd || isActionClose || isActionCloseHistory ) {
         // Set QC approve name
         if (qcApprove?.approve_name) {
           setqcapprove_name(qcApprove.approve_name);
@@ -1662,6 +1662,7 @@ export default function ExplaintBody({
       (action === "ExplainRead" ||
         action === "ApproveSCAdd" ||
         action === "ApproveQCAdd" ||
+        isActionCloseHistory ||
         action === "CloseAdd") &&
       dataelement?.id
     ) {

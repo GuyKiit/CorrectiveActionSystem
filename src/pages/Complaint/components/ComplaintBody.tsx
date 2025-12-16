@@ -3226,6 +3226,8 @@ React.useEffect(() => {
                                             <IconButton
                                               color="primary"
                                               onClick={async () => {
+                                                console.log("Downloading file:", item);
+                                                console.log("Downloading item.full_path:", item.full_path);
                                                 if (!item.full_path) return;
 
                                                 try {
