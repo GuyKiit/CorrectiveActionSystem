@@ -2319,6 +2319,7 @@ React.useEffect(() => {
                         required="required"
                         value={product_name}
                         labelName="ชื่อสินค้า (Product Name)"
+                        placeholderlabel="กรุณากรอกชื่อสินค้า"
                         onchange={(e) => {
                           setproduct_name(e);
                           if (onProductNameChange) {
@@ -2342,6 +2343,7 @@ React.useEffect(() => {
                         required="required"
                         value={lot_no}
                         labelName="Lot No./Bag No"
+                        placeholderlabel="กรุณากรอกหมายเลข Lot No./Bag No"
                         onchange={(e) => {
                           setlot_no(e);
                           if (onLotNoChange) {
@@ -2483,6 +2485,7 @@ React.useEffect(() => {
                                     <FullWidthTextArea
                                       value={compTypeOther}
                                       labelName="Other:"
+                                      placeholderlabel="กรุณากรอกรายละเอียด"
                                       onchange={(e) => {
                                         setcompTypeOther(e);
                                         if (onOtherTypeChange) {
@@ -2589,6 +2592,7 @@ React.useEffect(() => {
                                     <FullWidthTextArea
                                       value={clauseOther}
                                       labelName="Clause:"
+                                      placeholderlabel="กรุณากรอกรายละเอียด"
                                       onchange={(e) => {
                                         setclauseOther(e);
                                         if (onClauseChange) {
@@ -2618,6 +2622,7 @@ React.useEffect(() => {
                                     <FullWidthTextArea
                                       value={compRsOther}
                                       labelName="Other:"
+                                      placeholderlabel="กรุณากรอกรายละเอียด"
                                       onchange={(e) => {
                                         setcompRsOther(e);
                                         if (onOtherRsChange) {
@@ -2705,6 +2710,7 @@ React.useEffect(() => {
                                 <FullWidthTextArea
                                   value={detail}
                                   labelName=""
+                                  placeholderlabel="กรุณากรอกรายละเอียด"
                                   onchange={(e) => {
                                     setdetail(e);
                                     if (onDetailChange) {

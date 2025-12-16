@@ -5964,6 +5964,7 @@ export default function Complaint() {
             <FullWidthTextField
               value={TextNameSearch.cas_number}
               labelName={"CAS Number"}
+              placeholderlabel="กรุณากรอกหมายเลข CAS Number"
               onchange={(value) =>
                 setTextNameSearch({
                   ...TextNameSearch,
@@ -5976,6 +5977,7 @@ export default function Complaint() {
             <FullWidthTextField
               value={TextNameSearch.product_name}
               labelName={"ชื่อสินค้า (Product Name)"}
+              placeholderlabel="กรุณากรอกชื่อสินค้า"
               onchange={(value) =>
                 setTextNameSearch({
                   ...TextNameSearch,
@@ -5988,6 +5990,7 @@ export default function Complaint() {
             <FullWidthTextField
               value={TextNameSearch.lot_no}
               labelName={"Lot No./Bag No"}
+              placeholderlabel="กรุณากรอกหมายเลข Lot No./Bag No"
               onchange={(value) =>
                 setTextNameSearch({ ...TextNameSearch, ...{ lot_no: value } })
               }

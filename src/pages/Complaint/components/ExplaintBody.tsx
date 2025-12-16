@@ -2008,6 +2008,7 @@ export default function ExplaintBody({
                                   <FullWidthTextArea
                                     value={ToolOther}
                                     labelName="Other:"
+                                    placeholderlabel="กรุณากรอกรายละเอียด"
                                     onchange={(e) => {
                                       setToolOther(e);
                                       if (onToolOtherChange) {
@@ -2117,6 +2118,7 @@ export default function ExplaintBody({
                                   <FullWidthTextArea
                                     value={DecisionOther}
                                     labelName="Other:"
+                                    placeholderlabel="กรุณากรอกรายละเอียด"
                                     onchange={(e) => {
                                       setDecisionOther(e);
                                       if (onDecisionOtherChange) {

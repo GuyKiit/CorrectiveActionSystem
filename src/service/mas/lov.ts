@@ -71,7 +71,7 @@ export async function mas_DomainGetAll(setmaster_domain: (data: any) => void, is
 }
 
 // Function - Get DomainRelate
-export async function mas_DomainRelateGet(company_id: any, set_domainrelate: (data: any) => void, user : any, isCallFuncLogOn: boolean) {
+export async function mas_DomainRelateGet(company_id: any, set_domainrelate: (data: any) => void, user: any, isCallFuncLogOn: boolean) {
   if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  DomainRelateGet");
 
   try {
@@ -79,7 +79,7 @@ export async function mas_DomainRelateGet(company_id: any, set_domainrelate: (da
       domain: user[0]?.employee_domain,
       company_id: company_id,
     };
-    
+
     const response = await _POST(dataset, "/Complaint/CasDomainRelateGet");
     if (response && response.status === "success") {
       // console.log("❇️ Call [Complaint/CasDomainGet] -> DomainRelateGet :",response.data);
@@ -184,8 +184,8 @@ export async function mas_DepartmentGet_Complaint(value: any, setdataset_departm
           (item: any) => item.department_id != user[0]?.itasset_department_id
         );
       }
-      console.log("response.data",response.data);
-      
+      console.log("response.data", response.data);
+
       setdataset_department(response.data); // ✅ เรียกทุก action
       setdataset_department_respondent(datasetToSet); // ✅ เรียกทุก action
     }
