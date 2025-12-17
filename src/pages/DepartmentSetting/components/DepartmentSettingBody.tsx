@@ -95,6 +95,7 @@ type Block = {
 
 interface DepartmentSettingBody {
     action: string;
+    isItAdmin: boolean;
     disableTextField?: boolean;
     readonlyTextField?: boolean;
     bgcolorTextField?: boolean;
@@ -138,6 +139,7 @@ type FileData = {
 
 export default function DepartmentSettingBody({
     action,
+    isItAdmin,
     readonlyTextField,
     bgcolorTextField,
     validateText,
@@ -266,7 +268,7 @@ export default function DepartmentSettingBody({
             set_domain([]);
             set_department([]);
             set_username([]);
-            setdept_domain("");
+            setdept_domain(null);
             setdomain_dept_id(null);
             setsectionApprove(null);
             setqcApprove(null);
@@ -278,20 +280,19 @@ export default function DepartmentSettingBody({
 
     const handleDomainChange = (value: any) => {
         console.log("####### Onchange Domain Value [event] :", value);
+         setdomain_dept_id(null);
+         set_department([])
 
-        if (value && value.domain_id && value.company_id) {
+        if (value) {
+        // if (value && value.domain_id && value.company_id) {
             const dataset = {
                 domain_id: value.domain_id,
-                company_id: value.company_id,
+                company_id: dept_company?.company_id ?? user[0]?.itasset_company_id, 
             };
 
-            mas_DepartmentDomainGet(value, set_department, isCallFuncLogOn);
-        } else {
-            set_department([]);
-        }
+            mas_DepartmentDomainGet(dataset, set_department, isCallFuncLogOn);
+        } 
     };
-
-
 
     const handleDepartmentChange = (val: any) => {
         console.log('####### Onchange Department Value [event] : ', val);
@@ -307,8 +308,6 @@ export default function DepartmentSettingBody({
 
         } else {
             set_username([]);
-            setsectionApprove(null);
-            setqcApprove(null);
         }
     };
 
@@ -389,6 +388,66 @@ export default function DepartmentSettingBody({
 
         if (!isActionAdd && dataelement) mapInitialValues();
     }, [dataelement, company, master_domain, master_department]);
+
+
+    React.useEffect(() => {
+        // Only run on mount for Add action
+        if (!isActionAdd) return;
+
+        const InitialValuesCompanyandDomain = async () => {
+            try {
+                if (Array.isArray(company)) {
+                    // 1. Find and set initial company
+                    const mappedCompany = await setValueMas(
+                        company,
+                        user[0]?.itasset_company_id,
+                        "company_id"
+                    );
+                    if (mappedCompany) {
+                        setdept_company(mappedCompany); // Set initial company
+
+                        // 2. Fetch domain list for this company and set as options
+                        const tempDomain = await new Promise<any[]>((resolve) => {
+                            mas_DomainGet(
+                                mappedCompany.company_id,
+                                (domains: any[]) => {
+                                    set_domain(domains);
+                                    resolve(domains);
+                                },
+                                user,
+                                isCallFuncLogOn
+                            );
+                        });
+
+                        // 3. Find and set initial domain from the fetched list
+                        if (Array.isArray(tempDomain)) {
+                            const mappedDomain = await setValueMas(
+                                tempDomain,
+                                user[0]?.employee_domain,
+                                "domain_id"
+                            );
+                            if (mappedDomain) {
+
+                                const dataset = {
+                                  domain_id: user[0]?.employee_domain,
+                                  company_id: user[0]?.itasset_company_id,
+                                };
+
+                                setdept_domain(mappedDomain); // Set initial domain
+                                mas_DepartmentDomainGet(dataset, set_department, isCallFuncLogOn);
+                            }
+                        }
+                    }
+                }
+            } catch (err) {
+                console.error("setCompanyValues error:", err);
+            }
+        };
+
+        InitialValuesCompanyandDomain();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
 
 
     // ============================
@@ -589,7 +648,7 @@ export default function DepartmentSettingBody({
                                     handleCompanyChange(val);
                                     onCompanyAreaChange?.(val);
                                 }}
-                                readonly={isActionRead || isActionDelete}
+                                readonly={isActionRead || isActionDelete || !isItAdmin}
                                 Validate={validateText?.Company_Area || false}
                                 validateTextLable={validateText?.Company_Area? "กรุณาเลือกบริษัท (Company)": ""}
                                 
@@ -600,13 +659,14 @@ export default function DepartmentSettingBody({
                                 required="required"
                                 value={dept_domain}
                                 labelName={
-                                    "โดเมน (Domain)"
+                                    "โรงงาน (Factory)"
                                 }
                                 options={domain}
                                 column="domain_name"
                                 setvalue={(val) => {
                                     // console.log("Domain selected:", val?.domain_name);
                                     setdept_domain(val);
+                                    console.log("🚀 handleDomainChange=", val);
                                     handleDomainChange(val);
                                     if (onDomainAreaChange) {
                                         onDomainAreaChange(val);
@@ -616,11 +676,11 @@ export default function DepartmentSettingBody({
                                 bgcolorTextField={
                                     isActionAdd ? false : isActionEdit ? false : true
                                 }
-                                readonly={isActionRead || isActionDelete || !dept_company}
+                                readonly={isActionRead || isActionDelete || !dept_company || !isItAdmin}
                                 Validate={validateText?.Domain_Area || false}
                                 validateTextLable={
                                     validateText?.Domain_Area
-                                        ? "กรุณาเลือกโดเมน (Domain)"
+                                        ? "กรุณาเลือกโรงงาน (Factory)"
                                         : ""
                                 }
                             />
