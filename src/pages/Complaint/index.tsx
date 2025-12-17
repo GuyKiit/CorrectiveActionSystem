@@ -550,6 +550,8 @@ export default function Complaint() {
 
   const [openUpLoad, setOpenUpload] = React.useState(false);
 
+  const [isAcknowledgeUpdated, setIsAcknowledgeUpdated] = React.useState(false);
+
   const [ComplaintBlocks, setComplaintBlocks] = useState<Block[]>([]);
   const [blockValidateErrors, setBlockValidateErrors] = useState<{
     [index: number]: data_detail;
@@ -2823,7 +2825,7 @@ export default function Complaint() {
          <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
           <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ชื่อผู้ออกเอกสาร (Reported by)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_fname_th ? (user[0]?.employee_fname_th + " " + (user[0]?.employee_lname_th || "")) : ((user[0]?.employee_fname_en || "") + " " + (user[0]?.employee_lname_en || ""))} (${user[0]?.employee_username || "-"})</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_fname_th ? (user[0]?.employee_fname_th + " " + (user[0]?.employee_lname_th || "")) : ((user[0]?.employee_fname_en || "") + " " + (user[0]?.employee_lname_en || ""))} </td>
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ตำแหน่ง (Position)</td>
@@ -3065,7 +3067,7 @@ export default function Complaint() {
          <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
           <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ชื่อผู้ออกเอกสาร (Reported by)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_fname_th ? (user[0]?.employee_fname_th + " " + (user[0]?.employee_lname_th || "")) : ((user[0]?.employee_fname_en || "") + " " + (user[0]?.employee_lname_en || ""))} (${user[0]?.employee_username || "-"})</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_fname_th ? (user[0]?.employee_fname_th + " " + (user[0]?.employee_lname_th || "")) : ((user[0]?.employee_fname_en || "") + " " + (user[0]?.employee_lname_en || ""))} </td>
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ตำแหน่ง (Position)</td>
@@ -4279,8 +4281,7 @@ export default function Complaint() {
       
       // 🧩 บันทึกข้อมูล Approve
       const response = await _POST(
-        approvePayload,
-        "/ExplaintApprove/ExplaintApproveAdd"
+        approvePayload,"/ExplaintApprove/ExplaintApproveAdd"
       );
 
       if (response && response.status === "success") {
@@ -4483,8 +4484,7 @@ export default function Complaint() {
     try {
       // 🧩 บันทึกข้อมูล Approve
       const response = await _POST(
-        approvePayload,
-        "/ExplaintApprove/ExplaintApproveAdd"
+        approvePayload,"/ExplaintApprove/ExplaintApproveAdd"
       );
 
       if (response && response.status === "success") {
@@ -4831,7 +4831,69 @@ export default function Complaint() {
     const resolveExplainId = () => {
       return currentExplainForApproval?.id;
     };
+    // หา display text สำหรับ email
+    const selectedApproveItem = (dataApprove_Combobox || []).find(
+      (item: any) => item.lov_code === approveSelectionCode
+    );
+    const approveDisplayText = selectedApproveItem?.lov1 || approveSelectionCode || "-";
 
+    const emailBodyHtml = `
+      <div style="font-family: Arial, sans-serif; color: #333;">
+        <p>
+        เรียน Document Control
+      </p>
+      <p style="margin-top: 5px;">
+        แจ้งเตือนการปิดปัญหาข้อร้องเรียน มีรายละเอียดดังต่อไปนี้
+      </p>
+        <br />
+        <h2 style="color: #95cc97ff; border-bottom: 2px solid #95cc97ff; padding-bottom: 10px;">
+          รายละเอียดการอนุมัติ (Approval Details)
+        </h2>
+        <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+          <tr>
+            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">Approve หัวหน้าส่วน (Section Approve)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${approveDisplayText || "-"}</td>
+          </tr>
+           <tr>
+            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">หมายเหตุการอนุมัติ</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${close_detail || "-"}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">หมายเหตุเพิ่มเติม</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${close_note || "-"}</td>
+          </tr>
+        </table> 
+        <h2 style="color: #64c768ff; border-bottom: 2px solid #64c768ff; padding-bottom: 10px;">
+          ข้อมูลผู้รับรอง (Section Head)
+        </h2>
+        <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+          <tr>
+            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">ชื่อผู้อนุมัติ (Approved by)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_fname_th  || ""} ${user[0]?.employee_lname_th || ""} (${user[0]?.employee_username || "-"})</td>
+          </tr>
+           <tr>
+            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ตำแหน่ง (Position)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_position || "-"}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">แผนก (Department)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.itasset_department_name || "-"}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">โรงงาน (Factory)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_domain || "-"}</td>
+          </tr>
+        </table> 
+        <p style="margin-top: 20px; font-size: 14px; color: #000000;">
+        ขอแสดงความนับถือ,<br />
+          CAS - Corrective Action System<br />
+          Thai Roong Ruang Sugar Group
+          <br /><br /><br />
+          ****************************************************************************************<br />
+          อีเมลฉบับนี้ เป็นการจัดส่งผ่านระบบอัติโนมัติ โดยท่านไม่สามารถตอบกลับผ่านเมลนี้ได้
+      </p>
+      </div>
+    `;
     const explainRootId = resolveExplainId();
 
     // 🧩 สร้าง payload สำหรับ Approve
@@ -4854,6 +4916,7 @@ export default function Complaint() {
       CurrentAccessModel: {
         user_id: user[0]?.employee_username || "",
       },
+      emailBody: emailBodyHtml
     };
 
     setIsLoadingScreen(true);
@@ -4920,6 +4983,7 @@ export default function Complaint() {
       ComplaintGet();
     }
   };
+
   const handleOnclickCloseHistory = async (data: any) => {
     // if (isCallFuncLogOn)
     //   console.log(
@@ -5627,7 +5691,11 @@ export default function Complaint() {
     setOpenUpload(false);
     setApproveSelectionCode(null); // รีเซ็ตค่าเมื่อปิด Dialog
     //setdataFuapp(null); // รีเซ็ตค่า Approve ที่เลือกไว้
-    // resetForm();
+
+    if (isAcknowledgeUpdated) {
+        ComplaintGet();
+        setIsAcknowledgeUpdated(false);
+    }
   };
 
 
@@ -6419,6 +6487,7 @@ export default function Complaint() {
               handleOnclickExplainView(item, "ExplainRead")
             }
             handleOnclickExplainApproveSc={handleOnclickExplainApproveSc}
+            onAcknowledgeUpdate={() => setIsAcknowledgeUpdated(true)}
           />
         }
       />
@@ -6443,6 +6512,7 @@ export default function Complaint() {
               handleOnclickExplainView(item, "ReadExplain")
             }
             handleOnclickExplainApproveSc={handleOnclickExplainApproveSc}
+            onAcknowledgeUpdate={() => setIsAcknowledgeUpdated(true)}
           />
         }
       />
