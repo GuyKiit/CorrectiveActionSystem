@@ -286,6 +286,13 @@ export default function DepartmentSetting() {
 
   };
 
+  const tempRoleUser = dataset_roleProfile?.filter(
+              (item: any) => item.lov1 === String(user[0]?.role_id)
+            );
+  const isItAdmin = tempRoleUser?.[0]?.lov_code === "it_admin";
+  console.log("isItAdmin",isItAdmin);
+  
+
   // Function - Validate before Add Complaint
     const validateBeforeAdd = (): boolean => {
       if (isCallFuncLogOn)
@@ -432,7 +439,7 @@ export default function DepartmentSetting() {
         setdatastatus?.(grouped["complaint_status"] || []);
 
         //console.log('⚠️⚠️⚠️⚠️ [grouped["active_company"]] :', grouped["active_company"])
-        //console.log('⚠️⚠️⚠️⚠️ [grouped["role_profile"]] :', grouped["role_profile"])
+        console.log('⚠️⚠️⚠️⚠️ [grouped["role_profile"]] :', grouped["role_profile"])
         //console.log('⚠️⚠️⚠️⚠️ [grouped["complaint_status"]] :', grouped["complaint_status"])
 
 
@@ -1016,7 +1023,7 @@ useEffect(() => {
               value={domain?.find(
                 (item: any) => item.domain_id === TextNameSearch.domain_search
               ) || null}
-              labelName="โดเมน (Domain)"
+              labelName="โรงงาน (Factory)"
               options={domain || []}
               column="domain_name"
               setvalue={(val) => {
@@ -1114,6 +1121,7 @@ useEffect(() => {
         handleClose={handleClose}
         buttonColor="success"
         element={<DepartmentSettingBody
+        isItAdmin={isItAdmin}
           action="Read"
         />}
       />
@@ -1130,6 +1138,7 @@ useEffect(() => {
         buttonColor="success"
         element={
           <DepartmentSettingBody
+          isItAdmin={isItAdmin}
             action="Add"
             // onBlocksChange={(data) => setComplaintBlocks(data)}
             validateDetailText={blockValidateErrors}
@@ -1177,6 +1186,7 @@ useEffect(() => {
         hideSaveDraft={true}
         buttonColor="success"
         element={<DepartmentSettingBody
+        isItAdmin={isItAdmin}
           action="Edit"
           onBlocksChange={(data) => setComplaintBlocks(data)}
           validateDetailText={blockValidateErrors}
@@ -1222,6 +1232,7 @@ useEffect(() => {
         handlefunction={DepartmentSettingDelete}
         buttonColor="error"
         element={<DepartmentSettingBody
+        isItAdmin={isItAdmin}
           action="Delete"
         />}
       />

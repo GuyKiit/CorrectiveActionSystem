@@ -95,6 +95,7 @@ type Block = {
 
 interface DepartmentSettingBody {
     action: string;
+    isItAdmin: boolean;
     disableTextField?: boolean;
     readonlyTextField?: boolean;
     bgcolorTextField?: boolean;
@@ -138,6 +139,7 @@ type FileData = {
 
 export default function DepartmentSettingBody({
     action,
+    isItAdmin,
     readonlyTextField,
     bgcolorTextField,
     validateText,
@@ -266,7 +268,7 @@ export default function DepartmentSettingBody({
             set_domain([]);
             set_department([]);
             set_username([]);
-            setdept_domain("");
+            setdept_domain(null);
             setdomain_dept_id(null);
             setsectionApprove(null);
             setqcApprove(null);
@@ -278,21 +280,19 @@ export default function DepartmentSettingBody({
 
     const handleDomainChange = (value: any) => {
         console.log("####### Onchange Domain Value [event] :", value);
+         setdomain_dept_id(null);
+         set_department([])
 
         if (value) {
         // if (value && value.domain_id && value.company_id) {
             const dataset = {
                 domain_id: value.domain_id,
-                company_id: user[0]?.itasset_company_id,
+                company_id: dept_company?.company_id ?? user[0]?.itasset_company_id, 
             };
 
-            mas_DepartmentDomainGet(value, set_department, isCallFuncLogOn);
-        } else {
-            set_department([]);
-        }
+            mas_DepartmentDomainGet(dataset, set_department, isCallFuncLogOn);
+        } 
     };
-
-
 
     const handleDepartmentChange = (val: any) => {
         console.log('####### Onchange Department Value [event] : ', val);
@@ -308,8 +308,6 @@ export default function DepartmentSettingBody({
 
         } else {
             set_username([]);
-            setsectionApprove(null);
-            setqcApprove(null);
         }
     };
 
@@ -650,7 +648,7 @@ export default function DepartmentSettingBody({
                                     handleCompanyChange(val);
                                     onCompanyAreaChange?.(val);
                                 }}
-                                readonly={isActionRead || isActionDelete}
+                                readonly={isActionRead || isActionDelete || !isItAdmin}
                                 Validate={validateText?.Company_Area || false}
                                 validateTextLable={validateText?.Company_Area? "กรุณาเลือกบริษัท (Company)": ""}
                                 
@@ -661,7 +659,7 @@ export default function DepartmentSettingBody({
                                 required="required"
                                 value={dept_domain}
                                 labelName={
-                                    "โดเมน (Domain)"
+                                    "โรงงาน (Factory)"
                                 }
                                 options={domain}
                                 column="domain_name"
@@ -678,11 +676,11 @@ export default function DepartmentSettingBody({
                                 bgcolorTextField={
                                     isActionAdd ? false : isActionEdit ? false : true
                                 }
-                                readonly={isActionRead || isActionDelete || !dept_company}
+                                readonly={isActionRead || isActionDelete || !dept_company || !isItAdmin}
                                 Validate={validateText?.Domain_Area || false}
                                 validateTextLable={
                                     validateText?.Domain_Area
-                                        ? "กรุณาเลือกโดเมน (Domain)"
+                                        ? "กรุณาเลือกโรงงาน (Factory)"
                                         : ""
                                 }
                             />
