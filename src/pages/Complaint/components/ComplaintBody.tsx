@@ -154,6 +154,7 @@ interface ComplaintBody {
 
   handleOnclickComplainCloseAdd?: (item: any) => void;
   submitCount?: number;
+  onAcknowledgeUpdate?: () => void;
 }
 
 type LovType = {
@@ -218,6 +219,7 @@ export default function ComplaintBody({
   handleOnclickExplainApproveQc,
 
   handleOnclickComplainCloseAdd,
+  onAcknowledgeUpdate,
 }: ComplaintBody) {
 
 
@@ -1114,7 +1116,7 @@ export default function ComplaintBody({
          <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
           <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ชื่อผู้ออกเอกสาร (Reported by)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_fname_th ? (user[0]?.employee_fname_th + " " + (user[0]?.employee_lname_th || "")) : ((user[0]?.employee_fname_en || "") + " " + (user[0]?.employee_lname_en || ""))} (${user[0]?.employee_username || "-"})</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_fname_th ? (user[0]?.employee_fname_th + " " + (user[0]?.employee_lname_th || "")) : ((user[0]?.employee_fname_en || "") + " " + (user[0]?.employee_lname_en || ""))} </td>
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ตำแหน่ง (Position)</td>
@@ -1930,6 +1932,9 @@ React.useEffect(() => {
       ) {
         if (dataelement?.acknowledge_flag == 0) {
           await Acknowledge_Update(dataelement);
+          if (onAcknowledgeUpdate) {
+            onAcknowledgeUpdate();
+          }
         }
         await Complaint_Get(dataelement); // ✅ Move inside: Only fetch if updated
       }
