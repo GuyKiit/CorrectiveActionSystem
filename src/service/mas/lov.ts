@@ -34,17 +34,39 @@ export async function mas_DomainGet(company_id: number, set_domain: (data: any) 
   if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  DomainGet");
 
   try {
+    // const dataset = {
+    //   company_id: company_id,
+    // };
+
     const dataset = {
+      domain: user[0]?.employee_domain,
       company_id: company_id,
     };
-    const response = await _POST(dataset, "/Complaint/CasDomainGet");
+    
+    const response = await _POST(dataset, "/Complaint/CasDomainRelateGet");
     if (response && response.status === "success") {
-      console.log("❇️ Call [Complaint/CasDomainGet] -> Domain_Get :", response.data);
+      // console.log("❇️ Call [Complaint/CasDomainGet] -> DomainRelateGet :",response.data);
+
+      console.log(
+        "❇️ Call [Complaint/DomainRelateGet] -> DomainRelateGet :",
+        response.data
+      );
       if (Array.isArray(response.data)) {
-        // เอา filter ออก → ใช้ทุกตัว
+
         set_domain(response.data);
+        // setdataset_company(domain);
+
       }
     }
+
+    // const response = await _POST(dataset, "/Complaint/CasDomainGet");
+    // if (response && response.status === "success") {
+      // console.log("❇️ Call [Complaint/CasDomainGet] -> Domain_Get :", response.data);
+      // if (Array.isArray(response.data)) {
+      //   // เอา filter ออก → ใช้ทุกตัว
+      //   set_domain(response.data);
+      // }
+    // }
   } catch (e) {
     console.log("error:", e);
   }
@@ -116,10 +138,10 @@ export async function mas_DepartmentDomainGet(value: any, set_department: (data:
       "/Complaint/CasDepartmentDomainGet"
     );
     if (response && response.status === "success") {
-      // console.log(
-      //   "❇️ Call [Complaint/CasDepartmentDomainGet] -> Department_Domain_Get :",
-      //   response.data
-      // );
+      console.log(
+        "❇️❇️❇️❇️❇️ Call [Complaint/CasDepartmentDomainGet] -> Department_Domain_Get :",
+        response.data
+      );
       if (Array.isArray(response.data)) {
         // เอา filter ออก → ใช้ทุกตัว
         set_department(response.data);
