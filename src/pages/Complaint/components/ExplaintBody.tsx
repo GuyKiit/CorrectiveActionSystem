@@ -493,7 +493,7 @@ export default function ExplaintBody({
   const [isMinimizecloseOpen, setisMinimizeCloseOpen] = useState(true);
   const [foundSC, setFoundSC] = useState(null);
   const [foundQC, setFoundQC] = useState(null);
-  const [foundCLOSE, setFoundCLOSE] = useState(null);
+  const [foundCLOSE, setFoundCLOSE] = React.useState<any>(null);
   const grouped = {
   config_file: dataset_configfile || [],
 };
@@ -510,6 +510,7 @@ export default function ExplaintBody({
   const isApproveFu = dataFuapp?.lov_code === "APPROVE";
   const showPlaceholderclosedetail = isActionCloseAdd && !close_detail;
   const showPlaceholderclosenote = isActionCloseAdd && !close_note;
+  const isReturnPage = action === "CloseAdd" || action === "CloseHistory";
   //================================================================================================================================================//
   
   // ตั้งค่า isROOTHidden เป็น false เมื่ออยู่ในโหมดดูข้อมูล
@@ -722,6 +723,18 @@ export default function ExplaintBody({
     setotherText("");
     setcompRsOther("");
   };
+  const resetCloseState = () => {
+  setclose_name("");
+  setclose_company_id(null);
+  setclose_department_id(null);
+  setclose_position("");
+  setclose_email("");
+  setclose_date(null);
+  setdataFuapp(null);
+  setclose_detail("");
+  setclose_note("");
+  setFoundCLOSE(null);
+};
 
   // ลบไฟล์
   const handleRemoveFile = (index: number) => {
@@ -1508,42 +1521,167 @@ export default function ExplaintBody({
     approveList, 
     // isItAdmin,
   ]);
+//   useEffect(() => {
+
+// }, [foundSC, foundQC, foundCLOSE]);
+
+const selectedClose = React.useMemo(() => {
+  // if (action === "Add") return null;
+  if (!explainList?.length ||  !dataelement) return null;
+  if (action === "CloseAdd") return
+
+  // 👉 PRIORITY 1: Return (ต้องมี dataelement ก่อน)
+  if (dataelement) {
+    const returnItem = explainList.find(
+      (x:any) =>
+        x.id === dataelement.id &&
+        ["REJECT", "ADD"].includes(x.close_status)
+    );
+
+    if (returnItem) {
+      return { type: "RETURN", data: returnItem };
+    }
+  }
+
+  // 👉 PRIORITY 2: Close ปกติ
+  return { type: "CLOSE", data: explainList[0] };
+
+}, [explainList, dataelement, action]);
+
 
   React.useEffect(() => {
+  if (!selectedClose) return;
 
-  if (!explainList?.length || !dataelement) return;
+  if (selectedClose.type === "RETURN") {
+    const c = selectedClose.data;
 
-  const closeItem = explainList?.find(
-    (x:any) =>
-      x.id === dataelement?.id && 
-      ["REJECT", "ADD"].includes(x.close_status)
-  );
-
-  if (closeItem) {
-    setFoundCLOSE(closeItem);
-
-    setclose_name(closeItem?.return_name ?? "");
+    setFoundCLOSE((prev: any) =>
+  prev?.id === c.id ? prev : c
+);
+    setclose_name(c.return_name ?? "");
     setclose_company_id(
-      dataset_company.find((c:any) => Number(c.company_id) === closeItem.return_company_id) || null
+      dataset_company.find((x:any) => Number(x.company_id) === c.return_company_id) || null
     );
     setclose_department_id(
-      dataset_department.find((d:any) => Number(d.department_id) === closeItem.return_department_id) || null
+      dataset_department.find((x:any) => Number(x.department_id) === c.return_department_id) || null
     );
-    setclose_position(closeItem.return_position ?? "");
-    setclose_email(closeItem.return_email ?? "");
-    setclose_date(closeItem.return_datetime ? dayjs(closeItem.return_datetime) : null);
+    setclose_position(c.return_position ?? "");
+    setclose_email(c.return_email ?? "");
+    setclose_date(c.return_datetime ? dayjs(c.return_datetime) : null);
     setdataFuapp(
-      dataApprove_Combobox.find((item:any) => item.lov_code === closeItem.close_status) || null
+      dataApprove_Combobox.find((x:any) => x.lov_code === c.close_status) || null
     );
-    setclose_detail(closeItem.return_detail ?? "");
-    setclose_note(closeItem.return_note ?? "");
+    setclose_detail(c.return_detail ?? "");
+    setclose_note(c.return_note ?? "");
+    return;
   }
-}, [explainList, dataelement, dataset_company, dataset_department, dataApprove_Combobox]);
+
+  if (selectedClose.type === "CLOSE") {
+    const c = selectedClose.data;
+
+    setclose_name(c.close_name || "");
+    setclose_company_id(
+      dataset_company.find((x:any) => Number(x.company_id) === c.close_company_id) || null
+    );
+    setclose_department_id(
+      dataset_department.find((x:any) => Number(x.department_id) === c.close_department_id) || null
+    );
+    setclose_position(c.close_position || "");
+    setclose_email(c.close_email || "");
+    setclose_date(dayjs(c.close_date));
+    setdataFuapp(
+      dataApprove_Combobox.find((x:any) => x.lov_code === c.close_status) || null
+    );
+    setclose_detail(c.close_detail || "");
+    setclose_note(c.close_note || "");
+  }
+}, [
+  selectedClose,
+  dataset_company,
+  dataset_department,
+  dataApprove_Combobox
+]);
+
+
+const closeAddInitRef = React.useRef(false);
+
+React.useEffect(() => {
+  if (action !== "CloseAdd") {
+    closeAddInitRef.current = false;
+    return;
+  }
+
+  // 🛑 รอ data ให้พร้อมก่อน
+  if (
+    closeAddInitRef.current ||
+    !user?.length ||
+    !dataset_company?.length ||
+    !dataset_department?.length
+  ) {
+    return;
+  }
+
+  closeAddInitRef.current = true;
+
+  setclose_name(user[0]?.employee_username ?? "");
+
+  setclose_company_id(
+    dataset_company.find(
+      (c:any) => Number(c.company_id) === user[0]?.itasset_company_id
+    ) || null
+  );
+
+  setclose_department_id(
+    dataset_department.find(
+      (d:any) => Number(d.department_id) === user[0]?.itasset_department_id
+    ) || null
+  );
+
+  setclose_position(user[0]?.employee_position ?? "");
+  setclose_email(user[0]?.employee_email ?? "");
+  setclose_date(dayjs());
+
+}, [action, user, dataset_company, dataset_department]);
+
+
+//   React.useEffect(() => {
+//   if (!explainList?.length || !dataelement) return;
+
+//   const closeItem = explainList?.find(
+//     (x:any) =>
+//       x.id === dataelement?.id && 
+//       ["REJECT", "ADD"].includes(x.close_status)
+//   );
+
+//   if (!closeItem) {
+//     // 🔒 reset เฉพาะตอน "อยู่หน้า Return"
+//     if (isReturnPage && foundCLOSE) {
+//       resetCloseState();
+//     }
+//     return;
+//   }
+//     setFoundCLOSE(closeItem);
+
+//     setclose_name(closeItem?.return_name ?? "");
+//     setclose_company_id(
+//       dataset_company.find((c:any) => Number(c.company_id) === closeItem.return_company_id) || null
+//     );
+//     setclose_department_id(
+//       dataset_department.find((d:any) => Number(d.department_id) === closeItem.return_department_id) || null
+//     );
+//     setclose_position(closeItem.return_position ?? "");
+//     setclose_email(closeItem.return_email ?? "");
+//     setclose_date(closeItem.return_datetime ? dayjs(closeItem.return_datetime) : null);
+//     setdataFuapp(
+//       dataApprove_Combobox.find((item:any) => item.lov_code === closeItem.close_status) || null
+//     );
+//     setclose_detail(closeItem.return_detail ?? "");
+//     setclose_note(closeItem.return_note ?? "");
+  
+// }, [explainList, dataelement, dataset_company, dataset_department, dataApprove_Combobox,isReturnPage,foundCLOSE]);
 
   
-  useEffect(() => {
-
-}, [foundSC, foundQC, foundCLOSE]);
+  
  
 
   // 🔹 Load QC approve data and radio when in CloseAdd mode

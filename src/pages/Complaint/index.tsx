@@ -5192,12 +5192,8 @@ export default function Complaint() {
         }
 
         // Set QC approve detail and note
-        if (qcApprove.approve_detail) {
-          setqcapprove_detail(qcApprove.approve_detail);
-        }
-        if (qcApprove.approve_note) {
-          setqcapprove_note(qcApprove.approve_note);
-        }
+        setqcapprove_detail(qcApprove?.approve_detail || "");
+        setqcapprove_note(qcApprove?.approve_note || "");
         setdataQcapp(
           dataApprove_Combobox.find(
             (item: any) => item.lov_code === qcApprove.approve_status

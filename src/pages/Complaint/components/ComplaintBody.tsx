@@ -900,6 +900,7 @@ export default function ComplaintBody({
   // };
 
   // Functions (Initial, Calculation or ETC.) =================================================
+
   const resetForm = () => {
     if (true)
       console.log(
@@ -931,6 +932,18 @@ export default function ComplaintBody({
     setotherText("");
     setcompRsOther("");
   };
+
+  const resetCloseState = () => {
+  setclose_name("");
+  setclose_company_id(null);
+  setclose_department_id(null);
+  setclose_position("");
+  setclose_email("");
+  setclose_date(null);
+  setdataFuapp(null);
+  setclose_detail("");
+  setclose_note("");
+};
 
   const priorityCalculateRespondDate = (
     daysToAdd: number,
@@ -1846,12 +1859,14 @@ React.useEffect(() => {
     }
   }, [dataelement, dataset_reporttype, dataset_company]);
 
+
   React.useEffect(() => {
     // console.log("🔄 explainList UPDATED:", explainList);
     if (explainList?.length > 0 && action != "Add") {
-      const close = explainList[0];
 
+      const close = explainList?.[0];
       //console.log("👉 SELECTED explain for close:", close);
+      if (!close) return;
 
       setclose_name(close?.close_name || "");
       setclose_company_id(
@@ -1874,18 +1889,9 @@ React.useEffect(() => {
       );
       setclose_detail(close?.close_detail ? close?.close_detail : "");
       setclose_note(close?.close_note ? close?.close_note : "");
-
-      // console.log("💾2 close_name:", close?.close_name);
-      // console.log("💾2 close_company_id:", close?.close_company_id);
-      // console.log("💾2 close_company_id:", close_company_id);
-      // console.log("💾2 close_email:", close?.close_email);
-      // console.log("💾2 close_department_id:", close?.close_department_id);
-      // console.log("💾2 close_department_id:", close_department_id);
-      // console.log("💾2 close_position:", close?.close_position);
-      // console.log("💾2 close_detail:", close?.close_detail);
-      // console.log("💾2 close_note:", close?.close_note);
     }
-  }, [explainList, dataset_department]);
+  }, [explainList, dataset_department,dataset_company,dataApprove_Combobox]);
+
 
   // ✅ ใช้ ref เพื่อเก็บ complaint ID ก่อนหน้า
   const prevComplaintIdRef = React.useRef<string | null>(null);
@@ -1949,7 +1955,7 @@ React.useEffect(() => {
     const newData: any[] = [];
 
     if (!Array.isArray(data)) {
-      console.warn("⚠️ setComplaintType: data is not an array", data);
+      // console.warn("⚠️ setComplaintType: data is not an array", data);
       return newData;
     }
 
@@ -1960,10 +1966,7 @@ React.useEffect(() => {
       const typeId = el.complaint_type_id;
 
       if (!typeId) {
-        console.warn(
-          `⚠️ setComplaintType: No complaint_type_id found in element ${index}`,
-          el
-        );
+        // console.warn(`⚠️ setComplaintType: No complaint_type_id found in element ${index}`,el);
         return;
       }
 
@@ -1978,13 +1981,8 @@ React.useEffect(() => {
           other: el.other || "", // ⭐ เก็บค่าข้อความ Other มาด้วย
         });
       } else {
-        console.warn(
-          `⚠️ setComplaintType: No matching type found for ID ${typeId}`
-        );
-        console.warn(
-          `⚠️ Available IDs:`,
-          dataComplaintType_Combobox.map((item: any) => item.id)
-        );
+        // console.warn(`⚠️ setComplaintType: No matching type found for ID ${typeId}`);
+        // console.warn(`⚠️ Available IDs:`,dataComplaintType_Combobox.map((item: any) => item.id));
       }
     });
 
@@ -1999,7 +1997,7 @@ React.useEffect(() => {
     const newData: any[] = [];
 
     if (!Array.isArray(data)) {
-      console.warn("⚠️ setComplaintRs: data is not an array", data);
+      // console.warn("⚠️ setComplaintRs: data is not an array", data);
       return newData;
     }
 
@@ -2010,10 +2008,7 @@ React.useEffect(() => {
       const typeId = el.complaint_type_id;
 
       if (!typeId) {
-        console.warn(
-          `⚠️ setComplaintRs: No complaint_type_id found in element ${index}`,
-          el
-        );
+        // console.warn(`⚠️ setComplaintRs: No complaint_type_id found in element ${index}`,el);
         return;
       }
 
@@ -2029,13 +2024,8 @@ React.useEffect(() => {
           clause: el.clause || "",
         });
       } else {
-        console.warn(
-          `⚠️ setComplaintRs: No matching RS found for ID ${typeId}`
-        );
-        console.warn(
-          `⚠️ Available RS IDs:`,
-          dataComplaintRs_Combobox.map((item: any) => item.id)
-        );
+        // console.warn(`⚠️ setComplaintRs: No matching RS found for ID ${typeId}` );
+        // console.warn(`⚠️ Available RS IDs:`,dataComplaintRs_Combobox.map((item: any) => item.id));
       }
     });
 
