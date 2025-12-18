@@ -3398,7 +3398,7 @@ export default function Complaint() {
          <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
           <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ชื่อผู้ส่งกลับ(Return by)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_fname_th  || ""} ${user[0]?.employee_lname_th || ""} (${user[0]?.employee_username || "-"})</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_fname_th ? (user[0]?.employee_fname_th + " " + (user[0]?.employee_lname_th || "")) : ((user[0]?.employee_fname_en || "") + " " + (user[0]?.employee_lname_en || ""))} </td>
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ตำแหน่ง (Position)</td>
@@ -3491,6 +3491,50 @@ export default function Complaint() {
         (val: any) => val["lov5"] == user[0].role_id
       );
 
+      const email_request_department_name = dataelement?.respondent_department_name || dataset_department?.find((x: any) => x.department_id == dataelement?.respondent_department_id)?.department_name || dataelement?.respondent_department_id || "-";
+      
+      const emailBodyHtml = `
+      <div style="font-family: Arial, sans-serif; color: #333;">
+        <p>
+        เรียน เจ้าหน้าที่ฝ่าย${email_request_department_name || "-"}
+      </p>
+      <p style="margin-top: 5px;">
+        แจ้งเตือนรับทราบ เพื่อพิจารณายกเลิก หรือ แก้ไข
+      </p>
+        <br />
+        <h2 style="color: #2196f3; border-bottom: 2px solid #2196f3; padding-bottom: 10px;">
+          ผู้ทำการส่งกลับ (Return by)
+        </h2>
+         <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+          <tr>
+            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ชื่อผู้ส่งกลับ(Return by)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_fname_th ? (user[0]?.employee_fname_th + " " + (user[0]?.employee_lname_th || "")) : ((user[0]?.employee_fname_en || "") + " " + (user[0]?.employee_lname_en || ""))}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ตำแหน่ง (Position)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_position || "-"}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">แผนก (Department)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.itasset_department_name || "-"}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">โรงงาน (Factory)</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.itasset_company_name || "-"}</td>
+          </tr>
+
+        </table> 
+        <p style="margin-top: 20px; font-size: 14px; color: #000000;">
+        ขอแสดงความนับถือ,<br />
+          CAS - Corrective Action System<br />
+          Thai Roong Ruang Sugar Group
+          <br /><br /><br />
+          ****************************************************************************************<br />
+          อีเมลฉบับนี้ เป็นการจัดส่งผ่านระบบอัติโนมัติ โดยท่านไม่สามารถตอบกลับผ่านเมลนี้ได้
+      </p>
+      </div>
+    `;
+
       // 🧩 สร้าง payload สำหรับ Approve
       const approvePayload = {
         ExplaintApproveModel: {
@@ -3523,6 +3567,7 @@ export default function Complaint() {
         CurrentAccessModel: {
           user_id: user[0]?.employee_username || "",
         },
+        emailBody: emailBodyHtml
       };
 
       setIsLoadingScreen(true);
@@ -4192,7 +4237,7 @@ export default function Complaint() {
         </h2>
         <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
           <tr>
-            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">Approve หัวหน้าส่วน (Section Approve)</td>
+            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">อนุมัติหัวหน้าส่วน (Section Approve)</td>
             <td style="padding: 8px; border: 1px solid #ddd;">${approveDisplayText || "-"}</td>
           </tr>
            <tr>
@@ -4210,7 +4255,7 @@ export default function Complaint() {
         <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
           <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">ชื่อผู้อนุมัติ (Approved by)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_fname_th  || ""} ${user[0]?.employee_lname_th || ""} (${user[0]?.employee_username || "-"})</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_fname_th ? (user[0]?.employee_fname_th + " " + (user[0]?.employee_lname_th || "")) : ((user[0]?.employee_fname_en || "") + " " + (user[0]?.employee_lname_en || ""))}</td>
           </tr>
            <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ตำแหน่ง (Position)</td>
@@ -4396,7 +4441,7 @@ export default function Complaint() {
         </h2>
         <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
           <tr>
-            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">Approve หัวหน้าส่วน (Section Approve)</td>
+            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">อนุมัติผู้จัดการโรงงาน (QMR)</td>
             <td style="padding: 8px; border: 1px solid #ddd;">${approveDisplayText || "-"}</td>
           </tr>
            <tr>

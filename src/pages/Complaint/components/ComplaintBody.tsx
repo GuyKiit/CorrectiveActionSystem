@@ -478,7 +478,7 @@ export default function ComplaintBody({
 
     if (firstError) {
       setFirstErrorField(firstError);
-      
+
       // Handle scrolling for Accordions
       if (firstError === "Complaint_Type" && complaintTypeRef.current) {
         complaintTypeRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -580,8 +580,8 @@ export default function ComplaintBody({
   const [isMinimizeotapp2Open, setisMinimizeOtapp2Open] = useState(true);
   const isCrossCompany = dataset_crosscompany?.[0]?.lov_code == "1";
   const grouped = {
-  config_file: dataset_configfile || [],
-};
+    config_file: dataset_configfile || [],
+  };
   // Check Acknowledge flag =========================================================
   const updateAcknowledgeFlag = (value: any) => {
     // console.log("####### Onchange Company Value [event] : ", value);
@@ -589,7 +589,7 @@ export default function ComplaintBody({
     // console.log("Render check respondent_domain_id:", respondent_domain_id);
 
     if (value != null) {
-      mas_DomainRelateGet(value, set_domainrelate,user , isCallFuncLogOn);
+      mas_DomainRelateGet(value, set_domainrelate, user, isCallFuncLogOn);
     } else {
       setrespondent_domain_id(null);
     }
@@ -1012,55 +1012,17 @@ export default function ComplaintBody({
       return updatedList;
     });
   };
-  useEffect(() => {
-    setcomplaintFiles(fileList); // sync
-  }, [fileList]);
-
-  const Dept_setup_By_Domain_dept_id_Get = async (data: any) => {
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  Dept_setup_By_Domain_dept_id_Get"
-      );
-
-    if (!data?.domain_dept_id) {
-      console.warn("⚠️ ไม่มี domain_dept_id ใน data:", data);
-      return null;
-    }
-
-    setIsLoadingScreen(false);
-    const dataset = { domain_dept_id: data.domain_dept_id };
-    // console.log("🧩 Payload ส่งเข้า SP :", dataset);
-
-    try {
-      const response = await _POST(
-        dataset,
-        "/DeptSetup/DeptSetupByDomaindeptidGet"
-      );
-      // console.log("📥 DeptSetup Response (full):", response);
-      // console.log("🧩 Payload ส่งเข้า SP :", dataset);
-
-      // คืน response ทั้งก้อน ให้ caller เลือกเอา element ที่ต้องการ
-      return response || null;
-    } catch (e) {
-      console.error("❌ Error DeptSetupByDomaindeptidGet:", e);
-      return null;
-    } finally {
-      setIsLoadingScreen(false);
-    }
-  };
 
   const Acknowledge_Update = async (data: any) => {
     // if (isCallFuncLogOn)console.log("🕑 ", dayjs().format("HH:mm:ss.SSS"), " [Calling Function]  :  Acknowledge_Update");
     const safeFormatDate = (val: any) => {
-            if (!val) return "-";
-            let d = dayjs(val);
-            if (!d.isValid()) {
-                 d = dayjs(val, ["DD-MM-YYYY", "DD/MM/YYYY", "YYYY-MM-DD"]);
-            }
-            return d.isValid() ? d.format("DD/MM/YYYY") : "-";
-        };
+      if (!val) return "-";
+      let d = dayjs(val);
+      if (!d.isValid()) {
+        d = dayjs(val, ["DD-MM-YYYY", "DD/MM/YYYY", "YYYY-MM-DD"]);
+      }
+      return d.isValid() ? d.format("DD/MM/YYYY") : "-";
+    };
     const email_reportType = dataset_reporttype?.find((x: any) => x.id == dataelement?.report_type)?.lov4 || "-";
     const email_casNumber = dataelement?.cas_number || "-";
     const email_priority_id = datapriority_Combobox?.find((x: any) => x.id == dataelement?.priority_level)?.lov2 || "-";
@@ -1157,18 +1119,18 @@ export default function ComplaintBody({
     `;
 
     const dataset = {
-  AcknowledgeModel: {
-    id: data.id,
-    acknowledge_flag: data.acknowledge_flag,
-    acknowledge_name: user[0]?.employee_username,
-    acknowledge_company_id: user[0]?.itasset_company_id,
-    acknowledge_department_id: user[0]?.itasset_department_id,
-    acknowledge_position: user[0]?.employee_position,
-    acknowledge_email: user[0]?.employee_email,
-    update_by: user[0]?.employee_username,
-  },
-  emailBody: emailBodyHtml,  // 👈 อยู่นอก AcknowledgeModel
-};
+      AcknowledgeModel: {
+        id: data.id,
+        acknowledge_flag: data.acknowledge_flag,
+        acknowledge_name: user[0]?.employee_username,
+        acknowledge_company_id: user[0]?.itasset_company_id,
+        acknowledge_department_id: user[0]?.itasset_department_id,
+        acknowledge_position: user[0]?.employee_position,
+        acknowledge_email: user[0]?.employee_email,
+        update_by: user[0]?.employee_username,
+      },
+      emailBody: emailBodyHtml,  // 👈 อยู่นอก AcknowledgeModel
+    };
 
     try {
       let response = await _POST(dataset, "/Acknowledge/AcknowledgeEdit");
@@ -1176,7 +1138,47 @@ export default function ComplaintBody({
         setIsLoadingScreen(false);
         setdataelement(response.data[0]);
       }
-    } catch (e) {}
+    } catch (e) { }
+  };
+
+
+  useEffect(() => {
+    setcomplaintFiles(fileList); // sync
+  }, [fileList]);
+
+  const Dept_setup_By_Domain_dept_id_Get = async (data: any) => {
+    if (isCallFuncLogOn)
+      console.log(
+        "🕑 ",
+        dayjs().format("HH:mm:ss.SSS"),
+        " [Calling Function]  :  Dept_setup_By_Domain_dept_id_Get"
+      );
+
+    if (!data?.domain_dept_id) {
+      console.warn("⚠️ ไม่มี domain_dept_id ใน data:", data);
+      return null;
+    }
+
+    setIsLoadingScreen(false);
+    const dataset = { domain_dept_id: data.domain_dept_id };
+    // console.log("🧩 Payload ส่งเข้า SP :", dataset);
+
+    try {
+      const response = await _POST(
+        dataset,
+        "/DeptSetup/DeptSetupByDomaindeptidGet"
+      );
+      // console.log("📥 DeptSetup Response (full):", response);
+      // console.log("🧩 Payload ส่งเข้า SP :", dataset);
+
+      // คืน response ทั้งก้อน ให้ caller เลือกเอา element ที่ต้องการ
+      return response || null;
+    } catch (e) {
+      console.error("❌ Error DeptSetupByDomaindeptidGet:", e);
+      return null;
+    } finally {
+      setIsLoadingScreen(false);
+    }
   };
 
   // Function - Get Complaints
@@ -1269,7 +1271,7 @@ export default function ComplaintBody({
       setcomplaintFiles([]);
       return;
     }
-    
+
     //setIsLoadingScreen(true);
     const dataset = {
       complaint_id: dataelement?.id,
@@ -1328,56 +1330,56 @@ export default function ComplaintBody({
   const lastDataElement = React.useRef<any>(null); // Track last processed data
   const hasMappedDepartment = React.useRef(false); // Track if department has been mapped
   React.useEffect(() => {
-  if (respondent_company_id?.company_id) {
-    mas_DomainRelateGet(
-      respondent_company_id.company_id,
-      set_domainrelate,
-      user,
-      isCallFuncLogOn
-    );
+    if (respondent_company_id?.company_id) {
+      mas_DomainRelateGet(
+        respondent_company_id.company_id,
+        set_domainrelate,
+        user,
+        isCallFuncLogOn
+      );
 
-    // reset domain ทุกครั้งที่ company เปลี่ยน
-    // setrespondent_domain_id(null);
-  }
-}, [respondent_company_id]);
-
-React.useEffect(() => {
-  if (
-    !respondent_domain_id &&
-    Array.isArray(domainrelate) &&
-    domainrelate.length > 0 &&
-    user?.[0]?.employee_domain
-  ) {
-    const autoDomain = domainrelate.find(
-      (item: any) =>
-        String(item.domain_id) === String(user[0].employee_domain)
-    );
-
-    if (autoDomain) {
-      console.log("🎯 Auto domain from employee_domain:", autoDomain);
-
-      setrespondent_domain_id(autoDomain);
-      handleDomainChange(autoDomain);
-      onRespondentDepartmentChange?.(autoDomain);
+      // reset domain ทุกครั้งที่ company เปลี่ยน
+      // setrespondent_domain_id(null);
     }
-  }
-}, [domainrelate, respondent_domain_id, user]);
+  }, [respondent_company_id]);
 
-React.useEffect(() => {
-  if (!respondent_domain_id) return;
+  React.useEffect(() => {
+    if (
+      !respondent_domain_id &&
+      Array.isArray(domainrelate) &&
+      domainrelate.length > 0 &&
+      user?.[0]?.employee_domain
+    ) {
+      const autoDomain = domainrelate.find(
+        (item: any) =>
+          String(item.domain_id) === String(user[0].employee_domain)
+      );
 
-  mas_DepartmentGet_Complaint(
-    {
-      domain_id: respondent_domain_id.domain_id,
-      company_id: respondent_company_id?.company_id,
-    },
-    setdataset_department,
-    setdataset_department_respondent,
-    isCallFuncLogOn,
-    user,
-    action
-  );
-}, [respondent_domain_id]);
+      if (autoDomain) {
+        console.log("🎯 Auto domain from employee_domain:", autoDomain);
+
+        setrespondent_domain_id(autoDomain);
+        handleDomainChange(autoDomain);
+        onRespondentDepartmentChange?.(autoDomain);
+      }
+    }
+  }, [domainrelate, respondent_domain_id, user]);
+
+  React.useEffect(() => {
+    if (!respondent_domain_id) return;
+
+    mas_DepartmentGet_Complaint(
+      {
+        domain_id: respondent_domain_id.domain_id,
+        company_id: respondent_company_id?.company_id,
+      },
+      setdataset_department,
+      setdataset_department_respondent,
+      isCallFuncLogOn,
+      user,
+      action
+    );
+  }, [respondent_domain_id]);
 
   // 🧩 1️⃣ โหลดข้อมูลหลัก (ReportType, Company, Domain, Department)
   React.useEffect(() => {
@@ -1411,7 +1413,7 @@ React.useEffect(() => {
           if (dataelement.report_type) {
 
             const defaultVal =
-            (await setValueMas(
+              (await setValueMas(
                 dataset_reporttype,
                 dataelement.report_type,
                 "id"
@@ -1421,7 +1423,7 @@ React.useEffect(() => {
                   item.lov_code === dataelement.report_type ||
                   item.id === dataelement.report_type
               );
-              // f (defaultVal) setdataReportTypeValue(defaultVal);
+            // f (defaultVal) setdataReportTypeValue(defaultVal);
             if (defaultVal) {
               setdataReportTypeValue({
                 ...defaultVal,
@@ -1441,11 +1443,11 @@ React.useEffect(() => {
 
           // console.log("🕑🕑🕑 [dataelement.report_type]  : ", dataelement.report_type, "🕑🕑🕑");
           // console.log("🕑🕑🕑 [dataset_reporttype]  : ", dataset_reporttype, "🕑🕑🕑");
-          
+
         } else {
           if (Array.isArray(dataset_reporttype) && dataelement?.report_type) {
             const defaultVal =
-            (await setValueMas(
+              (await setValueMas(
                 dataset_reporttype,
                 dataelement.report_type,
                 "id"
@@ -1455,7 +1457,7 @@ React.useEffect(() => {
                   item.lov_code === dataelement.report_type ||
                   item.id === dataelement.report_type
               );
-              // f (defaultVal) setdataReportTypeValue(defaultVal);
+            // f (defaultVal) setdataReportTypeValue(defaultVal);
             if (defaultVal) {
               setdataReportTypeValue({
                 ...defaultVal,
@@ -1488,8 +1490,8 @@ React.useEffect(() => {
         //========================================================================================================================
         // 3) Domain relate
         //========================================================================================================================
-          await mas_DomainRelateGet(
-            dataelement.respondent_company_id?.company_id ?? dataelement.respondent_company_id,
+        await mas_DomainRelateGet(
+          dataelement.respondent_company_id?.company_id ?? dataelement.respondent_company_id,
           set_domainrelate,
           user,
           isCallFuncLogOn
@@ -1506,17 +1508,17 @@ React.useEffect(() => {
           );
           if (mappedDomain) setrequest_domain_id(mappedDomain);
         }
-        
+
         //========================================================================================================================
         // 5) โหลด Department
         //========================================================================================================================
         if (dataelement?.respondent_department_id) {
           const currentCompanyId =
-          dataelement.respondent_company_id?.company_id ??
-          dataelement.respondent_company_id;
+            dataelement.respondent_company_id?.company_id ??
+            dataelement.respondent_company_id;
           const currentDomainId =
-          dataelement.respondent_domain_id?.domain_id ??
-          dataelement.respondent_domain_id ??
+            dataelement.respondent_domain_id?.domain_id ??
+            dataelement.respondent_domain_id ??
             null;
 
           const shouldFetch =
@@ -1551,64 +1553,64 @@ React.useEffect(() => {
   }, [dataelement]);
 
   React.useEffect(() => {
-  if (Array.isArray(domainrelate) && domainrelate.length > 0) {
+    if (Array.isArray(domainrelate) && domainrelate.length > 0) {
 
-    const run = async () => {
-      // แมป respondent_domain_id
-      if (dataelement?.respondent_domain_id) {
-        const mappedRespondent = await setValueMas(
-          domainrelate,
-          dataelement.respondent_domain_id,
-          "domain_id"
+      const run = async () => {
+        // แมป respondent_domain_id
+        if (dataelement?.respondent_domain_id) {
+          const mappedRespondent = await setValueMas(
+            domainrelate,
+            dataelement.respondent_domain_id,
+            "domain_id"
+          );
+
+          if (mappedRespondent) {
+            setrespondent_domain_id(mappedRespondent);
+            // console.log("🎯 respondent domain mapped:", mappedRespondent);
+          }
+        }
+
+        // แมป request_domain_id
+        if (dataelement?.request_domain_id) {
+          const mappedRequest = await setValueMas(
+            domainrelate,
+            dataelement.request_domain_id,
+            "domain_id"
+          );
+
+          if (mappedRequest) {
+            setrequest_domain_id(mappedRequest);
+            // console.log("🎯 request domain mapped:", mappedRequest);
+          }
+        }
+      };
+
+      run();
+    }
+  }, [domainrelate, dataelement?.respondent_domain_id, dataelement?.request_domain_id]);
+
+  React.useEffect(() => {
+    if (
+      Array.isArray(dataset_department) &&
+      dataset_department.length > 0 &&
+      dataelement?.respondent_department_id
+    ) {
+      const run = async () => {
+        const mappedDept = await setValueMas(
+          dataset_department,
+          dataelement.respondent_department_id,
+          "department_id"
         );
 
-        if (mappedRespondent) {
-          setrespondent_domain_id(mappedRespondent);
-          // console.log("🎯 respondent domain mapped:", mappedRespondent);
+        if (mappedDept) {
+          setrespondent_department_id(mappedDept);
+          // console.log("🏬 Department mapped:", mappedDept);
         }
-      }
+      };
 
-      // แมป request_domain_id
-      if (dataelement?.request_domain_id) {
-        const mappedRequest = await setValueMas(
-          domainrelate,
-          dataelement.request_domain_id,
-          "domain_id"
-        );
-
-        if (mappedRequest) {
-          setrequest_domain_id(mappedRequest);
-          // console.log("🎯 request domain mapped:", mappedRequest);
-        }
-      }
-    };
-
-    run();
-  }
-}, [domainrelate, dataelement?.respondent_domain_id, dataelement?.request_domain_id]);
-
-React.useEffect(() => {
-  if (
-    Array.isArray(dataset_department) &&
-    dataset_department.length > 0 &&
-    dataelement?.respondent_department_id
-  ) {
-    const run = async () => {
-      const mappedDept = await setValueMas(
-        dataset_department,
-        dataelement.respondent_department_id,
-        "department_id"
-      );
-
-      if (mappedDept) {
-        setrespondent_department_id(mappedDept);
-        // console.log("🏬 Department mapped:", mappedDept);
-      }
-    };
-
-    run();
-  }
-}, [dataset_department, dataelement?.respondent_department_id]);
+      run();
+    }
+  }, [dataset_department, dataelement?.respondent_department_id]);
 
   // 🧩 2️⃣ เมื่อ dataset_department พร้อมจริง → map default
   React.useEffect(() => {
@@ -1655,14 +1657,14 @@ React.useEffect(() => {
     // console.log("🕑🕑🕑🕑🕑🕑🕑🕑 [datapriority_Combobox]  : ", datapriority_Combobox, "🕑🕑🕑🕑🕑🕑🕑🕑");
 
     const newFilteredPriority =
-    isItAdmin ?
-    datapriority_Combobox.filter(
-      (item: LovType) => item.lov_type === "priority_level" && item.lov7 == dataelement?.request_domain_id
-    )
-    :
-    datapriority_Combobox.filter(
-      (item: LovType) => item.lov_type === "priority_level"
-    )
+      isItAdmin ?
+        datapriority_Combobox.filter(
+          (item: LovType) => item.lov_type === "priority_level" && item.lov7 == dataelement?.request_domain_id
+        )
+        :
+        datapriority_Combobox.filter(
+          (item: LovType) => item.lov_type === "priority_level"
+        )
 
     setFilteredpriority((prev) =>
       JSON.stringify(prev) !== JSON.stringify(newFilteredPriority)
@@ -1686,15 +1688,15 @@ React.useEffect(() => {
     const val = dataReportTypeValue;
 
     // Approve
-    const newFilteredFuApprove = 
-    isItAdmin ?
-    (dataApprove_Combobox || []).filter(
-      (item: LovType) => item.lov_type === "approve_select" && item.lov7 == dataelement?.request_domain_id
-    )
-    :
-    (dataApprove_Combobox || []).filter(
-      (item: LovType) => item.lov_type === "approve_select"
-    )
+    const newFilteredFuApprove =
+      isItAdmin ?
+        (dataApprove_Combobox || []).filter(
+          (item: LovType) => item.lov_type === "approve_select" && item.lov7 == dataelement?.request_domain_id
+        )
+        :
+        (dataApprove_Combobox || []).filter(
+          (item: LovType) => item.lov_type === "approve_select"
+        )
 
     setFilteredFuApprove((prev) =>
       JSON.stringify(prev) !== JSON.stringify(newFilteredFuApprove)
@@ -1898,7 +1900,7 @@ React.useEffect(() => {
 
   React.useEffect(() => {
     const currentId = dataelement?.id;
-    
+
     // ⚠️ ป้องกันการ fetch ซ้ำเมื่อ ID เหมือนเดิม
     // เมื่อปิด ExplainView → setdataelement(complaintMainData) → dataelement object เปลี่ยนแต่ ID เหมือนเดิม
     if (prevComplaintIdRef.current === currentId && currentId) {
@@ -1925,16 +1927,27 @@ React.useEffect(() => {
     }
   }, [action, dataelement]); // ใช้ dataelement ทั้งหมดเป็น dependency
 
+
+  // ✅ useRef เพื่อให้ Acknowledge_Update รันเพียงครั้งเดียวต่อ dataelement.id
+  const acknowledgeProcessedId = React.useRef<string | null>(null);
+
   React.useEffect(() => {
     if (isItAdmin) return;
+    if (!dataelement?.id) return;
 
+    // ✅ ถ้า id เดียวกันกับที่เคยรันไปแล้ว ให้ skip
+    if (acknowledgeProcessedId.current === dataelement.id) return;
+
+    // ✅ Lock ทันทีเพื่อป้องกัน Race Condition (รันซ้ำระหว่างรอ await)
+    acknowledgeProcessedId.current = dataelement.id;
 
     const fetchAcknowlege = async () => {
       if (
         (isActionExplain ||
           (isActionReadExplain &&
-            dataelement?.request_name != user[0].employee_username)) &&
-        dataelement?.id
+            dataelement?.request_name != user[0].employee_username)) //new💫
+        //      dataelement?.request_name != user[0].employee_username)) &&
+        // dataelement?.id
       ) {
         if (dataelement?.acknowledge_flag == 0) {
           await Acknowledge_Update(dataelement);
@@ -1946,7 +1959,22 @@ React.useEffect(() => {
       }
     };
     fetchAcknowlege();
-  }, [action, dataelement?.id, dataelement?.acknowledge_flag , isItAdmin]);
+  }, [action, dataelement?.id, isItAdmin]);
+  //  }, [action, dataelement?.id, dataelement?.acknowledge_flag, isItAdmin]);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   const setComplaintType = (data: any) => {
     // console.log("🔍 setComplaintType input data:", data);
@@ -2048,11 +2076,11 @@ React.useEffect(() => {
   // #F29739
 
   return (
-      <Box
-        id="complaint-content-capture"  
-        sx={{
-          p: 2,
-          mb: 2,
+    <Box
+      id="complaint-content-capture"
+      sx={{
+        p: 2,
+        mb: 2,
         border: "2px solid #39a2f2",
         borderRadius: 2,
         backgroundColor: "#ffffff",
@@ -2072,11 +2100,11 @@ React.useEffect(() => {
             labelName={"ประเภทรายงาน (Report Type)"}
             // options={dataset_reporttype} // <-- แก้ตรงนี้
             options={(dataset_reporttype || []).map((item: any) => ({
-                ...item, // ✅ เก็บค่าทุกอย่างของ item เดิมไว้ (รวมถึง lov4)
-                displayText: item.lov3
-                  ? `${item.lov_code} (${item.lov3})`
-                  : item.lov_code,
-              }))}
+              ...item, // ✅ เก็บค่าทุกอย่างของ item เดิมไว้ (รวมถึง lov4)
+              displayText: item.lov3
+                ? `${item.lov_code} (${item.lov3})`
+                : item.lov_code,
+            }))}
             // column="lov_code"
             column="displayText"
             setvalue={handleReportTypeChange}
@@ -2281,15 +2309,15 @@ React.useEffect(() => {
                           const arr = Array.isArray(resp?.data)
                             ? resp.data
                             : resp?.data
-                            ? [resp.data]
-                            : [];
+                              ? [resp.data]
+                              : [];
 
                           const found =
                             arr.find((d: any) => d?.dept_email || d?.email) ??
                             arr ??
                             null;
 
-                          const email = found?.dept_email ;
+                          const email = found?.dept_email;
 
                           // console.log(
                           //   "📧 Selected dept email extracted:",
@@ -2493,35 +2521,35 @@ React.useEffect(() => {
                                   {dataComplaintType.some(
                                     (c) => c.lov2 === "Y"
                                   ) && (
-                                    <FullWidthTextArea
-                                      value={compTypeOther}
-                                      labelName="Other:"
-                                      placeholderlabel="กรุณากรอกรายละเอียด"
-                                      onchange={(e) => {
-                                        setcompTypeOther(e);
-                                        if (onOtherTypeChange) {
-                                          onOtherTypeChange(e);
+                                      <FullWidthTextArea
+                                        value={compTypeOther}
+                                        labelName="Other:"
+                                        placeholderlabel="กรุณากรอกรายละเอียด"
+                                        onchange={(e) => {
+                                          setcompTypeOther(e);
+                                          if (onOtherTypeChange) {
+                                            onOtherTypeChange(e);
+                                          }
+                                        }}
+                                        bgcolorTextField={
+                                          isActionAdd
+                                            ? false
+                                            : isActionEdit
+                                              ? false
+                                              : true
                                         }
-                                      }}
-                                      bgcolorTextField={
-                                        isActionAdd
-                                          ? false
-                                          : isActionEdit
-                                          ? false
-                                          : true
-                                      }
-                                      readonly={!isActionAdd && !isActionEdit}
-                                      // shouldFocusError={validateText?.Other_Type}
-                                      submitCount={submitCount}
-                                      Validate={validateText?.Other_Type || false}
-                                      shouldFocusError={firstErrorField === "Other_Type"}
-                                      validateTextLable={
-                                        validateText?.Other_Type
-                                          ? "กรุณากรอกรายละเอียด"
-                                          : ""
-                                      }
-                                    />
-                                  )}
+                                        readonly={!isActionAdd && !isActionEdit}
+                                        // shouldFocusError={validateText?.Other_Type}
+                                        submitCount={submitCount}
+                                        Validate={validateText?.Other_Type || false}
+                                        shouldFocusError={firstErrorField === "Other_Type"}
+                                        validateTextLable={
+                                          validateText?.Other_Type
+                                            ? "กรุณากรอกรายละเอียด"
+                                            : ""
+                                        }
+                                      />
+                                    )}
                                 </Box>
                               </Box>
 
@@ -2600,64 +2628,64 @@ React.useEffect(() => {
                                   {dataComplaintRs.some(
                                     (rs) => rs.lov3 === "Clause"
                                   ) && (
-                                    <FullWidthTextArea
-                                      value={clauseOther}
-                                      labelName="Clause:"
-                                      placeholderlabel="กรุณากรอกรายละเอียด"
-                                      onchange={(e) => {
-                                        setclauseOther(e);
-                                        if (onClauseChange) {
-                                          onClauseChange(e);
+                                      <FullWidthTextArea
+                                        value={clauseOther}
+                                        labelName="Clause:"
+                                        placeholderlabel="กรุณากรอกรายละเอียด"
+                                        onchange={(e) => {
+                                          setclauseOther(e);
+                                          if (onClauseChange) {
+                                            onClauseChange(e);
+                                          }
+                                        }}
+                                        bgcolorTextField={
+                                          isActionAdd
+                                            ? false
+                                            : isActionEdit
+                                              ? false
+                                              : true
                                         }
-                                      }}
-                                      bgcolorTextField={
-                                        isActionAdd
-                                          ? false
-                                          : isActionEdit
-                                          ? false
-                                          : true
-                                      }
-                                      readonly={!isActionAdd && !isActionEdit}
-                                      Validate={validateText?.Clause_Rs || false}
-                                      shouldFocusError={firstErrorField === "Clause_Rs"}
-                                      validateTextLable={
-                                        validateText?.Clause_Rs
-                                          ? "กรุณากรอกรายละเอียด Clause"
-                                          : ""
-                                      }
-                                    />
-                                  )}
+                                        readonly={!isActionAdd && !isActionEdit}
+                                        Validate={validateText?.Clause_Rs || false}
+                                        shouldFocusError={firstErrorField === "Clause_Rs"}
+                                        validateTextLable={
+                                          validateText?.Clause_Rs
+                                            ? "กรุณากรอกรายละเอียด Clause"
+                                            : ""
+                                        }
+                                      />
+                                    )}
                                   {dataComplaintRs.some(
                                     (rs) => rs.lov3 === "Other"
                                   ) && (
-                                    <FullWidthTextArea
-                                      value={compRsOther}
-                                      labelName="Other:"
-                                      placeholderlabel="กรุณากรอกรายละเอียด"
-                                      onchange={(e) => {
-                                        setcompRsOther(e);
-                                        if (onOtherRsChange) {
-                                          onOtherRsChange(e);
+                                      <FullWidthTextArea
+                                        value={compRsOther}
+                                        labelName="Other:"
+                                        placeholderlabel="กรุณากรอกรายละเอียด"
+                                        onchange={(e) => {
+                                          setcompRsOther(e);
+                                          if (onOtherRsChange) {
+                                            onOtherRsChange(e);
+                                          }
+                                        }}
+                                        bgcolorTextField={
+                                          isActionAdd
+                                            ? false
+                                            : isActionEdit
+                                              ? false
+                                              : true
                                         }
-                                      }}
-                                      bgcolorTextField={
-                                        isActionAdd
-                                          ? false
-                                          : isActionEdit
-                                          ? false
-                                          : true
-                                      }
-                                      readonly={!isActionAdd && !isActionEdit}
-                                      shouldFocusError={firstErrorField === "Other_Rs"}
-                                      submitCount={submitCount}
-                                      Validate={validateText?.Other_Rs || false}
-                                      validateTextLable={
-                                        validateText?.Other_Rs
-                                          ? "กรุณากรอกรายละเอียด Other"
-                                          : ""
-                                      }
-                                    />
-                                  )}
+                                        readonly={!isActionAdd && !isActionEdit}
+                                        shouldFocusError={firstErrorField === "Other_Rs"}
+                                        submitCount={submitCount}
+                                        Validate={validateText?.Other_Rs || false}
+                                        validateTextLable={
+                                          validateText?.Other_Rs
+                                            ? "กรุณากรอกรายละเอียด Other"
+                                            : ""
+                                        }
+                                      />
+                                    )}
                                 </Box>
                               </Box>
                               {validateText?.Complaint_Rs && (
@@ -2732,8 +2760,8 @@ React.useEffect(() => {
                                     action === "Add"
                                       ? false
                                       : isActionEdit
-                                      ? false
-                                      : true
+                                        ? false
+                                        : true
                                   }
                                   readonly={!isActionAdd && !isActionEdit}
                                   Validate={validateText?.Detail || false}
@@ -2962,7 +2990,7 @@ React.useEffect(() => {
                                 </Box>
                               </Grid>
                             </Grid>
-                            
+
                             {validateText?.Priority && (
                               <label
                                 className="fs-7 py-1 sarabun-regular-lable-validate"
@@ -3047,8 +3075,8 @@ React.useEffect(() => {
                           <Grid size={12}>
                             <BrowseFileUpload
                               setFile={handleFileChange}
-                              setFileName={() => {}}
-                                options={(filteredphoto || []).map((p: any) => ({
+                              setFileName={() => { }}
+                              options={(filteredphoto || []).map((p: any) => ({
                                 id: p.id,
                                 lov1: p.lov1,
                                 lov2: p.lov2,
@@ -3131,37 +3159,37 @@ React.useEffect(() => {
                                           {/* //ปุ่มลบไฟล์ */}
                                           {(action == "Edit" ||
                                             action == "Add") && (
-                                            <IconButton
-                                              color="error"
-                                              onClick={() => {
-                                                // หา index ที่ถูกต้องใน fileList
-                                                const actualIndex =
-                                                  fileList.findIndex(
-                                                    (f) =>
-                                                      f.file.name ===
+                                              <IconButton
+                                                color="error"
+                                                onClick={() => {
+                                                  // หา index ที่ถูกต้องใน fileList
+                                                  const actualIndex =
+                                                    fileList.findIndex(
+                                                      (f) =>
+                                                        f.file.name ===
                                                         item.file.name &&
-                                                      f.attachmentType ===
+                                                        f.attachmentType ===
                                                         item.attachmentType
-                                                  );
-                                                // console.log(
-                                                //   "🔍 Remove file debug:",
-                                                //   {
-                                                //     itemName: item.file.name,
-                                                //     itemType:
-                                                //       item.attachmentType,
-                                                //     actualIndex,
-                                                //     fileListLength:
-                                                //       fileList.length,
-                                                //   }
-                                                // );
-                                                if (actualIndex !== -1) {
-                                                  handleRemoveFile(actualIndex);
-                                                }
-                                              }}
-                                            >
-                                              <DeleteIcon />
-                                            </IconButton>
-                                          )}
+                                                    );
+                                                  // console.log(
+                                                  //   "🔍 Remove file debug:",
+                                                  //   {
+                                                  //     itemName: item.file.name,
+                                                  //     itemType:
+                                                  //       item.attachmentType,
+                                                  //     actualIndex,
+                                                  //     fileListLength:
+                                                  //       fileList.length,
+                                                  //   }
+                                                  // );
+                                                  if (actualIndex !== -1) {
+                                                    handleRemoveFile(actualIndex);
+                                                  }
+                                                }}
+                                              >
+                                                <DeleteIcon />
+                                              </IconButton>
+                                            )}
 
                                           {/* //ปุ่มดูไฟล์ */}
 
@@ -3241,7 +3269,7 @@ React.useEffect(() => {
                                                   link.setAttribute(
                                                     "download",
                                                     item.original_file_name ??
-                                                      "file"
+                                                    "file"
                                                   );
                                                   document.body.appendChild(
                                                     link
@@ -3524,7 +3552,7 @@ React.useEffect(() => {
 
                         {/* === ฝั่งขวา ปุ่ม Add === */}
                         {action !== "ReadExplain" &&
-                          (dataelement?.complaint_status_label === "SUBMITED" ) &&
+                          (dataelement?.complaint_status_label === "SUBMITED") &&
                           dataelement?.step_label === "EXPLAIN" && (
                             <Button
                               variant="contained"
@@ -3615,8 +3643,8 @@ React.useEffect(() => {
                                           สร้างเมื่อ:{" "}
                                           {item.create_datetime
                                             ? dayjs(
-                                                item.create_datetime
-                                              ).format("DD/MM/YYYY HH:mm")
+                                              item.create_datetime
+                                            ).format("DD/MM/YYYY HH:mm")
                                             : "-"}
                                         </Typography>
                                       </Box>
@@ -4204,8 +4232,8 @@ React.useEffect(() => {
                                         isActionAdd
                                           ? false
                                           : isActionEdit
-                                          ? false
-                                          : true
+                                            ? false
+                                            : true
                                       }
                                       readonly={
                                         isActionRead ||
@@ -4270,8 +4298,8 @@ React.useEffect(() => {
                                         isActionAdd
                                           ? false
                                           : isActionEdit
-                                          ? false
-                                          : true
+                                            ? false
+                                            : true
                                       }
                                       readonly={
                                         isActionRead ||
