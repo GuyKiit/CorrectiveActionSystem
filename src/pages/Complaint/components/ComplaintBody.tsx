@@ -1063,7 +1063,7 @@ export default function ComplaintBody({
         };
     const email_reportType = dataset_reporttype?.find((x: any) => x.id == dataelement?.report_type)?.lov4 || "-";
     const email_casNumber = dataelement?.cas_number || "-";
-    const email_priority_id = dataelement?.priority_level?.lov2 || dataelement?.datapriority?.lov2; 
+    const email_priority_id = datapriority_Combobox?.find((x: any) => x.id == dataelement?.priority_level)?.lov2 || "-";
     const email_responseDate = safeFormatDate(dataelement?.respond_date_within);
     const email_lotNo = dataelement?.lot_no || "-";
     const email_detectionDate = safeFormatDate(dataelement?.date_of_detection);
@@ -1088,7 +1088,7 @@ export default function ComplaintBody({
         <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
           <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">ประเภทรายงาน (Report Type)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${email_reportType?.lov4 || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${email_reportType || "-"}</td>
           </tr>
            <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">CAS Number</td>

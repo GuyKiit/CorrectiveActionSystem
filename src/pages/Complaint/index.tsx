@@ -4007,34 +4007,30 @@ export default function Complaint() {
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">กำหนดวันตรวจติดตามผลวันที่ (Follow-up Date)</td>
             <td style="padding: 8px; border: 1px solid #ddd;">${follow_up_date ? follow_up_date.format("DD/MM/YYYY") : "-"}</td>
           </tr>
-          <tr>
+          ${observation_analysis ? `<tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">การวิเคราะห์เบื้องต้นของข้อสังเกต (ObAnalysis)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${observation_analysis || "-"}</td>
-          </tr>
-          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;">${observation_analysis}</td>
+          </tr>` : ''}
+          ${email_toolsUsed && email_toolsUsed !== '-' ? `<tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">เครื่องมือที่ใช้ (Tools Used)</td>
             <td style="padding: 8px; border: 1px solid #ddd;">${email_toolsUsed}</td>
-          </tr>
-          <tr>
+          </tr>` : ''}
+          ${root_cause ? `<tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">คำอธิบายการวิเคราะห์ (Root Cause)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${root_cause || "-"}</td>
-          </tr>
-          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;">${root_cause}</td>
+          </tr>` : ''}
+          ${email_decision && email_decision !== '-' ? `<tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">การตัดสินใจเกี่ยวกับแนวทางการจัดการ (ของเสีย / สินค้าที่ไม่ผ่านเกณฑ์)  (Decision on Disposition)</td>
             <td style="padding: 8px; border: 1px solid #ddd;">${email_decision}</td>
-          </tr>
-          <tr>
+          </tr>` : ''}
+          ${corrective_action ? `<tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">การดำเนินการแก้ไข (Corrective Action)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${corrective_action || "-"}</td>
-          </tr>
-          <tr>
-            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">การดำเนินการแก้ไข (Corrective Action)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${corrective_action || "-"}</td>
-          </tr>
-          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;">${corrective_action}</td>
+          </tr>` : ''}
+          ${preventive_action_plan ? `<tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">แผนการป้องกันไม่ให้ปัญหาเกิดขึ้นซ้ำ (Preventive Action Plan)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${preventive_action_plan || "-"}</td>
-          </tr>
+            <td style="padding: 8px; border: 1px solid #ddd;">${preventive_action_plan}</td>
+          </tr>` : ''}
         </table>
         <h2 style="color: #d32f2f; border-bottom: 2px solid #d32f2f; padding-bottom: 10px;">
           ผู้ทำการชี้แจง (Explainer)
