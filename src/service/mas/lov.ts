@@ -125,7 +125,7 @@ export async function mas_DomainRelateGet(company_id: any, set_domainrelate: (da
 export async function mas_DepartmentDomainGet(value: any, set_department: (data: any) => void, isCallFuncLogOn: boolean) {
   if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  DepartmentDomainGet");
 
-  console.log(value, "💚💚💚 value in mas_DepartmentDomainGet 💚💚💚");
+  // console.log(value, "💚💚💚 value in mas_DepartmentDomainGet 💚💚💚");
 
 
   try {

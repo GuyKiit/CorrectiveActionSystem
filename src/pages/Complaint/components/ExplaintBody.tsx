@@ -2042,6 +2042,7 @@ React.useEffect(() => {
                       }
                       shouldFocusError={firstErrorField === "Follow_up_Date"}
                       submitCount={submitCount}
+                      minDate={dayjs()}
                     />
                   </Grid>
                 </Grid>

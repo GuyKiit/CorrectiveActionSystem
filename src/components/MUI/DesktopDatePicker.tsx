@@ -22,6 +22,8 @@ interface DesktopDatePickers {
   validateTextLable?: string
   shouldFocusError?: boolean;
   submitCount?: number;
+  minDate?: dayjs.Dayjs;
+  maxDate?: dayjs.Dayjs;
 }
 
 export default function DesktopDatePickers({
@@ -35,6 +37,8 @@ export default function DesktopDatePickers({
   handleChange,
   shouldFocusError,
   submitCount,
+  minDate,
+  maxDate,
 }: DesktopDatePickers) {
   const dateFormat = "DD/MM/YYYY";
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -89,6 +93,8 @@ export default function DesktopDatePickers({
               },
             },
           }}
+          minDate={minDate}
+          maxDate={maxDate}
         />
       </LocalizationProvider>
       {validateTextLable && (
