@@ -30,7 +30,7 @@ export async function mas_CompanyGet(company_id: number, set_company: (data: any
 };
 
 
-export async function mas_DomainGet(company_id: number, set_domain: (data: any) => void, user: any, isCallFuncLogOn: boolean) {
+export async function mas_DomainGet(company_id: string, set_domain: (data: any) => void, user: any, isCallFuncLogOn: boolean) {
   if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  DomainGet");
 
   try {
