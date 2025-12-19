@@ -934,16 +934,16 @@ export default function ComplaintBody({
   };
 
   const resetCloseState = () => {
-  setclose_name("");
-  setclose_company_id(null);
-  setclose_department_id(null);
-  setclose_position("");
-  setclose_email("");
-  setclose_date(null);
-  setdataFuapp(null);
-  setclose_detail("");
-  setclose_note("");
-};
+    setclose_name("");
+    setclose_company_id(null);
+    setclose_department_id(null);
+    setclose_position("");
+    setclose_email("");
+    setclose_date(null);
+    setdataFuapp(null);
+    setclose_detail("");
+    setclose_note("");
+  };
 
   const priorityCalculateRespondDate = (
     daysToAdd: number,
@@ -1034,6 +1034,8 @@ export default function ComplaintBody({
     const email_detail = dataelement?.detail || "-";
     const email_requrst_department_name = dataelement?.request_department_name || dataset_department?.find((x: any) => x.department_id == dataelement?.request_department_id)?.department_name || dataelement?.request_department_id || "-";
     const email_request_name = dataelement?.request_name || "-";
+
+    const emailSubject = `[CAS] แจ้งเตือนการ ตอบรับ / รับทราบ รายละเอียดข้อร้องเรียน CAS No.${email_casNumber || "-"}`;
 
     const emailBodyHtml = `
       <div style="font-family: Arial, sans-serif; color: #333;">
@@ -1129,7 +1131,8 @@ export default function ComplaintBody({
         acknowledge_email: user[0]?.employee_email,
         update_by: user[0]?.employee_username,
       },
-      emailBody: emailBodyHtml,  // 👈 อยู่นอก AcknowledgeModel
+      emailBody: emailBodyHtml,
+      emailSubject: emailSubject
     };
 
     try {
@@ -1892,7 +1895,7 @@ export default function ComplaintBody({
       setclose_detail(close?.close_detail ? close?.close_detail : "");
       setclose_note(close?.close_note ? close?.close_note : "");
     }
-  }, [explainList, dataset_department,dataset_company,dataApprove_Combobox]);
+  }, [explainList, dataset_department, dataset_company, dataApprove_Combobox]);
 
 
   // ✅ ใช้ ref เพื่อเก็บ complaint ID ก่อนหน้า
