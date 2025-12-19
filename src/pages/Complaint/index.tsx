@@ -3530,8 +3530,8 @@ export default function Complaint() {
         แจ้งเตือนรับทราบ เพื่อพิจารณายกเลิก หรือ แก้ไข
       </p>
         <br />
-        <h2 style="color: #2196f3; border-bottom: 2px solid #2196f3; padding-bottom: 10px;">
-          ผู้ทำการส่งกลับ (Return by)
+         <h2 style="color: #2196f3; border-bottom: 2px solid #2196f3; padding-bottom: 10px;">
+          รายละเอียด การปฏิเสธ(Reject Details)
         </h2>
          <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
           <tr>
@@ -5086,13 +5086,13 @@ export default function Complaint() {
     if (
       follow_up_date &&
       dayjs().startOf("day").isBefore(dayjs(follow_up_date).startOf("day"))
-    ){
+    ) {
       FullSweetalert({
         title: "แจ้งเตือน",
         text: "ยังไม่ถึงวันที่ตรวจติดตามผล ไม่สามารถปิดรายการได้",
         icon: "warning",
       });
-        return;
+      return;
     }
 
     const tempComplaintStatus = await LovAll_Get(
