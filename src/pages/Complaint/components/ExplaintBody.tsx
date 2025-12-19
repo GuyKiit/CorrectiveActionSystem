@@ -2169,7 +2169,7 @@ React.useEffect(() => {
                                     Validate={validateText?.Tuother || false}
                                     validateTextLable={
                                       validateText?.Tuother
-                                        ? "กรุณาเลือกอื่นๆ"
+                                        ? "กรุณากรอกรายละเอียดอื่นๆ (Tools Used)"
                                         : ""
                                     }
                                     shouldFocusError={firstErrorField === "Tuother"}
@@ -2281,7 +2281,7 @@ React.useEffect(() => {
                                     Validate={validateText?.Ddother || false}
                                     validateTextLable={
                                       validateText?.Ddother
-                                        ? "กรุณาเลือกอื่นๆ"
+                                        ? "กรุณากรอกรายละเอียดอื่นๆ (Decision on Disposition)"
                                         : ""
                                     }
                                     shouldFocusError={firstErrorField === "Ddother"}
@@ -3873,7 +3873,6 @@ React.useEffect(() => {
                         <Grid container spacing={3}>
                           <Grid size={4}>
                             <FullWidthTextField
-                              required="required"
                               value={close_name}
                               labelName="ผู้ตรวจติดตาม (Follow-up by)"
                               readonly
@@ -3881,7 +3880,6 @@ React.useEffect(() => {
                           </Grid>
                           <Grid size={4}>
                             <AutocompleteComboBox
-                              required="required"
                               value={close_company_id}
                               labelName={"บริษัท (Company)"}
                               options={dataset_company}
@@ -3893,7 +3891,6 @@ React.useEffect(() => {
                           </Grid>
                           <Grid size={4}>
                             <AutocompleteComboBox
-                              required="required"
                               value={close_department_id}
                               labelName={"แผนก (Department)"}
                               options={dataset_department}
@@ -3906,7 +3903,6 @@ React.useEffect(() => {
                           </Grid>
                           <Grid size={4}>
                             <FullWidthTextField
-                              required="required"
                               value={close_position}
                               labelName="ตำแหน่ง (Position)"
                               onchange={(e) => setclose_position(e)}
@@ -3915,7 +3911,6 @@ React.useEffect(() => {
                           </Grid>
                           <Grid size={4}>
                             <FullWidthTextField
-                              required="required"
                               value={close_email}
                               labelName="อีเมล (Email)"
                               onchange={(e) => setclose_email(e)}
@@ -3924,7 +3919,6 @@ React.useEffect(() => {
                           </Grid>
                           <Grid size={4}>
                             <DesktopDatePickers
-                              required="required"
                               labelName={"วันที่ปิดรายการ (Date)"}
                               value={close_date}
                               handleChange={(val) => setclose_date(val ?? null)}

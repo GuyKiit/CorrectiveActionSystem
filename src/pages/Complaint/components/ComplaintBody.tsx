@@ -2076,6 +2076,18 @@ export default function ComplaintBody({
     return selected;
   };
 
+  const getCloseDetailLabel = (approveData: any) => {
+    if (!approveData) return "หมายเหตุการปิด";
+    
+    // Check lov2 for REJECT status as per user request
+    if (approveData.lov2 === "REJECT") {
+      return "หมายเหตุการปฏิเสธ";
+    }
+    else if (approveData.lov2 === "APPROVE") {
+      return "หมายเหตุการปิดรายการ";
+    }
+  };
+
   // #F29739
 
   return (
@@ -2194,19 +2206,6 @@ export default function ComplaintBody({
                     options={domainrelate}
                     column="domain_name"
                     setvalue={(v) => setrespondent_company_id(v)}
-                    // setvalue={(val) => {
-                    //   //console.log("Domain selected:", val?.domain_name);
-                    //   //console.log("Domain selected:", val?.domain_id);
-                    //   //console.log("😍val:", val);
-                    //   handleDomainChange(val);
-
-                    //   setrespondent_domain_id(val);
-                    //   //console.log("cccccc", val);
-
-                    //   if (onRespondentDepartmentChange) {
-                    //     onRespondentDepartmentChange(val);
-                    //   }
-                    // }}
                     bgcolorTextField={true}
                     readonly={!isActionAdd || !isCrossCompany}
                     required="required"
@@ -2214,7 +2213,7 @@ export default function ComplaintBody({
                     shouldFocusError={firstErrorField === "Respondent_Department"}
                     validateTextLable={
                       validateText?.Respondent_Department
-                        ? "กรุณาเลือกโดเมน"
+                        ? "กรุณาเลือกโรงงาน"
                         : ""
                     }
                   />
@@ -2295,12 +2294,6 @@ export default function ComplaintBody({
                         options={dataset_department_respondent}
                         column="department_name"
                         setvalue={async (val) => {
-                          // console.log(
-                          //   "Selected value:",
-                          //   val,
-                          //   "respondent_department_id :",
-                          //   respondent_department_id
-                          // );
                           setrespondent_department_id(val);
 
                           // ✅ ดึงข้อมูล Email จากแผนกที่เลือก
@@ -3961,7 +3954,6 @@ export default function ComplaintBody({
                       <Grid container spacing={3}>
                         <Grid size={4}>
                           <FullWidthTextField
-                            required="required"
                             value={close_name}
                             labelName="ผู้ตรวจติดตาม (Follow-up by)"
                             onchange={(e) => setclose_name(e)}
@@ -3972,18 +3964,8 @@ export default function ComplaintBody({
                             }
                           />
                         </Grid>
-                        {/* <Grid size={4}>
-                          <FullWidthTextField
-                            required="required"
-                            value={close_company_id}
-                            labelName="บริษัท (Company)"
-                            onchange={(e) => setclose_company_id(e)}
-                            readonly={isActionRead || isActionDelete || isActionCloseHistory}
-                          />
-                        </Grid> */}
                         <Grid size={4}>
                           <AutocompleteComboBox
-                            required="required"
                             value={close_company_id}
                             labelName={"บริษัท (Company)"}
                             options={dataset_company}
@@ -3995,7 +3977,6 @@ export default function ComplaintBody({
                         </Grid>
                         <Grid size={4}>
                           <AutocompleteComboBox
-                            required="required"
                             value={close_department_id}
                             labelName={"แผนก (Department)"}
                             options={dataset_department}
@@ -4016,7 +3997,6 @@ export default function ComplaintBody({
                         </Grid>
                         <Grid size={4}>
                           <FullWidthTextField
-                            required="required"
                             value={close_position}
                             labelName="แผนก (Position)"
                             onchange={(e) => setclose_position(e)}
@@ -4029,7 +4009,6 @@ export default function ComplaintBody({
                         </Grid>
                         <Grid size={4}>
                           <FullWidthTextField
-                            required="required"
                             value={close_email}
                             labelName="อีเมล (Email)"
                             onchange={(e) => setclose_email(e)}
@@ -4042,7 +4021,6 @@ export default function ComplaintBody({
                         </Grid>
                         <Grid size={4}>
                           <DesktopDatePickers
-                            required="required"
                             labelName={"วันที่อนุมัติ (Date)"}
                             value={close_date}
                             handleChange={(val) => setclose_date(val ?? null)}
@@ -4209,8 +4187,8 @@ export default function ComplaintBody({
                                   color: "#333",
                                 }}
                               >
-                                หมายเหตุการอนุมัติ
-                                <span style={{ color: "red" }}> *</span>
+                                {getCloseDetailLabel(dataFuapp)}
+                                {dataFuapp?.lov_code !== "APPROVE" && (<span style={{ color: "red" }}> *</span>)}
                               </Typography>
                             </AccordionSummary>
 
@@ -4276,7 +4254,7 @@ export default function ComplaintBody({
                                 }}
                               >
                                 หมายเหตุเพิ่มเติม
-                                <span style={{ color: "red" }}> *</span>
+                                {dataFuapp?.lov_code !== "APPROVE" && (<span style={{ color: "red" }}> *</span>)}
                               </Typography>
                             </AccordionSummary>
 
