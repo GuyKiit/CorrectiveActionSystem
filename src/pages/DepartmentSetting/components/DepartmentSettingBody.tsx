@@ -304,7 +304,7 @@ export default function DepartmentSettingBody({
                 department_id: val.department_id, // ✅ ต้องมีอันนี้ด้วย
             };
 
-            console.log("😋 ส่งค่าไป UsernameGet :", dataset);
+            // console.log("😋 ส่งค่าไป UsernameGet :", dataset);
 
         } else {
             set_username([]);

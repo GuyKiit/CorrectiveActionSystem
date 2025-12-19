@@ -246,7 +246,6 @@ export default function DepartmentSetting() {
   // Search Variables (from index.tsx)
   const [TextNameSearch, setTextNameSearch] = React.useState({
     id: "",
-    username_search: "",
     company_search: "",
     domain_search: "",
     department_search: ""
@@ -374,11 +373,13 @@ export default function DepartmentSetting() {
 
     if (value != null) {
       const dataset = {
-        domain_id: domain_search?.domain_id || value.domain_id,
-        company_id: company_search?.company_id || value.company_id,
+        domain_id: value.domain_id,
+        company_id: Number(TextNameSearch.company_search),
       };
 
-      mas_DepartmentDomainGet(value, set_department, isCallFuncLogOn);
+      // console.log("📌 Dataset for Department API:", dataset);
+
+      mas_DepartmentDomainGet(dataset, set_department, isCallFuncLogOn);
       // mas_UsernameGetAll(setmaster_user, isCallFuncLogOn);
     } else {
       set_department([]);
@@ -901,14 +902,15 @@ useEffect(() => {
   const handleCloseSearch = () => {
     if (isCallFuncLogOn) //console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  handleCloseSearch");
       setTextNameSearch({
-        id: "",
-        username_search: "",
-        company_search: "",
-        department_search: "",
-        domain_search: ""
-      });
-    setSearchTrigger(true);
-  };
+    id: "",
+    department_search: "",
+    domain_search: "",
+    company_search: "",
+  });
+
+  // set_department([]);
+  setSearchTrigger(true);
+};
 
   // Close Dialog Handler
   const handleClose = () => {
@@ -960,6 +962,68 @@ useEffect(() => {
       CompanyGet();
     }
   }, [dataset_activeCompany]);
+
+   React.useEffect(() => {
+    if (!TextNameSearch.company_search && user[0]?.itasset_company_id) {
+      setTextNameSearch(prev => ({
+        ...prev,
+        company_search: String(user[0].itasset_company_id),
+        // domain_search: ""   // ⭐ สำคัญมาก
+      }));
+  
+      set_domain([]); // ⭐ กัน domain เก่าค้าง
+    }
+  }, [user]);
+
+  React.useEffect(() => {
+      if (!TextNameSearch.company_search) return;
+  
+      mas_DomainGet(
+        TextNameSearch.company_search,
+        set_domain,
+        user,
+        isCallFuncLogOn
+      );
+    }, [TextNameSearch.company_search]);
+
+    React.useEffect(() => {
+        if (!Array.isArray(domain) || domain.length === 0) return;
+      }, [domain]);
+    
+      React.useEffect(() => {
+      if (
+        !TextNameSearch.domain_search &&
+        Array.isArray(domain) &&
+        domain.length > 0 &&
+        user[0]?.domain_name
+      ) {
+        const autoDomain = domain.find(
+          (item: any) =>
+            String(item.domain_name) === String(user[0].domain_name)
+        );
+        if (autoDomain) {
+          setTextNameSearch(prev => ({
+            ...prev,
+            domain_search: autoDomain.domain_id
+          }));
+    
+          handleDomainChange(autoDomain);
+        }
+      }
+    }, [domain, user]);
+
+    React.useEffect(() => {
+  if (!TextNameSearch.domain_search || !TextNameSearch.company_search) return;
+
+  mas_DepartmentDomainGet(
+    {
+      domain_id: TextNameSearch.domain_search,
+      company_id: TextNameSearch.company_search,
+    },
+    set_department,
+    isCallFuncLogOn,
+  );
+}, [TextNameSearch.domain_search, TextNameSearch.company_search]);
   // =====================================================================================================
   // RETURN SECTION - RENDER COMPONENT
   // =====================================================================================================
@@ -1002,9 +1066,20 @@ useEffect(() => {
           </Grid> */}
           <Grid size={4}>
             <AutocompleteComboBox
-              value={company?.find(
-                (item: any) => item.company_id === TextNameSearch.company_search
-              ) || null}
+              // value={company?.find(
+              //   (item: any) => item.company_id === TextNameSearch.company_search
+              // ) || null}
+              value={
+                company?.find(
+                  (item: any) =>
+                    String(item.company_id) === String(TextNameSearch.company_search)
+                ) ||
+                company?.find(
+                  (item: any) =>
+                    String(item.company_id) === String(user[0]?.itasset_company_id)
+                ) ||
+                null
+              }
               labelName="บริษัท (Company)"
               options={company || []}
               column="company_name"
@@ -1016,13 +1091,25 @@ useEffect(() => {
                   company_search: val?.company_id || "", // เก็บแค่ id เป็น string
                 })
               }}
+              readonly = {!isItAdmin}
             />
           </Grid>
           <Grid size={4}>
             <AutocompleteComboBox
-              value={domain?.find(
-                (item: any) => item.domain_id === TextNameSearch.domain_search
-              ) || null}
+              // value={domain?.find(
+              //   (item: any) => item.domain_id === TextNameSearch.domain_search
+              // ) || null}
+              value={
+                domain?.find(
+                  (item: any) =>
+                    item.domain_id === TextNameSearch.domain_search
+                ) || 
+                domain?.find(
+                  (item: any) =>
+                    String(item.domain_id) === String(user[0]?.domain_name)
+                ) ||
+                null
+              }
               labelName="โรงงาน (Factory)"
               options={domain || []}
               column="domain_name"
@@ -1033,7 +1120,7 @@ useEffect(() => {
                   domain_search: val?.domain_id || "", // เก็บแค่ id เป็น string
                 })
               }}
-              readonly={!TextNameSearch.company_search}
+              readonly = {!isItAdmin}
             />
           </Grid>
           <Grid size={4}>

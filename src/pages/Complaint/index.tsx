@@ -765,6 +765,7 @@ export default function Complaint() {
 
   const handleCompanyChange = async (value: any) => {
     if (value) {
+      console.log("📌 Dataset for Department API:", value);
       mas_DomainRelateGet(
         value?.company_id,
         set_domainrelate,

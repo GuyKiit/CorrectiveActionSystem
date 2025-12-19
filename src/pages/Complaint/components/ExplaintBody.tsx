@@ -962,10 +962,7 @@ export default function ExplaintBody({
         if (mappedDept) {
           setrespondent_department_id(mappedDept); // ค่า default ของ Combobox
         } else {
-          console.warn(
-            "⚠️ No department found for ID:",
-            dataelement.respondent_department_id
-          );
+          // console.warn("⚠️ No department found for ID:",dataelement.respondent_department_id);
         }
       }
 
@@ -1024,10 +1021,7 @@ export default function ExplaintBody({
         if (mappedDept) {
           setresponsible_department_id(mappedDept); // ค่า default ของ Combobox
         } else {
-          console.warn(
-            "⚠️ No department found for ID:",
-            dataelement.responsible_department_id
-          );
+          // console.warn("⚠️ No department found for ID:",dataelement.responsible_department_id);
         }
       }
 
@@ -2048,6 +2042,7 @@ React.useEffect(() => {
                       }
                       shouldFocusError={firstErrorField === "Follow_up_Date"}
                       submitCount={submitCount}
+                      minDate={dayjs()}
                     />
                   </Grid>
                 </Grid>
