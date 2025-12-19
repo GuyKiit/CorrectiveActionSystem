@@ -47,10 +47,10 @@ export async function mas_DomainGet(company_id: string, set_domain: (data: any) 
     if (response && response.status === "success") {
       // console.log("❇️ Call [Complaint/CasDomainGet] -> DomainRelateGet :",response.data);
 
-      console.log(
-        "❇️ Call [Complaint/DomainRelateGet] -> DomainRelateGet :",
-        response.data
-      );
+      // console.log(
+      //   "❇️ Call [Complaint/DomainRelateGet] -> DomainRelateGet :",
+      //   response.data
+      // );
       if (Array.isArray(response.data)) {
 
         set_domain(response.data);
@@ -106,10 +106,10 @@ export async function mas_DomainRelateGet(company_id: any, set_domainrelate: (da
     if (response && response.status === "success") {
       // console.log("❇️ Call [Complaint/CasDomainGet] -> DomainRelateGet :",response.data);
 
-      console.log(
-        "❇️ Call [Complaint/DomainRelateGet] -> DomainRelateGet :",
-        response.data
-      );
+      // console.log(
+      //   "❇️ Call [Complaint/DomainRelateGet] -> DomainRelateGet :",
+      //   response.data
+      // );
       if (Array.isArray(response.data)) {
 
         set_domainrelate(response.data);
@@ -138,10 +138,10 @@ export async function mas_DepartmentDomainGet(value: any, set_department: (data:
       "/Complaint/CasDepartmentDomainGet"
     );
     if (response && response.status === "success") {
-      console.log(
-        "❇️❇️❇️❇️❇️ Call [Complaint/CasDepartmentDomainGet] -> Department_Domain_Get :",
-        response.data
-      );
+      // console.log(
+      //   "❇️❇️❇️❇️❇️ Call [Complaint/CasDepartmentDomainGet] -> Department_Domain_Get :",
+      //   response.data
+      // );
       if (Array.isArray(response.data)) {
         // เอา filter ออก → ใช้ทุกตัว
         set_department(response.data);
@@ -196,7 +196,7 @@ export async function mas_DepartmentGet_Complaint(value: any, setdataset_departm
       "/Complaint/CasDepartmentDomainGet"
     );
     if (Array.isArray(response.data)) {
-      console.log("response.data", response.data);
+      // console.log("response.data", response.data);
 
       let datasetToSet = response.data;
 
@@ -206,7 +206,7 @@ export async function mas_DepartmentGet_Complaint(value: any, setdataset_departm
           (item: any) => item.department_id != user[0]?.itasset_department_id
         );
       }
-      console.log("response.data", response.data);
+      // console.log("response.data", response.data);
 
       setdataset_department(response.data); // ✅ เรียกทุก action
       setdataset_department_respondent(datasetToSet); // ✅ เรียกทุก action

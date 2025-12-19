@@ -1013,6 +1013,8 @@ export default function Complaint() {
     return paddingYear;
   }
 
+  const isBeforeFollowUpDate = follow_up_date && dayjs().startOf("day").isBefore(dayjs(follow_up_date).startOf("day"));
+
   // =====================================================================================================
   // UTILITY FUNCTIONS
   // =====================================================================================================
@@ -3372,7 +3374,7 @@ export default function Complaint() {
     }
     // 🟢 STEP 2 : ถ้าเป็น "EXPLAIN_CONFIRM" = ทำงานจริง
     if (mode === "EXPLAIN_CONFIRM") {
-
+      setIsLoadingScreen(true);
       // if (isCallFuncLogOn)
       //   console.log("🕑 ", dayjs().format("HH:mm:ss.SSS"), " [ComplaintReturn] Confirm mode");
 
@@ -3442,7 +3444,6 @@ export default function Complaint() {
       };
 
       // formData.append("emailBody", emailBodyHtml);
-
       try {
         const response = await _POST(
           complaintReturnPayload,
@@ -5082,6 +5083,17 @@ export default function Complaint() {
     //     " [Calling Function]  :  CloseAdd"
     //   );
 
+    if (
+      follow_up_date &&
+      dayjs().startOf("day").isBefore(dayjs(follow_up_date).startOf("day"))
+    ){
+      FullSweetalert({
+        title: "แจ้งเตือน",
+        text: "ยังไม่ถึงวันที่ตรวจติดตามผล ไม่สามารถปิดรายการได้",
+        icon: "warning",
+      });
+        return;
+    }
 
     const tempComplaintStatus = await LovAll_Get(
       "complaint_status",
@@ -6250,7 +6262,7 @@ export default function Complaint() {
                   dataset_domain: val?.domain_id || "", // เก็บแค่ id เป็น string
                 });
               }}
-              readonly={!isItAdmin}
+              readonly={!isItAdmin || !TextNameSearch.dataset_company}
             />
           </Grid>
           <Grid size={4}>
