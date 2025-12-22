@@ -127,10 +127,10 @@ export const Department_Setting_headCells = [
         colWidth: 150,
     },
     {
-        columnName: 'domain_id',
+        columnName: 'domain_prefix_name',
         numeric: 'center',
         disablePadding: false,
-        label: 'โดเมน',
+        label: 'โรงงาน',
         colWidth: 150,
     },
     {
