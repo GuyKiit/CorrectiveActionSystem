@@ -276,6 +276,7 @@ export default function Complaint() {
     // Dataset Variables
     dataset_reporttype,
     dataset_department,
+    dataset_department_request,
     dataset_department_respondent,
     dataset_company,
     dataset_domain,
@@ -436,6 +437,7 @@ export default function Complaint() {
     setdataset_roleProfile,
     setdataset_configfile,
     setdataset_department,
+    setdataset_department_request,
     setdataset_department_respondent,
     setdataset_company,
     set_domain,
@@ -2823,7 +2825,7 @@ export default function Complaint() {
           </tr>
         </table>
         <h2 style="color: #2196f3; border-bottom: 2px solid #2196f3; padding-bottom: 10px;">
-          ผู้ทำการออกเอกสาร (Reporting Department)
+          ผู้ทำการออกเอกสาร (Issuer)
         </h2>
          <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
           <tr>
@@ -3065,7 +3067,7 @@ export default function Complaint() {
           </tr>
         </table>
         <h2 style="color: #2196f3; border-bottom: 2px solid #2196f3; padding-bottom: 10px;">
-          ผู้ทำการออกเอกสาร (Reporting Department)
+          ผู้ทำการออกเอกสาร (Issuer)
         </h2>
          <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
           <tr>
@@ -3530,8 +3532,8 @@ export default function Complaint() {
         แจ้งเตือนรับทราบ เพื่อพิจารณายกเลิก หรือ แก้ไข
       </p>
         <br />
-        <h2 style="color: #2196f3; border-bottom: 2px solid #2196f3; padding-bottom: 10px;">
-          ผู้ทำการส่งกลับ (Return by)
+         <h2 style="color: #d32f2f; border-bottom: 2px solid #d32f2f; padding-bottom: 10px;">
+          รายละเอียดการปฏิเสธ (Rejection Details)
         </h2>
          <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
           <tr>
@@ -3747,8 +3749,8 @@ export default function Complaint() {
         แจ้งเตือนรับทราบ เพื่อพิจารณายกเลิก หรือ แก้ไข
       </p>
         <br />
-        <h2 style="color: #2196f3; border-bottom: 2px solid #2196f3; padding-bottom: 10px;">
-          รายละเอียดการอนุมัติ (Approval Details)
+        <h2 style="color: #d32f2f; border-bottom: 2px solid #d32f2f; padding-bottom: 10px;">
+          รายละเอียดการปฏิเสธ (Rejection Details)
         </h2>
          <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
           <tr>
@@ -3957,8 +3959,8 @@ export default function Complaint() {
         แจ้งเตือนปัญหาข้อร้องเรียน มีรายละเอียดดังต่อไปนี้
       </p>
         <br />
-        <h2 style="color: #95cc97ff; border-bottom: 2px solid #95cc97ff; padding-bottom: 10px;">
-          รายละเอียดการอนุมัติ (Approval Details)
+        <h2 style="color: #d32f2f; border-bottom: 2px solid #d32f2f; padding-bottom: 10px;">
+          รายละเอียดการปฏิเสธ (Rejection Details)
         </h2>
         <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
           <tr>
@@ -4254,7 +4256,7 @@ export default function Complaint() {
       </p>
         <br />
         <h2 style="color: #ff9800; border-bottom: 2px solid #ff9800; padding-bottom: 10px;">
-          รายละเอียดคำชี้แจง (Explain Detail)
+          รายละเอียดคำชี้แจง (Explain Details)
         </h2>
         <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
           <tr>
@@ -4291,7 +4293,7 @@ export default function Complaint() {
           </tr>` : ''}
         </table>
         <h2 style="color: #d32f2f; border-bottom: 2px solid #d32f2f; padding-bottom: 10px;">
-          ผู้ทำการชี้แจง (Explainer)
+          ผู้ทำการชี้แจง (Respondent)
         </h2>
          <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
           <tr>
@@ -4449,7 +4451,7 @@ export default function Complaint() {
         แจ้งเตือนปัญหาข้อร้องเรียน มีรายละเอียดดังต่อไปนี้
       </p>
         <br />
-        <h2 style="color: #95cc97ff; border-bottom: 2px solid #95cc97ff; padding-bottom: 10px;">
+        <h2 style="color: #2196f3; border-bottom: 2px solid #2196f3; padding-bottom: 10px;">
           รายละเอียดการอนุมัติ (Approval Details)
         </h2>
         <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
@@ -4648,16 +4650,32 @@ export default function Complaint() {
     const email_casNumber = dataelement?.cas_number || complaintMainData?.cas_number || "-";
     const emailSubject = `[CAS] แจ้งเตือนการ ตอบรับ / รับทราบ รายละเอียดข้อร้องเรียน CAS No.${email_casNumber || "-"}`;
 
+    const email_request_department_name =
+      dataelement?.request_department_name ||
+      complaintMainData?.request_department_name ||
+      dataset_department?.find(
+        (x: any) =>
+          x.department_id == dataelement?.request_department_id ||
+          x.department_id == complaintMainData?.request_department_id
+      )?.department_name ||
+      dataset_department_request?.find(
+        (x: any) =>
+          x.department_id == dataelement?.request_department_id ||
+          x.department_id == complaintMainData?.request_department_id
+      )?.department_name ||
+      dataelement?.request_department_id ||
+      complaintMainData?.request_department_id || "-";
+
     const emailBodyHtml = `
       <div style="font-family: Arial, sans-serif; color: #333;">
         <p>
-        เรียน เจ้าหน้าที่ฝ่าย
+        เรียน เจ้าหน้าที่ฝ่าย${email_request_department_name || "-"}
       </p>
       <p style="margin-top: 5px;">
         แจ้งเตือนปัญหาข้อร้องเรียน มีรายละเอียดดังต่อไปนี้
       </p>
         <br />
-        <h2 style="color: #95cc97ff; border-bottom: 2px solid #95cc97ff; padding-bottom: 10px;">
+        <h2 style="color: #2196f3; border-bottom: 2px solid #2196f3; padding-bottom: 10px;">
           รายละเอียดการอนุมัติ (Approval Details)
         </h2>
         <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
@@ -4680,7 +4698,7 @@ export default function Complaint() {
         <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
           <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">ชื่อผู้อนุมัติ (Approved by)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_fname_th || ""} ${user[0]?.employee_lname_th || ""} (${user[0]?.employee_username || "-"})</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_fname_th ? (user[0]?.employee_fname_th + " " + (user[0]?.employee_lname_th || "")) : ((user[0]?.employee_fname_en || "") + " " + (user[0]?.employee_lname_en || ""))}</td>
           </tr>
            <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ตำแหน่ง (Position)</td>
@@ -5086,13 +5104,13 @@ export default function Complaint() {
     if (
       follow_up_date &&
       dayjs().startOf("day").isBefore(dayjs(follow_up_date).startOf("day"))
-    ){
+    ) {
       FullSweetalert({
         title: "แจ้งเตือน",
         text: "ยังไม่ถึงวันที่ตรวจติดตามผล ไม่สามารถปิดรายการได้",
         icon: "warning",
       });
-        return;
+      return;
     }
 
     const tempComplaintStatus = await LovAll_Get(
@@ -5122,7 +5140,7 @@ export default function Complaint() {
         แจ้งเตือนการปิดปัญหาข้อร้องเรียน มีรายละเอียดดังต่อไปนี้
       </p>
         <br />
-        <h2 style="color: #95cc97ff; border-bottom: 2px solid #95cc97ff; padding-bottom: 10px;">
+        <h2 style="color: #2196f3; border-bottom: 2px solid #2196f3; padding-bottom: 10px;">
           รายละเอียดการอนุมัติ (Approval Details)
         </h2>
         <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
@@ -5145,7 +5163,7 @@ export default function Complaint() {
         <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
           <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">ชื่อผู้อนุมัติ (Approved by)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_fname_th || ""} ${user[0]?.employee_lname_th || ""} (${user[0]?.employee_username || "-"})</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_fname_th ? (user[0]?.employee_fname_th + " " + (user[0]?.employee_lname_th || "")) : ((user[0]?.employee_fname_en || "") + " " + (user[0]?.employee_lname_en || ""))}</td>
           </tr>
            <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ตำแหน่ง (Position)</td>
@@ -6019,6 +6037,20 @@ export default function Complaint() {
           user,
           isCallFuncLogOn
         );
+
+        // ✅ Load Request Departments
+        const reqDomain = dataelement?.request_domain_id || user[0]?.employee_domain;
+        if (reqDomain) {
+          await mas_DepartmentDomainGet(
+            {
+              domain_id: reqDomain,
+              company_id: dataelement?.request_company_id || user[0]?.itasset_company_id
+            },
+            setdataset_department_request,
+            isCallFuncLogOn
+          );
+        }
+
         if (dataelement?.respondent_domain_id) {
           await mas_DepartmentGet_Complaint(
             {

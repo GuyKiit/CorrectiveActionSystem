@@ -4,9 +4,9 @@ import { Launch } from "..";
 
 export type Adds = undefined | null | boolean;
 
-export type ListComplaintContextProps = {  
+export type ListComplaintContextProps = {
     // data get ListSearchGet
-    dataelement : any
+    dataelement: any
     setdataelement: Dispatch<SetStateAction<any>>;
 
     Complaint_no?: string
@@ -14,7 +14,7 @@ export type ListComplaintContextProps = {
     id?: string
     report_type?: string
     cas_number?: string
-    doc_date?: dayjs.Dayjs 
+    doc_date?: dayjs.Dayjs
     date_of_detection?: dayjs.Dayjs | null
     request_name?: string | null
     request_company_id?: any
@@ -94,6 +94,7 @@ export type ListComplaintContextProps = {
     dataset_reporttype?: any
     dataset_company?: any
     dataset_department?: any
+    dataset_department_request?: any
     dataset_department_respondent?: any
     dataset_domain?: any
     dataset_domainrelate?: any
@@ -207,7 +208,7 @@ export type ListComplaintContextProps = {
     isApproveQcBoxHidden?: boolean
     isApproveCloseBoxHidden?: boolean
 
-    
+
 
 
     setComplaint_no: Dispatch<SetStateAction<string>>;
@@ -270,7 +271,7 @@ export type ListComplaintContextProps = {
     setcreate_datetime: Dispatch<SetStateAction<dayjs.Dayjs>>
     setupdate_by: Dispatch<SetStateAction<string>>
     setupdate_datetime: Dispatch<SetStateAction<dayjs.Dayjs>>
-    
+
 
 
     setComplaintStatusID_Combobox: Dispatch<SetStateAction<any>>
@@ -295,6 +296,7 @@ export type ListComplaintContextProps = {
     setdataset_reporttype: Dispatch<SetStateAction<any>>
     setdataset_company: Dispatch<SetStateAction<any>>
     setdataset_department: Dispatch<SetStateAction<any>>
+    setdataset_department_request: Dispatch<SetStateAction<any>>
     setdataset_department_respondent: Dispatch<SetStateAction<any>>
     setdataset_domain: Dispatch<SetStateAction<any>>
     setdataset_domainrelate: Dispatch<SetStateAction<any>>
@@ -396,16 +398,16 @@ export type ListComplaintContextProps = {
     setqcapprove_date: Dispatch<SetStateAction<dayjs.Dayjs | null>>
     setqcapprove_detail: Dispatch<SetStateAction<string>>
     setqcapprove_note: Dispatch<SetStateAction<string>>
-    
+
     setisApproveScBoxHidden: Dispatch<SetStateAction<boolean | undefined>>
     setisApproveQcBoxHidden: Dispatch<SetStateAction<boolean>>
     setisApproveCloseBoxHidden: Dispatch<SetStateAction<boolean>>
 };
 
 export const initialListComplaint: ListComplaintContextProps = {
-       // data get ListSearchGet
-     dataelement :null,
-    setdataelement: ()=>{},
+    // data get ListSearchGet
+    dataelement: null,
+    setdataelement: () => { },
 
     setComplaint_no: () => { },
     setno: () => { },
@@ -488,6 +490,7 @@ export const initialListComplaint: ListComplaintContextProps = {
     setdataset_reporttype: () => { },
     setdataset_company: () => { },
     setdataset_department: () => { },
+    setdataset_department_request: () => { },
     setdataset_department_respondent: () => { },
     setdataset_domain: () => { },
     setdataset_domainrelate: () => { },
@@ -561,7 +564,7 @@ export const initialListComplaint: ListComplaintContextProps = {
     setclose_email: () => { },
     setclose_date: () => { },
     setclose_detail: () => { },
-    setclose_note: () => { },   
+    setclose_note: () => { },
 
     setreturn_detail: () => { },
     setreturn_name: () => { },
@@ -581,20 +584,20 @@ export const initialListComplaint: ListComplaintContextProps = {
     setapprove_note: () => { },
     setapprove_name: () => { },
     setapprove_company_id: () => { },
-    setapprove_department_id: () => {},
+    setapprove_department_id: () => { },
     setapprove_position: () => { },
     setapprove_email: () => { },
     setapprove_date: () => { },
 
     setqcapprove_name: () => { },
     setqcapprove_company_id: () => { },
-    setqcapprove_department_id: () => {},
+    setqcapprove_department_id: () => { },
     setqcapprove_position: () => { },
     setqcapprove_email: () => { },
     setqcapprove_date: () => { },
     setqcapprove_detail: () => { },
     setqcapprove_note: () => { },
-    
+
     setisApproveScBoxHidden: () => { },
     setisApproveQcBoxHidden: () => { },
     setisApproveCloseBoxHidden: () => { },

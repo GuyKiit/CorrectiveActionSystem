@@ -249,6 +249,9 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
     const [dataset_department, setdataset_department] = useState<any>(
         initialListComplaint.dataset_department
     );
+    const [dataset_department_request, setdataset_department_request] = useState<any>(
+        initialListComplaint.dataset_department_request
+    );
     const [dataset_department_respondent, setdataset_department_respondent] = useState<any>(
         initialListComplaint.dataset_department_respondent
     );
@@ -535,7 +538,7 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
     const [qcapprove_note, setqcapprove_note] = useState<any>(
         initialListComplaint.qcapprove_note
     );
-    
+
     const [isApproveScBoxHidden, setisApproveScBoxHidden] = useState<boolean | undefined>(
         false
     );
@@ -548,7 +551,7 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
     const [casuserdept, set_casuserdept] = useState<any>(
         initialListComplaint.casuserdept
     );
-    
+
 
     return (
         <ListComplaintContext.Provider
@@ -638,6 +641,7 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 dataset_reporttype,
                 dataset_company,
                 dataset_department,
+                dataset_department_request,
                 dataset_department_respondent,
                 dataset_domain,
                 dataset_domainrelate,
@@ -743,7 +747,7 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 setisApproveQcBoxHidden,
                 isApproveCloseBoxHidden,
                 setisApproveCloseBoxHidden,
-            
+
 
 
                 setComplaint_no,
@@ -828,6 +832,7 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 setdataset_reporttype,
                 setdataset_company,
                 setdataset_department,
+                setdataset_department_request,
                 setdataset_department_respondent,
                 setdataset_domain,
                 setdataset_domainrelate,
@@ -848,7 +853,7 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 set_departmentrelate_search,
                 set_department,
                 set_domain,
-                
+
 
                 //--------Explaint-------
                 setExplainList,

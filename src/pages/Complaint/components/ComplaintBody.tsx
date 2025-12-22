@@ -1088,7 +1088,7 @@ export default function ComplaintBody({
           </tr>
         </table>
         <h2 style="color: #2196f3; border-bottom: 2px solid #2196f3; padding-bottom: 10px;">
-          ผู้ตอบรับและยืนยันการรับทราบ (Received and duly noted)
+          ผู้ตอบรับและยืนยันการรับทราบ (Acknowledged by)
         </h2>
          <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
           <tr>
@@ -2078,7 +2078,7 @@ export default function ComplaintBody({
 
   const getCloseDetailLabel = (approveData: any) => {
     if (!approveData) return "หมายเหตุการปิด";
-    
+
     // Check lov2 for REJECT status as per user request
     if (approveData.lov2 === "REJECT") {
       return "หมายเหตุการปฏิเสธ";
