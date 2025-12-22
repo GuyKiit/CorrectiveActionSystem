@@ -122,7 +122,7 @@ export default function FuncDialog(props: FuncDialog) {
             <FullWidthButton
               disabled={props.disableSaveSubmit}
               handleonClick={props.handlefunction ?? props.handleClose}
-              labelName={props.buttonText ?? "SAVE & SUBMIT"}
+              labelName={props.buttonText ?? "บันทึกและส่ง"}
               variant_text="contained"
               colorname={props.buttonColor ?? "primary"}
             />
