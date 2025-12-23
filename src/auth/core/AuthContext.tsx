@@ -173,13 +173,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.log(accessType);
   
       const currentAccessData = {
-        domain_id: response?.data?.auth_role_profile[0].employee_domain,
-        session_id: response?.data?.auth_role_profile[0].session_id,
-        user_id: response?.data?.auth_role_profile[0].employee_username,
+        domain_id: response?.data?.data?.auth_role_profile[0].employee_domain,
+        session_id: response?.data?.data?.auth_role_profile[0].session_id,
+        user_id: response?.data?.data?.auth_role_profile[0].employee_username,
         access_type: accessType,
         client_ip: clientIP,
         public_ip: publicIP,
-        app_name: response?.data?.auth_role_profile[0].application_code,
+        app_name: response?.data?.data?.auth_role_profile[0].application_code,
         version_no: import.meta.env.VITE_VERSION,
         browser: getBrowserInfo(),
         access_status: response.status,
@@ -211,6 +211,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       
 
       if (data?.status === 'Success' && data?.data?.auth_role_profile) {
+      console.log("🔑 response : ",response);
+        
+        await getCurrentAccessData(response);
         setIsLoadingScreen(false)
         setSession(data);
       } else {
@@ -218,7 +221,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setError(data?.error_message || 'Login failed');
       }
 
-      await getCurrentAccessData(response);
 
     } catch (error) {
       setIsLoadingScreen(false)

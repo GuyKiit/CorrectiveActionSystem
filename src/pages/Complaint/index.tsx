@@ -36,7 +36,11 @@ import DataTable from "../../components/MUI/DataTable";
 import ComplaintBody from "./components/ComplaintBody";
 import { useListComplaint } from "./core/ListComplaintContext";
 import { v4 as uuidv4 } from "uuid";
-import { cleanAccessData } from "../../service/initmain/initmain";
+import {
+  cleanAccessData,
+  getCurrentAccessObject,
+  updateSessionStorageCurrentAccess,
+} from "../../service/initmain/initmain";
 import FuncDialog from "../../components/MUI/FullDialog";
 import FullSweetalert from "../../components/MUI/Sweetalert";
 import AutocompleteComboBox from "../../components/MUI/AutocompleteComboBox";
@@ -185,10 +189,21 @@ export default function Complaint() {
   // AUTHENTICATION & USER DATA
   // =====================================================================================================
   const user = cleanAccessData("userSession");
+  const app = getCurrentAccessObject(
+    user?.[0]?.employee_username || "",
+    user?.[0]?.employee_domain || "",
+    "Complaint List"
+  );
   const { setIsLoadingScreen } = useLayout();
   const { menuFuncData, userData } = useAuth();
   const { Customer, ProductGroup, CustomerAddress } = useData();
+  const employeeUsername = user?.[0]?.employee_username || "";
+  const employeeDomain = user?.[0]?.employee_domain || "";
 
+  const screenName = "ComplaintPage";
+
+  cleanAccessData("current_access");
+  updateSessionStorageCurrentAccess("screen_name", screenName);
 
   // =====================================================================================================
   // CONTEXT VARIABLES
@@ -689,7 +704,6 @@ export default function Complaint() {
   );
   const isItAdmin = tempRoleUser?.[0]?.lov_code === "it_admin";
 
-
   // const handleClose = () => {
   //   if (isCallFuncLogOn)
   //     console.log(
@@ -1015,7 +1029,9 @@ export default function Complaint() {
     return paddingYear;
   }
 
-  const isBeforeFollowUpDate = follow_up_date && dayjs().startOf("day").isBefore(dayjs(follow_up_date).startOf("day"));
+  const isBeforeFollowUpDate =
+    follow_up_date &&
+    dayjs().startOf("day").isBefore(dayjs(follow_up_date).startOf("day"));
 
   // =====================================================================================================
   // UTILITY FUNCTIONS
@@ -1073,8 +1089,11 @@ export default function Complaint() {
   // =====================================================================================================
 
   // Function - Get LOV Master Data
-  const LovAll_Get = async (mode?: any, respondent_domain_id?: any, isItAdmin?: boolean) => {
-
+  const LovAll_Get = async (
+    mode?: any,
+    respondent_domain_id?: any,
+    isItAdmin?: boolean
+  ) => {
     // console.log("4️⃣4️⃣4️⃣ [mode] : ", mode, "// [isItAdmin] : ", isItAdmin);
 
     // if (isCallFuncLogOn)
@@ -1145,30 +1164,32 @@ export default function Complaint() {
 
           // return grouped["complaint_status"].filter((item: any) => item.lov7 === respondent_domain_id?.domain_id)
           return isItAdmin
-            ? grouped["complaint_status"]   // 🔥 admin เห็นทุก domain
+            ? grouped["complaint_status"] // 🔥 admin เห็นทุก domain
             : grouped["complaint_status"].filter(
-              (item: any) => item.lov7 === (typeof respondent_domain_id === "object"
-                ? respondent_domain_id?.domain_id
-                : respondent_domain_id)
-            );
+                (item: any) =>
+                  item.lov7 ===
+                  (typeof respondent_domain_id === "object"
+                    ? respondent_domain_id?.domain_id
+                    : respondent_domain_id)
+              );
         }
       } catch (e) {
         //console.log("error:", e);
       }
     } else {
       try {
-
         // console.log("💚💚💚💚💚💚💚💚 isItAdmin :", isItAdmin);
-        const dataset = isItAdmin ?
-          {
-            lov_type: "report_type,complaint_type,reference_standard,priority_level,attach_type,complaint_status,tool_use,decision_disposition,approve_select,complaint_step,complaint_action,active_company,role_profile,config_file",
-          }
-          :
-          {
-            lov_group: user[0]?.itasset_company_id + ",VARIABLE_CONSTANT" + ",SYSTEM",
-            lov_type: "report_type,complaint_type,reference_standard,priority_level,attach_type,complaint_status,tool_use,decision_disposition,approve_select,complaint_step,complaint_action,active_company,role_profile,config_file",
-          }
-
+        const dataset = isItAdmin
+          ? {
+              lov_type:
+                "report_type,complaint_type,reference_standard,priority_level,attach_type,complaint_status,tool_use,decision_disposition,approve_select,complaint_step,complaint_action,active_company,role_profile,config_file",
+            }
+          : {
+              lov_group:
+                user[0]?.itasset_company_id + ",VARIABLE_CONSTANT" + ",SYSTEM",
+              lov_type:
+                "report_type,complaint_type,reference_standard,priority_level,attach_type,complaint_status,tool_use,decision_disposition,approve_select,complaint_step,complaint_action,active_company,role_profile,config_file",
+            };
 
         // const dataset = {
 
@@ -1244,10 +1265,10 @@ export default function Complaint() {
 
           setdatastatus?.(
             isItAdmin
-              ? grouped["complaint_status"] :
-              grouped["complaint_status"].filter(
-                (item: any) => item.lov7 === user[0].employee_domain
-              )
+              ? grouped["complaint_status"]
+              : grouped["complaint_status"].filter(
+                  (item: any) => item.lov7 === user[0].employee_domain
+                )
           );
 
           const filterAction = (code: string) => {
@@ -1258,38 +1279,48 @@ export default function Complaint() {
 
           setdataset_complaintActionNew(
             isItAdmin
-              ? filterAction("ACTION_NEW") :
-              grouped["complaint_action"].filter(
-                (item: any) => item.lov_code === "ACTION_NEW" && item.lov_group == user[0].itasset_company_id
-              )
+              ? filterAction("ACTION_NEW")
+              : grouped["complaint_action"].filter(
+                  (item: any) =>
+                    item.lov_code === "ACTION_NEW" &&
+                    item.lov_group == user[0].itasset_company_id
+                )
           );
           setdataset_complaintActionExplain(
             isItAdmin
-              ? filterAction("ACTION_EXPLAIN") :
-              grouped["complaint_action"].filter(
-                (item: any) => item.lov_code === "ACTION_EXPLAIN" && item.lov_group == user[0].itasset_company_id
-              )
+              ? filterAction("ACTION_EXPLAIN")
+              : grouped["complaint_action"].filter(
+                  (item: any) =>
+                    item.lov_code === "ACTION_EXPLAIN" &&
+                    item.lov_group == user[0].itasset_company_id
+                )
           );
           setdataset_complaintActionApproveSC(
             isItAdmin
-              ? filterAction("ACTION_APPROVE_SC") :
-              grouped["complaint_action"].filter(
-                (item: any) => item.lov_code === "ACTION_APPROVE_SC" && item.lov_group == user[0].itasset_company_id
-              )
+              ? filterAction("ACTION_APPROVE_SC")
+              : grouped["complaint_action"].filter(
+                  (item: any) =>
+                    item.lov_code === "ACTION_APPROVE_SC" &&
+                    item.lov_group == user[0].itasset_company_id
+                )
           );
           setdataset_complaintActionApproveQC(
             isItAdmin
-              ? filterAction("ACTION_APPROVE_QC") :
-              grouped["complaint_action"].filter(
-                (item: any) => item.lov_code === "ACTION_APPROVE_QC" && item.lov_group == user[0].itasset_company_id
-              )
+              ? filterAction("ACTION_APPROVE_QC")
+              : grouped["complaint_action"].filter(
+                  (item: any) =>
+                    item.lov_code === "ACTION_APPROVE_QC" &&
+                    item.lov_group == user[0].itasset_company_id
+                )
           );
           setdataset_complaintActionClose(
             isItAdmin
-              ? filterAction("ACTION_CLOSE") :
-              grouped["complaint_action"].filter(
-                (item: any) => item.lov_code === "ACTION_CLOSE" && item.lov_group == user[0].itasset_company_id
-              )
+              ? filterAction("ACTION_CLOSE")
+              : grouped["complaint_action"].filter(
+                  (item: any) =>
+                    item.lov_code === "ACTION_CLOSE" &&
+                    item.lov_group == user[0].itasset_company_id
+                )
           );
 
           // console.log('⚠️⚠️⚠️⚠️ [grouped["complaint_status"]] :', grouped["complaint_status"]);
@@ -1428,6 +1459,7 @@ export default function Complaint() {
   };
 
   // Function - Get Department Domain
+
   // const DepartmentDomainGet = async (action?: string) => {
   //   if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  DepartmentDomainGet");
 
@@ -1527,7 +1559,7 @@ export default function Complaint() {
   //       console.error("error", e);
   //     }
   //   };
-  // Function - Get Complaints
+  // Function - Get Complaints single list
   const Complaint_Get = async (data: any) => {
     // if (isCallFuncLogOn)
     //   console.log(
@@ -1535,6 +1567,7 @@ export default function Complaint() {
     //     dayjs().format("HH:mm:ss.SSS"),
     //     " [Calling Function]  :  Complaint_Get"
     //   );
+    updateSessionStorageCurrentAccess("event_name", "ComplaintGet");
 
     setIsLoadingScreen(true);
     const dataset = {
@@ -1543,6 +1576,7 @@ export default function Complaint() {
       domain_id: user[0]?.employee_domain,
       department_id: user[0]?.itasset_department_id,
       company_id: user[0]?.itasset_company_id,
+      application_code: app?.app_name || "",
     };
     //console.log("Read step:4 dataset: ", dataset);
 
@@ -1656,7 +1690,7 @@ export default function Complaint() {
     }
   };
 
-  // Function - Search Complaints
+  // Function - Search Complaints Data List
   const ComplaintGet = async () => {
     // if (isCallFuncLogOn)
     //   console.log(
@@ -1666,6 +1700,7 @@ export default function Complaint() {
     //   );
     // console.log("step:2 เรียกฟังก์ชั่น ComplaintGet ใหม่");
     //console.log("⭐️⭐️⭐️⭐️ CHECK DATA COMPLAINT ACTION : ", dataset_complaintAction, "⭐️⭐️⭐️");
+    updateSessionStorageCurrentAccess("event_name", "ComplaintGet");
 
     setIsLoadingScreen(true);
     const dataset = {
@@ -1674,6 +1709,7 @@ export default function Complaint() {
       domain_id: user[0]?.employee_domain,
       department_id: user[0]?.itasset_department_id,
       company_id: user[0]?.itasset_company_id, //@param Fixed
+      application_code: app?.app_name || "",
       //=======================================================
       domain: TextNameSearch.dataset_domain
         ? TextNameSearch.dataset_domain
@@ -1727,11 +1763,9 @@ export default function Complaint() {
           // console.log("filteredData", filteredData);
 
           filteredData.forEach((el: any) => {
-
             const tempDataStatus = (datastatusCrossDomain || []).filter(
               //const tempApproveInfo = datastatus.filter(
-              (val: any) =>
-                val["lov7"] == el.respondent_domain_id
+              (val: any) => val["lov7"] == el.respondent_domain_id
             );
 
             const tempApproveInfo = (tempDataStatus || []).filter(
@@ -1922,7 +1956,7 @@ export default function Complaint() {
                         el.step_label === "COMPLAINT" &&
                         tempApproveSeq == "2" &&
                         el.request_department_id ==
-                        user[0]?.itasset_department_id
+                          user[0]?.itasset_department_id
                       // ) &&
                       // splitNextStepName(el.approve_step
                     )) ??
@@ -1964,7 +1998,6 @@ export default function Complaint() {
             // console.log("🤞🤞dataset_complaintActionClose",dataset_complaintActionClose);
             // console.log("🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞");
             // console.log(" ");
-
 
             el.approve_by = el.approve_by.replace(/\s*\(/, "<br/>(");
             el.ACTION = ACTION;
@@ -2034,7 +2067,7 @@ export default function Complaint() {
     //     dayjs().format("HH:mm:ss.SSS"),
     //     " [Calling Function]  :  validateBeforeAdd"
     //   );
-    setSubmitCount(prev => prev + 1);
+    setSubmitCount((prev) => prev + 1);
     let valid = true;
     // Clear ALL validation errors before validation
     setReportTypeError(false);
@@ -2208,7 +2241,7 @@ export default function Complaint() {
     //     " [Calling Function]  :  validateExplainAdd"
     //   );
 
-    setSubmitCount(prev => prev + 1);
+    setSubmitCount((prev) => prev + 1);
     let valid = true;
     // Clear all validation errors
     setFollowUpDateError(false);
@@ -2381,7 +2414,7 @@ export default function Complaint() {
     //     dayjs().format("HH:mm:ss.SSS"),
     //     " [Calling Function]  :  validateSCApprove"
     //   );
-    setSubmitCount(prev => prev + 1);
+    setSubmitCount((prev) => prev + 1);
     let valid = true;
     // Clear ALL validation errors before validation
     setScDetailError(false);
@@ -2406,7 +2439,7 @@ export default function Complaint() {
     //     dayjs().format("HH:mm:ss.SSS"),
     //     " [Calling Function]  :  validateQCApprove"
     //   );
-    setSubmitCount(prev => prev + 1);
+    setSubmitCount((prev) => prev + 1);
     let valid = true;
     // Clear ALL validation errors before validation
     setQcDetailError(false);
@@ -2431,7 +2464,7 @@ export default function Complaint() {
     //     dayjs().format("HH:mm:ss.SSS"),
     //     " [Calling Function]  :  validateClose"
     //   );
-    setSubmitCount(prev => prev + 1);
+    setSubmitCount((prev) => prev + 1);
     let valid = true;
     // Clear ALL validation errors before validation
     setCloseDetailError(false);
@@ -2457,23 +2490,13 @@ export default function Complaint() {
     //     dayjs().format("HH:mm:ss.SSS"),
     //     " [Calling Function]  :  ComplaintSavedraftAdd"
     //   );
+    updateSessionStorageCurrentAccess("event_name", "ComplaintSavedraft");
 
     if (!validateSaveDraft()) {
       return;
     }
 
     const tempid = uuidv4();
-
-    //Function Split Domain (For using with Complaint Status)
-    //const tempComplaintStatus = splitByDot(user[0]?.employee_domain);
-    // console.log(
-    //   "📡 Sending respondent_domain_id to LovAll_Get:",
-    //   respondent_domain_id
-    // );
-    // console.log(
-    //   "📡 Sending respondent_domain_id to LovAll_Get:",
-    //   respondent_domain_id?.domain_id
-    // );
     const tempComplaintStatus = await LovAll_Get(
       "complaint_status",
       respondent_domain_id
@@ -2482,19 +2505,19 @@ export default function Complaint() {
     // เตรียม Models
     const complainttypeModel = dataComplaintTypeValue_Combobox
       ? compTypeUpdateCompId(
-        dataComplaintTypeValue_Combobox,
-        tempid,
-        compTypeOther
-      )
+          dataComplaintTypeValue_Combobox,
+          tempid,
+          compTypeOther
+        )
       : null;
 
     const complaintRsModel = dataComplaintRsValue_Combobox
       ? compRsUpdateCompId(
-        dataComplaintRsValue_Combobox,
-        tempid,
-        compRsOther,
-        clauseOther
-      )
+          dataComplaintRsValue_Combobox,
+          tempid,
+          compRsOther,
+          clauseOther
+        )
       : null;
 
     // สร้าง JSON payload
@@ -2505,10 +2528,10 @@ export default function Complaint() {
         cas_number: cas_number,
         date_of_detection: date_of_detection
           ? date_of_detection
-            .hour(dayjs().hour())
-            .minute(dayjs().minute())
-            .second(dayjs().second())
-            .format("YYYY-MM-DDTHH:mm:ss.SSS")
+              .hour(dayjs().hour())
+              .minute(dayjs().minute())
+              .second(dayjs().second())
+              .format("YYYY-MM-DDTHH:mm:ss.SSS")
           : null,
         request_name: user[0]?.employee_username || "",
         request_company_id: request_company_id?.company_id,
@@ -2527,10 +2550,10 @@ export default function Complaint() {
         priority_level: datapriorityValue_Combobox,
         respond_date_within: respond_date_within
           ? respond_date_within
-            .hour(23)
-            .minute(59)
-            .second(59)
-            .format("YYYY-MM-DDTHH:mm:ss.SSS")
+              .hour(23)
+              .minute(59)
+              .second(59)
+              .format("YYYY-MM-DDTHH:mm:ss.SSS")
           : null,
         lot_no: lot_no || null,
         complaint_status_id: tempComplaintStatus[0]?.id,
@@ -2541,9 +2564,10 @@ export default function Complaint() {
         // เพิ่ม complaintFile
         complaintFile:
           complaintFiles?.map((item: any, index: number) => {
-            const isOther = dataphoto_Combobox?.find(
-              (opt: any) => opt.id === item.attachmentType
-            )?.lov2 === "Y";
+            const isOther =
+              dataphoto_Combobox?.find(
+                (opt: any) => opt.id === item.attachmentType
+              )?.lov2 === "Y";
 
             return {
               cf_type: "Complaint",
@@ -2567,9 +2591,11 @@ export default function Complaint() {
         code_type: dataReportTypeValue.lov1 + "-" + getPaddingYear(),
         code_num: 1,
       },
-      CurrentAccessModel: {
-        user_id: user[0]?.employee_username || "",
-      },
+      CurrentAccessModel: getCurrentAccessObject(
+        employeeUsername,
+        employeeDomain,
+        screenName
+      ),
     };
 
     // สร้าง FormData
@@ -2620,35 +2646,15 @@ export default function Complaint() {
     //     dayjs().format("HH:mm:ss.SSS"),
     //     " [Calling Function]  :  ComplaintAdd"
     //   );
+    updateSessionStorageCurrentAccess("event_name", "ComplaintAdd");
 
     if (!validateBeforeAdd()) {
       return;
     }
-
-    // Get LOV
-    //let tempComplaintStatus: any
-    // console.log(
-    //   "📡 Sending respondent_domain_id to LovAll_Get:",
-    //   respondent_domain_id
-    // );
-    // console.log(
-    //   "📡 Sending respondent_domain_id to LovAll_Get:",
-    //   respondent_domain_id?.domain_id
-    // );
     const tempComplaintStatus = await LovAll_Get(
       "complaint_status",
       respondent_domain_id
     );
-    // console.log("🧩 tempComplaintStatus raw:", tempComplaintStatus);
-    // console.log("💕 tempvalue 1 id", tempComplaintStatus[1]?.id);
-    // console.log("💕 tempvalue 2 id", tempComplaintStatus[2]?.id);
-
-    // const tempComplaintStatus = await LovAll_Get("complaint_status", dataelement?.respondent_domain_id);
-    // // console.log("💕 tempvalue", tempvalue);
-    // console.log("💕 tempvalue 0", tempComplaintStatus[0]);
-    // console.log("💕 tempvalue 1", tempComplaintStatus[1]);
-    // console.log("💕 tempvalue 1 id", tempComplaintStatus[1]?.id);
-    // console.log("💕 tempvalue 2 id", tempComplaintStatus[2]?.id);
 
     const tempid = uuidv4();
 
@@ -2658,19 +2664,19 @@ export default function Complaint() {
     // เตรียม Models
     const complainttypeModel = dataComplaintTypeValue_Combobox
       ? compTypeUpdateCompId(
-        dataComplaintTypeValue_Combobox,
-        tempid,
-        compTypeOther
-      )
+          dataComplaintTypeValue_Combobox,
+          tempid,
+          compTypeOther
+        )
       : null;
 
     const complaintRsModel = dataComplaintRsValue_Combobox
       ? compRsUpdateCompId(
-        dataComplaintRsValue_Combobox,
-        tempid,
-        compRsOther,
-        clauseOther
-      )
+          dataComplaintRsValue_Combobox,
+          tempid,
+          compRsOther,
+          clauseOther
+        )
       : null;
 
     // console.log("💕#### tempvalue 1 id", tempComplaintStatus[1]?.id);
@@ -2682,10 +2688,10 @@ export default function Complaint() {
         cas_number: cas_number,
         date_of_detection: date_of_detection
           ? date_of_detection
-            .hour(dayjs().hour())
-            .minute(dayjs().minute())
-            .second(dayjs().second())
-            .format("YYYY-MM-DDTHH:mm:ss.SSS")
+              .hour(dayjs().hour())
+              .minute(dayjs().minute())
+              .second(dayjs().second())
+              .format("YYYY-MM-DDTHH:mm:ss.SSS")
           : null,
 
         // Request Metadata
@@ -2710,10 +2716,10 @@ export default function Complaint() {
         priority_level: datapriorityValue_Combobox,
         respond_date_within: respond_date_within
           ? respond_date_within
-            .hour(dayjs().hour())
-            .minute(dayjs().minute())
-            .second(dayjs().second())
-            .format("YYYY-MM-DDTHH:mm:ss.SSS")
+              .hour(dayjs().hour())
+              .minute(dayjs().minute())
+              .second(dayjs().second())
+              .format("YYYY-MM-DDTHH:mm:ss.SSS")
           : null,
         lot_no: lot_no,
         complaint_status_id: tempComplaintStatus[1]?.id,
@@ -2727,9 +2733,10 @@ export default function Complaint() {
         // เพิ่ม complaintFile
         complaintFile:
           complaintFiles?.map((item: any, index: number) => {
-            const isOther = dataphoto_Combobox?.find(
-              (opt: any) => opt.id === item.attachmentType
-            )?.lov2 === "Y";
+            const isOther =
+              dataphoto_Combobox?.find(
+                (opt: any) => opt.id === item.attachmentType
+              )?.lov2 === "Y";
 
             return {
               cf_type: "Complaint",
@@ -2753,9 +2760,11 @@ export default function Complaint() {
         code_type: dataReportTypeValue.lov1 + "-" + getPaddingYear(),
         code_num: 1,
       },
-      CurrentAccessModel: {
-        user_id: user[0]?.employee_username || "",
-      },
+      CurrentAccessModel: getCurrentAccessObject(
+        employeeUsername,
+        employeeDomain,
+        screenName
+      ),
     };
     //console.log("complaintFile:", complaintPayload.complaintModel.complaintFile);
     // สร้าง FormData
@@ -2765,7 +2774,6 @@ export default function Complaint() {
     // --------------------------------------------------------------------------------
     // [NEW LOGIC] Generate HTML for Email Body (Respondent Department)
     // --------------------------------------------------------------------------------
-
 
     // แนบไฟล์จริง
     if (complaintFiles && complaintFiles.length > 0) {
@@ -2789,7 +2797,9 @@ export default function Complaint() {
         <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
           <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">ประเภทรายงาน (Report Type)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${dataReportTypeValue?.lov4 || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              dataReportTypeValue?.lov4 || "-"
+            }</td>
           </tr>
            <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">CAS Number</td>
@@ -2797,31 +2807,47 @@ export default function Complaint() {
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ระดับความสำคัญ (Priority)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${datapriority?.lov2 || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              datapriority?.lov2 || "-"
+            }</td>
           </tr>      
           <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ตอบกลับภายในวันที่ (Response Date)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${respond_date_within ? respond_date_within.format("DD/MM/YYYY") : "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              respond_date_within
+                ? respond_date_within.format("DD/MM/YYYY")
+                : "-"
+            }</td>
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">Lot No./Bag No</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${lot_no || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              lot_no || "-"
+            }</td>
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">วันที่พบปัญหา (Date of Detection)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${date_of_detection ? date_of_detection.format("DD/MM/YYYY") : "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              date_of_detection ? date_of_detection.format("DD/MM/YYYY") : "-"
+            }</td>
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">แผนกที่พบปัญหา (Department / Area of Detection)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${respondent_department_id?.department_name || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              respondent_department_id?.department_name || "-"
+            }</td>
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">ชื่อสินค้า (Product Name)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${product_name || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              product_name || "-"
+            }</td>
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">รายละเอียด (Detail)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${detail || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              detail || "-"
+            }</td>
           </tr>
         </table>
         <h2 style="color: #2196f3; border-bottom: 2px solid #2196f3; padding-bottom: 10px;">
@@ -2830,19 +2856,33 @@ export default function Complaint() {
          <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
           <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ชื่อผู้ออกเอกสาร (Reported by)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_fname_th ? (user[0]?.employee_fname_th + " " + (user[0]?.employee_lname_th || "")) : ((user[0]?.employee_fname_en || "") + " " + (user[0]?.employee_lname_en || ""))} </td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              user[0]?.employee_fname_th
+                ? user[0]?.employee_fname_th +
+                  " " +
+                  (user[0]?.employee_lname_th || "")
+                : (user[0]?.employee_fname_en || "") +
+                  " " +
+                  (user[0]?.employee_lname_en || "")
+            } </td>
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ตำแหน่ง (Position)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_position || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              user[0]?.employee_position || "-"
+            }</td>
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">แผนก (Department)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.itasset_department_name || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              user[0]?.itasset_department_name || "-"
+            }</td>
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">โรงงาน (Factory)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.itasset_company_name || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              user[0]?.itasset_company_name || "-"
+            }</td>
           </tr>
 
         </table> 
@@ -2858,17 +2898,13 @@ export default function Complaint() {
     `;
 
     formData.append("emailBody", emailBodyHtml);
-    // console.log("📧 Email HTML generated and appended to formData");
 
     setIsLoadingScreen(true);
 
     let response;
 
     try {
-      response = await _POST_FORMDATA(
-        formData,
-        "/Complaint/ComplaintAdd"
-      );
+      response = await _POST_FORMDATA(formData, "/Complaint/ComplaintAdd");
     } catch (error) {
       console.error("Upload failed:", error);
       response = { status: "failed" };
@@ -2881,7 +2917,6 @@ export default function Complaint() {
         icon: "success",
       });
     } else {
-
       FullSweetalert({
         title: "Failed",
         text: `บันทึกไม่ข้อมูลสำเร็จ`,
@@ -2890,7 +2925,6 @@ export default function Complaint() {
     }
     handleClose();
     ComplaintGet();
-
   };
 
   // Function - Edit Complaint
@@ -2903,15 +2937,9 @@ export default function Complaint() {
     //     " [Calling Function]  :  ComplaintEdit"
     //   );
 
+    // updateSessionStorageCurrentAccess("event_name", "ComplaintEdit");
 
-    // console.log(
-    //   "📡 Sending respondent_domain_id to LovAll_Get:",
-    //   respondent_domain_id
-    // );
-    // console.log(
-    //   "📡 Sending respondent_domain_id to LovAll_Get:",
-    //   respondent_domain_id?.domain_id
-    // );
+
     const tempComplaintStatus = await LovAll_Get(
       "complaint_status",
       dataelement?.respondent_domain_id
@@ -2924,6 +2952,7 @@ export default function Complaint() {
 
     const formData = new FormData();
     if (mode == "SUBMIT") {
+      updateSessionStorageCurrentAccess("event_name", "ComplaintEdit (Submit)");
       const tempid = uuidv4();
       if (!validateBeforeAdd()) {
         return;
@@ -2932,19 +2961,19 @@ export default function Complaint() {
       // เตรียม Models
       const complainttypeModel = dataComplaintTypeValue_Combobox
         ? compTypeUpdateCompId(
-          dataComplaintTypeValue_Combobox,
-          tempid,
-          compTypeOther
-        )
+            dataComplaintTypeValue_Combobox,
+            tempid,
+            compTypeOther
+          )
         : null;
 
       const complaintRsModel = dataComplaintRsValue_Combobox
         ? compRsUpdateCompId(
-          dataComplaintRsValue_Combobox,
-          tempid,
-          compRsOther,
-          clauseOther
-        )
+            dataComplaintRsValue_Combobox,
+            tempid,
+            compRsOther,
+            clauseOther
+          )
         : null;
 
       const complaintPayload = {
@@ -2955,10 +2984,10 @@ export default function Complaint() {
           save_type: "save_submit",
           date_of_detection: date_of_detection
             ? date_of_detection
-              .hour(23)
-              .minute(59)
-              .second(59)
-              .format("YYYY-MM-DDTHH:mm:ss.SSS")
+                .hour(23)
+                .minute(59)
+                .second(59)
+                .format("YYYY-MM-DDTHH:mm:ss.SSS")
             : null,
           respondent_domain_id: respondent_domain_id?.domain_id,
           respondent_department_id: respondent_department_id?.department_id,
@@ -2970,19 +2999,20 @@ export default function Complaint() {
             datapriorityValue_Combobox || dataelement?.priority_level,
           respond_date_within: respond_date_within
             ? respond_date_within
-              .hour(23)
-              .minute(59)
-              .second(59)
-              .format("YYYY-MM-DDTHH:mm:ss.SSS")
+                .hour(23)
+                .minute(59)
+                .second(59)
+                .format("YYYY-MM-DDTHH:mm:ss.SSS")
             : null,
           complaint_status_id: tempComplaintStatus[1]?.id,
           complaintType: complainttypeModel,
           complaintRs: complaintRsModel,
           complaintFile:
             complaintFiles?.map((item: any, index: number) => {
-              const isOther = dataphoto_Combobox?.find(
-                (opt: any) => opt.id === item.attachmentType
-              )?.lov2 === "Y";
+              const isOther =
+                dataphoto_Combobox?.find(
+                  (opt: any) => opt.id === item.attachmentType
+                )?.lov2 === "Y";
               return {
                 id: item.id || undefined,
                 cf_type: "Complaint",
@@ -3001,10 +3031,11 @@ export default function Complaint() {
               };
             }) || [],
         },
-
-        CurrentAccessModel: {
-          user_id: user[0]?.employee_username || "",
-        },
+        CurrentAccessModel: getCurrentAccessObject(
+        employeeUsername,
+        employeeDomain,
+        screenName
+      ),
       };
 
       formData.append("complaintPayloadJson", JSON.stringify(complaintPayload));
@@ -3031,39 +3062,59 @@ export default function Complaint() {
         <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
           <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">ประเภทรายงาน (Report Type)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${dataReportTypeValue?.lov4 || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              dataReportTypeValue?.lov4 || "-"
+            }</td>
           </tr>
            <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">CAS Number</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${cas_number || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              cas_number || "-"
+            }</td>
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ระดับความสำคัญ (Priority)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${datapriority?.lov2 || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              datapriority?.lov2 || "-"
+            }</td>
           </tr>      
           <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ตอบกลับภายในวันที่ (Response Date)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${respond_date_within ? respond_date_within.format("DD/MM/YYYY") : "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              respond_date_within
+                ? respond_date_within.format("DD/MM/YYYY")
+                : "-"
+            }</td>
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">Lot No./Bag No</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${lot_no || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              lot_no || "-"
+            }</td>
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">วันที่พบปัญหา (Date of Detection)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${date_of_detection ? date_of_detection.format("DD/MM/YYYY") : "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              date_of_detection ? date_of_detection.format("DD/MM/YYYY") : "-"
+            }</td>
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">แผนกที่พบปัญหา (Department / Area of Detection)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${respondent_department_id?.department_name || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              respondent_department_id?.department_name || "-"
+            }</td>
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">ชื่อสินค้า (Product Name)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${product_name || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              product_name || "-"
+            }</td>
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">รายละเอียด (Detail)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${detail || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              detail || "-"
+            }</td>
           </tr>
         </table>
         <h2 style="color: #2196f3; border-bottom: 2px solid #2196f3; padding-bottom: 10px;">
@@ -3072,19 +3123,33 @@ export default function Complaint() {
          <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
           <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ชื่อผู้ออกเอกสาร (Reported by)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_fname_th ? (user[0]?.employee_fname_th + " " + (user[0]?.employee_lname_th || "")) : ((user[0]?.employee_fname_en || "") + " " + (user[0]?.employee_lname_en || ""))} </td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              user[0]?.employee_fname_th
+                ? user[0]?.employee_fname_th +
+                  " " +
+                  (user[0]?.employee_lname_th || "")
+                : (user[0]?.employee_fname_en || "") +
+                  " " +
+                  (user[0]?.employee_lname_en || "")
+            } </td>
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ตำแหน่ง (Position)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_position || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              user[0]?.employee_position || "-"
+            }</td>
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">แผนก (Department)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.itasset_department_name || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              user[0]?.itasset_department_name || "-"
+            }</td>
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">โรงงาน (Factory)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.itasset_company_name || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              user[0]?.itasset_company_name || "-"
+            }</td>
           </tr>
 
         </table> 
@@ -3131,27 +3196,29 @@ export default function Complaint() {
         ComplaintGet();
       }
     } else if (mode == "NEW") {
+      updateSessionStorageCurrentAccess("event_name", "ComplaintEdit (New)");
       if (!validateSaveDraft()) {
         return;
       }
+      
       const tempid = uuidv4();
 
       // เตรียม Models
       const complainttypeModel = dataComplaintTypeValue_Combobox
         ? compTypeUpdateCompId(
-          dataComplaintTypeValue_Combobox,
-          tempid,
-          compTypeOther
-        )
+            dataComplaintTypeValue_Combobox,
+            tempid,
+            compTypeOther
+          )
         : null;
 
       const complaintRsModel = dataComplaintRsValue_Combobox
         ? compRsUpdateCompId(
-          dataComplaintRsValue_Combobox,
-          tempid,
-          compRsOther,
-          clauseOther
-        )
+            dataComplaintRsValue_Combobox,
+            tempid,
+            compRsOther,
+            clauseOther
+          )
         : null;
 
       // Normalize date_of_detection ค่อยย้ายไปไว้ตรงกลาง
@@ -3175,10 +3242,10 @@ export default function Complaint() {
           save_type: "save_draft",
           date_of_detection: date_of_detection
             ? date_of_detection
-              .hour(23)
-              .minute(59)
-              .second(59)
-              .format("YYYY-MM-DDTHH:mm:ss.SSS")
+                .hour(23)
+                .minute(59)
+                .second(59)
+                .format("YYYY-MM-DDTHH:mm:ss.SSS")
             : null,
           respondent_domain_id: respondent_domain_id?.domain_id,
           respondent_department_id: respondent_department_id?.department_id,
@@ -3190,10 +3257,10 @@ export default function Complaint() {
             datapriorityValue_Combobox || dataelement?.priority_level,
           respond_date_within: respond_date_within
             ? respond_date_within
-              .hour(23)
-              .minute(59)
-              .second(59)
-              .format("YYYY-MM-DDTHH:mm:ss.SSS")
+                .hour(23)
+                .minute(59)
+                .second(59)
+                .format("YYYY-MM-DDTHH:mm:ss.SSS")
             : null,
           complaint_status_id: tempComplaintStatus[0]?.id,
           complaintType: complainttypeModel,
@@ -3228,10 +3295,11 @@ export default function Complaint() {
               };
             }) || [],
         },
-
-        CurrentAccessModel: {
-          user_id: user[0]?.employee_username || "",
-        },
+        CurrentAccessModel: getCurrentAccessObject(
+        employeeUsername,
+        employeeDomain,
+        screenName
+      ),
       };
 
       formData.append("complaintPayloadJson", JSON.stringify(complaintPayload));
@@ -3271,7 +3339,6 @@ export default function Complaint() {
         handleClose();
         ComplaintGet();
       }
-
     }
   };
 
@@ -3283,15 +3350,17 @@ export default function Complaint() {
     //     dayjs().format("HH:mm:ss.SSS"),
     //     " [Calling Function]  :  ComplaintDelete"
     //   );
+    updateSessionStorageCurrentAccess("event_name", "ComplaintDelete");
 
-    // สร้าง JSON payload
     const complaintPayload = {
       ComplaintModel: {
         id: dataelement?.id,
       },
-      CurrentAccessModel: {
-        user_id: user[0]?.employee_username || "",
-      },
+      CurrentAccessModel: getCurrentAccessObject(
+        employeeUsername,
+        employeeDomain,
+        screenName
+      ),
     };
 
     //console.log("📤 complaintPayload:", complaintPayload);
@@ -3386,8 +3455,16 @@ export default function Complaint() {
       );
       const email_casNumber = dataelement?.cas_number || "-";
 
-      const email_requrst_department_name = dataelement?.request_department_name || dataset_department?.find((x: any) => x.department_id == dataelement?.request_department_id)?.department_name || dataelement?.request_department_id || "-";
-      const emailSubject = `[CAS] แจ้งเตือนการ ตอบรับ / รับทราบ รายละเอียดข้อร้องเรียน CAS No.${email_casNumber || "-"}`;
+      const email_requrst_department_name =
+        dataelement?.request_department_name ||
+        dataset_department?.find(
+          (x: any) => x.department_id == dataelement?.request_department_id
+        )?.department_name ||
+        dataelement?.request_department_id ||
+        "-";
+      const emailSubject = `[CAS] แจ้งเตือนการ ตอบรับ / รับทราบ รายละเอียดข้อร้องเรียน CAS No.${
+        email_casNumber || "-"
+      }`;
 
       const emailBodyHtml = `
       <div style="font-family: Arial, sans-serif; color: #333;">
@@ -3404,19 +3481,33 @@ export default function Complaint() {
          <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
           <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ชื่อผู้ส่งกลับ(Return by)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_fname_th ? (user[0]?.employee_fname_th + " " + (user[0]?.employee_lname_th || "")) : ((user[0]?.employee_fname_en || "") + " " + (user[0]?.employee_lname_en || ""))} </td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              user[0]?.employee_fname_th
+                ? user[0]?.employee_fname_th +
+                  " " +
+                  (user[0]?.employee_lname_th || "")
+                : (user[0]?.employee_fname_en || "") +
+                  " " +
+                  (user[0]?.employee_lname_en || "")
+            } </td>
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ตำแหน่ง (Position)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_position || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              user[0]?.employee_position || "-"
+            }</td>
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">แผนก (Department)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.itasset_department_name || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              user[0]?.itasset_department_name || "-"
+            }</td>
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">โรงงาน (Factory)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.itasset_company_name || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              user[0]?.itasset_company_name || "-"
+            }</td>
           </tr>
 
         </table> 
@@ -3442,7 +3533,7 @@ export default function Complaint() {
           user_id: user[0]?.employee_username || "",
         },
         emailBody: emailBodyHtml,
-        emailSubject: emailSubject
+        emailSubject: emailSubject,
       };
 
       // formData.append("emailBody", emailBodyHtml);
@@ -3480,7 +3571,6 @@ export default function Complaint() {
       const tempid = uuidv4();
       const domainId = dataelement?.respondent_domain_id;
 
-
       // console.log("📡 Current tempComplaintStatus:", tempComplaintStatus);
 
       // 🧩 Helper: หา explain_id ที่แท้จริงจาก dataelement
@@ -3501,7 +3591,8 @@ export default function Complaint() {
       const selectedApproveItem = (dataApprove_Combobox || []).find(
         (item: any) => item.lov_code === approveSelectionCode
       );
-      const approveDisplayText = selectedApproveItem?.lov1 || approveSelectionCode || "-";
+      const approveDisplayText =
+        selectedApproveItem?.lov1 || approveSelectionCode || "-";
 
       const email_respondent_department_name =
         dataelement?.respondent_department_name ||
@@ -3520,8 +3611,11 @@ export default function Complaint() {
         complaintMainData?.respondent_department_id ||
         "-";
 
-      const email_casNumber = dataelement?.cas_number || complaintMainData?.cas_number || "-";
-      const emailSubject = `[CAS] แจ้งเตือนการ ตอบรับ / รับทราบ รายละเอียดข้อร้องเรียน CAS No.${email_casNumber || "-"}`;
+      const email_casNumber =
+        dataelement?.cas_number || complaintMainData?.cas_number || "-";
+      const emailSubject = `[CAS] แจ้งเตือนการ ตอบรับ / รับทราบ รายละเอียดข้อร้องเรียน CAS No.${
+        email_casNumber || "-"
+      }`;
 
       const emailBodyHtml = `
       <div style="font-family: Arial, sans-serif; color: #333;">
@@ -3538,15 +3632,21 @@ export default function Complaint() {
          <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
           <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">อนุมัติหัวหน้าส่วน (Section Approve)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${approveDisplayText || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              approveDisplayText || "-"
+            }</td>
           </tr>
            <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">หมายเหตุการอนุมัติ</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${approve_detail || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              approve_detail || "-"
+            }</td>
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">หมายเหตุเพิ่มเติม</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${approve_note || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              approve_note || "-"
+            }</td>
           </tr>
         </table> 
         <h2 style="color: #64c768ff; border-bottom: 2px solid #64c768ff; padding-bottom: 10px;">
@@ -3555,19 +3655,33 @@ export default function Complaint() {
         <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
           <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">ชื่อผู้อนุมัติ (Approved by)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_fname_th ? (user[0]?.employee_fname_th + " " + (user[0]?.employee_lname_th || "")) : ((user[0]?.employee_fname_en || "") + " " + (user[0]?.employee_lname_en || ""))}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              user[0]?.employee_fname_th
+                ? user[0]?.employee_fname_th +
+                  " " +
+                  (user[0]?.employee_lname_th || "")
+                : (user[0]?.employee_fname_en || "") +
+                  " " +
+                  (user[0]?.employee_lname_en || "")
+            }</td>
           </tr>
            <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ตำแหน่ง (Position)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_position || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              user[0]?.employee_position || "-"
+            }</td>
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">แผนก (Department)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.itasset_department_name || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              user[0]?.itasset_department_name || "-"
+            }</td>
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">โรงงาน (Factory)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.itasset_company_name || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              user[0]?.itasset_company_name || "-"
+            }</td>
           </tr>
         </table> 
         <p style="margin-top: 20px; font-size: 14px; color: #000000;">
@@ -3601,10 +3715,10 @@ export default function Complaint() {
           approve_email: user[0]?.employee_email || "",
           approve_date: approve_date
             ? approve_date
-              .hour(dayjs().hour())
-              .minute(dayjs().minute())
-              .second(dayjs().second())
-              .format("YYYY-MM-DDTHH:mm:ss")
+                .hour(dayjs().hour())
+                .minute(dayjs().minute())
+                .second(dayjs().second())
+                .format("YYYY-MM-DDTHH:mm:ss")
             : new Date().toISOString(),
           create_by: user[0]?.employee_username || "",
           domain_id: user[0]?.employee_domain || "",
@@ -3613,7 +3727,7 @@ export default function Complaint() {
           user_id: user[0]?.employee_username || "",
         },
         emailBody: emailBodyHtml,
-        emailSubject: emailSubject
+        emailSubject: emailSubject,
       };
 
       setIsLoadingScreen(true);
@@ -3718,7 +3832,8 @@ export default function Complaint() {
       const selectedApproveItem = (dataApprove_Combobox || []).find(
         (item: any) => item.lov_code === approveSelectionCode
       );
-      const approveDisplayText = selectedApproveItem?.lov1 || approveSelectionCode || "-";
+      const approveDisplayText =
+        selectedApproveItem?.lov1 || approveSelectionCode || "-";
 
       const email_respondent_department_name =
         dataelement?.respondent_department_name ||
@@ -3737,8 +3852,11 @@ export default function Complaint() {
         complaintMainData?.respondent_department_id ||
         "-";
 
-      const email_casNumber = dataelement?.cas_number || complaintMainData?.cas_number || "-";
-      const emailSubject = `[CAS] แจ้งเตือนการ ตอบรับ / รับทราบ รายละเอียดข้อร้องเรียน CAS No.${email_casNumber || "-"}`;
+      const email_casNumber =
+        dataelement?.cas_number || complaintMainData?.cas_number || "-";
+      const emailSubject = `[CAS] แจ้งเตือนการ ตอบรับ / รับทราบ รายละเอียดข้อร้องเรียน CAS No.${
+        email_casNumber || "-"
+      }`;
 
       const emailBodyHtml = `
       <div style="font-family: Arial, sans-serif; color: #333;">
@@ -3755,15 +3873,21 @@ export default function Complaint() {
          <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
           <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">อนุมัติผู้จัดการโรงงาน (QMR)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${approveDisplayText || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              approveDisplayText || "-"
+            }</td>
           </tr>
            <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">หมายเหตุการอนุมัติ</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${qcapprove_detail || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              qcapprove_detail || "-"
+            }</td>
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">หมายเหตุเพิ่มเติม</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${qcapprove_note || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              qcapprove_note || "-"
+            }</td>
           </tr>
         </table> 
         <h2 style="color: #64c768ff; border-bottom: 2px solid #64c768ff; padding-bottom: 10px;">
@@ -3772,19 +3896,33 @@ export default function Complaint() {
         <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
           <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">ชื่อผู้อนุมัติ (Approved by)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_fname_th ? (user[0]?.employee_fname_th + " " + (user[0]?.employee_lname_th || "")) : ((user[0]?.employee_fname_en || "") + " " + (user[0]?.employee_lname_en || ""))}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              user[0]?.employee_fname_th
+                ? user[0]?.employee_fname_th +
+                  " " +
+                  (user[0]?.employee_lname_th || "")
+                : (user[0]?.employee_fname_en || "") +
+                  " " +
+                  (user[0]?.employee_lname_en || "")
+            }</td>
           </tr>
            <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ตำแหน่ง (Position)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_position || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              user[0]?.employee_position || "-"
+            }</td>
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">แผนก (Department)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.itasset_department_name || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              user[0]?.itasset_department_name || "-"
+            }</td>
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">โรงงาน (Factory)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.itasset_company_name || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              user[0]?.itasset_company_name || "-"
+            }</td>
           </tr>
         </table> 
         <p style="margin-top: 20px; font-size: 14px; color: #000000;">
@@ -3819,10 +3957,10 @@ export default function Complaint() {
           approve_email: user[0]?.employee_email || "",
           approve_date: approve_date
             ? approve_date
-              .hour(dayjs().hour())
-              .minute(dayjs().minute())
-              .second(dayjs().second())
-              .format("YYYY-MM-DDTHH:mm:ss")
+                .hour(dayjs().hour())
+                .minute(dayjs().minute())
+                .second(dayjs().second())
+                .format("YYYY-MM-DDTHH:mm:ss")
             : new Date().toISOString(),
           create_by: user[0]?.employee_username || "",
           domain_id: user[0]?.employee_domain || "",
@@ -3831,7 +3969,7 @@ export default function Complaint() {
           user_id: user[0]?.employee_username || "",
         },
         emailBody: emailBodyHtml,
-        emailSubject: emailSubject
+        emailSubject: emailSubject,
       };
 
       setIsLoadingScreen(true);
@@ -3929,7 +4067,8 @@ export default function Complaint() {
       const selectedApproveItem = (dataApprove_Combobox || []).find(
         (item: any) => item.lov_code === approveSelectionCode
       );
-      const approveDisplayText = selectedApproveItem?.lov1 || approveSelectionCode || "-";
+      const approveDisplayText =
+        selectedApproveItem?.lov1 || approveSelectionCode || "-";
 
       const email_respondent_department_name =
         dataelement?.respondent_department_name ||
@@ -3945,10 +4084,14 @@ export default function Complaint() {
             x.department_id == complaintMainData?.respondent_department_id
         )?.department_name ||
         dataelement?.respondent_department_id ||
-        complaintMainData?.respondent_department_id || "-";
+        complaintMainData?.respondent_department_id ||
+        "-";
 
-      const email_casNumber = dataelement?.cas_number || complaintMainData?.cas_number || "-";
-      const emailSubject = `[CAS] แจ้งเตือนการ ตอบรับ / รับทราบ รายละเอียดข้อร้องเรียน CAS No.${email_casNumber || "-"}`;
+      const email_casNumber =
+        dataelement?.cas_number || complaintMainData?.cas_number || "-";
+      const emailSubject = `[CAS] แจ้งเตือนการ ตอบรับ / รับทราบ รายละเอียดข้อร้องเรียน CAS No.${
+        email_casNumber || "-"
+      }`;
 
       const emailBodyHtml = `
       <div style="font-family: Arial, sans-serif; color: #333;">
@@ -3965,15 +4108,21 @@ export default function Complaint() {
         <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
           <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">อนุมัติหัวหน้าส่วน (Section Approve)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${approveDisplayText || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              approveDisplayText || "-"
+            }</td>
           </tr>
            <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">หมายเหตุการอนุมัติ</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${close_detail || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              close_detail || "-"
+            }</td>
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">หมายเหตุเพิ่มเติม</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${close_note || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              close_note || "-"
+            }</td>
           </tr>
         </table> 
         <h2 style="color: #64c768ff; border-bottom: 2px solid #64c768ff; padding-bottom: 10px;">
@@ -3982,19 +4131,33 @@ export default function Complaint() {
         <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
           <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">ชื่อผู้อนุมัติ (Approved by)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_fname_th ? (user[0]?.employee_fname_th + " " + (user[0]?.employee_lname_th || "")) : ((user[0]?.employee_fname_en || "") + " " + (user[0]?.employee_lname_en || ""))}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              user[0]?.employee_fname_th
+                ? user[0]?.employee_fname_th +
+                  " " +
+                  (user[0]?.employee_lname_th || "")
+                : (user[0]?.employee_fname_en || "") +
+                  " " +
+                  (user[0]?.employee_lname_en || "")
+            }</td>
           </tr>
            <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ตำแหน่ง (Position)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_position || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              user[0]?.employee_position || "-"
+            }</td>
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">แผนก (Department)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.itasset_department_name || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              user[0]?.itasset_department_name || "-"
+            }</td>
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">โรงงาน (Factory)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.itasset_company_name || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              user[0]?.itasset_company_name || "-"
+            }</td>
           </tr>
         </table> 
         <p style="margin-top: 20px; font-size: 14px; color: #000000;">
@@ -4031,7 +4194,7 @@ export default function Complaint() {
           user_id: user[0]?.employee_username || "",
         },
         emailBody: emailBodyHtml,
-        emailSubject: emailSubject
+        emailSubject: emailSubject,
       };
 
       try {
@@ -4065,6 +4228,9 @@ export default function Complaint() {
 
   // CREATE - Add Complaint
   const ExplainAdd = async () => {
+
+  updateSessionStorageCurrentAccess('event_name', 'ExplainAdd');
+
     setSubmitCount((prev) => prev + 1);
     if (!validateExplainAdd()) {
       return;
@@ -4127,10 +4293,10 @@ export default function Complaint() {
     const maxExplainSeq =
       currentExplainList && currentExplainList.length > 0
         ? Math.max(
-          ...currentExplainList.map(
-            (item: any) => parseInt(item.explain_seq) || 0
+            ...currentExplainList.map(
+              (item: any) => parseInt(item.explain_seq) || 0
+            )
           )
-        )
         : 0;
     const nextSeq = maxExplainSeq + 1;
 
@@ -4145,10 +4311,10 @@ export default function Complaint() {
         preventive_action_plan: preventive_action_plan || null,
         follow_up_date: follow_up_date
           ? follow_up_date
-            .hour(23)
-            .minute(59)
-            .second(59)
-            .format("YYYY-MM-DDTHH:mm:ss.SSS")
+              .hour(23)
+              .minute(59)
+              .second(59)
+              .format("YYYY-MM-DDTHH:mm:ss.SSS")
           : null,
         responsible_name: user[0]?.employee_username || "",
         responsible_company_id: responsible_company_id?.company_id
@@ -4161,10 +4327,10 @@ export default function Complaint() {
         responsible_email: user[0]?.employee_email || "",
         responsible_date: responsible_date
           ? responsible_date
-            .hour(23)
-            .minute(59)
-            .second(59)
-            .format("YYYY-MM-DDTHH:mm:ss.SSS")
+              .hour(23)
+              .minute(59)
+              .second(59)
+              .format("YYYY-MM-DDTHH:mm:ss.SSS")
           : null,
         cf_type: "Explain",
         create_by: user[0]?.employee_username || "",
@@ -4193,9 +4359,7 @@ export default function Complaint() {
             create_datetime: new Date().toISOString(),
           })) || [],
       },
-      CurrentAccessModel: {
-        user_id: user[0]?.employee_username || "",
-      },
+      CurrentAccessModel: getCurrentAccessObject(employeeUsername, employeeDomain, screenName)
     };
 
     const formData = new FormData();
@@ -4211,7 +4375,10 @@ export default function Complaint() {
     console.log("📧 Validating Email Data (ExplainAdd):", dataelement);
     console.log("📧 PriorityLevel List:", PriorityLevel);
     console.log("📧 dataelement?.priority_level:", dataelement?.priority_level);
-    console.log("📧 dataelement?.respond_date_within:", dataelement?.respond_date_within);
+    console.log(
+      "📧 dataelement?.respond_date_within:",
+      dataelement?.respond_date_within
+    );
 
     // Helper เฉพาะกิจสำหรับ Email Body
     const safeFormatDate = (val: any) => {
@@ -4223,28 +4390,49 @@ export default function Complaint() {
       return d.isValid() ? d.format("DD/MM/YYYY") : "-";
     };
 
-    const email_reportType = dataset_reporttype?.find((x: any) => x.id == dataelement?.report_type)?.lov4 || "-";
+    const email_reportType =
+      dataset_reporttype?.find((x: any) => x.id == dataelement?.report_type)
+        ?.lov4 || "-";
     const email_casNumber = dataelement?.cas_number || "-";
-    const email_priority_id = dataelement?.priority_level?.lov2 || dataelement?.datapriority?.lov2;
+    const email_priority_id =
+      dataelement?.priority_level?.lov2 || dataelement?.datapriority?.lov2;
     const email_responseDate = safeFormatDate(dataelement?.respond_date_within);
     const email_lotNo = dataelement?.lot_no || "-";
     const email_detectionDate = safeFormatDate(dataelement?.date_of_detection);
-    const email_deptName = dataset_department?.find((x: any) => x.department_id == dataelement?.respondent_department_id)?.department_name || dataelement?.respondent_department_name || "-";
+    const email_deptName =
+      dataset_department?.find(
+        (x: any) => x.department_id == dataelement?.respondent_department_id
+      )?.department_name ||
+      dataelement?.respondent_department_name ||
+      "-";
     const email_productName = dataelement?.product_name || "-";
     const email_detail = dataelement?.detail || "-";
-    const email_respondent_department_name = dataset_department?.find((x: any) => x.department_id == dataelement?.respondent_department_id)?.department_name || dataelement?.respondent_department_name || "-";
+    const email_respondent_department_name =
+      dataset_department?.find(
+        (x: any) => x.department_id == dataelement?.respondent_department_id
+      )?.department_name ||
+      dataelement?.respondent_department_name ||
+      "-";
 
-    const email_toolsUsed = dataTooluseValue?.map((item: any) => {
-      const label = item.label || item.lov1 || item.name || "-";
-      const otherText = (item.isOther === "Y" && ToolOther) ? " " + ToolOther : "";
-      return "- " + label + otherText;
-    }).join("<br/>") || "-";
+    const email_toolsUsed =
+      dataTooluseValue
+        ?.map((item: any) => {
+          const label = item.label || item.lov1 || item.name || "-";
+          const otherText =
+            item.isOther === "Y" && ToolOther ? " " + ToolOther : "";
+          return "- " + label + otherText;
+        })
+        .join("<br/>") || "-";
 
-    const email_decision = dataDecisionValue?.map((item: any) => {
-      const label = item.label || item.lov1 || item.name || "-";
-      const otherText = (item.isOther === "Y" && DecisionOther) ? " " + DecisionOther : "";
-      return "- " + label + otherText;
-    }).join("<br/>") || "-";
+    const email_decision =
+      dataDecisionValue
+        ?.map((item: any) => {
+          const label = item.label || item.lov1 || item.name || "-";
+          const otherText =
+            item.isOther === "Y" && DecisionOther ? " " + DecisionOther : "";
+          return "- " + label + otherText;
+        })
+        .join("<br/>") || "-";
 
     const emailBodyHtml = `
       <div style="font-family: Arial, sans-serif; color: #333;">
@@ -4261,36 +4449,64 @@ export default function Complaint() {
         <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
           <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">วันที่ชี้แจง (Date)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${responsible_date ? responsible_date.format("DD/MM/YYYY") : "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              responsible_date ? responsible_date.format("DD/MM/YYYY") : "-"
+            }</td>
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">กำหนดวันตรวจติดตามผลวันที่ (Follow-up Date)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${follow_up_date ? follow_up_date.format("DD/MM/YYYY") : "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              follow_up_date ? follow_up_date.format("DD/MM/YYYY") : "-"
+            }</td>
           </tr>
-          ${observation_analysis ? `<tr>
+          ${
+            observation_analysis
+              ? `<tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">การวิเคราะห์เบื้องต้นของข้อสังเกต (ObAnalysis)</td>
             <td style="padding: 8px; border: 1px solid #ddd;">${observation_analysis}</td>
-          </tr>` : ''}
-          ${email_toolsUsed && email_toolsUsed !== '-' ? `<tr>
+          </tr>`
+              : ""
+          }
+          ${
+            email_toolsUsed && email_toolsUsed !== "-"
+              ? `<tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">เครื่องมือที่ใช้ (Tools Used)</td>
             <td style="padding: 8px; border: 1px solid #ddd;">${email_toolsUsed}</td>
-          </tr>` : ''}
-          ${root_cause ? `<tr>
+          </tr>`
+              : ""
+          }
+          ${
+            root_cause
+              ? `<tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">คำอธิบายการวิเคราะห์ (Root Cause)</td>
             <td style="padding: 8px; border: 1px solid #ddd;">${root_cause}</td>
-          </tr>` : ''}
-          ${email_decision && email_decision !== '-' ? `<tr>
+          </tr>`
+              : ""
+          }
+          ${
+            email_decision && email_decision !== "-"
+              ? `<tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">การตัดสินใจเกี่ยวกับแนวทางการจัดการ (ของเสีย / สินค้าที่ไม่ผ่านเกณฑ์)  (Decision on Disposition)</td>
             <td style="padding: 8px; border: 1px solid #ddd;">${email_decision}</td>
-          </tr>` : ''}
-          ${corrective_action ? `<tr>
+          </tr>`
+              : ""
+          }
+          ${
+            corrective_action
+              ? `<tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">การดำเนินการแก้ไข (Corrective Action)</td>
             <td style="padding: 8px; border: 1px solid #ddd;">${corrective_action}</td>
-          </tr>` : ''}
-          ${preventive_action_plan ? `<tr>
+          </tr>`
+              : ""
+          }
+          ${
+            preventive_action_plan
+              ? `<tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">แผนการป้องกันไม่ให้ปัญหาเกิดขึ้นซ้ำ (Preventive Action Plan)</td>
             <td style="padding: 8px; border: 1px solid #ddd;">${preventive_action_plan}</td>
-          </tr>` : ''}
+          </tr>`
+              : ""
+          }
         </table>
         <h2 style="color: #d32f2f; border-bottom: 2px solid #d32f2f; padding-bottom: 10px;">
           ผู้ทำการชี้แจง (Respondent)
@@ -4298,19 +4514,33 @@ export default function Complaint() {
          <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
           <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ชื่อผู้ชี้แจง (Explain by)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_fname_th ? (user[0]?.employee_fname_th + " " + (user[0]?.employee_lname_th || "")) : ((user[0]?.employee_fname_en || "") + " " + (user[0]?.employee_lname_en || ""))}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              user[0]?.employee_fname_th
+                ? user[0]?.employee_fname_th +
+                  " " +
+                  (user[0]?.employee_lname_th || "")
+                : (user[0]?.employee_fname_en || "") +
+                  " " +
+                  (user[0]?.employee_lname_en || "")
+            }</td>
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ตำแหน่ง (Position)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_position || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              user[0]?.employee_position || "-"
+            }</td>
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">แผนก (Department)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.itasset_department_name || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              user[0]?.itasset_department_name || "-"
+            }</td>
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">โรงงาน (Factory)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.itasset_company_name || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              user[0]?.itasset_company_name || "-"
+            }</td>
           </tr>
 
         </table> 
@@ -4436,11 +4666,14 @@ export default function Complaint() {
     const selectedApproveItem = (dataApprove_Combobox || []).find(
       (item: any) => item.lov_code === approveSelectionCode
     );
-    const approveDisplayText = selectedApproveItem?.lov1 || approveSelectionCode || "-";
+    const approveDisplayText =
+      selectedApproveItem?.lov1 || approveSelectionCode || "-";
 
-
-    const email_casNumber = dataelement?.cas_number || complaintMainData?.cas_number || "-";
-    const emailSubject = `[CAS] แจ้งเตือนการ ตอบรับ / รับทราบ รายละเอียดข้อร้องเรียน CAS No.${email_casNumber || "-"}`;
+    const email_casNumber =
+      dataelement?.cas_number || complaintMainData?.cas_number || "-";
+    const emailSubject = `[CAS] แจ้งเตือนการ ตอบรับ / รับทราบ รายละเอียดข้อร้องเรียน CAS No.${
+      email_casNumber || "-"
+    }`;
 
     const emailBodyHtml = `
       <div style="font-family: Arial, sans-serif; color: #333;">
@@ -4457,15 +4690,21 @@ export default function Complaint() {
         <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
           <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">อนุมัติหัวหน้าส่วน (Section Approve)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${approveDisplayText || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              approveDisplayText || "-"
+            }</td>
           </tr>
            <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">หมายเหตุการอนุมัติ</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${approve_detail || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              approve_detail || "-"
+            }</td>
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">หมายเหตุเพิ่มเติม</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${approve_note || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              approve_note || "-"
+            }</td>
           </tr>
         </table> 
         <h2 style="color: #64c768ff; border-bottom: 2px solid #64c768ff; padding-bottom: 10px;">
@@ -4474,19 +4713,33 @@ export default function Complaint() {
         <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
           <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">ชื่อผู้อนุมัติ (Approved by)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_fname_th ? (user[0]?.employee_fname_th + " " + (user[0]?.employee_lname_th || "")) : ((user[0]?.employee_fname_en || "") + " " + (user[0]?.employee_lname_en || ""))}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              user[0]?.employee_fname_th
+                ? user[0]?.employee_fname_th +
+                  " " +
+                  (user[0]?.employee_lname_th || "")
+                : (user[0]?.employee_fname_en || "") +
+                  " " +
+                  (user[0]?.employee_lname_en || "")
+            }</td>
           </tr>
            <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ตำแหน่ง (Position)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_position || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              user[0]?.employee_position || "-"
+            }</td>
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">แผนก (Department)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.itasset_department_name || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              user[0]?.itasset_department_name || "-"
+            }</td>
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">โรงงาน (Factory)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.itasset_company_name || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              user[0]?.itasset_company_name || "-"
+            }</td>
           </tr>
         </table> 
         <p style="margin-top: 20px; font-size: 14px; color: #000000;">
@@ -4520,10 +4773,10 @@ export default function Complaint() {
         approve_email: user[0]?.employee_email || "",
         approve_date: approve_date
           ? approve_date
-            .hour(dayjs().hour())
-            .minute(dayjs().minute())
-            .second(dayjs().second())
-            .format("YYYY-MM-DDTHH:mm:ss")
+              .hour(dayjs().hour())
+              .minute(dayjs().minute())
+              .second(dayjs().second())
+              .format("YYYY-MM-DDTHH:mm:ss")
           : new Date().toISOString(),
         create_by: user[0]?.employee_username || "",
         domain_id: user[0]?.employee_domain || "",
@@ -4533,16 +4786,16 @@ export default function Complaint() {
         user_id: user[0]?.employee_username || "",
       },
       emailBody: emailBodyHtml,
-      emailSubject: emailSubject
+      emailSubject: emailSubject,
     };
 
     setIsLoadingScreen(true);
 
     try {
-
       // 🧩 บันทึกข้อมูล Approve
       const response = await _POST(
-        approvePayload, "/ExplaintApprove/ExplaintApproveAdd"
+        approvePayload,
+        "/ExplaintApprove/ExplaintApproveAdd"
       );
 
       if (response && response.status === "success") {
@@ -4641,14 +4894,17 @@ export default function Complaint() {
     const explainRootId = approvalSource.id;
     const currentApproveList = approvalSource?.approveList || [];
 
-
     const selectedApproveItem = (dataApprove_Combobox || []).find(
       (item: any) => item.lov_code === approveSelectionCode
     );
-    const approveDisplayText = selectedApproveItem?.lov1 || approveSelectionCode || "-";
+    const approveDisplayText =
+      selectedApproveItem?.lov1 || approveSelectionCode || "-";
 
-    const email_casNumber = dataelement?.cas_number || complaintMainData?.cas_number || "-";
-    const emailSubject = `[CAS] แจ้งเตือนการ ตอบรับ / รับทราบ รายละเอียดข้อร้องเรียน CAS No.${email_casNumber || "-"}`;
+    const email_casNumber =
+      dataelement?.cas_number || complaintMainData?.cas_number || "-";
+    const emailSubject = `[CAS] แจ้งเตือนการ ตอบรับ / รับทราบ รายละเอียดข้อร้องเรียน CAS No.${
+      email_casNumber || "-"
+    }`;
 
     const email_request_department_name =
       dataelement?.request_department_name ||
@@ -4664,7 +4920,8 @@ export default function Complaint() {
           x.department_id == complaintMainData?.request_department_id
       )?.department_name ||
       dataelement?.request_department_id ||
-      complaintMainData?.request_department_id || "-";
+      complaintMainData?.request_department_id ||
+      "-";
 
     const emailBodyHtml = `
       <div style="font-family: Arial, sans-serif; color: #333;">
@@ -4681,15 +4938,21 @@ export default function Complaint() {
         <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
           <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">อนุมัติผู้จัดการโรงงาน (QMR)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${approveDisplayText || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              approveDisplayText || "-"
+            }</td>
           </tr>
            <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">หมายเหตุการอนุมัติ</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${qcapprove_detail || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              qcapprove_detail || "-"
+            }</td>
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">หมายเหตุเพิ่มเติม</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${qcapprove_note || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              qcapprove_note || "-"
+            }</td>
           </tr>
         </table> 
         <h2 style="color: #64c768ff; border-bottom: 2px solid #64c768ff; padding-bottom: 10px;">
@@ -4698,19 +4961,33 @@ export default function Complaint() {
         <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
           <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">ชื่อผู้อนุมัติ (Approved by)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_fname_th ? (user[0]?.employee_fname_th + " " + (user[0]?.employee_lname_th || "")) : ((user[0]?.employee_fname_en || "") + " " + (user[0]?.employee_lname_en || ""))}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              user[0]?.employee_fname_th
+                ? user[0]?.employee_fname_th +
+                  " " +
+                  (user[0]?.employee_lname_th || "")
+                : (user[0]?.employee_fname_en || "") +
+                  " " +
+                  (user[0]?.employee_lname_en || "")
+            }</td>
           </tr>
            <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ตำแหน่ง (Position)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_position || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              user[0]?.employee_position || "-"
+            }</td>
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">แผนก (Department)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.itasset_department_name || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              user[0]?.itasset_department_name || "-"
+            }</td>
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">โรงงาน (Factory)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.itasset_company_name || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              user[0]?.itasset_company_name || "-"
+            }</td>
           </tr>
         </table> 
         <p style="margin-top: 20px; font-size: 14px; color: #000000;">
@@ -4744,10 +5021,10 @@ export default function Complaint() {
         approve_email: user[0]?.employee_email || "",
         approve_date: qcapprove_date
           ? qcapprove_date
-            .hour(dayjs().hour())
-            .minute(dayjs().minute())
-            .second(dayjs().second())
-            .format("YYYY-MM-DDTHH:mm:ss")
+              .hour(dayjs().hour())
+              .minute(dayjs().minute())
+              .second(dayjs().second())
+              .format("YYYY-MM-DDTHH:mm:ss")
           : new Date().toISOString(),
         create_by: user[0]?.employee_username || "",
         domain_id: user[0]?.employee_domain || "",
@@ -4757,7 +5034,7 @@ export default function Complaint() {
         user_id: user[0]?.employee_username || "",
       },
       emailBody: emailBodyHtml,
-      emailSubject: emailSubject
+      emailSubject: emailSubject,
     };
 
     setIsLoadingScreen(true);
@@ -4765,7 +5042,8 @@ export default function Complaint() {
     try {
       // 🧩 บันทึกข้อมูล Approve
       const response = await _POST(
-        approvePayload, "/ExplaintApprove/ExplaintApproveAdd"
+        approvePayload,
+        "/ExplaintApprove/ExplaintApproveAdd"
       );
 
       if (response && response.status === "success") {
@@ -4833,7 +5111,6 @@ export default function Complaint() {
     //     dayjs().format("HH:mm:ss.SSS"),
     //     " [Calling Function]  :  handleOnclickMenuSync"
     //   );
-
     // setOpenSync(true);
   };
 
@@ -5126,10 +5403,14 @@ export default function Complaint() {
     const selectedApproveItem = (dataApprove_Combobox || []).find(
       (item: any) => item.lov_code === approveSelectionCode
     );
-    const approveDisplayText = selectedApproveItem?.lov1 || approveSelectionCode || "-";
+    const approveDisplayText =
+      selectedApproveItem?.lov1 || approveSelectionCode || "-";
 
-    const email_casNumber = dataelement?.cas_number || complaintMainData?.cas_number || "-";
-    const emailSubject = `[CAS] แจ้งเตือนการ ตอบรับ / รับทราบ รายละเอียดข้อร้องเรียน CAS No.${email_casNumber || "-"}`;
+    const email_casNumber =
+      dataelement?.cas_number || complaintMainData?.cas_number || "-";
+    const emailSubject = `[CAS] แจ้งเตือนการ ตอบรับ / รับทราบ รายละเอียดข้อร้องเรียน CAS No.${
+      email_casNumber || "-"
+    }`;
 
     const emailBodyHtml = `
       <div style="font-family: Arial, sans-serif; color: #333;">
@@ -5146,15 +5427,21 @@ export default function Complaint() {
         <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
           <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">Approve หัวหน้าส่วน (Section Approve)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${approveDisplayText || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              approveDisplayText || "-"
+            }</td>
           </tr>
            <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">หมายเหตุการอนุมัติ</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${close_detail || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              close_detail || "-"
+            }</td>
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">หมายเหตุเพิ่มเติม</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${close_note || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              close_note || "-"
+            }</td>
           </tr>
         </table> 
         <h2 style="color: #64c768ff; border-bottom: 2px solid #64c768ff; padding-bottom: 10px;">
@@ -5163,19 +5450,33 @@ export default function Complaint() {
         <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
           <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">ชื่อผู้อนุมัติ (Approved by)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_fname_th ? (user[0]?.employee_fname_th + " " + (user[0]?.employee_lname_th || "")) : ((user[0]?.employee_fname_en || "") + " " + (user[0]?.employee_lname_en || ""))}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              user[0]?.employee_fname_th
+                ? user[0]?.employee_fname_th +
+                  " " +
+                  (user[0]?.employee_lname_th || "")
+                : (user[0]?.employee_fname_en || "") +
+                  " " +
+                  (user[0]?.employee_lname_en || "")
+            }</td>
           </tr>
            <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ตำแหน่ง (Position)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_position || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              user[0]?.employee_position || "-"
+            }</td>
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">แผนก (Department)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.itasset_department_name || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              user[0]?.itasset_department_name || "-"
+            }</td>
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">โรงงาน (Factory)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.itasset_company_name || "-"}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${
+              user[0]?.itasset_company_name || "-"
+            }</td>
           </tr>
         </table> 
         <p style="margin-top: 20px; font-size: 14px; color: #000000;">
@@ -5211,7 +5512,7 @@ export default function Complaint() {
         user_id: user[0]?.employee_username || "",
       },
       emailBody: emailBodyHtml,
-      emailSubject: emailSubject
+      emailSubject: emailSubject,
     };
 
     setIsLoadingScreen(true);
@@ -5323,8 +5624,6 @@ export default function Complaint() {
   };
 
   // ------------------------------------------------------//
-
-
 
   // -------- Approve Dialog Handlers --------
 
@@ -5630,7 +5929,7 @@ export default function Complaint() {
         const userCompanyId = String(user[0]?.itasset_company_id);
         setqcapprove_company_id(
           dataset_company.find((c: any) => c.company_id === userCompanyId) ||
-          null
+            null
         );
 
         // map department_id → object
@@ -5683,7 +5982,6 @@ export default function Complaint() {
     // เปิด modal
     setOpenExplainApproveQc(true);
   };
-
 
   const handleOnclickComplainCloseAdd = async (explainData: any) => {
     // if (isCallFuncLogOn)
@@ -5831,7 +6129,6 @@ export default function Complaint() {
     resetForm();
   };
 
-
   // Search Handlers
   const handleCloseSearch = () => {
     if (isCallFuncLogOn)
@@ -5871,14 +6168,13 @@ export default function Complaint() {
         dayjs().format("HH:mm:ss.SSS"),
         " [Calling Function]  :  handleCloseExplainView"
       );
-    useEffect
+    useEffect;
     if (complaintMainData) {
       setdataelement(complaintMainData);
     }
 
     setOpenExplainView(false);
   };
-
 
   const handleCloseExplainAdd = () => {
     if (isCallFuncLogOn)
@@ -5935,7 +6231,7 @@ export default function Complaint() {
         " [Calling Function]  :  handleCloseAdd"
       );
 
-    //  useEffect 
+    //  useEffect
     //   if (complaintMainData) {
     //     setdataelement(complaintMainData);
 
@@ -5989,7 +6285,6 @@ export default function Complaint() {
     }
   };
 
-
   // Set Data Handler
   const setData = (data: any) => {
     if (isCallFuncLogOn)
@@ -6025,7 +6320,7 @@ export default function Complaint() {
     const fetchData = async () => {
       try {
         //console.log("useEffect start");
-        const tempCheckItAdmin = await LovAll_Get('get_role');
+        const tempCheckItAdmin = await LovAll_Get("get_role");
         // console.log("😎🥰 tempCheckItAdmin", tempCheckItAdmin);
         await LovAll_Get(null, null, tempCheckItAdmin);
         await DomainRelateGet();
@@ -6039,12 +6334,14 @@ export default function Complaint() {
         );
 
         // ✅ Load Request Departments
-        const reqDomain = dataelement?.request_domain_id || user[0]?.employee_domain;
+        const reqDomain =
+          dataelement?.request_domain_id || user[0]?.employee_domain;
         if (reqDomain) {
           await mas_DepartmentDomainGet(
             {
               domain_id: reqDomain,
-              company_id: dataelement?.request_company_id || user[0]?.itasset_company_id
+              company_id:
+                dataelement?.request_company_id || user[0]?.itasset_company_id,
             },
             setdataset_department_request,
             isCallFuncLogOn
@@ -6154,10 +6451,10 @@ export default function Complaint() {
   }, [currentExplainForApproval, dataApprove_Combobox]);
   React.useEffect(() => {
     if (!TextNameSearch.dataset_company && user[0]?.itasset_company_id) {
-      setTextNameSearch(prev => ({
+      setTextNameSearch((prev) => ({
         ...prev,
         dataset_company: user[0].itasset_company_id,
-        dataset_domain: ""   // ⭐ สำคัญมาก
+        dataset_domain: "", // ⭐ สำคัญมาก
       }));
 
       set_domainrelate([]); // ⭐ กัน domain เก่าค้าง
@@ -6186,13 +6483,12 @@ export default function Complaint() {
       user[0]?.domain_name
     ) {
       const autoDomain = domainrelate.find(
-        (item: any) =>
-          String(item.domain_name) === String(user[0].domain_name)
+        (item: any) => String(item.domain_name) === String(user[0].domain_name)
       );
       if (autoDomain) {
-        setTextNameSearch(prev => ({
+        setTextNameSearch((prev) => ({
           ...prev,
-          dataset_domain: autoDomain.domain_id
+          dataset_domain: autoDomain.domain_id,
         }));
 
         handleDomainChange(autoDomain);
@@ -6250,11 +6546,13 @@ export default function Complaint() {
               value={
                 dataset_company?.find(
                   (item: any) =>
-                    String(item.company_id) === String(TextNameSearch.dataset_company)
+                    String(item.company_id) ===
+                    String(TextNameSearch.dataset_company)
                 ) ||
                 dataset_company?.find(
                   (item: any) =>
-                    String(item.company_id) === String(user[0]?.itasset_company_id)
+                    String(item.company_id) ===
+                    String(user[0]?.itasset_company_id)
                 ) ||
                 null
               }
@@ -6262,10 +6560,10 @@ export default function Complaint() {
               options={dataset_company || []}
               column="company_name"
               setvalue={(val) => {
-                handleCompanyChange(val);   // ⭐ เรียกใหม่ตามรูปแบบเดียวกับที่แก้
+                handleCompanyChange(val); // ⭐ เรียกใหม่ตามรูปแบบเดียวกับที่แก้
                 setTextNameSearch({
                   ...TextNameSearch,
-                  dataset_company: val?.company_id || ""
+                  dataset_company: val?.company_id || "",
                 });
               }}
               readonly={!isItAdmin}
@@ -6633,10 +6931,7 @@ export default function Complaint() {
         titlename={"รายการข้อร้องเรียน"}
         handleClose={handleClose}
         buttonColor="success"
-        element={<ComplaintBody
-          action="Read"
-          isItAdmin={isItAdmin}
-        />}
+        element={<ComplaintBody action="Read" isItAdmin={isItAdmin} />}
       />
 
       {/* For Status [NEW] */}
@@ -6759,10 +7054,7 @@ export default function Complaint() {
         handleClose={handleClose}
         handlefunction={ComplaintDelete}
         buttonColor="error"
-        element={<ComplaintBody
-          action="Delete"
-          isItAdmin={isItAdmin}
-        />}
+        element={<ComplaintBody action="Delete" isItAdmin={isItAdmin} />}
       />
 
       {/* // ===================================================================================================== */}
@@ -6857,7 +7149,9 @@ export default function Complaint() {
             handleOpenAdd={() => handleOnclickExplainAdd(dataelement)}
             // openExplainView={openExplainView}
             // handleCloseExplainView={handleClose}
-            handleOnclickExplainView={(item) => handleOnclickExplainView(item, "ApproveScRead")}
+            handleOnclickExplainView={(item) =>
+              handleOnclickExplainView(item, "ApproveScRead")
+            }
             handleOnclickExplainApproveSc={handleOnclickExplainApproveSc}
           />
         }
@@ -7088,10 +7382,15 @@ export default function Complaint() {
         dialogWidth="xl"
         openBottonHidden={true}
         hideSaveDraft
-        hideReject={false}         // แสดงตลอด
-        hideSaveSubmit={false}     // แสดงตลอด
-        disableReject={!approveSelectionCode || (approveSelectionCode !== "ADD" && approveSelectionCode !== "REJECT")}
-        disableSaveSubmit={!approveSelectionCode || approveSelectionCode !== "APPROVE"}
+        hideReject={false} // แสดงตลอด
+        hideSaveSubmit={false} // แสดงตลอด
+        disableReject={
+          !approveSelectionCode ||
+          (approveSelectionCode !== "ADD" && approveSelectionCode !== "REJECT")
+        }
+        disableSaveSubmit={
+          !approveSelectionCode || approveSelectionCode !== "APPROVE"
+        }
         titlename={"อนุมติรายการหัวหน้าแผนก"}
         buttonText={"อนุมัติ"}
         handlefunction={ApproveScAdd}
@@ -7146,10 +7445,15 @@ export default function Complaint() {
         dialogWidth="xl"
         openBottonHidden={true}
         hideSaveDraft
-        hideReject={false}         // แสดงตลอด
-        hideSaveSubmit={false}     // แสดงตลอด
-        disableReject={!approveSelectionCode || (approveSelectionCode !== "ADD" && approveSelectionCode !== "REJECT")}
-        disableSaveSubmit={!approveSelectionCode || approveSelectionCode !== "APPROVE"}
+        hideReject={false} // แสดงตลอด
+        hideSaveSubmit={false} // แสดงตลอด
+        disableReject={
+          !approveSelectionCode ||
+          (approveSelectionCode !== "ADD" && approveSelectionCode !== "REJECT")
+        }
+        disableSaveSubmit={
+          !approveSelectionCode || approveSelectionCode !== "APPROVE"
+        }
         titlename={"อนุมติรายการผู้จัดการโรงงาน"}
         buttonText={"อนุมัติ"}
         handlefunction={ApproveQcAdd}
@@ -7200,10 +7504,15 @@ export default function Complaint() {
         dialogWidth="xl"
         openBottonHidden={true}
         hideSaveDraft
-        hideReject={false}         // แสดงตลอด
-        hideSaveSubmit={false}     // แสดงตลอด
-        disableReject={!approveSelectionCode || (approveSelectionCode !== "ADD" && approveSelectionCode !== "REJECT")}
-        disableSaveSubmit={!approveSelectionCode || approveSelectionCode !== "APPROVE"}
+        hideReject={false} // แสดงตลอด
+        hideSaveSubmit={false} // แสดงตลอด
+        disableReject={
+          !approveSelectionCode ||
+          (approveSelectionCode !== "ADD" && approveSelectionCode !== "REJECT")
+        }
+        disableSaveSubmit={
+          !approveSelectionCode || approveSelectionCode !== "APPROVE"
+        }
         titlename={"ปิดรายการคำชี้แจง"}
         buttonText={"ปิดรายการ"}
         handlefunction={CloseAdd}
@@ -7279,4 +7588,3 @@ export default function Complaint() {
     </>
   );
 }
-
