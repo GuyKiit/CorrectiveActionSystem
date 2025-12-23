@@ -3,6 +3,7 @@ import { login_auth_emp_get } from '../../service/login';
 import { logintType, AuthModel, auth_role_profile, auth_role_menu, auth_role_menu_func, auth_app_info } from '../../types/users';
 import { fetchIpAddress } from '../../service/ip';
 import { useLayout } from '../../layout/core/LayoutProvider';
+import MobileDetect from 'mobile-detect';
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -131,6 +132,63 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setError("");
   };
 
+  const fetchPublicIP = async (): Promise<string> => {
+      try {
+        const response = await fetch("https://api.ipify.org?format=json");
+        const data = await response.json();
+        return data.ip;
+      } catch (error) {
+        console.error("Error fetching public IP:", error);
+        return "";
+      }
+    };
+  
+    const getBrowserInfo = (): string => {
+      const userAgent = navigator.userAgent || "";
+      let browserName = "Unknown";
+      let browserVersion = "Unknown";
+  
+      if (/chrome|chromium|crios/i.test(userAgent) && !/edg/i.test(userAgent)) {
+        browserName = "Chrome";
+        browserVersion = userAgent.match(/Chrome\/([0-9.]+)/)?.[1] || "Unknown";
+      } else if (/firefox|fxios/i.test(userAgent)) {
+        browserName = "Firefox";
+        browserVersion = userAgent.match(/Firefox\/([0-9.]+)/)?.[1] || "Unknown";
+      } else if (/safari/i.test(userAgent) && !/chrome|chromium|crios/i.test(userAgent)) {
+        browserName = "Safari";
+        browserVersion = userAgent.match(/Version\/([0-9.]+)/)?.[1] || "Unknown";
+      } else if (/edg/i.test(userAgent)) {
+        browserName = "Edge";
+        browserVersion = userAgent.match(/Edg\/([0-9.]+)/)?.[1] || "Unknown";
+      }
+  
+      return `${browserName} ${browserVersion}`;
+    };
+  
+    const getCurrentAccessData = async (response: any) => {
+      const publicIP = await fetchPublicIP();
+      const clientIP = await fetchIpAddress(); // Replace with backend data if available
+      const md = new MobileDetect(window.navigator.userAgent);
+      const accessType = md.mobile() ? 'MOBILE' : 'WEB';
+      console.log(accessType);
+  
+      const currentAccessData = {
+        domain_id: response?.data?.auth_role_profile[0].employee_domain,
+        session_id: response?.data?.auth_role_profile[0].session_id,
+        user_id: response?.data?.auth_role_profile[0].employee_username,
+        access_type: accessType,
+        client_ip: clientIP,
+        public_ip: publicIP,
+        app_name: response?.data?.auth_role_profile[0].application_code,
+        version_no: import.meta.env.VITE_VERSION,
+        browser: getBrowserInfo(),
+        access_status: response.status,
+        status_desc: ""
+      };
+  
+      sessionStorage.setItem("current_access", JSON.stringify(currentAccessData));
+    };
+
   const login = async (user: string, password: string) => {
     setIsLoadingScreen(true)
     setIsLoading(true);
@@ -159,6 +217,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setIsLoadingScreen(false)
         setError(data?.error_message || 'Login failed');
       }
+
+      await getCurrentAccessData(response);
+
     } catch (error) {
       setIsLoadingScreen(false)
       setError("Login failed. Please try again.");
