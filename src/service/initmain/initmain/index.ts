@@ -74,6 +74,13 @@ export function getCurrentAccessObject(employeeUsername: string, employeeDomain:
         event_name: "No Current Access",
         user_id: employeeUsername,
     };
+    // ✅ Ensure screen_name is always updated with the current screenName argument
+    if (storedAccessData) {
+        currentAccessObject.screen_name = screenName;
+        // Optional: Save back to session storage
+        sessionStorage.setItem('current_access', JSON.stringify(currentAccessObject));
+    }
+
     console.log(currentAccessObject, 'currentAccessObject');
     return currentAccessObject;
 }
