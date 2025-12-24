@@ -18,7 +18,11 @@ import { Complaint_headCells, Department_Setting_headCells } from "../../../libs
 import DataTable from "../../components/MUI/DataTable";
 // import ComplaintBody from "./components/ComplaintBody";
 import { v4 as uuidv4 } from "uuid";
-import { cleanAccessData } from "../../service/initmain/initmain";
+import {
+  cleanAccessData,
+  getCurrentAccessObject,
+  updateSessionStorageCurrentAccess,
+} from "../../service/initmain/initmain";
 import FuncDialog from "../../components/MUI/FullDialog";
 import FullSweetalert from "../../components/MUI/Sweetalert";
 import AutocompleteComboBox from "../../components/MUI/AutocompleteComboBox";
@@ -150,6 +154,11 @@ export default function DepartmentSetting() {
   // AUTHENTICATION & USER DATA
   // =====================================================================================================
   const user = cleanAccessData("userSession");
+  const screenName = "DepartmentSettingPage";
+
+  const employeeUsername = user?.[0]?.employee_username || "";
+  const employeeDomain = user?.[0]?.employee_domain || "";
+
   const { setIsLoadingScreen } = useLayout();
   const { menuFuncData, userData } = useAuth();
   const { Customer, ProductGroup, CustomerAddress } = useData();
@@ -170,7 +179,7 @@ export default function DepartmentSetting() {
     qcApprove,
     dept_company,
     dept_domain,
-    
+
 
     // Setter Functions
     setdataelement,
@@ -273,7 +282,7 @@ export default function DepartmentSetting() {
   const [emailAreaError, setEmailAreaError] = useState(false);
   const [usernameAreaError, setUsernameAreaError] = useState(false);
   const [stepAreaError, setStepAreaError] = useState(false);
-  
+
   // For On-Off Calling Function Log
   const [isCallFuncLogOn] = useState(true);
   const [searchTrigger, setSearchTrigger] = useState(false);
@@ -282,32 +291,31 @@ export default function DepartmentSetting() {
     setdocumentDateSearch(null);
     setrespondWithinSearch(null);
     setEndDateSearch(null);
-
   };
 
   const tempRoleUser = dataset_roleProfile?.filter(
-              (item: any) => item.lov1 === String(user[0]?.role_id)
-            );
+    (item: any) => item.lov1 === String(user[0]?.role_id)
+  );
   const isItAdmin = tempRoleUser?.[0]?.lov_code === "it_admin";
-  console.log("isItAdmin",isItAdmin);
-  
+  console.log("isItAdmin", isItAdmin);
+
 
   // Function - Validate before Add Complaint
-    const validateBeforeAdd = (): boolean => {
-      if (isCallFuncLogOn)
-        console.log(
-          "🕑 ",
-          dayjs().format("HH:mm:ss.SSS"),
-          " [Calling Function]  :  validateBeforeAdd"
-        );
-      let valid = true;
-      // Clear ALL validation errors before validation
-      setCompanyAreaError(false);
-      setDomainAreaError(false);
-      setDepartmentAreaError(false);
-      setEmailAreaError(false);
-      setStepAreaError(false);
-    
+  const validateBeforeAdd = (): boolean => {
+    if (isCallFuncLogOn)
+      console.log(
+        "🕑 ",
+        dayjs().format("HH:mm:ss.SSS"),
+        " [Calling Function]  :  validateBeforeAdd"
+      );
+    let valid = true;
+    // Clear ALL validation errors before validation
+    setCompanyAreaError(false);
+    setDomainAreaError(false);
+    setDepartmentAreaError(false);
+    setEmailAreaError(false);
+    setStepAreaError(false);
+
 
     // Validate 
     if (!dept_company || !dept_company.company_id) {
@@ -596,7 +604,6 @@ export default function DepartmentSetting() {
       }
   };
 
-
   // =====================================================================================================
   // API FUNCTIONS - CRUD OPERATIONS
   // =====================================================================================================
@@ -605,9 +612,16 @@ export default function DepartmentSetting() {
   const Dept_setup_Get = async (data: any) => {
     if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  Dept_setup_Get");
 
+    updateSessionStorageCurrentAccess("event_name", "DepartmentSettingGet");
+
     setIsLoadingScreen(true)
     const dataset = {
       id: data.id,
+      CurrentAccessModel: getCurrentAccessObject(
+        employeeUsername,
+        employeeDomain,
+        screenName
+      ),
     };
 
     try {
@@ -627,12 +641,18 @@ export default function DepartmentSetting() {
   // Function - Search Complaints
   const DeptSetupGet = async () => {
     if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  DeptSetupGet");
+    updateSessionStorageCurrentAccess("event_name", "DepartmentSettingGet");
 
     setIsLoadingScreen(true);
     const dataset = {
       company_search: TextNameSearch.company_search ? TextNameSearch.company_search : null,
       domain_search: TextNameSearch.domain_search ? TextNameSearch.domain_search : null,
       department_search: TextNameSearch.department_search ? TextNameSearch.department_search : null,
+      CurrentAccessModel: getCurrentAccessObject(
+        employeeUsername,
+        employeeDomain,
+        screenName
+      ),
     }
 
     //console.log("step:2 dataset ก่อนส่ง API /DeptSearch/DeptSearchGet ", dataset);
@@ -711,31 +731,38 @@ export default function DepartmentSetting() {
 
     }
   };
-useEffect(() => {
+
+  useEffect(() => {
     if (searchTrigger) {
       DeptSetupGet();
       setSearchTrigger(false); // reset trigger เพื่อให้พร้อมใช้ครั้งถัดไป
     }
   }, [searchTrigger, TextNameSearch]);
+
   // Function - Add DepartmentSetting
   const DepartmentSettingAdd = async () => {
     if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  DepartmentSettingAdd");
 
+    updateSessionStorageCurrentAccess("event_name", "DepartmentSettingAdd");
+
     if (!validateBeforeAdd()) {
       return;
     }
-
     const tempid = uuidv4();
 
     // สร้าง JSON payload
     const DeptSetupPayload = {
-
       id: tempid,
       domain_dept_id: domain_dept_id?.domain_dept_id,
       dept_email: dept_email,
       create_by: user[0]?.employee_username || "",
-
+      CurrentAccessModel: getCurrentAccessObject(
+        employeeUsername,
+        employeeDomain,
+        screenName
+      ),
     };
+
     ////console.log("📤 DeptSetupPayload:", DeptSetupPayload);
     setIsLoadingScreen(true);
 
@@ -764,7 +791,6 @@ useEffect(() => {
     } finally {
       setIsLoadingScreen(false);
       handleClose();
-
       // Complaint_Get();
       DeptSetupGet();
     }
@@ -774,6 +800,7 @@ useEffect(() => {
   const DepartmentSettingEdit = async () => {
     if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  DepartmentSettingEdit");
 
+    updateSessionStorageCurrentAccess("event_name", "DepartmentSettingEdit");
     // if (!validateBeforeAdd()) {
     //   return;
     // }
@@ -784,6 +811,11 @@ useEffect(() => {
       domain_dept_id: domain_dept_id.domain_dept_id, //**อย่าลืมเปลี่ยนชื่อ นะสุภาวดี */
       dept_email: dept_email,
       update_by: user[0]?.employee_username,
+      CurrentAccessModel: getCurrentAccessObject(
+        employeeUsername,
+        employeeDomain,
+        screenName
+      ),
     };
     setIsLoadingScreen(true);
 
@@ -810,7 +842,7 @@ useEffect(() => {
     } finally {
       setIsLoadingScreen(false);
       handleClose();
-      
+
       // Complaint_Get();
       DeptSetupGet();
     }
@@ -819,14 +851,17 @@ useEffect(() => {
   // Function - Delete DepartmentSetting
   const DepartmentSettingDelete = async () => {
     if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  ComplaintDelete");
+    updateSessionStorageCurrentAccess("event_name", "DepartmentSettingDelete");
 
     // สร้าง JSON payload
     const DeptSetupPayload = {
-
       id: dataelement?.id,
       update_by: user[0]?.employee_username || '',
-
-
+      CurrentAccessModel: getCurrentAccessObject(
+        employeeUsername,
+        employeeDomain,
+        screenName
+      ),
     };
 
     //console.log("📤 DeptSetupPayload:", DeptSetupPayload);
@@ -864,7 +899,7 @@ useEffect(() => {
     }
   };
 
-  
+
   const handleOnclickDepartmentSettingAdd = () => {
     if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  handleOnclickDepartmentSettingAdd");
     // console.log("⭐step:3 เรียกฟังก์ชั่น ดูข้อมูล handleOnclickDepartmentSettingAdd ");
@@ -902,15 +937,15 @@ useEffect(() => {
   const handleCloseSearch = () => {
     if (isCallFuncLogOn) //console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  handleCloseSearch");
       setTextNameSearch({
-    id: "",
-    department_search: "",
-    domain_search: "",
-    company_search: "",
-  });
+        id: "",
+        department_search: "",
+        domain_search: "",
+        company_search: "",
+      });
 
-  // set_department([]);
-  setSearchTrigger(true);
-};
+    // set_department([]);
+    setSearchTrigger(true);
+  };
 
   // Close Dialog Handler
   const handleClose = () => {
@@ -929,7 +964,7 @@ useEffect(() => {
   // USEEFFECT - INITIALIZATION (from index.tsx and ComplaintRead.tsx)
   // =====================================================================================================
 
-  
+
 
   // Initialize data on component mount
   const effectRan = React.useRef(false); // ป้องกัน run ซ้ำใน dev mode
@@ -963,67 +998,67 @@ useEffect(() => {
     }
   }, [dataset_activeCompany]);
 
-   React.useEffect(() => {
+  React.useEffect(() => {
     if (!TextNameSearch.company_search && user[0]?.itasset_company_id) {
       setTextNameSearch(prev => ({
         ...prev,
         company_search: String(user[0].itasset_company_id),
         // domain_search: ""   // ⭐ สำคัญมาก
       }));
-  
+
       set_domain([]); // ⭐ กัน domain เก่าค้าง
     }
   }, [user]);
 
   React.useEffect(() => {
-      if (!TextNameSearch.company_search) return;
-  
-      mas_DomainGet(
-        TextNameSearch.company_search,
-        set_domain,
-        user,
-        isCallFuncLogOn
+    if (!TextNameSearch.company_search) return;
+
+    mas_DomainGet(
+      TextNameSearch.company_search,
+      set_domain,
+      user,
+      isCallFuncLogOn
+    );
+  }, [TextNameSearch.company_search]);
+
+  React.useEffect(() => {
+    if (!Array.isArray(domain) || domain.length === 0) return;
+  }, [domain]);
+
+  React.useEffect(() => {
+    if (
+      !TextNameSearch.domain_search &&
+      Array.isArray(domain) &&
+      domain.length > 0 &&
+      user[0]?.domain_name
+    ) {
+      const autoDomain = domain.find(
+        (item: any) =>
+          String(item.domain_name) === String(user[0].domain_name)
       );
-    }, [TextNameSearch.company_search]);
+      if (autoDomain) {
+        setTextNameSearch(prev => ({
+          ...prev,
+          domain_search: autoDomain.domain_id
+        }));
 
-    React.useEffect(() => {
-        if (!Array.isArray(domain) || domain.length === 0) return;
-      }, [domain]);
-    
-      React.useEffect(() => {
-      if (
-        !TextNameSearch.domain_search &&
-        Array.isArray(domain) &&
-        domain.length > 0 &&
-        user[0]?.domain_name
-      ) {
-        const autoDomain = domain.find(
-          (item: any) =>
-            String(item.domain_name) === String(user[0].domain_name)
-        );
-        if (autoDomain) {
-          setTextNameSearch(prev => ({
-            ...prev,
-            domain_search: autoDomain.domain_id
-          }));
-    
-          handleDomainChange(autoDomain);
-        }
+        handleDomainChange(autoDomain);
       }
-    }, [domain, user]);
+    }
+  }, [domain, user]);
 
-    React.useEffect(() => {
-  if (!TextNameSearch.domain_search || !TextNameSearch.company_search) return;
+  React.useEffect(() => {
+    if (!TextNameSearch.domain_search || !TextNameSearch.company_search) return;
 
-  mas_DepartmentDomainGet(
-    {
-      domain_id: TextNameSearch.domain_search,
-      company_id: TextNameSearch.company_search,
-    },
-    set_department,
-    isCallFuncLogOn,
-  );
-}, [TextNameSearch.domain_search, TextNameSearch.company_search]);
+    mas_DepartmentDomainGet(
+      {
+        domain_id: TextNameSearch.domain_search,
+        company_id: TextNameSearch.company_search,
+      },
+      set_department,
+      isCallFuncLogOn,
+    );
+  }, [TextNameSearch.domain_search, TextNameSearch.company_search]);
   // =====================================================================================================
   // RETURN SECTION - RENDER COMPONENT
   // =====================================================================================================
@@ -1091,7 +1126,7 @@ useEffect(() => {
                   company_search: val?.company_id || "", // เก็บแค่ id เป็น string
                 })
               }}
-              readonly = {!isItAdmin}
+              readonly={!isItAdmin}
             />
           </Grid>
           <Grid size={4}>
@@ -1103,7 +1138,7 @@ useEffect(() => {
                 domain?.find(
                   (item: any) =>
                     item.domain_id === TextNameSearch.domain_search
-                ) || 
+                ) ||
                 domain?.find(
                   (item: any) =>
                     String(item.domain_id) === String(user[0]?.domain_name)
@@ -1120,7 +1155,7 @@ useEffect(() => {
                   domain_search: val?.domain_id || "", // เก็บแค่ id เป็น string
                 })
               }}
-              readonly = {!isItAdmin}
+              readonly={!isItAdmin}
             />
           </Grid>
           <Grid size={4}>
@@ -1208,7 +1243,7 @@ useEffect(() => {
         handleClose={handleClose}
         buttonColor="success"
         element={<DepartmentSettingBody
-        isItAdmin={isItAdmin}
+          isItAdmin={isItAdmin}
           action="Read"
         />}
       />
@@ -1225,7 +1260,7 @@ useEffect(() => {
         buttonColor="success"
         element={
           <DepartmentSettingBody
-          isItAdmin={isItAdmin}
+            isItAdmin={isItAdmin}
             action="Add"
             // onBlocksChange={(data) => setComplaintBlocks(data)}
             validateDetailText={blockValidateErrors}
@@ -1273,7 +1308,7 @@ useEffect(() => {
         hideSaveDraft={true}
         buttonColor="success"
         element={<DepartmentSettingBody
-        isItAdmin={isItAdmin}
+          isItAdmin={isItAdmin}
           action="Edit"
           onBlocksChange={(data) => setComplaintBlocks(data)}
           validateDetailText={blockValidateErrors}
@@ -1319,7 +1354,7 @@ useEffect(() => {
         handlefunction={DepartmentSettingDelete}
         buttonColor="error"
         element={<DepartmentSettingBody
-        isItAdmin={isItAdmin}
+          isItAdmin={isItAdmin}
           action="Delete"
         />}
       />
