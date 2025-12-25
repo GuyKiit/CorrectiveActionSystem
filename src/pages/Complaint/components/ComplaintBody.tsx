@@ -1043,7 +1043,7 @@ export default function ComplaintBody({
         เรียน เจ้าหน้าที่ฝ่าย${email_requrst_department_name || "-"}
       </p>
       <p style="margin-top: 5px;">
-        เรียนมาเพื่อทราบว่า คุณ ${email_request_name || "-"} ได้ตอบรับและยืนยันการรับทราบรายละเอียดข้อร้องเรียน CAS No.${email_casNumber || "-"} เรียบร้อยแล้ว
+        เรียนมาเพื่อทราบว่า คุณ ${user[0]?.employee_fname_th ? (user[0]?.employee_fname_th + " " + (user[0]?.employee_lname_th || "")) : ((user[0]?.employee_fname_en || "") + " " + (user[0]?.employee_lname_en || ""))} (${user[0]?.employee_username}) ได้ตอบรับและยืนยันการรับทราบรายละเอียดข้อร้องเรียนของรายการ CAS No : ${email_casNumber || "-"} เรียบร้อยแล้ว
       </p>
         <br />
         <h2 style="color: #d32f2f; border-bottom: 2px solid #d32f2f; padding-bottom: 10px;">
@@ -2283,6 +2283,7 @@ export default function ComplaintBody({
                             : ""
                         }
                         submitCount={submitCount}
+                        maxDate={dayjs()}
                       />
                     </Grid>
                     <Grid size={4}>

@@ -2805,6 +2805,7 @@ export default function Complaint() {
         formData.append("complaintFiles", fileItem.file);
       });
     }
+    // const email_casNumber = dataelement?.cas_number || "-";
 
     const emailBodyHtml = `
       <div style="font-family: Arial, sans-serif; color: #333;">
@@ -2812,7 +2813,7 @@ export default function Complaint() {
         เรียน เจ้าหน้าที่ฝ่าย${respondent_department_id?.department_name || "-"}
       </p>
       <p style="margin-top: 5px;">
-        แจ้งเตือนปัญหาข้อร้องเรียน มีรายละเอียดดังต่อไปนี้
+        แจ้งเตือนปัญหาข้อร้องเรียนของรายการ CAS Number : CAS_NUMBER มีรายละเอียดดังต่อไปนี้
       </p>
         <br />
         <h2 style="color: #d32f2f; border-bottom: 2px solid #d32f2f; padding-bottom: 10px;">
@@ -3055,6 +3056,7 @@ export default function Complaint() {
           formData.append("complaintFiles", fileItem.file);
         });
       }
+      const email_casNumber = dataelement?.cas_number || "-";
 
       const emailBodyHtml = `
       <div style="font-family: Arial, sans-serif; color: #333;">
@@ -3062,7 +3064,7 @@ export default function Complaint() {
         เรียน เจ้าหน้าที่ฝ่าย${respondent_department_id?.department_name || "-"}
       </p>
       <p style="margin-top: 5px;">
-        แจ้งเตือนปัญหาข้อร้องเรียน มีรายละเอียดดังต่อไปนี้
+        แจ้งเตือนปัญหาข้อร้องเรียนของรายการ CAS Number : ${email_casNumber} มีรายละเอียดดังต่อไปนี้
       </p>
         <br />
         <h2 style="color: #d32f2f; border-bottom: 2px solid #d32f2f; padding-bottom: 10px;">
@@ -3468,7 +3470,7 @@ export default function Complaint() {
         เรียน เจ้าหน้าที่ฝ่าย${email_requrst_department_name || "-"}
       </p>
       <p style="margin-top: 5px;">
-        แจ้งเตือนรับทราบ เพื่อพิจารณายกเลิก หรือ แก้ไข
+        เรียนมาเพื่อทราบ เพื่อพิจารณายกเลิก หรือ แก้ไข
       </p>
         <br />
         <h2 style="color: #2196f3; border-bottom: 2px solid #2196f3; padding-bottom: 10px;">
@@ -3476,7 +3478,7 @@ export default function Complaint() {
         </h2>
          <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
           <tr>
-            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ชื่อผู้ส่งกลับ(Return by)</td>
+            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ชื่อผู้ส่งกลับ (Return by)</td>
             <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_fname_th
           ? user[0]?.employee_fname_th +
           " " +
@@ -3617,7 +3619,7 @@ export default function Complaint() {
         เรียน เจ้าหน้าที่ฝ่าย${email_respondent_department_name || "-"}
       </p>
       <p style="margin-top: 5px;">
-        แจ้งเตือนรับทราบ เพื่อพิจารณายกเลิก หรือ แก้ไข
+        เรียนมาเพื่อทราบ เพื่อพิจารณายกเลิก หรือ แก้ไข
       </p>
         <br />
          <h2 style="color: #d32f2f; border-bottom: 2px solid #d32f2f; padding-bottom: 10px;">
@@ -3630,12 +3632,12 @@ export default function Complaint() {
         }</td>
           </tr>
            <tr>
-            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">หมายเหตุการอนุมัติ</td>
+            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">หมายเหตุการปฏิเสธ (Rejection Detail)</td>
             <td style="padding: 8px; border: 1px solid #ddd;">${approve_detail || "-"
         }</td>
           </tr>
           <tr>
-            <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">หมายเหตุเพิ่มเติม</td>
+            <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">หมายเหตุเพิ่มเติม (Rejection Note)</td>
             <td style="padding: 8px; border: 1px solid #ddd;">${approve_note || "-"
         }</td>
           </tr>
@@ -3684,7 +3686,7 @@ export default function Complaint() {
       // 🧩 สร้าง payload สำหรับ Approve
       const approvePayload = {
         ExplaintApproveModel: {
-          //id: tempid,
+          id: tempid,
           explain_id: explainRootId,
           approve_seq: approveSeq[0].lov3,
           complaint_status_id: tempComplaintStatus[3]?.id,
@@ -3856,7 +3858,7 @@ export default function Complaint() {
         เรียน เจ้าหน้าที่ฝ่าย${email_respondent_department_name || "-"}
       </p>
       <p style="margin-top: 5px;">
-        แจ้งเตือนรับทราบ เพื่อพิจารณายกเลิก หรือ แก้ไข
+        เรียนมาเพื่อทราบ เพื่อพิจารณายกเลิก หรือ แก้ไข
       </p>
         <br />
         <h2 style="color: #d32f2f; border-bottom: 2px solid #d32f2f; padding-bottom: 10px;">
@@ -3869,18 +3871,18 @@ export default function Complaint() {
         }</td>
           </tr>
            <tr>
-            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">หมายเหตุการอนุมัติ</td>
+            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">หมายเหตุการปฏิเสธ (Rejection Detail)</td>
             <td style="padding: 8px; border: 1px solid #ddd;">${qcapprove_detail || "-"
         }</td>
           </tr>
           <tr>
-            <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">หมายเหตุเพิ่มเติม</td>
+            <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">หมายเหตุเพิ่มเติม (Rejection Note)</td>
             <td style="padding: 8px; border: 1px solid #ddd;">${qcapprove_note || "-"
         }</td>
           </tr>
         </table> 
         <h2 style="color: #64c768ff; border-bottom: 2px solid #64c768ff; padding-bottom: 10px;">
-          ข้อมูลผู้รับรอง (QMR
+          ข้อมูลผู้รับรอง (QMR)
         </h2>
         <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
           <tr>
@@ -4086,7 +4088,7 @@ export default function Complaint() {
          เรียน เจ้าหน้าที่ฝ่าย${email_respondent_department_name || "-"}
       </p>
       <p style="margin-top: 5px;">
-        แจ้งเตือนปัญหาข้อร้องเรียน มีรายละเอียดดังต่อไปนี้
+        แจ้งเตือนปัญหาข้อร้องเรียนของรายการ CAS Number : ${email_casNumber} มีรายละเอียดดังต่อไปนี้
       </p>
         <br />
         <h2 style="color: #d32f2f; border-bottom: 2px solid #d32f2f; padding-bottom: 10px;">
@@ -4099,12 +4101,12 @@ export default function Complaint() {
         }</td>
           </tr>
            <tr>
-            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">หมายเหตุการอนุมัติ</td>
+            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">หมายเหตุการปฏิเสธ (Rejection Detail)</td>
             <td style="padding: 8px; border: 1px solid #ddd;">${close_detail || "-"
         }</td>
           </tr>
           <tr>
-            <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">หมายเหตุเพิ่มเติม</td>
+            <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">หมายเหตุเพิ่มเติม (Rejection Note)</td>
             <td style="padding: 8px; border: 1px solid #ddd;">${close_note || "-"
         }</td>
           </tr>
@@ -4417,13 +4419,14 @@ export default function Complaint() {
         })
         .join("<br/>") || "-";
 
+
     const emailBodyHtml = `
       <div style="font-family: Arial, sans-serif; color: #333;">
         <p>
         เรียน หัวหน้าฝ่าย${email_respondent_department_name}
       </p>
       <p style="margin-top: 5px;">
-        แจ้งเตือนปัญหาข้อร้องเรียน มีรายละเอียดดังต่อไปนี้
+        แจ้งเตือนปัญหาข้อร้องเรียนของรายการ CAS Number : ${email_casNumber} มีรายละเอียดดังต่อไปนี้
       </p>
         <br />
         <h2 style="color: #ff9800; border-bottom: 2px solid #ff9800; padding-bottom: 10px;">
@@ -4651,7 +4654,7 @@ export default function Complaint() {
         เรียน ผู้จัดการโรงงาน (QMR)
       </p>
       <p style="margin-top: 5px;">
-        แจ้งเตือนปัญหาข้อร้องเรียน มีรายละเอียดดังต่อไปนี้
+        แจ้งเตือนปัญหาข้อร้องเรียนของรายการ CAS Number : ${email_casNumber} มีรายละเอียดดังต่อไปนี้
       </p>
         <br />
         <h2 style="color: #2196f3; border-bottom: 2px solid #2196f3; padding-bottom: 10px;">
@@ -4664,12 +4667,12 @@ export default function Complaint() {
       }</td>
           </tr>
            <tr>
-            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">หมายเหตุการอนุมัติ</td>
+            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">หมายเหตุการอนุมัติ (Approve Detail)</td>
             <td style="padding: 8px; border: 1px solid #ddd;">${approve_detail || "-"
       }</td>
           </tr>
           <tr>
-            <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">หมายเหตุเพิ่มเติม</td>
+            <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">หมายเหตุเพิ่มเติม (Approve Note)</td>
             <td style="padding: 8px; border: 1px solid #ddd;">${approve_note || "-"
       }</td>
           </tr>
@@ -4893,7 +4896,7 @@ export default function Complaint() {
         เรียน เจ้าหน้าที่ฝ่าย${email_request_department_name || "-"}
       </p>
       <p style="margin-top: 5px;">
-        แจ้งเตือนปัญหาข้อร้องเรียน มีรายละเอียดดังต่อไปนี้
+        แจ้งเตือนปัญหาข้อร้องเรียนของรายการ CAS Number : ${email_casNumber} มีรายละเอียดดังต่อไปนี้
       </p>
         <br />
         <h2 style="color: #2196f3; border-bottom: 2px solid #2196f3; padding-bottom: 10px;">
@@ -4906,12 +4909,12 @@ export default function Complaint() {
       }</td>
           </tr>
            <tr>
-            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">หมายเหตุการอนุมัติ</td>
+            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">หมายเหตุการอนุมัติ (Approve Detail)</td>
             <td style="padding: 8px; border: 1px solid #ddd;">${qcapprove_detail || "-"
       }</td>
           </tr>
           <tr>
-            <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">หมายเหตุเพิ่มเติม</td>
+            <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">หมายเหตุเพิ่มเติม (Approve Note)</td>
             <td style="padding: 8px; border: 1px solid #ddd;">${qcapprove_note || "-"
       }</td>
           </tr>
@@ -5061,16 +5064,6 @@ export default function Complaint() {
       handleClose();
       ComplaintGet();
     }
-  };
-
-  const handleOnclickMenuSync = () => {
-    // if (isCallFuncLogOn)
-    //   console.log(
-    //     "🕑 ",
-    //     dayjs().format("HH:mm:ss.SSS"),
-    //     " [Calling Function]  :  handleOnclickMenuSync"
-    //   );
-    // setOpenSync(true);
   };
 
   const handleOnclickComplaintAdd = () => {
@@ -5338,17 +5331,17 @@ export default function Complaint() {
     //     " [Calling Function]  :  CloseAdd"
     //   );
 
-    // if (
-    //   follow_up_date &&
-    //   dayjs().startOf("day").isBefore(dayjs(follow_up_date).startOf("day"))
-    // ) {
-    //   FullSweetalert({
-    //     title: "แจ้งเตือน",
-    //     text: "ยังไม่ถึงวันที่ตรวจติดตามผล ไม่สามารถปิดรายการได้",
-    //     icon: "warning",
-    //   });
-    //   return;
-    // }
+    if (
+      follow_up_date &&
+      dayjs().startOf("day").isBefore(dayjs(follow_up_date).startOf("day"))
+    ) {
+      FullSweetalert({
+        title: "แจ้งเตือน",
+        text: "ยังไม่ถึงวันที่ตรวจติดตามผล ไม่สามารถปิดรายการได้",
+        icon: "warning",
+      });
+      return;
+    }
 
     const tempComplaintStatus = await LovAll_Get(
       "complaint_status",
@@ -5380,32 +5373,32 @@ export default function Complaint() {
         แจ้งเตือนการปิดปัญหาข้อร้องเรียน มีรายละเอียดดังต่อไปนี้
       </p>
         <br />
-        <h2 style="color: #2196f3; border-bottom: 2px solid #2196f3; padding-bottom: 10px;">
-          รายละเอียดการอนุมัติ (Approval Details)
+        <h2 style="color: #5a5a5aff; border-bottom: 2px solid #5a5a5aff; padding-bottom: 10px;">
+          รายละเอียดการปิดรายการ (Close Details)
         </h2>
         <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
           <tr>
-            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">Approve หัวหน้าส่วน (Section Approve)</td>
+            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">ผลการตรวจติดตาม (Follow up)</td>
             <td style="padding: 8px; border: 1px solid #ddd;">${approveDisplayText || "-"
       }</td>
           </tr>
            <tr>
-            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">หมายเหตุการอนุมัติ</td>
+            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">หมายเหตุการปิดรายการ (Close Detail)</td>
             <td style="padding: 8px; border: 1px solid #ddd;">${close_detail || "-"
       }</td>
           </tr>
           <tr>
-            <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">หมายเหตุเพิ่มเติม</td>
+            <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">หมายเหตุเพิ่มเติม (Close Note)</td>
             <td style="padding: 8px; border: 1px solid #ddd;">${close_note || "-"
       }</td>
           </tr>
         </table> 
         <h2 style="color: #64c768ff; border-bottom: 2px solid #64c768ff; padding-bottom: 10px;">
-          ข้อมูลผู้รับรอง (Section Head)
+          ข้อมูลผู้ปิดรายการ
         </h2>
         <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
           <tr>
-            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">ชื่อผู้อนุมัติ (Approved by)</td>
+            <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">ชื่อผู้ปิดรายการ (Closed by)</td>
             <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_fname_th
         ? user[0]?.employee_fname_th +
         " " +
