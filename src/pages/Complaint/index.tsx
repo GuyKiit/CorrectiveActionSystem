@@ -5814,19 +5814,38 @@ export default function Complaint() {
                   if (fileResponse && fileResponse.status === "success" && Array.isArray(fileResponse.data)) {
                     console.log("🐛 DEBUG files fetched:", fileResponse.data);
 
-                    // Map to ComplaintFile structure with mock File object
-                    const mappedFiles = fileResponse.data.map((file: any) => ({
-                      file: {
-                        name: file.user_file_name || "unknown",
-                        size: Number(file.file_size) || 0,
-                        type: file.file_type || "",
-                      } as File,
-                      attachmentType: file.complaint_at_id,
-                      otherText: file.other,
-                      original_file_name: file.user_file_name,
-                      img_url: file.img_url,
-                      full_path: file.full_path,
-                      id: file.id
+                    // Map to ComplaintFile structure with real File object (fetch blob)
+                    const mappedFiles = await Promise.all(fileResponse.data.map(async (file: any) => {
+                      let fileObj: File;
+                      try {
+                        // Try to fetch the file content
+                        const fetchUrl = file.full_path || file.img_url;
+                        if (fetchUrl) {
+                          const res = await fetch(fetchUrl);
+                          const blob = await res.blob();
+                          fileObj = new File([blob], file.user_file_name || "unknown", { type: file.file_type || blob.type });
+                        } else {
+                          throw new Error("No URL found");
+                        }
+                      } catch (err) {
+                        console.error("Error fetching file content for previous explain:", err);
+                        // Fallback to mock object (will not upload content but prevents crash)
+                        fileObj = {
+                          name: file.user_file_name || "unknown",
+                          size: Number(file.file_size) || 0,
+                          type: file.file_type || "",
+                        } as File;
+                      }
+
+                      return {
+                        file: fileObj,
+                        attachmentType: file.complaint_at_id,
+                        otherText: file.other,
+                        original_file_name: file.user_file_name,
+                        img_url: file.img_url,
+                        full_path: file.full_path,
+                        id: file.id
+                      };
                     }));
 
                     setPrevExplainFiles(mappedFiles);
