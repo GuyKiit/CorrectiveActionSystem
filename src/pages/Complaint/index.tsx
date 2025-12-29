@@ -314,7 +314,7 @@ export default function Complaint() {
     explainList,
     approveList,
     dataTooluseValue,
-    dataTooluse_Combobox,
+    dataToolUse_Combobox,
     ToolOther,
 
     dataDecisionValue,
@@ -477,8 +477,11 @@ export default function Complaint() {
     setdataDecision_Combobox,
     setdataApprove_Combobox,
     setdataDecision,
+    setDecisionOther,
     setresponsible_date,
+    setdataToolUseValue,
     setfollow_up_date,
+    setdataDecisionValue,
 
     setdataset_stepcomplaint,
     setdataset_complaintAction,
@@ -587,6 +590,8 @@ export default function Complaint() {
     string | null
   >(null);
   const [action, setAction] = React.useState("");
+
+  const [prevExplainFiles, setPrevExplainFiles] = React.useState<any[]>([]);
 
   // const [openSync, setOpenSync] = React.useState(false);
   // const [statusMode, setstatusMode] = React.useState([]);
@@ -4381,17 +4386,12 @@ export default function Complaint() {
     const email_casNumber = dataelement?.cas_number || "-";
     const email_priority_id =
       dataelement?.priority_level?.lov2 || dataelement?.datapriority?.lov2;
-    const email_responseDate = safeFormatDate(dataelement?.respond_date_within);
-    const email_lotNo = dataelement?.lot_no || "-";
-    const email_detectionDate = safeFormatDate(dataelement?.date_of_detection);
     const email_deptName =
       dataset_department?.find(
         (x: any) => x.department_id == dataelement?.respondent_department_id
       )?.department_name ||
       dataelement?.respondent_department_name ||
       "-";
-    const email_productName = dataelement?.product_name || "-";
-    const email_detail = dataelement?.detail || "-";
     const email_respondent_department_name =
       dataset_department?.find(
         (x: any) => x.department_id == dataelement?.respondent_department_id
@@ -4540,7 +4540,8 @@ export default function Complaint() {
         // ✅ สร้าง payload สำหรับอัปเดตสถานะ Complaint
         const complaintEditPayload = {
           complaintModel: {
-            id: dataelement?.id,
+            // id: dataelement?.id,
+            id: complaintRootId,
             mode: "EXPLAIN",
             complaint_status_id: tempComplaintStatus[2]?.id,
           },
@@ -5604,7 +5605,41 @@ export default function Complaint() {
     setOpenReadApproveQC(true); // แล้วค่อยเปิด Dialog
   };
 
-  const handleOnclickExplainAdd = (data: any) => {
+  // const handleOnclickExplainAdd = (data: any) => {
+  //   // if (isCallFuncLogOn)
+  //   //   console.log(
+  //   //     "🕑 ",
+  //   //     dayjs().format("HH:mm:ss.SSS"),
+  //   //     " [Calling Function]  :  handleOnclickExplainAdd"
+  //   //   );
+
+  //   resetForm();
+  //   setroot_cause("");
+  //   setobservation_analysis("");
+  //   setcorrective_action("");
+  //   setpreventive_action_plan("");
+  //   setdataToolUse([]);
+  //   setToolOther("");
+  //   setresponsible_date(null);
+  //   setfollow_up_date(null);
+
+  //   setresponsible_date(dayjs()); // ตั้งค่าวันที่ชี้แจงเป็นวันปัจจุบัน
+
+  //   // ✅ Save current complaint data before opening Explain Add
+  //   if (dataelement) {
+  //     setComplaintMainData(dataelement);
+  //   }
+
+  //   setOpenExplainAdd(true);
+  //   // ใช้ข้อมูลที่ส่งมาจากหน้า Explain รายละเอียด
+  //   if (data) {
+  //     setdataelement(data);
+  //   } else {
+  //     setdataelement(null);
+  //   }
+  // };
+
+  const handleOnclickExplainAdd = async (data: any) => {
     // if (isCallFuncLogOn)
     //   console.log(
     //     "🕑 ",
@@ -5621,23 +5656,213 @@ export default function Complaint() {
     setToolOther("");
     setresponsible_date(null);
     setfollow_up_date(null);
+    setPrevExplainFiles([]);
 
-    setresponsible_date(dayjs()); // ตั้งค่าวันที่ชี้แจงเป็นวันปัจจุบัน
+    // ตั้งค่าวันที่ชี้แจงเป็นวันปัจจุบัน
+    setresponsible_date(dayjs());
 
     // ✅ Save current complaint data before opening Explain Add
     if (dataelement) {
       setComplaintMainData(dataelement);
     }
 
+    let latestExplainData: any = {};
+
+    // ถ้ามี data ส่งมา ให้ใช้ data.id ในการดึงข้อมูล explain เก่า
+    if (data && data.id) {
+      try {
+        const dataset = {
+          complaint_id: data.id,
+          CurrentAccessModel: getCurrentAccessObject(
+            employeeUsername,
+            employeeDomain,
+            screenName
+          ),
+        };
+        // เรียก API เพื่อดึง explain list ของ complaint นี้
+        let response = await _POST(dataset, "/Explain/ExplainGet");
+
+        if (response && response.status === "success" && Array.isArray(response.data)) {
+          // หา explain ล่าสุด (เรียงตาม explain_seq หรือ timestamp ถ้ามี)
+          // สมมติว่า response.data เรียงมาแล้ว หรือเราหาตัวที่มี seq มากสุด
+          const explains = response.data;
+
+          if (explains.length > 0) {
+            // หา max seq
+            const latestExplain = explains.reduce((prev: any, current: any) => {
+              return (Number(prev.explain_seq) > Number(current.explain_seq)) ? prev : current
+            });
+
+            // Pre-populate ข้อมูลจาก latestExplain
+            if (latestExplain) {
+              latestExplainData = latestExplain; // Store for merging later
+
+              setroot_cause(latestExplain.root_cause || "");
+              setobservation_analysis(latestExplain.observation_analysis || "");
+              setcorrective_action(latestExplain.corrective_action || "");
+              setpreventive_action_plan(latestExplain.preventive_action_plan || "");
+
+              if (latestExplain.follow_up_date) {
+                setfollow_up_date(dayjs(latestExplain.follow_up_date));
+              }
+
+              // ---------------- Map Tools Used ----------------
+              if (latestExplain.explainTu && Array.isArray(latestExplain.explainTu)) {
+                const matchedTools: any[] = [];
+                let otherTextValue = "";
+
+                latestExplain.explainTu.forEach((item: any) => {
+                  // Match by explain_tu_id (which seems to be the tool code like "TRR_TU_2")
+                  // or tool_id, lov_id.
+                  // Based on logs: item.explain_tu_id is "TRR_TU_2".
+                  // We need to check against Combobox items.
+
+                  const itemId = item.explain_tu_id || item.tool_id || item.lov_id || item.id;
+
+                  const found = dataToolUse_Combobox?.find((opt: any) =>
+                    String(opt.id) === String(itemId) ||
+                    String(opt.lov_code) === String(itemId) ||
+                    (item.tool_code && String(opt.lov_code) === String(item.tool_code))
+                  );
+
+                  if (found) {
+                    // Avoid duplicates
+                    if (!matchedTools.some(t => t.id === found.id)) {
+                      matchedTools.push(found);
+                    }
+                    // Check Other
+                    if (found.lov2 === "Y" && item.other) {
+                      otherTextValue = item.other;
+                    }
+                  }
+                });
+
+                if (matchedTools.length > 0) {
+                  setdataToolUse(matchedTools);
+
+                  // ✅ Also populate dataToolUseValue for validation
+                  const reducedArray = matchedTools.map((t) => ({
+                    explain_tu_id: t.id,
+                    label: t.lov1,
+                    isOther: t.lov2,
+                  }));
+                  setdataToolUseValue(reducedArray);
+                }
+                if (otherTextValue) {
+                  setToolOther(otherTextValue);
+                }
+              }
+
+              // ---------------- Map Decision on Disposition ----------------
+              if (latestExplain.explainDd && Array.isArray(latestExplain.explainDd)) {
+                console.log("🐛 Debug explainDd:", JSON.stringify(latestExplain.explainDd, null, 2));
+                console.log("🐛 Debug dataDecision_Combobox:", JSON.stringify(dataDecision_Combobox, null, 2));
+
+                const matchedDecisions: any[] = [];
+                let decisionOtherText = "";
+
+                latestExplain.explainDd.forEach((item: any) => {
+                  // Match by ID
+                  const itemId = item.explain_dd_id || item.decision_id || item.lov_id || item.id;
+                  console.log("🐛 Debug Processing Decision item:", JSON.stringify(item), "itemId:", itemId);
+
+                  const found = dataDecision_Combobox?.find((opt: any) =>
+                    String(opt.id) === String(itemId) ||
+                    String(opt.lov_code) === String(itemId) ||
+                    (item.decision_code && String(opt.lov_code) === String(item.decision_code))
+                  );
+
+                  if (found) {
+                    console.log("🐛 Debug Found Decision match:", found);
+                    if (!matchedDecisions.some(d => d.id === found.id)) {
+                      matchedDecisions.push(found);
+                    }
+                    // Check Other
+                    if (found.lov2 === "Y" && item.other) {
+                      decisionOtherText = item.other;
+                    }
+                  } else {
+                    console.log("🐛 Debug No Decision match found for:", itemId);
+                  }
+                });
+
+                if (matchedDecisions.length > 0) {
+                  setdataDecision(matchedDecisions);
+
+                  // ✅ Also populate dataDecisionValue for validation
+                  const reducedArray = matchedDecisions.map((dd) => ({
+                    explain_dd_id: dd.id,
+                    label: dd.lov1,
+                    isOther: dd.lov2,
+                  }));
+                  setdataDecisionValue(reducedArray);
+                }
+                if (decisionOtherText) {
+                  setDecisionOther(decisionOtherText);
+                }
+              }
+
+              // ---------------- Map Files (Fetch from API & Merge to Editable List) ----------------
+              if (latestExplain.id) {
+                try {
+                  console.log("🐛 DEBUG fetching files for explain_id:", latestExplain.id);
+                  const fileResponse = await _POST({
+                    explain_id: latestExplain.id,
+                    cf_type: "Explain"
+                  }, "/ComplaintFile/ComplaintFileGet");
+
+                  if (fileResponse && fileResponse.status === "success" && Array.isArray(fileResponse.data)) {
+                    console.log("🐛 DEBUG files fetched:", fileResponse.data);
+
+                    // Map to ComplaintFile structure with mock File object
+                    const mappedFiles = fileResponse.data.map((file: any) => ({
+                      file: {
+                        name: file.user_file_name || "unknown",
+                        size: Number(file.file_size) || 0,
+                        type: file.file_type || "",
+                      } as File,
+                      attachmentType: file.complaint_at_id,
+                      otherText: file.other,
+                      original_file_name: file.user_file_name,
+                      img_url: file.img_url,
+                      full_path: file.full_path,
+                      id: file.id
+                    }));
+
+                    setPrevExplainFiles(mappedFiles);
+                  } else {
+                    console.log("🐛 DEBUG no files found from API");
+                    setPrevExplainFiles([]);
+                  }
+                } catch (err) {
+                  console.error("🐛 DEBUG error fetching files:", err);
+                  setPrevExplainFiles([]);
+                }
+              }
+            }
+          }
+        }
+      } catch (e) {
+        console.error("Error pre-populating explain data:", e);
+      }
+    }
+
+
     setOpenExplainAdd(true);
     // ใช้ข้อมูลที่ส่งมาจากหน้า Explain รายละเอียด
     if (data) {
-      setdataelement(data);
+      // ✅ Merge data but ensure Complaint ID (id) is preserved and not overwritten by explain data
+      // We also set complaint_id to data.id to be safe for getting logic
+      setdataelement({
+        ...data,
+        ...latestExplainData,
+        id: data.id,
+        complaint_id: data.id
+      });
     } else {
       setdataelement(null);
     }
   };
-
   const handleOnclickExplainView = async (explainData: any, name: string) => {
     // console.log("handleOnclickExplainView", handleOnclickExplainView);
 
@@ -7267,12 +7492,15 @@ export default function Complaint() {
               setDdOtherError(false);
             }}
             onDecisionOtherChange={(val) => {
+              setDecisionOther(val);
               setDdOtherError(false);
             }}
+
             onCorrectiveActionChange={(val) => {
               setcorrective_action(val);
               setCorrectiveActionError(false);
             }}
+            prevFiles={prevExplainFiles}
             onPreventiveActionPlanChange={(val) => {
               setpreventive_action_plan(val);
               setPreventiveActionPlanError(false);
