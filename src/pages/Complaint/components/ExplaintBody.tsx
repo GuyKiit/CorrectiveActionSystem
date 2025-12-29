@@ -330,6 +330,7 @@ export default function ExplaintBody({
     isApproveQcBoxHidden,
     isApproveCloseBoxHidden,
     dataset_configfile,
+    follow_up_date_condition,
 
     setcas_number,
     setdoc_date,
@@ -438,6 +439,7 @@ export default function ExplaintBody({
     setisApproveCloseBoxHidden,
     setdataset_configfile,
     setdataFuapp,
+    setfollow_up_date_condition
   } = useListComplaint();
  //⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐//
     // Utility Variables ======================================================
@@ -511,6 +513,8 @@ export default function ExplaintBody({
   const showPlaceholderclosedetail = isActionCloseAdd && !close_detail;
   const showPlaceholderclosenote = isActionCloseAdd && !close_note;
   const isReturnPage = action === "CloseAdd" || action === "CloseHistory";
+
+  const isFollowUpDate = dataelement?.follow_up_date_condition === "1";
   //================================================================================================================================================//
   
   // ตั้งค่า isROOTHidden เป็น false เมื่ออยู่ในโหมดดูข้อมูล
@@ -919,7 +923,7 @@ export default function ExplaintBody({
   //===================================================================================================
 
   React.useEffect(() => {
-    //console.log("Step:02", action, dataelement);
+    console.log("Step:02",  dataelement);
     const updateData = async () => {
       // ================================
       // Map ค่า default ของ company
@@ -2033,7 +2037,7 @@ React.useEffect(() => {
                         }
                       }}
                       bgcolorTextField={isActionAdd ? false : true}
-                      readonly={!isActionExplainAdd}
+                      readonly={!isFollowUpDate}
                       Validate={validateText?.Follow_up_Date || false}
                       validateTextLable={
                         validateText?.Follow_up_Date

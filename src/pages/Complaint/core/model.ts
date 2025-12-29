@@ -207,6 +207,7 @@ export type ListComplaintContextProps = {
     isApproveScBoxHidden?: boolean
     isApproveQcBoxHidden?: boolean
     isApproveCloseBoxHidden?: boolean
+    follow_up_date_condition?: any
 
 
 
@@ -402,6 +403,7 @@ export type ListComplaintContextProps = {
     setisApproveScBoxHidden: Dispatch<SetStateAction<boolean | undefined>>
     setisApproveQcBoxHidden: Dispatch<SetStateAction<boolean>>
     setisApproveCloseBoxHidden: Dispatch<SetStateAction<boolean>>
+    setfollow_up_date_condition: Dispatch<SetStateAction<any>>
 };
 
 export const initialListComplaint: ListComplaintContextProps = {
@@ -601,4 +603,5 @@ export const initialListComplaint: ListComplaintContextProps = {
     setisApproveScBoxHidden: () => { },
     setisApproveQcBoxHidden: () => { },
     setisApproveCloseBoxHidden: () => { },
+    setfollow_up_date_condition: () => { },
 };

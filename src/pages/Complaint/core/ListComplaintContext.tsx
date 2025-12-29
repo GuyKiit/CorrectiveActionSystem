@@ -551,6 +551,9 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
     const [casuserdept, set_casuserdept] = useState<any>(
         initialListComplaint.casuserdept
     );
+    const [follow_up_date_condition, setfollow_up_date_condition] = useState<any>(
+        initialListComplaint.follow_up_date_condition
+    );
 
 
     return (
@@ -747,6 +750,8 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 setisApproveQcBoxHidden,
                 isApproveCloseBoxHidden,
                 setisApproveCloseBoxHidden,
+                follow_up_date_condition,
+                setfollow_up_date_condition,
 
 
 
