@@ -1746,7 +1746,7 @@ export default function ExplaintBody({
     //   currentSelected: (dataTooluse || []).length,
     // });
 
-    if (dataTooluse && dataTooluse.length > 0) return; // กัน loop
+    // if (dataTooluse && dataTooluse.length > 0) return; // กัน loop
 
     const rawTU = Array.isArray(dataelement?.ToolUse)
       ? dataelement.ToolUse
@@ -1784,7 +1784,7 @@ export default function ExplaintBody({
       Array.isArray(dataDecision_Combobox) && dataDecision_Combobox.length > 0;
     if (!isDecisionComboReady) return;
 
-    if (dataDecision && dataDecision.length > 0) return; // กัน loop
+    // if (dataDecision && dataDecision.length > 0) return; // กัน loop
 
     const rawDD = Array.isArray(dataelement?.Decision)
       ? dataelement.Decision
