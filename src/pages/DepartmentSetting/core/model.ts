@@ -57,6 +57,7 @@ export type ListDepartmentSettingContextProps = {
     datastatus?: any
     datastatusconfig?: any
     approveCard?: any
+    deptSetupList?: any
     
 
     company_search?: any
@@ -74,6 +75,7 @@ export type ListDepartmentSettingContextProps = {
     setdatastatus: Dispatch<SetStateAction<any>>;
     setdatastatusconfig: Dispatch<SetStateAction<any>>;
     setapproveCard: Dispatch<SetStateAction<any>>;
+    setDeptSetupList: Dispatch<SetStateAction<any>>;
     
 
     set_company_search: Dispatch<SetStateAction<any>>;
@@ -111,6 +113,7 @@ export const initialListDepartmentSetting: ListDepartmentSettingContextProps = {
     setdatastatus: () => { },
     setdatastatusconfig: () => { },
     setapproveCard: () => { },
+    setDeptSetupList: () => { },
     
 
     set_company_search: () => { },

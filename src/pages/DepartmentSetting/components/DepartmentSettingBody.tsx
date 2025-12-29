@@ -185,6 +185,7 @@ export default function DepartmentSettingBody({
         qcApprove,
         dept_company,
         dept_domain,
+        deptSetupList,
 
         setdataelement,
         setdept_id,
@@ -194,6 +195,7 @@ export default function DepartmentSettingBody({
         setstep,
         setsectionApprove,
         setqcApprove,
+        setDeptSetupList,
 
         setdept_company,
         setdept_domain,
@@ -252,6 +254,7 @@ export default function DepartmentSettingBody({
     const [request_department_id, setrequest_department_id] = React.useState<{ itasset_department_id: number; itasset_department_name: string; } | null>(null);
     const [dataDecision, setdataDecision] = useState<LovType[]>([]);
     const [approveStates, setApproveStates] = useState<Record<string, any>>({});
+
     // const [dept_domain, setdept_domain] = useState<any>(null);
     // const [sectionApprove, setsectionApprove] = useState<any>(null);
     // const [qcApprove, setqcApprove] = useState<any>(null);
@@ -350,6 +353,7 @@ export default function DepartmentSettingBody({
     // ============================
     // 1️⃣ UseEffect สำหรับ Map ค่าเริ่มต้น
     // ============================
+    
     React.useEffect(() => {
         const mapInitialValues = async () => {
             try {
@@ -447,7 +451,7 @@ export default function DepartmentSettingBody({
         InitialValuesCompanyandDomain();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-
+    
 
 
     // ============================
