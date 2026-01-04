@@ -1130,6 +1130,11 @@ export default function ComplaintBody({
         acknowledge_position: user[0]?.employee_position,
         acknowledge_email: user[0]?.employee_email,
         update_by: user[0]?.employee_username,
+
+        request_company_id : data.request_company_id,
+        request_domain_id: data.request_domain_id,
+        request_department_id: data.request_department_id,
+
       },
       emailBody: emailBodyHtml,
       emailSubject: emailSubject
