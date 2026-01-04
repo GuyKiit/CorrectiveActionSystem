@@ -448,7 +448,7 @@ export default function DepartmentSetting() {
         setdatastatus?.(grouped["complaint_status"] || []);
 
         //console.log('⚠️⚠️⚠️⚠️ [grouped["active_company"]] :', grouped["active_company"])
-        console.log('⚠️⚠️⚠️⚠️ [grouped["role_profile"]] :', grouped["role_profile"])
+        // console.log('⚠️⚠️⚠️⚠️ [grouped["role_profile"]] :', grouped["role_profile"])
         //console.log('⚠️⚠️⚠️⚠️ [grouped["complaint_status"]] :', grouped["complaint_status"])
 
 
@@ -660,12 +660,12 @@ export default function DepartmentSetting() {
       let response = await _POST(dataset, "/DeptSetup/DeptSetupGet");
       // console.log("step:2 ผลลัพธ์ที่ได้จาก API /DeptSetup/DeptSetupGet ", response);
       if (response && response.status === "success") {
-
+        
         setIsLoadingScreen(false);
         const responseData: any = [];
         if (Array.isArray(response.data)) {
           response.data.forEach((el: any) => {
-            console.log("#################el", el);
+            // console.log("#################el", el);
 
             const ACTION = (
               <ActionManageCell
@@ -1290,6 +1290,7 @@ export default function DepartmentSetting() {
               setdept_email(val);
               setEmailAreaError(false);
             }}
+            existingData={datalist}
           />
 
 
@@ -1338,7 +1339,7 @@ export default function DepartmentSetting() {
             setdept_email(val);
             setEmailAreaError(false);
           }}
-
+          existingData={datalist}
         />}
       />
 

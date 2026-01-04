@@ -77,11 +77,11 @@ export default function OnlineUsers() {
 
       // console.log("🔍 [user_current_count] Response:", response);
 
-      response.data.forEach((data: any) => {
-        // console.log("🔍🔍🔍🔍🔍 [last_update] Response:", data.last_update);
-        // console.log("📧📧📧📧📧 [email] Response:", data.email);
-        // console.log("👤👤👤👤👤 [employee_url] Response:", data.employee_url);
-      });
+      // response.data.forEach((data: any) => {
+      //   // console.log("🔍🔍🔍🔍🔍 [last_update] Response:", data.last_update);
+      //   // console.log("📧📧📧📧📧 [email] Response:", data.email);
+      //   // console.log("👤👤👤👤👤 [employee_url] Response:", data.employee_url);
+      // });
 
       if (response && response.status === "Success") {
         // console.log("🍀🍀🍀🍀🍀🍀 CHECK [response] : ", response);
