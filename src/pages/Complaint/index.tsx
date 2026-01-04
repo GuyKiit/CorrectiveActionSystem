@@ -3526,7 +3526,14 @@ export default function Complaint() {
           id: dataelement?.id,
           return_from_status_id: tempComplaintStatus[1]?.id,
           complaint_status_id: tempComplaintStatus[0]?.id,
+          request_department_id: dataelement?.request_department_id,
+          request_company_id: dataelement?.request_company_id,
+          request_domain_id: dataelement?.request_domain_id,
           mode: "EXPLAIN",
+          
+          respondent_company_id: dataelement?.respondent_company_id,
+          respondent_domain_id: dataelement?.respondent_domain_id,
+          respondent_department_id: dataelement?.respondent_department_id,
         },
         CurrentAccessModel: getCurrentAccessObject(
           employeeUsername,
@@ -3716,6 +3723,10 @@ export default function Complaint() {
             : new Date().toISOString(),
           create_by: user[0]?.employee_username || "",
           domain_id: user[0]?.employee_domain || "",
+
+          respondent_company_id: dataelement?.respondent_company_id,
+          respondent_domain_id: dataelement?.respondent_domain_id,
+          respondent_department_id: dataelement?.respondent_department_id,
         },
         CurrentAccessModel: getCurrentAccessObject(
           employeeUsername,
@@ -3956,6 +3967,10 @@ export default function Complaint() {
             : new Date().toISOString(),
           create_by: user[0]?.employee_username || "",
           domain_id: user[0]?.employee_domain || "",
+
+          respondent_company_id: dataelement?.respondent_company_id,
+          respondent_domain_id: dataelement?.respondent_domain_id,
+          respondent_department_id: dataelement?.respondent_department_id,
         },
         CurrentAccessModel: getCurrentAccessObject(
           employeeUsername,
@@ -4176,6 +4191,10 @@ export default function Complaint() {
           complaint_status_id: tempComplaintStatus[1]?.id,
           close_status: approveSelectionCode,
           mode: mode,
+
+          respondent_company_id: dataelement?.respondent_company_id,
+          respondent_domain_id: dataelement?.respondent_domain_id,
+          respondent_department_id: dataelement?.respondent_department_id,
         },
         CurrentAccessModel: getCurrentAccessObject(
           employeeUsername,
