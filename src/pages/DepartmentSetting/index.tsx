@@ -179,7 +179,7 @@ export default function DepartmentSetting() {
     qcApprove,
     dept_company,
     dept_domain,
-
+    deptSetupList,
 
     // Setter Functions
     setdataelement,
@@ -193,6 +193,7 @@ export default function DepartmentSetting() {
     setqcApprove,
     setdept_company,
     setdept_domain,
+    setDeptSetupList,
 
     //----------dataset---------
     // company_search, set_company_search,
