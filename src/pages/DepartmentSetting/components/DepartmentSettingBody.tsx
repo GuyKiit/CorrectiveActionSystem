@@ -112,6 +112,7 @@ interface DepartmentSettingBody {
     onEmailAreaChange?: (val: any) => void;
     onSectionAreaChange?: (val: any) => void;
     onQcAreaChange?: (val: any) => void;
+    existingData?: any[];
 }
 
 type LovType = {
@@ -153,6 +154,7 @@ export default function DepartmentSettingBody({
     onEmailAreaChange,
     onSectionAreaChange,
     onQcAreaChange,
+    existingData,
 }: DepartmentSettingBody) {
     const isActionRead = action === "Read" || action === "ExplainRead";
     const isActionAdd = action === "Add";
@@ -185,6 +187,7 @@ export default function DepartmentSettingBody({
         qcApprove,
         dept_company,
         dept_domain,
+        deptSetupList,
 
         setdataelement,
         setdept_id,
@@ -194,6 +197,7 @@ export default function DepartmentSettingBody({
         setstep,
         setsectionApprove,
         setqcApprove,
+        setDeptSetupList,
 
         setdept_company,
         setdept_domain,
@@ -252,6 +256,7 @@ export default function DepartmentSettingBody({
     const [request_department_id, setrequest_department_id] = React.useState<{ itasset_department_id: number; itasset_department_name: string; } | null>(null);
     const [dataDecision, setdataDecision] = useState<LovType[]>([]);
     const [approveStates, setApproveStates] = useState<Record<string, any>>({});
+
     // const [dept_domain, setdept_domain] = useState<any>(null);
     // const [sectionApprove, setsectionApprove] = useState<any>(null);
     // const [qcApprove, setqcApprove] = useState<any>(null);
@@ -350,6 +355,7 @@ export default function DepartmentSettingBody({
     // ============================
     // 1️⃣ UseEffect สำหรับ Map ค่าเริ่มต้น
     // ============================
+    
     React.useEffect(() => {
         const mapInitialValues = async () => {
             try {
@@ -447,7 +453,7 @@ export default function DepartmentSettingBody({
         InitialValuesCompanyandDomain();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-
+    
 
 
     // ============================
@@ -696,6 +702,7 @@ export default function DepartmentSettingBody({
                                 options={department}
                                 column="department_name"
                                 setvalue={(val) => {
+                                    // console.log("🚀 handleDepartmentChange=", val);
                                     handleDepartmentChange(val);
                                     setdomain_dept_id(val);
                                     if (onDepartmentAreaChange) {
@@ -712,6 +719,25 @@ export default function DepartmentSettingBody({
                                         ? "กรุณาเลือกแผนก (Department)"
                                         : ""
                                 }
+                                getOptionDisabled={(option: any) => {
+                                    if (!existingData || !dept_company || !dept_domain) return false;
+                                    
+                                    // Check if this option matches any existing entry
+                                    const isDuplicate = existingData.some((item: any) => {
+                                        // Skip checking against itself if editing
+                                        if (isActionEdit && dataelement && item.id === dataelement.id) {
+                                            return false;
+                                        }
+
+                                        return (
+                                            String(item.company_id) === String(dept_company.company_id) &&
+                                            String(item.domain_id) === String(dept_domain.domain_id) &&
+                                            String(item.domain_dept_id) === String(option.domain_dept_id)
+                                        );
+                                    });
+                                    
+                                    return isDuplicate;
+                                }}
                             />
                         </Grid>
                         <Grid size={12}>
@@ -729,11 +755,14 @@ export default function DepartmentSettingBody({
                                 readonly={isActionRead || isActionDelete}
                                 Validate={validateText?.Email_Area || false}
                                 validateTextLable={
-                                    validateText?.Email_Area
+                                validateText?.Email_Area
                                         ? "กรุณากรอกรายละเอียด (Email)"
                                         : ""
                                 }
                             />
+                            <Typography variant="caption" color="textSecondary" sx={{ mt: 0.5, display: 'block' }}>
+                                กรุณากรอกอีเมลที่ต้องการให้มีการส่งอีเมลแจ้งเตือน ยกตัวอย่างเช่น test1@trrgroup.com (ในกรณีที่มีหลายอีเมล กรุณาใช้ , ในการแบ่งอีเมล เช่น test1@trrgroup.com,test2@trrgroup.com,test3@trrgroup.com)
+                            </Typography>
                         </Grid>
                     </Grid>
                 </Paper>

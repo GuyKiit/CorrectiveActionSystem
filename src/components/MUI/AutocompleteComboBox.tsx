@@ -23,6 +23,7 @@ interface AutocompleteComboBox {
   id?: string;
   shouldFocusError?: boolean;
   submitCount?: number;
+  getOptionDisabled?: (option: any) => boolean;
 }
 
 export default function AutocompleteComboBox(props: AutocompleteComboBox) {
@@ -90,6 +91,7 @@ export default function AutocompleteComboBox(props: AutocompleteComboBox) {
         )}
         onChange={handleOnchange}
         disabled={disabled}
+        getOptionDisabled={props.getOptionDisabled}
         readOnly={readonly}
         renderInput={(params) => (
           <TextField
