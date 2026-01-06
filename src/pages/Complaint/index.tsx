@@ -3539,7 +3539,7 @@ export default function Complaint() {
           request_company_id: dataelement?.request_company_id,
           request_domain_id: dataelement?.request_domain_id,
           mode: "EXPLAIN",
-          
+
           respondent_company_id: dataelement?.respondent_company_id,
           respondent_domain_id: dataelement?.respondent_domain_id,
           respondent_department_id: dataelement?.respondent_department_id,
@@ -5352,7 +5352,7 @@ export default function Complaint() {
   };
 
   // --------------------- CLOSE ---------------------//
-  const handleOnclickComplainClose = (data: any, name: string) => {
+  const handleOnclickComplainClose = async (data: any, name: string) => {
     //READ
     setAction(name);
     // if (isCallFuncLogOn)
@@ -5363,9 +5363,13 @@ export default function Complaint() {
     //   );
 
     resetForm();
-    Complaint_Get(data);
-    setOpenComplainClose(true);
     setdataelement(data);
+    const fullData = await Complaint_Get(data);
+    if (fullData) {
+      setComplaintMainData(fullData);
+      setdataelement(fullData);
+    }
+    setOpenComplainClose(true);
   };
 
   const CloseAdd = async () => {
@@ -5399,6 +5403,24 @@ export default function Complaint() {
     const resolveExplainId = () => {
       return currentExplainForApproval?.id;
     };
+
+    const email_respondent_department_name =
+      dataelement?.respondent_department_name ||
+      complaintMainData?.respondent_department_name ||
+      dataset_department?.find(
+        (x: any) =>
+          x.department_id == dataelement?.respondent_department_id ||
+          x.department_id == complaintMainData?.respondent_department_id
+      )?.department_name ||
+      dataset_department_respondent?.find(
+        (x: any) =>
+          x.department_id == dataelement?.respondent_department_id ||
+          x.department_id == complaintMainData?.respondent_department_id
+      )?.department_name ||
+      dataelement?.respondent_department_id ||
+      complaintMainData?.respondent_department_id ||
+      "-";
+
     // หา display text สำหรับ email
     const selectedApproveItem = (dataApprove_Combobox || []).find(
       (item: any) => item.lov_code === approveSelectionCode
@@ -5414,7 +5436,7 @@ export default function Complaint() {
     const emailBodyHtml = `
       <div style="font-family: Arial, sans-serif; color: #333;">
         <p>
-        เรียน Document Control
+        เรียน เจ้าหน้าที่ฝ่าย${email_respondent_department_name || "-"}
       </p>
       <p style="margin-top: 5px;">
         แจ้งเตือนการปิดปัญหาข้อร้องเรียน มีรายละเอียดดังต่อไปนี้
@@ -5502,6 +5524,16 @@ export default function Complaint() {
         close_status: approveSelectionCode,
         close_detail: close_detail || null,
         close_note: close_note || null,
+
+        respondent_company_id:
+          dataelement?.respondent_company_id ||
+          complaintMainData?.respondent_company_id,
+        respondent_domain_id:
+          dataelement?.respondent_domain_id ||
+          complaintMainData?.respondent_domain_id,
+        respondent_department_id:
+          dataelement?.respondent_department_id ||
+          complaintMainData?.respondent_department_id,
       },
       CurrentAccessModel: getCurrentAccessObject(
         employeeUsername,
