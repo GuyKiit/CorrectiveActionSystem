@@ -142,7 +142,7 @@ export const Department_Setting_headCells = [
     },
     {
         columnName: 'dept_email',
-        numeric: 'center',
+        numeric: 'Left',
         disablePadding: true,
         label: 'อีเมล',
         colWidth: 150

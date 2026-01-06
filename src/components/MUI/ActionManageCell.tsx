@@ -32,6 +32,7 @@ interface ActionManageCellProps {
   hiddenDepartmentView?: boolean;
   hiddenDepartmentEdit?: boolean;
   hiddenDepartmentDelete?: boolean;
+  hiddenPrint?: boolean;
   role_id?: string;
   chack_data?: 'Cutoff_Row' | 'CencalCutoff' | undefined;
   hadleOnclickMenu?: (value: string) => void;
@@ -68,6 +69,7 @@ const ActionManageCell: React.FC<ActionManageCellProps> = (props) => {
     hiddenDepartmentView,
     hiddenDepartmentEdit,
     hiddenDepartmentDelete,
+    hiddenPrint,
     role_id,
   } = props;
   const { menuFuncData } = useAuth();
@@ -116,7 +118,8 @@ const ActionManageCell: React.FC<ActionManageCellProps> = (props) => {
         (funcName === "DepartmentAdd" && hiddenDepartmentAdd) ||    // DepartmentAdd
         (funcName === "DepartmentView" && hiddenDepartmentView) ||  // DepartmentView
         (funcName === "DepartmentEdit" && hiddenDepartmentEdit) ||  // DepartmentEdit
-        (funcName === "DepartmentDelete" && hiddenDepartmentDelete) // DepartmentDelete
+        (funcName === "DepartmentDelete" && hiddenDepartmentDelete) ||// DepartmentDelete
+        (funcName === "พิมพ์ (Print)" && hiddenPrint) // DepartmentDelete
       }
       // onMouseEnter={(e) => {
       //   if (hasSubMenu) {

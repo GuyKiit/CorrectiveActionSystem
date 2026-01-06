@@ -8,6 +8,7 @@ import Home from '../pages/Home'
 import PageComplaint from '../pages/Complaint/PageComplaint'
 import DepartmentSetting from '../pages/DepartmentSetting'
 import { ListDepartmentSettingProvider } from '../pages/DepartmentSetting/core/ListDepartmentSettingContext'
+import ReportTreeView from '../pages/Report/ReportTreeView'
 
 
 /**
@@ -31,7 +32,7 @@ export default function AppRoutes() {
           <Route element={<ProtectedRoute />}>
             {/* <Route path='home' element={<Home />} /> */}
             <Route path='complaint' element={<PageComplaint/>} />
-            <Route path='report' element={<Report/>} />
+            <Route path='report' element={<ReportTreeView/>} />
             <Route path='departmentsetting' element={
               <ListDepartmentSettingProvider>
                 <DepartmentSetting/>

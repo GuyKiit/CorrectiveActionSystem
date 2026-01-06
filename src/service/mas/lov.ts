@@ -219,32 +219,43 @@ export async function mas_DepartmentGet_Complaint(value: any, setdataset_departm
 
 // Function - Get Username Domain
 
-// export async function mas_UsernameGet(value: any, set_username: (data: any) => void, isCallFuncLogOn: boolean) {
-//   if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  CasUsernameGet");
+export async function mas_UsernameGet(value: any, setUsernameOptions: (data: any) => void, isCallFuncLogOn: boolean) {
+  if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  CasUsernameGet");
 
-//   try {
-//     const dataset = {
-//       domain_id: value.domain_id,
-//       company_id: value.company_id,
-//       // department_id: value.department_id,
-//     };
-//     const response = await _POST(
-//       dataset,
-//       "/Complaint/CasUsernameGet"
-//     );
-//     if (response && response.status === "success") {
-//       console.log(
-//         "❇️ Call [Complaint/CasUsernameGet] -> CasUsernameGet :",
-//         response.data
-//       );
+  try {
+    const dataset = {
+      domain_id: value.domain_id,
+      company_id: value.company_id,
+      department_id: value.department_id,
+    };
+    const response = await _POST(
+      dataset,
+      "/Complaint/CasUsernameGet"
+    );
+    if (response && response.status === "success") {
+      console.log(
+        "❇️ Call [Complaint/CasUsernameGet] -> CasUsernameGet :",
+        response.data
+      );
+// ⭐ map field ให้ CustomMultiSelect รู้จัก
+      const mapped = (response.data ?? []).map((u: any) => ({
+        ...u,
+        id: String(u.employee_id),
+        label: `${u.employee_username} (${u.employee_email})`,  // ⭐ สำคัญมาก
+        value: `${u.employee_username} (${u.employee_email})`,  // (ถ้า component ใช้)
+      }));
 
-//       set_username(response.data);
+      setUsernameOptions(mapped);
+    } else {
+      setUsernameOptions([]);
+    }
 
-//     }
-//   } catch (e) {
-//     console.log("error:", e);
-//   }
-// };
+    
+  } catch (e) {
+    console.log("error:", e);
+    setUsernameOptions([]);
+  }
+};
 
 
 export async function mas_UsernameGetAll(setmaster_user: (data: any) => void, isCallFuncLogOn: boolean) {

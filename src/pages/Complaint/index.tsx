@@ -2820,6 +2820,9 @@ export default function Complaint() {
       <p style="margin-top: 5px;">
         แจ้งเตือนปัญหาข้อร้องเรียนของรายการ CAS Number : CAS_NUMBER มีรายละเอียดดังต่อไปนี้
       </p>
+      <b style="margin-top: 5px;">
+        ** หากต้องการติดตามรายการข้อร้องเรียน สามารถติดตามได้ผ่านระบบ <a href="http://intranet.trrgroup.com/cas"style="color:#0b5ed7; text-decoration:underline;">[CAS] Corrective Action System </a>** 
+      </b>
         <br />
         <h2 style="color: #d32f2f; border-bottom: 2px solid #d32f2f; padding-bottom: 10px;">
           แผนกผู้ถูกร้องเรียน (Respondent Department)
@@ -3072,6 +3075,9 @@ export default function Complaint() {
         แจ้งเตือนปัญหาข้อร้องเรียนของรายการ CAS Number : ${email_casNumber} มีรายละเอียดดังต่อไปนี้
       </p>
         <br />
+        <b style="margin-top: 5px;">
+        ** หากต้องการติดตามรายการข้อร้องเรียน สามารถติดตามได้ผ่านระบบ <a href="http://intranet.trrgroup.com/cas">[CAS] Corrective Action System </a>** 
+        </b>
         <h2 style="color: #d32f2f; border-bottom: 2px solid #d32f2f; padding-bottom: 10px;">
           แผนกผู้ถูกร้องเรียน (Respondent Department)
         </h2>
@@ -3477,6 +3483,9 @@ export default function Complaint() {
       <p style="margin-top: 5px;">
         เรียนมาเพื่อทราบ เพื่อพิจารณายกเลิก หรือ แก้ไข
       </p>
+      <b style="margin-top: 5px;">
+        ** หากต้องการติดตามรายการข้อร้องเรียน สามารถติดตามได้ผ่านระบบ <a href="http://intranet.trrgroup.com/cas"style="color:#0b5ed7; text-decoration:underline;">[CAS] Corrective Action System </a>** 
+      </b>
         <br />
         <h2 style="color: #2196f3; border-bottom: 2px solid #2196f3; padding-bottom: 10px;">
           ผู้ทำการส่งกลับ (Return by)
@@ -3633,6 +3642,9 @@ export default function Complaint() {
       <p style="margin-top: 5px;">
         เรียนมาเพื่อทราบ เพื่อพิจารณายกเลิก หรือ แก้ไข
       </p>
+      <b style="margin-top: 5px;">
+        ** หากต้องการติดตามรายการข้อร้องเรียน สามารถติดตามได้ผ่านระบบ <a href="http://intranet.trrgroup.com/cas"style="color:#0b5ed7; text-decoration:underline;">[CAS] Corrective Action System </a>** 
+      </b>
         <br />
          <h2 style="color: #d32f2f; border-bottom: 2px solid #d32f2f; padding-bottom: 10px;">
           รายละเอียดการปฏิเสธ (Rejection Details)
@@ -3876,6 +3888,9 @@ export default function Complaint() {
       <p style="margin-top: 5px;">
         เรียนมาเพื่อทราบ เพื่อพิจารณายกเลิก หรือ แก้ไข
       </p>
+      <b style="margin-top: 5px;">
+        ** หากต้องการติดตามรายการข้อร้องเรียน สามารถติดตามได้ผ่านระบบ <a href="http://intranet.trrgroup.com/cas"style="color:#0b5ed7; text-decoration:underline;">[CAS] Corrective Action System </a>** 
+      </b>
         <br />
         <h2 style="color: #d32f2f; border-bottom: 2px solid #d32f2f; padding-bottom: 10px;">
           รายละเอียดการปฏิเสธ (Rejection Details)
@@ -4110,6 +4125,9 @@ export default function Complaint() {
       <p style="margin-top: 5px;">
         แจ้งเตือนปัญหาข้อร้องเรียนของรายการ CAS Number : ${email_casNumber} มีรายละเอียดดังต่อไปนี้
       </p>
+      <b style="margin-top: 5px;">
+        ** หากต้องการติดตามรายการข้อร้องเรียน สามารถติดตามได้ผ่านระบบ <a href="http://intranet.trrgroup.com/cas"style="color:#0b5ed7; text-decoration:underline;">[CAS] Corrective Action System </a>** 
+      </b>
         <br />
         <h2 style="color: #d32f2f; border-bottom: 2px solid #d32f2f; padding-bottom: 10px;">
           รายละเอียดการปฏิเสธ (Rejection Details)
@@ -4447,6 +4465,9 @@ export default function Complaint() {
       <p style="margin-top: 5px;">
         แจ้งเตือนปัญหาข้อร้องเรียนของรายการ CAS Number : ${email_casNumber} มีรายละเอียดดังต่อไปนี้
       </p>
+      <b style="margin-top: 5px;">
+        ** หากต้องการติดตามรายการข้อร้องเรียน สามารถติดตามได้ผ่านระบบ <a href="http://intranet.trrgroup.com/cas"style="color:#0b5ed7; text-decoration:underline;">[CAS] Corrective Action System </a>** 
+      </b>
         <br />
         <h2 style="color: #ff9800; border-bottom: 2px solid #ff9800; padding-bottom: 10px;">
           รายละเอียดคำชี้แจง (Explain Details)
@@ -4676,6 +4697,9 @@ export default function Complaint() {
       <p style="margin-top: 5px;">
         แจ้งเตือนปัญหาข้อร้องเรียนของรายการ CAS Number : ${email_casNumber} มีรายละเอียดดังต่อไปนี้
       </p>
+      <b style="margin-top: 5px;">
+        ** หากต้องการติดตามรายการข้อร้องเรียน สามารถติดตามได้ผ่านระบบ <a href="http://intranet.trrgroup.com/cas"style="color:#0b5ed7; text-decoration:underline;">[CAS] Corrective Action System </a>** 
+      </b>
         <br />
         <h2 style="color: #2196f3; border-bottom: 2px solid #2196f3; padding-bottom: 10px;">
           รายละเอียดการอนุมัติ (Approval Details)
@@ -4918,6 +4942,9 @@ export default function Complaint() {
       <p style="margin-top: 5px;">
         แจ้งเตือนปัญหาข้อร้องเรียนของรายการ CAS Number : ${email_casNumber} มีรายละเอียดดังต่อไปนี้
       </p>
+      <b style="margin-top: 5px;">
+        ** หากต้องการติดตามรายการข้อร้องเรียน สามารถติดตามได้ผ่านระบบ <a href="http://intranet.trrgroup.com/cas"style="color:#0b5ed7; text-decoration:underline;">[CAS] Corrective Action System </a>** 
+      </b>
         <br />
         <h2 style="color: #2196f3; border-bottom: 2px solid #2196f3; padding-bottom: 10px;">
           รายละเอียดการอนุมัติ (Approval Details)
@@ -5392,6 +5419,9 @@ export default function Complaint() {
       <p style="margin-top: 5px;">
         แจ้งเตือนการปิดปัญหาข้อร้องเรียน มีรายละเอียดดังต่อไปนี้
       </p>
+      <b style="margin-top: 5px;">
+        ** หากต้องการติดตามรายการข้อร้องเรียน สามารถติดตามได้ผ่านระบบ <a href="http://intranet.trrgroup.com/cas"style="color:#0b5ed7; text-decoration:underline;">[CAS] Corrective Action System </a>** 
+      </b>
         <br />
         <h2 style="color: #5a5a5aff; border-bottom: 2px solid #5a5a5aff; padding-bottom: 10px;">
           รายละเอียดการปิดรายการ (Close Details)
