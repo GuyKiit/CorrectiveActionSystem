@@ -157,7 +157,7 @@ const CustomMultiSelect: React.FC<CustomMultiSelectProps> = ({
             <div className="text-gray-400">ไม่พบข้อมูล</div>
           ) : (
             filteredOptions.map((opt) => {
-              const checked = selectedIdSet.has(opt.id.trim().toLowerCase());
+              const checked = selectedIdSet.has(opt?.id?.trim()?.toLowerCase());
               const disabled = isDisabled(opt);
               const isMgr = (v: any) => v === 1 || v === "1" || v === true;
               const mgr = isMgr(opt.is_manager);

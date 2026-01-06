@@ -38,6 +38,7 @@ import AutocompleteComboBox from "../../components/MUI/AutocompleteComboBox";
 import dayjs from "dayjs";
 import FullWidthButton from "../../components/MUI/FullWidthButton";
 import DesktopDatePickers from "../../components/MUI/DesktopDatePicker";
+import ActionManageCell from "../../components/MUI/ActionManageCell";
 
 interface Report {
   id: string;
@@ -250,7 +251,7 @@ export default function ReportListPage() {
     const mockReports: Report[] = [
       {
         id: '1',
-        name: 'Complaint Report',
+        name: 'Complaint Report NCR',
         type: 'Sales',
         dateCreated: '2024-01-15',
         status: 'Completed',
@@ -259,7 +260,7 @@ export default function ReportListPage() {
       },
       {
         id: '2',
-        name: 'Inventory Analysis Q1',
+        name: 'Complaint Report CAR',
         type: 'Inventory',
         dateCreated: '2024-01-14',
         status: 'Processing',
@@ -268,7 +269,7 @@ export default function ReportListPage() {
       },
       {
         id: '3',
-        name: 'Financial Summary 2024',
+        name: 'Complaint Report C-PAR',
         type: 'Financial',
         dateCreated: '2024-01-13',
         status: 'Completed',
@@ -277,21 +278,12 @@ export default function ReportListPage() {
       },
       {
         id: '4',
-        name: 'Customer Analytics',
+        name: 'Complaint Report OBS',
         type: 'Customer',
         dateCreated: '2024-01-12',
         status: 'Failed',
         size: '0 MB',
         createdBy: 'Sarah Wilson'
-      },
-      {
-        id: '5',
-        name: 'Weekly Sales Trends',
-        type: 'Sales',
-        dateCreated: '2024-01-11',
-        status: 'Completed',
-        size: '1.1 MB',
-        createdBy: 'David Brown'
       }
     ];
     setReports(mockReports);
@@ -348,7 +340,7 @@ export default function ReportListPage() {
   return (
     <>
       {/* Search Section */}
-      <Box
+      {/* <Box
         sx={{
           p: 2,
           mt: 8,
@@ -487,70 +479,50 @@ export default function ReportListPage() {
             />
           </Grid>
         </Grid>
-      </Box>
+      </Box> */}
 
       {/* Reports Table Section */}
       <Box sx={{
         p: 2,
-        mt: 2,
+        mt: 8,
         border: "2px solid #39a2f2",
         borderRadius: 2,
         backgroundColor: "#ffffff",
       }}>
 
         <TableContainer component={Paper}>
-          <Table>
+          <Table size="medium">
             <TableHead>
               <TableRow sx={{ backgroundColor: 'grey.50' }}>
-                <TableCell><strong>ชื่อรายงาน</strong></TableCell>
+                <TableCell><strong>จัดการ</strong></TableCell>
+                <TableCell align="justify"><strong>ชื่อรายงาน</strong></TableCell>
                 {/* <TableCell><strong>ประเภท</strong></TableCell> */}
-                <TableCell><strong>วันที่สร้าง</strong></TableCell>
+                {/* <TableCell><strong>วันที่สร้าง</strong></TableCell> */}
                 {/* <TableCell><strong>Status</strong></TableCell> */}
-                <TableCell><strong>ขนาด</strong></TableCell>
-                <TableCell><strong>สร้างโดย</strong></TableCell>
-                <TableCell align="center"><strong>จัดการ</strong></TableCell>
+                {/* <TableCell><strong>ขนาด</strong></TableCell>
+                <TableCell><strong>สร้างโดย</strong></TableCell> */}
+                
               </TableRow>
             </TableHead>
             <TableBody>
               {filteredReports.map((report) => (
                 <TableRow key={report.id} hover>
-                  <TableCell>{report.name}</TableCell>
-                  {/* <TableCell>
-                  <Chip 
-                    label={report.type} 
-                    size="small" 
-                    variant="outlined"
-                  />
-                </TableCell> */}
-                  <TableCell>{report.dateCreated}</TableCell>
-                  {/* <TableCell>
-                  <Chip 
-                    label={report.status} 
-                    size="small"
-                    color={getStatusColor(report.status) as any}
-                  />
-                </TableCell> */}
-                  <TableCell>{report.size}</TableCell>
-                  <TableCell>{report.createdBy}</TableCell>
-                  <TableCell align="center">
-                    <Stack direction="row" spacing={1} justifyContent="center">
-                      <IconButton
-                        size="small"
-                        onClick={() => handleView(report.id)}
-                        title="View Report"
-                      >
-                        <ViewIcon />
-                      </IconButton>
-                      <IconButton
-                        size="small"
-                        onClick={() => handleDownload(report.id)}
-                        disabled={report.status !== 'Completed'}
-                        title="Download Report"
-                      >
-                        <DownloadIcon />
-                      </IconButton>
-                    </Stack>
+                  
+                  <TableCell>
+                    <ActionManageCell
+                    hiddenDepartmentAdd={true}
+                    hiddenDepartmentView={true}
+                    hiddenDepartmentEdit={true}
+                    hiddenDepartmentDelete={true}
+                    hiddenRead={true}
+                    hiddenReadExplain={true}
+                    hiddenReadApproveSC={true}
+                    hiddenReadApproveQC={true}
+                    hiddenReadClose={true}
+                    hiddenCloseHistory={true}
+                    />
                   </TableCell>
+                  <TableCell align="justify">{report.name}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

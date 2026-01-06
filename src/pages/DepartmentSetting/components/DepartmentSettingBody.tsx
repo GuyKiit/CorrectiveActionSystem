@@ -57,7 +57,8 @@ import { cleanAccessData } from "../../../service/initmain/initmain";
 import { data } from "react-router-dom";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useListDepartmentSetting } from "../core/ListDepartmentSettingContext";
-import { mas_DepartmentDomainGet, mas_DomainGet } from "../../../service/mas/lov";
+import { mas_DepartmentDomainGet, mas_DomainGet , mas_UsernameGet} from "../../../service/mas/lov";
+import CustomMultiSelect from "../../../components/MUI/CustomMultiSelect";
 
 // pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
@@ -256,7 +257,8 @@ export default function DepartmentSettingBody({
     const [request_department_id, setrequest_department_id] = React.useState<{ itasset_department_id: number; itasset_department_name: string; } | null>(null);
     const [dataDecision, setdataDecision] = useState<LovType[]>([]);
     const [approveStates, setApproveStates] = useState<Record<string, any>>({});
-
+    const [usernameOptions, setUsernameOptions] = useState<any[]>([]);
+    const [selectedUsers, setSelectedUsers] = useState<any[]>([]);
     // const [dept_domain, setdept_domain] = useState<any>(null);
     // const [sectionApprove, setsectionApprove] = useState<any>(null);
     // const [qcApprove, setqcApprove] = useState<any>(null);
@@ -285,6 +287,7 @@ export default function DepartmentSettingBody({
 
     const handleDomainChange = (value: any) => {
         console.log("####### Onchange Domain Value [event] :", value);
+         setdept_domain(value);
          setdomain_dept_id(null);
          set_department([])
 
@@ -303,22 +306,19 @@ export default function DepartmentSettingBody({
         console.log('####### Onchange Department Value [event] : ', val);
 
         if (val != null) {
+            setdomain_dept_id(val);
+            setSelectedUsers([]);
             const dataset = {
                 domain_id: dept_domain?.domain_id || val.domain_id,
                 company_id: dept_company?.company_id || val.company_id,
                 department_id: val.department_id, // ✅ ต้องมีอันนี้ด้วย
             };
-
+            mas_UsernameGet(dataset, setUsernameOptions, isCallFuncLogOn);
             // console.log("😋 ส่งค่าไป UsernameGet :", dataset);
 
         } else {
-            set_username([]);
+            setUsernameOptions([]);
         }
-    };
-
-    const handleApproveCard = (val: any) => {
-
-
     };
 
     //========================================================================================
@@ -573,8 +573,22 @@ export default function DepartmentSettingBody({
                 item.lov7 === dept_domain?.domain_id
         );
     }, [datastatus, dept_domain]);
+
+    // ============================ Set Email จาก selectedUsers ==================================
+    React.useEffect(() => {
+    if (!isActionAdd && !isActionEdit) return;
+      if (!selectedUsers || selectedUsers.length === 0) {
+        setdept_email("");
+        return;
+      }
     
-// console.log("🚀 validateText.Company_Area (Body) =", validateText?.Company_Area);
+      const emails = selectedUsers
+        .map(u => u.employee_email)
+        .filter(Boolean); // กัน null / undefined
+    
+      setdept_email(emails.join(","));
+    }, [selectedUsers]);
+    //=========================================================================================
 
 
     return (
@@ -763,10 +777,35 @@ export default function DepartmentSettingBody({
                             <Typography variant="caption" color="textSecondary" sx={{ mt: 0.5, display: 'block' }}>
                                 กรุณากรอกอีเมลที่ต้องการให้มีการส่งอีเมลแจ้งเตือน ยกตัวอย่างเช่น test1@trrgroup.com (ในกรณีที่มีหลายอีเมล กรุณาใช้ , ในการแบ่งอีเมล เช่น test1@trrgroup.com,test2@trrgroup.com,test3@trrgroup.com)
                             </Typography>
+                           
+                        </Grid>
+                        <Grid size={12}>
+                                 <div>
+                                <CustomMultiSelect
+                                  label="เลือกพนักงาน"
+                                  options={usernameOptions}
+                                  selected={selectedUsers}
+                                  validate={validateText && validateText.employees}
+                                  required
+                                  onChange={(v) => {
+                                    setSelectedUsers(v)
+                                    // if (validateText?.employees) {
+                                    //   setValidateText?.((p: any) => ({...p, employees: false}));
+                                    //   setValidateTextLabel?.('');
+                                    // }
+                                  }
+                                  }
+                                  disabledPositions={[
+                                    "นักศึกษาฝึกงาน",
+                                    "Outsource SSEC",
+                                  ]}
+                                />
+                            </div>
                         </Grid>
                     </Grid>
                 </Paper>
             </Grid>
+            
             {/* รายละเอียด ผู้อนุมัติ */}
             {/* <Grid container spacing={2}>
                 <Paper
