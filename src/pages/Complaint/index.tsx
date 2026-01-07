@@ -2626,15 +2626,15 @@ export default function Complaint() {
         screenName
       ),
       complaintstatusLog: {
-          id: uuidv4(),
-          complaint_id: tempid,
-          complaint_status_id: tempComplaintStatus[0]?.id,
-          user_name: user[0]?.employee_username,
-          user_company_id: user[0]?.itasset_company_id,
-          user_department_id: user[0]?.itasset_department_id,
-          user_position: user[0]?.employee_position,
-          user_email: user[0]?.employee_email,
-        }, 
+        id: uuidv4(),
+        complaint_id: tempid,
+        complaint_status_id: tempComplaintStatus[0]?.id,
+        user_name: user[0]?.employee_username,
+        user_company_id: user[0]?.itasset_company_id,
+        user_department_id: user[0]?.itasset_department_id,
+        user_position: user[0]?.employee_position,
+        user_email: user[0]?.employee_email,
+      },
     };
 
     // สร้าง FormData
@@ -2696,7 +2696,7 @@ export default function Complaint() {
     );
 
     const tempid = uuidv4();
-    
+
 
     //Function Split Domain (For using with Complaint Status)
     // const tempComplaintStatus = splitByDot(user[0]?.employee_domain);
@@ -2804,15 +2804,15 @@ export default function Complaint() {
         screenName
       ),
       complaintstatusLog: {
-          id: uuidv4(),
-          complaint_id: tempid,
-          complaint_status_id: tempComplaintStatus[1]?.id,
-          user_name: user[0]?.employee_username,
-          user_company_id: user[0]?.itasset_company_id,
-          user_department_id: user[0]?.itasset_department_id,
-          user_position: user[0]?.employee_position,
-          user_email: user[0]?.employee_email,
-        }, 
+        id: uuidv4(),
+        complaint_id: tempid,
+        complaint_status_id: tempComplaintStatus[1]?.id,
+        user_name: user[0]?.employee_username,
+        user_company_id: user[0]?.itasset_company_id,
+        user_department_id: user[0]?.itasset_department_id,
+        user_position: user[0]?.employee_position,
+        user_email: user[0]?.employee_email,
+      },
     };
     //console.log("complaintFile:", complaintPayload.complaintModel.complaintFile);
     // สร้าง FormData
@@ -3082,7 +3082,7 @@ export default function Complaint() {
           user_department_id: user[0]?.itasset_department_id,
           user_position: user[0]?.employee_position,
           user_email: user[0]?.employee_email,
-        }, 
+        },
       };
 
       formData.append("complaintPayloadJson", JSON.stringify(complaintPayload));
@@ -3105,7 +3105,7 @@ export default function Complaint() {
       </p>
         <br />
         <b style="margin-top: 5px;">
-        ** หากต้องการติดตามรายการข้อร้องเรียน สามารถติดตามได้ผ่านระบบ <a href="http://intranet.trrgroup.com/cas">[CAS] Corrective Action System </a>** 
+        ** หากต้องการติดตามรายการข้อร้องเรียน สามารถติดตามได้ผ่านระบบ <a href="http://intranet.trrgroup.com/cas" style="color:#0b5ed7;>[CAS] Corrective Action System </a>** 
         </b>
         <h2 style="color: #d32f2f; border-bottom: 2px solid #d32f2f; padding-bottom: 10px;">
           แผนกผู้ถูกร้องเรียน (Respondent Department)
@@ -3347,7 +3347,7 @@ export default function Complaint() {
           user_department_id: user[0]?.itasset_department_id,
           user_position: user[0]?.employee_position,
           user_email: user[0]?.employee_email,
-        }, 
+        },
       };
 
       formData.append("complaintPayloadJson", JSON.stringify(complaintPayload));
@@ -3399,6 +3399,10 @@ export default function Complaint() {
     //     " [Calling Function]  :  ComplaintDelete"
     //   );
     updateSessionStorageCurrentAccess("event_name", "ComplaintDelete");
+    const tempComplaintStatus = await LovAll_Get(
+      "complaint_status",
+      dataelement?.respondent_domain_id
+    );
 
     const complaintPayload = {
       ComplaintModel: {
@@ -3409,6 +3413,16 @@ export default function Complaint() {
         employeeDomain,
         screenName
       ),
+      complaintstatusLog: {
+        id: uuidv4(),
+        complaint_id: dataelement?.id,
+        complaint_status_id: tempComplaintStatus[0]?.id,
+        user_name: user[0]?.employee_username,
+        user_company_id: user[0]?.itasset_company_id,
+        user_department_id: user[0]?.itasset_department_id,
+        user_position: user[0]?.employee_position,
+        user_email: user[0]?.employee_email,
+      },
     };
 
     //console.log("📤 complaintPayload:", complaintPayload);
@@ -3597,7 +3611,7 @@ export default function Complaint() {
           user_department_id: user[0]?.itasset_department_id,
           user_position: user[0]?.employee_position,
           user_email: user[0]?.employee_email,
-        }, 
+        },
         emailBody: emailBodyHtml,
         emailSubject: emailSubject,
       };
@@ -3803,7 +3817,7 @@ export default function Complaint() {
           user_department_id: user[0]?.itasset_department_id,
           user_position: user[0]?.employee_position,
           user_email: user[0]?.employee_email,
-        }, 
+        },
         emailBody: emailBodyHtml,
         emailSubject: emailSubject,
       };
@@ -3858,7 +3872,7 @@ export default function Complaint() {
               user_department_id: user[0]?.itasset_department_id,
               user_position: user[0]?.employee_position,
               user_email: user[0]?.employee_email,
-        }, 
+            },
           };
 
           const updateRes = await _POST(
@@ -4070,7 +4084,7 @@ export default function Complaint() {
           user_department_id: user[0]?.itasset_department_id,
           user_position: user[0]?.employee_position,
           user_email: user[0]?.employee_email,
-        }, 
+        },
         emailBody: emailBodyHtml,
         emailSubject: emailSubject,
       };
@@ -4120,7 +4134,7 @@ export default function Complaint() {
               user_department_id: user[0]?.itasset_department_id,
               user_position: user[0]?.employee_position,
               user_email: user[0]?.employee_email,
-        }, 
+            },
           };
 
           const updateRes = await _POST(
@@ -4317,7 +4331,7 @@ export default function Complaint() {
           user_department_id: user[0]?.itasset_department_id,
           user_position: user[0]?.employee_position,
           user_email: user[0]?.employee_email,
-        }, 
+        },
 
         emailBody: emailBodyHtml,
         emailSubject: emailSubject,
@@ -4688,15 +4702,15 @@ export default function Complaint() {
             user_id: user[0]?.employee_username || "",
           },
           complaintstatusLog: {
-          id: uuidv4(),
-          complaint_id: dataelement?.id,
-          complaint_status_id: tempComplaintStatus[2]?.id,
-          user_name: user[0]?.employee_username,
-          user_company_id: user[0]?.itasset_company_id,
-          user_department_id: user[0]?.itasset_department_id,
-          user_position: user[0]?.employee_position,
-          user_email: user[0]?.employee_email,
-        }, 
+            id: uuidv4(),
+            complaint_id: dataelement?.id,
+            complaint_status_id: tempComplaintStatus[2]?.id,
+            user_name: user[0]?.employee_username,
+            user_company_id: user[0]?.itasset_company_id,
+            user_department_id: user[0]?.itasset_department_id,
+            user_position: user[0]?.employee_position,
+            user_email: user[0]?.employee_email,
+          },
         };
 
         // ✅ ต้องส่งเป็น FormData เพราะ backend ต้องการ complaintPayloadJson
@@ -4930,15 +4944,15 @@ export default function Complaint() {
             user_id: user[0]?.employee_username || "",
           },
           complaintstatusLog: {
-          id: uuidv4(),
-          complaint_id: dataelement?.id,
-          complaint_status_id: tempComplaintStatus[3]?.id,
-          user_name: user[0]?.employee_username,
-          user_company_id: user[0]?.itasset_company_id,
-          user_department_id: user[0]?.itasset_department_id,
-          user_position: user[0]?.employee_position,
-          user_email: user[0]?.employee_email,
-        }, 
+            id: uuidv4(),
+            complaint_id: dataelement?.id,
+            complaint_status_id: tempComplaintStatus[3]?.id,
+            user_name: user[0]?.employee_username,
+            user_company_id: user[0]?.itasset_company_id,
+            user_department_id: user[0]?.itasset_department_id,
+            user_position: user[0]?.employee_position,
+            user_email: user[0]?.employee_email,
+          },
         };
 
         const complaintFormData = new FormData();
@@ -5186,15 +5200,15 @@ export default function Complaint() {
             user_id: user[0]?.employee_username || "",
           },
           complaintstatusLog: {
-          id: uuidv4(),
-          complaint_id: dataelement?.id,
-          complaint_status_id: tempComplaintStatus[4]?.id,
-          user_name: user[0]?.employee_username,
-          user_company_id: user[0]?.itasset_company_id,
-          user_department_id: user[0]?.itasset_department_id,
-          user_position: user[0]?.employee_position,
-          user_email: user[0]?.employee_email,
-        }, 
+            id: uuidv4(),
+            complaint_id: dataelement?.id,
+            complaint_status_id: tempComplaintStatus[4]?.id,
+            user_name: user[0]?.employee_username,
+            user_company_id: user[0]?.itasset_company_id,
+            user_department_id: user[0]?.itasset_department_id,
+            user_position: user[0]?.employee_position,
+            user_email: user[0]?.employee_email,
+          },
         };
 
         const complaintFormData = new FormData();
@@ -5692,15 +5706,15 @@ export default function Complaint() {
             user_id: user[0]?.employee_username || "",
           },
           complaintstatusLog: {
-          id: uuidv4(),
-          complaint_id: dataelement?.id,
-          complaint_status_id: tempComplaintStatus[5]?.id,
-          user_name: user[0]?.employee_username,
-          user_company_id: user[0]?.itasset_company_id,
-          user_department_id: user[0]?.itasset_department_id,
-          user_position: user[0]?.employee_position,
-          user_email: user[0]?.employee_email,
-        }, 
+            id: uuidv4(),
+            complaint_id: dataelement?.id,
+            complaint_status_id: tempComplaintStatus[5]?.id,
+            user_name: user[0]?.employee_username,
+            user_company_id: user[0]?.itasset_company_id,
+            user_department_id: user[0]?.itasset_department_id,
+            user_position: user[0]?.employee_position,
+            user_email: user[0]?.employee_email,
+          },
         };
 
         const complaintFormData = new FormData();
