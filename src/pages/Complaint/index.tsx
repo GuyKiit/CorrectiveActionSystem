@@ -2625,6 +2625,16 @@ export default function Complaint() {
         employeeDomain,
         screenName
       ),
+      complaintstatusLog: {
+          id: uuidv4(),
+          complaint_id: tempid,
+          complaint_status_id: tempComplaintStatus[0]?.id,
+          user_name: user[0]?.employee_username,
+          user_company_id: user[0]?.itasset_company_id,
+          user_department_id: user[0]?.itasset_department_id,
+          user_position: user[0]?.employee_position,
+          user_email: user[0]?.employee_email,
+        }, 
     };
 
     // สร้าง FormData
@@ -2686,6 +2696,7 @@ export default function Complaint() {
     );
 
     const tempid = uuidv4();
+    
 
     //Function Split Domain (For using with Complaint Status)
     // const tempComplaintStatus = splitByDot(user[0]?.employee_domain);
@@ -2707,7 +2718,6 @@ export default function Complaint() {
         clauseOther
       )
       : null;
-
     // console.log("💕#### tempvalue 1 id", tempComplaintStatus[1]?.id);
     // สร้าง JSON payload
     const complaintPayload = {
@@ -2758,7 +2768,6 @@ export default function Complaint() {
         // เพิ่ม Complaint Type + Complaint RS
         complaintType: complainttypeModel,
         complaintRs: complaintRsModel,
-
         // เพิ่ม complaintFile
         complaintFile:
           complaintFiles?.map((item: any, index: number) => {
@@ -2794,6 +2803,16 @@ export default function Complaint() {
         employeeDomain,
         screenName
       ),
+      complaintstatusLog: {
+          id: uuidv4(),
+          complaint_id: tempid,
+          complaint_status_id: tempComplaintStatus[1]?.id,
+          user_name: user[0]?.employee_username,
+          user_company_id: user[0]?.itasset_company_id,
+          user_department_id: user[0]?.itasset_department_id,
+          user_position: user[0]?.employee_position,
+          user_email: user[0]?.employee_email,
+        }, 
     };
     //console.log("complaintFile:", complaintPayload.complaintModel.complaintFile);
     // สร้าง FormData
@@ -3054,6 +3073,16 @@ export default function Complaint() {
           employeeDomain,
           screenName
         ),
+        complaintstatusLog: {
+          id: uuidv4(),
+          complaint_id: dataelement?.id,
+          complaint_status_id: tempComplaintStatus[1]?.id,
+          user_name: user[0]?.employee_username,
+          user_company_id: user[0]?.itasset_company_id,
+          user_department_id: user[0]?.itasset_department_id,
+          user_position: user[0]?.employee_position,
+          user_email: user[0]?.employee_email,
+        }, 
       };
 
       formData.append("complaintPayloadJson", JSON.stringify(complaintPayload));
@@ -3309,6 +3338,16 @@ export default function Complaint() {
           employeeDomain,
           screenName
         ),
+        complaintstatusLog: {
+          id: uuidv4(),
+          complaint_id: dataelement?.id,
+          complaint_status_id: tempComplaintStatus[0]?.id,
+          user_name: user[0]?.employee_username,
+          user_company_id: user[0]?.itasset_company_id,
+          user_department_id: user[0]?.itasset_department_id,
+          user_position: user[0]?.employee_position,
+          user_email: user[0]?.employee_email,
+        }, 
       };
 
       formData.append("complaintPayloadJson", JSON.stringify(complaintPayload));
@@ -3549,6 +3588,16 @@ export default function Complaint() {
           employeeDomain,
           screenName
         ),
+        complaintstatusLog: {
+          id: uuidv4(),
+          complaint_id: dataelement?.id,
+          complaint_status_id: tempComplaintStatus[0]?.id,
+          user_name: user[0]?.employee_username,
+          user_company_id: user[0]?.itasset_company_id,
+          user_department_id: user[0]?.itasset_department_id,
+          user_position: user[0]?.employee_position,
+          user_email: user[0]?.employee_email,
+        }, 
         emailBody: emailBodyHtml,
         emailSubject: emailSubject,
       };
@@ -3745,6 +3794,16 @@ export default function Complaint() {
           employeeDomain,
           screenName
         ),
+        complaintstatusLog: {
+          id: uuidv4(),
+          complaint_id: dataelement?.id,
+          complaint_status_id: tempComplaintStatus[3]?.id,
+          user_name: user[0]?.employee_username,
+          user_company_id: user[0]?.itasset_company_id,
+          user_department_id: user[0]?.itasset_department_id,
+          user_position: user[0]?.employee_position,
+          user_email: user[0]?.employee_email,
+        }, 
         emailBody: emailBodyHtml,
         emailSubject: emailSubject,
       };
@@ -3790,6 +3849,16 @@ export default function Complaint() {
               employeeDomain,
               screenName
             ),
+            complaintstatusLog: {
+              id: uuidv4(),
+              complaint_id: dataelement?.id,
+              complaint_status_id: tempComplaintStatus[1]?.id,
+              user_name: user[0]?.employee_username,
+              user_company_id: user[0]?.itasset_company_id,
+              user_department_id: user[0]?.itasset_department_id,
+              user_position: user[0]?.employee_position,
+              user_email: user[0]?.employee_email,
+        }, 
           };
 
           const updateRes = await _POST(
@@ -3992,6 +4061,16 @@ export default function Complaint() {
           employeeDomain,
           screenName
         ),
+        complaintstatusLog: {
+          id: uuidv4(),
+          complaint_id: dataelement?.id,
+          complaint_status_id: tempComplaintStatus[4]?.id,
+          user_name: user[0]?.employee_username,
+          user_company_id: user[0]?.itasset_company_id,
+          user_department_id: user[0]?.itasset_department_id,
+          user_position: user[0]?.employee_position,
+          user_email: user[0]?.employee_email,
+        }, 
         emailBody: emailBodyHtml,
         emailSubject: emailSubject,
       };
@@ -4032,6 +4111,16 @@ export default function Complaint() {
             CurrentAccessModel: {
               user_id: user[0]?.employee_username || "",
             },
+            complaintstatusLog: {
+              id: uuidv4(),
+              complaint_id: dataelement?.id,
+              complaint_status_id: tempComplaintStatus[1]?.id,
+              user_name: user[0]?.employee_username,
+              user_company_id: user[0]?.itasset_company_id,
+              user_department_id: user[0]?.itasset_department_id,
+              user_position: user[0]?.employee_position,
+              user_email: user[0]?.employee_email,
+        }, 
           };
 
           const updateRes = await _POST(
@@ -4219,6 +4308,16 @@ export default function Complaint() {
           employeeDomain,
           screenName
         ),
+        complaintstatusLog: {
+          id: uuidv4(),
+          complaint_id: dataelement?.id,
+          complaint_status_id: tempComplaintStatus[1]?.id,
+          user_name: user[0]?.employee_username,
+          user_company_id: user[0]?.itasset_company_id,
+          user_department_id: user[0]?.itasset_department_id,
+          user_position: user[0]?.employee_position,
+          user_email: user[0]?.employee_email,
+        }, 
 
         emailBody: emailBodyHtml,
         emailSubject: emailSubject,
@@ -4588,6 +4687,16 @@ export default function Complaint() {
           CurrentAccessModel: {
             user_id: user[0]?.employee_username || "",
           },
+          complaintstatusLog: {
+          id: uuidv4(),
+          complaint_id: dataelement?.id,
+          complaint_status_id: tempComplaintStatus[2]?.id,
+          user_name: user[0]?.employee_username,
+          user_company_id: user[0]?.itasset_company_id,
+          user_department_id: user[0]?.itasset_department_id,
+          user_position: user[0]?.employee_position,
+          user_email: user[0]?.employee_email,
+        }, 
         };
 
         // ✅ ต้องส่งเป็น FormData เพราะ backend ต้องการ complaintPayloadJson
@@ -4820,6 +4929,16 @@ export default function Complaint() {
           CurrentAccessModel: {
             user_id: user[0]?.employee_username || "",
           },
+          complaintstatusLog: {
+          id: uuidv4(),
+          complaint_id: dataelement?.id,
+          complaint_status_id: tempComplaintStatus[3]?.id,
+          user_name: user[0]?.employee_username,
+          user_company_id: user[0]?.itasset_company_id,
+          user_department_id: user[0]?.itasset_department_id,
+          user_position: user[0]?.employee_position,
+          user_email: user[0]?.employee_email,
+        }, 
         };
 
         const complaintFormData = new FormData();
@@ -5066,6 +5185,16 @@ export default function Complaint() {
           CurrentAccessModel: {
             user_id: user[0]?.employee_username || "",
           },
+          complaintstatusLog: {
+          id: uuidv4(),
+          complaint_id: dataelement?.id,
+          complaint_status_id: tempComplaintStatus[4]?.id,
+          user_name: user[0]?.employee_username,
+          user_company_id: user[0]?.itasset_company_id,
+          user_department_id: user[0]?.itasset_department_id,
+          user_position: user[0]?.employee_position,
+          user_email: user[0]?.employee_email,
+        }, 
         };
 
         const complaintFormData = new FormData();
@@ -5562,6 +5691,16 @@ export default function Complaint() {
           CurrentAccessModel: {
             user_id: user[0]?.employee_username || "",
           },
+          complaintstatusLog: {
+          id: uuidv4(),
+          complaint_id: dataelement?.id,
+          complaint_status_id: tempComplaintStatus[5]?.id,
+          user_name: user[0]?.employee_username,
+          user_company_id: user[0]?.itasset_company_id,
+          user_department_id: user[0]?.itasset_department_id,
+          user_position: user[0]?.employee_position,
+          user_email: user[0]?.employee_email,
+        }, 
         };
 
         const complaintFormData = new FormData();
