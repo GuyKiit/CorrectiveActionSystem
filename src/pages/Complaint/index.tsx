@@ -59,6 +59,7 @@ import {
   mas_DomainRelateGet,
 } from "../../service/mas/lov";
 import { data } from "react-router-dom";
+import { log } from "node:console";
 
 // =====================================================================================================
 // TYPE DEFINITIONS : โอมสุดหล่อ
@@ -1097,7 +1098,8 @@ export default function Complaint() {
   const LovAll_Get = async (
     mode?: any,
     respondent_domain_id?: any,
-    isItAdmin?: boolean
+    isItAdmin?: boolean,
+    complaint_status_id?: string
   ) => {
     // console.log("4️⃣4️⃣4️⃣ [mode] : ", mode, "// [isItAdmin] : ", isItAdmin);
 
@@ -1141,7 +1143,7 @@ export default function Complaint() {
       }
     }
 
-    if (mode == "complaint_status") {
+    if (mode == "get_complaint_status") {
       try {
         const dataset = {
           lov_group: String(user[0]?.itasset_company_id),
@@ -1152,6 +1154,52 @@ export default function Complaint() {
               : respondent_domain_id,
         };
         const response = await _POST(dataset, "/Lov/LovGet");
+
+        if (response && response.status === "success") {
+          const lovData = response.data || [];
+          // console.log(
+          //   "❇️❇️❇️❇️❇️❇️❇️ Call [Lov/LovGet] -> LovAll_Get :",
+          //   response.data
+          // );
+
+          // ✅ จัดกลุ่มตาม lov_type
+          const grouped = lovData.reduce((acc: any, item: any) => {
+            if (!acc[item.lov_type]) acc[item.lov_type] = [];
+            acc[item.lov_type].push(item);
+            return acc;
+          }, {});
+
+          // return grouped["complaint_status"].filter((item: any) => item.lov7 === respondent_domain_id?.domain_id)
+          return isItAdmin
+            ? grouped["complaint_status"] // 🔥 admin เห็นทุก domain
+            : grouped["complaint_status"].filter(
+              (item: any) =>
+                item.lov7 ===
+                (typeof respondent_domain_id === "object"
+                  ? respondent_domain_id?.domain_id
+                  : respondent_domain_id)
+            );
+        }
+      } catch (e) {
+        //console.log("error:", e);
+      }
+    } 
+    if (mode == "get_complaint_status_by_id") {
+      try {
+        const dataset = {
+          id: complaint_status_id,
+          lov_group: String(user[0]?.itasset_company_id),
+          lov_type: "complaint_status",
+          lov7:
+            typeof respondent_domain_id === "object"
+              ? respondent_domain_id?.domain_id
+              : respondent_domain_id,
+        };
+        const response = await _POST(dataset, "/Lov/LovGet");
+
+        console.table("🚩🚩🚩🚩🚩🚩🚩 Call [Lov/LovGet] -> LovAll_Get :", response.data);
+        console.table("🚩🚩🚩🚩🚩🚩🚩 NEXT -> LovAll_Get :", response.data[0].lov1);
+        console.table("🚩🚩🚩🚩🚩🚩🚩 PREV [Lov/LovGet] -> LovAll_Get :", response.data[0].lov2);
 
         if (response && response.status === "success") {
           const lovData = response.data || [];
@@ -2527,7 +2575,7 @@ export default function Complaint() {
 
     const tempid = uuidv4();
     const tempComplaintStatus = await LovAll_Get(
-      "complaint_status",
+      "get_complaint_status",
       respondent_domain_id
     );
 
@@ -2691,7 +2739,7 @@ export default function Complaint() {
       return;
     }
     const tempComplaintStatus = await LovAll_Get(
-      "complaint_status",
+      "get_complaint_status",
       respondent_domain_id
     );
 
@@ -2978,8 +3026,10 @@ export default function Complaint() {
     //   );
 
     const tempComplaintStatus = await LovAll_Get(
-      "complaint_status",
-      dataelement?.respondent_domain_id
+      "get_complaint_status_by_id",
+      dataelement?.respondent_domain_id,
+      false,
+      dataelement?.complaint_status_id
     );
     // console.log("💕 tempvalue 0 id", tempComplaintStatus[0]?.id);
     // console.log("💕 tempvalue 1 id", tempComplaintStatus[1]?.id);
@@ -3041,7 +3091,7 @@ export default function Complaint() {
               .second(59)
               .format("YYYY-MM-DDTHH:mm:ss.SSS")
             : null,
-          complaint_status_id: tempComplaintStatus[1]?.id,
+          complaint_status_id: tempComplaintStatus[0]?.lov1,
           complaintType: complainttypeModel,
           complaintRs: complaintRsModel,
           complaintFile:
@@ -3076,7 +3126,7 @@ export default function Complaint() {
         complaintstatusLog: {
           id: uuidv4(),
           complaint_id: dataelement?.id,
-          complaint_status_id: tempComplaintStatus[1]?.id,
+          complaint_status_id: tempComplaintStatus[0]?.lov1,
           user_name: user[0]?.employee_username,
           user_company_id: user[0]?.itasset_company_id,
           user_department_id: user[0]?.itasset_department_id,
@@ -3400,7 +3450,7 @@ export default function Complaint() {
     //   );
     updateSessionStorageCurrentAccess("event_name", "ComplaintDelete");
     const tempComplaintStatus = await LovAll_Get(
-      "complaint_status",
+      "get_complaint_status",
       dataelement?.respondent_domain_id
     );
 
@@ -3413,16 +3463,16 @@ export default function Complaint() {
         employeeDomain,
         screenName
       ),
-      complaintstatusLog: {
-        id: uuidv4(),
-        complaint_id: dataelement?.id,
-        complaint_status_id: tempComplaintStatus[0]?.id,
-        user_name: user[0]?.employee_username,
-        user_company_id: user[0]?.itasset_company_id,
-        user_department_id: user[0]?.itasset_department_id,
-        user_position: user[0]?.employee_position,
-        user_email: user[0]?.employee_email,
-      },
+      // complaintstatusLog: {
+      //   id: uuidv4(),
+      //   complaint_id: dataelement?.id,
+      //   complaint_status_id: tempComplaintStatus[0]?.id,
+      //   user_name: user[0]?.employee_username,
+      //   user_company_id: user[0]?.itasset_company_id,
+      //   user_department_id: user[0]?.itasset_department_id,
+      //   user_position: user[0]?.employee_position,
+      //   user_email: user[0]?.employee_email,
+      // },
     };
 
     //console.log("📤 complaintPayload:", complaintPayload);
@@ -3475,8 +3525,10 @@ export default function Complaint() {
     //   );
 
     const tempComplaintStatus = await LovAll_Get(
-      "complaint_status",
-      user[0]?.employee_domain
+      "get_complaint_status_by_id",
+      user[0]?.employee_domain,
+      false,
+      dataelement?.complaint_status_id,
     );
 
     // console.log("💕 tempvalue 0 id", tempComplaintStatus[0]?.id);
@@ -3512,10 +3564,12 @@ export default function Complaint() {
       //   console.log("🕑 ", dayjs().format("HH:mm:ss.SSS"), " [ComplaintReturn] Confirm mode");
       updateSessionStorageCurrentAccess("event_name", "ExplainReject");
 
-      const tempComplaintStatus = await LovAll_Get(
-        "complaint_status",
-        user[0]?.employee_domain
-      );
+      // const tempComplaintStatus = await LovAll_Get(
+      //   "get_complaint_status_by_id",
+      //   user[0]?.employee_domain,
+      //   false,
+      //   dataelement?.complaint_status_id
+      // );
       const email_casNumber = dataelement?.cas_number || "-";
 
       const email_requrst_department_name =
@@ -3586,8 +3640,8 @@ export default function Complaint() {
       const complaintReturnPayload = {
         complaintReturnModel: {
           id: dataelement?.id,
-          return_from_status_id: tempComplaintStatus[1]?.id,
-          complaint_status_id: tempComplaintStatus[0]?.id,
+          return_from_status_id: tempComplaintStatus[0]?.id,
+          complaint_status_id: tempComplaintStatus[0]?.lov2,
           request_department_id: dataelement?.request_department_id,
           request_company_id: dataelement?.request_company_id,
           request_domain_id: dataelement?.request_domain_id,
@@ -3605,7 +3659,7 @@ export default function Complaint() {
         complaintstatusLog: {
           id: uuidv4(),
           complaint_id: dataelement?.id,
-          complaint_status_id: tempComplaintStatus[0]?.id,
+          complaint_status_id: tempComplaintStatus[0]?.lov2,
           user_name: user[0]?.employee_username,
           user_company_id: user[0]?.itasset_company_id,
           user_department_id: user[0]?.itasset_department_id,
@@ -3616,7 +3670,7 @@ export default function Complaint() {
         emailSubject: emailSubject,
       };
 
-      // formData.append("emailBody", emailBodyHtml);
+      formData.append("emailBody", emailBodyHtml);
       try {
         const response = await _POST(
           complaintReturnPayload,
@@ -3651,7 +3705,14 @@ export default function Complaint() {
       }
       const tempid = uuidv4();
       const domainId = dataelement?.respondent_domain_id;
+      
 
+      const tempExplainStatus = await LovAll_Get(
+        "get_complaint_status_by_id",
+        user[0]?.employee_domain,
+        false,
+        complaintMainData?.complaint_status_id
+      );
       // console.log("📡 Current tempComplaintStatus:", tempComplaintStatus);
 
       // 🧩 Helper: หา explain_id ที่แท้จริงจาก dataelement
@@ -3776,7 +3837,7 @@ export default function Complaint() {
           id: tempid,
           explain_id: explainRootId,
           approve_seq: approveSeq[0].lov3,
-          complaint_status_id: tempComplaintStatus[3]?.id,
+          complaint_status_id: tempExplainStatus[0]?.lov1,
           approve_status: approveSelectionCode,
           approve_detail: approve_detail || null,
           approve_note: approve_note || null,
@@ -3811,7 +3872,7 @@ export default function Complaint() {
         complaintstatusLog: {
           id: uuidv4(),
           complaint_id: dataelement?.id,
-          complaint_status_id: tempComplaintStatus[3]?.id,
+          complaint_status_id: tempExplainStatus[0]?.lov1,
           user_name: user[0]?.employee_username,
           user_company_id: user[0]?.itasset_company_id,
           user_department_id: user[0]?.itasset_department_id,
@@ -3853,8 +3914,8 @@ export default function Complaint() {
                 : user[0]?.itasset_department_id || "",
               return_position: user[0]?.employee_position || "",
               return_email: user[0]?.employee_email || "",
-              return_from_status_id: tempComplaintStatus[2]?.id,
-              complaint_status_id: tempComplaintStatus[1]?.id,
+              return_from_status_id: tempExplainStatus[0]?.id,
+              complaint_status_id: tempExplainStatus[0]?.lov2,
               mode: mode,
             },
             CurrentAccessModel: getCurrentAccessObject(
@@ -3865,7 +3926,7 @@ export default function Complaint() {
             complaintstatusLog: {
               id: uuidv4(),
               complaint_id: dataelement?.id,
-              complaint_status_id: tempComplaintStatus[1]?.id,
+              complaint_status_id: tempExplainStatus[0]?.lov2,
               user_name: user[0]?.employee_username,
               user_company_id: user[0]?.itasset_company_id,
               user_department_id: user[0]?.itasset_department_id,
@@ -3918,6 +3979,13 @@ export default function Complaint() {
       }
 
       const tempid = uuidv4();
+
+      const tempExplainStatus = await LovAll_Get(
+        "get_complaint_status_by_id",
+        user[0]?.employee_domain,
+        false,
+        complaintMainData?.complaint_status_id
+      );
 
       // 🧩 Helper: หา explain_id ที่แท้จริงจาก dataelement
       const resolveExplainId = () => {
@@ -4041,7 +4109,7 @@ export default function Complaint() {
           id: tempid,
           explain_id: explainRootId,
           approve_seq: approveSeq[0].lov3,
-          complaint_status_id: tempComplaintStatus[4]?.id,
+          complaint_status_id: tempExplainStatus[0]?.lov1,
           approve_status: approveSelectionCode,
           approve_detail: qcapprove_detail || null,
           approve_note: qcapprove_note || null,
@@ -4076,7 +4144,7 @@ export default function Complaint() {
         complaintstatusLog: {
           id: uuidv4(),
           complaint_id: dataelement?.id,
-          complaint_status_id: tempComplaintStatus[4]?.id,
+          complaint_status_id: tempExplainStatus[0]?.lov1,
           user_name: user[0]?.employee_username,
           user_company_id: user[0]?.itasset_company_id,
           user_department_id: user[0]?.itasset_department_id,
@@ -4116,8 +4184,8 @@ export default function Complaint() {
                 : user[0]?.itasset_department_id || "",
               return_position: user[0]?.employee_position || "",
               return_email: user[0]?.employee_email || "",
-              return_from_status_id: tempComplaintStatus[3]?.id,
-              complaint_status_id: tempComplaintStatus[1]?.id,
+              return_from_status_id: tempExplainStatus[0]?.id,
+              complaint_status_id: tempExplainStatus[0]?.lov2,
               mode: mode,
             },
             CurrentAccessModel: {
@@ -4126,7 +4194,7 @@ export default function Complaint() {
             complaintstatusLog: {
               id: uuidv4(),
               complaint_id: dataelement?.id,
-              complaint_status_id: tempComplaintStatus[1]?.id,
+              complaint_status_id: tempExplainStatus[0]?.lov2,
               user_name: user[0]?.employee_username,
               user_company_id: user[0]?.itasset_company_id,
               user_department_id: user[0]?.itasset_department_id,
@@ -4178,6 +4246,12 @@ export default function Complaint() {
       if (!validateClose()) {
         return;
       }
+      const tempExplainStatus = await LovAll_Get(
+        "get_complaint_status_by_id",
+        user[0]?.employee_domain,
+        false,
+        complaintMainData?.complaint_status_id
+      );
       const resolveExplainId = () => {
         return currentExplainForApproval?.id;
       };
@@ -4306,8 +4380,8 @@ export default function Complaint() {
             : user[0]?.itasset_department_id || "",
           return_position: user[0]?.employee_position || "",
           return_email: user[0]?.employee_email || "",
-          return_from_status_id: tempComplaintStatus[4]?.id,
-          complaint_status_id: tempComplaintStatus[1]?.id,
+          return_from_status_id: tempExplainStatus[0]?.id,
+          complaint_status_id: tempExplainStatus[0]?.lov2,
           close_status: approveSelectionCode,
           mode: mode,
 
@@ -4323,7 +4397,7 @@ export default function Complaint() {
         complaintstatusLog: {
           id: uuidv4(),
           complaint_id: dataelement?.id,
-          complaint_status_id: tempComplaintStatus[1]?.id,
+          complaint_status_id: tempExplainStatus[0]?.lov2,
           user_name: user[0]?.employee_username,
           user_company_id: user[0]?.itasset_company_id,
           user_department_id: user[0]?.itasset_department_id,
@@ -4353,6 +4427,7 @@ export default function Complaint() {
             icon: "error",
           });
           // console.log("⚠️ Add failed:", response);
+          console.log("❗ ComplaintReturn response:", response);
         }
       } catch (error) {
         // console.error("Upload failed:", error);
@@ -4387,8 +4462,10 @@ export default function Complaint() {
 
 
     const tempComplaintStatus = await LovAll_Get(
-      "complaint_status",
-       domainId
+      "get_complaint_status_by_id",
+       domainId,
+       false,
+       dataelement?.complaint_status_id
     );
 console.log("domainId", domainId);
     const resolveComplaintId = () => {
@@ -4678,7 +4755,8 @@ console.log("domainId", domainId);
     `;
 
     formData.append("emailBody", emailBodyHtml);
-
+      
+      
     setIsLoadingScreen(true);
     try {
       const response = await _POST_FORMDATA(formData, "/Explain/ExplainAdd");
@@ -4690,7 +4768,7 @@ console.log("domainId", domainId);
             // id: dataelement?.id,
             id: complaintRootId,
             mode: "EXPLAIN",
-            complaint_status_id: tempComplaintStatus[2]?.id,
+            complaint_status_id: tempComplaintStatus[0]?.lov1,
           },
           CurrentAccessModel: {
             user_id: user[0]?.employee_username || "",
@@ -4698,7 +4776,7 @@ console.log("domainId", domainId);
           complaintstatusLog: {
             id: uuidv4(),
             complaint_id: dataelement?.id,
-            complaint_status_id: tempComplaintStatus[2]?.id,
+            complaint_status_id: tempComplaintStatus[0]?.lov1,
             user_name: user[0]?.employee_username,
             user_company_id: user[0]?.itasset_company_id,
             user_department_id: user[0]?.itasset_department_id,
@@ -4773,11 +4851,16 @@ console.log("domainId", domainId);
       });
       return;
     }
-
+console.log("🧪 complaint_status_id source:", {
+  fromExplain: approvalSource?.complaint_status_id,
+  fromComplaint: complaintMainData?.complaint_status_id,
+});
     // โหลดค่า Complaint Status จาก respondent_domain_id
     const tempComplaintStatus = await LovAll_Get(
-      "complaint_status",
-      approvalSource?.respondent_domain_id
+      "get_complaint_status_by_id",
+      approvalSource?.respondent_domain_id,
+      false,
+      complaintMainData?.complaint_status_id
     );
 
     //ขั้นตอนการเตรียมลำดับการอนุมัติ (Approve Seq)
@@ -4884,7 +4967,7 @@ console.log("domainId", domainId);
         id: tempid,
         explain_id: explainRootId,
         approve_seq: approveSeq[0].lov3,
-        complaint_status_id: tempComplaintStatus[3]?.id,
+        complaint_status_id: tempComplaintStatus[0]?.lov1,
         approve_status: approveSelectionCode,
         approve_detail: approve_detail || null,
         approve_note: approve_note || null,
@@ -4931,7 +5014,7 @@ console.log("domainId", domainId);
           ComplaintModel: {
             id: currentExplainForApproval?.complaint_id,
             mode: "APPROVE_SC",
-            complaint_status_id: tempComplaintStatus[3]?.id,
+            complaint_status_id: tempComplaintStatus[0]?.lov1,
           },
           CurrentAccessModel: {
             user_id: user[0]?.employee_username || "",
@@ -4939,7 +5022,7 @@ console.log("domainId", domainId);
           complaintstatusLog: {
             id: uuidv4(),
             complaint_id: dataelement?.id,
-            complaint_status_id: tempComplaintStatus[3]?.id,
+            complaint_status_id: tempComplaintStatus[0]?.lov1,
             user_name: user[0]?.employee_username,
             user_company_id: user[0]?.itasset_company_id,
             user_department_id: user[0]?.itasset_department_id,
@@ -5017,8 +5100,10 @@ console.log("domainId", domainId);
 
     // โหลดค่า Complaint Status จาก respondent_domain_id
     const tempComplaintStatus = await LovAll_Get(
-      "complaint_status",
-      approvalSource?.respondent_domain_id
+      "get_complaint_status_by_id",
+      approvalSource?.respondent_domain_id,
+      false,
+      complaintMainData?.complaint_status_id
     );
 
     // const approveInfo = datastatus.filter(
@@ -5139,7 +5224,7 @@ console.log("domainId", domainId);
         id: tempid,
         explain_id: explainRootId,
         approve_seq: approveSeq[0].lov3,
-        complaint_status_id: tempComplaintStatus[4]?.id,
+        complaint_status_id: tempComplaintStatus[0]?.lov1,
         approve_status: approveSelectionCode,
         approve_detail: qcapprove_detail || null,
         approve_note: qcapprove_note || null,
@@ -5187,7 +5272,7 @@ console.log("domainId", domainId);
           ComplaintModel: {
             id: currentExplainForApproval?.complaint_id,
             mode: "APPROVE_QC",
-            complaint_status_id: tempComplaintStatus[4]?.id,
+            complaint_status_id: tempComplaintStatus[0]?.lov1,
           },
           CurrentAccessModel: {
             user_id: user[0]?.employee_username || "",
@@ -5195,7 +5280,7 @@ console.log("domainId", domainId);
           complaintstatusLog: {
             id: uuidv4(),
             complaint_id: dataelement?.id,
-            complaint_status_id: tempComplaintStatus[4]?.id,
+            complaint_status_id: tempComplaintStatus[0]?.lov1,
             user_name: user[0]?.employee_username,
             user_company_id: user[0]?.itasset_company_id,
             user_department_id: user[0]?.itasset_department_id,
@@ -5531,8 +5616,10 @@ console.log("domainId", domainId);
     }
 
     const tempComplaintStatus = await LovAll_Get(
-      "complaint_status",
-      user[0]?.employee_domain
+      "get_complaint_status_by_id",
+      user[0]?.employee_domain,
+      false,
+      complaintMainData?.complaint_status_id
     );
 
     // 🧩 Helper: หา explain_id ที่แท้จริงจาก dataelement
@@ -5628,7 +5715,7 @@ console.log("domainId", domainId);
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">โรงงาน (Factory)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.itasset_company_name || "-"
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.domain_name || "-"
       }</td>
           </tr>
         </table> 
@@ -5693,7 +5780,7 @@ console.log("domainId", domainId);
           complaintModel: {
             id: complaintId,
             mode: "CLOSE",
-            complaint_status_id: tempComplaintStatus[5]?.id,
+            complaint_status_id: tempComplaintStatus[0]?.lov1,
           },
           CurrentAccessModel: {
             user_id: user[0]?.employee_username || "",
@@ -5701,7 +5788,7 @@ console.log("domainId", domainId);
           complaintstatusLog: {
             id: uuidv4(),
             complaint_id: dataelement?.id,
-            complaint_status_id: tempComplaintStatus[5]?.id,
+            complaint_status_id: tempComplaintStatus[0]?.lov1,
             user_name: user[0]?.employee_username,
             user_company_id: user[0]?.itasset_company_id,
             user_department_id: user[0]?.itasset_department_id,
