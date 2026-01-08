@@ -4318,9 +4318,13 @@ export default function Complaint() {
           close_status: approveSelectionCode,
           mode: mode,
 
-          respondent_company_id: dataelement?.respondent_company_id,
-          respondent_domain_id: dataelement?.respondent_domain_id,
-          respondent_department_id: dataelement?.respondent_department_id,
+          // respondent_company_id: dataelement?.respondent_company_id,
+          // respondent_domain_id: dataelement?.respondent_domain_id,
+          // respondent_department_id: dataelement?.respondent_department_id,
+
+          request_company_id: dataelement?.respondent_company_id || complaintMainData?.respondent_company_id,
+          request_domain_id: dataelement?.respondent_domain_id || complaintMainData?.respondent_domain_id,
+          request_department_id: dataelement?.respondent_department_id || complaintMainData?.respondent_department_id,
         },
         CurrentAccessModel: getCurrentAccessObject(
           employeeUsername,
