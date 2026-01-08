@@ -2921,7 +2921,7 @@ export default function Complaint() {
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">โรงงาน (Factory)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.itasset_company_name || "-"
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.domain_name || "-"
       }</td>
           </tr>
 
@@ -3105,8 +3105,8 @@ export default function Complaint() {
       </p>
         <br />
         <b style="margin-top: 5px;">
-        ** หากต้องการติดตามรายการข้อร้องเรียน สามารถติดตามได้ผ่านระบบ <a href="http://intranet.trrgroup.com/cas" style="color:#0b5ed7;>[CAS] Corrective Action System </a>** 
-        </b>
+        ** หากต้องการติดตามรายการข้อร้องเรียน สามารถติดตามได้ผ่านระบบ <a href="http://intranet.trrgroup.com/cas"style="color:#0b5ed7; text-decoration:underline;">[CAS] Corrective Action System </a>** 
+      </b>
         <h2 style="color: #d32f2f; border-bottom: 2px solid #d32f2f; padding-bottom: 10px;">
           แผนกผู้ถูกร้องเรียน (Respondent Department)
         </h2>
@@ -3186,7 +3186,7 @@ export default function Complaint() {
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">โรงงาน (Factory)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.itasset_company_name || "-"
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.domain_name || "-"
         }</td>
           </tr>
 
@@ -3567,7 +3567,7 @@ export default function Complaint() {
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">โรงงาน (Factory)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.itasset_company_name || "-"
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.domain_name || "-"
         }</td>
           </tr>
 
@@ -3756,7 +3756,7 @@ export default function Complaint() {
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">โรงงาน (Factory)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.itasset_company_name || "-"
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.domain_name || "-"
         }</td>
           </tr>
         </table> 
@@ -3823,7 +3823,6 @@ export default function Complaint() {
       };
 
       setIsLoadingScreen(true);
-
       try {
         // 🧩 บันทึกข้อมูล Approve
         const response = await _POST(
@@ -3874,7 +3873,6 @@ export default function Complaint() {
               user_email: user[0]?.employee_email,
             },
           };
-
           const updateRes = await _POST(
             complaintReturnPayload,
             "/Complaint/ComplaintReturn"
@@ -4022,7 +4020,7 @@ export default function Complaint() {
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">โรงงาน (Factory)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.itasset_company_name || "-"
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.domain_name || "-"
         }</td>
           </tr>
         </table> 
@@ -4279,7 +4277,7 @@ export default function Complaint() {
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">โรงงาน (Factory)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.itasset_company_name || "-"
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.domain_name || "-"
         }</td>
           </tr>
         </table> 
@@ -4383,19 +4381,16 @@ export default function Complaint() {
     //   );
 
     const tempid = uuidv4();
-    // console.log(
-    //   "📡 Sending respondent_domain_id to LovAll_Get:",
-    //   dataelement?.respondent_domain_id
-    // );
-    // console.log(
-    //   "📡 Sending respondent_domain_id to LovAll_Get:",
-    //   dataelement?.respondent_domain_id?.domain_id
-    // );
+    
+    
+    const domainId = dataelement?.respondent_domain_id || user?.[0]?.employee_domain;
+
+
     const tempComplaintStatus = await LovAll_Get(
       "complaint_status",
-      dataelement?.respondent_domain_id
+       domainId
     );
-
+console.log("domainId", domainId);
     const resolveComplaintId = () => {
       const el: any = dataelement || {};
       if (el.complaint_id) {
@@ -4666,7 +4661,7 @@ export default function Complaint() {
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">โรงงาน (Factory)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.itasset_company_name || "-"
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.domain_name || "-"
       }</td>
           </tr>
 
@@ -4685,7 +4680,6 @@ export default function Complaint() {
     formData.append("emailBody", emailBodyHtml);
 
     setIsLoadingScreen(true);
-
     try {
       const response = await _POST_FORMDATA(formData, "/Explain/ExplainAdd");
 
@@ -4712,7 +4706,6 @@ export default function Complaint() {
             user_email: user[0]?.employee_email,
           },
         };
-
         // ✅ ต้องส่งเป็น FormData เพราะ backend ต้องการ complaintPayloadJson
         const complaintFormData = new FormData();
         complaintFormData.append(
@@ -4871,7 +4864,7 @@ export default function Complaint() {
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">โรงงาน (Factory)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.itasset_company_name || "-"
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.domain_name || "-"
       }</td>
           </tr>
         </table> 
@@ -5126,7 +5119,7 @@ export default function Complaint() {
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">โรงงาน (Factory)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.itasset_company_name || "-"
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.domain_name || "-"
       }</td>
           </tr>
         </table> 
