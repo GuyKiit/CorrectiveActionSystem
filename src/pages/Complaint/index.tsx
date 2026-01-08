@@ -3413,16 +3413,16 @@ export default function Complaint() {
         employeeDomain,
         screenName
       ),
-      complaintstatusLog: {
-        id: uuidv4(),
-        complaint_id: dataelement?.id,
-        complaint_status_id: tempComplaintStatus[0]?.id,
-        user_name: user[0]?.employee_username,
-        user_company_id: user[0]?.itasset_company_id,
-        user_department_id: user[0]?.itasset_department_id,
-        user_position: user[0]?.employee_position,
-        user_email: user[0]?.employee_email,
-      },
+      // complaintstatusLog: {
+      //   id: uuidv4(),
+      //   complaint_id: dataelement?.id,
+      //   complaint_status_id: tempComplaintStatus[0]?.id,
+      //   user_name: user[0]?.employee_username,
+      //   user_company_id: user[0]?.itasset_company_id,
+      //   user_department_id: user[0]?.itasset_department_id,
+      //   user_position: user[0]?.employee_position,
+      //   user_email: user[0]?.employee_email,
+      // },
     };
 
     //console.log("📤 complaintPayload:", complaintPayload);
@@ -3478,6 +3478,19 @@ export default function Complaint() {
       "complaint_status",
       user[0]?.employee_domain
     );
+
+    const resolveComplaintId = () => {
+      const el: any = dataelement || {};
+      if (el.complaint_id) {
+        if (typeof el.complaint_id === "object")
+          return el.complaint_id.id ?? el.complaint_id;
+        return el.complaint_id;
+      }
+      if (el.complaint && el.complaint.id) return el.complaint.id;
+      return el.id;
+    };
+
+    const complaintRootId = resolveComplaintId();
 
     // console.log("💕 tempvalue 0 id", tempComplaintStatus[0]?.id);
     // console.log("💕 tempvalue 1 id", tempComplaintStatus[1]?.id);
@@ -3604,7 +3617,7 @@ export default function Complaint() {
         ),
         complaintstatusLog: {
           id: uuidv4(),
-          complaint_id: dataelement?.id,
+          complaint_id: complaintRootId,
           complaint_status_id: tempComplaintStatus[0]?.id,
           user_name: user[0]?.employee_username,
           user_company_id: user[0]?.itasset_company_id,
@@ -3651,6 +3664,18 @@ export default function Complaint() {
       }
       const tempid = uuidv4();
       const domainId = dataelement?.respondent_domain_id;
+      const resolveComplaintId = () => {
+        const el: any = dataelement || {};
+        if (el.complaint_id) {
+          if (typeof el.complaint_id === "object")
+            return el.complaint_id.id ?? el.complaint_id;
+          return el.complaint_id;
+        }
+        if (el.complaint && el.complaint.id) return el.complaint.id;
+        return el.id;
+      };
+
+      const complaintRootId = resolveComplaintId();
 
       // console.log("📡 Current tempComplaintStatus:", tempComplaintStatus);
 
@@ -3808,16 +3833,6 @@ export default function Complaint() {
           employeeDomain,
           screenName
         ),
-        complaintstatusLog: {
-          id: uuidv4(),
-          complaint_id: dataelement?.id,
-          complaint_status_id: tempComplaintStatus[3]?.id,
-          user_name: user[0]?.employee_username,
-          user_company_id: user[0]?.itasset_company_id,
-          user_department_id: user[0]?.itasset_department_id,
-          user_position: user[0]?.employee_position,
-          user_email: user[0]?.employee_email,
-        },
         emailBody: emailBodyHtml,
         emailSubject: emailSubject,
       };
@@ -3865,7 +3880,7 @@ export default function Complaint() {
             ),
             complaintstatusLog: {
               id: uuidv4(),
-              complaint_id: dataelement?.id,
+              complaint_id: complaintRootId,
               complaint_status_id: tempComplaintStatus[1]?.id,
               user_name: user[0]?.employee_username,
               user_company_id: user[0]?.itasset_company_id,
@@ -4075,16 +4090,6 @@ export default function Complaint() {
           employeeDomain,
           screenName
         ),
-        complaintstatusLog: {
-          id: uuidv4(),
-          complaint_id: dataelement?.id,
-          complaint_status_id: tempComplaintStatus[4]?.id,
-          user_name: user[0]?.employee_username,
-          user_company_id: user[0]?.itasset_company_id,
-          user_department_id: user[0]?.itasset_department_id,
-          user_position: user[0]?.employee_position,
-          user_email: user[0]?.employee_email,
-        },
         emailBody: emailBodyHtml,
         emailSubject: emailSubject,
       };
@@ -4127,7 +4132,7 @@ export default function Complaint() {
             },
             complaintstatusLog: {
               id: uuidv4(),
-              complaint_id: dataelement?.id,
+              complaint_id: complaintRootId,
               complaint_status_id: tempComplaintStatus[1]?.id,
               user_name: user[0]?.employee_username,
               user_company_id: user[0]?.itasset_company_id,
@@ -4324,7 +4329,7 @@ export default function Complaint() {
         ),
         complaintstatusLog: {
           id: uuidv4(),
-          complaint_id: dataelement?.id,
+          complaint_id: complaintRootId,
           complaint_status_id: tempComplaintStatus[1]?.id,
           user_name: user[0]?.employee_username,
           user_company_id: user[0]?.itasset_company_id,
@@ -4498,6 +4503,16 @@ export default function Complaint() {
             create_by: user[0]?.employee_username || "",
             create_datetime: new Date().toISOString(),
           })) || [],
+      },
+      complaintstatusLog: {
+        id: uuidv4(),
+        complaint_id: complaintRootId,
+        complaint_status_id: tempComplaintStatus[2]?.id,
+        user_name: user[0]?.employee_username,
+        user_company_id: user[0]?.itasset_company_id,
+        user_department_id: user[0]?.itasset_department_id,
+        user_position: user[0]?.employee_position,
+        user_email: user[0]?.employee_email,
       },
       CurrentAccessModel: getCurrentAccessObject(employeeUsername, employeeDomain, screenName)
     };
@@ -4701,16 +4716,6 @@ export default function Complaint() {
           CurrentAccessModel: {
             user_id: user[0]?.employee_username || "",
           },
-          complaintstatusLog: {
-            id: uuidv4(),
-            complaint_id: dataelement?.id,
-            complaint_status_id: tempComplaintStatus[2]?.id,
-            user_name: user[0]?.employee_username,
-            user_company_id: user[0]?.itasset_company_id,
-            user_department_id: user[0]?.itasset_department_id,
-            user_position: user[0]?.employee_position,
-            user_email: user[0]?.employee_email,
-          },
         };
 
         // ✅ ต้องส่งเป็น FormData เพราะ backend ต้องการ complaintPayloadJson
@@ -4885,6 +4890,17 @@ export default function Complaint() {
       </p>
       </div>
     `;
+    const resolveComplaintId = () => {
+      const el: any = dataelement || {};
+      if (el.complaint_id) {
+        if (typeof el.complaint_id === "object")
+          return el.complaint_id.id ?? el.complaint_id;
+        return el.complaint_id;
+      }
+      if (el.complaint && el.complaint.id) return el.complaint.id;
+      return el.id;
+    };
+    const complaintRootId = resolveComplaintId();
 
     const approvePayload = {
       ExplaintApproveModel: {
@@ -4920,6 +4936,16 @@ export default function Complaint() {
         employeeDomain,
         screenName
       ),
+      complaintstatusLog: {
+        id: uuidv4(),
+        complaint_id: complaintRootId,
+        complaint_status_id: tempComplaintStatus[3]?.id,
+        user_name: user[0]?.employee_username,
+        user_company_id: user[0]?.itasset_company_id,
+        user_department_id: user[0]?.itasset_department_id,
+        user_position: user[0]?.employee_position,
+        user_email: user[0]?.employee_email,
+      },
       emailBody: emailBodyHtml,
       emailSubject: emailSubject,
     };
@@ -4942,16 +4968,6 @@ export default function Complaint() {
           },
           CurrentAccessModel: {
             user_id: user[0]?.employee_username || "",
-          },
-          complaintstatusLog: {
-            id: uuidv4(),
-            complaint_id: dataelement?.id,
-            complaint_status_id: tempComplaintStatus[3]?.id,
-            user_name: user[0]?.employee_username,
-            user_company_id: user[0]?.itasset_company_id,
-            user_department_id: user[0]?.itasset_department_id,
-            user_position: user[0]?.employee_position,
-            user_email: user[0]?.employee_email,
           },
         };
 
@@ -5141,6 +5157,19 @@ export default function Complaint() {
       </div>
     `;
 
+    const resolveComplaintId = () => {
+      const el: any = dataelement || {};
+      if (el.complaint_id) {
+        if (typeof el.complaint_id === "object")
+          return el.complaint_id.id ?? el.complaint_id;
+        return el.complaint_id;
+      }
+      if (el.complaint && el.complaint.id) return el.complaint.id;
+      return el.id;
+    };
+
+    const complaintRootId = resolveComplaintId();
+
     const approvePayload = {
       ExplaintApproveModel: {
         id: tempid,
@@ -5175,6 +5204,16 @@ export default function Complaint() {
         employeeDomain,
         screenName
       ),
+      complaintstatusLog: {
+        id: uuidv4(),
+        complaint_id: complaintRootId,
+        complaint_status_id: tempComplaintStatus[4]?.id,
+        user_name: user[0]?.employee_username,
+        user_company_id: user[0]?.itasset_company_id,
+        user_department_id: user[0]?.itasset_department_id,
+        user_position: user[0]?.employee_position,
+        user_email: user[0]?.employee_email,
+      },
       emailBody: emailBodyHtml,
       emailSubject: emailSubject,
     };
@@ -5198,16 +5237,6 @@ export default function Complaint() {
           },
           CurrentAccessModel: {
             user_id: user[0]?.employee_username || "",
-          },
-          complaintstatusLog: {
-            id: uuidv4(),
-            complaint_id: dataelement?.id,
-            complaint_status_id: tempComplaintStatus[4]?.id,
-            user_name: user[0]?.employee_username,
-            user_company_id: user[0]?.itasset_company_id,
-            user_department_id: user[0]?.itasset_department_id,
-            user_position: user[0]?.employee_position,
-            user_email: user[0]?.employee_email,
           },
         };
 
@@ -5650,6 +5679,18 @@ export default function Complaint() {
       </div>
     `;
     const explainRootId = resolveExplainId();
+    const resolveComplaintId = () => {
+      const el: any = dataelement || {};
+      if (el.complaint_id) {
+        if (typeof el.complaint_id === "object")
+          return el.complaint_id.id ?? el.complaint_id;
+        return el.complaint_id;
+      }
+      if (el.complaint && el.complaint.id) return el.complaint.id;
+      return el.id;
+    };
+
+    const complaintRootId = resolveComplaintId();
 
     // 🧩 สร้าง payload สำหรับ Approve
     const closePayload = {
@@ -5683,6 +5724,16 @@ export default function Complaint() {
         employeeDomain,
         screenName
       ),
+      complaintstatusLog: {
+        id: uuidv4(),
+        complaint_id: complaintRootId,
+        complaint_status_id: tempComplaintStatus[5]?.id,
+        user_name: user[0]?.employee_username,
+        user_company_id: user[0]?.itasset_company_id,
+        user_department_id: user[0]?.itasset_department_id,
+        user_position: user[0]?.employee_position,
+        user_email: user[0]?.employee_email,
+      },
       emailBody: emailBodyHtml,
       emailSubject: emailSubject,
     };
@@ -5704,16 +5755,6 @@ export default function Complaint() {
           },
           CurrentAccessModel: {
             user_id: user[0]?.employee_username || "",
-          },
-          complaintstatusLog: {
-            id: uuidv4(),
-            complaint_id: dataelement?.id,
-            complaint_status_id: tempComplaintStatus[5]?.id,
-            user_name: user[0]?.employee_username,
-            user_company_id: user[0]?.itasset_company_id,
-            user_department_id: user[0]?.itasset_department_id,
-            user_position: user[0]?.employee_position,
-            user_email: user[0]?.employee_email,
           },
         };
 
