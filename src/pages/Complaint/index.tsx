@@ -2878,7 +2878,7 @@ export default function Complaint() {
     const emailBodyHtml = `
       <div style="font-family: Arial, sans-serif; color: #333;">
         <p>
-        เรียน เจ้าหน้าที่ฝ่าย${respondent_department_id?.department_name || "-"}
+        เรียน เจ้าหน้าที่ฝ่าย${respondent_department_id?.ไ || "-"}
       </p>
       <p style="margin-top: 5px;">
         แจ้งเตือนปัญหาข้อร้องเรียนของรายการ CAS Number : CAS_NUMBER มีรายละเอียดดังต่อไปนี้
