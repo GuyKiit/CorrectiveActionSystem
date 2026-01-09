@@ -1183,7 +1183,7 @@ export default function Complaint() {
       } catch (e) {
         //console.log("error:", e);
       }
-    } 
+    }
     if (mode == "get_complaint_status_by_id") {
       try {
         const dataset = {
@@ -3726,7 +3726,7 @@ export default function Complaint() {
       };
 
       const complaintRootId = resolveComplaintId();
-      
+
 
       const tempExplainStatus = await LovAll_Get(
         "get_complaint_status_by_id",
@@ -3949,20 +3949,26 @@ export default function Complaint() {
             complaintReturnPayload,
             "/Complaint/ComplaintReturn"
           );
+          console.log("updateRes", updateRes);
 
-          if (updateRes && updateRes.status === "success") {
-            FullSweetalert({
-              title: "Success",
-              text: `บันทึกการอนุมัติและอัปเดตสถานะสำเร็จ`,
-              icon: "success",
-            });
-          } else {
-            FullSweetalert({
-              title: "Warning",
-              text: `บันทึกการอนุมัติสำเร็จ แต่ไม่สามารถอัปเดตสถานะได้`,
-              icon: "warning",
-            });
-          }
+          FullSweetalert({
+            title: "Success",
+            text: `บันทึกการอนุมัติและอัปเดตสถานะสำเร็จ`,
+            icon: "success",
+          });
+          // if (updateRes && updateRes.status === "success") {
+          //   FullSweetalert({
+          //     title: "Success",
+          //     text: `บันทึกการอนุมัติและอัปเดตสถานะสำเร็จ`,
+          //     icon: "success",
+          //   });
+          // } else {
+          //   FullSweetalert({
+          //     title: "Warning",
+          //     text: `บันทึกการอนุมัติสำเร็จ แต่ไม่สามารถอัปเดตสถานะได้`,
+          //     icon: "warning",
+          //   });
+          // }
         } else {
           FullSweetalert({
             title: "Failed",
@@ -4209,19 +4215,24 @@ export default function Complaint() {
             "/Complaint/ComplaintReturn"
           );
 
-          if (updateRes && updateRes.status === "success") {
-            FullSweetalert({
-              title: "Success",
-              text: `บันทึกการอนุมัติและอัปเดตสถานะสำเร็จ`,
-              icon: "success",
-            });
-          } else {
-            FullSweetalert({
-              title: "Warning",
-              text: `บันทึกการอนุมัติสำเร็จ แต่ไม่สามารถอัปเดตสถานะได้`,
-              icon: "warning",
-            });
-          }
+          FullSweetalert({
+            title: "Success",
+            text: `บันทึกการอนุมัติและอัปเดตสถานะสำเร็จ`,
+            icon: "success",
+          });
+          // if (updateRes && updateRes.status === "success") {
+          //   FullSweetalert({
+          //     title: "Success",
+          //     text: `บันทึกการอนุมัติและอัปเดตสถานะสำเร็จ`,
+          //     icon: "success",
+          //   });
+          // } else {
+          //   FullSweetalert({
+          //     title: "Warning",
+          //     text: `บันทึกการอนุมัติสำเร็จ แต่ไม่สามารถอัปเดตสถานะได้`,
+          //     icon: "warning",
+          //   });
+          // }
         } else {
           FullSweetalert({
             title: "Failed",
@@ -4461,18 +4472,18 @@ export default function Complaint() {
     //   );
 
     const tempid = uuidv4();
-    
-    
+
+
     const domainId = dataelement?.respondent_domain_id || user?.[0]?.employee_domain;
 
 
     const tempComplaintStatus = await LovAll_Get(
       "get_complaint_status_by_id",
-       domainId,
-       false,
-       dataelement?.complaint_status_id
+      domainId,
+      false,
+      dataelement?.complaint_status_id
     );
-console.log("domainId", domainId);
+    console.log("domainId", domainId);
     const resolveComplaintId = () => {
       const el: any = dataelement || {};
       if (el.complaint_id) {
@@ -4620,7 +4631,7 @@ console.log("domainId", domainId);
     const email_reportType =
       dataset_reporttype?.find((x: any) => x.id == dataelement?.report_type)
         ?.lov4 || "-";
-    const email_casNumber = dataelement?.cas_number || "-";
+    const email_casNumber = dataelement?.cas_number || complaintMainData?.cas_number || "-";
     const email_priority_id =
       dataelement?.priority_level?.lov2 || dataelement?.datapriority?.lov2;
     const email_deptName =
@@ -4770,8 +4781,8 @@ console.log("domainId", domainId);
     `;
 
     formData.append("emailBody", emailBodyHtml);
-      
-      
+
+
     setIsLoadingScreen(true);
     try {
       const response = await _POST_FORMDATA(formData, "/Explain/ExplainAdd");
@@ -4856,10 +4867,10 @@ console.log("domainId", domainId);
       });
       return;
     }
-console.log("🧪 complaint_status_id source:", {
-  fromExplain: approvalSource?.complaint_status_id,
-  fromComplaint: complaintMainData?.complaint_status_id,
-});
+    console.log("🧪 complaint_status_id source:", {
+      fromExplain: approvalSource?.complaint_status_id,
+      fromComplaint: complaintMainData?.complaint_status_id,
+    });
     // โหลดค่า Complaint Status จาก respondent_domain_id
     const tempComplaintStatus = await LovAll_Get(
       "get_complaint_status_by_id",
