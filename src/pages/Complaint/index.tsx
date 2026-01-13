@@ -4483,7 +4483,7 @@ export default function Complaint() {
       false,
       dataelement?.complaint_status_id
     );
-    console.log("domainId", domainId);
+    // console.log("domainId", domainId);
     const resolveComplaintId = () => {
       const el: any = dataelement || {};
       if (el.complaint_id) {
@@ -4610,13 +4610,10 @@ export default function Complaint() {
     }
 
     // ✅ เตรียมข้อมูลสำหรับ Email Body (ดึงจาก dataelement เพราะ State อาจจะว่างในโหมด Explain)
-    console.log("📧 Validating Email Data (ExplainAdd):", dataelement);
-    console.log("📧 PriorityLevel List:", PriorityLevel);
-    console.log("📧 dataelement?.priority_level:", dataelement?.priority_level);
-    console.log(
-      "📧 dataelement?.respond_date_within:",
-      dataelement?.respond_date_within
-    );
+    // console.log("📧 Validating Email Data (ExplainAdd):", dataelement);
+    // console.log("📧 PriorityLevel List:", PriorityLevel);
+    // console.log("📧 dataelement?.priority_level:", dataelement?.priority_level);
+    // console.log("📧 dataelement?.respond_date_within:",dataelement?.respond_date_within);
 
     // Helper เฉพาะกิจสำหรับ Email Body
     const safeFormatDate = (val: any) => {
@@ -4867,10 +4864,10 @@ export default function Complaint() {
       });
       return;
     }
-    console.log("🧪 complaint_status_id source:", {
-      fromExplain: approvalSource?.complaint_status_id,
-      fromComplaint: complaintMainData?.complaint_status_id,
-    });
+    // console.log("🧪 complaint_status_id source:", {
+    //   fromExplain: approvalSource?.complaint_status_id,
+    //   fromComplaint: complaintMainData?.complaint_status_id,
+    // });
     // โหลดค่า Complaint Status จาก respondent_domain_id
     const tempComplaintStatus = await LovAll_Get(
       "get_complaint_status_by_id",
@@ -6121,8 +6118,8 @@ export default function Complaint() {
 
               // ---------------- Map Decision on Disposition ----------------
               if (latestExplain.explainDd && Array.isArray(latestExplain.explainDd)) {
-                console.log("🐛 Debug explainDd:", JSON.stringify(latestExplain.explainDd, null, 2));
-                console.log("🐛 Debug dataDecision_Combobox:", JSON.stringify(dataDecision_Combobox, null, 2));
+                // console.log("🐛 Debug explainDd:", JSON.stringify(latestExplain.explainDd, null, 2));
+                // console.log("🐛 Debug dataDecision_Combobox:", JSON.stringify(dataDecision_Combobox, null, 2));
 
                 const matchedDecisions: any[] = [];
                 let decisionOtherText = "";
@@ -6130,7 +6127,7 @@ export default function Complaint() {
                 latestExplain.explainDd.forEach((item: any) => {
                   // Match by ID
                   const itemId = item.explain_dd_id || item.decision_id || item.lov_id || item.id;
-                  console.log("🐛 Debug Processing Decision item:", JSON.stringify(item), "itemId:", itemId);
+                  // console.log("🐛 Debug Processing Decision item:", JSON.stringify(item), "itemId:", itemId);
 
                   const found = dataDecision_Combobox?.find((opt: any) =>
                     String(opt.id) === String(itemId) ||
@@ -6139,7 +6136,7 @@ export default function Complaint() {
                   );
 
                   if (found) {
-                    console.log("🐛 Debug Found Decision match:", found);
+                    // console.log("🐛 Debug Found Decision match:", found);
                     if (!matchedDecisions.some(d => d.id === found.id)) {
                       matchedDecisions.push(found);
                     }
@@ -6148,7 +6145,7 @@ export default function Complaint() {
                       decisionOtherText = item.other;
                     }
                   } else {
-                    console.log("🐛 Debug No Decision match found for:", itemId);
+                    // console.log("🐛 Debug No Decision match found for:", itemId);
                   }
                 });
 
@@ -6171,14 +6168,14 @@ export default function Complaint() {
               // ---------------- Map Files (Fetch from API & Merge to Editable List) ----------------
               if (latestExplain.id) {
                 try {
-                  console.log("🐛 DEBUG fetching files for explain_id:", latestExplain.id);
+                  // console.log("🐛 DEBUG fetching files for explain_id:", latestExplain.id);
                   const fileResponse = await _POST({
                     explain_id: latestExplain.id,
                     cf_type: "Explain"
                   }, "/ComplaintFile/ComplaintFileGet");
 
                   if (fileResponse && fileResponse.status === "success" && Array.isArray(fileResponse.data)) {
-                    console.log("🐛 DEBUG files fetched:", fileResponse.data);
+                    // console.log("🐛 DEBUG files fetched:", fileResponse.data);
 
                     // Map to ComplaintFile structure with real File object (fetch blob)
                     const mappedFiles = await Promise.all(fileResponse.data.map(async (file: any) => {
@@ -6216,11 +6213,11 @@ export default function Complaint() {
 
                     setPrevExplainFiles(mappedFiles);
                   } else {
-                    console.log("🐛 DEBUG no files found from API");
+                    // console.log("🐛 DEBUG no files found from API");
                     setPrevExplainFiles([]);
                   }
                 } catch (err) {
-                  console.error("🐛 DEBUG error fetching files:", err);
+                  // console.error("🐛 DEBUG error fetching files:", err);
                   setPrevExplainFiles([]);
                 }
               }

@@ -29,7 +29,7 @@ const LoginSection: React.FC = () => {
  
     try {
       let response = await _GET_APP({});
-      console.log(response, "response_App_Get");
+      // console.log(response, "response_App_Get");
  
       if (Array.isArray(response?.data)) {
         application = response.data.filter((item: any) => item.application_code === import.meta.env.VITE_APP_APPLICATION_CODE);

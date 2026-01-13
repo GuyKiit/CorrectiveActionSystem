@@ -941,7 +941,7 @@ export default function ExplaintBody({
   //===================================================================================================
 
   React.useEffect(() => {
-    console.log("Step:02",  dataelement);
+    // console.log("Step:02",  dataelement);
     const updateData = async () => {
       // ================================
       // Map ค่า default ของ company
@@ -1092,9 +1092,9 @@ export default function ExplaintBody({
       const reportTypeToUse = dataReportTypeValue; // ใช้ state ปัจจุบัน (ซึ่งเราเพิ่งอาจจะ set)
       if (reportTypeToUse) {
         const val = reportTypeToUse;
-        console.log("🐛 Debug ExplaintBody reportTypeToUse:", val);
-        console.log("🐛 Debug ExplaintBody val.lov_code:", val.lov_code);
-        console.log("🐛 Debug ExplaintBody dataDecision_Combobox length:", dataDecision_Combobox?.length);
+        // console.log("🐛 Debug ExplaintBody reportTypeToUse:", val);
+        // console.log("🐛 Debug ExplaintBody val.lov_code:", val.lov_code);
+        // console.log("🐛 Debug ExplaintBody dataDecision_Combobox length:", dataDecision_Combobox?.length);
 
         if (!isItAdmin) {
           const newFilteredSecApprove = (dataApprove_Combobox || []).filter(
@@ -1729,7 +1729,10 @@ export default function ExplaintBody({
   }, [isActionCloseAdd, currentExplainForApproval, dataApprove_Combobox]);
 
   React.useEffect(() => {
-
+    setdataToolUse([]);
+    setdataToolUseValue([]);
+    setdataTooluseCheckbox([]);
+    setToolOther("");
 
     if (
       !dataelement ||
@@ -1776,6 +1779,9 @@ export default function ExplaintBody({
   }, [dataelement, dataToolUse_Combobox]); // ✅ แค่สองตัวนี้
 
   React.useEffect(() => {
+    setdataDecision([]);
+    setdataDecisionValue([]);
+    setDecisionOther("");
     //console.log("Step:09", dataelement, dataDecision_Combobox);
     if (!dataelement || !(dataelement?.Decision || dataelement?.explainDd))
       return;

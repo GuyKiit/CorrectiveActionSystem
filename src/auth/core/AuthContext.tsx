@@ -211,7 +211,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 
       if (data?.status === 'Success' && data?.data?.auth_role_profile) {
-        console.log("🔑 response : ", response);
+        // console.log("🔑 response : ", response);
 
         await getCurrentAccessData(response);
         setIsLoadingScreen(false)
