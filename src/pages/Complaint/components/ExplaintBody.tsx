@@ -1729,27 +1729,25 @@ export default function ExplaintBody({
   }, [isActionCloseAdd, currentExplainForApproval, dataApprove_Combobox]);
 
   React.useEffect(() => {
-    setdataToolUse([]);
-    setdataToolUseValue([]);
-    setdataTooluseCheckbox([]);
-    setToolOther("");
+      if (!dataelement) return;
 
-    if (
-      !dataelement ||
-      !(dataelement?.ToolUse || dataelement?.tooluse || dataelement?.explainTu)
-    )
+    const hasTu =
+      dataelement?.ToolUse ||
+      dataelement?.tooluse ||
+        dataelement?.explainTu;
+
+    // 🔥 ถ้า record นี้ "ไม่มี explain" → reset แล้วจบ
+    if (!hasTu) {
+      setdataToolUse([]);
+      setdataToolUseValue([]);
+      setdataTooluseCheckbox([]);
+      setToolOther("");
       return;
+      }
 
     const isComboReady =
       Array.isArray(dataToolUse_Combobox) && dataToolUse_Combobox.length > 0;
-    if (!isComboReady) return;
-
-    // console.log("🔧 [Effect: ToolUse prefill check]", {
-    //   isComboReady,
-    //   currentSelected: (dataTooluse || []).length,
-    // });
-
-    // if (dataTooluse && dataTooluse.length > 0) return; // กัน loop
+      if (!isComboReady) return;
 
     const rawTU = Array.isArray(dataelement?.ToolUse)
       ? dataelement.ToolUse
@@ -1757,66 +1755,80 @@ export default function ExplaintBody({
         ? dataelement.tooluse
         : Array.isArray(dataelement?.explainTu)
           ? dataelement.explainTu
-          : [];
+            : [];
 
     const tu = setExplainTU(rawTU);
-    setdataToolUse(tu);
+      setdataToolUse(tu);
 
-    // Sync dataToolUseValue for validation
-    const reducedArrayTU = tu.map((t) => ({
-      explain_tu_id: t.id,
-      label: t.lov1,
-      isOther: t.lov2,
-    }));
-    setdataToolUseValue(reducedArrayTU);
+    setdataToolUseValue(
+      tu.map((t) => ({
+        explain_tu_id: t.id,
+        label: t.lov1,
+        isOther: t.lov2,
+      }))
+      );
 
     if (Array.isArray(dataelement?.tooluse)) {
       setdataTooluseCheckbox(setTooluse(dataelement.tooluse));
-    }
+      }
 
     const otherTU = tu.find((el: any) => el.lov2 === "Y");
     setToolOther(otherTU?.other || "");
-  }, [dataelement, dataToolUse_Combobox]); // ✅ แค่สองตัวนี้
+  }, [dataelement, dataToolUse_Combobox]);
 
   React.useEffect(() => {
+  if (!dataelement) return;
+
+  const hasDecision =
+    dataelement?.Decision || dataelement?.explainDd;
+
+  if (!hasDecision) {
     setdataDecision([]);
     setdataDecisionValue([]);
     setDecisionOther("");
-    //console.log("Step:09", dataelement, dataDecision_Combobox);
-    if (!dataelement || !(dataelement?.Decision || dataelement?.explainDd))
-      return;
+    return;
+  }
 
-    const isDecisionComboReady =
-      Array.isArray(dataDecision_Combobox) && dataDecision_Combobox.length > 0;
-    if (!isDecisionComboReady) return;
+  const isDecisionComboReady =
+    Array.isArray(dataDecision_Combobox) &&
+    dataDecision_Combobox.length > 0;
+  if (!isDecisionComboReady) return;
 
-    // if (dataDecision && dataDecision.length > 0) return; // กัน loop
+  const rawDD = Array.isArray(dataelement?.Decision)
+    ? dataelement.Decision
+    : Array.isArray(dataelement?.explainDd)
+      ? dataelement.explainDd
+      : [];
 
-    const rawDD = Array.isArray(dataelement?.Decision)
-      ? dataelement.Decision
-      : Array.isArray(dataelement?.explainDd)
-        ? dataelement.explainDd
-        : [];
+  const dd = setExplainDD(rawDD);
+  setdataDecision(dd);
 
-    const dd = setExplainDD(rawDD);
-    setdataDecision(dd);
-
-    // Sync dataDecisionValue for validation
-    const reducedArrayDD = dd.map((d) => ({
+  setdataDecisionValue(
+    dd.map((d) => ({
       explain_dd_id: d.id,
       label: d.lov1,
       isOther: d.lov2,
-    }));
-    setdataDecisionValue(reducedArrayDD);
+    }))
+  );
 
-    const otherDD = dd.find((el: any) => el.lov2 === "Y");
-    setDecisionOther(otherDD?.other || "");
-  }, [dataelement, dataDecision_Combobox]); // ✅ แค่สองตัวนี้
+  const otherDD = dd.find((el: any) => el.lov2 === "Y");
+  setDecisionOther(otherDD?.other || "");
+}, [dataelement, dataDecision_Combobox]);
 
   // Debug useEffect for dataTooluseCheckbox state changes
   React.useEffect(() => {
     //console.log("step:10 dataTooluseCheckbox changed:", dataTooluseCheckbox);
   }, [dataTooluseCheckbox]);
+//   React.useEffect(() => {
+//   setdataToolUse([]);
+//   setdataToolUseValue([]);
+//   setdataTooluseCheckbox([]);
+//   setToolOther("");
+
+//   setdataDecision([]);
+//   setdataDecisionValue([]);
+//   setDecisionOther("");
+// }, [dataelement?.id]); // 🔥 สำคัญ: ใช้ id
 
   React.useEffect(() => {
     //console.log("step:11 Action change detected:", action);
