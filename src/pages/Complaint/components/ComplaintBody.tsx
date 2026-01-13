@@ -1364,7 +1364,7 @@ export default function ComplaintBody({
       );
 
       if (autoDomain) {
-        console.log("🎯 Auto domain from employee_domain:", autoDomain);
+        // console.log("🎯 Auto domain from employee_domain:", autoDomain);
 
         setrespondent_domain_id(autoDomain);
         handleDomainChange(autoDomain);

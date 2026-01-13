@@ -81,6 +81,6 @@ export function getCurrentAccessObject(employeeUsername: string, employeeDomain:
         sessionStorage.setItem('current_access', JSON.stringify(currentAccessObject));
     }
 
-    console.log(currentAccessObject, 'currentAccessObject');
+    // console.log(currentAccessObject, 'currentAccessObject');
     return currentAccessObject;
 }
