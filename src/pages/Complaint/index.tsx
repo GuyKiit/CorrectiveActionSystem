@@ -1956,25 +1956,6 @@ export default function Complaint() {
                     )) ??
                   false
                 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                
                 //-----------------------------------------------------------------------
                 //-----------------------------------------------------------------------
 
@@ -2037,32 +2018,6 @@ export default function Complaint() {
                 //-----------------------------------------------------------------------
                 //-----------------------------------------------------------------------
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                 // For Status [APPROVED][QC]
                 hiddenClose={
                   (dataset_complaintActionApproveQC &&
@@ -2104,38 +2059,13 @@ export default function Complaint() {
                     )) ??
                   false
                 }
-                casNumber={el.cas_number}
               />
             );
-
-            // console.log(" ");
-            // console.log("🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞");
-            // console.log("🤞🤞dataset_complaintActionNew",dataset_complaintActionNew);
-            // console.log("🤞🤞dataset_complaintActionExplain",dataset_complaintActionExplain);
-            // console.log("🤞🤞dataset_complaintActionApproveSC",dataset_complaintActionApproveSC);
-            // console.log("🤞🤞dataset_complaintActionApproveQC",dataset_complaintActionApproveQC);
-            // console.log("🤞🤞dataset_complaintActionClose",dataset_complaintActionClose);
-            // console.log("🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞🤞");
-            // console.log(" ");
 
             el.approve_by = el.approve_by.replace(/\s*\(/, "<br/>(");
             el.ACTION = ACTION;
             const tempRolename = tempRoleUser[0].lov_code;
             // Prepare Role From Role Profile
-
-            // console.log("🦄🦄🦄🦄🦄🦄 tempApproveSeq : ", tempApproveSeq);
-            // console.log("🎶🎶🎶🎶🎶 tempApproveSeq : ", el.cas_number);
-            // console.log("🎶🎶🎶🎶🎶 isItAdmin : ", isItAdmin);
-            // console.log("4️⃣4️⃣🤍🤍5️⃣5️⃣ dataset_complaintActionApproveQC : ", dataset_complaintActionApproveQC);
-            // console.log("🎆 🎆 🎆 🎆 complaint_status_label:", el.complaint_status_label);
-            // console.log("🎆 🎆 🎆 🎆 setdataset_roleProfile :", dataset_roleProfile);
-            // console.log("🎆 🎆 🎆 🎆 el :", el);
-            // console.log("🎆 🎆 🎆 🎆 user[0] :", user[0]);
-            // console.log("🎆 🎆 🎆 🎆 tempRoleUser :", tempRoleUser);
-
-            // console.log("tempRoleUser tempRoleUser : ", tempRoleUser);
-            // console.log("tempRolename tempRolename : ", tempRolename);
-            // console.log(el.step_label)
 
             // For Display Status on Datatable [NEW, SUBMITED, EXPLAINED, APPROVED, CLOSED]
             el.complaint_status_label = (
