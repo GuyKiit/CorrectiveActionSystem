@@ -45,13 +45,22 @@ export default function Navbar({ isOpen, setIsOpen }: NavbarProps) {
                 aria-label="open sidebar"
                 onClick={() => setIsOpen(!isOpen)}
                 sx={{
-                  color: '#000000',
-                  border: '1px solid rgba(0, 0, 0, 0.3)',
+                  color: '#1e293b',
                   borderRadius: '12px',
                   padding: '12px',
+                  background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.74), rgba(255, 255, 255, 0.54))',
+                  backdropFilter: 'blur(10px)',
+                  WebkitBackdropFilter: 'blur(10px)',
+                  border: '1px solid rgba(255, 255, 255, 0.4)',
+                  borderTop: '1px solid rgba(255, 255, 255, 0.8)',
+                  borderLeft: '1px solid rgba(255, 255, 255, 0.8)',
+                  boxShadow: '0 4px 6px rgba(0, 0, 0, 0.05), inset 0 0 0 1px rgba(255, 255, 255, 0.2)',
+                  transition: 'all 0.3s',
                   '&:hover': {
-                    backgroundColor: 'rgba(0, 0, 0, 0.1)',
-                    borderColor: 'rgba(0, 0, 0, 0.5)'
+                    background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7))',
+                    borderColor: 'rgba(255, 255, 255, 1)',
+                    boxShadow: '0 6px 15px rgba(0, 0, 0, 0.1), inset 0 0 0 1px rgba(255, 255, 255, 0.4)',
+                    transform: 'translateY(-1px)'
                   }
                 }}
               >

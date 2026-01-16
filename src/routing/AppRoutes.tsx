@@ -26,11 +26,11 @@ export default function AppRoutes() {
         <Route element={<App />}>
           {/* Public routes */}
           <Route path='auth/*' element={<AuthPage />} />
-          <Route path='*' element={<Navigate to='/auth' />} />
+          <Route path='*' element={<Navigate to='/home' />} />
 
           {/* Protected routes */}
           <Route element={<ProtectedRoute />}>
-            {/* <Route path='home' element={<Home />} /> */}
+            <Route path='home' element={<Home />} />
             <Route path='complaint' element={<PageComplaint/>} />
             <Route path='report' element={<ReportTreeView/>} />
             <Route path='departmentsetting' element={

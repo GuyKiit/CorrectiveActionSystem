@@ -12,7 +12,7 @@ const LoginSection: React.FC = () => {
   const navigate = useNavigate();
   useEffect(() => {
     if (isAuthenticated) {
-      navigate('/complaint');
+      navigate('/home');
       // navigate('/report');
       // navigate('/departmentsetting');
     }

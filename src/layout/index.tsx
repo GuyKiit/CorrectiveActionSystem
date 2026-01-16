@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from './component/navbar';
 import Sidebar from './component/sidebar';
+import Footer from './component/footer';
 
 interface PropsLayout {
   children: React.ReactNode;
@@ -30,10 +31,11 @@ export default function MasterLayout({ children }: PropsLayout) {
       
       <div className={`p-4 transition-all duration-300 ${
         isOpen ? 'sm:ml-64' : 'sm:ml-16'
-      } pt-20`}>
-        <div className="p-4 border-0  rounded-lg dark:border-gray-700">
+      } pt-20 flex flex-col min-h-screen`}>
+        <div className="p-4 border-0  rounded-lg dark:border-gray-700 flex-1">
           {children}
         </div>
+        <Footer />
       </div>
 
       {/* Overlay for mobile */}

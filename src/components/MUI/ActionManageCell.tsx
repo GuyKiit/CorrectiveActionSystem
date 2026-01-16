@@ -33,6 +33,7 @@ interface ActionManageCellProps {
   hiddenDepartmentEdit?: boolean;
   hiddenDepartmentDelete?: boolean;
   hiddenPrint?: boolean;
+  casNumber?: string;
   role_id?: string;
   chack_data?: 'Cutoff_Row' | 'CencalCutoff' | undefined;
   hadleOnclickMenu?: (value: string) => void;
@@ -70,6 +71,9 @@ const ActionManageCell: React.FC<ActionManageCellProps> = (props) => {
     hiddenDepartmentEdit,
     hiddenDepartmentDelete,
     hiddenPrint,
+
+    casNumber,
+
     role_id,
   } = props;
   const { menuFuncData } = useAuth();
@@ -139,7 +143,28 @@ const ActionManageCell: React.FC<ActionManageCellProps> = (props) => {
   // console.log(hiddenExplain,'hiddenExplain');
   // console.log(hiddenClose,'🎏🎏🎏hiddenClose');
   
-// console.log('CHECK DATE el in ActionManageCell', menuFuncData)
+  console.log('✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️')
+  console.log('✳️✳️  ✳️✳️ ✳️✳️ CAS Number : ', casNumber)
+  console.log('✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️')
+  console.log('🔥 CHECK VALUE [ActionManageCell] hiddenRead : ', hiddenRead === true ? '1' : '0')
+  console.log('🔥 CHECK VALUE [ActionManageCell] hiddenEdit : ', hiddenEdit === true ? '1' : '0')
+  console.log('🔥 CHECK VALUE [ActionManageCell] hiddenDelete : ', hiddenDelete === true ? '1' : '0')
+  console.log('🔥 CHECK VALUE [ActionManageCell] hiddenExplain : ', hiddenExplain === true ? '1' : '0')
+  console.log('🔥 CHECK VALUE [ActionManageCell] hiddenApproveSC : ', hiddenApproveSC === true ? '1' : '0')
+  console.log('🔥 CHECK VALUE [ActionManageCell] hiddenApproveQC : ', hiddenApproveQC === true ? '1' : '0')
+  console.log('🔥 CHECK VALUE [ActionManageCell] hiddenClose : ', hiddenClose === true ? '1' : '0')
+  console.log('🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥')
+  console.log('🔥 CHECK VALUE [ActionManageCell] hiddenReadExplain : ', hiddenReadExplain === true ? '1' : '0')
+  console.log('🔥 CHECK VALUE [ActionManageCell] hiddenReadApproveSC : ', hiddenReadApproveSC === true ? '1' : '0')
+  console.log('🔥 CHECK VALUE [ActionManageCell] hiddenReadApproveQC : ', hiddenReadApproveQC === true ? '1' : '0')
+  console.log('🔥 CHECK VALUE [ActionManageCell] hiddenReadClose : ', hiddenReadClose === true ? '1' : '0')
+  console.log('🔥 CHECK VALUE [ActionManageCell] hiddenCloseHistory : ', hiddenCloseHistory === true ? '1' : '0')
+  console.log('🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥')
+  console.log('🔥 CHECK VALUE [ActionManageCell] hiddenDepartmentAdd : ', hiddenDepartmentAdd === true ? '1' : '0')
+  console.log('🔥 CHECK VALUE [ActionManageCell] hiddenDepartmentView : ', hiddenDepartmentView === true ? '1' : '0')
+  console.log('🔥 CHECK VALUE [ActionManageCell] hiddenDepartmentEdit : ', hiddenDepartmentEdit === true ? '1' : '0')
+  console.log('🔥 CHECK VALUE [ActionManageCell] hiddenDepartmentDelete : ', hiddenDepartmentDelete === true ? '1' : '0')
+  console.log('✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️✳️')
   const filteredMenu = (menuFuncData ?? [])
   
     .filter(el =>
