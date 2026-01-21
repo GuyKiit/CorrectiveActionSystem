@@ -48,7 +48,7 @@ export default function Profile({ isOpen }: Profile) {
   const [profileModalOpen, setProfileModalOpen] = React.useState(false);
   const [isDefaultPhoto, setIsDefaultPhoto] = React.useState(false);
   const [manualGuideOpen, setManualGuideOpen] = React.useState(false);
-  const manualGuideUrl = null;
+  const manualGuideUrl = "https://intra-tools.trrgroup.com/storage/CAS/PROD/UserManual/UserManual-CAS-20260121.pdf";
   // const manualGuideUrl = "https://intra-tools.trrgroup.com/storage/AVL/PROD/doc_form/TRR-Business-Ethics-for-partners.pdf";
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
