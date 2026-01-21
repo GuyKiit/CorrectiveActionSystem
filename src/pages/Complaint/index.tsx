@@ -7924,7 +7924,7 @@ export default function Complaint() {
         disableSaveSubmit={
           !approveSelectionCode || approveSelectionCode !== "APPROVE"
         }
-        titlename={"อนุมติรายการหัวหน้าแผนก"}
+        titlename={"อนุมัติรายการหัวหน้าแผนก"}
         buttonText={"อนุมัติ"}
         handlefunction={ApproveScAdd}
         handlereject={() => ComplaintReturn("APPROVE_SC")}
@@ -7987,7 +7987,7 @@ export default function Complaint() {
         disableSaveSubmit={
           !approveSelectionCode || approveSelectionCode !== "APPROVE"
         }
-        titlename={"อนุมติรายการผู้จัดการโรงงาน"}
+        titlename={"อนุมัติรายการผู้จัดการโรงงาน"}
         buttonText={"อนุมัติ"}
         handlefunction={ApproveQcAdd}
         handlereject={() => ComplaintReturn("APPROVE_QC")}
