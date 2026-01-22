@@ -582,6 +582,7 @@ export default function ComplaintBody({
   const grouped = {
     config_file: dataset_configfile || [],
   };
+  
   // Check Acknowledge flag =========================================================
   const updateAcknowledgeFlag = (value: any) => {
     // console.log("####### Onchange Company Value [event] : ", value);
@@ -945,24 +946,75 @@ export default function ComplaintBody({
     setclose_note("");
   };
 
-  const priorityCalculateRespondDate = (
-    daysToAdd: number,
-    checked: boolean
-  ) => {
-    if (true)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  priorityCalculateRespondDate"
-      );
+  // const priorityCalculateRespondDate = (
+  //   daysToAdd: number,
+  //   checked: boolean
+  // ) => {
+  //   if (true)
+  //     console.log(
+  //       "🕑 ",
+  //       dayjs().format("HH:mm:ss.SSS"),
+  //       " [Calling Function]  :  priorityCalculateRespondDate"
+  //     );
 
-    if (checked) {
-      const newDate = dayjs().add(daysToAdd, "day"); // use dayjs instead of Date
-      setrespond_date_within(newDate);
-    } else {
-      setrespond_date_within(null);
-    }
-  };
+  //   if (checked) {
+  //     const newDate = dayjs().add(daysToAdd, "day"); // use dayjs instead of Date
+  //     setrespond_date_within(newDate);
+  //   } else {
+  //     setrespond_date_within(null);
+  //   }
+  // };
+  const priorityCalculateRespondDate = (
+  days: number,
+  checked: boolean = true
+) => {
+  console.log(
+    "🕑 ",
+    dayjs().format("HH:mm:ss.SSS"),
+    " [Calling Function] priorityCalculateRespondDate"
+  );
+
+  if (!checked) {
+    setrespond_date_within(null);
+    return;
+  }
+
+  // ✅ ใช้วันปัจจุบันเสมอ (Add + Edit)
+  const baseDate = dayjs();
+
+  const newDate = baseDate.add(days, "day");
+
+  setrespond_date_within(newDate);
+};
+
+React.useEffect(() => {
+  if (!isActionEdit) return;
+  if (!datapriority) return;
+
+  const days = Number(datapriority.lov3 ?? 0);
+
+  const today = dayjs().startOf("day");
+  const expectedDate = today.add(days, "day");
+
+  // ❗ ยังไม่เคยมีวัน
+  if (!respond_date_within) {
+    setrespond_date_within(expectedDate);
+    return;
+  }
+
+  const current = dayjs(respond_date_within).startOf("day");
+
+  // ✅ ถ้าวันไม่ตรง → recal ใหม่
+  if (!current.isSame(expectedDate, "day")) {
+    setrespond_date_within(expectedDate);
+  }
+
+}, [
+  isActionEdit,
+  datapriority?.id,
+  respond_date_within
+]);
+
 
   const arraysAreEqual = (a: any[], b: any[]) => {
     // if (true) console.log("🕑 ",dayjs().format("HH:mm:ss.SSS")," [Calling Function]  :  arraysAreEqual");
@@ -2092,6 +2144,10 @@ export default function ComplaintBody({
       return "หมายเหตุการปิดรายการ";
     }
   };
+
+  
+
+  
 
   // #F29739
 
