@@ -2599,9 +2599,9 @@ export default function Complaint() {
         priority_level: datapriorityValue_Combobox,
         respond_date_within: respond_date_within
           ? respond_date_within
-            .hour(23)
-            .minute(59)
-            .second(59)
+            .hour(dayjs().hour())
+            .minute(dayjs().minute())
+            .second(dayjs().second())
             .format("YYYY-MM-DDTHH:mm:ss.SSS")
           : null,
         lot_no: lot_no || null,
@@ -3057,12 +3057,12 @@ export default function Complaint() {
           priority_level:
             datapriorityValue_Combobox || dataelement?.priority_level,
           respond_date_within: respond_date_within
-            ? respond_date_within
-              .hour(23)
-              .minute(59)
-              .second(59)
-              .format("YYYY-MM-DDTHH:mm:ss.SSS")
-            : null,
+          ? respond_date_within
+            .hour(dayjs().hour())
+            .minute(dayjs().minute())
+            .second(dayjs().second())
+            .format("YYYY-MM-DDTHH:mm:ss.SSS")
+          : null,
           complaint_status_id: tempComplaintStatus[0]?.lov1,
           complaintType: complainttypeModel,
           complaintRs: complaintRsModel,
@@ -3316,12 +3316,12 @@ export default function Complaint() {
           priority_level:
             datapriorityValue_Combobox || dataelement?.priority_level,
           respond_date_within: respond_date_within
-            ? respond_date_within
-              .hour(23)
-              .minute(59)
-              .second(59)
-              .format("YYYY-MM-DDTHH:mm:ss.SSS")
-            : null,
+          ? respond_date_within
+            .hour(dayjs().hour())
+            .minute(dayjs().minute())
+            .second(dayjs().second())
+            .format("YYYY-MM-DDTHH:mm:ss.SSS")
+          : null,
           complaint_status_id: tempComplaintStatus[0]?.id,
           complaintType: complainttypeModel,
           complaintRs: complaintRsModel,
