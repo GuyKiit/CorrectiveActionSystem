@@ -2969,7 +2969,7 @@ export default function Complaint() {
         <p>
 
         <div style="text-align: center; background-color: #d32f2f; color: #ffffff; padding: 20px; border-radius: 5px; margin-bottom: 20px;">
-        <h1 style="margin: 0; font-size: 24px; text-transform: uppercase;">🚨 เร่งด่วนฉุกเฉิน (EMERGENCY) 🚨</h1>
+        <h1 style="margin: 0; font-size: 24px; text-transform: uppercase;"> เร่งด่วนฉุกเฉิน (EMERGENCY) </h1>
         <p style="margin: 10px 0 0 0; font-size: 16px; font-weight: bold;">
                 รายการข้อร้องเรียนเร่งด่วนฉุกเฉิน : กรุณาตรวจสอบและดำเนินการแก้ไขทันที
         </p>
@@ -3356,7 +3356,7 @@ export default function Complaint() {
         <p>
 
         <div style="text-align: center; background-color: #d32f2f; color: #ffffff; padding: 20px; border-radius: 5px; margin-bottom: 20px;">
-        <h1 style="margin: 0; font-size: 24px; text-transform: uppercase;">🚨 เร่งด่วนฉุกเฉิน (EMERGENCY) 🚨</h1>
+        <h1 style="margin: 0; font-size: 24px; text-transform: uppercase;"> เร่งด่วนฉุกเฉิน (EMERGENCY) </h1>
         <p style="margin: 10px 0 0 0; font-size: 16px; font-weight: bold;">
                 รายการข้อร้องเรียนเร่งด่วนฉุกเฉิน : กรุณาตรวจสอบและดำเนินการแก้ไขทันที
         </p>
