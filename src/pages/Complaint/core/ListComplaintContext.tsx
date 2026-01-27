@@ -279,6 +279,8 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
     // );
     // State สำหรับเก็บไฟล์จริง
     const [complaintFiles, setcomplaintFiles] = useState<File[]>([]); // state ไฟล์
+    const [explainFiles, setexplainFiles] = useState<File[]>([]); // state ไฟล์
+    const [closeFiles, setcloseFiles] = useState<File[]>([]); // state ไฟล์
 
 
 
@@ -649,6 +651,8 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 dataset_domain,
                 dataset_domainrelate,
                 complaintFiles,
+                explainFiles,
+                closeFiles,
                 dataset_stepcomplaint,
                 dataset_complaintAction,
                 dataset_complaintActionNew,
@@ -842,6 +846,8 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 setdataset_domain,
                 setdataset_domainrelate,
                 setcomplaintFiles,
+                setexplainFiles,
+                setcloseFiles,
                 setdataset_stepcomplaint,
                 setdataset_complaintAction,
                 setdataset_complaintActionNew,
