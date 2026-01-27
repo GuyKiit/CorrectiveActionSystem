@@ -345,6 +345,7 @@ export default function ComplaintBody({
     domain,
     explainList,
     dataset_configfile,
+    closeFiles,
 
     setComplaint_no,
     setno,
@@ -443,6 +444,7 @@ export default function ComplaintBody({
     set_domain,
     setExplainList,
     setdataset_configfile,
+    setcloseFiles,
   } = useListComplaint();
 
   const [previewFile, setPreviewFile] = useState<File | null>(null);
@@ -867,6 +869,21 @@ export default function ComplaintBody({
     setcomplaintFiles(updatedList);
   };
 
+ 
+  //     // if (true)
+  //     //   console.log(
+  //     //     "🕑 ",
+  //     //     dayjs().format("HH:mm:ss.SSS"),
+  //     //     " [Calling Function]  :  handleFileChange"
+  //     //   );
+  
+  //     if (!fileArray || fileArray.length === 0) return;
+  //     if (cf_type === "Complaint") {
+  //     setFileList((prev:any) => [...prev, ...fileArray]);
+  //   } else {
+  //     setcloseFiles((prev:any) => [...prev, ...fileArray]);
+  //   }
+  //   };
   // const handleFileAttachmentTypeChange = (index: number, type: string) => {
   //   if (true)
   //     console.log(
@@ -1312,31 +1329,115 @@ React.useEffect(() => {
     [complaint_status_id];
 
   // READ - Get Complaints
-  const ComplaintFile_Get = async () => {
+  // const ComplaintFile_Get = async () => {
+  //   if (true)
+  //     if (!dataelement?.id) {
+  //       // console.log("🕑 ", dayjs().format("HH:mm:ss.SSS")," [Calling Function]  :  ComplaintFile_Get");
+
+  //       // ตรวจสอบว่ามี dataelement?.id หรือไม่  ไม่error หากไม่มีไฟล์
+  //       // console.log("No complaint ID, skipping file fetch");
+  //       setFileList([]);
+  //       setcomplaintFiles([]);
+  //       return;
+  //     }
+
+  //   // ✅ Safety Check: ป้องกันการเรียกด้วย Explain Data หรือข้อมูลที่ไม่ใช่ Complaint
+  //   if (dataelement?.complaint_id || !dataelement?.cas_number) {
+  //     // console.log("⏭️ Skip ComplaintFile_Get - Invalid data type (likely Explain data)");
+  //     setFileList([]);
+  //     setcomplaintFiles([]);
+  //     return;
+  //   }
+
+  //   //setIsLoadingScreen(true);
+  //   const dataset = {
+  //     complaint_id: dataelement?.id,
+  //     cf_type: "Complaint",
+  //   };
+
+  //   try {
+  //     let response = await _POST(dataset, "/ComplaintFile/ComplaintFileGet");
+  //     if (response && response.status === "success") {
+  //       setIsLoadingScreen(false);
+  //       const responseData: any = [];
+
+  //       if (Array.isArray(response.data) && response.data.length > 0) {
+  //         // console.log("################# FILE #######################:",response.data); // เช็คว่ามีกี่แถวจริง ๆ
+
+  //         const mappedFiles: ComplaintFile[] = response.data.map(
+  //           (file: any) => ({
+  //             file: {
+  //               name: file.user_file_name || "unknown",
+  //               size: Number(file.file_size) || 0,
+  //               type: file.file_type || "",
+  //             } as File,
+  //             attachmentType: file.complaint_at_id,
+  //             otherText: file.other,
+  //             original_file_name: file.user_file_name,
+  //             img_url: file.img_url,
+  //             full_path: file.full_path,
+  //             id: file.id, // เพิ่ม id สำหรับการลบไฟล์
+  //           })
+  //         );
+
+  //         setFileList(mappedFiles);
+  //         setcomplaintFiles(mappedFiles);
+  //       } else {
+  //         // ไม่มีไฟล์
+  //         // console.log("No files found");
+  //         setFileList([]);
+  //         setcomplaintFiles([]);
+  //       }
+  //     } else {
+  //       // Response ไม่สำเร็จ
+  //       // console.log("Failed to get files:", response);
+  //       setFileList([]);
+  //       setcomplaintFiles([]);
+  //     }
+  //   } catch (e) {
+  //     setFileList([]);
+  //     setcomplaintFiles([]);
+  //   } finally {
+  //     setIsLoadingScreen(false);
+  //   }
+  // };
+
+  const ComplaintFile_Get = async (cf_type: "Complaint" | "Close") => {
     if (true)
       if (!dataelement?.id) {
         // console.log("🕑 ", dayjs().format("HH:mm:ss.SSS")," [Calling Function]  :  ComplaintFile_Get");
 
         // ตรวจสอบว่ามี dataelement?.id หรือไม่  ไม่error หากไม่มีไฟล์
         // console.log("No complaint ID, skipping file fetch");
-        setFileList([]);
-        setcomplaintFiles([]);
+        if (cf_type === "Complaint") {
+          setFileList([]);
+        } else {
+          setcloseFiles([]);
+        }
         return;
       }
 
     // ✅ Safety Check: ป้องกันการเรียกด้วย Explain Data หรือข้อมูลที่ไม่ใช่ Complaint
-    if (dataelement?.complaint_id || !dataelement?.cas_number) {
-      // console.log("⏭️ Skip ComplaintFile_Get - Invalid data type (likely Explain data)");
-      setFileList([]);
-      setcomplaintFiles([]);
-      return;
-    }
+    // if (dataelement?.complaint_id || !dataelement?.cas_number) {
+    //   // console.log("⏭️ Skip ComplaintFile_Get - Invalid data type (likely Explain data)");
+    //   setFileList([]);
+    //   setcomplaintFiles([]);
+    //   return;
+    // }
 
     //setIsLoadingScreen(true);
-    const dataset = {
-      complaint_id: dataelement?.id,
-      cf_type: "Complaint",
-    };
+    const dataset =
+      cf_type === "Complaint"
+        ? {
+            complaint_id: dataelement.id,
+            explain_id: null,
+            cf_type: "Complaint",
+          }
+        : {
+            complaint_id: dataelement.id,
+            explain_id: dataelement.explain_id,
+            cf_type: "Close",
+          };
 
     try {
       let response = await _POST(dataset, "/ComplaintFile/ComplaintFileGet");
@@ -1363,8 +1464,12 @@ React.useEffect(() => {
             })
           );
 
+         if (cf_type === "Complaint") {
           setFileList(mappedFiles);
           setcomplaintFiles(mappedFiles);
+        } else {
+          setcloseFiles(mappedFiles);
+        }
         } else {
           // ไม่มีไฟล์
           // console.log("No files found");
@@ -1972,20 +2077,27 @@ React.useEffect(() => {
       // ✅ ตรวจสอบว่าเป็น Complaint Object จริงหรือไม่
       // ถ้ามี complaint_id แสดงว่าเป็น Explain Data (ลูก) ที่ถูกส่งเข้ามาแทนที่ -> ข้ามการ fetch
       // (Complaint Data จะไม่มี field complaint_id ในตัวเอง)
-      if (dataelement?.complaint_id) {
-        // console.log("⏭️ Skip fetch - dataelement has complaint_id (is Explain data)");
-        return;
-      }
+      // if (dataelement?.complaint_id) {
+      //   // console.log("⏭️ Skip fetch - dataelement has complaint_id (is Explain data)");
+      //   return;
+      // }
 
       // console.log("📥 Fetching data for complaint ID:", currentId);
-      ComplaintFile_Get();
+      if (dataelement?.complaint_id) {
+    // 👉 Close (Explain)
+        ComplaintFile_Get("Close");
+      } else {
+    // 👉 Complaint
+        ComplaintFile_Get("Complaint");
+      }
+
       ExplainGet();
       prevComplaintIdRef.current = currentId; // บันทึก ID ปัจจุบัน
     } else if (!currentId) {
       // ถ้าไม่มี ID ให้ reset ref
       prevComplaintIdRef.current = null;
     }
-  }, [action, dataelement]); // ใช้ dataelement ทั้งหมดเป็น dependency
+  }, [action, dataelement,dataelement?.id]); // ใช้ dataelement ทั้งหมดเป็น dependency
 
 
   // ✅ useRef เพื่อให้ Acknowledge_Update รันเพียงครั้งเดียวต่อ dataelement.id
@@ -4355,6 +4467,303 @@ React.useEffect(() => {
                               </Box>
                             </AccordionDetails>
                           </Accordion>
+                          <Accordion
+                    expanded={isMinimizefileOpen}
+                    onChange={() => setisMinimizeFileOpen(!isMinimizefileOpen)}
+                    sx={{
+                      borderRadius: 3,
+                      background:
+                        "linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%)",
+                      border: "1px solid #e0e0e0",
+                      boxShadow: "0 4px 12px rgba(158,158,158,0.1)",
+                      mt: 3,
+                    }}
+                  >
+                    {/* 🔹 หัวข้อ */}
+                    <AccordionSummary
+                      expandIcon={<ExpandMoreIcon sx={{ color: "#616161" }} />}
+                      aria-controls="dept-content"
+                      id="dept-header"
+                      sx={{ px: 2 }}
+                    >
+                      <Box sx={{ flexGrow: 1 }}>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            pb: 2,
+                            borderBottom: "2px solid #616161", // ✅ เส้นเต็มเหมือนเดิม
+                          }}
+                        >
+                          <Box
+                            sx={{
+                              width: 6,
+                              height: 24,
+                              backgroundColor: "#616161",
+                              borderRadius: 1,
+                              mr: 2,
+                            }}
+                          />
+                          <Typography
+                            className="sarabun-regular-datatable"
+                            sx={{
+                              fontSize: 18,
+                              fontWeight: 600,
+                              color: "#616161",
+                            }}
+                          >
+                            แนบไฟล์ (Attachments)
+                          </Typography>
+                        </Box>
+                      </Box>
+                    </AccordionSummary>
+                    <AccordionDetails sx={{ p: 3 }}>
+                      <Grid container spacing={2}>
+                        {
+                          <Grid size={12}>
+                            <BrowseFileUpload
+                              setFile={handleFileChange}
+                              setFileName={() => { }}
+                              options={(filteredphoto || []).map((p: any) => ({
+                                id: p.id,
+                                lov1: p.lov1,
+                                lov2: p.lov2,
+                                lov_code: "CheckTypeFileImage",
+                                isOther: p.lov2, // Use lov2 as isOther logic for 'Other' field
+                              }))}
+                              grouped={grouped}
+                              action={action}
+                            />
+
+                            {/* Grouped display by attachment type - Full width boxes stacked vertically */}
+                            <Box sx={{ mt: 1 }}>
+                              {(filteredphoto || []).map((photoType: any) => {
+                                const items = closeFiles.filter(
+                                  (f:any) => f.attachmentType === photoType.id
+                                );
+                                if (items.length === 0) return null;
+                                return (
+                                  <Paper
+                                    key={photoType.id}
+                                    elevation={1}
+                                    sx={{
+                                      p: 2,
+                                      borderRadius: 2,
+                                      mb: 2,
+                                      width: "100%",
+                                    }}
+                                  >
+                                    <label
+                                      className="sarabun-regular-datatable"
+                                      style={{
+                                        fontWeight: 600,
+                                        fontSize: "16px",
+                                      }}
+                                    >
+                                      {photoType.lov1}
+                                    </label>
+                                    <Divider sx={{ my: 1 }} />
+                                    {items.map((item:any, idx:any) => (
+                                      <Box
+                                        key={idx}
+                                        sx={{
+                                          p: 1.5,
+                                          border: "1px solid #e0e0e0",
+                                          borderRadius: 1,
+                                          mb: 1,
+                                          display: "flex",
+                                          justifyContent: "space-between",
+                                          alignItems: "center",
+                                          gap: 2,
+                                        }}
+                                      >
+                                        <Box>
+                                          <div style={{ fontWeight: "bold" }}>
+                                            {item.file.name}
+                                          </div>
+                                          <div
+                                            style={{
+                                              fontSize: "15px",
+                                              color: "#484444ff",
+                                            }}
+                                          >
+                                            {item.file.size < 1024 * 1024
+                                              ? `${(item.file.size / 1024).toFixed(2)} KB`
+                                              : `${(item.file.size / (1024 * 1024)).toFixed(2)} MB`}
+                                          </div>
+                                          {photoType.lov2 === "Y" && (
+                                            <div
+                                              style={{
+                                                fontSize: "15px",
+                                                color: "#484444ff",
+                                                marginTop: "4px",
+                                              }}
+                                            >
+                                              รายละเอียด: {item.otherText}
+                                            </div>
+                                          )}
+                                        </Box>
+                                        <Box sx={{ display: "flex", gap: 1 }}>
+                                          {/* //ปุ่มลบไฟล์ */}
+                                          {(isActionEdit ||
+                                            isActionAdd  ) && (
+                                              <IconButton
+                                                color="error"
+                                                onClick={() => {
+                                                  // หา index ที่ถูกต้องใน fileList
+                                                  const actualIndex =
+                                                    closeFiles.findIndex(
+                                                      (f:any) =>
+                                                        f.file.name ===
+                                                        item.file.name &&
+                                                        f.attachmentType ===
+                                                        item.attachmentType
+                                                    );
+                                                  // console.log(
+                                                  //   "🔍 Remove file debug:",
+                                                  //   {
+                                                  //     itemName: item.file.name,
+                                                  //     itemType:
+                                                  //       item.attachmentType,
+                                                  //     actualIndex,
+                                                  //     fileListLength:
+                                                  //       fileList.length,
+                                                  //   }
+                                                  // );
+                                                  if (actualIndex !== -1) {
+                                                    handleRemoveFile(actualIndex);
+                                                  }
+                                                }}
+                                              >
+                                                <DeleteIcon />
+                                              </IconButton>
+                                            )}
+
+                                          {/* //ปุ่มดูไฟล์ */}
+
+                                          <IconButton
+                                            color="primary"
+                                            onClick={() => {
+                                              // console.log(
+                                              //   "full_path:",
+                                              //   item.full_path
+                                              // );
+                                              // console.log(
+                                              //   "file type:",
+                                              //   typeof item.file
+                                              // );
+                                              // console.log(
+                                              //   "file instanceof File:",
+                                              //   item.file instanceof File
+                                              // );
+
+                                              // ตรวจสอบว่าเป็นไฟล์ใหม่ (ไม่มี full_path) หรือไฟล์เก่า (มี full_path)
+                                              if (item.full_path) {
+                                                // ไฟล์เก่า - เปิดจาก NAS
+                                                window.open(
+                                                  item.full_path,
+                                                  "_blank"
+                                                );
+                                              } else if (
+                                                item.file instanceof File
+                                              ) {
+                                                // ไฟล์ใหม่ - เปิดจาก File object
+                                                const fileUrl =
+                                                  URL.createObjectURL(
+                                                    item.file
+                                                  );
+                                                window.open(fileUrl, "_blank");
+                                                // Clean up URL after a delay to free memory
+                                                setTimeout(
+                                                  () =>
+                                                    URL.revokeObjectURL(
+                                                      fileUrl
+                                                    ),
+                                                  1000
+                                                );
+                                              } else {
+                                                // console.log(
+                                                //   "Cannot preview file - no full_path or File object"
+                                                // );
+                                              }
+                                            }}
+                                          >
+                                            <VisibilityIcon />
+                                          </IconButton>
+
+                                          {/* //ปุ่มดาวน์โหลดไฟล์ */}
+                                          {/* {(action === "Read" || isActionExplain) && ( */}
+                                          {!isActionAdd && (
+                                            <IconButton
+                                              color="primary"
+                                              onClick={async () => {
+                                                console.log("Downloading file:", item);
+                                                console.log("Downloading item.full_path:", item.full_path);
+                                                if (!item.full_path) return;
+
+                                                try {
+                                                  const response = await fetch(
+                                                    item.full_path,
+                                                    { method: "GET" }
+                                                  );
+                                                  const blob =
+                                                    await response.blob();
+                                                  const url =
+                                                    URL.createObjectURL(blob);
+
+                                                  const link =
+                                                    document.createElement("a");
+                                                  link.href = url;
+                                                  link.setAttribute(
+                                                    "download",
+                                                    item.original_file_name ??
+                                                    "file"
+                                                  );
+                                                  document.body.appendChild(
+                                                    link
+                                                  );
+                                                  link.click();
+                                                  document.body.removeChild(
+                                                    link
+                                                  );
+
+                                                  URL.revokeObjectURL(url); // cleanup memory
+                                                } catch (err) {
+                                                  console.error(
+                                                    "Download failed:",
+                                                    err
+                                                  );
+                                                }
+                                              }}
+                                            >
+                                              <DownloadIcon />
+                                            </IconButton>
+                                          )}
+                                        </Box>
+                                      </Box>
+                                    ))}
+                                  </Paper>
+                                );
+                              })}
+
+                              {closeFiles.length === 0 && (
+                                <Paper
+                                  elevation={0}
+                                  sx={{
+                                    p: 2,
+                                    textAlign: "center",
+                                    color: "#999",
+                                  }}
+                                >
+                                  ยังไม่มีไฟล์ที่แนบ
+                                </Paper>
+                              )}
+                            </Box>
+                          </Grid>
+                        }
+                      </Grid>
+                    </AccordionDetails>
+                  </Accordion>
                           {/* )} */}
                         </Grid>
                         {/* )} */}
