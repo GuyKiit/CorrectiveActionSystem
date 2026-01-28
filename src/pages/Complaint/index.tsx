@@ -536,6 +536,10 @@ export default function Complaint() {
     setisApproveQcBoxHidden,
     isApproveCloseBoxHidden,
     setisApproveCloseBoxHidden,
+
+    // File states for clearing
+    setexplainFiles,
+    setcloseFiles,
   } = useListComplaint();
 
   // =====================================================================================================
@@ -789,7 +793,7 @@ export default function Complaint() {
 
   const handleCompanyChange = async (value: any) => {
     if (value) {
-      console.log("📌 Dataset for Department API:", value);
+      // console.log("📌 Dataset for Department API:", value);
       mas_DomainRelateGet(
         value?.company_id,
         set_domainrelate,
@@ -3637,7 +3641,7 @@ export default function Complaint() {
           formData,
           "/Complaint/ComplaintEdit"
         );
-        console.log("Response: ", response);
+        // console.log("Response: ", response);
         if (response && response.status === "success") {
           FullSweetalert({
             title: "Success",
@@ -4176,18 +4180,21 @@ export default function Complaint() {
           // );
           // console.log("updateRes", updateRes);
           const complaintFormData = new FormData();
-        complaintFormData.append(
-          "complaintReturnJson",
-          JSON.stringify(complaintReturnPayload)
-        );
-        closeFiles?.forEach((f: any) => {
-          complaintFormData.append("closeFiles", f.file);
-        });
-        // const response = await _POST(
-        //   complaintReturnPayload,
-        //   "/Complaint/ComplaintReturn"
-        // );
-        const response = await _POST_FORMDATA(complaintFormData, "/Complaint/ComplaintReturn");
+          complaintFormData.append(
+            "complaintReturnJson",
+            JSON.stringify(complaintReturnPayload)
+          );
+          closeFiles?.forEach((f: any) => {
+            // เฉพาะไฟล์ใหม่ที่เป็น File object จริง
+            if (f.file instanceof File) {
+              complaintFormData.append("closeFiles", f.file);
+            }
+          });
+          // const response = await _POST(
+          //   complaintReturnPayload,
+          //   "/Complaint/ComplaintReturn"
+          // );
+          const response = await _POST_FORMDATA(complaintFormData, "/Complaint/ComplaintReturn");
           FullSweetalert({
             title: "Success",
             text: `บันทึกการอนุมัติและอัปเดตสถานะสำเร็จ`,
@@ -4452,18 +4459,18 @@ export default function Complaint() {
           //   "/Complaint/ComplaintReturn"
           // );
           const complaintFormData = new FormData();
-        complaintFormData.append(
-          "complaintReturnJson",
-          JSON.stringify(complaintReturnPayload)
-        );
-        closeFiles?.forEach((f: any) => {
-          complaintFormData.append("closeFiles", f.file);
-        });
-        // const response = await _POST(
-        //   complaintReturnPayload,
-        //   "/Complaint/ComplaintReturn"
-        // );
-        const response = await _POST_FORMDATA(complaintFormData, "/Complaint/ComplaintReturn");
+          complaintFormData.append(
+            "complaintReturnJson",
+            JSON.stringify(complaintReturnPayload)
+          );
+          closeFiles?.forEach((f: any) => {
+            complaintFormData.append("closeFiles", f.file);
+          });
+          // const response = await _POST(
+          //   complaintReturnPayload,
+          //   "/Complaint/ComplaintReturn"
+          // );
+          const response = await _POST_FORMDATA(complaintFormData, "/Complaint/ComplaintReturn");
 
           FullSweetalert({
             title: "Success",
@@ -4651,38 +4658,39 @@ export default function Complaint() {
           // respondent_domain_id: dataelement?.respondent_domain_id,
           // respondent_department_id: dataelement?.respondent_department_id,
 
-          request_company_id:dataelement?.respondent_company_id?.company_id
+          request_company_id: dataelement?.respondent_company_id?.company_id
             ? Number(dataelement.respondent_company_id.company_id)
             : complaintMainData?.respondent_company_id
-            ? Number(complaintMainData.respondent_company_id)
-            : null,
+              ? Number(complaintMainData.respondent_company_id)
+              : null,
           request_domain_id: dataelement?.respondent_domain_id || complaintMainData?.respondent_domain_id,
-          request_department_id:dataelement?.respondent_department_id?.department_id
+          request_department_id: dataelement?.respondent_department_id?.department_id
             ? Number(dataelement.respondent_department_id.department_id)
             : complaintMainData?.respondent_department_id
-            ? Number(complaintMainData.respondent_department_id)
-            : null,
+              ? Number(complaintMainData.respondent_department_id)
+              : null,
           ComplaintFile:
-          closeFiles?.map((item: any, index: number) => ({
-            cf_type: "Close",
-            complaint_id: complaintRootId,
-            complaint_at_id: item.attachmentType,
-            other:
-              dataphoto_Combobox?.find(
-                (opt: any) => opt.id === item.attachmentType
-              )?.lov2 === "Y"
-                ? item.otherText?.trim() || null
-                : null,
-            explain_id: explainRootId,
-            cf_file_seq: (index + 1).toString(),
-            user_file_name: item.file.name,
-            file_name: item.file.name,
-            file_type: item.file.type.split("/")[1] || "",
-            file_size: item.file.size.toString(),
-            record_status: true,
-            create_by: user[0]?.employee_username || "",
-            create_datetime: new Date().toISOString(),
-          })) || [],
+            closeFiles?.filter((item: any) => item.file instanceof File)
+              .map((item: any, index: number) => ({
+                cf_type: "Close",
+                complaint_id: complaintRootId,
+                complaint_at_id: item.attachmentType,
+                other:
+                  dataphoto_Combobox?.find(
+                    (opt: any) => opt.id === item.attachmentType
+                  )?.lov2 === "Y"
+                    ? item.otherText?.trim() || null
+                    : null,
+                explain_id: explainRootId,
+                cf_file_seq: (index + 1).toString(),
+                user_file_name: item.file.name,
+                file_name: item.file.name,
+                file_type: item.file.type.split("/")[1] || "",
+                file_size: item.file.size.toString(),
+                record_status: true,
+                create_by: user[0]?.employee_username || "",
+                create_datetime: new Date().toISOString(),
+              })) || [],
         },
         CurrentAccessModel: getCurrentAccessObject(
           employeeUsername,
@@ -4711,7 +4719,10 @@ export default function Complaint() {
           JSON.stringify(complaintReturnPayload)
         );
         closeFiles?.forEach((f: any) => {
-          complaintFormData.append("closeFiles", f.file);
+          // เฉพาะไฟล์ใหม่ที่เป็น File object จริง
+          if (f.file instanceof File) {
+            complaintFormData.append("closeFiles", f.file);
+          }
         });
         // const response = await _POST(
         //   complaintReturnPayload,
@@ -4732,7 +4743,7 @@ export default function Complaint() {
             icon: "error",
           });
           // console.log("⚠️ Add failed:", response);
-          console.log("❗ ComplaintReturn response:", response);
+          // console.log("❗ ComplaintReturn response:", response);
         }
       } catch (error) {
         // console.error("Upload failed:", error);
@@ -5929,6 +5940,7 @@ export default function Complaint() {
     //     " [Calling Function]  :  CloseAdd"
     //   );
     const tempid = uuidv4();
+
     if (
       follow_up_date &&
       dayjs().startOf("day").isBefore(dayjs(follow_up_date).startOf("day"))
@@ -6055,7 +6067,7 @@ export default function Complaint() {
       </p>
       </div>
     `;
-    
+
     const explainRootId = resolveExplainId();
     const resolveComplaintId = () => {
       const el: any = dataelement || {};
@@ -6090,37 +6102,38 @@ export default function Complaint() {
         update_by: user[0]?.employee_username || "",
         domain_id: user[0]?.employee_domain || "",
         respondent_company_id:
-          dataelement?.respondent_company_id 
-          ? Number(dataelement.respondent_company_id)
-          : Number(complaintMainData?.respondent_company_id),
+          dataelement?.respondent_company_id
+            ? Number(dataelement.respondent_company_id)
+            : Number(complaintMainData?.respondent_company_id),
         respondent_domain_id:
           dataelement?.respondent_domain_id ||
           complaintMainData?.respondent_domain_id,
         respondent_department_id:
-          dataelement?.respondent_department_id 
-          ? Number(dataelement.respondent_department_id)
-          : Number(complaintMainData?.respondent_department_id),
+          dataelement?.respondent_department_id
+            ? Number(dataelement.respondent_department_id)
+            : Number(complaintMainData?.respondent_department_id),
         ComplaintFile:
-          closeFiles?.map((item: any, index: number) => ({
-            cf_type: "Close",
-            complaint_id: complaintRootId,
-            complaint_at_id: item.attachmentType,
-            other:
-              dataphoto_Combobox?.find(
-                (opt: any) => opt.id === item.attachmentType
-              )?.lov2 === "Y"
-                ? item.otherText?.trim() || null
-                : null,
-            explain_id: explainRootId,
-            cf_file_seq: (index + 1).toString(),
-            user_file_name: item.file.name,
-            file_name: item.file.name,
-            file_type: item.file.type.split("/")[1] || "",
-            file_size: item.file.size.toString(),
-            record_status: true,
-            create_by: user[0]?.employee_username || "",
-            create_datetime: new Date().toISOString(),
-          })) || [],
+          closeFiles?.filter((item: any) => item.file instanceof File)
+            .map((item: any, index: number) => ({
+              cf_type: "Close",
+              complaint_id: complaintRootId,
+              complaint_at_id: item.attachmentType,
+              other:
+                dataphoto_Combobox?.find(
+                  (opt: any) => opt.id === item.attachmentType
+                )?.lov2 === "Y"
+                  ? item.otherText?.trim() || null
+                  : null,
+              explain_id: explainRootId,
+              cf_file_seq: (index + 1).toString(),
+              user_file_name: item.file.name,
+              file_name: item.file.name,
+              file_type: item.file.type.split("/")[1] || "",
+              file_size: item.file.size.toString(),
+              record_status: true,
+              create_by: user[0]?.employee_username || "",
+              create_datetime: new Date().toISOString(),
+            })) || [],
       },
       CurrentAccessModel: getCurrentAccessObject(
         employeeUsername,
@@ -6148,16 +6161,16 @@ export default function Complaint() {
         formData.append("closeFiles", fileItem.file);
       });
     }
-    
+
     setIsLoadingScreen(true);
-console.log("========== respondent_company_id DEBUG ==========");
-console.log("dataelement?.respondent_company_id:", dataelement?.respondent_company_id);
-console.log("complaintMainData?.respondent_company_id:", complaintMainData?.respondent_company_id);
-console.log("=================================================");
-console.log(
-  "CLOSE PAYLOAD JSON >>>",
-  JSON.stringify(closePayload, null, 2)
-);
+    // console.log("========== respondent_company_id DEBUG ==========");
+    // console.log("dataelement?.respondent_company_id:", dataelement?.respondent_company_id);
+    // console.log("complaintMainData?.respondent_company_id:", complaintMainData?.respondent_company_id);
+    // console.log("=================================================");
+    // console.log(
+    //   "CLOSE PAYLOAD JSON >>>",
+    //   JSON.stringify(closePayload, null, 2)
+    // );
     try {
       // 🧩 บันทึกข้อมูล Approve
       // const response = await _POST(closePayload, "/Explain/CloseAdd");
@@ -6352,6 +6365,10 @@ console.log(
     setresponsible_date(null);
     setfollow_up_date(null);
     setPrevExplainFiles([]);
+    // Clear file states to prevent old files from persisting
+    setexplainFiles([]);
+    setcloseFiles([]);
+    setcomplaintFiles([]);
 
     // ตั้งค่าวันที่ชี้แจงเป็นวันปัจจุบัน
     setresponsible_date(dayjs());
