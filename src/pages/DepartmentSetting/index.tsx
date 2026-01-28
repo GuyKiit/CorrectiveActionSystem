@@ -704,6 +704,7 @@ export default function DepartmentSetting() {
                 hiddenReadApproveQC={true}
                 hiddenReadClose={true}
                 hiddenCloseHistory={true}
+                hiddenPrint={true}
               />
             );
             el.ACTION = ACTION;

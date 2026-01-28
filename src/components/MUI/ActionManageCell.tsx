@@ -119,7 +119,7 @@ const ActionManageCell: React.FC<ActionManageCellProps> = (props) => {
         (funcName === "DepartmentView" && hiddenDepartmentView) ||  // DepartmentView
         (funcName === "DepartmentEdit" && hiddenDepartmentEdit) ||  // DepartmentEdit
         (funcName === "DepartmentDelete" && hiddenDepartmentDelete) ||// DepartmentDelete
-        (funcName === "Print" && hiddenPrint) // DepartmentDelete
+        (funcName === "Print" && hiddenPrint) // Print
       }
       // onMouseEnter={(e) => {
       //   if (hasSubMenu) {

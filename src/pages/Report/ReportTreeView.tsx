@@ -46,20 +46,20 @@ export default function ReportTreeView() {
   const [reportList, setReportList] = React.useState<any>([])
   const [reportListName, setReportListName] = React.useState(['head-0', 'head-1']);
   const [openReport, setOpenReport] = React.useState(false);
-  const [dataelement, setdataelement] = React.useState<null>(null);
+  const [tempReportParam, setTempReportParam] = React.useState<any>(null);
  
  
  
   const reports = [
-    {
-      headName: "ประเภทรายงานข้อบกพร่อง",
-      sub_report: [
-        { id: 1, report_code: "NCR", report_name: "รายงานข้อบกพร่องที่ไม่เป็นไปตามข้อกำหนด" },
-        { id: 2, report_code: "CAR", report_name: "รายงานคำร้องขอดำเนินการแก้ไข" },
-        { id: 4, report_code: "CPAR", report_name: "รายงานคำร้องขอดำเนินการแก้ไขและป้องกัน" },
-        { id: 5, report_code: "OBS", report_name: "รายงานข้อบกพร่องที่สามารถยอมรับได้" },
-      ]
-    },
+    // {
+    //   headName: "ประเภทรายงานข้อบกพร่อง",
+    //   sub_report: [
+    //     { id: 1, report_code: "NCR", report_name: "รายงานข้อบกพร่องที่ไม่เป็นไปตามข้อกำหนด" },
+    //     { id: 2, report_code: "CAR", report_name: "รายงานคำร้องขอดำเนินการแก้ไข" },
+    //     { id: 4, report_code: "CPAR", report_name: "รายงานคำร้องขอดำเนินการแก้ไขและป้องกัน" },
+    //     { id: 5, report_code: "OBS", report_name: "รายงานข้อบกพร่องที่สามารถยอมรับได้" },
+    //   ]
+    // },
     {
       headName: "สรุปรวมประเภทรายงาน",
       sub_report: [
@@ -69,8 +69,8 @@ export default function ReportTreeView() {
   ];
  
   const hadleOnclickReport = (data: any) => {
+    setTempReportParam(data);
     setOpenReport(true);
-    setdataelement(data)
     console.log("Selected Report:", data);
   };
  
@@ -117,7 +117,7 @@ export default function ReportTreeView() {
                       <CustomTreeItem
                         key={`head-${index}`}
                         itemId={`head-${index}`}
-                        label={<span className="bold-label sarabun-regular text-black">{el.headName}<span style={{ color: 'red' }}> (ยังไม่พร้อมใช้งาน)</span></span>}
+                        label={<span className="bold-label sarabun-regular text-black">{el.headName}</span>}
                       >
                         {el?.sub_report?.map((file: any, index: number) => (
                           <CustomTreeItem
@@ -140,11 +140,17 @@ export default function ReportTreeView() {
                     ))}
                   </SimpleTreeView>
                   {/* ==================== Report Preview ==================== */}
-                  {dataelement && (
+                  {/* {dataelement && (
                     <Box sx={{ mt: 4 }}>
                       <ReportBody dataelement={dataelement} />
                     </Box>
-                  )}
+                  )} */}
+                  <ReportBody
+                    mode="summary_report"
+                    open={openReport}
+                    tempReportParam={tempReportParam}
+                    onClose={() => setOpenReport(false)}
+                  />
                 </Box>
               )}
             </div>
