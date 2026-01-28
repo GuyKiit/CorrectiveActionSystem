@@ -236,7 +236,7 @@ export default function ExplaintBody({
   const isActionClose = action === "Close";
   const isActionCloseAdd = action === "CloseAdd";
   const isActionReadClose = action === "ReadClose";
-  const isActionCloseHistory = action === "CloseHistoryRead";
+  const isActionCloseHistory = action === "CloseHistoryRead" || action === "CloseHistory";
   // =====================================================
   const user = cleanAccessData("userSession");
   //⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐//
@@ -705,7 +705,7 @@ export default function ExplaintBody({
   //   setFileList(updatedList);
   //   setcomplaintFiles(updatedList);
   // };
-  const handleFileChange = (fileArray: ComplaintFile[],cf_type: "Explain" | "Close") => {
+  const handleFileChange = (fileArray: ComplaintFile[], cf_type: "Explain" | "Close") => {
     // if (true)
     //   console.log(
     //     "🕑 ",
@@ -715,10 +715,10 @@ export default function ExplaintBody({
 
     if (!fileArray || fileArray.length === 0) return;
     if (cf_type === "Explain") {
-    setexplainFiles((prev:any) => [...prev, ...fileArray]);
-  } else {
-    setcloseFiles((prev:any) => [...prev, ...fileArray]);
-  }
+      setexplainFiles((prev: any) => [...prev, ...fileArray]);
+    } else {
+      setcloseFiles((prev: any) => [...prev, ...fileArray]);
+    }
   };
 
   // ✅ Populate files from previous explain
@@ -734,7 +734,7 @@ export default function ExplaintBody({
   // }, [prevFiles, isActionExplainAdd]);
   useEffect(() => {
     if (isActionExplainAdd && prevFiles && prevFiles.length > 0) {
-      console.log("📂 Pre-populating files from previous explain:", prevFiles);
+      // console.log("📂 Pre-populating files from previous explain:", prevFiles);
       // Check if files are already populated to avoid duplicates or infinite loops if needed
       // But normally prevFiles is passed once.
       // We overwrite or merge? The user probably wants it to *be* the initial state.
@@ -806,7 +806,7 @@ export default function ExplaintBody({
   //   //console.log("Step:01", filteredTooluse, fileList);
   //   setcomplaintFiles(fileList); // sync
   // }, [fileList, filteredTooluse]);
-  const handleRemoveFile = (index: number,cf_type: "Explain" | "Close") => {
+  const handleRemoveFile = (index: number, cf_type: "Explain" | "Close") => {
     // if (true)
     //   console.log(
     //     "🕑 ",
@@ -814,14 +814,14 @@ export default function ExplaintBody({
     //     " [Calling Function]  :  handleRemoveFile"
     //   );
     if (cf_type === "Explain") {
-    setexplainFiles((prev:any) =>
-      prev.filter((_:any, i:any) => i !== index)
-    );
-  } else {
-    setcloseFiles((prev:any) =>
-      prev.filter((_:any, i:any) => i !== index)
-    );
-  }
+      setexplainFiles((prev: any) =>
+        prev.filter((_: any, i: any) => i !== index)
+      );
+    } else {
+      setcloseFiles((prev: any) =>
+        prev.filter((_: any, i: any) => i !== index)
+      );
+    }
   };
   useEffect(() => {
     //console.log("Step:01", filteredTooluse, fileList);
@@ -912,18 +912,19 @@ export default function ExplaintBody({
     //   );
 
     // ตรวจสอบว่ามี dataelement?.id หรือไม่  ไม่error หากไม่มีไฟล์
-     if (!dataelement?.id) {
-        if (cf_type === "Explain") 
-          setexplainFiles([]);
-        else setcloseFiles([]);
-    return;
-  }
+    if (!dataelement?.id) {
+      if (cf_type === "Explain")
+        setexplainFiles([]);
+      else setcloseFiles([]);
+      return;
+    }
 
     // setIsLoadingScreen(true);
     const dataset = {
-    explain_id: dataelement.id,
-    cf_type,
-  };
+      explain_id: dataelement.id,
+      complaint_id: dataelement.id,
+      cf_type,
+    };
 
     try {
       let response = await _POST(dataset, "/ComplaintFile/ComplaintFileGet");
@@ -933,11 +934,6 @@ export default function ExplaintBody({
         const responseData: any = [];
 
         if (Array.isArray(response.data) && response.data.length > 0) {
-          // console.log(
-          //   "################# FILE #######################:",
-          //   response.data
-          // ); // เช็คว่ามีกี่แถวจริง ๆ
-
           const mappedFiles: ComplaintFile[] = response.data.map(
             (file: any) => ({
               file: {
@@ -955,26 +951,26 @@ export default function ExplaintBody({
           );
 
           if (cf_type === "Explain") {
-          setexplainFiles(mappedFiles);
+            setexplainFiles(mappedFiles);
+          } else {
+            setcloseFiles(mappedFiles);
+          }
         } else {
-          setcloseFiles(mappedFiles);
-        }
-        } else {
-        // ✅ ไม่มีไฟล์ → ล้างเฉพาะ type นี้
-        if (cf_type === "Explain") {
-          setexplainFiles([]);
-        } else {
-          setcloseFiles([]);
+          // ✅ ไม่มีไฟล์ → ล้างเฉพาะ type นี้
+          if (cf_type === "Explain") {
+            setexplainFiles([]);
+          } else {
+            setcloseFiles([]);
+          }
         }
       }
-    }
     } catch (e) {
       // console.log("Error getting files:", e);
       if (cf_type === "Explain") {
-      setexplainFiles([]);
-    } else {
-      setcloseFiles([]);
-    }
+        setexplainFiles([]);
+      } else {
+        setcloseFiles([]);
+      }
     } finally {
       setIsLoadingScreen(false);
     }
@@ -1221,9 +1217,6 @@ export default function ExplaintBody({
       const reportTypeToUse = dataReportTypeValue; // ใช้ state ปัจจุบัน (ซึ่งเราเพิ่งอาจจะ set)
       if (reportTypeToUse) {
         const val = reportTypeToUse;
-        // console.log("🐛 Debug ExplaintBody reportTypeToUse:", val);
-        // console.log("🐛 Debug ExplaintBody val.lov_code:", val.lov_code);
-        // console.log("🐛 Debug ExplaintBody dataDecision_Combobox length:", dataDecision_Combobox?.length);
 
         if (!isItAdmin) {
           const newFilteredSecApprove = (dataApprove_Combobox || []).filter(
@@ -1306,6 +1299,7 @@ export default function ExplaintBody({
         setFilteredQcApprove([]);
         setFilteredSecApprove([]);
         setFilteredphoto([]);
+
 
         // หมายเหตุ: filteredpriority เรา update ข้างบนแล้ว
       }
@@ -1790,6 +1784,21 @@ export default function ExplaintBody({
 
   }, [action, user, dataset_company, dataset_department]);
 
+  // useEffect สำหรับโหลดไฟล์ Close จาก NAS
+  React.useEffect(() => {
+    // console.log("🔍 Close File useEffect:", {
+    //   dataelementId: dataelement?.id,
+    //   isActionReadClose,
+    //   isActionCloseHistory
+    // });
+    if (
+      dataelement?.id &&
+      (isActionReadClose || isActionCloseHistory)
+    ) {
+      // console.log("✅ Calling ComplaintFile_Get('Close')");
+      ComplaintFile_Get("Close");
+    }
+  }, [dataelement?.id, isActionReadClose, isActionCloseHistory]);
 
   //   React.useEffect(() => {
   //   if (!explainList?.length || !dataelement) return;
@@ -2859,27 +2868,27 @@ export default function ExplaintBody({
                         {
                           <Grid size={12}>
                             {(isActionExplainAdd) && !isViewMode && (
-                            <BrowseFileUpload
-                              setFile={(files) => handleFileChange(files, "Explain")}
-                              setFileName={() => { }}
-                              options={(filteredphoto || []).map((p: any) => ({
-                                id: p.id,
-                                lov1: p.lov1,
-                                lov2: p.lov2,
-                                isOther: p.lov2,
-                                lov_code: "CheckTypeFileImage",
-                              }))}
-                              grouped={grouped}
-                              action={action}
-                              isViewMode={isViewMode}
-                            />
+                              <BrowseFileUpload
+                                setFile={(files) => handleFileChange(files, "Explain")}
+                                setFileName={() => { }}
+                                options={(filteredphoto || []).map((p: any) => ({
+                                  id: p.id,
+                                  lov1: p.lov1,
+                                  lov2: p.lov2,
+                                  isOther: p.lov2,
+                                  lov_code: "CheckTypeFileImage",
+                                }))}
+                                grouped={grouped}
+                                action={action}
+                                isViewMode={isViewMode}
+                              />
                             )}
 
                             {/* Grouped display by attachment type - Full width boxes stacked vertically */}
                             <Box sx={{ mt: 1 }}>
                               {(filteredphoto || []).map((photoType: any) => {
                                 const items = explainFiles.filter(
-                                  (f:any) => f.attachmentType === photoType.id
+                                  (f: any) => f.attachmentType === photoType.id
                                 );
                                 if (items.length === 0) return null;
                                 return (
@@ -2903,7 +2912,7 @@ export default function ExplaintBody({
                                       {photoType.lov1}
                                     </label>
                                     <Divider sx={{ my: 1 }} />
-                                    {items.map((item:any, idx:any) => (
+                                    {items.map((item: any, idx: any) => (
                                       <Box
                                         key={idx}
                                         sx={{
@@ -2955,7 +2964,7 @@ export default function ExplaintBody({
                                                   // หา index ที่ถูกต้องใน fileList
                                                   const actualIndex =
                                                     explainFiles.findIndex(
-                                                      (f:any) =>
+                                                      (f: any) =>
                                                         f.file.name ===
                                                         item.file.name &&
                                                         f.attachmentType ===
@@ -4427,80 +4436,80 @@ export default function ExplaintBody({
                             </Collapse>
                             <Accordion
                               expanded={isMinimizefilecloseOpen}
-                            onChange={() => setisMinimizeFilecloseOpen(!isMinimizefilecloseOpen)}
-                            sx={{
-                              borderRadius: 3,
-                              background:
-                                "linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%)",
-                              border: "1px solid #e0e0e0",
-                              boxShadow: "0 4px 12px rgba(158,158,158,0.1)",
-                              mt: 3,
-                            }}
-                          >
-                            {/* 🔹 หัวข้อ */}
-                            <AccordionSummary
-                              expandIcon={<ExpandMoreIcon sx={{ color: "#616161" }} />}
-                              aria-controls="dept-content"
-                              id="dept-header"
-                              sx={{ px: 2 }}
+                              onChange={() => setisMinimizeFilecloseOpen(!isMinimizefilecloseOpen)}
+                              sx={{
+                                borderRadius: 3,
+                                background:
+                                  "linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%)",
+                                border: "1px solid #e0e0e0",
+                                boxShadow: "0 4px 12px rgba(158,158,158,0.1)",
+                                mt: 3,
+                              }}
                             >
-                              <Box sx={{ flexGrow: 1 }}>
-                                <Box
-                                  sx={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    pb: 2,
-                                    borderBottom: "2px solid #616161", // ✅ เส้นเต็มเหมือนเดิม
-                                  }}
-                                >
+                              {/* 🔹 หัวข้อ */}
+                              <AccordionSummary
+                                expandIcon={<ExpandMoreIcon sx={{ color: "#616161" }} />}
+                                aria-controls="dept-content"
+                                id="dept-header"
+                                sx={{ px: 2 }}
+                              >
+                                <Box sx={{ flexGrow: 1 }}>
                                   <Box
                                     sx={{
-                                      width: 6,
-                                      height: 24,
-                                      backgroundColor: "#616161",
-                                      borderRadius: 1,
-                                      mr: 2,
-                                    }}
-                                  />
-                                  <Typography
-                                    className="sarabun-regular-datatable"
-                                    sx={{
-                                      fontSize: 18,
-                                      fontWeight: 600,
-                                      color: "#616161",
+                                      display: "flex",
+                                      alignItems: "center",
+                                      pb: 2,
+                                      borderBottom: "2px solid #616161", // ✅ เส้นเต็มเหมือนเดิม
                                     }}
                                   >
-                                    แนบไฟล์ (Attachments)
-                                  </Typography>
+                                    <Box
+                                      sx={{
+                                        width: 6,
+                                        height: 24,
+                                        backgroundColor: "#616161",
+                                        borderRadius: 1,
+                                        mr: 2,
+                                      }}
+                                    />
+                                    <Typography
+                                      className="sarabun-regular-datatable"
+                                      sx={{
+                                        fontSize: 18,
+                                        fontWeight: 600,
+                                        color: "#616161",
+                                      }}
+                                    >
+                                      แนบไฟล์ (Attachments)
+                                    </Typography>
+                                  </Box>
                                 </Box>
-                              </Box>
-                            </AccordionSummary>
-                            <AccordionDetails sx={{ p: 3 }}>
-                              <Grid container spacing={2}>
-                                
+                              </AccordionSummary>
+                              <AccordionDetails sx={{ p: 3 }}>
+                                <Grid container spacing={2}>
+
                                   <Grid size={12}>
                                     {(isActionCloseAdd) && !isViewMode && (
-                                    <BrowseFileUpload
-                                      setFile={(files) => handleFileChange(files, "Close")}
-                                      setFileName={() => { }}
-                                      options={(filteredphoto || []).map((p: any) => ({
-                                        id: p.id,
-                                        lov1: p.lov1,
-                                        lov2: p.lov2,
-                                        isOther: p.lov2,
-                                        lov_code: "CheckTypeFileImage",
-                                      }))}
-                                      grouped={grouped}
-                                      action={action}
-                                      isViewMode={isViewMode}
-                                    />
+                                      <BrowseFileUpload
+                                        setFile={(files) => handleFileChange(files, "Close")}
+                                        setFileName={() => { }}
+                                        options={(filteredphoto || []).map((p: any) => ({
+                                          id: p.id,
+                                          lov1: p.lov1,
+                                          lov2: p.lov2,
+                                          isOther: p.lov2,
+                                          lov_code: "CheckTypeFileImage",
+                                        }))}
+                                        grouped={grouped}
+                                        action={action}
+                                        isViewMode={isViewMode}
+                                      />
                                     )}
-        
+
                                     {/* Grouped display by attachment type - Full width boxes stacked vertically */}
                                     <Box sx={{ mt: 1 }}>
                                       {(filteredphoto || []).map((photoType: any) => {
                                         const items = closeFiles.filter(
-                                          (f:any) => f.attachmentType === photoType.id
+                                          (f: any) => f.attachmentType === photoType.id
                                         );
                                         if (items.length === 0) return null;
                                         return (
@@ -4524,7 +4533,7 @@ export default function ExplaintBody({
                                               {photoType.lov1}
                                             </label>
                                             <Divider sx={{ my: 1 }} />
-                                            {items.map((item:any, idx:any) => (
+                                            {items.map((item: any, idx: any) => (
                                               <Box
                                                 key={idx}
                                                 sx={{
@@ -4569,14 +4578,14 @@ export default function ExplaintBody({
                                                   {(isActionEdit ||
                                                     isActionAdd ||
                                                     isActionExplainAdd ||
-                                                    isActionCloseAdd ) && (
+                                                    isActionCloseAdd) && (
                                                       <IconButton
                                                         color="error"
                                                         onClick={() => {
                                                           // หา index ที่ถูกต้องใน fileList
                                                           const actualIndex =
                                                             closeFiles.findIndex(
-                                                              (f:any) =>
+                                                              (f: any) =>
                                                                 f.file.name ===
                                                                 item.file.name &&
                                                                 f.attachmentType ===
@@ -4601,9 +4610,9 @@ export default function ExplaintBody({
                                                         <DeleteIcon />
                                                       </IconButton>
                                                     )}
-        
+
                                                   {/* //ปุ่มดูไฟล์ */}
-                                                  
+
                                                   <IconButton
                                                     color="primary"
                                                     onClick={() => {
@@ -4619,7 +4628,7 @@ export default function ExplaintBody({
                                                       //   "file instanceof File:",
                                                       //   item.file instanceof File
                                                       // );
-                                                    
+
                                                       // ตรวจสอบว่าเป็นไฟล์ใหม่ (ไม่มี full_path) หรือไฟล์เก่า (มี full_path)
                                                       if (item.full_path) {
                                                         // ไฟล์เก่า - เปิดจาก NAS
@@ -4653,15 +4662,15 @@ export default function ExplaintBody({
                                                   >
                                                     <VisibilityIcon />
                                                   </IconButton>
-                                                  
+
                                                   {/* //ปุ่มดาวน์โหลดไฟล์ */}
-                                                  
+
                                                   {!(isActionExplainAdd || isActionCloseAdd) && (
                                                     <IconButton
                                                       color="primary"
                                                       onClick={async () => {
                                                         if (!item.full_path) return;
-                                                      
+
                                                         try {
                                                           const response = await fetch(
                                                             item.full_path,
@@ -4671,7 +4680,7 @@ export default function ExplaintBody({
                                                             await response.blob();
                                                           const url =
                                                             URL.createObjectURL(blob);
-                                                        
+
                                                           const link =
                                                             document.createElement("a");
                                                           link.href = url;
@@ -4687,7 +4696,7 @@ export default function ExplaintBody({
                                                           document.body.removeChild(
                                                             link
                                                           );
-                                                        
+
                                                           URL.revokeObjectURL(url); // cleanup memory
                                                         } catch (err) {
                                                           console.error(
@@ -4706,7 +4715,7 @@ export default function ExplaintBody({
                                           </Paper>
                                         );
                                       })}
-        
+
                                       {closeFiles.length === 0 && (
                                         <Paper
                                           elevation={0}
@@ -4721,10 +4730,10 @@ export default function ExplaintBody({
                                       )}
                                     </Box>
                                   </Grid>
-                                
-                              </Grid>
-                            </AccordionDetails>
-                          </Accordion>
+
+                                </Grid>
+                              </AccordionDetails>
+                            </Accordion>
                           </Grid>
                         </Grid>
                       </Paper>
