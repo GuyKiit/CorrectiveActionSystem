@@ -60,6 +60,7 @@ import {
 } from "../../service/mas/lov";
 import { data } from "react-router-dom";
 import { log } from "node:console";
+import ReportBodyProps from "../Report/reportbody";
 
 // =====================================================================================================
 // TYPE DEFINITIONS : โอมสุดหล่อ
@@ -564,6 +565,7 @@ export default function Complaint() {
   const [openReadApproveQC, setOpenReadApproveQC] = React.useState(false);
   const [openReadClose, setOpenReadClose] = React.useState(false);
   const [openCloseHistory, setOpenCloseHistory] = React.useState(false);
+  const [openPrint, setOpenPrint] = React.useState(false);
   // Close Dialog Handler
 
   const [openExplainApproveSc, setOpenExplainApproveSc] = React.useState(false);
@@ -1897,7 +1899,11 @@ export default function Complaint() {
                   } else if (name === "CloseHistory") {
                     // DepartmentDomainGet("Explain");
                     handleOnclickCloseHistory(el);
+                  } else if (name === "Print") {
+                    // DepartmentDomainGet("Explain");
+                    handleOnclickPrint(el, name);
                   }
+                  
 
                   // else if (name === "ExplainApproveSc") {
                   //   // DepartmentDomainGet("Explain");
@@ -2057,6 +2063,15 @@ export default function Complaint() {
 
                 // For Status [CLOSED]
                 hiddenCloseHistory={
+                  (dataset_complaintActionClose &&
+                    !dataset_complaintActionClose.some((mode: any) =>
+                      mode.lov1
+                        .split(",")
+                        .includes(String(el.complaint_status_label))
+                    )) ??
+                  false
+                }
+                hiddenPrint={
                   (dataset_complaintActionClose &&
                     !dataset_complaintActionClose.some((mode: any) =>
                       mode.lov1
@@ -6261,6 +6276,18 @@ export default function Complaint() {
     setdataelement(data);
     setOpenCloseHistory(true);
   };
+
+  const handleOnclickPrint = async (data: any, name: string) => {
+    // if (isCallFuncLogOn)
+    //   console.log(
+    //     "🕑 ",
+    //     dayjs().format("HH:mm:ss.SSS"),
+    //     " [Calling Function]  :  handleOnclickCloseHistory"
+    //   );
+    resetForm();
+    setdataelement(data);
+    setOpenPrint(true);
+  };
   // ------------------------------------------------------//
 
   // -------------------------  QC  ---------------------------//
@@ -7179,6 +7206,7 @@ export default function Complaint() {
     setOpenComplainCloseAdd(false);
     setOpenCloseHistory(false);
     setOpenUpload(false);
+    setOpenPrint(false);
     setApproveSelectionCode(null); // รีเซ็ตค่าเมื่อปิด Dialog
     //setdataFuapp(null); // รีเซ็ตค่า Approve ที่เลือกไว้
 
@@ -8156,6 +8184,24 @@ export default function Complaint() {
             handleOnclickExplainView={(item) =>
               handleOnclickExplainView(item, "CloseHistory")
             }
+          />
+        }
+      />
+
+      <FuncDialog
+        open={openPrint}
+        dialogWidth="xl"
+        modalHeight="100px"
+        modalWidth="500px"
+        openBottonHidden={false}
+        handleClose={handleClose}
+        buttonColor="success"
+        element={
+          <ReportBodyProps
+            mode="complaint_report"
+            open={openPrint}
+            onClose={handleClose}
+            tempReportParam={dataelement}
           />
         }
       />

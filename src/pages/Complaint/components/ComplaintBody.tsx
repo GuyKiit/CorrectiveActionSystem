@@ -153,6 +153,7 @@ interface ComplaintBody {
   handleOnclickExplainApproveQc?: (item: any) => void;
 
   handleOnclickComplainCloseAdd?: (item: any) => void;
+  handleOnclickPrint?: (item: any, name: string) => void;
   submitCount?: number;
   onAcknowledgeUpdate?: () => void;
 }
