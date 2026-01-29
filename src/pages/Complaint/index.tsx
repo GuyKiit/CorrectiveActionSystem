@@ -3896,13 +3896,13 @@ export default function Complaint() {
           return_from_status_id: tempComplaintStatus[0]?.id,
           complaint_status_id: tempComplaintStatus[0]?.lov2,
           request_department_id: dataelement?.request_department_id,
-          request_company_id: dataelement?.request_company_id,
+          request_company_id: Number(dataelement?.request_company_id),
           request_domain_id: dataelement?.request_domain_id,
           mode: "EXPLAIN",
 
-          respondent_company_id: dataelement?.respondent_company_id,
+          respondent_company_id: Number(dataelement?.respondent_company_id),
           respondent_domain_id: dataelement?.respondent_domain_id,
-          respondent_department_id: dataelement?.respondent_department_id,
+          respondent_department_id: Number(dataelement?.respondent_department_id),
         },
         CurrentAccessModel: getCurrentAccessObject(
           employeeUsername,
@@ -3925,10 +3925,22 @@ export default function Complaint() {
 
       formData.append("emailBody", emailBodyHtml);
       try {
-        const response = await _POST(
-          complaintReturnPayload,
-          "/Complaint/ComplaintReturn"
-        );
+        // const response = await _POST(
+        //   complaintReturnPayload,
+        //   "/Complaint/ComplaintReturn"
+        // );
+        const complaintFormData = new FormData();
+          complaintFormData.append(
+            "complaintReturnJson",
+            JSON.stringify(complaintReturnPayload)
+          );
+          closeFiles?.forEach((f: any) => {
+            // เฉพาะไฟล์ใหม่ที่เป็น File object จริง
+            if (f.file instanceof File) {
+              complaintFormData.append("closeFiles", f.file);
+            }
+          });
+          const response = await _POST_FORMDATA(complaintFormData, "/Complaint/ComplaintReturn");
         if (response && response.status === "success") {
           FullSweetalert({
             title: "Success",
@@ -4854,9 +4866,9 @@ export default function Complaint() {
         preventive_action_plan: preventive_action_plan || null,
         follow_up_date: follow_up_date
           ? follow_up_date
-            .hour(23)
-            .minute(59)
-            .second(59)
+            .hour(dayjs().hour())
+            .minute(dayjs().minute())
+            .second(dayjs().second())
             .format("YYYY-MM-DDTHH:mm:ss.SSS")
           : null,
         responsible_name: user[0]?.employee_username || "",
@@ -4870,9 +4882,9 @@ export default function Complaint() {
         responsible_email: user[0]?.employee_email || "",
         responsible_date: responsible_date
           ? responsible_date
-            .hour(23)
-            .minute(59)
-            .second(59)
+            .hour(dayjs().hour())
+            .minute(dayjs().minute())
+            .second(dayjs().second())
             .format("YYYY-MM-DDTHH:mm:ss.SSS")
           : null,
         cf_type: "Explain",
