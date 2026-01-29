@@ -242,13 +242,6 @@ export default function ComplaintBody({
   const [openConfirm, setOpenConfirm] = useState(false);
   const [deleteIndex, setDeleteIndex] = useState<number | null>(null);
 
-  // const handleConfirmDelete = () => {
-  //   if (deleteIndex !== null) {
-  //     handleRemoveFile(deleteIndex);
-  //     setDeleteIndex(null);
-  //   }
-  //   setOpenConfirm(false);
-  // };
 
   const {
     dataelement,
@@ -861,13 +854,18 @@ export default function ComplaintBody({
   // };
 
   // รับ ComplaintFile[] จาก BrowseFileUpload
-  const handleFileChange = (fileArray: ComplaintFile[]) => {
+  const handleFileChange = (fileArray: ComplaintFile[], cf_type: "Complaint" | "Close") => {
     // if (true)console.log("🕑 ",dayjs().format("HH:mm:ss.SSS")," [Calling Function]  :  handleFileChange");
 
     if (!fileArray || fileArray.length === 0) return;
-    const updatedList = [...fileList, ...fileArray];
-    setFileList(updatedList);
-    setcomplaintFiles(updatedList);
+    // const updatedList = [...fileList, ...fileArray];
+    // setFileList(updatedList);
+    // setcomplaintFiles(updatedList);
+    if (cf_type === "Complaint") {
+      setFileList((prev: any) => [...prev, ...fileArray]);
+    } else {
+      setcloseFiles((prev: any) => [...prev, ...fileArray]);
+    }
   };
 
 
@@ -1043,45 +1041,73 @@ export default function ComplaintBody({
     );
   };
 
-  const handleRemoveFile = async (index: number) => {
-    // if (true)console.log("🕑 ",dayjs().format("HH:mm:ss.SSS")," [Calling Function]  :  handleRemoveFile");
+  // const handleRemoveFile = async (index: number, ) => {
+  //   // if (true)console.log("🕑 ",dayjs().format("HH:mm:ss.SSS")," [Calling Function]  :  handleRemoveFile");
 
-    const fileToRemove = fileList[index];
+  //   const fileToRemove = fileList[index];
 
-    // ถ้าเป็นไฟล์ที่มีอยู่แล้วในฐานข้อมูล (มี id)
-    if (fileToRemove && fileToRemove.id) {
-      try {
-        // เรียกใช้ endpoint ลบไฟล์จากฐานข้อมูล
-        const deletePayload = {
-          id: fileToRemove.id,
-          update_by: user[0]?.employee_username || "",
-        };
+  //   // ถ้าเป็นไฟล์ที่มีอยู่แล้วในฐานข้อมูล (มี id)
+  //   if (fileToRemove && fileToRemove.id) {
+  //     try {
+  //       // เรียกใช้ endpoint ลบไฟล์จากฐานข้อมูล
+  //       const deletePayload = {
+  //         id: fileToRemove.id,
+  //         update_by: user[0]?.employee_username || "",
+  //       };
 
-        // console.log("🗑️ Deleting file from database:", deletePayload);
-        const response = await _POST(
-          deletePayload,
-          "/ComplaintFile/ComplaintFileEdit"
-        );
-        // console.log("🗑️ Delete response:", response);
+  //       // console.log("🗑️ Deleting file from database:", deletePayload);
+  //       const response = await _POST(
+  //         deletePayload,
+  //         "/ComplaintFile/ComplaintFileEdit"
+  //       );
+  //       // console.log("🗑️ Delete response:", response);
 
-        if (response && response.status === "success") {
-          // console.log("✅ File deleted from database successfully");
-        } else {
-          // console.log("⚠️ Failed to delete file from database:", response);
-        }
-      } catch (error) {
-        // console.error("❌ Error deleting file from database:", error);
-      }
-    }
+  //       if (response && response.status === "success") {
+  //         // console.log("✅ File deleted from database successfully");
+  //       } else {
+  //         // console.log("⚠️ Failed to delete file from database:", response);
+  //       }
+  //     } catch (error) {
+  //       // console.error("❌ Error deleting file from database:", error);
+  //     }
+  //   }
 
-    // ลบไฟล์จาก UI
-    setFileList((prev) => {
-      const updatedList = prev.filter((_, i) => i !== index);
-      // อัปเดต complaintFiles ใน context ด้วย
-      setcomplaintFiles(updatedList);
-      return updatedList;
-    });
-  };
+  //   // ลบไฟล์จาก UI
+  //   setFileList((prev) => {
+  //     const updatedList = prev.filter((_, i) => i !== index);
+  //     // อัปเดต complaintFiles ใน context ด้วย
+  //     setcomplaintFiles(updatedList);
+  //     return updatedList;
+  //   });
+  // };
+
+  const handleRemoveFile = async (
+  index: number,
+  cf_type: "Complaint" | "Close"
+) => {
+  const targetList =
+    cf_type === "Complaint" ? fileList : closeFiles;
+
+  const fileToRemove = targetList[index];
+
+  if (fileToRemove?.id) {
+    await _POST(
+      {
+        id: fileToRemove.id,
+        update_by: user[0]?.employee_username || "",
+      },
+      "/ComplaintFile/ComplaintFileEdit"
+    );
+  }
+
+  if (cf_type === "Complaint") {
+    setFileList((prev) => prev.filter((_, i) => i !== index));
+  } else {
+    setcloseFiles((prev:any) => prev.filter((_:any, i:any) => i !== index));
+  }
+};
+
+  
 
   const Acknowledge_Update = async (data: any) => {
     // if (isCallFuncLogOn)console.log("🕑 ", dayjs().format("HH:mm:ss.SSS"), " [Calling Function]  :  Acknowledge_Update");
@@ -1510,6 +1536,8 @@ export default function ComplaintBody({
       setIsLoadingScreen(false);
     }
   };
+
+  
 
   // ⭐⭐⭐⭐⭐ Start : ==============================================================================================//
   // const effectRan = React.useRef(false); // ป้องกัน run ซ้ำใน dev mode
@@ -3310,7 +3338,7 @@ export default function ComplaintBody({
                         {
                           <Grid size={12}>
                             <BrowseFileUpload
-                              setFile={handleFileChange}
+                              setFile={(files) => handleFileChange(files, "Complaint")}
                               setFileName={() => { }}
                               options={(filteredphoto || []).map((p: any) => ({
                                 id: p.id,
@@ -3419,7 +3447,7 @@ export default function ComplaintBody({
                                                   //   }
                                                   // );
                                                   if (actualIndex !== -1) {
-                                                    handleRemoveFile(actualIndex);
+                                                    handleRemoveFile(actualIndex, "Complaint");
                                                   }
                                                 }}
                                               >
@@ -4588,7 +4616,7 @@ export default function ComplaintBody({
                                 {
                                   <Grid size={12}>
                                     <BrowseFileUpload
-                                      setFile={handleFileChange}
+                                      setFile={(files) => handleFileChange(files, "Close")}
                                       setFileName={() => { }}
                                       options={(filteredphoto || []).map((p: any) => ({
                                         id: p.id,
@@ -4697,7 +4725,7 @@ export default function ComplaintBody({
                                                           //   }
                                                           // );
                                                           if (actualIndex !== -1) {
-                                                            handleRemoveFile(actualIndex);
+                                                            handleRemoveFile(actualIndex, "Close");
                                                           }
                                                         }}
                                                       >
