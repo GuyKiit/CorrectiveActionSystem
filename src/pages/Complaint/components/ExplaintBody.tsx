@@ -922,7 +922,7 @@ export default function ExplaintBody({
     // setIsLoadingScreen(true);
     const dataset = {
       explain_id: dataelement.id,
-      complaint_id: dataelement.id,
+      complaint_id: dataelement.complaint_id,
       cf_type,
     };
 

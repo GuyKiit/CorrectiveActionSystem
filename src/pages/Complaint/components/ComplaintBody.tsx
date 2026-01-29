@@ -1425,16 +1425,32 @@ export default function ComplaintBody({
     // }
 
     //setIsLoadingScreen(true);
+    // สำหรับ Close files ต้องหา explain ที่มี explain_seq สูงสุด (ล่าสุด)
+    let latestExplainId = dataelement.explain_id;
+    if (cf_type === "Close" && Array.isArray(explainList) && explainList.length > 0) {
+      const latestExplain = explainList.reduce((prev: any, current: any) => {
+        const prevSeq = Number(prev.explain_seq) || 0;
+        const currSeq = Number(current.explain_seq) || 0;
+        return currSeq > prevSeq ? current : prev;
+      }, explainList[0]);
+      if (latestExplain?.id) {
+        latestExplainId = latestExplain.id;
+      }
+    }
+
+    // ✅ หา complaint_id ที่ถูกต้อง (dataelement อาจเป็น Complaint หรือ Explain)
+    const actualComplaintId = dataelement.complaint_id || dataelement.id;
+
     const dataset =
       cf_type === "Complaint"
         ? {
-          complaint_id: dataelement.id,
+          complaint_id: actualComplaintId,
           explain_id: null,
           cf_type: "Complaint",
         }
         : {
-          complaint_id: dataelement.id,
-          explain_id: dataelement.explain_id,
+          complaint_id: actualComplaintId,
+          explain_id: latestExplainId,
           cf_type: "Close",
         };
 
@@ -1470,16 +1486,22 @@ export default function ComplaintBody({
             setcloseFiles(mappedFiles);
           }
         } else {
-          // ไม่มีไฟล์
-          // console.log("No files found");
-          setFileList([]);
-          setcomplaintFiles([]);
+          // ไม่มีไฟล์ - clear เฉพาะ type ที่ fetch
+          if (cf_type === "Complaint") {
+            setFileList([]);
+            setcomplaintFiles([]);
+          } else {
+            setcloseFiles([]);
+          }
         }
       } else {
-        // Response ไม่สำเร็จ
-        // console.log("Failed to get files:", response);
-        setFileList([]);
-        setcomplaintFiles([]);
+        // Response ไม่สำเร็จ - clear เฉพาะ type ที่ fetch
+        if (cf_type === "Complaint") {
+          setFileList([]);
+          setcomplaintFiles([]);
+        } else {
+          setcloseFiles([]);
+        }
       }
     } catch (e) {
       setFileList([]);
@@ -2059,40 +2081,89 @@ export default function ComplaintBody({
   }, [explainList, dataset_department, dataset_company, dataApprove_Combobox]);
 
 
-  // ✅ ใช้ ref เพื่อเก็บ complaint ID ก่อนหน้า
+  // ✅ ใช้ ref เพื่อเก็บ complaint ID และ action ก่อนหน้า
   const prevComplaintIdRef = React.useRef<string | null>(null);
+  const prevActionRef = React.useRef<string | null>(null);
 
   React.useEffect(() => {
     const currentId = dataelement?.id;
 
-    // ⚠️ ป้องกันการ fetch ซ้ำเมื่อ ID เหมือนเดิม
+
+    // ⚠️ ป้องกันการ fetch ซ้ำเมื่อ ID และ action เหมือนเดิม
     // เมื่อปิด ExplainView → setdataelement(complaintMainData) → dataelement object เปลี่ยนแต่ ID เหมือนเดิม
-    if (prevComplaintIdRef.current === currentId && currentId) {
-      // console.log("⏭️ Skip fetch - same complaint ID:", currentId);
+    // แต่ถ้า action เปลี่ยน ต้อง fetch ใหม่
+    if (prevComplaintIdRef.current === currentId && prevActionRef.current === action && currentId) {
       return;
+    }
+
+    // ✅ Clear close files เมื่อเปลี่ยน complaint เพื่อไม่ให้แสดงไฟล์เก่า
+    if (prevComplaintIdRef.current !== currentId) {
+      setcloseFiles([]);
     }
 
     if (!isActionAdd && currentId) {
       // console.log("📥 Fetching data for complaint ID:", currentId);
+
+      // Fetch Complaint files immediately (ไม่ต้องรอ explainList)
       if (isActionCloseHistory) {
-        // 👉 CloseHistory - ดึงทั้ง Close และ Complaint files
-        ComplaintFile_Get("Close");
         ComplaintFile_Get("Complaint");
-      } else if (dataelement?.complaint_id) {
-        // 👉 Close (Explain)
-        ComplaintFile_Get("Close");
-      } else {
+      } else if (!dataelement?.complaint_id) {
         // 👉 Complaint
         ComplaintFile_Get("Complaint");
       }
 
+      // Fetch explainList first, then Close files will be fetched in separate useEffect
       ExplainGet();
       prevComplaintIdRef.current = currentId; // บันทึก ID ปัจจุบัน
+      prevActionRef.current = action; // บันทึก action ปัจจุบัน
     } else if (!currentId) {
       // ถ้าไม่มี ID ให้ reset ref
       prevComplaintIdRef.current = null;
+      prevActionRef.current = null;
     }
   }, [action, dataelement, dataelement?.id]); // ใช้ dataelement ทั้งหมดเป็น dependency
+
+  // ✅ useEffect สำหรับ fetch Close files หลังจาก explainList พร้อม
+  const prevCloseFilesFetchedForIdRef = React.useRef<string | null>(null);
+  const prevActionForCloseRef = React.useRef<string | null>(null);
+
+  React.useEffect(() => {
+    const currentComplaintId = dataelement?.complaint_id || dataelement?.id;
+
+    // Reset ref เมื่อ action เปลี่ยน (เช่น กลับจาก ExplainBody)
+    if (prevActionForCloseRef.current !== action) {
+      prevCloseFilesFetchedForIdRef.current = null;
+      prevActionForCloseRef.current = action;
+    }
+
+    // Reset ref เมื่อ explainList ถูก clear (reload)
+    if (!explainList || explainList.length === 0) {
+      prevCloseFilesFetchedForIdRef.current = null;
+    }
+
+    // ตรวจสอบว่า explainList เป็นของ complaint ปัจจุบันหรือไม่
+    const explainMatchesComplaint =
+      Array.isArray(explainList) &&
+      explainList.length > 0 &&
+      explainList[0]?.complaint_id === currentComplaintId;
+
+    // Trigger เมื่อ explainList พร้อมและตรงกับ complaint ปัจจุบัน
+    if (
+      explainMatchesComplaint &&
+      currentComplaintId &&
+      prevCloseFilesFetchedForIdRef.current !== currentComplaintId &&
+      (isActionCloseHistory || dataelement?.complaint_id)
+    ) {
+      // console.log("📂 Fetching Close files for complaint:", currentComplaintId);
+      ComplaintFile_Get("Close");
+      prevCloseFilesFetchedForIdRef.current = currentComplaintId;
+    }
+
+    // Reset เมื่อไม่มี ID
+    if (!currentComplaintId) {
+      prevCloseFilesFetchedForIdRef.current = null;
+    }
+  }, [explainList, isActionCloseHistory, dataelement?.complaint_id, dataelement?.id, action]);
 
 
   // ✅ useRef เพื่อให้ Acknowledge_Update รันเพียงครั้งเดียวต่อ dataelement.id
