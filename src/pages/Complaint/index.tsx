@@ -5968,17 +5968,17 @@ export default function Complaint() {
     //   );
     const tempid = uuidv4();
 
-    // if (
-    //   follow_up_date &&
-    //   dayjs().startOf("day").isBefore(dayjs(follow_up_date).startOf("day"))
-    // ) {
-    //   FullSweetalert({
-    //     title: "แจ้งเตือน",
-    //     text: "ยังไม่ถึงวันที่ตรวจติดตามผล ไม่สามารถปิดรายการได้",
-    //     icon: "warning",
-    //   });
-    //   return;
-    // }
+    if (
+      follow_up_date &&
+      dayjs().startOf("day").isBefore(dayjs(follow_up_date).startOf("day"))
+    ) {
+      FullSweetalert({
+        title: "แจ้งเตือน",
+        text: "ยังไม่ถึงวันที่ตรวจติดตามผล ไม่สามารถปิดรายการได้",
+        icon: "warning",
+      });
+      return;
+    }
 
     const tempComplaintStatus = await LovAll_Get(
       "get_complaint_status_by_id",
