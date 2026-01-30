@@ -3930,17 +3930,17 @@ export default function Complaint() {
         //   "/Complaint/ComplaintReturn"
         // );
         const complaintFormData = new FormData();
-          complaintFormData.append(
-            "complaintReturnJson",
-            JSON.stringify(complaintReturnPayload)
-          );
-          closeFiles?.forEach((f: any) => {
-            // เฉพาะไฟล์ใหม่ที่เป็น File object จริง
-            if (f.file instanceof File) {
-              complaintFormData.append("closeFiles", f.file);
-            }
-          });
-          const response = await _POST_FORMDATA(complaintFormData, "/Complaint/ComplaintReturn");
+        complaintFormData.append(
+          "complaintReturnJson",
+          JSON.stringify(complaintReturnPayload)
+        );
+        closeFiles?.forEach((f: any) => {
+          // เฉพาะไฟล์ใหม่ที่เป็น File object จริง
+          if (f.file instanceof File) {
+            complaintFormData.append("closeFiles", f.file);
+          }
+        });
+        const response = await _POST_FORMDATA(complaintFormData, "/Complaint/ComplaintReturn");
         if (response && response.status === "success") {
           FullSweetalert({
             title: "Success",
@@ -6559,6 +6559,7 @@ export default function Complaint() {
                   // console.log("🐛 DEBUG fetching files for explain_id:", latestExplain.id);
                   const fileResponse = await _POST({
                     explain_id: latestExplain.id,
+                    complaint_id: latestExplain.complaint_id || data.id,
                     cf_type: "Explain"
                   }, "/ComplaintFile/ComplaintFileGet");
 
