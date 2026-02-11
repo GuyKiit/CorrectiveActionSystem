@@ -4146,6 +4146,7 @@ export default function Complaint() {
           employeeDomain,
           screenName
         ),
+        sendEmail: approveSelectionCode === "APPROVE",
         emailBody: emailBodyHtml,
         emailSubject: emailSubject,
       };
@@ -4184,12 +4185,27 @@ export default function Complaint() {
               return_from_status_id: tempExplainStatus[0]?.id,
               complaint_status_id: tempExplainStatus[0]?.lov2,
               mode: mode,
+
+              request_company_id: dataelement?.respondent_company_id?.company_id
+                ? Number(dataelement.respondent_company_id.company_id)
+                : complaintMainData?.respondent_company_id
+                  ? Number(complaintMainData.respondent_company_id)
+                  : null,
+              request_domain_id: dataelement?.respondent_domain_id || complaintMainData?.respondent_domain_id,
+              request_department_id: dataelement?.respondent_department_id?.department_id
+                ? Number(dataelement.respondent_department_id.department_id)
+                : complaintMainData?.respondent_department_id
+                  ? Number(complaintMainData.respondent_department_id)
+                  : null,
             },
             CurrentAccessModel: getCurrentAccessObject(
               employeeUsername,
               employeeDomain,
               screenName
             ),
+            sendEmail: approveSelectionCode === "APPROVE",
+            emailBody: emailBodyHtml,
+            emailSubject: emailSubject,
             complaintstatusLog: {
               id: uuidv4(),
               complaint_id: complaintRootId,
@@ -4429,6 +4445,7 @@ export default function Complaint() {
           employeeDomain,
           screenName
         ),
+        sendEmail: approveSelectionCode === "APPROVE",
         emailBody: emailBodyHtml,
         emailSubject: emailSubject,
       };
@@ -4465,7 +4482,20 @@ export default function Complaint() {
               return_from_status_id: tempExplainStatus[0]?.id,
               complaint_status_id: tempExplainStatus[0]?.lov2,
               mode: mode,
+              request_company_id: dataelement?.respondent_company_id?.company_id
+                ? Number(dataelement.respondent_company_id.company_id)
+                : complaintMainData?.respondent_company_id
+                  ? Number(complaintMainData.respondent_company_id)
+                  : null,
+              request_domain_id: dataelement?.respondent_domain_id || complaintMainData?.respondent_domain_id,
+              request_department_id: dataelement?.respondent_department_id?.department_id
+                ? Number(dataelement.respondent_department_id.department_id)
+                : complaintMainData?.respondent_department_id
+                  ? Number(complaintMainData.respondent_department_id)
+                  : null,
             },
+            emailBody: emailBodyHtml,
+            emailSubject: emailSubject,
             CurrentAccessModel: {
               user_id: user[0]?.employee_username || "",
             },
@@ -5341,6 +5371,10 @@ export default function Complaint() {
         create_by: user[0]?.employee_username || "",
         domain_id: user[0]?.employee_domain || "",
         respondent_domain_id: approvalSource?.respondent_domain_id,
+
+        // respondent_company_id: dataelement?.respondent_company_id || complaintMainData?.respondent_company_id,
+        // // respondent_domain_id: dataelement?.respondent_domain_id || complaintMainData?.respondent_domain_id,
+        // respondent_department_id: dataelement?.respondent_department_id || complaintMainData?.respondent_department_id,
       },
       CurrentAccessModel: getCurrentAccessObject(
         employeeUsername,
@@ -5357,6 +5391,7 @@ export default function Complaint() {
         user_position: user[0]?.employee_position,
         user_email: user[0]?.employee_email,
       },
+      sendEmail: approveSelectionCode === "APPROVE",
       emailBody: emailBodyHtml,
       emailSubject: emailSubject,
     };
@@ -5611,6 +5646,18 @@ export default function Complaint() {
         create_by: user[0]?.employee_username || "",
         domain_id: user[0]?.employee_domain || "",
         respondent_domain_id: approvalSource?.respondent_domain_id, // ✅ เพิ่ม field นี้
+
+        request_company_id: dataelement?.request_company_id?.company_id
+          ? Number(dataelement.request_company_id.company_id)
+          : complaintMainData?.request_company_id
+            ? Number(complaintMainData.request_company_id)
+            : null,
+        request_domain_id: dataelement?.request_domain_id || complaintMainData?.request_domain_id,
+        request_department_id: dataelement?.request_department_id?.department_id
+          ? Number(dataelement.request_department_id.department_id)
+          : complaintMainData?.request_department_id
+            ? Number(complaintMainData.request_department_id)
+            : null,
       },
       CurrentAccessModel: getCurrentAccessObject(
         employeeUsername,
@@ -5627,6 +5674,7 @@ export default function Complaint() {
         user_position: user[0]?.employee_position,
         user_email: user[0]?.employee_email,
       },
+      sendEmail: false,
       emailBody: emailBodyHtml,
       emailSubject: emailSubject,
     };
@@ -6177,6 +6225,7 @@ export default function Complaint() {
         user_position: user[0]?.employee_position,
         user_email: user[0]?.employee_email,
       },
+      sendEmail: approveSelectionCode === "APPROVE",
       emailBody: emailBodyHtml,
       emailSubject: emailSubject,
     };
