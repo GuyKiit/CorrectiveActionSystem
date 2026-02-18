@@ -243,6 +243,9 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
     const [dataset_reporttype, setdataset_reporttype] = useState<any>(
         initialListComplaint.dataset_reporttype
     );
+    const [dataset_reporttype_inactive, setdataset_reporttype_inactive] = useState<any>(
+        initialListComplaint.dataset_reporttype_inactive
+    );
     const [dataset_company, setdataset_company] = useState<any>(
         initialListComplaint.dataset_company
     );
@@ -644,6 +647,7 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 //--------dataset-------
                 dataset_crosscompany,
                 dataset_reporttype,
+                dataset_reporttype_inactive,
                 dataset_company,
                 dataset_department,
                 dataset_department_request,
@@ -839,6 +843,7 @@ const ListComplaintProvider: FC<WithChildren> = ({ children }) => {
                 //--------dataset-------
                 setdataset_crosscompany,
                 setdataset_reporttype,
+                setdataset_reporttype_inactive,
                 setdataset_company,
                 setdataset_department,
                 setdataset_department_request,

@@ -92,6 +92,7 @@ export type ListComplaintContextProps = {
     //--------dataset-------
     dataset_crosscompany?: any
     dataset_reporttype?: any
+    dataset_reporttype_inactive?: any
     dataset_company?: any
     dataset_department?: any
     dataset_department_request?: any
@@ -297,6 +298,7 @@ export type ListComplaintContextProps = {
     //--------dataset-------
     setdataset_crosscompany: Dispatch<SetStateAction<any>>
     setdataset_reporttype: Dispatch<SetStateAction<any>>
+    setdataset_reporttype_inactive: Dispatch<SetStateAction<any>>
     setdataset_company: Dispatch<SetStateAction<any>>
     setdataset_department: Dispatch<SetStateAction<any>>
     setdataset_department_request: Dispatch<SetStateAction<any>>
@@ -494,6 +496,7 @@ export const initialListComplaint: ListComplaintContextProps = {
     //--------dataset-------
     setdataset_crosscompany: () => { },
     setdataset_reporttype: () => { },
+    setdataset_reporttype_inactive: () => { },
     setdataset_company: () => { },
     setdataset_department: () => { },
     setdataset_department_request: () => { },

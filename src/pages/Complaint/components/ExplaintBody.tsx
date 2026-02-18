@@ -257,6 +257,7 @@ export default function ExplaintBody({
     complaint_status_id,
     // Dataset
     dataset_reporttype,
+    dataset_reporttype_inactive,
     dataset_company,
     dataset_department,
     ToolOther,
@@ -368,6 +369,7 @@ export default function ExplaintBody({
 
     // Dataset
     setdataset_reporttype,
+    setdataset_reporttype_inactive,
     setdataset_company,
     setdataset_department,
     setdataset_domain,
@@ -1115,30 +1117,36 @@ export default function ExplaintBody({
 
       // ถ้าไม่มี anything ที่จำเป็นก็ยังไม่ return ทันที — เราต้องการให้ logic พยายามทำงานเมื่อข้อมูลพร้อม
       // 1) เตรียม newDataset จาก dataset_reporttype (ถ้ามี)
-      let newDataset: LovType[] | undefined = Array.isArray(dataset_reporttype)
-        ? dataset_reporttype
+      let newDataset: LovType[] | undefined = Array.isArray(dataset_reporttype_inactive)
+        ? dataset_reporttype_inactive
         : undefined;
 
       // ถ้ามี dataset_reporttype และ dataelement ให้เรียก setValueMas เพื่อ map ค่า (safe)
-      if (Array.isArray(dataset_reporttype) && dataelement) {
+      if (Array.isArray(dataset_reporttype_inactive) && dataelement) {
         try {
           const mapped = await setValueMas(
-            dataset_reporttype,
+            dataset_reporttype_inactive,
             dataelement.report_type,
             "id"
           );
+          console.log("dataset_reporttype_inactive",dataset_reporttype_inactive);
+          console.log("dataelement.report_type", dataelement.report_type);
+          console.log("mapped1:", mapped);
+          
           // mapped อาจเป็น undefined หรือ array — ให้ใช้ mapped ถ้ามีค่าที่แตกต่างจากเดิม
           if (mapped && Array.isArray(mapped)) {
             // ถ้า different -> update state
-            if (JSON.stringify(mapped) !== JSON.stringify(dataset_reporttype)) {
-              setdataset_reporttype(mapped);
+            if (JSON.stringify(mapped) !== JSON.stringify(dataset_reporttype_inactive)) {
+              setdataset_reporttype_inactive(mapped);
             }
             newDataset = mapped;
           } else {
             // ถ้า mapped เป็น object เดียว ๆ (กรณีฟังก์ชันคืน object) — เราอยากให้ newDataset เป็น array
+            console.log("mapped2:", mapped);
+
             if (mapped && !Array.isArray(mapped)) {
-              newDataset = Array.isArray(dataset_reporttype)
-                ? dataset_reporttype
+              newDataset = Array.isArray(dataset_reporttype_inactive)
+                ? dataset_reporttype_inactive
                 : [mapped];
             }
           }
@@ -1171,7 +1179,6 @@ export default function ExplaintBody({
           // console.warn("⚠️ No department found for ID:",dataelement.responsible_department_id);
         }
       }
-
       // 2) ถ้า action === "Read" หรือ "Explain" และมี dataelement.report_type ให้หา default จาก newDataset (ถ้ามี)
       if (
         (!isActionAdd || !isActionRead || !isActionEdit || !isActionDelete) &&
@@ -1193,6 +1200,10 @@ export default function ExplaintBody({
             dataReportTypeValue.id !== defaultVal.id
           ) {
             // console.log("🔍 ExplaintBody - Setting Report Type:", defaultVal);
+            // console.log("🔍 defaultVal.id", defaultVal.id);
+            // console.log("🔍 dataReportTypeValue.id", dataReportTypeValue?.id);
+            // console.log("🔍Explain ID:", dataelement?.id);
+            // console.log("🔍Complaint ID:", dataelement?.complaint_id);
             setdataReportTypeValue(defaultVal);
           }
         } else {
@@ -1202,16 +1213,6 @@ export default function ExplaintBody({
           // );
         }
       }
-
-      // Always prepare Follow-up approve options (not dependent on report type)
-      // const fuApproveAll = (dataApprove_Combobox || []).filter(
-      //   (item: LovType) => item.lov_type === "approve_select"
-      // );
-      // setFilteredFuApprove((prev: LovType[]) => {
-      //   if (JSON.stringify(prev) !== JSON.stringify(fuApproveAll))
-      //     return fuApproveAll;
-      //   return prev;
-      // });
 
       // 4) ถ้ามี dataReportTypeValue (จาก state หรือ เพิ่ง set ข้างบน) ให้กรอง complaint/attach/reference
       const reportTypeToUse = dataReportTypeValue; // ใช้ state ปัจจุบัน (ซึ่งเราเพิ่งอาจจะ set)
@@ -1311,6 +1312,7 @@ export default function ExplaintBody({
     action,
     dataelement?.report_type, // ใช้ property เพื่อให้ effect รันเมื่อ report_type เปลี่ยน
     dataset_reporttype,
+    dataset_reporttype_inactive,
     dataToolUse_Combobox,
     dataDecision_Combobox,
     dataphoto_Combobox,
@@ -1532,10 +1534,14 @@ export default function ExplaintBody({
         setapprove_detail(scApprove?.approve_detail || "");
         setapprove_note(scApprove?.approve_note || "");
       }
-
+      console.log("😁dataelement", dataelement);
+      console.log("😁dataelement.report_type", dataelement.report_type);
       // Set visibility based on report type from dataelement
+      const reportTypeToUse = dataset_reporttype_inactive?.length? dataset_reporttype_inactive : dataset_reporttype;
+      console.log("reportTypeToUse", reportTypeToUse);
+      
       if (dataelement.report_type) {
-        const reportTypeObj = dataset_reporttype?.find(
+        const reportTypeObj = reportTypeToUse?.find(
           (item: LovType) =>
             item.id === dataelement.report_type ||
             item.lov_code === dataelement.report_type

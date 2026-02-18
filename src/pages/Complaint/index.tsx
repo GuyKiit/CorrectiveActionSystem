@@ -294,6 +294,7 @@ export default function Complaint() {
 
     // Dataset Variables
     dataset_reporttype,
+    dataset_reporttype_inactive,
     dataset_department,
     dataset_department_request,
     dataset_department_respondent,
@@ -452,6 +453,7 @@ export default function Complaint() {
     setclauseOther,
     setphoTypeOther,
     setdataset_reporttype,
+    setdataset_reporttype_inactive,
     setdataset_activeCompany,
     setdataset_roleProfile,
     setdataset_configfile,
@@ -1061,6 +1063,40 @@ export default function Complaint() {
       }
     }
 
+    if (mode == "get_inactive") {
+      try {
+        const dataset = isItAdmin
+          ? {
+            lov_type:
+              "report_type",
+            lov_active_flag: 'N',
+          }
+          : {
+            lov_group:
+              user[0]?.itasset_company_id + ",VARIABLE_CONSTANT" + ",SYSTEM",
+            lov_type:
+              "report_type",
+            lov_active_flag: 'N',
+          };
+        const response = await _POST(dataset, "/Lov/LovGet");
+
+        if (response && response.status === "success") {
+          const lovData = response.data || [];
+          console.log(
+            "❇️❇️❇️❇️❇️❇️❇️ Call [Lov/LovGet] -> LovAll_Get :",
+            response.data
+          );
+
+          console.log('😂 dataset_reporttype_inactive :', lovData);
+
+          setdataset_reporttype_inactive?.(lovData);
+
+        }
+      } catch (e) {
+        //console.log("error:", e);
+      }
+    }
+
     if (mode == "get_complaint_status") {
       try {
         const dataset = {
@@ -1197,7 +1233,7 @@ export default function Complaint() {
           // console.log('💚💚 [response.data] : ', response.data);
 
           // console.log('⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️');
-          // console.log('⚠️⚠️⚠️⚠️ [grouped["report_type"]] :', grouped["report_type"]);
+          console.log('⚠️⚠️⚠️⚠️ [grouped["report_type"]] :', grouped["report_type"]);
           // console.log('⚠️⚠️⚠️⚠️ [grouped["complaint_type"]] :', grouped["complaint_type"]);
           // console.log('⚠️⚠️⚠️⚠️ [grouped["reference_standard"]] :', grouped["reference_standard"]);
           // console.log('⚠️⚠️⚠️⚠️ [grouped["priority_level"]] :', grouped["priority_level"]);
@@ -5671,6 +5707,9 @@ export default function Complaint() {
     //     dayjs().format("HH:mm:ss.SSS"),
     //     "[Calling Function] : handleOnclickExplainApproveSc"
     //   );
+    console.log("explainData",explainData);
+    console.log("dataelement",dataelement);
+    
     const complaintData = dataelement;
     // เก็บ complaint หลัก
     setComplaintMainData(complaintData);
@@ -5700,22 +5739,22 @@ export default function Complaint() {
     if (explainData.follow_up_date)
       setfollow_up_date(dayjs(explainData.follow_up_date));
 
+    //---------------------------------------------------------------------------------------
+    //---------------------------------------------------------------------------------------
+    //---------------------------------------------------------------------------------------
+    
     // เอา report_type มาด้วย
-    const reportType =
-      explainData.complaint?.report_type ||
-      explainData.report_type ||
-      complaintData?.report_type;
+    const reportType = complaintData?.report_type;
 
-    if (reportType && dataset_reporttype) {
-      const reportTypeObj = dataset_reporttype.find(
-        (item: any) => item.id === reportType || item.lov_code === reportType
-      );
+    if (reportType && dataset_reporttype_inactive) {
+      const reportTypeObj = dataset_reporttype_inactive.find(
+        (item: any) => item.id === reportType);
 
       if (reportTypeObj) {
         setdataelement({
           ...explainData,
           report_type: reportTypeObj.lov_code,
-          _forceVisibilityUpdate: Date.now(),
+          // _forceVisibilityUpdate: Date.now(),
         });
       } else {
         setdataelement(explainData);
@@ -5723,6 +5762,10 @@ export default function Complaint() {
     } else {
       setdataelement(explainData);
     }
+
+    //---------------------------------------------------------------------------------------
+    //---------------------------------------------------------------------------------------
+    //---------------------------------------------------------------------------------------
 
     // เปิด modal
     setOpenExplainApproveSc(true);
@@ -6521,22 +6564,21 @@ export default function Complaint() {
     }
 
     // เอา report_type มาด้วย
-    const reportType =
-      explainData.complaint?.report_type ||
-      explainData.report_type ||
-      complaintData?.report_type;
-
-    if (reportType && dataset_reporttype) {
-      const reportTypeObj = dataset_reporttype.find(
-        (item: any) => item.id === reportType || item.lov_code === reportType
+    const reportType = complaintData?.report_type;
+    console.log("reportType", reportType);
+    if (reportType && dataset_reporttype_inactive) {
+      const reportTypeObj = dataset_reporttype_inactive.find(
+        (item: any) => item.id === reportType
       );
 
       if (reportTypeObj) {
         setdataelement({
           ...explainData,
           report_type: reportTypeObj.lov_code,
-          _forceVisibilityUpdate: Date.now(),
+          // _forceVisibilityUpdate: Date.now(),
         });
+        console.log("reportTypeObj", reportTypeObj);
+        console.log("1111");
       } else {
         // console.log("call from line 5013", dataelement);
         setdataelement(explainData);
@@ -6651,21 +6693,17 @@ export default function Complaint() {
     }
 
     // เอา report_type มาด้วย
-    const reportType =
-      explainData.complaint?.report_type ||
-      explainData.report_type ||
-      complaintData?.report_type;
+    const reportType = complaintData?.report_type;
 
-    if (reportType && dataset_reporttype) {
-      const reportTypeObj = dataset_reporttype.find(
-        (item: any) => item.id === reportType || item.lov_code === reportType
-      );
+    if (reportType && dataset_reporttype_inactive) {
+      const reportTypeObj = dataset_reporttype_inactive.find(
+        (item: any) => item.id === reportType);
 
       if (reportTypeObj) {
         setdataelement({
           ...explainData,
           report_type: reportTypeObj.lov_code,
-          _forceVisibilityUpdate: Date.now(),
+          // _forceVisibilityUpdate: Date.now(),
         });
       } else {
         setdataelement(explainData);
@@ -6673,6 +6711,8 @@ export default function Complaint() {
     } else {
       setdataelement(explainData);
     }
+
+    
 
     // เปิด modal
     setOpenExplainApproveQc(true);
@@ -6774,21 +6814,17 @@ export default function Complaint() {
     }
 
     // เอา report_type มาด้วย
-    const reportType =
-      explainData.complaint?.report_type ||
-      explainData.report_type ||
-      complaintData?.report_type;
+    const reportType = complaintData?.report_type;
 
-    if (reportType && dataset_reporttype) {
-      const reportTypeObj = dataset_reporttype.find(
-        (item: any) => item.id === reportType || item.lov_code === reportType
-      );
+    if (reportType && dataset_reporttype_inactive) {
+      const reportTypeObj = dataset_reporttype_inactive.find(
+        (item: any) => item.id === reportType);
 
       if (reportTypeObj) {
         setdataelement({
           ...explainData,
           report_type: reportTypeObj.lov_code,
-          _forceVisibilityUpdate: Date.now(),
+          // _forceVisibilityUpdate: Date.now(),
         });
       } else {
         setdataelement(explainData);
@@ -6997,6 +7033,7 @@ export default function Complaint() {
         const tempCheckItAdmin = await LovAll_Get("get_role");
         // console.log("😎🥰 tempCheckItAdmin", tempCheckItAdmin);
         await LovAll_Get(null, null, tempCheckItAdmin);
+        await LovAll_Get('get_inactive');
         await DomainRelateGet();
         // await DepartmentDomainGet();
 
