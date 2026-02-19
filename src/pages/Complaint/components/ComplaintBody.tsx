@@ -1662,9 +1662,9 @@ export default function ComplaintBody({
 
         } 
         else {
-          console.log("ACTION:", action);
-          console.log("🕑🕑🕑 [dataelement.report_type]  : ", dataelement.report_type, "🕑🕑🕑");
-          console.log("🕑🕑🕑 [dataset_reporttype]  : ", dataset_reporttype, "🕑🕑🕑");
+          // console.log("ACTION:", action);
+          // console.log("🕑🕑🕑 [dataelement.report_type]  : ", dataelement.report_type, "🕑🕑🕑");
+          // console.log("🕑🕑🕑 [dataset_reporttype]  : ", dataset_reporttype, "🕑🕑🕑");
           if (Array.isArray(dataset_reporttype_inactive) && dataelement?.report_type) {
             const defaultVal =
               (await setValueMas(

@@ -1082,12 +1082,12 @@ export default function Complaint() {
 
         if (response && response.status === "success") {
           const lovData = response.data || [];
-          console.log(
-            "❇️❇️❇️❇️❇️❇️❇️ Call [Lov/LovGet] -> LovAll_Get :",
-            response.data
-          );
+          // console.log(
+          //   "❇️❇️❇️❇️❇️❇️❇️ Call [Lov/LovGet] -> LovAll_Get :",
+          //   response.data
+          // );
 
-          console.log('😂 dataset_reporttype_inactive :', lovData);
+          // console.log('😂 dataset_reporttype_inactive :', lovData);
 
           setdataset_reporttype_inactive?.(lovData);
 
@@ -1233,7 +1233,7 @@ export default function Complaint() {
           // console.log('💚💚 [response.data] : ', response.data);
 
           // console.log('⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️');
-          console.log('⚠️⚠️⚠️⚠️ [grouped["report_type"]] :', grouped["report_type"]);
+          // console.log('⚠️⚠️⚠️⚠️ [grouped["report_type"]] :', grouped["report_type"]);
           // console.log('⚠️⚠️⚠️⚠️ [grouped["complaint_type"]] :', grouped["complaint_type"]);
           // console.log('⚠️⚠️⚠️⚠️ [grouped["reference_standard"]] :', grouped["reference_standard"]);
           // console.log('⚠️⚠️⚠️⚠️ [grouped["priority_level"]] :', grouped["priority_level"]);
@@ -6565,7 +6565,7 @@ export default function Complaint() {
 
     // เอา report_type มาด้วย
     const reportType = complaintData?.report_type;
-    console.log("reportType", reportType);
+    // console.log("reportType", reportType);
     if (reportType && dataset_reporttype_inactive) {
       const reportTypeObj = dataset_reporttype_inactive.find(
         (item: any) => item.id === reportType
@@ -6577,8 +6577,8 @@ export default function Complaint() {
           report_type: reportTypeObj.lov_code,
           // _forceVisibilityUpdate: Date.now(),
         });
-        console.log("reportTypeObj", reportTypeObj);
-        console.log("1111");
+        // console.log("reportTypeObj", reportTypeObj);
+        // console.log("1111");
       } else {
         // console.log("call from line 5013", dataelement);
         setdataelement(explainData);

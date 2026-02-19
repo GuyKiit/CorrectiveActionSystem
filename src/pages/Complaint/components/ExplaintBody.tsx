@@ -1129,9 +1129,8 @@ export default function ExplaintBody({
             dataelement.report_type,
             "id"
           );
-          console.log("dataset_reporttype_inactive",dataset_reporttype_inactive);
-          console.log("dataelement.report_type", dataelement.report_type);
-          console.log("mapped1:", mapped);
+          // console.log("dataset_reporttype_inactive",dataset_reporttype_inactive);
+          // console.log("dataelement.report_type", dataelement.report_type);
           
           // mapped อาจเป็น undefined หรือ array — ให้ใช้ mapped ถ้ามีค่าที่แตกต่างจากเดิม
           if (mapped && Array.isArray(mapped)) {
@@ -1142,7 +1141,6 @@ export default function ExplaintBody({
             newDataset = mapped;
           } else {
             // ถ้า mapped เป็น object เดียว ๆ (กรณีฟังก์ชันคืน object) — เราอยากให้ newDataset เป็น array
-            console.log("mapped2:", mapped);
 
             if (mapped && !Array.isArray(mapped)) {
               newDataset = Array.isArray(dataset_reporttype_inactive)
@@ -1534,14 +1532,14 @@ export default function ExplaintBody({
         setapprove_detail(scApprove?.approve_detail || "");
         setapprove_note(scApprove?.approve_note || "");
       }
-      console.log("😁dataelement", dataelement);
-      console.log("😁dataelement.report_type", dataelement.report_type);
+      // console.log("😁dataelement", dataelement);
+      // console.log("😁dataelement.report_type", dataelement.report_type);
       // Set visibility based on report type from dataelement
-      const reportTypeToUse = dataset_reporttype_inactive?.length? dataset_reporttype_inactive : dataset_reporttype;
-      console.log("reportTypeToUse", reportTypeToUse);
+      // const reportTypeToUse = dataset_reporttype_inactive?.length? dataset_reporttype_inactive : dataset_reporttype;
+      // console.log("reportTypeToUse", reportTypeToUse);
       
-      if (dataelement.report_type) {
-        const reportTypeObj = reportTypeToUse?.find(
+      if (dataelement) {
+        const reportTypeObj = dataset_reporttype_inactive?.find(
           (item: LovType) =>
             item.id === dataelement.report_type ||
             item.lov_code === dataelement.report_type
