@@ -1065,6 +1065,7 @@ export default function Complaint() {
     }
 
     if (mode == "get_inactive") {
+
       try {
         const dataset = isItAdmin
           ? {
@@ -1088,7 +1089,7 @@ export default function Complaint() {
           //   response.data
           // );
 
-          console.log('😂 dataset_reporttype_inactive :', lovData);
+          // console.log('😂 dataset_reporttype_inactive :', lovData);
 
           setdataset_reporttype_inactive?.(lovData);
 
@@ -1497,6 +1498,45 @@ export default function Complaint() {
     }
   };
 
+  const isMaxLevel = (allowedLevelsArray: any, currentLevel: any) => {
+    // 1. ดัก Error เผื่อค่าว่าง
+    if (!allowedLevelsArray || allowedLevelsArray.length === 0 || !currentLevel) {
+      return false; 
+    }
+
+    // 2. แปลงทุกตัวใน Array ให้เป็น Number แน่ๆ แล้วหาค่าสูงสุด
+    // เช่น ['1', '2'] -> จะถูกแปลงและหาค่า max ได้เป็น 2
+    const maxLevel = Math.max(...allowedLevelsArray.map(Number));
+
+    // 3. แปลงค่าที่รับมาเป็น Number แล้วจับมาเทียบกัน (คืนค่าเป็น true/false)
+    return Number(currentLevel) === maxLevel;
+  };
+
+  // ฟังก์ชันนี้รับพารามิเตอร์ 2 ตัว: Master Data ทั้งหมด และค่า lov5 ของแต่ละ Record
+  const getFilteredComplaintStatus = (allStatuses: any, allowedLov5: any) => {
+    // 1. ถ้าไม่มีค่า lov5 ส่งมา ป้องกัน Error ให้ Return ตัวเต็มกลับไปก่อน
+    if (!allowedLov5) return allStatuses;
+
+    // 2. แปลง "1,2" ให้เป็น Array ['1', '2'] เพื่อให้ค้นหาง่ายขึ้น
+    const allowedLevels = String(allowedLov5).split(',');
+
+    // console.log("allowedLevels", allowedLevels);
+
+    // 3. กรองข้อมูล
+    return allStatuses.filter((status: any) => {
+      // ดึงค่า lov3 ออกมาเช็ค (เผื่อกรณีมันมาเป็น string 'NULL' หรือค่า null ว่างๆ)
+      const currentLov3 = status.lov3;
+
+      // เงื่อนไข A: ถ้า lov3 เป็น null หรือ 'NULL' (เช่น NEW, SUBMITTED, CLOSED) ให้ปล่อยผ่านเสมอ
+      if (!currentLov3 || currentLov3 === 'NULL') {
+        return true;
+      }
+
+      // เงื่อนไข B: ถ้า lov3 มีตัวเลข (เช่น 1 หรือ 2) ให้เช็คว่าตัวเลขนั้นอยู่ใน Array allowedLevels หรือไม่
+      return allowedLevels.includes(String(currentLov3));
+    });
+  };
+
   // =====================================================================================================
   // API FUNCTIONS - CRUD OPERATIONS
   // =====================================================================================================
@@ -1703,39 +1743,20 @@ export default function Complaint() {
 
     // console.log("step:2 dataset ก่อนส่ง API /Complaint/ComplaintGet ", dataset);
     try {
+      //=========================================================================
       let response = await _POST(dataset, "/Complaint/ComplaintGet");
-      // console.log(
-      //   "step:2 ผลลัพธ์ที่ได้จาก API /Complaint/ComplaintGet ",
-      //   dataset
-      // );
+      //=========================================================================
+
 
       if (response && response.status === "success") {
+
         setIsLoadingScreen(false);
         const responseData: any = [];
 
         if (Array.isArray(response.data)) {
 
-          // tempDataset_reporttype_inactive = await LovAll_Get('get_inactive');
-          console.log("👹👹👹 dataset_reporttype_inactive", dataset_reporttype_inactive);
-
-          // console.log("@@@@@@@@        @@@@@@@@", response.data);
-          console.log("respondent_domain_id", respondent_domain_id);
-
-          const tempApproveStep = (dataset_reporttype_inactive || []).filter(
-            (val: any) => val["id"] === response.data.report_type
-          );
-
-          console.log("🦄🦄🦄 tempApproveStep", tempApproveStep);
-          console.log("🦄🦄🦄 tempApproveStep", tempApproveStep[0]?.lov5);
-
-          const tempComplaintStatusList = await LovAll_Get(
-            "Lead",
-            respondent_domain_id,
-            false,
-            dataelement?.complaint_status_id,
-            tempApproveStep[0]?.lov5
-          );
-
+          // console.log("👹👹👹 dataset_reporttype_inactive", dataset_reporttype_inactive);
+          // console.log("👹 response.data.report_type", response.data);
 
           // 🔹 กรองข้อมูลก่อน
           const filteredData = response.data.filter(
@@ -1747,73 +1768,127 @@ export default function Complaint() {
                 item.complaint_status_label !== "NEW")
           );
 
-          // console.log("filteredData", filteredData);
+          //=========================================================================================
+          //=========================================================================================
+          //=========================================================================================
+
           filteredData.forEach(async (el: any) => {
 
-            //====================================================================
-            console.log("😘😘😘dataset_reporttype_inactive",dataset_reporttype_inactive);
-            console.log("😘😘😘el.report_type",el.report_type);
-            
+            //==========================================================================
+            // NEW SECTION
+            //==========================================================================
+
+            // [MASTER] Complaint Status (By Domain)
+            const tempDataStatus1 = (datastatusCrossDomain || []).filter(
+              (val: any) => val["lov7"] == el.respondent_domain_id
+            );
+
+            // console.log("1️⃣1️⃣1️⃣ ####### [MASTER] tempDataStatus1 [Complaint Status] : ", tempDataStatus1, "#######");
+
+            // --------------------------------------------------------------------------
+
+            // [SELECT] Report Type (From Report Type / INACTIVE)
             const tempApproveStep = (dataset_reporttype_inactive || []).filter(
               (val: any) => val["id"] === el.report_type
             );
 
-            console.log("🦄🦄🦄🦄🦄🦄🦄🦄🦄🦄🦄🦄🦄🦄🦄 el", el);
-            console.log("🦄🦄🦄 tempApproveStep", tempApproveStep);
-            console.log("😪😪😯😪 el.respondent_domain_id,", el.respondent_domain_id,);
-            console.log("😪😪😯😪 el.complaint_status_id", el.complaint_status_id);
-            console.log("😪😪😯😪 tempApproveStep[0]?.lov5", tempApproveStep[0]?.lov5);
-            
-            const tempComplaintStatusList = await LovAll_Get(
-              "Lead",
-              el.respondent_domain_id,
-              false,
-              el.complaint_status_id,
-              tempApproveStep[0]?.lov5
-            );
-            
-            //====================================================================
-            
-            console.log("🦄🦄🦄 tempComplaintStatusList", tempComplaintStatusList);
+            // console.log("2️⃣2️⃣2️⃣ ####### [SELECT] tempApproveStep [Approve Step] : ", tempApproveStep, "#######");
 
+            // --------------------------------------------------------------------------
+
+            // [MASTER] Complaint Status (By Report Type Approve Step)
+            const filteredComplaintStatus = getFilteredComplaintStatus(tempDataStatus1, tempApproveStep[0]?.lov5);
+
+            // console.log("3️⃣3️⃣3️⃣ ####### [MASTER] filteredComplaintStatus : ", filteredComplaintStatus, "#######");
+
+            // --------------------------------------------------------------------------
+
+            // [MASTER] Group of Approve Step (From Master Complaint Status // LEAD)
+            const filteredApproveStep = filteredComplaintStatus.filter(
+              (val: any) => val["lov3"] !== null
+            );
+
+            // console.log("4️⃣4️⃣4️⃣ ####### [MASTER] filteredApproveStep : ", filteredApproveStep, "#######");
+
+            // --------------------------------------------------------------------------
+
+            // [MASTER]
+            const temp = (filteredComplaintStatus || []).filter(
+              //const tempApproveInfo = datastatus.filter(
+              (val: any) =>
+                val["id"] == el.complaint_status_id && val["lov3"] !== null
+            );
+
+            let tempApproveSeq = [];
+            let isApproveStepMax = false;
+
+            if (temp.length > 0) {
+
+              // console.log("✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨");
+              // console.log("5️⃣5️⃣5️⃣ ####### [MASTER] temp : ", temp, "#######");
+              // console.log("5️⃣5️⃣5️⃣ ####### [MASTER] temp found : ", temp[0]?.lov3, "#######");
+              // console.log("✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨");
+
+              // ==================================================================================================
+
+              tempApproveSeq.push(temp[0]["lov3"]);
+
+              // console.log("6️⃣6️⃣6️⃣ ####### [MASTER] tempApproveSeq : ", tempApproveSeq, "#######");
+
+              // ==================================================================================================
+
+              const allowedApproveStep = String(tempApproveStep[0]?.lov5).split(',');
+
+              // console.log("7️⃣7️⃣7️⃣ ####### [MASTER] allowedApproveStep : ", allowedApproveStep, "#######");
+
+              isApproveStepMax = isMaxLevel(allowedApproveStep, temp[0]?.lov3);
+
+              // if (isApproveStepMax) {
+              //   console.log("✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅");
+              //   console.log("####### ✅ isMax : ", isApproveStepMax, "#######");
+              //   console.log("✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅");
+              // } else {
+              //   console.log("❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌");
+              //   console.log("####### ❌ isMax : ", isApproveStepMax, "#######");
+              //   console.log("❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌");
+              // }
+
+              // ==================================================================================================
+              
+            }
+
+
+
+
+            //==========================================================================
+            // DEFAULT SECTION
+            //==========================================================================
+
+            // // --------------------------------------------------------------------------
+            // // // Filter Complaint Status with [Same Domain]
+            // // --------------------------------------------------------------------------
             // const tempDataStatus = (datastatusCrossDomain || []).filter(
             //   //const tempApproveInfo = datastatus.filter(
             //   (val: any) => val["lov7"] == el.respondent_domain_id
             // );
 
-            // เลิอกข้อมูลของแต่ล่ะ Row 
-            const tempApproveInfo_CurrentStep = (tempComplaintStatusList || []).filter(
-              //const tempApproveInfo = datastatus.filter(
-              (val: any) =>
-                val["id"] == el.complaint_status_id && val["lov3"] !== null
-            );
-
-            const tempApproveInfo_ApproveStep = (tempComplaintStatusList || []).filter(
-              //const tempApproveInfo = datastatus.filter(
-              (val: any) =>
-                val["id"] == el.complaint_status_id && val["lov3"] !== null
-            );
-
-            const tempApproveInfo = (tempComplaintStatusList || []).filter(
-              //const tempApproveInfo = datastatus.filter(
-              (val: any) =>
-                val["id"] == el.complaint_status_id && val["lov3"] !== null
-            );
-
-            // const tempApproveInfo2 = (tempDataStatus || []).filter(
+            // // --------------------------------------------------------------------------
+            // // // Filter Complaint Status with [Same ID] and [lov3 is not null]
+            // // --------------------------------------------------------------------------
+            // const tempApproveInfo = (tempDataStatus || []).filter(
             //   //const tempApproveInfo = datastatus.filter(
             //   (val: any) =>
-            //     val["lov3"] !== null
+            //     val["id"] == el.complaint_status_id && val["lov3"] !== null
             // );
 
-            console.log("tempApproveInfo_ApproveStep", tempApproveInfo_ApproveStep);
-            console.log("tempApproveInfo_CurrentStep", tempApproveInfo_CurrentStep);
-            console.log("datastatusCrossDomain", datastatusCrossDomain);
-            
+            // // --------------------------------------------------------------------------
+            // // // Get Approve Sequence (If it has, return static number)
+            // // --------------------------------------------------------------------------
             // const tempApproveSeq =
-            //   tempApproveInfo_CurrentStep.length > 0 ? tempApproveInfo_CurrentStep[0]["lov3"] == Math.max(tempComplaintStatusList) : null;
-            const tempApproveSeq =
-              tempApproveInfo.length > 0 ? tempApproveInfo[0]["lov3"] : null;
+            //   tempApproveInfo.length > 0 ? tempApproveInfo[0]["lov3"] : null;
+
+            //==========================================================================
+            //==========================================================================
 
             const ACTION = (
               <ActionManageCell
@@ -1965,7 +2040,7 @@ export default function Complaint() {
                         mode.lov1
                           .split(",")
                           .includes(String(el.complaint_status_label)) &&
-                        tempApproveSeq == "1"
+                        tempApproveSeq[0] == "1"
                       // ) &&
                       // splitNextStepName(el.approve_step
                     )) ??
@@ -1978,7 +2053,7 @@ export default function Complaint() {
                         mode.lov1
                           .split(",")
                           .includes(String(el.complaint_status_label)) &&
-                        tempApproveSeq == "1"
+                        tempApproveSeq[0] == "1"
                       // ) &&
                       // splitNextStepName(el.approve_step
                     )) ??
@@ -1996,7 +2071,7 @@ export default function Complaint() {
                           .split(",")
                           .includes(String(el.complaint_status_label)) &&
                         el.step_label === "COMPLAINT" &&
-                        tempApproveSeq == "2" &&
+                        isApproveStepMax &&
                         el.request_department_id ==
                         user[0]?.itasset_department_id
                       // ) &&
@@ -2011,7 +2086,7 @@ export default function Complaint() {
                         mode.lov1
                           .split(",")
                           .includes(String(el.complaint_status_label)) &&
-                        tempApproveSeq == "2"
+                        tempApproveSeq[0] == "2"
                     )) ??
                   false
                 }
@@ -2052,7 +2127,7 @@ export default function Complaint() {
                 acknowledge={el.acknowledge_flag}
                 step={`${el.step_label}`}
                 role={tempRolename}
-                approveseq={tempApproveSeq}
+                approveseq={tempApproveSeq[0]}
                 userdept={user[0]?.itasset_department_id}
                 requestdept={el.request_department_id}
               ></BasicChips>
@@ -2077,6 +2152,7 @@ export default function Complaint() {
   useEffect(() => {
     if (searchTrigger) {
       ComplaintGet();
+      console.log("🔁🔁 complaintAction พร้อมแล้ว → เรียก ComplaintGet()");
       setSearchTrigger(false); // reset trigger เพื่อให้พร้อมใช้ครั้งถัดไป
     }
   }, [searchTrigger, TextNameSearch]);
@@ -7261,6 +7337,7 @@ export default function Complaint() {
 
     if (isAcknowledgeUpdated) {
       ComplaintGet();
+      console.log("🔁🔁🔁 พร้อมแล้ว → เรียก ComplaintGet()");
       setIsAcknowledgeUpdated(false);
     }
   };
@@ -7350,6 +7427,19 @@ export default function Complaint() {
     fetchData();
   }, []);
 
+  React.useEffect(() => {
+
+    const prepareComplaintStatus = async () => {
+
+      // Get Report Type
+      const tempReportType = await LovAll_Get("get_inactive");
+
+    }
+
+    prepareComplaintStatus();
+
+  }, []);
+
   // Dynamic useEffect
   React.useEffect(() => {
     if (dataset_activeCompany) {
@@ -7357,9 +7447,7 @@ export default function Complaint() {
     }
 
     if (dataset_complaintAction) {
-      // LovAll_Get("get_inactive"); 
       ComplaintGet();
-      console.log("🔁 complaintAction พร้อมแล้ว → เรียก ComplaintGet()");
     }
   }, [dataset_activeCompany, dataset_complaintAction]);
 
