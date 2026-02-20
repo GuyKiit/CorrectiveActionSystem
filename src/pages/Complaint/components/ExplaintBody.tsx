@@ -1485,12 +1485,12 @@ export default function ExplaintBody({
       const scApprove = approveList?.find(
         (x: any) => x.explain_id === dataelement?.id && x.approve_seq === 1
       );
-      // console.log("scApprove", scApprove);
+      console.log("scApprove", scApprove);
       // QC Approve = approve_seq = 2
       const qcApprove = approveList?.find(
         (x: any) => x.explain_id === dataelement?.id && x.approve_seq === 2
       );
-      // console.log("qcApprove", qcApprove);
+      console.log("qcApprove", qcApprove);
 
       const closeItem = explainList?.find(
         (x: any) => x.id === dataelement?.id && ["REJECT", "ADD"].includes(x.close_status)

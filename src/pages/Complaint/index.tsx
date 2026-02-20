@@ -1498,6 +1498,20 @@ export default function Complaint() {
     }
   };
 
+  const isMinLevel = (allowedLevelsArray: any, currentLevel: any) => {
+    // 1. ดัก Error เผื่อค่าว่าง
+    if (!allowedLevelsArray || allowedLevelsArray.length === 0 || !currentLevel) {
+      return false; 
+    }
+
+    // 2. แปลงทุกตัวใน Array ให้เป็น Number แน่ๆ แล้วหาค่าสูงสุด
+    // เช่น ['1', '2'] -> จะถูกแปลงและหาค่า max ได้เป็น 2
+    const minLevel = Math.min(...allowedLevelsArray.map(Number));
+
+    // 3. แปลงค่าที่รับมาเป็น Number แล้วจับมาเทียบกัน (คืนค่าเป็น true/false)
+    return Number(currentLevel) === minLevel;
+  };
+
   const isMaxLevel = (allowedLevelsArray: any, currentLevel: any) => {
     // 1. ดัก Error เผื่อค่าว่าง
     if (!allowedLevelsArray || allowedLevelsArray.length === 0 || !currentLevel) {
@@ -1799,7 +1813,7 @@ export default function Complaint() {
             // [MASTER] Complaint Status (By Report Type Approve Step)
             const filteredComplaintStatus = getFilteredComplaintStatus(tempDataStatus1, tempApproveStep[0]?.lov5);
 
-            // console.log("3️⃣3️⃣3️⃣ ####### [MASTER] filteredComplaintStatus : ", filteredComplaintStatus, "#######");
+            console.log("3️⃣3️⃣3️⃣ ####### [MASTER] filteredComplaintStatus : ", filteredComplaintStatus, "#######");
 
             // --------------------------------------------------------------------------
 
@@ -1808,7 +1822,7 @@ export default function Complaint() {
               (val: any) => val["lov3"] !== null
             );
 
-            // console.log("4️⃣4️⃣4️⃣ ####### [MASTER] filteredApproveStep : ", filteredApproveStep, "#######");
+            console.log("4️⃣4️⃣4️⃣ ####### [MASTER] filteredApproveStep : ", filteredApproveStep, "#######");
 
             // --------------------------------------------------------------------------
 
@@ -1820,14 +1834,19 @@ export default function Complaint() {
             );
 
             let tempApproveSeq = [];
+            let isApproveStepMin = false;
             let isApproveStepMax = false;
+            let isAllowedTypeSingle = true;
 
             if (temp.length > 0) {
 
-              // console.log("✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨");
-              // console.log("5️⃣5️⃣5️⃣ ####### [MASTER] temp : ", temp, "#######");
-              // console.log("5️⃣5️⃣5️⃣ ####### [MASTER] temp found : ", temp[0]?.lov3, "#######");
-              // console.log("✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨");
+              console.log("✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨");
+              console.log("5️⃣5️⃣5️⃣ ####### [MASTER] isApproveStepMax : ", isApproveStepMax, "#######");
+              console.log("5️⃣5️⃣5️⃣ ####### [MASTER] tempisAllowedTypeSingle : ", isAllowedTypeSingle, "#######");
+              console.log("5️⃣5️⃣5️⃣ ####### [MASTER] temp : ", temp, "#######");
+              console.log("5️⃣5️⃣5️⃣ ####### [MASTER] temp found : ", temp[0]?.lov3, "#######");
+              console.log("5️⃣5️⃣5️⃣ dataset_complaintActionApproveQC : ", dataset_complaintActionApproveQC, "#######");
+              console.log("✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨");
 
               // ==================================================================================================
 
@@ -1838,20 +1857,16 @@ export default function Complaint() {
               // ==================================================================================================
 
               const allowedApproveStep = String(tempApproveStep[0]?.lov5).split(',');
+              
+              console.log("7️⃣7️⃣7️⃣ ####### [MASTER] allowedApproveStep : ", allowedApproveStep, "#######");
 
-              // console.log("7️⃣7️⃣7️⃣ ####### [MASTER] allowedApproveStep : ", allowedApproveStep, "#######");
+              
+              if (allowedApproveStep.length > 1){
+                isApproveStepMin = isMinLevel(allowedApproveStep, temp[0]?.lov3);
+                isApproveStepMax = isMaxLevel(allowedApproveStep, temp[0]?.lov3);
+                isAllowedTypeSingle = false;
+              }
 
-              isApproveStepMax = isMaxLevel(allowedApproveStep, temp[0]?.lov3);
-
-              // if (isApproveStepMax) {
-              //   console.log("✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅");
-              //   console.log("####### ✅ isMax : ", isApproveStepMax, "#######");
-              //   console.log("✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅");
-              // } else {
-              //   console.log("❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌");
-              //   console.log("####### ❌ isMax : ", isApproveStepMax, "#######");
-              //   console.log("❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌");
-              // }
 
               // ==================================================================================================
               
@@ -1890,6 +1905,8 @@ export default function Complaint() {
             //==========================================================================
             //==========================================================================
 
+            const tempRolename = tempRoleUser[0].lov_code;
+            
             const ACTION = (
               <ActionManageCell
                 role_id={user[0]?.role_id}
@@ -1948,6 +1965,7 @@ export default function Complaint() {
                 hiddenDepartmentView={true}
                 hiddenDepartmentEdit={true}
                 hiddenDepartmentDelete={true}
+
                 // For Status [NEW]
                 hiddenRead={
                   (dataset_complaintActionNew &&
@@ -2040,11 +2058,13 @@ export default function Complaint() {
                         mode.lov1
                           .split(",")
                           .includes(String(el.complaint_status_label)) &&
-                        tempApproveSeq[0] == "1"
+                          tempRolename === "qc" && 
+                          !isAllowedTypeSingle && 
+                          isApproveStepMin
                       // ) &&
                       // splitNextStepName(el.approve_step
-                    )) ??
-                  false
+                    ))
+                  ?? false
                 }
                 hiddenReadApproveQC={
                   (dataset_complaintActionApproveQC &&
@@ -2071,9 +2091,9 @@ export default function Complaint() {
                           .split(",")
                           .includes(String(el.complaint_status_label)) &&
                         el.step_label === "COMPLAINT" &&
-                        isApproveStepMax &&
-                        el.request_department_id ==
-                        user[0]?.itasset_department_id
+                        tempRolename === "user" &&
+                        (isApproveStepMax || isAllowedTypeSingle) &&
+                        el.request_department_id == user[0]?.itasset_department_id
                       // ) &&
                       // splitNextStepName(el.approve_step
                     )) ??
@@ -2112,12 +2132,177 @@ export default function Complaint() {
                     )) ??
                   false
                 }
+                // // For Status [NEW]
+                // hiddenRead={
+                //   (dataset_complaintActionNew &&
+                //     !dataset_complaintActionNew.some((mode: any) =>
+                //       mode.lov1
+                //         .split(",")
+                //         .includes(String(el.complaint_status_label))
+                //     )) ??
+                //   false
+                // }
+                // hiddenEdit={
+                //   (dataset_complaintActionNew &&
+                //     !dataset_complaintActionNew.some((mode: any) =>
+                //       mode.lov1
+                //         .split(",")
+                //         .includes(String(el.complaint_status_label))
+                //     )) ??
+                //   false
+                // }
+                // hiddenDelete={
+                //   (dataset_complaintActionNew &&
+                //     !dataset_complaintActionNew.some((mode: any) =>
+                //       mode.lov1
+                //         .split(",")
+                //         .includes(String(el.complaint_status_label))
+                //     )) ??
+                //   false
+                // }
+                // //-----------------------------------------------------------------------
+                // //-----------------------------------------------------------------------
+
+                // // For Status [SUBMITED]
+                // hiddenExplain={
+                //   (dataset_complaintActionExplain &&
+                //     !dataset_complaintActionExplain.some(
+                //       (mode: any) =>
+                //         mode.lov1
+                //           .split(",")
+                //           .includes(String(el.complaint_status_label)) &&
+                //         el.step_label == "EXPLAIN"
+                //     )) ??
+                //   false
+                // }
+                // hiddenReadExplain={
+                //   (dataset_complaintActionExplain &&
+                //     !dataset_complaintActionExplain.some((mode: any) =>
+                //       mode.lov1
+                //         .split(",")
+                //         .includes(String(el.complaint_status_label))
+                //     )) ??
+                //   false
+                // }
+                // //-----------------------------------------------------------------------
+                // //-----------------------------------------------------------------------
+
+                // // For Status [EXPLAINED]
+                // hiddenApproveSC={
+                //   (dataset_complaintActionApproveSC &&
+                //     !dataset_complaintActionApproveSC.some(
+                //       (mode: any) =>
+                //         mode.lov1
+                //           .split(",")
+                //           .includes(String(el.complaint_status_label)) &&
+                //         el.step_label == "EXPLAIN"
+                //       // ) &&
+                //       // splitNextStepName(el.approve_step
+                //     )) ??
+                //   false
+                // }
+                // hiddenReadApproveSC={
+                //   (dataset_complaintActionApproveSC &&
+                //     !dataset_complaintActionApproveSC.some(
+                //       (mode: any) =>
+                //         mode.lov1
+                //           .split(",")
+                //           .includes(String(el.complaint_status_label))
+                //       // ) &&
+                //       // splitNextStepName(el.approve_step
+                //     )) ??
+                //   false
+                // }
+                // // -----------------------------------------------------------------------
+                // // -----------------------------------------------------------------------
+
+                // // For Status [APPROVED][SC]
+                // hiddenApproveQC={
+                //   (dataset_complaintActionApproveQC &&
+                //     !dataset_complaintActionApproveQC.some(
+                //       (mode: any) =>
+                //         mode.lov1
+                //           .split(",")
+                //           .includes(String(el.complaint_status_label)) &&
+                //           tempRolename === "qc" &&
+                //           (!isAllowedTypeSingle || isApproveStepMax)
+                //       // ) &&
+                //       // splitNextStepName(el.approve_step
+                //     )) ??
+                //   false
+                // }
+                // hiddenReadApproveQC={
+                //   (dataset_complaintActionApproveQC &&
+                //     !dataset_complaintActionApproveQC.some(
+                //       (mode: any) =>
+                //         mode.lov1
+                //           .split(",")
+                //           .includes(String(el.complaint_status_label)) &&
+                //         tempApproveSeq[0] == "1"
+                //       // ) &&
+                //       // splitNextStepName(el.approve_step
+                //     )) ??
+                //   false
+                // }
+                // //-----------------------------------------------------------------------
+                // //-----------------------------------------------------------------------
+
+                // // For Status [APPROVED][QC]
+                // hiddenClose={
+                //   (dataset_complaintActionApproveQC &&
+                //     !dataset_complaintActionApproveQC.some(
+                //       (mode: any) =>
+                //         mode.lov1
+                //           .split(",")
+                //           .includes(String(el.complaint_status_label)) &&
+                //         el.step_label === "COMPLAINT" &&
+                //         tempRolename === "user" &&
+                //         (isApproveStepMax || isAllowedTypeSingle) &&
+                //         el.request_department_id == user[0]?.itasset_department_id
+                //       // ) &&
+                //       // splitNextStepName(el.approve_step
+                //     )) ??
+                //   false
+                // }
+                // hiddenReadClose={
+                //   (dataset_complaintActionApproveQC &&
+                //     !dataset_complaintActionApproveQC.some(
+                //       (mode: any) =>
+                //         mode.lov1
+                //           .split(",")
+                //           .includes(String(el.complaint_status_label)) &&
+                //         tempApproveSeq[0] == "2"
+                //     )) ??
+                //   false
+                // }
+                // //-----------------------------------------------------------------------
+                // //-----------------------------------------------------------------------
+
+                // // For Status [CLOSED]
+                // hiddenCloseHistory={
+                //   (dataset_complaintActionClose &&
+                //     !dataset_complaintActionClose.some((mode: any) =>
+                //       mode.lov1
+                //         .split(",")
+                //         .includes(String(el.complaint_status_label))
+                //     )) ??
+                //   false
+                // }
+                // hiddenPrint={
+                //   (dataset_complaintActionClose &&
+                //     !dataset_complaintActionClose.some((mode: any) =>
+                //       mode.lov1
+                //         .split(",")
+                //         .includes(String(el.complaint_status_label))
+                //     )) ??
+                //   false
+                // }
               />
             );
 
             el.approve_by = el.approve_by.replace(/\s*\(/, "<br/>(");
             el.ACTION = ACTION;
-            const tempRolename = tempRoleUser[0].lov_code;
+            
             // Prepare Role From Role Profile
 
             // For Display Status on Datatable [NEW, SUBMITED, EXPLAINED, APPROVED, CLOSED]
@@ -2130,6 +2315,8 @@ export default function Complaint() {
                 approveseq={tempApproveSeq[0]}
                 userdept={user[0]?.itasset_department_id}
                 requestdept={el.request_department_id}
+                isApproveStepMax={isApproveStepMax}
+                isAllowedTypeSingle={isAllowedTypeSingle}
               ></BasicChips>
             );
 
@@ -5032,7 +5219,7 @@ export default function Complaint() {
       complaintstatusLog: {
         id: uuidv4(),
         complaint_id: complaintRootId,
-        complaint_status_id: tempComplaintStatus[0]?.lov1,
+        complaint_status_id: tempComplaintStatus.lov1,
         user_name: user[0]?.employee_username,
         user_company_id: user[0]?.itasset_company_id,
         user_department_id: user[0]?.itasset_department_id,
@@ -5223,66 +5410,66 @@ export default function Complaint() {
 
 
     setIsLoadingScreen(true);
-    // try {
-    //   const response = await _POST_FORMDATA(formData, "/Explain/ExplainAdd");
+    try {
+      const response = await _POST_FORMDATA(formData, "/Explain/ExplainAdd");
 
-    //   if (response && response.status === "success") {
-    //     // ✅ สร้าง payload สำหรับอัปเดตสถานะ Complaint
-    //     const complaintEditPayload = {
-    //       complaintModel: {
-    //         // id: dataelement?.id,
-    //         id: complaintRootId,
-    //         mode: "EXPLAIN",
-    //         complaint_status_id: tempComplaintStatus[0]?.lov1,
-    //       },
-    //       CurrentAccessModel: {
-    //         user_id: user[0]?.employee_username || "",
-    //       },
-    //     };
-    //     // ✅ ต้องส่งเป็น FormData เพราะ backend ต้องการ complaintPayloadJson
-    //     const complaintFormData = new FormData();
-    //     complaintFormData.append(
-    //       "complaintPayloadJson",
-    //       JSON.stringify(complaintEditPayload)
-    //     );
+      if (response && response.status === "success") {
+        // ✅ สร้าง payload สำหรับอัปเดตสถานะ Complaint
+        const complaintEditPayload = {
+          complaintModel: {
+            // id: dataelement?.id,
+            id: complaintRootId,
+            mode: "EXPLAIN",
+            complaint_status_id: tempComplaintStatus.lov1,
+          },
+          CurrentAccessModel: {
+            user_id: user[0]?.employee_username || "",
+          },
+        };
+        // ✅ ต้องส่งเป็น FormData เพราะ backend ต้องการ complaintPayloadJson
+        const complaintFormData = new FormData();
+        complaintFormData.append(
+          "complaintPayloadJson",
+          JSON.stringify(complaintEditPayload)
+        );
 
-    //     const updateRes = await _POST_FORMDATA(
-    //       complaintFormData,
-    //       "/Complaint/ComplaintEdit"
-    //     );
+        const updateRes = await _POST_FORMDATA(
+          complaintFormData,
+          "/Complaint/ComplaintEdit"
+        );
 
-    //     if (updateRes && updateRes.status === "success") {
-    //       FullSweetalert({
-    //         title: "Success",
-    //         text: `บันทึกข้อมูลชี้แจงและอัปเดตสถานะสำเร็จ`,
-    //         icon: "success",
-    //       });
-    //     } else {
-    //       FullSweetalert({
-    //         title: "Warning",
-    //         text: `บันทึกชี้แจงสำเร็จ แต่ไม่สามารถอัปเดตสถานะได้`,
-    //         icon: "warning",
-    //       });
-    //     }
-    //   } else {
-    //     FullSweetalert({
-    //       title: "Failed",
-    //       text: `บันทึกข้อมูลชี้แจงไม่สำเร็จ`,
-    //       icon: "error",
-    //     });
-    //   }
-    // } catch (error) {
-    //   console.error("ExplainAdd failed:", error);
-    //   FullSweetalert({
-    //     title: "Error",
-    //     text: `เกิดข้อผิดพลาดระหว่างการบันทึก`,
-    //     icon: "error",
-    //   });
-    // } finally {
-    //   setIsLoadingScreen(false);
-    //   handleClose();
-    //   ComplaintGet();
-    // }
+        if (updateRes && updateRes.status === "success") {
+          FullSweetalert({
+            title: "Success",
+            text: `บันทึกข้อมูลชี้แจงและอัปเดตสถานะสำเร็จ`,
+            icon: "success",
+          });
+        } else {
+          FullSweetalert({
+            title: "Warning",
+            text: `บันทึกชี้แจงสำเร็จ แต่ไม่สามารถอัปเดตสถานะได้`,
+            icon: "warning",
+          });
+        }
+      } else {
+        FullSweetalert({
+          title: "Failed",
+          text: `บันทึกข้อมูลชี้แจงไม่สำเร็จ`,
+          icon: "error",
+        });
+      }
+    } catch (error) {
+      console.error("ExplainAdd failed:", error);
+      FullSweetalert({
+        title: "Error",
+        text: `เกิดข้อผิดพลาดระหว่างการบันทึก`,
+        icon: "error",
+      });
+    } finally {
+      setIsLoadingScreen(false);
+      handleClose();
+      ComplaintGet();
+    }
   };
 
   const ApproveScAdd = async () => {
@@ -5776,7 +5963,7 @@ export default function Complaint() {
         id: tempid,
         explain_id: explainRootId,
         approve_seq: approveSeq[0].lov3,
-        complaint_status_id: tempComplaintStatus[0]?.lov1,
+        complaint_status_id: tempComplaintStatus.lov1,
         approve_status: approveSelectionCode,
         approve_detail: qcapprove_detail || null,
         approve_note: qcapprove_note || null,
@@ -5820,7 +6007,7 @@ export default function Complaint() {
       complaintstatusLog: {
         id: uuidv4(),
         complaint_id: complaintRootId,
-        complaint_status_id: tempComplaintStatus[0]?.lov1,
+        complaint_status_id: tempComplaintStatus.lov1,
         user_name: user[0]?.employee_username,
         user_company_id: user[0]?.itasset_company_id,
         user_department_id: user[0]?.itasset_department_id,
@@ -5847,7 +6034,7 @@ export default function Complaint() {
           ComplaintModel: {
             id: currentExplainForApproval?.complaint_id,
             mode: "APPROVE_QC",
-            complaint_status_id: tempComplaintStatus[0]?.lov1,
+            complaint_status_id: tempComplaintStatus.lov1,
           },
           CurrentAccessModel: {
             user_id: user[0]?.employee_username || "",
