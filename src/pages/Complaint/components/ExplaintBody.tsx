@@ -1435,7 +1435,7 @@ export default function ExplaintBody({
 
   //////////////////////// Approve Read //////////////////////////
   React.useEffect(() => {
-    // console.log("Step:02", action, dataelement, approveList);
+    console.log("Step:02", dataelement);
 
     if (
       dataelement &&
