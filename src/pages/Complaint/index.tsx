@@ -1813,7 +1813,7 @@ export default function Complaint() {
             // [MASTER] Complaint Status (By Report Type Approve Step)
             const filteredComplaintStatus = getFilteredComplaintStatus(tempDataStatus1, tempApproveStep[0]?.lov5);
 
-            console.log("3️⃣3️⃣3️⃣ ####### [MASTER] filteredComplaintStatus : ", filteredComplaintStatus, "#######");
+            // console.log("3️⃣3️⃣3️⃣ ####### [MASTER] filteredComplaintStatus : ", filteredComplaintStatus, "#######");
 
             // --------------------------------------------------------------------------
 
@@ -1822,7 +1822,7 @@ export default function Complaint() {
               (val: any) => val["lov3"] !== null
             );
 
-            console.log("4️⃣4️⃣4️⃣ ####### [MASTER] filteredApproveStep : ", filteredApproveStep, "#######");
+            // console.log("4️⃣4️⃣4️⃣ ####### [MASTER] filteredApproveStep : ", filteredApproveStep, "#######");
 
             // --------------------------------------------------------------------------
 
@@ -1840,14 +1840,6 @@ export default function Complaint() {
 
             if (temp.length > 0) {
 
-              console.log("✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨");
-              console.log("5️⃣5️⃣5️⃣ ####### [MASTER] isApproveStepMax : ", isApproveStepMax, "#######");
-              console.log("5️⃣5️⃣5️⃣ ####### [MASTER] tempisAllowedTypeSingle : ", isAllowedTypeSingle, "#######");
-              console.log("5️⃣5️⃣5️⃣ ####### [MASTER] temp : ", temp, "#######");
-              console.log("5️⃣5️⃣5️⃣ ####### [MASTER] temp found : ", temp[0]?.lov3, "#######");
-              console.log("5️⃣5️⃣5️⃣ dataset_complaintActionApproveQC : ", dataset_complaintActionApproveQC, "#######");
-              console.log("✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨");
-
               // ==================================================================================================
 
               tempApproveSeq.push(temp[0]["lov3"]);
@@ -1858,7 +1850,7 @@ export default function Complaint() {
 
               const allowedApproveStep = String(tempApproveStep[0]?.lov5).split(',');
               
-              console.log("7️⃣7️⃣7️⃣ ####### [MASTER] allowedApproveStep : ", allowedApproveStep, "#######");
+              // console.log("7️⃣7️⃣7️⃣ ####### [MASTER] allowedApproveStep : ", allowedApproveStep, "#######");
 
               
               if (allowedApproveStep.length > 1){
@@ -2091,7 +2083,7 @@ export default function Complaint() {
                           .split(",")
                           .includes(String(el.complaint_status_label)) &&
                         el.step_label === "COMPLAINT" &&
-                        tempRolename === "user" &&
+                        (tempRolename === "user" || tempRolename === "user_admin") &&
                         (isApproveStepMax || isAllowedTypeSingle) &&
                         el.request_department_id == user[0]?.itasset_department_id
                       // ) &&
@@ -6375,12 +6367,43 @@ export default function Complaint() {
       return;
     }
 
-    const tempComplaintStatus = await LovAll_Get(
-      "get_complaint_status_by_id",
-      user[0]?.employee_domain,
-      false,
-      complaintMainData?.complaint_status_id
+    //====================================================================================
+    //====================================================================================
+    const tempApproveStep = (dataset_reporttype_inactive || []).filter(
+      (val: any) => val["id"] === complaintMainData.report_type
     );
+    
+    console.log("🦄🦄🦄 tempApproveStep", tempApproveStep);
+    console.log("🦄🦄🦄 tempApproveStep", tempApproveStep[0]?.lov5);
+    
+    // const tempComplaintStatus = await LovAll_Get(
+      //   "get_complaint_status",
+    //   respondent_domain_id
+    // );
+    console.log("respondent_domain_id",respondent_domain_id);
+    console.log("tempApproveStep[0]?.lov5",tempApproveStep[0]?.lov5);
+    
+    const tempComplaintStatusList = await LovAll_Get(
+      "Lead",
+      respondent_domain_id,
+      false,
+      complaintMainData?.complaint_status_id,
+      tempApproveStep[0]?.lov5
+    );
+
+    const tempComplaintStatus = tempComplaintStatusList;
+    // const tempComplaintStatus = tempComplaintStatusList?.filter((item: any) => item.id === dataelement?.complaint_status_id);
+    
+    console.log("🤑🤑🤑🤑🤑 tempComplaintStatusList", tempComplaintStatusList);
+    //====================================================================================
+    //====================================================================================
+    
+    // const tempComplaintStatus = await LovAll_Get(
+    //   "get_complaint_status_by_id",
+    //   user[0]?.employee_domain,
+    //   false,
+    //   complaintMainData?.complaint_status_id
+    // );
 
     // 🧩 Helper: หา explain_id ที่แท้จริงจาก dataelement
     const resolveExplainId = () => {
@@ -6565,7 +6588,7 @@ export default function Complaint() {
       complaintstatusLog: {
         id: uuidv4(),
         complaint_id: complaintRootId,
-        complaint_status_id: tempComplaintStatus[0]?.lov1,
+        complaint_status_id: tempComplaintStatus.lov1,
         user_name: user[0]?.employee_username,
         user_company_id: user[0]?.itasset_company_id,
         user_department_id: user[0]?.itasset_department_id,
@@ -6607,7 +6630,7 @@ export default function Complaint() {
           complaintModel: {
             id: complaintId,
             mode: "CLOSE",
-            complaint_status_id: tempComplaintStatus[0]?.lov1,
+            complaint_status_id: tempComplaintStatus.lov1,
           },
           CurrentAccessModel: {
             user_id: user[0]?.employee_username || "",
@@ -8663,7 +8686,7 @@ export default function Complaint() {
         disableSaveSubmit={
           !approveSelectionCode || approveSelectionCode !== "APPROVE"
         }
-        titlename={"อนุมติรายการหัวหน้าแผนก"}
+        titlename={"อนุมัติรายการหัวหน้าแผนก"}
         buttonText={"อนุมัติ"}
         handlefunction={ApproveScAdd}
         handlereject={() => ComplaintReturn("APPROVE_SC")}
@@ -8726,7 +8749,7 @@ export default function Complaint() {
         disableSaveSubmit={
           !approveSelectionCode || approveSelectionCode !== "APPROVE"
         }
-        titlename={"อนุมติรายการผู้จัดการโรงงาน"}
+        titlename={"อนุมัติรายการผู้จัดการโรงงาน"}
         buttonText={"อนุมัติ"}
         handlefunction={ApproveQcAdd}
         handlereject={() => ComplaintReturn("APPROVE_QC")}
