@@ -326,6 +326,7 @@ export default function ComplaintBody({
     // Dataset
     dataset_crosscompany,
     dataset_reporttype,
+    dataset_reporttype_inactive,
     dataset_company,
     dataset_department,
     dataset_department_respondent,
@@ -425,6 +426,7 @@ export default function ComplaintBody({
     // Dataset
     setdataset_crosscompany,
     setdataset_reporttype,
+    setdataset_reporttype_inactive,
     setdataset_company,
     setdataset_department,
     setdataset_department_respondent,
@@ -1658,15 +1660,19 @@ export default function ComplaintBody({
           // console.log("🕑🕑🕑 [dataelement.report_type]  : ", dataelement.report_type, "🕑🕑🕑");
           // console.log("🕑🕑🕑 [dataset_reporttype]  : ", dataset_reporttype, "🕑🕑🕑");
 
-        } else {
-          if (Array.isArray(dataset_reporttype) && dataelement?.report_type) {
+        } 
+        else {
+          // console.log("ACTION:", action);
+          // console.log("🕑🕑🕑 [dataelement.report_type]  : ", dataelement.report_type, "🕑🕑🕑");
+          // console.log("🕑🕑🕑 [dataset_reporttype]  : ", dataset_reporttype, "🕑🕑🕑");
+          if (Array.isArray(dataset_reporttype_inactive) && dataelement?.report_type) {
             const defaultVal =
               (await setValueMas(
-                dataset_reporttype,
+                dataset_reporttype_inactive,
                 dataelement.report_type,
                 "id"
               )) ||
-              dataset_reporttype.find(
+              dataset_reporttype_inactive.find(
                 (item: LovType) =>
                   item.lov_code === dataelement.report_type ||
                   item.id === dataelement.report_type
@@ -1758,6 +1764,7 @@ export default function ComplaintBody({
             };
           }
         }
+        
       } catch (err) {
         console.error("❌ loadInitialData error:", err);
       }
@@ -2381,12 +2388,22 @@ export default function ComplaintBody({
             value={dataReportTypeValue}
             labelName={"ประเภทรายงาน (Report Type)"}
             // options={dataset_reporttype} // <-- แก้ตรงนี้
-            options={(dataset_reporttype || []).map((item: any) => ({
+            options={
+              isActionAdd ?
+              (dataset_reporttype || []).map((item: any) => ({
               ...item, // ✅ เก็บค่าทุกอย่างของ item เดิมไว้ (รวมถึง lov4)
               displayText: item.lov3
                 ? `${item.lov_code} (${item.lov3})`
                 : item.lov_code,
-            }))}
+              }))
+              :
+              (dataset_reporttype_inactive || []).map((item: any) => ({
+              ...item, // ✅ เก็บค่าทุกอย่างของ item เดิมไว้ (รวมถึง lov4)
+              displayText: item.lov3
+                ? `${item.lov_code} (${item.lov3})`
+                : item.lov_code,
+              }))
+          }
             // column="lov_code"
             column="displayText"
             setvalue={handleReportTypeChange}
