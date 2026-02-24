@@ -1435,7 +1435,7 @@ export default function ExplaintBody({
 
   //////////////////////// Approve Read //////////////////////////
   React.useEffect(() => {
-    console.log("Step:02", dataelement);
+    // console.log("Step:02", dataelement);
 
     if (
       dataelement &&
@@ -1655,6 +1655,18 @@ export default function ExplaintBody({
           (item: any) => item.lov_type === "approve_select"
         );
       setFilteredQcApprove(qcFiltered);
+
+      // Filter Fu Approve
+      const fuFiltered = isItAdmin
+        ? (dataApprove_Combobox || []).filter(
+          (item: any) =>
+            item.lov_type === "approve_select" &&
+            item.lov_group == dataelement?.responsible_company_id
+        )
+        : (dataApprove_Combobox || []).filter(
+          (item: any) => item.lov_type === "approve_select"
+        );
+      setFilteredFuApprove(fuFiltered);
     }
   }, [
     dataelement,

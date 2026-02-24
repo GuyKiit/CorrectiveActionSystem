@@ -1045,16 +1045,12 @@ export default function Complaint() {
           //   response.data
           // );
 
-          // console.log('⚠️⚠️❇️❇️⚠️⚠️ [lovData] :', lovData);
-          // console.log('⚠️⚠️⚠️⚠️ [grouped["lovData"]] :', lovData);
-
           setdataset_roleProfile?.(lovData);
 
           const tempRoleUser = lovData?.filter(
             (item: any) => item.lov1 === String(user[0]?.role_id)
           );
           const tempCheckItAdmin = tempRoleUser?.[0]?.lov_code === "it_admin";
-
           return tempCheckItAdmin;
 
           // return grouped["complaint_status"].filter((item: any) => item.lov7 === respondent_domain_id?.domain_id)
@@ -1065,7 +1061,6 @@ export default function Complaint() {
     }
 
     if (mode == "get_inactive") {
-
       try {
         const dataset = isItAdmin
           ? {
@@ -7577,9 +7572,8 @@ export default function Complaint() {
       try {
         //console.log("useEffect start");
         const tempCheckItAdmin = await LovAll_Get("get_role");
-        // console.log("😎🥰 tempCheckItAdmin", tempCheckItAdmin);
         await LovAll_Get(null, null, tempCheckItAdmin);
-        await LovAll_Get('get_inactive');
+        await LovAll_Get('get_inactive', null, tempCheckItAdmin);
         await DomainRelateGet();
         // await DepartmentDomainGet();
 
