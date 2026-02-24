@@ -979,12 +979,12 @@ export default function ExplaintBody({
   };
 
   const ExplaintApprove_Get = async (explain_id: string) => {
-    // if (isCallFuncLogOn)
-    //   console.log(
-    //     "🕑 ",
-    //     dayjs().format("HH:mm:ss.SSS"),
-    //     "[Calling Function] : ExplaintApprove_Get"
-    //   );
+    if (isCallFuncLogOn)
+      console.log(
+        "🕑 ",
+        dayjs().format("HH:mm:ss.SSS"),
+        "[Calling Function] : ExplaintApprove_Get"
+      );
 
     if (!explain_id) return [];
 
@@ -997,8 +997,8 @@ export default function ExplaintBody({
         "/ExplaintApprove/ExplaintApproveGet"
       );
       //console.log("📡 Response ExplaintApprove_Get:", response.data);
-
       if (response?.status === "success") {
+        
         setApproveList(response.data || []);
         return response.data || [];
       }
@@ -1435,7 +1435,7 @@ export default function ExplaintBody({
 
   //////////////////////// Approve Read //////////////////////////
   React.useEffect(() => {
-    // console.log("Step:02", action, dataelement, approveList);
+    // console.log("Step:02", dataelement);
 
     if (
       dataelement &&
@@ -1485,12 +1485,12 @@ export default function ExplaintBody({
       const scApprove = approveList?.find(
         (x: any) => x.explain_id === dataelement?.id && x.approve_seq === 1
       );
-      console.log("scApprove", scApprove);
+      // console.log("scApprove", scApprove);
       // QC Approve = approve_seq = 2
       const qcApprove = approveList?.find(
         (x: any) => x.explain_id === dataelement?.id && x.approve_seq === 2
       );
-      console.log("qcApprove", qcApprove);
+      // console.log("qcApprove", qcApprove);
 
       const closeItem = explainList?.find(
         (x: any) => x.id === dataelement?.id && ["REJECT", "ADD"].includes(x.close_status)
@@ -1537,6 +1537,8 @@ export default function ExplaintBody({
       // Set visibility based on report type from dataelement
       // const reportTypeToUse = dataset_reporttype_inactive?.length? dataset_reporttype_inactive : dataset_reporttype;
       // console.log("reportTypeToUse", reportTypeToUse);
+      // console.log("dataelement", dataelement);
+      // console.log("dataelement.report_type", dataelement.report_type);
       
       if (dataelement) {
         const reportTypeObj = dataset_reporttype_inactive?.find(
@@ -1653,6 +1655,18 @@ export default function ExplaintBody({
           (item: any) => item.lov_type === "approve_select"
         );
       setFilteredQcApprove(qcFiltered);
+
+      // Filter Fu Approve
+      const fuFiltered = isItAdmin
+        ? (dataApprove_Combobox || []).filter(
+          (item: any) =>
+            item.lov_type === "approve_select" &&
+            item.lov_group == dataelement?.responsible_company_id
+        )
+        : (dataApprove_Combobox || []).filter(
+          (item: any) => item.lov_type === "approve_select"
+        );
+      setFilteredFuApprove(fuFiltered);
     }
   }, [
     dataelement,
@@ -1846,7 +1860,6 @@ export default function ExplaintBody({
 
   // 🔹 Load QC approve data and radio when in CloseAdd mode
   React.useEffect(() => {
-
     if (
       !isActionCloseAdd ||
       !currentExplainForApproval ||
@@ -1855,6 +1868,7 @@ export default function ExplaintBody({
       return;
 
     const fetchQcApproveData = async () => {
+      
       const approveData = await ExplaintApprove_Get(
         currentExplainForApproval.id
       );
@@ -2043,6 +2057,25 @@ export default function ExplaintBody({
   React.useEffect(() => {
     //   //console.log("Step:13 close_name changed detected:", close_name);
   }, [close_name])
+
+
+  const checkQcCondition = () => {
+    let currentReportType = dataset_reporttype_inactive?.find(
+      (item: any) =>
+        item.id === dataelement?.report_type ||
+        item.lov_code === dataelement?.report_type
+    );
+    // console.log("😋😋😋dataset_reporttype_inactive",dataset_reporttype_inactive);
+    // console.log("😋😋😋dataelement",dataelement);
+    // console.log("😋😋😋dataelement.report_type",dataelement.report_type);
+    // console.log("😋😋😋currentReportType",currentReportType);
+    
+    if ( currentReportType.lov5) {
+      const levels = String(currentReportType.lov5).split(',');
+      return levels.length > 1;
+    }
+    
+  };
 
   return (
     <Box
@@ -3522,7 +3555,7 @@ export default function ExplaintBody({
 
       {/* //ส่วนของ Qc */}
       {
-        (isActionExplainApproveQcAdd ||
+        (isActionExplainApproveQcAdd  ||
           (isActionExplainReadApproveQc && foundQC) ||
           (isActionExplainApproveQcRead && foundQC) ||
           (isActionReadExplain && foundQC) ||
@@ -3530,7 +3563,7 @@ export default function ExplaintBody({
           (isActionExplainApproveScRead && foundQC) ||
           (isActionReadClose && foundQC) ||
           (isActionCloseHistory && foundQC) ||
-          isActionCloseAdd) && (
+          (isActionCloseAdd && checkQcCondition())) && (
           <Paper
             elevation={3}
             sx={{
