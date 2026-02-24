@@ -628,7 +628,7 @@ export default function ExplaintBody({
 
     setIsCAHidden(["NCR", "OBS"].includes(reportTypeCode));
 
-    setIsPAPHidden(["NCR", "OBS", "CAR"].includes(reportTypeCode));
+    setIsPAPHidden(["NCR", "OBS"].includes(reportTypeCode));
 
     setIsOBSAHidden(["NCR", "CAR", "CPAR"].includes(reportTypeCode));
 
