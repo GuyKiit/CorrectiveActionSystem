@@ -623,7 +623,7 @@ export default function Complaint() {
     cas_number: "",
     product_name: "",
     lot_no: "",
-    datastatus: "",
+    complaint_status_label: "",
     dataset_stepcomplaint: "",
     // request_department_id: ""
   });
@@ -1297,7 +1297,7 @@ export default function Complaint() {
           // console.log('⚠️⚠️⚠️⚠️ [grouped["active_company"]] :', grouped["active_company"]);
           // console.log('⚠️⚠️⚠️⚠️ [grouped["role_profile"]] :', grouped["role_profile"]);
           // console.log('⚠️⚠️⚠️⚠️ [grouped["config_file"]] :', grouped["config_file"]);
-          // console.log('⚠️⚠️⚠️⚠️ [grouped["complaint_status"]] :', grouped["complaint_status"]);
+          console.log('⚠️⚠️⚠️⚠️ [grouped["complaint_status"]] :', grouped["complaint_status"]);
           // console.log('⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️');
 
           // ตัวอย่างการ set state
@@ -1711,7 +1711,9 @@ export default function Complaint() {
     //console.log("⭐️⭐️⭐️⭐️ CHECK DATA COMPLAINT ACTION : ", dataset_complaintAction, "⭐️⭐️⭐️");
     updateSessionStorageCurrentAccess("event_name", "ComplaintGet");
 
-    setIsLoadingScreen(true);
+    setIsLoadingScreen(false);
+    console.log("TextNameSearch.complaint_status_label",TextNameSearch.complaint_status_label);
+    
     const dataset = {
       CurrentAccessModel: getCurrentAccessObject(
         employeeUsername,
@@ -1739,8 +1741,8 @@ export default function Complaint() {
         ? TextNameSearch.product_name
         : null,
       lot_no: TextNameSearch.lot_no ? TextNameSearch.lot_no : null,
-      complaint_status_label: TextNameSearch.datastatus
-        ? TextNameSearch.datastatus
+      complaint_status_label: TextNameSearch.complaint_status_label
+        ? TextNameSearch.complaint_status_label
         : null,
       doc_date: documentDateSearch
         ? documentDateSearch.format("DD-MM-YYYY")
@@ -1749,7 +1751,7 @@ export default function Complaint() {
         ? TextNameSearch.dataset_stepcomplaint
         : null,
     };
-
+    console.log("😫SEARCH PAYLOAD:", TextNameSearch);
     // console.log("step:2 dataset ก่อนส่ง API /Complaint/ComplaintGet ", dataset);
     try {
       //=========================================================================
@@ -7431,7 +7433,7 @@ export default function Complaint() {
       cas_number: "",
       product_name: "",
       lot_no: "",
-      datastatus: "",
+      complaint_status_label: "",
       dataset_stepcomplaint: "",
     });
 
@@ -7798,18 +7800,40 @@ export default function Complaint() {
       "Search"
     );
   }, [TextNameSearch.dataset_domain]);
+
+  const search_report_code = dataset_reporttype?.filter(
+      (item: any, index: number, self: any) =>
+        index === self.findIndex((t: any) => t.lov_code === item.lov_code)
+    ) || [];
+  
+    const search_step_code = dataset_stepcomplaint?.filter(
+      (item: any, index: number, self: any) =>
+        index === self.findIndex((t: any) => t.lov_code === item.lov_code)
+    ) || [];
+    
+    const search_status_code = datastatus?.filter(
+      (item: any, index: number, self: any) =>
+        index === self.findIndex((t: any) => t.lov_code === item.lov_code && t.lov3 === item.lov3)
+    ) || [];
+  
+    const statusOptions = React.useMemo(() => {
+    return (search_status_code || []).map((item: any) => ({
+      id: item.id,
+      lov_code: item.lov_code,
+      lov3: item.lov3,
+      lov4: item.lov4,
+      displayText: item.lov4
+        ? `${item.lov_code} (${item.lov4})`
+        : item.lov_code,
+    }));
+  }, [search_status_code]);
+
+
   // =====================================================================================================
   // RETURN SECTION - RENDER COMPONENT
   // =====================================================================================================
 
-  // #F29739
-  const statusOptions = (datastatus || []).map((item: any) => ({
-    id: item.id,
-    lov_code: item.lov_code,
-    lov4: item.lov4,
-    displayText: item.lov4 ? `${item.lov_code} (${item.lov4})` : item.lov_code,
-  }));
-
+  
   return (
     <>
       {/* Search Section */}
@@ -7906,18 +7930,30 @@ export default function Complaint() {
           <Grid size={4}>
             <AutocompleteComboBox
               value={
-                dataset_reporttype?.find(
-                  (item: any) => item.id === TextNameSearch.report_code
-                ) || null
+                search_report_code?.find((item: any) => {
+                  // แปลง "101,102,103" เป็น array แล้วเช็คว่ามี id ของ item นี้ไหม
+                  const TempReportID = TextNameSearch.report_code
+                    ? TextNameSearch.report_code.split(',') 
+                    : [];
+                  return TempReportID.includes(String(item.id));
+                }) || null
               }
               labelName="ประเภทเอกสาร (Report Type)"
-              options={dataset_reporttype || []}
+              options={search_report_code || []}
               column="lov_code"
               setvalue={(val) => {
-                setTextNameSearch({
-                  ...TextNameSearch,
-                  report_code: val?.id || "", // เก็บแค่ id เป็น string
-                });
+                if (val) {
+                  // หาทั้งหมดที่มี lov_code เหมือนกัน (เช่น NCR ทุกบริษัท)
+                  const TempallReportID = dataset_reporttype
+                    .filter((item: any) => item.lov_code === val.lov_code)
+                    .map((item: any) => item.id);
+                  console.log("User chose:", val.lov_code, "Mapping to IDs:", TempallReportID);
+                  // เก็บ ID ทั้งหมดลงไป คั่นด้วย comma (เช่น "101,102,103")
+                  setTextNameSearch({
+                    ...TextNameSearch,
+                    report_code: TempallReportID.join(','), 
+                  });
+                } 
                 setdataReportTypeValue(val);
                 setReportTypeError(false);
               }}
@@ -7961,44 +7997,34 @@ export default function Complaint() {
             />
           </Grid>
           <Grid size={4}>
-            {/* <AutocompleteComboBox
-              value={
-                datastatus?.find(
-                  (item: any) => item.id === TextNameSearch.datastatus
-                ) || null
-              }
-              labelName="สถานะ (Status)"
-              options={datastatus}
-              column="lov_code" // หรือชื่อ field ที่คุณต้องการแสดง
-              setvalue={(val) =>
-                setTextNameSearch({
-                  ...TextNameSearch,
-                  datastatus: val?.id || "", // เก็บแค่ id เป็น string
-                })
-              }
-            /> */}
             <AutocompleteComboBox
               value={
-                statusOptions?.find(
-                  (item: any) => item.id === TextNameSearch.datastatus
-                ) || null
+               statusOptions.find((item: any) => {
+                 const TempStatusID = TextNameSearch.complaint_status_label.split(',');
+                 const TempStatuscode = datastatus.find((ds: any) =>
+                   TempStatusID.includes(String(ds.id))
+                 );
+               
+                 return TempStatuscode?.lov_code === item.lov_code && TempStatuscode?.lov3 === item.lov3;
+               }) || null
               }
               labelName="สถานะ (Status)"
-              options={(datastatus || []).map((item: any) => ({
-                id: item.id, // เก็บ id ไว้
-                lov_code: item.lov_code,
-                lov4: item.lov4,
-                displayText: item.lov4
-                  ? `${item.lov_code} (${item.lov4})`
-                  : item.lov_code,
-              }))}
+              options={statusOptions}
               column="displayText" // ใช้ displayText แสดงใน dropdown
-              setvalue={(val) =>
-                setTextNameSearch({
-                  ...TextNameSearch,
-                  datastatus: val?.id || "", // ใช้ id จริง
-                })
-              }
+              setvalue={(val) => {
+                if (val) {
+                  const TempallStatusID = datastatus
+                    .filter((item: any) => item.lov_code === val.lov_code && item.lov3 === val.lov3)
+                    .map((item: any) => item.id);
+                  console.log("User chose:", val.lov_code, "Mapping to IDs:",TempallStatusID);
+                  console.log("STATE:", TextNameSearch.complaint_status_label);
+                  console.log("OPTIONS:", search_status_code);
+                  setTextNameSearch((prev: any) => ({
+                    ...prev,
+                    complaint_status_label: TempallStatusID.join(','),
+                  }));
+                }
+              }}
             />
           </Grid>
           <Grid size={4}>
@@ -8012,20 +8038,19 @@ export default function Complaint() {
           <Grid size={4}>
             <AutocompleteComboBox
               value={
-                dataset_stepcomplaint?.find(
-                  (item: any) =>
-                    item.lov_code === TextNameSearch.dataset_stepcomplaint
+                search_step_code.find(
+                  (item: any) => item.lov_code === TextNameSearch.dataset_stepcomplaint
                 ) || null
               }
               labelName="ขั้นตอน (Action Step)"
-              options={dataset_stepcomplaint}
+              options={search_step_code}
               column="lov_code" // หรือชื่อ field ที่คุณต้องการแสดง
-              setvalue={(val) =>
+              setvalue={(val) => {
                 setTextNameSearch({
                   ...TextNameSearch,
-                  dataset_stepcomplaint: val?.lov_code || "", // เก็บแค่ id เป็น string
-                })
-              }
+                  dataset_stepcomplaint: val?.lov_code || "",
+                });
+              }}
             />
           </Grid>
         </Grid>
