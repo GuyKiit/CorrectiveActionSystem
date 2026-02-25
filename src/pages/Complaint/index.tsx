@@ -20,7 +20,11 @@ import {
   CardContent,
   IconButton,
   Grow,
+  Autocomplete,
+  TextField,
+  Chip,
 } from "@mui/material";
+import { grey } from "@mui/material/colors";
 import ActionManageCell from "../../components/MUI/ActionManageCell";
 import { useAuth } from "../../auth/core/AuthContext";
 import EnhancedTable from "../../components/MUI/DataTable";
@@ -1712,8 +1716,8 @@ export default function Complaint() {
     updateSessionStorageCurrentAccess("event_name", "ComplaintGet");
 
     setIsLoadingScreen(false);
-    console.log("TextNameSearch.complaint_status_label",TextNameSearch.complaint_status_label);
-    
+    console.log("TextNameSearch.complaint_status_label", TextNameSearch.complaint_status_label);
+
     const dataset = {
       CurrentAccessModel: getCurrentAccessObject(
         employeeUsername,
@@ -7802,21 +7806,21 @@ export default function Complaint() {
   }, [TextNameSearch.dataset_domain]);
 
   const search_report_code = dataset_reporttype?.filter(
-      (item: any, index: number, self: any) =>
-        index === self.findIndex((t: any) => t.lov_code === item.lov_code)
-    ) || [];
-  
-    const search_step_code = dataset_stepcomplaint?.filter(
-      (item: any, index: number, self: any) =>
-        index === self.findIndex((t: any) => t.lov_code === item.lov_code)
-    ) || [];
-    
-    const search_status_code = datastatus?.filter(
-      (item: any, index: number, self: any) =>
-        index === self.findIndex((t: any) => t.lov_code === item.lov_code && t.lov3 === item.lov3)
-    ) || [];
-  
-    const statusOptions = React.useMemo(() => {
+    (item: any, index: number, self: any) =>
+      index === self.findIndex((t: any) => t.lov_code === item.lov_code)
+  ) || [];
+
+  const search_step_code = dataset_stepcomplaint?.filter(
+    (item: any, index: number, self: any) =>
+      index === self.findIndex((t: any) => t.lov_code === item.lov_code)
+  ) || [];
+
+  const search_status_code = datastatus?.filter(
+    (item: any, index: number, self: any) =>
+      index === self.findIndex((t: any) => t.lov_code === item.lov_code && t.lov3 === item.lov3)
+  ) || [];
+
+  const statusOptions = React.useMemo(() => {
     return (search_status_code || []).map((item: any) => ({
       id: item.id,
       lov_code: item.lov_code,
@@ -7833,7 +7837,7 @@ export default function Complaint() {
   // RETURN SECTION - RENDER COMPONENT
   // =====================================================================================================
 
-  
+
   return (
     <>
       {/* Search Section */}
@@ -7933,7 +7937,7 @@ export default function Complaint() {
                 search_report_code?.find((item: any) => {
                   // แปลง "101,102,103" เป็น array แล้วเช็คว่ามี id ของ item นี้ไหม
                   const TempReportID = TextNameSearch.report_code
-                    ? TextNameSearch.report_code.split(',') 
+                    ? TextNameSearch.report_code.split(',')
                     : [];
                   return TempReportID.includes(String(item.id));
                 }) || null
@@ -7951,9 +7955,9 @@ export default function Complaint() {
                   // เก็บ ID ทั้งหมดลงไป คั่นด้วย comma (เช่น "101,102,103")
                   setTextNameSearch({
                     ...TextNameSearch,
-                    report_code: TempallReportID.join(','), 
+                    report_code: TempallReportID.join(','),
                   });
-                } 
+                }
                 setdataReportTypeValue(val);
                 setReportTypeError(false);
               }}
@@ -7996,37 +8000,9 @@ export default function Complaint() {
               }
             />
           </Grid>
-          <Grid size={4}>
-            <AutocompleteComboBox
-              value={
-               statusOptions.find((item: any) => {
-                 const TempStatusID = TextNameSearch.complaint_status_label.split(',');
-                 const TempStatuscode = datastatus.find((ds: any) =>
-                   TempStatusID.includes(String(ds.id))
-                 );
-               
-                 return TempStatuscode?.lov_code === item.lov_code && TempStatuscode?.lov3 === item.lov3;
-               }) || null
-              }
-              labelName="สถานะ (Status)"
-              options={statusOptions}
-              column="displayText" // ใช้ displayText แสดงใน dropdown
-              setvalue={(val) => {
-                if (val) {
-                  const TempallStatusID = datastatus
-                    .filter((item: any) => item.lov_code === val.lov_code && item.lov3 === val.lov3)
-                    .map((item: any) => item.id);
-                  console.log("User chose:", val.lov_code, "Mapping to IDs:",TempallStatusID);
-                  console.log("STATE:", TextNameSearch.complaint_status_label);
-                  console.log("OPTIONS:", search_status_code);
-                  setTextNameSearch((prev: any) => ({
-                    ...prev,
-                    complaint_status_label: TempallStatusID.join(','),
-                  }));
-                }
-              }}
-            />
-          </Grid>
+
+
+
           <Grid size={4}>
             <DesktopDatePickers
               labelName={"วันที่ออกเอกสาร (Document Issuance Date)"}
@@ -8053,6 +8029,92 @@ export default function Complaint() {
               }}
             />
           </Grid>
+
+          <Grid size={4}>
+            <label htmlFor="" className={`fs-5 py-2 sarabun-regular`}>
+              สถานะ (Status)
+            </label>
+            <Autocomplete
+              multiple
+              sx={{
+                bgcolor: grey[50],
+                width: "100%",
+              }}
+              disablePortal
+              value={(() => {
+                const selectedIds = TextNameSearch.complaint_status_label
+                  ? TextNameSearch.complaint_status_label.split(',') : [];
+                if (selectedIds.length === 0)
+                  return [];
+
+                const matchedCodes = new Set<string>();
+                const result: any[] = [];
+
+                selectedIds.forEach((id: string) => {
+                  const found = datastatus.find((ds: any) => String(ds.id) === id);
+                  if (found) {
+                    const key = `${found.lov_code}||${found.lov3 || ''}`;
+                    if (!matchedCodes.has(key)) {
+                      matchedCodes.add(key);
+                      const opt = statusOptions.find(
+                        (o: any) => o.lov_code === found.lov_code && o.lov3 === found.lov3
+                      );
+                      if (opt) result.push(opt);
+                    }
+                  }
+                });
+                return result;
+              })()
+              }
+              options={statusOptions}
+              getOptionLabel={(option: any) => option.displayText || ''}
+              isOptionEqualToValue={(option: any, value: any) =>
+                option.lov_code === value.lov_code && option.lov3 === value.lov3
+              }
+
+              renderTags={(tagValue, getTagProps) =>
+                tagValue.map((option: any, index: number) => (
+                  <Chip
+                    label={option.displayText}
+                    {...getTagProps({ index })}
+                    key={`${option.lov_code}-${option.lov3 || index}`}
+                    size="small"
+                  />
+                ))
+              }
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  placeholder={TextNameSearch.complaint_status_label ? '' : 'เลือกสถานะ'}
+                  size="small"
+                />
+              )}
+
+              onChange={(_event, newValue: any[]) => {
+                if (!newValue || newValue.length === 0) {
+                  setTextNameSearch((prev: any) => ({
+                    ...prev,
+                    complaint_status_label: '',
+                  }));
+                  return;
+                }
+                const allIds = newValue.flatMap((selected: any) =>
+                  datastatus
+                    .filter(
+                      (item: any) =>
+                        item.lov_code === selected.lov_code &&
+                        item.lov3 === selected.lov3
+                    )
+                    .map((item: any) => item.id)
+                );
+                setTextNameSearch((prev: any) => ({
+                  ...prev,
+                  complaint_status_label: allIds.join(','),
+                }));
+              }}
+            />
+          </Grid>
+
         </Grid>
 
         {/* ======================================================================== */}
