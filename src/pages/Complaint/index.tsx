@@ -23,6 +23,7 @@ import {
   Autocomplete,
   TextField,
   Chip,
+  Checkbox,
 } from "@mui/material";
 import { grey } from "@mui/material/colors";
 import ActionManageCell from "../../components/MUI/ActionManageCell";
@@ -54,6 +55,8 @@ import BasicChips from "../../components/MUI/BasicChips";
 import FullWidthButton from "../../components/MUI/FullWidthButton";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CloseIcon from "@mui/icons-material/CheckCircle";
+import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
+import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import ExplaintBody from "./components/ExplaintBody";
 import {
   mas_DepartmentDomainGet,
@@ -3989,13 +3992,6 @@ export default function Complaint() {
   };
 
   const ComplaintReturn = async (mode: string) => {
-    // if (isCallFuncLogOn)
-    //   console.log(
-    //     "🕑 ",
-    //     dayjs().format("HH:mm:ss.SSS"),
-    //     " [Calling Function]  :  ComplaintReturn"
-    //   );
-
     const tempComplaintStatus = await LovAll_Get(
       "get_complaint_status_by_id",
       user[0]?.employee_domain,
@@ -8065,11 +8061,22 @@ export default function Complaint() {
               })()
               }
               options={statusOptions}
+              disableCloseOnSelect
               getOptionLabel={(option: any) => option.displayText || ''}
               isOptionEqualToValue={(option: any, value: any) =>
                 option.lov_code === value.lov_code && option.lov3 === value.lov3
               }
-
+              renderOption={(props, option: any, { selected }) => (
+                <li {...props} key={`${option.lov_code}-${option.lov3 || ''}`}>
+                  <Checkbox
+                    icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
+                    checkedIcon={<CheckBoxIcon fontSize="small" />}
+                    style={{ marginRight: 8 }}
+                    checked={selected}
+                  />
+                  {option.displayText || ''}
+                </li>
+              )}
               renderTags={(tagValue, getTagProps) =>
                 tagValue.map((option: any, index: number) => (
                   <Chip
@@ -8086,7 +8093,8 @@ export default function Complaint() {
                   placeholder={TextNameSearch.complaint_status_label ? '' : 'เลือกสถานะ'}
                   size="small"
                 />
-              )}
+              )
+              }
 
               onChange={(_event, newValue: any[]) => {
                 if (!newValue || newValue.length === 0) {
