@@ -1,6 +1,5 @@
 //ทำobj เป็น array
 import React, { useState, useRef, use, useEffect } from "react";
-import AddIcon from "@mui/icons-material/Add";
 import { setValueMas } from "../../../../libs/setvaluecallback";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { _POST } from "../../../service/mas";
@@ -10,58 +9,32 @@ import {
 } from "../../../../libs/datacontrol";
 import dayjs from "dayjs";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import DoneIcon from "@mui/icons-material/Done";
 import DownloadIcon from "@mui/icons-material/Download";
-import CloseIcon from "@mui/icons-material/Close";
 import {
   Box,
   Divider,
   IconButton,
   Paper,
-  Table,
-  TableCell,
-  TableRow,
-  TableBody,
-  TableHead,
-  TableContainer,
-  styled,
-  TextField,
   Radio,
   RadioGroup,
-  FormControl,
   FormControlLabel,
-  FormLabel,
-  Grid2,
-  Stack,
   AccordionDetails,
   Accordion,
   AccordionSummary,
   Typography,
-  Dialog,
-  DialogTitle,
-  DialogContent,
   Button,
 } from "@mui/material";
-// import { Document, Page, pdfjs } from "react-pdf";
-import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import FullWidthTextField from "../../../components/MUI/FullWidthTextField";
 import AutocompleteComboBox from "../../../components/MUI/AutocompleteComboBox";
 import DesktopDatePickers from "../../../components/MUI/DesktopDatePicker";
-import FullWidthButton from "../../../components/MUI/FullWidthButton";
 import FullWidthTextArea from "../../../components/MUI/FullWidthTextFieldArea";
 import FullWidthCheckbox from "../../../components/MUI/FullWidthCheckbox";
 import Grid from "@mui/material/Grid2";
-import TimePickerTextField from "../../../components/MUI/TimePickerTextField";
-import FullSweetalert from "../../../components/MUI/Sweetalert";
-import { v4 as uuidv4 } from "uuid";
 import { useData } from "../../../auth/core/DataContext";
 import { useLayout } from "../../../layout/core/LayoutProvider";
-import { Collapse } from "@mui/material";
 import BrowseFileUpload from "./BrowseFileUpload";
-import { log } from "node:console";
 import { cleanAccessData } from "../../../service/initmain/initmain";
 import { useListComplaint } from "../core/ListComplaintContext";
-import { data } from "react-router-dom";
 import { ComplaintFile } from "./BrowseFileUpload";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {
@@ -70,8 +43,6 @@ import {
   mas_DomainGet,
   mas_DomainRelateGet,
 } from "../../../service/mas/lov";
-import { isAction } from "redux";
-import FuncDialog from "../../../components/MUI/FullDialog";
 
 type Validate = {
   Product_Group: boolean;
@@ -192,8 +163,6 @@ export default function ComplaintBody({
   validateText,
   onBlocksChange,
   validateDetailText,
-  // openExplainView,
-  // handleCloseExplainView,
 
   onReportTypeChange,
   onDateOfDetectionChange,
@@ -239,9 +208,6 @@ export default function ComplaintBody({
   const isActionCloseHistory = action === "CloseHistory";
 
   const user = cleanAccessData("userSession");
-  const [openConfirm, setOpenConfirm] = useState(false);
-  const [deleteIndex, setDeleteIndex] = useState<number | null>(null);
-
 
   const {
     dataelement,
@@ -259,7 +225,6 @@ export default function ComplaintBody({
     request_phone,
     request_date,
     respondent_company_id,
-    // request_department_id,
     respondent_domain_id,
     respondent_department_id,
     respondent_email,
@@ -510,16 +475,7 @@ export default function ComplaintBody({
   const [dataComplaintType, setdataComplaintType] = useState<LovType[]>([]);
   const [dataComplaintRs, setdataComplaintRs] = useState<LovType[]>([]);
   const [dataphoto, setdataphoto] = useState<LovType[]>([]);
-  //const [datapriority, setdatapriority] = useState<LovType | null>(null);
-  const [files, setFiles] = useState<File[]>([]);
-  const [fileAttachmentTypes, setFileAttachmentTypes] = useState<{
-    [fileIndex: number]: string;
-  }>({});
-  const [fileOtherTexts, setFileOtherTexts] = useState<{
-    [fileIndex: number]: string;
-  }>({});
   const [fileList, setFileList] = useState<FileData[]>([]);
-  // const [explainList, setExplainList] = useState<any[]>([]);
 
   const [request_department_id, setrequest_department_id] = React.useState<{
     itasset_department_id: number;
@@ -581,20 +537,6 @@ export default function ComplaintBody({
     config_file: dataset_configfile || [],
   };
 
-  // Check Acknowledge flag =========================================================
-  const updateAcknowledgeFlag = (value: any) => {
-    // console.log("####### Onchange Company Value [event] : ", value);
-    // console.log("@@@@@@@@@@@@First", dataset_domainrelate);
-    // console.log("Render check respondent_domain_id:", respondent_domain_id);
-
-    if (value != null) {
-      mas_DomainRelateGet(value, set_domainrelate, user, isCallFuncLogOn);
-    } else {
-      setrespondent_domain_id(null);
-    }
-    // console.log("@@@@@@@@@@@@second", dataset_domainrelate);
-  };
-
   // Event Handlers =========================================================
   const handleCompanyChange = (value: any) => {
     if (value != null) {
@@ -616,7 +558,6 @@ export default function ComplaintBody({
   };
 
   const handleDomainChange = async (value: any) => {
-    // เคลียร์ข้อมูลแผนกทันที (ทั้ง list และค่าเลือก)
     setdataset_department([]);
     setrespondent_department_id(null);
     setrespondent_email("");
@@ -638,12 +579,7 @@ export default function ComplaintBody({
     );
   };
 
-  // Function Handlers (On Change Event) ======================================================
   const handleReportTypeChange = async (val: LovType | null) => {
-    // if (true)console.log( "🕑 ",dayjs().format("HH:mm:ss.SSS")," [Calling Function]  :  handleReportTypeChange");
-
-    // console.log(val, "valvalvalvalvalvalvalvalvalvalvalvalvalvalvalval");
-
     if (
       val?.lov_code === "CAR" ||
       val?.lov_code === "OBS" ||
@@ -654,9 +590,7 @@ export default function ComplaintBody({
       setIsRSHidden(false);
     }
     setdataReportTypeValue(val);
-    // console.log(dataReportTypeValue, "dataReportTypeValue");
 
-    // Clear validation error when user selects a value
     if (onReportTypeChange) {
       onReportTypeChange(val);
     }
@@ -700,7 +634,6 @@ export default function ComplaintBody({
     }
 
     setcas_number("");
-
     setdate_of_detection(null);
     setrespondent_department_id(null);
     setproduct_name("");
@@ -721,24 +654,16 @@ export default function ComplaintBody({
     setdataphoto([]);
     setotherText("");
     setphoTypeOther("");
-
     setrequest_name("");
     setrequest_position("");
     setrespondent_domain_id("");
-    // setrequest_department_id(dataset_department[0]);
     setrequest_email("");
     setrequest_phone("");
-    // setrequest_domain_id(dataset_company[0]);
-    // setrequest_company_id(dataset_company[0]);
     setFileList([]);
     setcomplaintFiles([]);
   };
 
   const handleCheckboxChangeCT = (item: LovType) => {
-    // if (true)console.log("🕑 ",dayjs().format("HH:mm:ss.SSS")," [Calling Function]  :  handleCheckboxChangeCT");
-
-    // console.log("💛💛item", item);
-
     setdataComplaintType((prev: LovType[] = []) => {
       let newData: LovType[];
 
@@ -762,27 +687,18 @@ export default function ComplaintBody({
         isOther: c.lov2,
       }));
 
-      // ดู log
-      // console.log("Reduced array:", reducedArray);
-
-      // อัปเดตเข้า context
       setdataComplaintTypeValue_Combobox(reducedArray);
-      // console.log(newData, "newData");
 
       // Clear validation error when user selects/deselects complaint type
       if (onComplaintTypeChange) {
         onComplaintTypeChange(newData);
       }
-
       return newData;
     });
   };
 
   const handleCheckboxChangeRS = (item: LovType) => {
-    // if (true) console.log("🕑 ",dayjs().format("HH:mm:ss.SSS")," [Calling Function]  :  handleCheckboxChangeRS");
-
     setdataComplaintRs((prev: LovType[] = []) => {
-      // console.log("💚💚item", item);
       let newData: LovType[];
 
       if (prev.some((rs) => rs.id === item.id)) {
@@ -807,62 +723,18 @@ export default function ComplaintBody({
         isOther: rs.lov2,
         isClause: rs.lov3,
       }));
-      // const reducedArray = newData.map(rs => ({ complaint_type_id: rs.id, lov1: rs.lov1 }));
-
-      // console.log("Reduced array:", reducedArray);
-
       setdataComplaintRsValue_Combobox(reducedArray);
 
-      // Clear validation error when user selects/deselects complaint rs
       if (onComplaintRsChange) {
         onComplaintRsChange(newData);
       }
-
       return newData;
     });
   };
 
-  // const handleCheckboxChangePhotoType = (item: LovType) => {
-  //   // if (true)console.log("🕑 ",dayjs().format("HH:mm:ss.SSS")," [Calling Function]  :  handleCheckboxChangePhotoType");
-
-  //   setdataphoto((prev: LovType[] = []) => {
-  //     let newData: LovType[];
-
-  //     if (prev.some((pho) => pho.id === item.id)) {
-  //       // ถ้ามีอยู่แล้ว → เอาออก
-  //       newData = [];
-
-  //       // ถ้าเอาออกแล้วเป็น Other → เคลียร์ค่า
-  //       if (item.id === "TRR_AT_4") {
-  //         setphoTypeOther("");
-  //       }
-  //     } else {
-  //       // เพิ่ม object แบบเต็ม
-  //       newData = [item];
-  //     }
-
-  //     // สร้าง array ลดรูปสำหรับ context
-  //     const reducedArray = newData.map((pho) => ({
-  //       complaint_at_id: pho.id,
-  //       label: pho.lov1,
-  //     }));
-
-  //     // console.log("Reduced array:", reducedArray);
-
-  //     setdataphotoValue_Combobox(reducedArray);
-
-  //     return newData;
-  //   });
-  // };
-
   // รับ ComplaintFile[] จาก BrowseFileUpload
   const handleFileChange = (fileArray: ComplaintFile[], cf_type: "Complaint" | "Close") => {
-    // if (true)console.log("🕑 ",dayjs().format("HH:mm:ss.SSS")," [Calling Function]  :  handleFileChange");
-
     if (!fileArray || fileArray.length === 0) return;
-    // const updatedList = [...fileList, ...fileArray];
-    // setFileList(updatedList);
-    // setcomplaintFiles(updatedList);
     if (cf_type === "Complaint") {
       setFileList((prev: any) => [...prev, ...fileArray]);
     } else {
@@ -870,127 +742,10 @@ export default function ComplaintBody({
     }
   };
 
-
-  //     // if (true)
-  //     //   console.log(
-  //     //     "🕑 ",
-  //     //     dayjs().format("HH:mm:ss.SSS"),
-  //     //     " [Calling Function]  :  handleFileChange"
-  //     //   );
-
-  //     if (!fileArray || fileArray.length === 0) return;
-  //     if (cf_type === "Complaint") {
-  //     setFileList((prev:any) => [...prev, ...fileArray]);
-  //   } else {
-  //     setcloseFiles((prev:any) => [...prev, ...fileArray]);
-  //   }
-  //   };
-  // const handleFileAttachmentTypeChange = (index: number, type: string) => {
-  //   if (true)
-  //     console.log(
-  //       "🕑 ",
-  //       dayjs().format("HH:mm:ss.SSS"),
-  //       " [Calling Function]  :  handleFileAttachmentTypeChange"
-  //     );
-
-  //   const updated = [...fileList];
-  //   updated[index] = {
-  //     ...updated[index],
-  //     attachmentType: type,
-  //     otherText: type === "TRR_AT_4" ? updated[index].otherText : "",
-  //   };
-  //   setFileList(updated);
-  //   setcomplaintFiles(updated);
-  // };
-
-  // const handleFileOtherTextChange = (index: number, text: string) => {
-  //   if (true)
-  //     console.log(
-  //       "🕑 ",
-  //       dayjs().format("HH:mm:ss.SSS"),
-  //       " [Calling Function]  :  handleFileOtherTextChange"
-  //     );
-
-  //   const updated = [...fileList];
-  //   updated[index] = { ...updated[index], otherText: text };
-  //   setFileList(updated);
-  //   setcomplaintFiles(updated);
-  //   return updated;
-  // };
-
-  // Functions (Initial, Calculation or ETC.) =================================================
-
-  const resetForm = () => {
-    if (true)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  resetForm"
-      );
-
-    setdataReportTypeValue("");
-    setcas_number("");
-    setproduct_name("");
-    setlot_no("");
-    setrequest_name("");
-    setrequest_company_id(null);
-    setrequest_domain_id("");
-    setrequest_department_id(null);
-    setrequest_position("");
-    setrequest_email("");
-    setrequest_phone("");
-    setrespondent_company_id(null);
-    setrespondent_domain_id("");
-    setrespondent_department_id(null);
-    setrespondent_email("");
-
-    setdoc_date(dayjs(null));
-    setrespond_date_within(dayjs(null));
-    setdetail("");
-    setcompTypeOther("");
-    setotherText("");
-    setcompRsOther("");
-  };
-
-  const resetCloseState = () => {
-    setclose_name("");
-    setclose_company_id(null);
-    setclose_department_id(null);
-    setclose_position("");
-    setclose_email("");
-    setclose_date(null);
-    setdataFuapp(null);
-    setclose_detail("");
-    setclose_note("");
-  };
-
-  // const priorityCalculateRespondDate = (
-  //   daysToAdd: number,
-  //   checked: boolean
-  // ) => {
-  //   if (true)
-  //     console.log(
-  //       "🕑 ",
-  //       dayjs().format("HH:mm:ss.SSS"),
-  //       " [Calling Function]  :  priorityCalculateRespondDate"
-  //     );
-
-  //   if (checked) {
-  //     const newDate = dayjs().add(daysToAdd, "day"); // use dayjs instead of Date
-  //     setrespond_date_within(newDate);
-  //   } else {
-  //     setrespond_date_within(null);
-  //   }
-  // };
   const priorityCalculateRespondDate = (
     days: number,
     checked: boolean = true
   ) => {
-    console.log(
-      "🕑 ",
-      dayjs().format("HH:mm:ss.SSS"),
-      " [Calling Function] priorityCalculateRespondDate"
-    );
 
     if (!checked) {
       setrespond_date_within(null);
@@ -999,7 +754,6 @@ export default function ComplaintBody({
 
     // ✅ ใช้วันปัจจุบันเสมอ (Add + Edit)
     const baseDate = dayjs();
-
     const newDate = baseDate.add(days, "day");
 
     setrespond_date_within(newDate);
@@ -1033,86 +787,33 @@ export default function ComplaintBody({
     respond_date_within
   ]);
 
+  const handleRemoveFile = async (
+    index: number,
+    cf_type: "Complaint" | "Close"
+  ) => {
+    const targetList =
+      cf_type === "Complaint" ? fileList : closeFiles;
 
-  const arraysAreEqual = (a: any[], b: any[]) => {
-    // if (true) console.log("🕑 ",dayjs().format("HH:mm:ss.SSS")," [Calling Function]  :  arraysAreEqual");
+    const fileToRemove = targetList[index];
 
-    if (a.length !== b.length) return false;
-    return a.every(
-      (item, index) => JSON.stringify(item) === JSON.stringify(b[index])
-    );
+    if (fileToRemove?.id) {
+      await _POST(
+        {
+          id: fileToRemove.id,
+          update_by: user[0]?.employee_username || "",
+        },
+        "/ComplaintFile/ComplaintFileEdit"
+      );
+    }
+
+    if (cf_type === "Complaint") {
+      setFileList((prev) => prev.filter((_, i) => i !== index));
+    } else {
+      setcloseFiles((prev: any) => prev.filter((_: any, i: any) => i !== index));
+    }
   };
 
-  // const handleRemoveFile = async (index: number, ) => {
-  //   // if (true)console.log("🕑 ",dayjs().format("HH:mm:ss.SSS")," [Calling Function]  :  handleRemoveFile");
-
-  //   const fileToRemove = fileList[index];
-
-  //   // ถ้าเป็นไฟล์ที่มีอยู่แล้วในฐานข้อมูล (มี id)
-  //   if (fileToRemove && fileToRemove.id) {
-  //     try {
-  //       // เรียกใช้ endpoint ลบไฟล์จากฐานข้อมูล
-  //       const deletePayload = {
-  //         id: fileToRemove.id,
-  //         update_by: user[0]?.employee_username || "",
-  //       };
-
-  //       // console.log("🗑️ Deleting file from database:", deletePayload);
-  //       const response = await _POST(
-  //         deletePayload,
-  //         "/ComplaintFile/ComplaintFileEdit"
-  //       );
-  //       // console.log("🗑️ Delete response:", response);
-
-  //       if (response && response.status === "success") {
-  //         // console.log("✅ File deleted from database successfully");
-  //       } else {
-  //         // console.log("⚠️ Failed to delete file from database:", response);
-  //       }
-  //     } catch (error) {
-  //       // console.error("❌ Error deleting file from database:", error);
-  //     }
-  //   }
-
-  //   // ลบไฟล์จาก UI
-  //   setFileList((prev) => {
-  //     const updatedList = prev.filter((_, i) => i !== index);
-  //     // อัปเดต complaintFiles ใน context ด้วย
-  //     setcomplaintFiles(updatedList);
-  //     return updatedList;
-  //   });
-  // };
-
-  const handleRemoveFile = async (
-  index: number,
-  cf_type: "Complaint" | "Close"
-) => {
-  const targetList =
-    cf_type === "Complaint" ? fileList : closeFiles;
-
-  const fileToRemove = targetList[index];
-
-  if (fileToRemove?.id) {
-    await _POST(
-      {
-        id: fileToRemove.id,
-        update_by: user[0]?.employee_username || "",
-      },
-      "/ComplaintFile/ComplaintFileEdit"
-    );
-  }
-
-  if (cf_type === "Complaint") {
-    setFileList((prev) => prev.filter((_, i) => i !== index));
-  } else {
-    setcloseFiles((prev:any) => prev.filter((_:any, i:any) => i !== index));
-  }
-};
-
-  
-
   const Acknowledge_Update = async (data: any) => {
-    // if (isCallFuncLogOn)console.log("🕑 ", dayjs().format("HH:mm:ss.SSS"), " [Calling Function]  :  Acknowledge_Update");
     const safeFormatDate = (val: any) => {
       if (!val) return "-";
       let d = dayjs(val);
@@ -1131,10 +832,8 @@ export default function ComplaintBody({
     const email_productName = dataelement?.product_name || "-";
     const email_detail = dataelement?.detail || "-";
     const email_requrst_department_name = dataelement?.request_department_name || dataset_department?.find((x: any) => x.department_id == dataelement?.request_department_id)?.department_name || dataelement?.request_department_id || "-";
-    const email_request_name = dataelement?.request_name || "-";
 
     const emailSubject = `[CAS] แจ้งเตือนการ ตอบรับ / รับทราบ รายละเอียดข้อร้องเรียน CAS No.${email_casNumber || "-"}`;
-
     const emailBodyHtml = `
       <div style="font-family: Arial, sans-serif; color: #333;">
         <p>
@@ -1251,50 +950,28 @@ export default function ComplaintBody({
   }, [fileList]);
 
   const Dept_setup_By_Domain_dept_id_Get = async (data: any) => {
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  Dept_setup_By_Domain_dept_id_Get"
-      );
-
     if (!data?.domain_dept_id) {
-      console.warn("⚠️ ไม่มี domain_dept_id ใน data:", data);
       return null;
     }
 
     setIsLoadingScreen(false);
     const dataset = { domain_dept_id: data.domain_dept_id };
-    // console.log("🧩 Payload ส่งเข้า SP :", dataset);
 
     try {
       const response = await _POST(
         dataset,
         "/DeptSetup/DeptSetupByDomaindeptidGet"
       );
-      // console.log("📥 DeptSetup Response (full):", response);
-      // console.log("🧩 Payload ส่งเข้า SP :", dataset);
 
-      // คืน response ทั้งก้อน ให้ caller เลือกเอา element ที่ต้องการ
       return response || null;
     } catch (e) {
-      console.error("❌ Error DeptSetupByDomaindeptidGet:", e);
       return null;
     } finally {
       setIsLoadingScreen(false);
     }
   };
 
-  // Function - Get Complaints
   const Complaint_Get = async (data: any) => {
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        " [Calling Function]  :  Complaint_Get"
-      );
-
-    // setIsLoadingScreen(true)
     const dataset = {
       id: data.id,
       user_id: user[0]?.employee_username,
@@ -1302,28 +979,21 @@ export default function ComplaintBody({
       department_id: user[0]?.itasset_department_id,
       company_id: user[0]?.itasset_company_id,
     };
-    // console.log("Read step:4 dataset: ", dataset);
 
     try {
       let response = await _POST(dataset, "/Complaint/ComplaintGet");
-      // console.log("Read step:4 ผลลัพธ์ : ", response);
-      // console.log("Read step:4 Normalize ปรับค่าใหม่ : ", response.data[0]);
       if (response && response.status === "success") {
         setIsLoadingScreen(false);
         setdataelement(response.data[0]);
       }
-    } catch (e) {
-      // console.log("error");
+    } catch {
+
     }
   };
 
-  // Function - Get Explain List
   const ExplainGet = async () => {
     if (isCallFuncLogOn)
       if (!dataelement?.id) {
-        // console.log("🕑 ",dayjs().format("HH:mm:ss.SSS")," [Calling Function]  :  ExplainGet");
-
-        // console.log("No complaint ID, skipping explain fetch");
         return;
       }
 
@@ -1334,108 +1004,21 @@ export default function ComplaintBody({
 
     try {
       let response = await _POST(dataset, "/Explain/ExplainGet");
-      // console.log("ExplainGet response:", response);
       if (response && response.status === "success") {
         setIsLoadingScreen(false);
         setExplainList(response.data || []);
         setcomplaint_status_id(dataelement?.complaint_status_id);
-        // console.log("dataelementdataelement", dataelement);
-
-        // console.log("Explain list:", response.data);
-        // console.log("explainList list:", explainList);
       }
     } catch (e) {
-      // console.log("ExplainGet error:", e);
       setIsLoadingScreen(false);
     }
   };
 
-  useEffect(() => {
-    // console.log("complaint_status_id", complaint_status_id);
-  }),
-    [complaint_status_id];
-
-  // READ - Get Complaints
-  // const ComplaintFile_Get = async () => {
-  //   if (true)
-  //     if (!dataelement?.id) {
-  //       // console.log("🕑 ", dayjs().format("HH:mm:ss.SSS")," [Calling Function]  :  ComplaintFile_Get");
-
-  //       // ตรวจสอบว่ามี dataelement?.id หรือไม่  ไม่error หากไม่มีไฟล์
-  //       // console.log("No complaint ID, skipping file fetch");
-  //       setFileList([]);
-  //       setcomplaintFiles([]);
-  //       return;
-  //     }
-
-  //   // ✅ Safety Check: ป้องกันการเรียกด้วย Explain Data หรือข้อมูลที่ไม่ใช่ Complaint
-  //   if (dataelement?.complaint_id || !dataelement?.cas_number) {
-  //     // console.log("⏭️ Skip ComplaintFile_Get - Invalid data type (likely Explain data)");
-  //     setFileList([]);
-  //     setcomplaintFiles([]);
-  //     return;
-  //   }
-
-  //   //setIsLoadingScreen(true);
-  //   const dataset = {
-  //     complaint_id: dataelement?.id,
-  //     cf_type: "Complaint",
-  //   };
-
-  //   try {
-  //     let response = await _POST(dataset, "/ComplaintFile/ComplaintFileGet");
-  //     if (response && response.status === "success") {
-  //       setIsLoadingScreen(false);
-  //       const responseData: any = [];
-
-  //       if (Array.isArray(response.data) && response.data.length > 0) {
-  //         // console.log("################# FILE #######################:",response.data); // เช็คว่ามีกี่แถวจริง ๆ
-
-  //         const mappedFiles: ComplaintFile[] = response.data.map(
-  //           (file: any) => ({
-  //             file: {
-  //               name: file.user_file_name || "unknown",
-  //               size: Number(file.file_size) || 0,
-  //               type: file.file_type || "",
-  //             } as File,
-  //             attachmentType: file.complaint_at_id,
-  //             otherText: file.other,
-  //             original_file_name: file.user_file_name,
-  //             img_url: file.img_url,
-  //             full_path: file.full_path,
-  //             id: file.id, // เพิ่ม id สำหรับการลบไฟล์
-  //           })
-  //         );
-
-  //         setFileList(mappedFiles);
-  //         setcomplaintFiles(mappedFiles);
-  //       } else {
-  //         // ไม่มีไฟล์
-  //         // console.log("No files found");
-  //         setFileList([]);
-  //         setcomplaintFiles([]);
-  //       }
-  //     } else {
-  //       // Response ไม่สำเร็จ
-  //       // console.log("Failed to get files:", response);
-  //       setFileList([]);
-  //       setcomplaintFiles([]);
-  //     }
-  //   } catch (e) {
-  //     setFileList([]);
-  //     setcomplaintFiles([]);
-  //   } finally {
-  //     setIsLoadingScreen(false);
-  //   }
-  // };
+  useEffect(() => { }), [complaint_status_id];
 
   const ComplaintFile_Get = async (cf_type: "Complaint" | "Close") => {
     if (true)
       if (!dataelement?.id) {
-        // console.log("🕑 ", dayjs().format("HH:mm:ss.SSS")," [Calling Function]  :  ComplaintFile_Get");
-
-        // ตรวจสอบว่ามี dataelement?.id หรือไม่  ไม่error หากไม่มีไฟล์
-        // console.log("No complaint ID, skipping file fetch");
         if (cf_type === "Complaint") {
           setFileList([]);
         } else {
@@ -1444,15 +1027,6 @@ export default function ComplaintBody({
         return;
       }
 
-    // ✅ Safety Check: ป้องกันการเรียกด้วย Explain Data หรือข้อมูลที่ไม่ใช่ Complaint
-    // if (dataelement?.complaint_id || !dataelement?.cas_number) {
-    //   // console.log("⏭️ Skip ComplaintFile_Get - Invalid data type (likely Explain data)");
-    //   setFileList([]);
-    //   setcomplaintFiles([]);
-    //   return;
-    // }
-
-    //setIsLoadingScreen(true);
     // สำหรับ Close files ต้องหา explain ที่มี explain_seq สูงสุด (ล่าสุด)
     let latestExplainId = dataelement.explain_id;
     if (cf_type === "Close" && Array.isArray(explainList) && explainList.length > 0) {
@@ -1489,8 +1063,6 @@ export default function ComplaintBody({
         const responseData: any = [];
 
         if (Array.isArray(response.data) && response.data.length > 0) {
-          // console.log("################# FILE #######################:",response.data); // เช็คว่ามีกี่แถวจริง ๆ
-
           const mappedFiles: ComplaintFile[] = response.data.map(
             (file: any) => ({
               file: {
@@ -1503,7 +1075,7 @@ export default function ComplaintBody({
               original_file_name: file.user_file_name,
               img_url: file.img_url,
               full_path: file.full_path,
-              id: file.id, // เพิ่ม id สำหรับการลบไฟล์
+              id: file.id,
             })
           );
 
@@ -1514,7 +1086,6 @@ export default function ComplaintBody({
             setcloseFiles(mappedFiles);
           }
         } else {
-          // ไม่มีไฟล์ - clear เฉพาะ type ที่ fetch
           if (cf_type === "Complaint") {
             setFileList([]);
             setcomplaintFiles([]);
@@ -1523,7 +1094,6 @@ export default function ComplaintBody({
           }
         }
       } else {
-        // Response ไม่สำเร็จ - clear เฉพาะ type ที่ fetch
         if (cf_type === "Complaint") {
           setFileList([]);
           setcomplaintFiles([]);
@@ -1539,9 +1109,7 @@ export default function ComplaintBody({
     }
   };
 
-  
 
-  // ⭐⭐⭐⭐⭐ Start : ==============================================================================================//
   // const effectRan = React.useRef(false); // ป้องกัน run ซ้ำใน dev mode
   const lastDataElement = React.useRef<any>(null); // Track last processed data
   const hasMappedDepartment = React.useRef(false); // Track if department has been mapped
@@ -1553,9 +1121,6 @@ export default function ComplaintBody({
         user,
         isCallFuncLogOn
       );
-
-      // reset domain ทุกครั้งที่ company เปลี่ยน
-      // setrespondent_domain_id(null);
     }
   }, [respondent_company_id]);
 
@@ -1572,8 +1137,6 @@ export default function ComplaintBody({
       );
 
       if (autoDomain) {
-        // console.log("🎯 Auto domain from employee_domain:", autoDomain);
-
         setrespondent_domain_id(autoDomain);
         handleDomainChange(autoDomain);
         onRespondentDepartmentChange?.(autoDomain);
@@ -1603,27 +1166,19 @@ export default function ComplaintBody({
 
     // ✅ ป้องกันการทำงานเมื่อเป็น Explain Data (มี complaint_id)
     if (dataelement?.complaint_id) {
-      // console.log("⏭️ Skip master data load - dataelement is Explain data");
       return;
     }
 
-    // if (effectRan.current) return;
-    // effectRan.current = true;
-
-    // Prevent double invoke on same data object (Strict Mode protection)
-    // But allow run if dataelement object reference changes (e.g. Refresh/Cancel)
     if (lastDataElement.current === dataelement) return;
     lastDataElement.current = dataelement;
     hasMappedDepartment.current = false;
 
     const loadInitialData = async () => {
 
-      // console.log("🕑🕑🕑🕑🕑🕑🕑🕑 [Calling Check isItAdmin]  : ", isItAdmin, "🕑🕑🕑🕑🕑🕑🕑🕑");
-
       try {
-        //========================================================================================================================
+        //==================================
         // 1) Report Type
-        //========================================================================================================================
+        //==================================
         if (isItAdmin) {
 
           if (dataelement.report_type) {
@@ -1639,7 +1194,6 @@ export default function ComplaintBody({
                   item.lov_code === dataelement.report_type ||
                   item.id === dataelement.report_type
               );
-            // f (defaultVal) setdataReportTypeValue(defaultVal);
             if (defaultVal) {
               setdataReportTypeValue({
                 ...defaultVal,
@@ -1648,23 +1202,9 @@ export default function ComplaintBody({
                   : defaultVal.lov_code,
               });
             }
-
-            // setdataReportTypeValue({
-            //   ...defaultVal,
-            //   displayText: defaultVal.lov3
-            //     ? `${defaultVal.lov_code} (${defaultVal.lov3})`
-            //     : defaultVal.lov_code,
-            // });
           }
-
-          // console.log("🕑🕑🕑 [dataelement.report_type]  : ", dataelement.report_type, "🕑🕑🕑");
-          // console.log("🕑🕑🕑 [dataset_reporttype]  : ", dataset_reporttype, "🕑🕑🕑");
-
-        } 
+        }
         else {
-          // console.log("ACTION:", action);
-          // console.log("🕑🕑🕑 [dataelement.report_type]  : ", dataelement.report_type, "🕑🕑🕑");
-          // console.log("🕑🕑🕑 [dataset_reporttype]  : ", dataset_reporttype, "🕑🕑🕑");
           if (Array.isArray(dataset_reporttype_inactive) && dataelement?.report_type) {
             const defaultVal =
               (await setValueMas(
@@ -1677,7 +1217,6 @@ export default function ComplaintBody({
                   item.lov_code === dataelement.report_type ||
                   item.id === dataelement.report_type
               );
-            // f (defaultVal) setdataReportTypeValue(defaultVal);
             if (defaultVal) {
               setdataReportTypeValue({
                 ...defaultVal,
@@ -1689,9 +1228,9 @@ export default function ComplaintBody({
           }
         }
 
-        //========================================================================================================================
+        //==================================
         // 2) Company
-        //========================================================================================================================
+        //==================================
         if (
           Array.isArray(dataset_company) &&
           dataelement?.respondent_company_id
@@ -1707,9 +1246,9 @@ export default function ComplaintBody({
           }
         }
 
-        //========================================================================================================================
+        //==================================
         // 3) Domain relate
-        //========================================================================================================================
+        //==================================
         await mas_DomainRelateGet(
           dataelement.respondent_company_id?.company_id ?? dataelement.respondent_company_id,
           set_domainrelate,
@@ -1717,9 +1256,9 @@ export default function ComplaintBody({
           isCallFuncLogOn
         );
 
-        //========================================================================================================================
+        //==================================
         // // 4) Domain default
-        //========================================================================================================================
+        //==================================
         if (Array.isArray(domainrelate) && dataelement?.request_domain_id) {
           const mappedDomain = await setValueMas(
             domainrelate,
@@ -1729,9 +1268,9 @@ export default function ComplaintBody({
           if (mappedDomain) setrequest_domain_id(mappedDomain);
         }
 
-        //========================================================================================================================
+        //==================================
         // 5) โหลด Department
-        //========================================================================================================================
+        //==================================
         if (dataelement?.respondent_department_id) {
           const currentCompanyId =
             dataelement.respondent_company_id?.company_id ??
@@ -1764,9 +1303,8 @@ export default function ComplaintBody({
             };
           }
         }
-        
-      } catch (err) {
-        console.error("❌ loadInitialData error:", err);
+      } catch {
+
       }
     };
 
@@ -1775,8 +1313,8 @@ export default function ComplaintBody({
 
   React.useEffect(() => {
     if (Array.isArray(domainrelate) && domainrelate.length > 0) {
-
       const run = async () => {
+
         // แมป respondent_domain_id
         if (dataelement?.respondent_domain_id) {
           const mappedRespondent = await setValueMas(
@@ -1787,7 +1325,6 @@ export default function ComplaintBody({
 
           if (mappedRespondent) {
             setrespondent_domain_id(mappedRespondent);
-            // console.log("🎯 respondent domain mapped:", mappedRespondent);
           }
         }
 
@@ -1801,7 +1338,6 @@ export default function ComplaintBody({
 
           if (mappedRequest) {
             setrequest_domain_id(mappedRequest);
-            // console.log("🎯 request domain mapped:", mappedRequest);
           }
         }
       };
@@ -1825,7 +1361,6 @@ export default function ComplaintBody({
 
         if (mappedDept) {
           setrespondent_department_id(mappedDept);
-          // console.log("🏬 Department mapped:", mappedDept);
         }
       };
 
@@ -1842,11 +1377,6 @@ export default function ComplaintBody({
         dataset_department.length > 0 &&
         dataelement?.respondent_department_id
       ) {
-        // console.log("🏬 Mapping department (ready):", {
-        //   target: dataelement.respondent_department_id,
-        //   dataset: dataset_department.map((d: any) => d.department_id),
-        // });
-
         const mappedDept = await setValueMas(
           dataset_department,
           dataelement.respondent_department_id,
@@ -1855,17 +1385,10 @@ export default function ComplaintBody({
 
         if (mappedDept) {
           setrespondent_department_id(mappedDept);
-          // console.log("✅ Department mapped:", mappedDept);
-        } else {
-          console.warn(
-            "⚠️ Department not found:",
-            dataelement.respondent_department_id
-          );
         }
         hasMappedDepartment.current = true;
       }
     };
-
     mapDepartment();
   }, [dataset_department]); // 🔁 trigger เฉพาะตอน department dataset update จริง
 
@@ -1874,9 +1397,6 @@ export default function ComplaintBody({
   // --------------------
   React.useEffect(() => {
     if (!Array.isArray(datapriority_Combobox)) return;
-
-    // console.log("🕑🕑🕑🕑🕑🕑🕑🕑 [datapriority_Combobox]  : ", datapriority_Combobox, "🕑🕑🕑🕑🕑🕑🕑🕑");
-
     const newFilteredPriority =
       isItAdmin ?
         datapriority_Combobox.filter(
@@ -1965,12 +1485,11 @@ export default function ComplaintBody({
     dataphoto_Combobox,
     dataComplaintRs_Combobox,
   ]);
+
   // ⭐⭐⭐⭐⭐ Start : ==============================================================================================//
 
   //////////////////////// Complaint Read //////////////////////////
   React.useEffect(() => {
-    // console.log("step: 5 เก็บข้อมูลเข้า ฺsetdataelement ใหม่ ", dataelement); //✅
-
     if (dataelement && action != "Add") {
       setcas_number(dataelement?.cas_number || "");
       setdoc_date(
@@ -1992,10 +1511,7 @@ export default function ComplaintBody({
         dataelement?.respondent_email ? dataelement?.respondent_email : ""
       );
       setdataComplaintType(setComplaintType(dataelement?.complaintType));
-      // setcompTypeOther(dataelement?.other ? dataelement?.other : "");
       setdataComplaintRs(setComplaintRs(dataelement?.complaintRs));
-      // setcompRsOther(dataelement?.other ? dataelement?.other : "");
-      // setclauseOther(dataelement?.clause ? dataelement?.clause : "");
       setdetail(dataelement?.detail ? dataelement?.detail : "");
       setpriority_level(setPriorityLevel(dataelement?.priority_level));
       setrespond_date_within(
@@ -2020,28 +1536,19 @@ export default function ComplaintBody({
       setrequest_phone(
         dataelement?.request_phone ? dataelement?.request_phone : ""
       );
-      // setrequest_company_id(dataset_company.find((el: any) => String(el.itasset_company_id) == String(dataelement.request_company_id?.company_id)));
       setcomplaint_status_label(dataelement?.complaint_status_label);
 
-      // สมมติ LovType คือ { id: string; label: string }
-      // if (dataelement && dataComplaintType?.length && dataComplaintRs?.length > 0) {
-
-      // }
 
       const ct = setComplaintType(dataelement?.complaintType);
       setdataComplaintType(ct);
 
-      // ⭐ สร้าง reducedArray สำหรับ dataComplaintTypeValue_Combobox
-      // เพื่อให้ข้อมูลถูกส่งไปตอน save แม้ว่าจะไม่ได้คลิก checkbox
       const ctReducedArray = ct.map((c: any) => ({
         complaint_type_id: c.id,
         label: c.lov1,
         isOther: c.lov2,
       }));
       setdataComplaintTypeValue_Combobox(ctReducedArray);
-      // console.log("🔄 Loaded Complaint Type reduced array:", ctReducedArray);
 
-      // ถ้ามี complaintType ที่เป็น Other ให้ดึงค่ามา
       const otherCT = ct.find((el: any) => el.lov2 === "Y");
       setcompTypeOther(otherCT?.other || "");
 
@@ -2056,7 +1563,6 @@ export default function ComplaintBody({
         isClause: r.lov3,
       }));
       setdataComplaintRsValue_Combobox(rsReducedArray);
-      // console.log("🔄 Loaded Complaint RS reduced array:", rsReducedArray);
 
       // ⭐ ดึงค่า Other และ Clause จาก RS
       const otherRS = rs.find((el: any) => el.lov3 === "Other");
@@ -2084,11 +1590,9 @@ export default function ComplaintBody({
 
 
   React.useEffect(() => {
-    // console.log("🔄 explainList UPDATED:", explainList);
     if (explainList?.length > 0 && action != "Add") {
 
       const close = explainList?.[0];
-      //console.log("👉 SELECTED explain for close:", close);
       if (!close) return;
 
       setclose_name(close?.close_name || "");
@@ -2137,22 +1641,19 @@ export default function ComplaintBody({
     }
 
     if (!isActionAdd && currentId) {
-      // console.log("📥 Fetching data for complaint ID:", currentId);
 
       // Fetch Complaint files immediately (ไม่ต้องรอ explainList)
       if (isActionCloseHistory) {
         ComplaintFile_Get("Complaint");
       } else if (!dataelement?.complaint_id) {
-        // 👉 Complaint
         ComplaintFile_Get("Complaint");
       }
 
       // Fetch explainList first, then Close files will be fetched in separate useEffect
       ExplainGet();
-      prevComplaintIdRef.current = currentId; // บันทึก ID ปัจจุบัน
-      prevActionRef.current = action; // บันทึก action ปัจจุบัน
+      prevComplaintIdRef.current = currentId;
+      prevActionRef.current = action;
     } else if (!currentId) {
-      // ถ้าไม่มี ID ให้ reset ref
       prevComplaintIdRef.current = null;
       prevActionRef.current = null;
     }
@@ -2189,12 +1690,10 @@ export default function ComplaintBody({
       prevCloseFilesFetchedForIdRef.current !== currentComplaintId &&
       (isActionCloseHistory || dataelement?.complaint_id)
     ) {
-      // console.log("📂 Fetching Close files for complaint:", currentComplaintId);
       ComplaintFile_Get("Close");
       prevCloseFilesFetchedForIdRef.current = currentComplaintId;
     }
 
-    // Reset เมื่อไม่มี ID
     if (!currentComplaintId) {
       prevCloseFilesFetchedForIdRef.current = null;
     }
@@ -2218,9 +1717,7 @@ export default function ComplaintBody({
       if (
         (isActionExplain ||
           (isActionReadExplain &&
-            dataelement?.request_name != user[0].employee_username)) //new💫
-        //      dataelement?.request_name != user[0].employee_username)) &&
-        // dataelement?.id
+            dataelement?.request_name != user[0].employee_username))
       ) {
         if (dataelement?.acknowledge_flag == 0) {
           await Acknowledge_Update(dataelement);
@@ -2233,41 +1730,20 @@ export default function ComplaintBody({
     };
     fetchAcknowlege();
   }, [action, dataelement?.id, isItAdmin]);
-  //  }, [action, dataelement?.id, dataelement?.acknowledge_flag, isItAdmin]);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   const setComplaintType = (data: any) => {
-    // console.log("🔍 setComplaintType input data:", data);
-    // console.log("🔍 dataComplaintType_Combobox:", dataComplaintType_Combobox);
-
     const newData: any[] = [];
 
     if (!Array.isArray(data)) {
-      // console.warn("⚠️ setComplaintType: data is not an array", data);
       return newData;
     }
 
     data.forEach((el, index) => {
-      // console.log(`🔍 Processing element ${index}:`, el);
 
       // Try to find the complaint_type_id from the element
       const typeId = el.complaint_type_id;
 
       if (!typeId) {
-        // console.warn(`⚠️ setComplaintType: No complaint_type_id found in element ${index}`,el);
         return;
       }
 
@@ -2276,40 +1752,28 @@ export default function ComplaintBody({
       );
 
       if (filter) {
-        // console.log(`✅ Found matching type for ID ${typeId}:`, filter);
         newData.push({
           ...filter,
-          other: el.other || "", // ⭐ เก็บค่าข้อความ Other มาด้วย
+          other: el.other || "",
         });
-      } else {
-        // console.warn(`⚠️ setComplaintType: No matching type found for ID ${typeId}`);
-        // console.warn(`⚠️ Available IDs:`,dataComplaintType_Combobox.map((item: any) => item.id));
       }
     });
-
-    // console.log("🔍 setComplaintType output:", newData);
     return newData;
   };
 
   const setComplaintRs = (data: any) => {
-    // console.log("🔍 setComplaintRs input data:", data);
-    // console.log("🔍 dataComplaintRs_Combobox:", dataComplaintRs_Combobox);
-
     const newData: any[] = [];
 
     if (!Array.isArray(data)) {
-      // console.warn("⚠️ setComplaintRs: data is not an array", data);
       return newData;
     }
 
     data.forEach((el, index) => {
-      // console.log(`🔍 Processing RS element ${index}:`, el);
 
       // Try to find the complaint_type_id from the element
       const typeId = el.complaint_type_id;
 
       if (!typeId) {
-        // console.warn(`⚠️ setComplaintRs: No complaint_type_id found in element ${index}`,el);
         return;
       }
 
@@ -2318,31 +1782,21 @@ export default function ComplaintBody({
       );
 
       if (filter) {
-        // console.log(`✅ Found matching RS for ID ${typeId}:`, filter);
         newData.push({
           ...filter,
-          other: el.other || "", // ⭐ เก็บค่าข้อความ Other มาด้วย
+          other: el.other || "",
           clause: el.clause || "",
         });
-      } else {
-        // console.warn(`⚠️ setComplaintRs: No matching RS found for ID ${typeId}` );
-        // console.warn(`⚠️ Available RS IDs:`,dataComplaintRs_Combobox.map((item: any) => item.id));
       }
     });
-
-    // console.log("🔍 setComplaintRs output:", newData);
     return newData;
   };
   const setPriorityLevel = (value: any) => {
-    // if (true) console.log("🕑 ",dayjs().format("HH:mm:ss.SSS")," [Calling Function]  :  setPriorityLevel");
-
     if (!value) return null;
 
     // หา object ที่ id ตรงกับค่าที่ DB ส่งมา
     const selected =
       datapriority_Combobox.find((item: any) => item.id === value) || null;
-
-    // console.log("🎯 Priority matched:", selected);
     return selected;
   };
 
@@ -2357,13 +1811,6 @@ export default function ComplaintBody({
       return "หมายเหตุการปิดรายการ";
     }
   };
-
-
-
-
-
-  // #F29739
-
   return (
     <Box
       id="complaint-content-capture"
@@ -2387,24 +1834,23 @@ export default function ComplaintBody({
             required="required"
             value={dataReportTypeValue}
             labelName={"ประเภทรายงาน (Report Type)"}
-            // options={dataset_reporttype} // <-- แก้ตรงนี้
             options={
               isActionAdd ?
-              (dataset_reporttype || []).map((item: any) => ({
-              ...item, // ✅ เก็บค่าทุกอย่างของ item เดิมไว้ (รวมถึง lov4)
-              displayText: item.lov3
-                ? `${item.lov_code} (${item.lov3})`
-                : item.lov_code,
-              }))
-              :
-              (dataset_reporttype_inactive || []).map((item: any) => ({
-              ...item, // ✅ เก็บค่าทุกอย่างของ item เดิมไว้ (รวมถึง lov4)
-              displayText: item.lov3
-                ? `${item.lov_code} (${item.lov3})`
-                : item.lov_code,
-              }))
-          }
-            // column="lov_code"
+                (dataset_reporttype || []).map((item: any) => ({
+                  ...item, // ✅ เก็บค่าทุกอย่างของ item เดิมไว้ (รวมถึง lov4)
+                  displayText: item.lov3
+                    ? `${item.lov_code} (${item.lov3})`
+                    : item.lov_code,
+                }))
+                :
+                (dataset_reporttype_inactive || []).map((item: any) => ({
+                  ...item, // ✅ เก็บค่าทุกอย่างของ item เดิมไว้ (รวมถึง lov4)
+                  displayText: item.lov3
+                    ? `${item.lov_code} (${item.lov3})`
+                    : item.lov_code,
+                }))
+            }
+
             column="displayText"
             setvalue={handleReportTypeChange}
             readonly={!isActionAdd}
@@ -2459,7 +1905,7 @@ export default function ComplaintBody({
                     labelName={"วันที่ออกเอกสาร (Document Issuance Date)"}
                     value={doc_date}
                     handleChange={(val: dayjs.Dayjs | null | undefined) => {
-                      if (val) setdoc_date(val); // ถ้า val เป็น null/undefined จะไม่เซ็ต
+                      if (val) setdoc_date(val);
                     }}
                     bgcolorTextField={true}
                     readonly
@@ -2471,13 +1917,9 @@ export default function ComplaintBody({
                     labelName={"บริษัท (Company)"}
                     options={dataset_company}
                     column="company_name"
-                    // setvalue={(v) => setrespondent_company_id(v)}
                     setvalue={(val) => {
-                      //console.log("Company selected:", val?.company_name);
                       handleCompanyChange(val);
-
                       setrespondent_company_id(val);
-                      //console.log("cccccc", val);
                     }}
                     bgcolorTextField={true}
                     readonly={!isActionAdd || !isCrossCompany}
@@ -2510,7 +1952,6 @@ export default function ComplaintBody({
                     width: "100%",
                     borderRadius: 3,
                     background: "#ffebeb",
-                    // background: "linear-gradient(135deg, #fff5f5 0%, #ffffff 100%)",
                     border: "1px solid #f44336",
                     boxShadow: "0 4px 12px rgba(244,67,54,0.1)",
                   }}
@@ -2580,13 +2021,7 @@ export default function ComplaintBody({
                         column="department_name"
                         setvalue={async (val) => {
                           setrespondent_department_id(val);
-
-                          // ✅ ดึงข้อมูล Email จากแผนกที่เลือก
-                          // ดึงข้อมูลจาก API (คืน response ทั้งก้อน)
-                          const resp = await Dept_setup_By_Domain_dept_id_Get(
-                            val
-                          );
-                          // resp?.data อาจเป็น Array หรือ undefined
+                          const resp = await Dept_setup_By_Domain_dept_id_Get(val);
                           const arr = Array.isArray(resp?.data)
                             ? resp.data
                             : resp?.data
@@ -2599,13 +2034,6 @@ export default function ComplaintBody({
                             null;
 
                           const email = found?.dept_email;
-
-                          // console.log(
-                          //   "📧 Selected dept email extracted:",
-                          //   email,
-                          //   "from",
-                          //   found
-                          // );
                           setrespondent_email(email);
                           if (!val) {
                             setrespondent_email("");
@@ -2645,7 +2073,6 @@ export default function ComplaintBody({
                             onProductNameChange(e);
                           }
                         }}
-                        //readonly={isActionRead || isActionDelete || isActionExplain}
                         readonly={!isActionAdd && !isActionEdit}
                         Validate={validateText?.Product_Name || false}
                         shouldFocusError={firstErrorField === "Product_Name"}
@@ -2670,7 +2097,6 @@ export default function ComplaintBody({
                           }
                         }}
                         bgcolorTextField={true}
-                        //readonly={isActionRead || isActionDelete || isActionExplain}
                         readonly={!isActionAdd && !isActionEdit}
                         Validate={validateText?.Lot_No || false}
                         shouldFocusError={firstErrorField === "Lot_No"}
@@ -2820,7 +2246,6 @@ export default function ComplaintBody({
                                               : true
                                         }
                                         readonly={!isActionAdd && !isActionEdit}
-                                        // shouldFocusError={validateText?.Other_Type}
                                         submitCount={submitCount}
                                         Validate={validateText?.Other_Type || false}
                                         shouldFocusError={firstErrorField === "Other_Type"}
@@ -3147,10 +2572,6 @@ export default function ComplaintBody({
                                               datapriority?.id === item.id
                                             }
                                             onChange={(e) => {
-                                              // console.log(
-                                              //   "🎯 Priority radio clicked:",
-                                              //   item
-                                              // );
                                               setdatapriority(item);
                                               setdatapriorityValue_Combobox(
                                                 item.id
@@ -3163,31 +2584,10 @@ export default function ComplaintBody({
                                                 days,
                                                 true
                                               );
-                                              // Clear validation error when user selects priority
                                               if (onPriorityChange) {
                                                 onPriorityChange(item);
                                               }
-                                              // console.log(
-                                              //   "เลือก priority:",
-                                              //   item.lov_code,
-                                              //   "Days:",
-                                              //   days
-                                              // );
-                                              // console.log(
-                                              //   "เลือก datapriority?.id:",
-                                              //   item.id
-                                              // );
-                                              // console.log(
-                                              //   "datapriorityValue_Combobox set to:",
-                                              //   item.id
-                                              // );
                                             }}
-                                            // disabled={
-                                            //   isActionRead ||
-                                            //   isActionEdit ||
-                                            //   isActionDelete ||
-                                            //   isActionExplain
-                                            // }
                                             disabled={
                                               !isActionAdd && !isActionEdit
                                             }
@@ -3325,7 +2725,7 @@ export default function ComplaintBody({
                             display: "flex",
                             alignItems: "center",
                             pb: 2,
-                            borderBottom: "2px solid #616161", // ✅ เส้นเต็มเหมือนเดิม
+                            borderBottom: "2px solid #616161",
                           }}
                         >
                           <Box
@@ -3362,7 +2762,7 @@ export default function ComplaintBody({
                                 lov1: p.lov1,
                                 lov2: p.lov2,
                                 lov_code: "CheckTypeFileImage",
-                                isOther: p.lov2, // Use lov2 as isOther logic for 'Other' field
+                                isOther: p.lov2,
                               }))}
                               grouped={grouped}
                               action={action}
@@ -3452,17 +2852,6 @@ export default function ComplaintBody({
                                                         f.attachmentType ===
                                                         item.attachmentType
                                                     );
-                                                  // console.log(
-                                                  //   "🔍 Remove file debug:",
-                                                  //   {
-                                                  //     itemName: item.file.name,
-                                                  //     itemType:
-                                                  //       item.attachmentType,
-                                                  //     actualIndex,
-                                                  //     fileListLength:
-                                                  //       fileList.length,
-                                                  //   }
-                                                  // );
                                                   if (actualIndex !== -1) {
                                                     handleRemoveFile(actualIndex, "Complaint");
                                                   }
@@ -3473,23 +2862,9 @@ export default function ComplaintBody({
                                             )}
 
                                           {/* //ปุ่มดูไฟล์ */}
-
                                           <IconButton
                                             color="primary"
                                             onClick={() => {
-                                              // console.log(
-                                              //   "full_path:",
-                                              //   item.full_path
-                                              // );
-                                              // console.log(
-                                              //   "file type:",
-                                              //   typeof item.file
-                                              // );
-                                              // console.log(
-                                              //   "file instanceof File:",
-                                              //   item.file instanceof File
-                                              // );
-
                                               // ตรวจสอบว่าเป็นไฟล์ใหม่ (ไม่มี full_path) หรือไฟล์เก่า (มี full_path)
                                               if (item.full_path) {
                                                 // ไฟล์เก่า - เปิดจาก NAS
@@ -3514,10 +2889,6 @@ export default function ComplaintBody({
                                                     ),
                                                   1000
                                                 );
-                                              } else {
-                                                // console.log(
-                                                //   "Cannot preview file - no full_path or File object"
-                                                // );
                                               }
                                             }}
                                           >
@@ -3525,15 +2896,11 @@ export default function ComplaintBody({
                                           </IconButton>
 
                                           {/* //ปุ่มดาวน์โหลดไฟล์ */}
-                                          {/* {(action === "Read" || isActionExplain) && ( */}
                                           {!isActionAdd && (
                                             <IconButton
                                               color="primary"
                                               onClick={async () => {
-                                                // console.log("Downloading file:", item);
-                                                // console.log("Downloading item.full_path:", item.full_path);
                                                 if (!item.full_path) return;
-
                                                 try {
                                                   const response = await fetch(
                                                     item.full_path,
@@ -3559,13 +2926,9 @@ export default function ComplaintBody({
                                                   document.body.removeChild(
                                                     link
                                                   );
-
                                                   URL.revokeObjectURL(url); // cleanup memory
-                                                } catch (err) {
-                                                  console.error(
-                                                    "Download failed:",
-                                                    err
-                                                  );
+                                                } catch {
+
                                                 }
                                               }}
                                             >
@@ -3623,7 +2986,6 @@ export default function ComplaintBody({
                         "linear-gradient(135deg, #f0f8ff 0%, #ffffff 100%)",
                       border: "1px solid #bbdefb",
                       boxShadow: "0 4px 12px rgba(33,150,243,0.1)",
-                      // mt: 3,
                     }}
                   >
                     {/* 🔹 หัวข้อ */}
@@ -3638,10 +3000,9 @@ export default function ComplaintBody({
                           sx={{
                             display: "flex",
                             alignItems: "center",
-                            // pb: 2,
                             py: 2,
                             px: 2,
-                            borderBottom: "2px solid #2196f3", // ✅ เส้นเต็มเหมือนเดิม
+                            borderBottom: "2px solid #2196f3",
                           }}
                         >
                           <Box
@@ -3703,12 +3064,8 @@ export default function ComplaintBody({
                             }
                             labelName="แผนก (Department)"
                             onchange={(e) => {
-                              // ถึง readonly แต่เผื่ออนาคตจะเปิดให้แก้
                               setrequest_department_id(
                                 user[0]?.itasset_department_id
-                                // action === "Add"
-                                //   ? user[0]?.itasset_department_id
-                                //   : dataelement?.request_department_id
                               );
                             }}
                             readonly
@@ -3759,7 +3116,6 @@ export default function ComplaintBody({
         </Paper>
       )}
 
-      {/* {isActionClose || isActionExplain || isActionExplainApproveSc || isActionExplainApproveQc && dataReportTypeValue && ( */}
       {!isActionAdd &&
         !isActionRead &&
         !isActionEdit &&
@@ -3852,8 +3208,8 @@ export default function ComplaintBody({
                                 boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
                               }}
                               onClick={(e) => {
-                                e.stopPropagation(); // ✅ ป้องกัน accordion toggle
-                                handleOpenAdd?.(); // ✅ เรียกถ้ามีค่าเท่านั้น
+                                e.stopPropagation();
+                                handleOpenAdd?.();
                               }}
                             >
                               เพิ่มคำชี้แจง
@@ -3983,93 +3339,6 @@ export default function ComplaintBody({
                                                   : "อนุมัติ"}
                                               </Button>
                                             )}
-                                          {/* {
-                                            (isActionExplainApproveSc || isActionExplainApproveQc)&&
-                                            (
-                                              (
-                                                // dataelement?.complaint_status_label === "EXPLAINED" &&
-                                                // dataelement?.step_label === "EXPLAIN" &&
-                                                isActionExplainApproveSc &&
-                                                index === 0
-                                              )
-                                              ||
-                                              (
-                                                // dataelement?.complaint_status_label === "APPROVED" &&
-                                                // dataelement?.step_label === "COMPLAINT" &&
-                                                isActionExplainApproveQc &&
-                                                index === 0
-                                              )
-                                            ) &&
-                                            (
-                                              <Button
-                                                variant="contained"
-                                                size="medium"
-                                                onClick={(e) => {
-                                                  e.stopPropagation();
-
-                                                  if (
-                                                    // dataelement?.complaint_status_label === "EXPLAINED" &&
-                                                    // dataelement?.step_label === "EXPLAIN"
-                                                    isActionExplainApproveSc
-                                                  ) {
-                                                    handleOnclickExplainApproveSc?.(item);
-                                                  } else if (
-                                                    // dataelement?.complaint_status_label === "APPROVED" &&
-                                                    // dataelement?.step_label === "COMPLAINT"
-                                                    isActionExplainApproveQc
-                                                  ) {
-                                                    handleOnclickExplainApproveQc?.(item);
-                                                  }
-                                                }}
-                                                sx={{
-                                                  backgroundColor: "#45bc4bff",
-                                                  color: "#FFFFFF",
-                                                  "&:hover": {
-                                                    backgroundColor: "#1b5e20",
-                                                  },
-                                                  textTransform: "none",
-                                                  fontWeight: 600,
-                                                  borderRadius: 2,
-                                                  px: 4,
-                                                }}
-                                              >
-                                                อนุมัติ
-                                              </Button>
-                                            )
-                                          } */}
-
-                                          {/* ปุ่มปิดรายการ */}
-                                          {/* {
-                                            isActionClose &&
-                                            index === 0 &&
-                                            (
-                                              <Button
-                                                variant="contained"
-                                                size="medium"
-                                                onClick={(e) => {
-                                                  e.stopPropagation();
-                                                  handleOnclickComplainCloseAdd &&
-                                                    handleOnclickComplainCloseAdd(
-                                                      item
-                                                    )
-                                                }
-                                                }
-                                                sx={{
-                                                  backgroundColor: "#45bc4bff",
-                                                  color: "#FFFFFF",
-                                                  "&:hover": {
-                                                    backgroundColor: "#1b5e20",
-                                                  },
-                                                  textTransform: "none",
-                                                  fontWeight: 600,
-                                                  borderRadius: 2,
-                                                  px: 4,
-                                                }}
-                                              >
-                                                ปิดรายการ
-                                              </Button>
-                                            )
-                                          } */}
 
                                           {/* ปุ่มดูข้อมูล */}
                                           <Button
@@ -4077,8 +3346,6 @@ export default function ComplaintBody({
                                             size="medium"
                                             onClick={(e) => {
                                               e.stopPropagation();
-                                              // console.log("🧩 handleOnclickExplainView click:", { action, item });
-                                              // console.log("🧩 item:", { item });
                                               handleOnclickExplainView &&
                                                 handleOnclickExplainView(
                                                   item,
@@ -4267,7 +3534,6 @@ export default function ComplaintBody({
                             options={dataset_department}
                             column="department_name"
                             setvalue={(e) => {
-                              // //console.log(e); // ดูค่าของ e ที่ถูกส่งมาจาก AutocompleteComboBox
                               setclose_department_id(e);
                             }}
                             bgcolorTextField={
@@ -4357,8 +3623,6 @@ export default function ComplaintBody({
                         spacing={2}
                         sx={{ alignItems: "stretch" }}
                       >
-                        {/* ✅ Accordion แทน Paper */}
-                        {/* {dataReportTypeValue && ( */}
                         <Grid size={12}>
                           <Accordion
                             expanded={isMinimizefuappOpen}
@@ -4394,10 +3658,10 @@ export default function ComplaintBody({
                                   flexDirection: "column",
                                 }}
                               >
-                                {/* ✅ ใช้ RadioGroup แทน Checkbox */}
+
                                 <RadioGroup
                                   row
-                                  value={dataFuapp?.id || ""} // เก็บ id ของที่เลือก
+                                  value={dataFuapp?.id || ""}
                                   onChange={(e) => {
                                     const selectedId = e.target.value;
                                     const selectedItem = (
@@ -4405,7 +3669,7 @@ export default function ComplaintBody({
                                     ).find((item) => item.id === selectedId);
                                     setdataFuapp(
                                       selectedItem ? { ...selectedItem } : null
-                                    ); // เก็บแค่ 1 ค่า
+                                    );
                                   }}
                                 >
                                   <Grid container spacing={2}>
@@ -4433,9 +3697,9 @@ export default function ComplaintBody({
                                               bgcolor:
                                                 dataFuapp?.id === item.id
                                                   ? "#d0f0c0"
-                                                  : "#f5f5f5", // ✅ เขียวพาสเทลถ้าเลือก, เทาอ่อนถ้ายังไม่เลือก
+                                                  : "#f5f5f5",
                                               "&:hover": {
-                                                bgcolor: "#c8e6c9", // สี hover
+                                                bgcolor: "#c8e6c9",
                                               },
                                             }}
                                           />
@@ -4447,7 +3711,6 @@ export default function ComplaintBody({
                               </Box>
                             </AccordionDetails>
                           </Accordion>
-                          {/* {dataReportTypeValue && ( */}
                           <Accordion
                             expanded={isMinimizedeapp2Open}
                             onChange={() =>
@@ -4456,7 +3719,7 @@ export default function ComplaintBody({
                             sx={{
                               borderRadius: 2,
                               backgroundColor: "#fafafa",
-                              mt: 2, // <-- เพิ่ม margin-top
+                              mt: 2,
                             }}
                           >
                             <AccordionSummary
@@ -4488,7 +3751,7 @@ export default function ComplaintBody({
                                     alignItems: "flex-start",
                                   }}
                                 >
-                                  {/* Response Date Field - positioned after Emergency option */}
+
                                   <Grid size={12}>
                                     <FullWidthTextArea
                                       value={close_detail}
@@ -4512,8 +3775,6 @@ export default function ComplaintBody({
                               </Box>
                             </AccordionDetails>
                           </Accordion>
-                          {/* )} */}
-                          {/* {dataReportTypeValue && ( */}
                           <Accordion
                             expanded={isMinimizeotapp2Open}
                             onChange={() =>
@@ -4522,7 +3783,7 @@ export default function ComplaintBody({
                             sx={{
                               borderRadius: 2,
                               backgroundColor: "#fafafa",
-                              mt: 2, // <-- เพิ่ม margin-top
+                              mt: 2,
                             }}
                           >
                             <AccordionSummary
@@ -4603,7 +3864,7 @@ export default function ComplaintBody({
                                     display: "flex",
                                     alignItems: "center",
                                     pb: 2,
-                                    borderBottom: "2px solid #616161", // ✅ เส้นเต็มเหมือนเดิม
+                                    borderBottom: "2px solid #616161",
                                   }}
                                 >
                                   <Box
@@ -4640,7 +3901,7 @@ export default function ComplaintBody({
                                         lov1: p.lov1,
                                         lov2: p.lov2,
                                         lov_code: "CheckTypeFileImage",
-                                        isOther: p.lov2, // Use lov2 as isOther logic for 'Other' field
+                                        isOther: p.lov2,
                                       }))}
                                       grouped={grouped}
                                       action={action}
@@ -4721,7 +3982,6 @@ export default function ComplaintBody({
                                                       <IconButton
                                                         color="error"
                                                         onClick={() => {
-                                                          // หา index ที่ถูกต้องใน fileList
                                                           const actualIndex =
                                                             closeFiles.findIndex(
                                                               (f: any) =>
@@ -4730,17 +3990,6 @@ export default function ComplaintBody({
                                                                 f.attachmentType ===
                                                                 item.attachmentType
                                                             );
-                                                          // console.log(
-                                                          //   "🔍 Remove file debug:",
-                                                          //   {
-                                                          //     itemName: item.file.name,
-                                                          //     itemType:
-                                                          //       item.attachmentType,
-                                                          //     actualIndex,
-                                                          //     fileListLength:
-                                                          //       fileList.length,
-                                                          //   }
-                                                          // );
                                                           if (actualIndex !== -1) {
                                                             handleRemoveFile(actualIndex, "Close");
                                                           }
@@ -4751,23 +4000,9 @@ export default function ComplaintBody({
                                                     )}
 
                                                   {/* //ปุ่มดูไฟล์ */}
-
                                                   <IconButton
                                                     color="primary"
                                                     onClick={() => {
-                                                      // console.log(
-                                                      //   "full_path:",
-                                                      //   item.full_path
-                                                      // );
-                                                      // console.log(
-                                                      //   "file type:",
-                                                      //   typeof item.file
-                                                      // );
-                                                      // console.log(
-                                                      //   "file instanceof File:",
-                                                      //   item.file instanceof File
-                                                      // );
-
                                                       // ตรวจสอบว่าเป็นไฟล์ใหม่ (ไม่มี full_path) หรือไฟล์เก่า (มี full_path)
                                                       if (item.full_path) {
                                                         // ไฟล์เก่า - เปิดจาก NAS
@@ -4778,13 +4013,11 @@ export default function ComplaintBody({
                                                       } else if (
                                                         item.file instanceof File
                                                       ) {
-                                                        // ไฟล์ใหม่ - เปิดจาก File object
                                                         const fileUrl =
                                                           URL.createObjectURL(
                                                             item.file
                                                           );
                                                         window.open(fileUrl, "_blank");
-                                                        // Clean up URL after a delay to free memory
                                                         setTimeout(
                                                           () =>
                                                             URL.revokeObjectURL(
@@ -4792,10 +4025,6 @@ export default function ComplaintBody({
                                                             ),
                                                           1000
                                                         );
-                                                      } else {
-                                                        // console.log(
-                                                        //   "Cannot preview file - no full_path or File object"
-                                                        // );
                                                       }
                                                     }}
                                                   >
@@ -4803,15 +4032,11 @@ export default function ComplaintBody({
                                                   </IconButton>
 
                                                   {/* //ปุ่มดาวน์โหลดไฟล์ */}
-                                                  {/* {(action === "Read" || isActionExplain) && ( */}
                                                   {!isActionAdd && (
                                                     <IconButton
                                                       color="primary"
                                                       onClick={async () => {
-                                                        // console.log("Downloading file:", item);
-                                                        // console.log("Downloading item.full_path:", item.full_path);
                                                         if (!item.full_path) return;
-
                                                         try {
                                                           const response = await fetch(
                                                             item.full_path,
@@ -4838,12 +4063,9 @@ export default function ComplaintBody({
                                                             link
                                                           );
 
-                                                          URL.revokeObjectURL(url); // cleanup memory
-                                                        } catch (err) {
-                                                          console.error(
-                                                            "Download failed:",
-                                                            err
-                                                          );
+                                                          URL.revokeObjectURL(url);
+                                                        } catch {
+
                                                         }
                                                       }}
                                                     >
@@ -4875,9 +4097,7 @@ export default function ComplaintBody({
                               </Grid>
                             </AccordionDetails>
                           </Accordion>
-                          {/* )} */}
                         </Grid>
-                        {/* )} */}
                       </Grid>
                     </Paper>
                   </AccordionDetails>
@@ -4887,18 +4107,6 @@ export default function ComplaintBody({
           </Paper>
         </Paper>
       )}
-
-      {/* <FuncDialog
-              open={openExplainView}
-              dialogWidth="md"
-              openBottonHidden={false}
-              titlename={"[Explain] ดูข้อมูล"}
-              handleClose={()=>handleCloseExplainView}
-              // handleClose={() => handleOnclickCloseReadExplain(dataelement)}
-              handlefunction={ExplainGet}
-              buttonColor="success"
-              
-            /> */}
     </Box>
   );
 }
