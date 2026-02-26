@@ -4011,9 +4011,7 @@ export default function Complaint() {
     };
 
     const complaintRootId = resolveComplaintId();
-    //posion
     const formData = new FormData();
-    // 🟡 STEP 1 : ถ้าเป็นโหมด "EXPLAIN" = ขอก่อนทำ
     if (mode === "EXPLAIN") {
       FullSweetalert({
         title: "ยืนยันการปฏิเสธ?",
@@ -4029,24 +4027,14 @@ export default function Complaint() {
           ComplaintReturn("EXPLAIN_CONFIRM");
         }
       });
-
-      return; // หยุดโค้ด ไม่ให้ทำงานต่อ
+      return;
     }
-    // 🟢 STEP 2 : ถ้าเป็น "EXPLAIN_CONFIRM" = ทำงานจริง
+
     if (mode === "EXPLAIN_CONFIRM") {
       setIsLoadingScreen(true);
-      // if (isCallFuncLogOn)
-      //   console.log("🕑 ", dayjs().format("HH:mm:ss.SSS"), " [ComplaintReturn] Confirm mode");
       updateSessionStorageCurrentAccess("event_name", "ExplainReject");
 
-      // const tempComplaintStatus = await LovAll_Get(
-      //   "get_complaint_status_by_id",
-      //   user[0]?.employee_domain,
-      //   false,
-      //   dataelement?.complaint_status_id
-      // );
       const email_casNumber = dataelement?.cas_number || "-";
-
       const email_requrst_department_name =
         dataelement?.request_department_name ||
         dataset_department?.find(
@@ -4054,9 +4042,8 @@ export default function Complaint() {
         )?.department_name ||
         dataelement?.request_department_id ||
         "-";
-      const emailSubject = `[CAS] แจ้งเตือนการ ตอบรับ / รับทราบ รายละเอียดข้อร้องเรียน CAS No.${email_casNumber || "-"
-        }`;
 
+      const emailSubject = `[CAS] แจ้งเตือนการ ตอบรับ / รับทราบ รายละเอียดข้อร้องเรียน CAS No.${email_casNumber || "-"}`;
       const emailBodyHtml = `
       <div style="font-family: Arial, sans-serif; color: #333;">
         <p>
@@ -4147,17 +4134,12 @@ export default function Complaint() {
 
       formData.append("emailBody", emailBodyHtml);
       try {
-        // const response = await _POST(
-        //   complaintReturnPayload,
-        //   "/Complaint/ComplaintReturn"
-        // );
         const complaintFormData = new FormData();
         complaintFormData.append(
           "complaintReturnJson",
           JSON.stringify(complaintReturnPayload)
         );
         closeFiles?.forEach((f: any) => {
-          // เฉพาะไฟล์ใหม่ที่เป็น File object จริง
           if (f.file instanceof File) {
             complaintFormData.append("closeFiles", f.file);
           }
@@ -4203,7 +4185,6 @@ export default function Complaint() {
 
       const complaintRootId = resolveComplaintId();
 
-
       const tempExplainStatus = await LovAll_Get(
         "get_complaint_status_by_id",
         user[0]?.employee_domain,
@@ -4211,7 +4192,6 @@ export default function Complaint() {
         complaintMainData?.complaint_status_id
       );
 
-      // 🧩 Helper: หา explain_id ที่แท้จริงจาก dataelement
       const resolveExplainId = () => {
         return currentExplainForApproval?.id;
       };
@@ -4225,7 +4205,6 @@ export default function Complaint() {
         (val: any) => val["lov5"] == user[0].role_id
       );
 
-      // หา display text สำหรับ email
       const selectedApproveItem = (dataApprove_Combobox || []).find(
         (item: any) => item.lov_code === approveSelectionCode
       );
@@ -4249,8 +4228,7 @@ export default function Complaint() {
         complaintMainData?.respondent_department_id ||
         "-";
 
-      const email_casNumber =
-        dataelement?.cas_number || complaintMainData?.cas_number || "-";
+      const email_casNumber = dataelement?.cas_number || complaintMainData?.cas_number || "-";
       const emailSubject = `[CAS] แจ้งเตือนการ ตอบรับ / รับทราบ รายละเอียดข้อร้องเรียน CAS No.${email_casNumber || "-"
         }`;
 
@@ -4272,18 +4250,11 @@ export default function Complaint() {
          <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
           <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">อนุมัติหัวหน้าส่วน (Section Approve)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${approveDisplayText || "-"
-        }</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${approveDisplayText || "-"}</td>
           </tr>
            <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">หมายเหตุการปฏิเสธ (Rejection Detail)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${approve_detail || "-"
-        }</td>
-          </tr>
-          <tr>
-            <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">หมายเหตุเพิ่มเติม (Rejection Note)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${approve_note || "-"
-        }</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${approve_detail || "-"}</td>
           </tr>
         </table> 
         <h2 style="color: #64c768ff; border-bottom: 2px solid #64c768ff; padding-bottom: 10px;">
@@ -4303,18 +4274,15 @@ export default function Complaint() {
           </tr>
            <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ตำแหน่ง (Position)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_position || "-"
-        }</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_position || "-"}</td>
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">แผนก (Department)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.itasset_department_name || "-"
-        }</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.itasset_department_name || "-"}</td>
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">โรงงาน (Factory)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.domain_name || "-"
-        }</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.domain_name || "-"}</td>
           </tr>
         </table> 
         <p style="margin-top: 20px; font-size: 14px; color: #000000;">
@@ -4327,7 +4295,6 @@ export default function Complaint() {
       </p>
       </div>
     `;
-      // 🧩 สร้าง payload สำหรับ Approve
       const approvePayload = {
         ExplaintApproveModel: {
           id: tempid,
@@ -4371,19 +4338,13 @@ export default function Complaint() {
       };
 
       setIsLoadingScreen(true);
+
       try {
-        // 🧩 บันทึกข้อมูล Approve
         const response = await _POST(
           approvePayload,
           "/ExplaintApprove/ExplaintApproveAdd"
         );
-
-        // console.log(return_detail, "return_detail");
-
         if (response && response.status === "success") {
-          // ✅ หลังบันทึก Approve สำเร็จ → อัปเดตสถานะ Complaint
-          // 🧩 ใช้ complaint_id จาก currentExplainForApproval แทน dataelement?.id
-          // เพราะ dataelement?.id อาจเป็น explain id แทน complaint id
           const complaintId =
             currentExplainForApproval?.complaint_id ?? dataelement?.id;
 
@@ -4436,45 +4397,24 @@ export default function Complaint() {
               user_email: user[0]?.employee_email,
             },
           };
-          // const updateRes = await _POST(
-          //   complaintReturnPayload,
-          //   "/Complaint/ComplaintReturn"
-          // );
-          // console.log("updateRes", updateRes);
+
           const complaintFormData = new FormData();
           complaintFormData.append(
             "complaintReturnJson",
             JSON.stringify(complaintReturnPayload)
           );
           closeFiles?.forEach((f: any) => {
-            // เฉพาะไฟล์ใหม่ที่เป็น File object จริง
             if (f.file instanceof File) {
               complaintFormData.append("closeFiles", f.file);
             }
           });
-          // const response = await _POST(
-          //   complaintReturnPayload,
-          //   "/Complaint/ComplaintReturn"
-          // );
+
           const response = await _POST_FORMDATA(complaintFormData, "/Complaint/ComplaintReturn");
           FullSweetalert({
             title: "Success",
             text: `บันทึกการอนุมัติและอัปเดตสถานะสำเร็จ`,
             icon: "success",
           });
-          // if (updateRes && updateRes.status === "success") {
-          //   FullSweetalert({
-          //     title: "Success",
-          //     text: `บันทึกการอนุมัติและอัปเดตสถานะสำเร็จ`,
-          //     icon: "success",
-          //   });
-          // } else {
-          //   FullSweetalert({
-          //     title: "Warning",
-          //     text: `บันทึกการอนุมัติสำเร็จ แต่ไม่สามารถอัปเดตสถานะได้`,
-          //     icon: "warning",
-          //   });
-          // }
         } else {
           FullSweetalert({
             title: "Failed",
@@ -4502,7 +4442,6 @@ export default function Complaint() {
       }
 
       const tempid = uuidv4();
-
       const tempExplainStatus = await LovAll_Get(
         "get_complaint_status_by_id",
         user[0]?.employee_domain,
@@ -4510,7 +4449,6 @@ export default function Complaint() {
         complaintMainData?.complaint_status_id
       );
 
-      // 🧩 Helper: หา explain_id ที่แท้จริงจาก dataelement
       const resolveExplainId = () => {
         return currentExplainForApproval?.id;
       };
@@ -4523,7 +4461,6 @@ export default function Complaint() {
       );
       const explainRootId = resolveExplainId();
 
-      // หา display text สำหรับ email
       const selectedApproveItem = (dataApprove_Combobox || []).find(
         (item: any) => item.lov_code === approveSelectionCode
       );
@@ -4549,8 +4486,7 @@ export default function Complaint() {
 
       const email_casNumber =
         dataelement?.cas_number || complaintMainData?.cas_number || "-";
-      const emailSubject = `[CAS] แจ้งเตือนการ ตอบรับ / รับทราบ รายละเอียดข้อร้องเรียน CAS No.${email_casNumber || "-"
-        }`;
+      const emailSubject = `[CAS] แจ้งเตือนการ ตอบรับ / รับทราบ รายละเอียดข้อร้องเรียน CAS No.${email_casNumber || "-"}`;
 
       const emailBodyHtml = `
       <div style="font-family: Arial, sans-serif; color: #333;">
@@ -4570,18 +4506,11 @@ export default function Complaint() {
          <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
           <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">อนุมัติผู้จัดการโรงงาน (QMR)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${approveDisplayText || "-"
-        }</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${approveDisplayText || "-"}</td>
           </tr>
            <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">หมายเหตุการปฏิเสธ (Rejection Detail)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${qcapprove_detail || "-"
-        }</td>
-          </tr>
-          <tr>
-            <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">หมายเหตุเพิ่มเติม (Rejection Note)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${qcapprove_note || "-"
-        }</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${qcapprove_detail || "-"}</td>
           </tr>
         </table> 
         <h2 style="color: #64c768ff; border-bottom: 2px solid #64c768ff; padding-bottom: 10px;">
@@ -4601,18 +4530,15 @@ export default function Complaint() {
           </tr>
            <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ตำแหน่ง (Position)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_position || "-"
-        }</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_position || "-"}</td>
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">แผนก (Department)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.itasset_department_name || "-"
-        }</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.itasset_department_name || "-"}</td>
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">โรงงาน (Factory)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.domain_name || "-"
-        }</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.domain_name || "-"}</td>
           </tr>
         </table> 
         <p style="margin-top: 20px; font-size: 14px; color: #000000;">
@@ -4626,7 +4552,6 @@ export default function Complaint() {
       </div>
     `;
 
-      // 🧩 สร้าง payload สำหรับ Approve
       const approvePayload = {
         ExplaintApproveModel: {
           id: tempid,
@@ -4672,15 +4597,12 @@ export default function Complaint() {
       setIsLoadingScreen(true);
 
       try {
-        // 🧩 บันทึกข้อมูล Approve
         const response = await _POST(
           approvePayload,
           "/ExplaintApprove/ExplaintApproveAdd"
         );
 
         if (response && response.status === "success") {
-          // 🧩 ใช้ complaint_id จาก currentExplainForApproval แทน dataelement?.id
-          // เพราะ dataelement?.id อาจเป็น explain id แทน complaint id
           const complaintId =
             currentExplainForApproval?.complaint_id ?? dataelement?.id;
 
@@ -4730,10 +4652,6 @@ export default function Complaint() {
             },
           };
 
-          // const updateRes = await _POST(
-          //   complaintReturnPayload,
-          //   "/Complaint/ComplaintReturn"
-          // );
           const complaintFormData = new FormData();
           complaintFormData.append(
             "complaintReturnJson",
@@ -4742,10 +4660,7 @@ export default function Complaint() {
           closeFiles?.forEach((f: any) => {
             complaintFormData.append("closeFiles", f.file);
           });
-          // const response = await _POST(
-          //   complaintReturnPayload,
-          //   "/Complaint/ComplaintReturn"
-          // );
+
           const response = await _POST_FORMDATA(complaintFormData, "/Complaint/ComplaintReturn");
 
           FullSweetalert({
@@ -4753,19 +4668,6 @@ export default function Complaint() {
             text: `บันทึกการอนุมัติและอัปเดตสถานะสำเร็จ`,
             icon: "success",
           });
-          // if (updateRes && updateRes.status === "success") {
-          //   FullSweetalert({
-          //     title: "Success",
-          //     text: `บันทึกการอนุมัติและอัปเดตสถานะสำเร็จ`,
-          //     icon: "success",
-          //   });
-          // } else {
-          //   FullSweetalert({
-          //     title: "Warning",
-          //     text: `บันทึกการอนุมัติสำเร็จ แต่ไม่สามารถอัปเดตสถานะได้`,
-          //     icon: "warning",
-          //   });
-          // }
         } else {
           FullSweetalert({
             title: "Failed",
@@ -4786,7 +4688,6 @@ export default function Complaint() {
         ComplaintGet();
       }
     } else if (mode == "CLOSE") {
-      // 🧩 Helper: หา explain_id ที่แท้จริงจาก dataelement
       updateSessionStorageCurrentAccess("event_name", "CloseAdd");
       if (!validateClose()) {
         return;
@@ -4808,7 +4709,6 @@ export default function Complaint() {
       const complaintId =
         currentExplainForApproval?.complaint_id ?? dataelement?.id;
 
-      // หา display text สำหรับ email
       const selectedApproveItem = (dataApprove_Combobox || []).find(
         (item: any) => item.lov_code === approveSelectionCode
       );
@@ -4834,8 +4734,7 @@ export default function Complaint() {
 
       const email_casNumber =
         dataelement?.cas_number || complaintMainData?.cas_number || "-";
-      const emailSubject = `[CAS] แจ้งเตือนการ ตอบรับ / รับทราบ รายละเอียดข้อร้องเรียน CAS No.${email_casNumber || "-"
-        }`;
+      const emailSubject = `[CAS] แจ้งเตือนการ ตอบรับ / รับทราบ รายละเอียดข้อร้องเรียน CAS No.${email_casNumber || "-"}`;
 
       const emailBodyHtml = `
       <div style="font-family: Arial, sans-serif; color: #333;">
@@ -4855,18 +4754,11 @@ export default function Complaint() {
         <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
           <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; vertical-align: top; border: 1px solid #ddd;">อนุมัติหัวหน้าส่วน (Section Approve)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${approveDisplayText || "-"
-        }</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${approveDisplayText || "-"}</td>
           </tr>
            <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">หมายเหตุการปฏิเสธ (Rejection Detail)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${close_detail || "-"
-        }</td>
-          </tr>
-          <tr>
-            <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">หมายเหตุเพิ่มเติม (Rejection Note)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${close_note || "-"
-        }</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${close_detail || "-"}</td>
           </tr>
         </table> 
         <h2 style="color: #64c768ff; border-bottom: 2px solid #64c768ff; padding-bottom: 10px;">
@@ -4886,18 +4778,15 @@ export default function Complaint() {
           </tr>
            <tr>
             <td style="padding: 8px; font-weight: bold; width: 40%; background-color: #f9f9f9; border: 1px solid #ddd;">ตำแหน่ง (Position)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_position || "-"
-        }</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.employee_position || "-"}</td>
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">แผนก (Department)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.itasset_department_name || "-"
-        }</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.itasset_department_name || "-"}</td>
           </tr>
           <tr>
             <td style="padding: 8px; font-weight: bold; background-color: #f9f9f9; border: 1px solid #ddd;">โรงงาน (Factory)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.domain_name || "-"
-        }</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${user[0]?.domain_name || "-"}</td>
           </tr>
         </table> 
         <p style="margin-top: 20px; font-size: 14px; color: #000000;">
@@ -4929,10 +4818,6 @@ export default function Complaint() {
           complaint_status_id: tempExplainStatus[0]?.lov2,
           close_status: approveSelectionCode,
           mode: mode,
-
-          // respondent_company_id: dataelement?.respondent_company_id,
-          // respondent_domain_id: dataelement?.respondent_domain_id,
-          // respondent_department_id: dataelement?.respondent_department_id,
 
           request_company_id: dataelement?.respondent_company_id?.company_id
             ? Number(dataelement.respondent_company_id.company_id)
@@ -4983,7 +4868,6 @@ export default function Complaint() {
           user_position: user[0]?.employee_position,
           user_email: user[0]?.employee_email,
         },
-
         emailBody: emailBodyHtml,
         emailSubject: emailSubject,
       };
@@ -4995,17 +4879,12 @@ export default function Complaint() {
           JSON.stringify(complaintReturnPayload)
         );
         closeFiles?.forEach((f: any) => {
-          // เฉพาะไฟล์ใหม่ที่เป็น File object จริง
           if (f.file instanceof File) {
             complaintFormData.append("closeFiles", f.file);
           }
         });
-        // const response = await _POST(
-        //   complaintReturnPayload,
-        //   "/Complaint/ComplaintReturn"
-        // );
-        const response = await _POST_FORMDATA(complaintFormData, "/Complaint/ComplaintReturn");
 
+        const response = await _POST_FORMDATA(complaintFormData, "/Complaint/ComplaintReturn");
         if (response && response.status === "success") {
           FullSweetalert({
             title: "Success",
@@ -5018,11 +4897,8 @@ export default function Complaint() {
             text: `บันทึกไม่ข้อมูลสำเร็จ`,
             icon: "error",
           });
-          // console.log("⚠️ Add failed:", response);
-          // console.log("❗ ComplaintReturn response:", response);
         }
-      } catch (error) {
-        // console.error("Upload failed:", error);
+      } catch {
       } finally {
         setIsLoadingScreen(false);
         handleClose();
@@ -7441,7 +7317,7 @@ export default function Complaint() {
     // ListSearchGet();
   };
 
-  // Close Explain View Dialog Handler (Back button behavior)
+
   const handleCloseExplainView = () => {
     if (isCallFuncLogOn)
       console.log(
@@ -7449,7 +7325,9 @@ export default function Complaint() {
         dayjs().format("HH:mm:ss.SSS"),
         " [Calling Function]  :  handleCloseExplainView"
       );
+
     useEffect;
+
     if (complaintMainData) {
       setdataelement(complaintMainData);
     }

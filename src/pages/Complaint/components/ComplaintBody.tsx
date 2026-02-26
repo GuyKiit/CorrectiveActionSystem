@@ -1538,6 +1538,7 @@ export default function ComplaintBody({
       );
       setcomplaint_status_label(dataelement?.complaint_status_label);
 
+
       const ct = setComplaintType(dataelement?.complaintType);
       setdataComplaintType(ct);
 
