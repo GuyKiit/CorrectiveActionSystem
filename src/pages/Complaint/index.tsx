@@ -8001,16 +8001,6 @@ export default function Complaint() {
             />
           </Grid>
 
-
-
-          <Grid size={4}>
-            <DesktopDatePickers
-              labelName={"วันที่ออกเอกสาร (Document Issuance Date)"}
-              value={documentDateSearch}
-              handleChange={(val) => setdocumentDateSearch(val ?? null)}
-            />
-          </Grid>
-
           <Grid size={4}>
             <AutocompleteComboBox
               value={
@@ -8027,6 +8017,14 @@ export default function Complaint() {
                   dataset_stepcomplaint: val?.lov_code || "",
                 });
               }}
+            />
+          </Grid>
+
+          <Grid size={4}>
+            <DesktopDatePickers
+              labelName={"วันที่ออกเอกสาร (Document Issuance Date)"}
+              value={documentDateSearch}
+              handleChange={(val) => setdocumentDateSearch(val ?? null)}
             />
           </Grid>
 
