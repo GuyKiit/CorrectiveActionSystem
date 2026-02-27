@@ -2354,7 +2354,7 @@ export default function ExplaintBody({
                     expanded={isMinimizefileOpen}
                     onChange={() => setisMinimizeFileOpen(!isMinimizefileOpen)}
                     sx={{
-                      borderRadius: 3,
+                      borderRadius: 1,
                       background:
                         "linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%)",
                       border: "1px solid #616161",
@@ -2374,10 +2374,7 @@ export default function ExplaintBody({
                             display: "flex",
                             alignItems: "center",
                             pb: 2,
-                            borderBottom: "none", // 👈 ปิดไว้ก่อน
-                            ".Mui-expanded &": {
-                            borderBottom: "2px solid #616161", // 👈 แสดงเฉพาะตอนเปิด
-                        },
+                        borderBottom: isMinimizefileOpen ? "2px solid #616161" : "none",
                           }}
                         >
                           <Box
@@ -2744,14 +2741,14 @@ export default function ExplaintBody({
                   </Box>
                 </Box>
 
-                <Grid container spacing={2} sx={{ alignItems: "stretch" }}>
+                <Grid container spacing={1} sx={{ alignItems: "stretch" }}>
                   <Grid size={12}>
                     <Accordion
                       expanded={isMinimizesectionradioOpen}
                       onChange={() =>
                         setisMinimizeSectionradioOpen(!isMinimizesectionradioOpen)
                       }
-                      sx={{ borderRadius: 1, backgroundColor: "#fafafa" }}
+                      sx={{ borderRadius: 1, backgroundColor: "#fafafa", mb: 2 }}
                     >
                       <AccordionSummary
                         expandIcon={<ExpandMoreIcon />}
@@ -2827,6 +2824,7 @@ export default function ExplaintBody({
                       </AccordionDetails>
                     </Accordion>
                     <Collapse
+                      sx={{ mt: 2 }} 
                       in={
                         dataSectionapp?.lov_code === "APPROVE" ||
                         dataSectionapp?.lov_code === "ADD" ||
@@ -2835,7 +2833,7 @@ export default function ExplaintBody({
                       timeout={400}
                       unmountOnExit
                     >
-                      <div style={{ marginBottom: '24px' }}>
+                      <div>
                         <Accordion
                           expanded={isMinimizedeappOpen}
                           onChange={() =>
@@ -2844,7 +2842,6 @@ export default function ExplaintBody({
                           sx={{
                             borderRadius: 2,
                             backgroundColor: "#fafafa",
-                            mt: 2,
                             border: validateText?.ScDetail
                               ? "1px solid #f44336"
                               : "1px solid #e0e0e0",
@@ -2918,6 +2915,7 @@ export default function ExplaintBody({
                       </div>
                     </Collapse>
                     <Collapse
+                      sx={{ mt: 2 }} 
                       in={dataSectionapp?.lov_code === "APPROVE"}
                       timeout={400}
                       unmountOnExit
@@ -2931,7 +2929,7 @@ export default function ExplaintBody({
                           sx={{
                             borderRadius: 2,
                             backgroundColor: "#fafafa",
-                            mt: 1,
+                            mb: 2,
                             border: validateText?.ScNote
                               ? "1px solid #f44336"
                               : "1px solid #e0e0e0",
@@ -3171,7 +3169,7 @@ export default function ExplaintBody({
                         onChange={() =>
                           setisMinimizeQmrradioOpen(!isMinimizeqmrradioOpen)
                         }
-                        sx={{ borderRadius: 2, backgroundColor: "#fafafa" }}
+                        sx={{ borderRadius: 1, backgroundColor: "#fafafa" }}
                       >
                         <AccordionSummary
                           expandIcon={<ExpandMoreIcon />}
@@ -3251,6 +3249,7 @@ export default function ExplaintBody({
                       </Accordion>
 
                       <Collapse
+                        sx={{ mt: 2 }} 
                         in={
                           dataQcapp?.lov_code === "APPROVE" ||
                           dataQcapp?.lov_code === "ADD" ||
@@ -3259,7 +3258,7 @@ export default function ExplaintBody({
                         timeout={400}
                         unmountOnExit
                       >
-                        <div style={{ marginBottom: '24px' }}>
+                        <div>
                           <Accordion
                             expanded={isMinimizeqmrdetailOpen}
                             onChange={() =>
@@ -3268,7 +3267,6 @@ export default function ExplaintBody({
                             sx={{
                               borderRadius: 2,
                               backgroundColor: "#fafafa",
-                              mt: 2,
                               border: validateText?.QcDetail
                                 ? "1px solid #f44336"
                                 : "1px solid #e0e0e0",
@@ -3343,6 +3341,7 @@ export default function ExplaintBody({
                       </Collapse>
 
                       <Collapse
+                        sx={{ mt: 2 }} 
                         in={dataQcapp?.lov_code === "APPROVE"}
                         timeout={400}
                         unmountOnExit
@@ -3356,7 +3355,6 @@ export default function ExplaintBody({
                             sx={{
                               borderRadius: 2,
                               backgroundColor: "#fafafa",
-                              mt: 2,
                               border: validateText?.QcNote
                                 ? "1px solid #f44336"
                                 : "1px solid #e0e0e0",
@@ -3729,6 +3727,7 @@ export default function ExplaintBody({
                   </Accordion>
                             
                   <Collapse
+                    sx={{ mt: 2 }} 
                     in={
                       followup_approve?.lov_code === "APPROVE" ||
                       followup_approve?.lov_code === "ADD" ||
@@ -3746,7 +3745,6 @@ export default function ExplaintBody({
                         sx={{
                           borderRadius: 2,
                           backgroundColor: "#fafafa",
-                          mt: 2, // <-- เพิ่ม margin-top
                           border: validateText?.CloseDetail
                             ? "1px solid #f44336"
                             : "1px solid #e0e0e0",
@@ -3824,6 +3822,7 @@ export default function ExplaintBody({
                   </Collapse>
 
                   <Collapse
+                    sx={{ mt: 2 }} 
                     in={followup_approve?.lov_code === "APPROVE"}
                     timeout={400}
                     unmountOnExit
@@ -3837,7 +3836,6 @@ export default function ExplaintBody({
                         sx={{
                           borderRadius: 2,
                           backgroundColor: "#fafafa",
-                          mt: 2,
                           border: validateText?.CloseNote
                             ? "1px solid #f44336"
                             : "1px solid #e0e0e0",
@@ -3921,7 +3919,7 @@ export default function ExplaintBody({
                         "linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%)",
                       border: "1px solid #616161",
                       boxShadow: "0 4px 12px rgba(158,158,158,0.1)",
-                      mt: 3,
+                      mt: 1,
                     }}
                   >
                     <AccordionSummary
