@@ -282,7 +282,7 @@ export default function ExplaintBody({
     close_detail,
     close_note,
     return_detail,
-    dataFuapp, //มันคือ Radio Close 
+    followup_approve, //มันคือ Radio Close 
     approve_name,
     approve_company_id,
     approve_department_id,
@@ -357,7 +357,7 @@ export default function ExplaintBody({
     setqcapprove_date,
     setqcapprove_detail,
     setqcapprove_note,
-    setdataFuapp, //มันคือ Radio Close 
+    setfollowup_approve, //มันคือ Radio Close 
     setexplainFiles,
     setcloseFiles,
   } = useListComplaint();
@@ -428,7 +428,7 @@ export default function ExplaintBody({
   const isApproveqmr = dataQcapp?.lov_code === "APPROVE";
   const showPlaceholderqmrdetail = isActionExplainApproveQcAdd && !qcapprove_detail;
   const showPlaceholderqmrnote = isActionExplainApproveQcAdd && !qcapprove_note;
-  const isApproveClose = dataFuapp?.lov_code === "APPROVE";
+  const isApproveClose = followup_approve?.lov_code === "APPROVE";
   const showPlaceholderclosedetail = isActionCloseAdd && !close_detail;
   const showPlaceholderclosenote = isActionCloseAdd && !close_note;
   const isFollowUpDate = dataelement?.follow_up_date_condition === "1";
@@ -1321,7 +1321,7 @@ export default function ExplaintBody({
       setclose_position(c.return_position ?? "");
       setclose_email(c.return_email ?? "");
       setclose_date(c.return_datetime ? dayjs(c.return_datetime) : null);
-      setdataFuapp(
+      setfollowup_approve(
         dataApprove_Combobox.find((x: any) => x.lov_code === c.close_status) || null
       );
       setclose_detail(c.return_detail ?? "");
@@ -1342,7 +1342,7 @@ export default function ExplaintBody({
       setclose_position(c.close_position || "");
       setclose_email(c.close_email || "");
       setclose_date(dayjs(c.close_date));
-      setdataFuapp(
+      setfollowup_approve(
         dataApprove_Combobox.find((x: any) => x.lov_code === c.close_status) || null
       );
       setclose_detail(c.close_detail || "");
@@ -3679,7 +3679,7 @@ export default function ExplaintBody({
                       >
                         <RadioGroup
                           row
-                          value={dataFuapp?.id || ""}
+                          value={followup_approve?.id || ""}
                           onChange={(e) => {
                             const selectedId = e.target.value;
                             const selectedItem = (
@@ -3688,7 +3688,7 @@ export default function ExplaintBody({
                             if (onApproveChange) {
                               onApproveChange(selectedItem || null);
                             }
-                            setdataFuapp(
+                            setfollowup_approve(
                               selectedItem
                                 ? { ...selectedItem }
                                 : null
@@ -3709,11 +3709,11 @@ export default function ExplaintBody({
                                   py: 1,
                                   borderRadius: 2,
                                   border:
-                                    dataFuapp?.id === item.id
+                                    followup_approve?.id === item.id
                                       ? "2px solid #4caf50"
                                       : "none",
                                   bgcolor:
-                                    dataFuapp?.id === item.id
+                                    followup_approve?.id === item.id
                                       ? "#d0f0c0"
                                       : "#f5f5f5",
                                   "&:hover": {
@@ -3730,9 +3730,9 @@ export default function ExplaintBody({
                             
                   <Collapse
                     in={
-                      dataFuapp?.lov_code === "APPROVE" ||
-                      dataFuapp?.lov_code === "ADD" ||
-                      dataFuapp?.lov_code === "REJECT"
+                      followup_approve?.lov_code === "APPROVE" ||
+                      followup_approve?.lov_code === "ADD" ||
+                      followup_approve?.lov_code === "REJECT"
                     }
                     timeout={400}
                     unmountOnExit
@@ -3766,8 +3766,8 @@ export default function ExplaintBody({
                             }}
                           >
                             {/* หมายเหตุการปิดรายการ */}
-                            {getCloseDetailLabel(dataFuapp)}
-                            {dataFuapp?.lov_code !== "APPROVE" && (<span style={{ color: "red" }}> *</span>)}
+                            {getCloseDetailLabel(followup_approve)}
+                            {followup_approve?.lov_code !== "APPROVE" && (<span style={{ color: "red" }}> *</span>)}
                           </Typography>
                         </AccordionSummary>
 
@@ -3790,8 +3790,8 @@ export default function ExplaintBody({
                                   placeholderlabel={
                                     showPlaceholderclosedetail
                                       ? isApproveClose
-                                        ? `${getApproveDetailLabel(dataFuapp)} (ถ้ามี)`
-                                        : `กรอก${getApproveDetailLabel(dataFuapp)}`
+                                        ? `${getApproveDetailLabel(followup_approve)} (ถ้ามี)`
+                                        : `กรอก${getApproveDetailLabel(followup_approve)}`
                                       : ""
                                   }
                                   onchange={(e) => {
@@ -3824,7 +3824,7 @@ export default function ExplaintBody({
                   </Collapse>
 
                   <Collapse
-                    in={dataFuapp?.lov_code === "APPROVE"}
+                    in={followup_approve?.lov_code === "APPROVE"}
                     timeout={400}
                     unmountOnExit
                   >
@@ -3857,7 +3857,7 @@ export default function ExplaintBody({
                             }}
                           >
                             หมายเหตุเพิ่มเติม
-                            {dataFuapp?.lov_code !== "APPROVE" && (<span style={{ color: "red" }}> *</span>)}
+                            {followup_approve?.lov_code !== "APPROVE" && (<span style={{ color: "red" }}> *</span>)}
                           </Typography>
                         </AccordionSummary>
 

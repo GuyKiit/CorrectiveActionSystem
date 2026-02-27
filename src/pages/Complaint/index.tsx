@@ -479,7 +479,7 @@ export default function Complaint() {
     dataSectionapp,
     setdataSectionapp,
     setdataQcapp,
-    setdataFuapp,//มันคือ Radio Close 
+    setfollowup_approve,//มันคือ Radio Close 
     setdataDecision_Combobox,
     setdataApprove_Combobox,
     setdataDecision,
@@ -791,7 +791,7 @@ export default function Complaint() {
     setapprove_email("");
 
     // เคลียร์ข้อมูล Approve
-    setdataFuapp(null);
+    setfollowup_approve(null);
     setapprove_date(null);
     setapprove_detail("");
     setapprove_note("");
@@ -7559,7 +7559,7 @@ export default function Complaint() {
     setOpenUpload(false);
     setOpenPrint(false);
     setApproveSelectionCode(null); // รีเซ็ตค่าเมื่อปิด Dialog
-    //setdataFuapp(null); // รีเซ็ตค่า Approve ที่เลือกไว้
+    //setfollowup_approve(null); // รีเซ็ตค่า Approve ที่เลือกไว้
 
     if (isAcknowledgeUpdated) {
       ComplaintGet();

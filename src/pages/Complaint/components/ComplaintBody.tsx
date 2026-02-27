@@ -333,7 +333,7 @@ export default function ComplaintBody({
     dataset_domain,
     dataset_domainrelate,
     complaintFiles,
-    dataFuapp,//มันคือ Radio Close 
+    followup_approve,
     domainrelate,
     departmentrelate,
     department,
@@ -433,7 +433,7 @@ export default function ComplaintBody({
     setdataset_domain,
     setdataset_domainrelate,
     setcomplaintFiles,
-    setdataFuapp, //มันคือ Radio Close 
+    setfollowup_approve, //มันคือ Radio Close 
     set_domainrelate,
     set_departmentrelate,
     set_department,
@@ -952,7 +952,7 @@ export default function ComplaintBody({
     setclose_position("");
     setclose_email("");
     setclose_date(null);
-    setdataFuapp(null);
+    setfollowup_approve(null);
     setclose_detail("");
     setclose_note("");
   };
@@ -2098,7 +2098,7 @@ export default function ComplaintBody({
       setclose_position(close?.close_position ? close?.close_position : "");
       setclose_email(close?.close_email ? close?.close_email : "");
       setclose_date(dayjs(close.close_date));
-      setdataFuapp(
+      setfollowup_approve(
         dataApprove_Combobox.find(
           (item: any) => item.lov_code === close.close_status
         ) || null
@@ -4373,13 +4373,13 @@ export default function ComplaintBody({
                                 {/* ✅ ใช้ RadioGroup แทน Checkbox */}
                                 <RadioGroup
                                   row
-                                  value={dataFuapp?.id || ""} // เก็บ id ของที่เลือก
+                                  value={followup_approve?.id || ""} // เก็บ id ของที่เลือก
                                   onChange={(e) => {
                                     const selectedId = e.target.value;
                                     const selectedItem = (
                                       filteredFuApprove || []
                                     ).find((item) => item.id === selectedId);
-                                    setdataFuapp(
+                                    setfollowup_approve(
                                       selectedItem ? { ...selectedItem } : null
                                     ); // เก็บแค่ 1 ค่า
                                   }}
@@ -4403,11 +4403,11 @@ export default function ComplaintBody({
                                               py: 1,
                                               borderRadius: 2,
                                               border:
-                                                dataFuapp?.id === item.id
+                                                followup_approve?.id === item.id
                                                   ? "2px solid #424242"
                                                   : "none",
                                               bgcolor:
-                                                dataFuapp?.id === item.id
+                                                followup_approve?.id === item.id
                                                   ? "#d0f0c0"
                                                   : "#f5f5f5", // ✅ เขียวพาสเทลถ้าเลือก, เทาอ่อนถ้ายังไม่เลือก
                                               "&:hover": {
@@ -4448,8 +4448,8 @@ export default function ComplaintBody({
                                   color: "#333",
                                 }}
                               >
-                                {getCloseDetailLabel(dataFuapp)}
-                                {dataFuapp?.lov_code !== "APPROVE" && (<span style={{ color: "red" }}> *</span>)}
+                                {getCloseDetailLabel(followup_approve)}
+                                {followup_approve?.lov_code !== "APPROVE" && (<span style={{ color: "red" }}> *</span>)}
                               </Typography>
                             </AccordionSummary>
 
@@ -4515,7 +4515,7 @@ export default function ComplaintBody({
                                 }}
                               >
                                 หมายเหตุเพิ่มเติม
-                                {dataFuapp?.lov_code !== "APPROVE" && (<span style={{ color: "red" }}> *</span>)}
+                                {followup_approve?.lov_code !== "APPROVE" && (<span style={{ color: "red" }}> *</span>)}
                               </Typography>
                             </AccordionSummary>
 
