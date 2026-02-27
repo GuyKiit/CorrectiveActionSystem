@@ -661,7 +661,7 @@ export default function DepartmentSetting() {
       let response = await _POST(dataset, "/DeptSetup/DeptSetupGet");
       // console.log("step:2 ผลลัพธ์ที่ได้จาก API /DeptSetup/DeptSetupGet ", response);
       if (response && response.status === "success") {
-        
+
         setIsLoadingScreen(false);
         const responseData: any = [];
         if (Array.isArray(response.data)) {
@@ -1101,11 +1101,9 @@ export default function DepartmentSetting() {
               }}
             />
           </Grid> */}
+
           <Grid size={4}>
             <AutocompleteComboBox
-              // value={company?.find(
-              //   (item: any) => item.company_id === TextNameSearch.company_search
-              // ) || null}
               value={
                 company?.find(
                   (item: any) =>
@@ -1123,7 +1121,6 @@ export default function DepartmentSetting() {
               setvalue={(val) => {
                 handleCompanyChange(val);
                 setTextNameSearch({
-
                   ...TextNameSearch,
                   company_search: val?.company_id || "", // เก็บแค่ id เป็น string
                 })
@@ -1131,6 +1128,7 @@ export default function DepartmentSetting() {
               readonly={!isItAdmin}
             />
           </Grid>
+
           <Grid size={4}>
             <AutocompleteComboBox
               // value={domain?.find(

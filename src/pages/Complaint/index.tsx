@@ -1214,24 +1214,6 @@ export default function Complaint() {
           const tempComplaintStatus = response.data?.filter((item: any) => item.id === complaint_status_id);
 
           return tempComplaintStatus[0];
-
-          // ✅ จัดกลุ่มตาม lov_type
-          // const grouped = lovData.reduce((acc: any, item: any) => {
-          //   if (!acc[item.lov_type]) acc[item.lov_type] = [];
-          //   acc[item.lov_type].push(item);
-          //   return acc;
-          // }, {});
-
-          // // return grouped["complaint_status"].filter((item: any) => item.lov7 === respondent_domain_id?.domain_id)
-          // return isItAdmin
-          //     ? grouped["complaint_status"] // 🔥 admin เห็นทุก domain
-          //     : grouped["complaint_status"].filter(
-          //       (item: any) =>
-          //         item.lov7 ===
-          //         (typeof respondent_domain_id === "object"
-          //           ? respondent_domain_id?.domain_id
-          //           : respondent_domain_id)
-          //     );
         }
 
       } catch (e) {
@@ -1394,38 +1376,7 @@ export default function Complaint() {
     }
   };
 
-  // Function - Get Domain
-  const DomainGet = async () => {
-    // if (isCallFuncLogOn)
-    //   console.log(
-    //     "🕑 ",
-    //     dayjs().format("HH:mm:ss.SSS"),
-    //     " [Calling Function]  :  DomainGet"
-    //   );
 
-    try {
-      const dataset = {
-        company_id: user[0]?.itasset_company_id,
-      };
-      const response = await _POST(dataset, "/Complaint/CasDomainGet");
-      if (response && response.status === "success") {
-        // //console.log("❇️ Call [Complaint/CasDomainGet] -> Domain_Get :",response.data);
-
-        // console.log("❇️ Call [Complaint/DomainGet] -> DomainGet :",response.data );
-        if (Array.isArray(response.data)) {
-          let domain = response.data.filter(
-            (item: any) => item.domain_id === user[0]?.employee_domain
-          );
-          if (domain) {
-            setdataset_domain(domain);
-            // setdataset_company(domain);
-          }
-        }
-      }
-    } catch (e) {
-      //console.log("error:", e);
-    }
-  };
 
   // Function - Get Company
   const CompanyGet = async (action?: string) => {
@@ -1714,8 +1665,6 @@ export default function Complaint() {
     //     dayjs().format("HH:mm:ss.SSS"),
     //     " [Calling Function]  :  ComplaintGet"
     //   );
-    // console.log("step:2 เรียกฟังก์ชั่น ComplaintGet ใหม่");
-    //console.log("⭐️⭐️⭐️⭐️ CHECK DATA COMPLAINT ACTION : ", dataset_complaintAction, "⭐️⭐️⭐️");
     updateSessionStorageCurrentAccess("event_name", "ComplaintGet");
 
     setIsLoadingScreen(false);
@@ -1731,9 +1680,12 @@ export default function Complaint() {
       user_id: user[0]?.employee_username,
       domain_id: user[0]?.employee_domain,
       department_id: user[0]?.itasset_department_id,
-      company_id: user[0]?.itasset_company_id, //@param Fixed
-      // application_code: app?.app_name || "",
+      company_id: user[0]?.itasset_company_id,
       //=======================================================
+      company: TextNameSearch.dataset_company &&
+        dataset_company?.some((item: any) => String(item.company_id) === String(TextNameSearch.dataset_company))
+        ? String(TextNameSearch.dataset_company)
+        : null,
       domain: TextNameSearch.dataset_domain
         ? TextNameSearch.dataset_domain
         : null,
@@ -1759,12 +1711,10 @@ export default function Complaint() {
         : null,
     };
     console.log("😫SEARCH PAYLOAD:", TextNameSearch);
-    // console.log("step:2 dataset ก่อนส่ง API /Complaint/ComplaintGet ", dataset);
     try {
       //=========================================================================
       let response = await _POST(dataset, "/Complaint/ComplaintGet");
       //=========================================================================
-
 
       if (response && response.status === "success") {
 
@@ -1772,10 +1722,6 @@ export default function Complaint() {
         const responseData: any = [];
 
         if (Array.isArray(response.data)) {
-
-          // console.log("👹👹👹 dataset_reporttype_inactive", dataset_reporttype_inactive);
-          // console.log("👹 response.data.report_type", response.data);
-
           // 🔹 กรองข้อมูลก่อน
           const filteredData = response.data.filter(
             (item: any) =>
@@ -1801,8 +1747,6 @@ export default function Complaint() {
               (val: any) => val["lov7"] == el.respondent_domain_id
             );
 
-            // console.log("1️⃣1️⃣1️⃣ ####### [MASTER] tempDataStatus1 [Complaint Status] : ", tempDataStatus1, "#######");
-
             // --------------------------------------------------------------------------
 
             // [SELECT] Report Type (From Report Type / INACTIVE)
@@ -1810,29 +1754,15 @@ export default function Complaint() {
               (val: any) => val["id"] === el.report_type
             );
 
-            // console.log("2️⃣2️⃣2️⃣ ####### [SELECT] tempApproveStep [Approve Step] : ", tempApproveStep, "#######");
-
             // --------------------------------------------------------------------------
 
             // [MASTER] Complaint Status (By Report Type Approve Step)
             const filteredComplaintStatus = getFilteredComplaintStatus(tempDataStatus1, tempApproveStep[0]?.lov5);
 
-            // console.log("3️⃣3️⃣3️⃣ ####### [MASTER] filteredComplaintStatus : ", filteredComplaintStatus, "#######");
-
-            // --------------------------------------------------------------------------
-
-            // [MASTER] Group of Approve Step (From Master Complaint Status // LEAD)
-            const filteredApproveStep = filteredComplaintStatus.filter(
-              (val: any) => val["lov3"] !== null
-            );
-
-            // console.log("4️⃣4️⃣4️⃣ ####### [MASTER] filteredApproveStep : ", filteredApproveStep, "#######");
-
             // --------------------------------------------------------------------------
 
             // [MASTER]
             const temp = (filteredComplaintStatus || []).filter(
-              //const tempApproveInfo = datastatus.filter(
               (val: any) =>
                 val["id"] == el.complaint_status_id && val["lov3"] !== null
             );
@@ -7616,6 +7546,7 @@ export default function Complaint() {
     };
     fetchSCApprove();
   }, [currentExplainForApproval, dataApprove_Combobox]);
+
   React.useEffect(() => {
     if (!TextNameSearch.dataset_company && user[0]?.itasset_company_id) {
       setTextNameSearch((prev) => ({
@@ -7705,6 +7636,14 @@ export default function Complaint() {
         : item.lov_code,
     }));
   }, [search_status_code]);
+
+  const reportTypeOptions = React.useMemo(() => {
+    return (search_report_code || []).map((item: any) => ({
+      id: item.id,
+      lov_code: item.lov_code,
+      displayText: item.lov_code,
+    }));
+  }, [search_report_code]);
 
 
   // =====================================================================================================
@@ -7806,38 +7745,109 @@ export default function Complaint() {
           </Grid>
 
           <Grid size={4}>
-            <AutocompleteComboBox
-              value={
-                search_report_code?.find((item: any) => {
-                  // แปลง "101,102,103" เป็น array แล้วเช็คว่ามี id ของ item นี้ไหม
-                  const TempReportID = TextNameSearch.report_code
-                    ? TextNameSearch.report_code.split(',')
-                    : [];
-                  return TempReportID.includes(String(item.id));
-                }) || null
+            <label htmlFor="" className={`fs-5 py-2 sarabun-regular`}>
+              ประเภทเอกสาร (Report Type)
+            </label>
+            <Autocomplete
+              multiple
+              sx={{
+                bgcolor: grey[50],
+                width: "100%",
+              }}
+              disablePortal
+              value={(() => {
+                const selectedIds = TextNameSearch.report_code
+                  ? TextNameSearch.report_code.split(',') : [];
+                if (selectedIds.length === 0) return [];
+
+                const matchedCodes = new Set<string>();
+                const result: any[] = [];
+
+                selectedIds.forEach((id: string) => {
+                  const found = dataset_reporttype.find((ds: any) => String(ds.id) === id);
+                  if (found) {
+                    const key = found.lov_code;
+                    if (!matchedCodes.has(key)) {
+                      matchedCodes.add(key);
+                      const opt = reportTypeOptions.find(
+                        (o: any) => o.lov_code === found.lov_code
+                      );
+                      if (opt) result.push(opt);
+                    }
+                  }
+                });
+                return result;
+              })()}
+              options={reportTypeOptions}
+              disableCloseOnSelect
+              getOptionLabel={(option: any) => option.displayText || ''}
+              isOptionEqualToValue={(option: any, value: any) =>
+                option.lov_code === value.lov_code
               }
-              labelName="ประเภทเอกสาร (Report Type)"
-              options={search_report_code || []}
-              column="lov_code"
-              setvalue={(val) => {
-                if (val) {
-                  // หาทั้งหมดที่มี lov_code เหมือนกัน (เช่น NCR ทุกบริษัท)
-                  const TempallReportID = dataset_reporttype
-                    .filter((item: any) => item.lov_code === val.lov_code)
-                    .map((item: any) => item.id);
-                  console.log("User chose:", val.lov_code, "Mapping to IDs:", TempallReportID);
-                  // เก็บ ID ทั้งหมดลงไป คั่นด้วย comma (เช่น "101,102,103")
-                  setTextNameSearch({
-                    ...TextNameSearch,
-                    report_code: TempallReportID.join(','),
-                  });
+              renderOption={(props, option: any, { selected }) => (
+                <li {...props} key={option.lov_code}>
+                  <Checkbox
+                    icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
+                    checkedIcon={<CheckBoxIcon fontSize="small" />}
+                    style={{ marginRight: 8 }}
+                    checked={selected}
+                  />
+                  {option.displayText || ''}
+                </li>
+              )}
+              renderTags={(tagValue, getTagProps) =>
+                tagValue.map((option: any, index: number) => (
+                  <Chip
+                    label={option.displayText}
+                    {...getTagProps({ index })}
+                    key={`${option.lov_code}-${index}`}
+                    size="small"
+                  />
+                ))
+              }
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  placeholder={TextNameSearch.report_code ? '' : 'เลือกประเภทเอกสาร'}
+                  size="small"
+                />
+              )}
+              onChange={(_event, newValue: any[]) => {
+                if (!newValue || newValue.length === 0) {
+                  setTextNameSearch((prev: any) => ({
+                    ...prev,
+                    report_code: '',
+                  }));
+                  setdataReportTypeValue(null);
+                  setReportTypeError(false);
+                  return;
                 }
-                setdataReportTypeValue(val);
+                // เช็คว่า company ที่เลือกมีอยู่ใน dropdown จริงๆ (ไม่ใช่ค่า auto-init 63)
+                const isCompanyValid = dataset_company?.some(
+                  (c: any) => String(c.company_id) === String(TextNameSearch.dataset_company)
+                );
+                const allIds = newValue.flatMap((selected: any) =>
+                  dataset_reporttype
+                    .filter(
+                      (item: any) =>
+                        item.lov_code === selected.lov_code &&
+                        (!isCompanyValid || String(item.lov_group) === String(TextNameSearch.dataset_company))
+                    )
+                    .map((item: any) => item.id)
+                );
+                setTextNameSearch((prev: any) => ({
+                  ...prev,
+                  report_code: allIds.join(','),
+                }));
+                console.log("🏆datastatus sample:", dataset_reporttype?.[3]);
+                console.log("🏆dataset_company:", TextNameSearch.dataset_company);
+                console.log("🏆allIds", allIds);
+                setdataReportTypeValue(newValue);
                 setReportTypeError(false);
               }}
-              error={reportTypeError}
             />
           </Grid>
+
           <Grid size={4}>
             <FullWidthTextField
               value={TextNameSearch.cas_number}
@@ -7982,15 +7992,28 @@ export default function Complaint() {
                   }));
                   return;
                 }
+                // เช็คว่า company ที่เลือกมีอยู่ใน dropdown จริงๆ (ไม่ใช่ค่า auto-init 63)
+                const isCompanyValid = dataset_company?.some(
+                  (c: any) => String(c.company_id) === String(TextNameSearch.dataset_company)
+                );
+                // เช็คว่า domain ที่เลือกมีอยู่ใน dropdown จริงๆ
+                const isDomainValid = domainrelate?.some(
+                  (d: any) => String(d.domain_id) === String(TextNameSearch.dataset_domain)
+                );
                 const allIds = newValue.flatMap((selected: any) =>
                   datastatus
                     .filter(
                       (item: any) =>
                         item.lov_code === selected.lov_code &&
-                        item.lov3 === selected.lov3
+                        item.lov3 === selected.lov3 &&
+                        (!isCompanyValid || String(item.lov_group) === String(TextNameSearch.dataset_company)) &&
+                        (!isDomainValid || String(item.lov7) === String(TextNameSearch.dataset_domain))
                     )
                     .map((item: any) => item.id)
                 );
+                console.log("🏆datastatus sample:", datastatus?.[0]);
+                console.log("🏆dataset_company:", TextNameSearch.dataset_company);
+                console.log("🏆allIds", allIds);
                 setTextNameSearch((prev: any) => ({
                   ...prev,
                   complaint_status_label: allIds.join(','),
