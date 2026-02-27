@@ -479,7 +479,7 @@ export default function Complaint() {
     dataSectionapp,
     setdataSectionapp,
     setdataQcapp,
-    setdataFuapp,
+    setdataFuapp,//มันคือ Radio Close 
     setdataDecision_Combobox,
     setdataApprove_Combobox,
     setdataDecision,
@@ -1297,7 +1297,7 @@ export default function Complaint() {
           // console.log('⚠️⚠️⚠️⚠️ [grouped["active_company"]] :', grouped["active_company"]);
           // console.log('⚠️⚠️⚠️⚠️ [grouped["role_profile"]] :', grouped["role_profile"]);
           // console.log('⚠️⚠️⚠️⚠️ [grouped["config_file"]] :', grouped["config_file"]);
-          console.log('⚠️⚠️⚠️⚠️ [grouped["complaint_status"]] :', grouped["complaint_status"]);
+          // console.log('⚠️⚠️⚠️⚠️ [grouped["complaint_status"]] :', grouped["complaint_status"]);
           // console.log('⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️');
 
           // ตัวอย่างการ set state
@@ -1712,7 +1712,7 @@ export default function Complaint() {
     updateSessionStorageCurrentAccess("event_name", "ComplaintGet");
 
     setIsLoadingScreen(false);
-    console.log("TextNameSearch.complaint_status_label",TextNameSearch.complaint_status_label);
+    // console.log("TextNameSearch.complaint_status_label",TextNameSearch.complaint_status_label);
     
     const dataset = {
       CurrentAccessModel: getCurrentAccessObject(
@@ -1751,7 +1751,7 @@ export default function Complaint() {
         ? TextNameSearch.dataset_stepcomplaint
         : null,
     };
-    console.log("😫SEARCH PAYLOAD:", TextNameSearch);
+    // console.log("😫SEARCH PAYLOAD:", TextNameSearch);
     // console.log("step:2 dataset ก่อนส่ง API /Complaint/ComplaintGet ", dataset);
     try {
       //=========================================================================
