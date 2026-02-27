@@ -523,10 +523,10 @@ export default function ComplaintBody({
   const [isMinimizerespondOpen, setisMinimizeRespondOpen] = useState(!(isActionAdd || isActionEdit) ? false : true);
 
   //====================== ส่วนกล่องชี้แจง ========================//
-  const [isMinimizeexlistOpen, setisMinimizeExlistOpen] = useState(true);
+  const [isMinimizeexlistOpen, setisMinimizeExlistOpen] = useState(!(isActionAdd || isActionExplain || isActionExplainApproveSc || isActionExplainApproveQc || isActionClose) ? false : true);
 
   //====================== ส่วนกล่องปิดรายการ ========================//
-  const [isMinimizecloseOpen, setisMinimizeCloseOpen] = useState(true);
+  const [isMinimizecloseOpen, setisMinimizeCloseOpen] = useState(!(isActionAdd || isActionEdit) ? false : true);
   const [isMinimizefuappOpen, setisMinimizeFuappOpen] = useState(true);
   const [isMinimizedeapp2Open, setisMinimizeDeapp2Open] = useState(true);
   const [isMinimizeotapp2Open, setisMinimizeOtapp2Open] = useState(true);
