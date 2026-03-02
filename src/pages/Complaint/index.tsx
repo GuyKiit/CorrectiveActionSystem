@@ -1,21 +1,14 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { _GET, _POST, _POST_FORMDATA, _POST_SYS_API } from "../../service/mas";
-import { _formatNumber, conCatDateTime } from "../../../libs/datacontrol";
-import { setValueMas } from "../../../libs/setvaluecallback";
+import { _formatNumber } from "../../../libs/datacontrol";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 dayjs.extend(customParseFormat);
-
 import {
-  Alert,
-  Snackbar,
   Box,
   Button,
   Divider,
-  Paper,
-  styled,
   Typography,
-  Slide,
   Card,
   CardContent,
   IconButton,
@@ -28,14 +21,10 @@ import {
 import { grey } from "@mui/material/colors";
 import ActionManageCell from "../../components/MUI/ActionManageCell";
 import { useAuth } from "../../auth/core/AuthContext";
-import EnhancedTable from "../../components/MUI/DataTable";
 import Grid from "@mui/material/Grid2";
 import { useLayout } from "../../layout/core/LayoutProvider";
 import { auth_role_menu_func } from "../../types/users";
 import AddIcon from "@mui/icons-material/Add";
-import UploadFileIcon from "@mui/icons-material/UploadFile";
-import DataTableCollapsible from "../../components/MUI/DataTableCollapsible";
-import { useData } from "../../auth/core/DataContext";
 import { Complaint_headCells } from "../../../libs/columnname";
 import DataTable from "../../components/MUI/DataTable";
 import ComplaintBody from "./components/ComplaintBody";
@@ -60,18 +49,11 @@ import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import ExplaintBody from "./components/ExplaintBody";
 import {
   mas_DepartmentDomainGet,
-  mas_DepartmentDomainGetAll,
   mas_DepartmentGet_Complaint,
   mas_DomainGet,
   mas_DomainRelateGet,
 } from "../../service/mas/lov";
-import { data } from "react-router-dom";
-import { log } from "node:console";
 import ReportBodyProps from "../Report/reportbody";
-
-// =====================================================================================================
-// TYPE DEFINITIONS : โอมสุดหล่อ
-// =====================================================================================================
 
 export type Launch = {
   id: string;
@@ -108,6 +90,7 @@ export type Launch = {
   date_of_detection: dayjs.Dayjs | null;
   respond_date_within: dayjs.Dayjs | null;
 };
+
 interface LovType {
   id: string;
   lov_id: string;
@@ -120,11 +103,13 @@ interface LovType {
   complaint_type_id: string;
   complaint_at_id: string;
 }
+
 interface Complaint {
   id: string;
   cas_number: string;
   product_name: string;
 }
+
 type Validate = {
   Product_Group: boolean;
   Report_Type: boolean;
@@ -142,21 +127,7 @@ type Validate = {
   Detail: boolean;
   Priority: boolean;
 };
-// interface ComplaintCarData {
-//   point_name: string;
-//   value: number;
-// }
-// interface ComplaintServiceData {
-//   service_name_TH: string;
-//   amount: string;
-//   contractor_name: number;
-// }
-// interface ComplaintImgData {
-//   id: string;
-//   file_name: string;
-//   path: number;
-//   location: string;
-// }
+
 type Block = {
   id: any;
   season: number;
@@ -175,6 +146,7 @@ type Block = {
   validateMessage: string;
   req: any;
 };
+
 type data_detail = {
   tms_Complaint_no?: any;
   prod_id?: any;
@@ -205,7 +177,6 @@ export default function Complaint() {
   );
   const { setIsLoadingScreen } = useLayout();
   const { menuFuncData, userData } = useAuth();
-  const { Customer, ProductGroup, CustomerAddress } = useData();
   const employeeUsername = user?.[0]?.employee_username || "";
   const employeeDomain = user?.[0]?.employee_domain || "";
 
@@ -221,21 +192,9 @@ export default function Complaint() {
     // Main Complaint Fields
     dataelement,
     setdataelement,
-    Complaint_no,
-    no,
-    id,
-    report_type,
     cas_number,
-    doc_date,
     date_of_detection,
-    request_name,
     request_company_id,
-    request_domain_id,
-    request_department_id,
-    request_position,
-    request_email,
-    request_phone,
-    request_date,
     respondent_company_id,
     respondent_domain_id,
     respondent_department_id,
@@ -246,58 +205,24 @@ export default function Complaint() {
     detail,
     compTypeOther,
     compRsOther,
-    priority_level,
     respond_date_within,
     lot_no,
-    user_file_name,
-    acknowledge_flag,
-    acknowledge_name,
-    acknowledge_company_id,
-    acknowledge_department_id,
-    acknowledge_position,
-    acknowledge_email,
-    acknowledge_datetime,
-    complaint_status_id,
-    status_last_datetime,
-    return_from_status_id,
-    return_from_status_datetime,
-    dc_name,
-    dc_company_id,
-    dc_department_id,
-    dc_position,
-    dc_email,
-    record_status,
-    create_by,
-    create_datetime,
-    update_by,
-    update_datetime,
-    ComplaintStatusID_Combobox,
     dataReportTypeValue,
-
     dataComplaintTypeValue_Combobox,
     dataComplaintType_Combobox,
     dataComplaintRsValue_Combobox,
     dataComplaintRs_Combobox,
-
-    dataphotoValue_Combobox,
     dataphoto_Combobox,
     datapriorityValue_Combobox,
     datastatus,
     datastatusCrossDomain,
-    datastatusconfig,
     datapriority_Combobox,
     datapriority,
-    PriorityLevel,
     clauseOther,
-    phoTypeOther,
     complaintFiles,
     explainFiles,
     closeFiles,
-    RunningModel,
-    approve_step,
-    otherText,
     domainrelate,
-    dataapproveValue_Combobox,
 
     // Dataset Variables
     dataset_reporttype,
@@ -306,8 +231,6 @@ export default function Complaint() {
     dataset_department_request,
     dataset_department_respondent,
     dataset_company,
-    dataset_domain,
-    dataset_domainrelate,
     dataset_stepcomplaint,
     dataset_complaintAction,
     dataset_complaintActionNew,
@@ -319,83 +242,42 @@ export default function Complaint() {
     dataset_complaintActionApproveSC,
     dataset_complaintActionApproveQC,
 
-    // Temp Domain Variable
-    domain,
-
     //Explaint
-    explainList,
-    approveList,
     dataTooluseValue,
     dataToolUse_Combobox,
     ToolOther,
-
     dataDecisionValue,
     dataDecision_Combobox,
     DecisionOther,
-
     dataApprove_Combobox,
-    explain_id,
-    complaint_id,
-    explain_seq,
     observation_analysis,
     root_cause,
     corrective_action,
     preventive_action_plan,
     follow_up_date,
-    responsible_name,
     responsible_company_id,
     responsible_department_id,
-    responsible_position,
-    responsible_email,
     responsible_date,
-    close_status,
-    close_name,
     close_company_id,
     close_department_id,
-    close_position,
-    close_email,
-    close_date,
     close_detail,
     close_note,
-    return_detail,
-    return_name,
     return_company_id,
     return_department_id,
-    return_position,
-    return_email,
-    return_datetime,
-    explain_record_status,
-    explain_create_by,
-    explain_create_datetime,
-    explain_update_by,
-    explain_update_datetime,
-    approve_status,
     approve_detail,
     approve_note,
-    approve_name,
     approve_company_id,
     approve_department_id,
-    apprvove_position,
-    approve_email,
     approve_date,
-
-    qcapprove_name,
     qcapprove_company_id,
     qcapprove_department_id,
-    qcapprove_position,
-    qcapprove_email,
     qcapprove_date,
     qcapprove_detail,
     qcapprove_note,
     dataset_crosscompany,
 
     // Setter Functions
-    setComplaint_no,
-    setno,
-    setid,
-    setreport_type,
     setcas_number,
-    setdoc_date,
     setdate_of_detection,
     setrequest_name,
     setrequest_company_id,
@@ -404,61 +286,28 @@ export default function Complaint() {
     setrequest_position,
     setrequest_email,
     setrequest_phone,
-    setuser_file_name,
-    setrequest_date,
     setrespondent_company_id,
     setrespondent_domain_id,
     setrespondent_department_id,
     setrespondent_email,
-    setrespondent_other_name,
-    setrespondent_other_email,
     setproduct_name,
     setdetail,
-    setcomplaint_type_other,
-    setpriority_level,
-    setrespond_date_within,
     setlot_no,
     setcompTypeOther,
     setcompRsOther,
-    setreference_standard_other,
-    setacknowledge_flag,
-    setacknowledge_name,
-    setacknowledge_company_id,
-    setacknowledge_department_id,
-    setacknowledge_position,
-    setacknowledge_email,
-    setacknowledge_datetime,
     setcomplaint_status_id,
-    setstatus_last_datetime,
-    setreturn_from_status_id,
-    setreturn_from_status_datetime,
-    setdc_name,
-    setdc_company_id,
-    setdc_department_id,
-    setdc_position,
-    setdc_email,
-    setrecord_status,
-    setcreate_by,
-    setcreate_datetime,
-    setupdate_by,
-    setupdate_datetime,
-    setComplaintStatusID_Combobox,
     setdataReportTypeValue,
     setdataComplaintType_Combobox,
     setdataComplaintTypeValue_Combobox,
     setdataComplaintRs_Combobox,
     setdatastatus,
     setdatastatusCrossDomain,
-    setdatastatusconfig,
     setdataComplaintRsValue_Combobox,
     setdataphoto_Combobox,
     setdataphotoValue_Combobox,
-    setdatapriorityValue_Combobox,
     setdatapriority_Combobox,
     setdatapriority,
-    setPriorityLevel,
     setclauseOther,
-    setphoTypeOther,
     setdataset_reporttype,
     setdataset_reporttype_inactive,
     setdataset_activeCompany,
@@ -469,10 +318,8 @@ export default function Complaint() {
     setdataset_department_respondent,
     setdataset_company,
     set_domain,
-    setdataset_domain,
     setdataset_domainrelate,
     setcomplaintFiles,
-    setotherText,
     set_domainrelate,
     setdataset_complaintActionApproveSC,
     setdataset_complaintActionApproveQC,
@@ -483,7 +330,6 @@ export default function Complaint() {
     setdataToolUse,
     setdataToolUse_Combobox,
     setToolOther,
-    dataSectionapp,
     setdataSectionapp,
     setdataQcapp,
     setdataFuapp,
@@ -495,7 +341,6 @@ export default function Complaint() {
     setdataToolUseValue,
     setfollow_up_date,
     setdataDecisionValue,
-
     setdataset_stepcomplaint,
     setdataset_complaintAction,
     setdataset_complaintActionNew,
@@ -508,7 +353,6 @@ export default function Complaint() {
 
     //set Approve
     setapprove_date,
-    setapprove_status,
     setapprove_detail,
     setapprove_note,
     setapprove_name,
@@ -516,7 +360,6 @@ export default function Complaint() {
     setapprove_department_id,
     setapprove_position,
     setapprove_email,
-
     setqcapprove_name,
     setqcapprove_company_id,
     setqcapprove_department_id,
@@ -527,25 +370,9 @@ export default function Complaint() {
     setqcapprove_note,
 
     //set Close
-    setclose_name,
-    setclose_company_id,
-    setclose_department_id,
-    setclose_position,
-    setclose_email,
-    setclose_date,
     setclose_detail,
     setclose_note,
-    setdataset_crosscompany,
-
-    casuserdept,
-    set_casuserdept,
-
-    isApproveScBoxHidden,
-    setisApproveScBoxHidden,
-    isApproveQcBoxHidden,
     setisApproveQcBoxHidden,
-    isApproveCloseBoxHidden,
-    setisApproveCloseBoxHidden,
 
     // File states for clearing
     setexplainFiles,
@@ -570,7 +397,6 @@ export default function Complaint() {
   const [openReadExplain, setOpenReadExplain] = React.useState(false);
   const [openApproveSC, setOpenApproveSC] = React.useState(false);
   const [openReadApproveSC, setOpenReadApproveSC] = React.useState(false);
-  //const [openApproveQC, setOpenApproveQC] = React.useState(false);
   const [openReadApproveQC, setOpenReadApproveQC] = React.useState(false);
   const [openReadClose, setOpenReadClose] = React.useState(false);
   const [openCloseHistory, setOpenCloseHistory] = React.useState(false);
@@ -584,40 +410,29 @@ export default function Complaint() {
   const [openComplainCloseAdd, setOpenComplainCloseAdd] = React.useState(false);
 
   const [openApproveQC, setOpenApproveQC] = React.useState(false);
-  const [openApproveQCAdd, setOpenApproveQCAdd] = React.useState(false);
 
   const [openUpLoad, setOpenUpload] = React.useState(false);
 
   const [isAcknowledgeUpdated, setIsAcknowledgeUpdated] = React.useState(false);
 
   const [ComplaintBlocks, setComplaintBlocks] = useState<Block[]>([]);
-  const [blockValidateErrors, setBlockValidateErrors] = useState<{
-    [index: number]: data_detail;
-  }>({});
+  const [blockValidateErrors, setBlockValidateErrors] = useState<{ [index: number]: data_detail; }>({});
   const [successCardOpen, setSuccessCardOpen] = React.useState(false);
   const [successCardMessage, setSuccessCardMessage] = React.useState("");
   const [openAddlist, setOpenAddlist] = React.useState(false);
   const [submitCount, setSubmitCount] = React.useState(0);
 
-  const [currentExplainForApproval, setCurrentExplainForApproval] =
-    useState<any>(null);
+  const [currentExplainForApproval, setCurrentExplainForApproval] = useState<any>(null);
   const [complaintMainData, setComplaintMainData] = useState<any>(null);
-  const [approveSelectionCode, setApproveSelectionCode] = useState<
-    string | null
-  >(null);
+  const [approveSelectionCode, setApproveSelectionCode] = useState<string | null>(null);
   const [action, setAction] = React.useState("");
 
   const [prevExplainFiles, setPrevExplainFiles] = React.useState<any[]>([]);
 
   // Date Search Variables (from index.tsx)
-  const [respondWithinSearch, setrespondWithinSearch] = React.useState<
-    dayjs.Dayjs | undefined | null
-  >(dayjs().subtract(1, "month"));
-  const [documentDateSearch, setdocumentDateSearch] =
-    React.useState<dayjs.Dayjs | null>(null);
-  const [endDateSearch, setEndDateSearch] = React.useState<
-    dayjs.Dayjs | undefined | null
-  >(dayjs().add(3, "month"));
+  const [respondWithinSearch, setrespondWithinSearch] = React.useState<dayjs.Dayjs | undefined | null>(dayjs().subtract(1, "month"));
+  const [documentDateSearch, setdocumentDateSearch] = React.useState<dayjs.Dayjs | null>(null);
+  const [endDateSearch, setEndDateSearch] = React.useState<dayjs.Dayjs | undefined | null>(dayjs().add(3, "month"));
 
   // Search Variables (from index.tsx)
   const [TextNameSearch, setTextNameSearch] = React.useState({
@@ -633,19 +448,11 @@ export default function Complaint() {
   });
 
   // Additional State Variables (from ComplaintRead.tsx)
-  const [open, setOpen] = React.useState(false);
-  const [dataComplaintType, setdataComplaintType] = useState<LovType[]>([]);
-  const [dataComplaintRs, setdataComplaintRs] = useState<LovType[]>([]);
-  const [dataComplaintphoto, setdataComplaintphoto] = useState<LovType[]>([]);
-  // const [dataPriority, setdataPriority] = useState<string>("");
-  const [filteredComplaintType, setFilteredComplaintType] = useState<LovType[]>(
-    []
-  );
+  const [filteredComplaintType, setFilteredComplaintType] = useState<LovType[]>([]);
   const [filteredComplaintRs, setFilteredComplaintRs] = useState<LovType[]>([]);
   const [filteredpriority, setFilteredpriority] = useState<LovType[]>([]);
   const [filteredphoto, setFilteredphoto] = useState<LovType[]>([]);
-  const [isRSHidden, setIsRSHidden] = React.useState(true);
-  const [value, setValue] = React.useState(0);
+
   // ถ้าสถานะเป็น EXPLAIN หรือ CLOSED ไม่ต้องให้กด Reject
   const hideReject = dataelement?.complaint_status_label == "EXPLAINED";
 
@@ -689,16 +496,12 @@ export default function Complaint() {
   const [closeNoteError, setCloseNoteError] = useState(false);
 
   const handleOpenAddList = () => setOpenAddlist(true);
-  const handleCloseAddlist = () => setOpenAddlist(false);
 
   // For On-Off Calling Function Log
   const [isCallFuncLogOn] = useState(true);
   const [searchTrigger, setSearchTrigger] = useState(false);
 
-  const isCrossCompany = dataset_crosscompany?.[0]?.lov_code == "1";
-  const grouped = {
-    config_file: dataset_configfile || [],
-  };
+  const grouped = { config_file: dataset_configfile || [], };
 
   const tempRoleUser = dataset_roleProfile?.filter(
     (item: any) => item.lov1 === String(user[0]?.role_id)
@@ -711,7 +514,6 @@ export default function Complaint() {
 
   const handleCompanyChange = async (value: any) => {
     if (value) {
-      // console.log("📌 Dataset for Department API:", value);
       mas_DomainRelateGet(
         value?.company_id,
         set_domainrelate,
@@ -973,16 +775,11 @@ export default function Complaint() {
           lov_group: String(user[0]?.itasset_company_id),
           lov_type: "complaint_status",
         };
-        console.log("dataset", dataset);
 
         const response = await _POST(dataset, "/Lov/LovGet");
 
         if (response && response.status === "success") {
           const lovData = response.data || [];
-          console.log(
-            "😂 Call [Lov/LovGet] -> LovAll_Get :",
-            response.data
-          );
 
           // ✅ จัดกลุ่มตาม lov_type
           const grouped = lovData.reduce((acc: any, item: any) => {
@@ -990,8 +787,6 @@ export default function Complaint() {
             acc[item.lov_type].push(item);
             return acc;
           }, {});
-
-          // return grouped["complaint_status"].filter((item: any) => item.lov7 === respondent_domain_id?.domain_id)
           return isItAdmin
             ? grouped["complaint_status"] // 🔥 admin เห็นทุก domain
             : grouped["complaint_status"].filter(
@@ -1026,8 +821,6 @@ export default function Complaint() {
             acc[item.lov_type].push(item);
             return acc;
           }, {});
-
-          // return grouped["complaint_status"].filter((item: any) => item.lov7 === respondent_domain_id?.domain_id)
           return isItAdmin
             ? grouped["complaint_status"] // 🔥 admin เห็นทุก domain
             : grouped["complaint_status"].filter(
@@ -1244,8 +1037,6 @@ export default function Complaint() {
     // 2. แปลง "1,2" ให้เป็น Array ['1', '2'] เพื่อให้ค้นหาง่ายขึ้น
     const allowedLevels = String(allowedLov5).split(',');
 
-    // console.log("allowedLevels", allowedLevels);
-
     // 3. กรองข้อมูล
     return allStatuses.filter((status: any) => {
       // ดึงค่า lov3 ออกมาเช็ค (เผื่อกรณีมันมาเป็น string 'NULL' หรือค่า null ว่างๆ)
@@ -1385,7 +1176,6 @@ export default function Complaint() {
     updateSessionStorageCurrentAccess("event_name", "ComplaintGet");
 
     setIsLoadingScreen(false);
-    console.log("TextNameSearch.complaint_status_label", TextNameSearch.complaint_status_label);
 
     const dataset = {
       CurrentAccessModel: getCurrentAccessObject(
@@ -1785,7 +1575,6 @@ export default function Complaint() {
   useEffect(() => {
     if (searchTrigger) {
       ComplaintGet();
-      console.log("🔁🔁 complaintAction พร้อมแล้ว → เรียก ComplaintGet()");
       setSearchTrigger(false); // reset trigger เพื่อให้พร้อมใช้ครั้งถัดไป
     }
   }, [searchTrigger, TextNameSearch]);
@@ -2346,8 +2135,6 @@ export default function Complaint() {
       : null;
 
     // สร้าง JSON payload
-    console.log("tempComplaintStatus", tempComplaintStatus);
-    console.log("tempComplaintStatus", tempComplaintStatus[1]?.id);
     const complaintPayload = {
       complaintModel: {
         id: tempid,
