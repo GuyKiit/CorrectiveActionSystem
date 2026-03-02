@@ -1692,17 +1692,70 @@ export default function Complaint() {
       department: TextNameSearch.dataset_department
         ? TextNameSearch.dataset_department
         : null,
-      report_code: TextNameSearch.report_code
-        ? TextNameSearch.report_code
-        : null,
+      report_code: (() => {
+        if (!TextNameSearch.report_code) return null;
+
+        // Extract selected lov_codes
+        const selectedIds = TextNameSearch.report_code.split(',');
+        const selectedCodes = new Set(
+          selectedIds.map(id => dataset_reporttype.find((rt: any) => String(rt.id) === id)?.lov_code)
+            .filter(Boolean)
+        );
+
+        if (selectedCodes.size === 0) return TextNameSearch.report_code;
+
+        // Re-resolve IDs constrained by the CURRENT selected company
+        const isCompanyValid = dataset_company?.some(
+          (c: any) => String(c.company_id) === String(TextNameSearch.dataset_company)
+        );
+
+        const newIds = dataset_reporttype
+          .filter((item: any) =>
+            selectedCodes.has(item.lov_code) &&
+            (!isCompanyValid || String(item.lov_group) === String(TextNameSearch.dataset_company))
+          )
+          .map((item: any) => item.id);
+
+        return newIds.length > 0 ? newIds.join(',') : TextNameSearch.report_code;
+      })(),
       cas_number: TextNameSearch.cas_number ? TextNameSearch.cas_number : null,
       product_name: TextNameSearch.product_name
         ? TextNameSearch.product_name
         : null,
       lot_no: TextNameSearch.lot_no ? TextNameSearch.lot_no : null,
-      complaint_status_label: TextNameSearch.complaint_status_label
-        ? TextNameSearch.complaint_status_label
-        : null,
+      complaint_status_label: (() => {
+        if (!TextNameSearch.complaint_status_label) return null;
+
+        // Extract selected lov_codes and their optional lov3 variants
+        const selectedIds = TextNameSearch.complaint_status_label.split(',');
+        const selectedConfigs = new Set(
+          selectedIds.map(id => {
+            const found = datastatus.find((ds: any) => String(ds.id) === id);
+            return found ? `${found.lov_code}||${found.lov3 || ''}` : null;
+          }).filter(Boolean)
+        );
+
+        if (selectedConfigs.size === 0) return TextNameSearch.complaint_status_label;
+
+        // Re-resolve IDs constrained by the CURRENT selected company and domain
+        const isCompanyValid = dataset_company?.some(
+          (c: any) => String(c.company_id) === String(TextNameSearch.dataset_company)
+        );
+        const isDomainValid = domainrelate?.some(
+          (d: any) => String(d.domain_id) === String(TextNameSearch.dataset_domain)
+        );
+
+        const newIds = datastatus
+          .filter((item: any) => {
+            const key = `${item.lov_code}||${item.lov3 || ''}`;
+            return selectedConfigs.has(key) &&
+              (!isCompanyValid || String(item.lov_group) === String(TextNameSearch.dataset_company)) &&
+              (!isDomainValid || String(item.lov7) === String(TextNameSearch.dataset_domain));
+          })
+          .map((item: any) => item.id);
+
+        return newIds.length > 0 ? newIds.join(',') : TextNameSearch.complaint_status_label;
+      })(),
       doc_date: documentDateSearch
         ? documentDateSearch.format("DD-MM-YYYY")
         : null,
@@ -7689,10 +7742,12 @@ export default function Complaint() {
               column="company_name"
               setvalue={(val) => {
                 handleCompanyChange(val); // ⭐ เรียกใหม่ตามรูปแบบเดียวกับที่แก้
-                setTextNameSearch({
-                  ...TextNameSearch,
+                setTextNameSearch((prev) => ({
+                  ...prev,
                   dataset_company: val?.company_id || "",
-                });
+                  dataset_domain: "", // clear child
+                  dataset_department: "" // clear child
+                }));
               }}
               readonly={!isItAdmin}
             />
@@ -7715,10 +7770,11 @@ export default function Complaint() {
               column="domain_name"
               setvalue={(val) => {
                 handleDomainChange(val);
-                setTextNameSearch({
-                  ...TextNameSearch,
+                setTextNameSearch((prev) => ({
+                  ...prev,
                   dataset_domain: val?.domain_id || "", // เก็บแค่ id เป็น string
-                });
+                  dataset_department: "" // clear child
+                }));
               }}
               readonly={!isItAdmin || !TextNameSearch.dataset_company}
             />
@@ -7735,10 +7791,10 @@ export default function Complaint() {
               options={dataset_department || []}
               column="department_name"
               setvalue={(val) => {
-                setTextNameSearch({
-                  ...TextNameSearch,
+                setTextNameSearch((prev) => ({
+                  ...prev,
                   dataset_department: val?.department_id || "", // เก็บแค่ id เป็น string
-                });
+                }));
               }}
               readonly={!TextNameSearch.dataset_domain}
             />

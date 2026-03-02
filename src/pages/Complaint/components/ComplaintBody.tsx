@@ -1,4 +1,3 @@
-//ทำobj เป็น array
 import React, { useState, useRef, use, useEffect } from "react";
 import { setValueMas } from "../../../../libs/setvaluecallback";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -38,9 +37,7 @@ import { useListComplaint } from "../core/ListComplaintContext";
 import { ComplaintFile } from "./BrowseFileUpload";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {
-  mas_DepartmentDomainGet,
   mas_DepartmentGet_Complaint,
-  mas_DomainGet,
   mas_DomainRelateGet,
 } from "../../../service/mas/lov";
 
@@ -157,12 +154,7 @@ type FileData = {
 export default function ComplaintBody({
   action,
   isItAdmin,
-  readonlyTextField,
-  bgcolorTextField,
-  isAcknowledge,
   validateText,
-  onBlocksChange,
-  validateDetailText,
 
   onReportTypeChange,
   onDateOfDetectionChange,
@@ -192,8 +184,6 @@ export default function ComplaintBody({
   onAcknowledgeUpdate,
 }: ComplaintBody) {
 
-
-
   const isActionRead = action === "Read";
   const isActionAdd = action === "Add";
   const isActionEdit = action === "Edit";
@@ -212,73 +202,29 @@ export default function ComplaintBody({
   const {
     dataelement,
     setdataelement,
-    Complaint_no,
-    no,
     cas_number,
     doc_date,
     date_of_detection,
-    request_name,
-    request_company_id,
     request_domain_id,
-    request_position,
-    request_email,
-    request_phone,
-    request_date,
     respondent_company_id,
     respondent_domain_id,
     respondent_department_id,
     respondent_email,
-    respondent_other_name,
-    respondent_other_email,
     product_name,
     detail,
-    priority_level,
     respond_date_within,
     lot_no,
-    user_file_name,
-    other,
     compTypeOther,
-    otherText,
     compRsOther,
     clauseOther,
-    photoOther,
-    phoTypeOther,
-    acknowledge_flag,
-    acknowledge_name,
-    acknowledge_company_id,
-    acknowledge_department_id,
-    acknowledge_position,
-    acknowledge_email,
-    acknowledge_datetime,
     complaint_status_id,
-    complaint_status_label,
-    step_label,
-    status_last_datetime,
-    return_from_status_id,
-    return_from_status_datetime,
-    dc_name,
-    dc_company_id,
-    dc_department_id,
-    dc_position,
-    dc_email,
-    record_status,
-    create_by,
-    create_datetime,
-    update_by,
-    update_datetime,
-    ComplaintStatusID_Combobox,
     dataReportTypeValue,
-    dataComplaintTypeValue_Combobox,
     dataComplaintType_Combobox,
-    dataComplaintRsValue_Combobox,
     dataComplaintRs_Combobox,
-    dataphotoValue_Combobox,
     datapriority,
     dataphoto_Combobox,
     datapriority_Combobox,
-    datapriorityValue_Combobox,
     dataApprove_Combobox,
-    root_cause,
     close_name,
     close_company_id,
     close_department_id,
@@ -295,90 +241,43 @@ export default function ComplaintBody({
     dataset_company,
     dataset_department,
     dataset_department_respondent,
-    dataset_domain,
-    dataset_domainrelate,
-    complaintFiles,
     dataFuapp,
     domainrelate,
-    departmentrelate,
-    department,
-    domain,
     explainList,
     dataset_configfile,
     closeFiles,
 
-    setComplaint_no,
-    setno,
     setcas_number,
     setdoc_date,
     setdate_of_detection,
     setrequest_name,
     setrequest_company_id,
     setrequest_domain_id,
-    // setrequest_department_id,
     setrequest_position,
     setrequest_email,
     setrequest_phone,
-    setuser_file_name,
-    setrequest_date,
     setrespondent_company_id,
     setrespondent_domain_id,
     setrespondent_department_id,
     setrespondent_email,
-    setrespondent_other_name,
-    setrespondent_other_email,
     setproduct_name,
     setdetail,
-    setcomplaint_type_other,
     setpriority_level,
     setrespond_date_within,
     setlot_no,
-    setother,
     setcompTypeOther,
     setotherText,
     setcompRsOther,
     setclauseOther,
-    setphotoOther,
     setphoTypeOther,
-
-    setreference_standard_other,
-    setacknowledge_flag,
-    setacknowledge_name,
-    setacknowledge_company_id,
-    setacknowledge_department_id,
-    setacknowledge_position,
-    setacknowledge_email,
-    setacknowledge_datetime,
     setcomplaint_status_id,
     setcomplaint_status_label,
-    setstep_label,
-    setstatus_last_datetime,
-    setreturn_from_status_id,
-    setreturn_from_status_datetime,
-    setdc_name,
-    setdc_company_id,
-    setdc_department_id,
-    setdc_position,
-    setdc_email,
-    setrecord_status,
-    setcreate_by,
-    setcreate_datetime,
-    setupdate_by,
-    setupdate_datetime,
-    setComplaintStatusID_Combobox,
     setdataReportTypeValue,
-    setdataComplaintType_Combobox,
     setdataComplaintTypeValue_Combobox,
-    setdataComplaintRs_Combobox,
     setdataComplaintRsValue_Combobox,
-    setdataphoto_Combobox,
     setdataphotoValue_Combobox,
     setdatapriority,
-    setdatapriority_Combobox,
     setdatapriorityValue_Combobox,
-    setdataApprove_Combobox,
-    setroot_cause,
-
     setclose_name,
     setclose_company_id,
     setclose_department_id,
@@ -389,26 +288,15 @@ export default function ComplaintBody({
     setclose_note,
 
     // Dataset
-    setdataset_crosscompany,
-    setdataset_reporttype,
-    setdataset_reporttype_inactive,
-    setdataset_company,
     setdataset_department,
     setdataset_department_respondent,
-    setdataset_domain,
-    setdataset_domainrelate,
     setcomplaintFiles,
     setdataFuapp,
     set_domainrelate,
-    set_departmentrelate,
-    set_department,
-    set_domain,
     setExplainList,
-    setdataset_configfile,
     setcloseFiles,
   } = useListComplaint();
 
-  const [previewFile, setPreviewFile] = useState<File | null>(null);
   const complaintTypeRef = useRef<HTMLDivElement>(null);
   const complaintRsRef = useRef<HTMLDivElement>(null);
   const priorityRef = useRef<HTMLDivElement>(null);
@@ -457,16 +345,13 @@ export default function ComplaintBody({
 
 
   // Utility Variables ======================================================
-  const { Customer } = useData();
   const { setIsLoadingScreen } = useLayout();
 
   // For On-Off Calling Function Log
   const [isCallFuncLogOn] = useState(true);
 
   // Get Master Variables ======================================================
-  const [filteredComplaintType, setFilteredComplaintType] = useState<LovType[]>(
-    []
-  );
+  const [filteredComplaintType, setFilteredComplaintType] = useState<LovType[]>([]);
   const [filteredComplaintRs, setFilteredComplaintRs] = useState<LovType[]>([]);
   const [filteredpriority, setFilteredpriority] = useState<LovType[]>([]);
   const [filteredphoto, setFilteredphoto] = useState<LovType[]>([]);
@@ -484,27 +369,8 @@ export default function ComplaintBody({
 
   // Hidden Variables ======================================================
   const [isFormHidden, setisFormHidden] = useState(true);
-
-  const [isCasNumberHidden, setisCasNumberHidden] = useState(true);
-  const [isFactoryHidden, setisFactoryHidden] = useState(true);
-  const [isAreaOfDetectionHidden, setisAreaOfDetectionHidden] = useState(true);
-  const [isProductHidden, setisProductHidden] = useState(true);
-  const [isLotNoHidden, setisLotNoHidden] = useState(true);
-  const [isAttachmentsHidden, setisAttachmentsHidden] = useState(true);
-  const [isDocumentIssuanceHidden, setisDocumentIssuanceHidden] =
-    useState(true);
-  const [isDateOfDetection, setisDateOfDetection] = useState(true);
-  const [isRequiredResponseDateHidden, setisRequiredResponseDateHidden] =
-    useState(true);
   const [isCTHidden, setisCTHidden] = useState(true);
   const [isRSHidden, setIsRSHidden] = useState(true);
-  const [isDetailHidden, setisDetailHidden] = useState(true);
-  const [isPriority, setisPriority] = useState(true);
-  const [isReportedByHidden, setisReportedByHidden] = useState(true);
-  const [isPositionHidden, setisPositionHidden] = useState(true);
-  const [isDepartmentHidden, setisDepartmentHidden] = useState(true);
-  const [isEmailHidden, setisEmailHidden] = useState(true);
-  const [isPhoneHidden, setisPhoneHidden] = useState(true);
 
   const lastFetchedDepartment = React.useRef<{
     company: any;
@@ -946,7 +812,7 @@ export default function ComplaintBody({
 
 
   useEffect(() => {
-    setcomplaintFiles(fileList); // sync
+    setcomplaintFiles(fileList);
   }, [fileList]);
 
   const Dept_setup_By_Domain_dept_id_Get = async (data: any) => {
@@ -1227,7 +1093,6 @@ export default function ComplaintBody({
             }
           }
         }
-
         //==================================
         // 2) Company
         //==================================
@@ -1245,7 +1110,6 @@ export default function ComplaintBody({
             setrequest_company_id(mappedCompany);
           }
         }
-
         //==================================
         // 3) Domain relate
         //==================================
@@ -1255,7 +1119,6 @@ export default function ComplaintBody({
           user,
           isCallFuncLogOn
         );
-
         //==================================
         // // 4) Domain default
         //==================================
@@ -1267,7 +1130,6 @@ export default function ComplaintBody({
           );
           if (mappedDomain) setrequest_domain_id(mappedDomain);
         }
-
         //==================================
         // 5) โหลด Department
         //==================================
@@ -1486,7 +1348,6 @@ export default function ComplaintBody({
     dataComplaintRs_Combobox,
   ]);
 
-  // ⭐⭐⭐⭐⭐ Start : ==============================================================================================//
 
   //////////////////////// Complaint Read //////////////////////////
   React.useEffect(() => {
@@ -1725,7 +1586,7 @@ export default function ComplaintBody({
             onAcknowledgeUpdate();
           }
         }
-        await Complaint_Get(dataelement); // ✅ Move inside: Only fetch if updated
+        await Complaint_Get(dataelement);
       }
     };
     fetchAcknowlege();
@@ -2485,6 +2346,7 @@ export default function ComplaintBody({
                         </Accordion>
                       </Box>
                     )}
+
                     {/* Priority Section */}
                     {dataReportTypeValue && (
                       <Box sx={{ mt: 3 }}>
@@ -3160,8 +3022,8 @@ export default function ComplaintBody({
                         sx={{
                           display: "flex",
                           alignItems: "center",
-                          justifyContent: "space-between", // ✅ ดันซ้าย-ขวา
-                          width: "100%", // ✅ กินเต็ม
+                          justifyContent: "space-between",
+                          width: "100%",
                         }}
                       >
                         {/* === ฝั่งซ้าย === */}
