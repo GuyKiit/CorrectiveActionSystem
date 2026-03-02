@@ -1,11 +1,7 @@
-import React, { useState, useRef, use, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { setValueMas } from "../../../../libs/setvaluecallback";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { _POST } from "../../../service/mas";
-import {
-  _formatNumber,
-  _formatNumberNotdecimal,
-} from "../../../../libs/datacontrol";
 import dayjs from "dayjs";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import DownloadIcon from "@mui/icons-material/Download";
