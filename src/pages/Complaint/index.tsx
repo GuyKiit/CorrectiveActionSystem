@@ -485,6 +485,7 @@ export default function Complaint() {
   const [ddOtherError, setDdOtherError] = useState(false);
   const [correctiveActionError, setCorrectiveActionError] = useState(false);
   const [preventiveActionPlanError, setPreventiveActionPlanError] = useState(false);
+
   const [qcDetailError, setQcDetailError] = useState(false);
   const [qcNoteError, setQcNoteError] = useState(false);
   const [closeDetailError, setCloseDetailError] = useState(false);
@@ -1747,13 +1748,11 @@ export default function Complaint() {
 
     // Type-specific validation
     if (reportTypeCode === "OBS") {
-      // OBS: Only requires observation_analysis and follow_up_date
       if (!observation_analysis || observation_analysis.trim() === "") {
         setObsAnalyError(true);
         valid = false;
       }
     } else if (reportTypeCode === "NCR") {
-      // NCR: Requires Tu (Tools Used), Rc (Root Cause), Dd (Decision/Disposition)
 
       // Validate Tools Used
       if (!dataTooluseValue || dataTooluseValue.length === 0) {
@@ -1793,7 +1792,6 @@ export default function Complaint() {
         }
       }
     } else if (reportTypeCode === "CAR") {
-      // CAR: Requires Tu (Tools Used), Rc (Root Cause), Ca (Corrective Action)
 
       // Validate Tools Used
       if (!dataTooluseValue || dataTooluseValue.length === 0) {
@@ -1822,8 +1820,13 @@ export default function Complaint() {
         setCorrectiveActionError(true);
         valid = false;
       }
+
+      // Validate Preventive Action Plan
+      if (!preventive_action_plan || preventive_action_plan.trim() === "") {
+        setPreventiveActionPlanError(true);
+        valid = false;
+      }
     } else if (reportTypeCode === "CPAR") {
-      // CPAR: Requires Tu (Tools Used), Rc (Root Cause), Ca (Corrective Action), Pap (Preventive Action Plan)
 
       // Validate Tools Used
       if (!dataTooluseValue || dataTooluseValue.length === 0) {
@@ -7269,6 +7272,8 @@ export default function Complaint() {
             handleOpenAdd={() => handleOnclickExplainApproveSc(dataelement)}
             onApproveChange={(value) => {
               setApproveSelectionCode(value?.lov_code ?? null);
+              setScDetailError(false);
+              setScNoteError(false);
             }}
             validateText={{
               Follow_up_Date: followUpDateError,
@@ -7332,6 +7337,8 @@ export default function Complaint() {
             handleOpenAdd={() => handleOnclickExplainApproveQc(dataelement)}
             onApproveChange={(value) => {
               setApproveSelectionCode(value?.lov_code ?? null);
+              setQcDetailError(false);
+              setQcNoteError(false);
             }}
             validateText={{
               Follow_up_Date: followUpDateError,
@@ -7390,6 +7397,8 @@ export default function Complaint() {
             handleOpenAdd={() => handleOnclickComplainCloseAdd(dataelement)}
             onApproveChange={(value) => {
               setApproveSelectionCode(value?.lov_code ?? null);
+              setCloseDetailError(false);
+              setCloseNoteError(false);
             }}
             validateText={{
               Follow_up_Date: followUpDateError,
