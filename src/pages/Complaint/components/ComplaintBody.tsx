@@ -1637,7 +1637,7 @@ export default function ComplaintBody({
 
     // ✅ Clear close files เมื่อเปลี่ยน complaint เพื่อไม่ให้แสดงไฟล์เก่า
     if (prevComplaintIdRef.current !== currentId) {
-      setcloseFiles([]);
+      // setcloseFiles([]);
     }
 
     if (!isActionAdd && currentId) {

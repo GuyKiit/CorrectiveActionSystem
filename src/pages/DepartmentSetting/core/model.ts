@@ -1,6 +1,4 @@
-import dayjs from "dayjs";
 import { SetStateAction, Dispatch } from "react";
-import { Launch } from "..";
 
 export type Adds = undefined | null | boolean;
 
@@ -31,7 +29,7 @@ export type ListDepartmentSettingContextProps = {
     setmaster_department: Dispatch<SetStateAction<any>>;
     setmaster_user: Dispatch<SetStateAction<any>>;
     //============================================
-    
+
 
     setdept_id: Dispatch<SetStateAction<string>>;
     setdomain_dept_id: Dispatch<SetStateAction<any>>;
@@ -45,7 +43,7 @@ export type ListDepartmentSettingContextProps = {
     setdept_company: Dispatch<SetStateAction<any>>;
     setdept_domain: Dispatch<SetStateAction<any>>;
 
-   
+
 
     //--------dataset-------
     company?: any
@@ -58,13 +56,13 @@ export type ListDepartmentSettingContextProps = {
     datastatusconfig?: any
     approveCard?: any
     deptSetupList?: any
-    
+
 
     company_search?: any
     department_search?: any
     domain_search?: any
     username_search?: any
-    
+
 
     set_company: Dispatch<SetStateAction<any>>;
     set_department: Dispatch<SetStateAction<any>>;
@@ -76,13 +74,13 @@ export type ListDepartmentSettingContextProps = {
     setdatastatusconfig: Dispatch<SetStateAction<any>>;
     setapproveCard: Dispatch<SetStateAction<any>>;
     setDeptSetupList: Dispatch<SetStateAction<any>>;
-    
+
 
     set_company_search: Dispatch<SetStateAction<any>>;
     set_department_search: Dispatch<SetStateAction<any>>;
     set_domain_search: Dispatch<SetStateAction<any>>;
     set_username_search: Dispatch<SetStateAction<any>>;
-    
+
 
 };
 
@@ -114,13 +112,13 @@ export const initialListDepartmentSetting: ListDepartmentSettingContextProps = {
     setdatastatusconfig: () => { },
     setapproveCard: () => { },
     setDeptSetupList: () => { },
-    
+
 
     set_company_search: () => { },
     set_department_search: () => { },
     set_domain_search: () => { },
     set_username_search: () => { },
-    
+
     //============================================
     //--------GetMaster(All)-------
     setmaster_domain: () => { },

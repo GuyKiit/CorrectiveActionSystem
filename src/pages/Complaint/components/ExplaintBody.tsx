@@ -197,18 +197,6 @@ export default function ExplaintBody({
   onCloseDetailChange,
   onCloseNoteChange,
   //====================Validate==================================//
-
-  //=======================Other=============================//
-
-  complaint_status_lable,
-  readonlyTextField,
-  bgcolorTextField,
-  onBlocksChange,
-  handleOpenAdd,
-  handleOnclickExplainView,
-  handleOnclickExplainApproveSc,
-  //=======================Other=============================//
-
   submitCount,
 }: ExplaintBody) {
   // const isActionRead =
@@ -368,12 +356,11 @@ export default function ExplaintBody({
   // For On-Off Calling Function Log
   const [isCallFuncLogOn] = useState(true);
   // Get Master Variables ======================================================
-
   const [filteredphoto, setFilteredphoto] = useState<LovType[]>([]);
   const [filteredTooluse, setFilteredTooluse] = useState<LovType[]>([]);
   const [filteredDecision, setFilteredDecision] = useState<LovType[]>([]);
-  const [filteredSecApprove, setFilteredSecApprove] = useState<LovType[]>([]);
-  const [filteredQcApprove, setFilteredQcApprove] = useState<LovType[]>([]);
+  const [filteredScApprove, setFilteredScApprove] = useState<LovType[]>([]);
+  const [filteredQmrApprove, setFilteredQmrApprove] = useState<LovType[]>([]);
   const [filteredCloseApprove, setFilteredCloseApprove] = useState<LovType[]>([]);
   //======================= Value Variables =======================
   //======================= Hidden Variables ======================
@@ -384,9 +371,9 @@ export default function ExplaintBody({
   const [isPAPHidden, setIsPAPHidden] = useState(true);
   const [isOBSAHidden, setIsOBSAHidden] = useState(true);
   const [isROOTHidden, setIsROOTHidden] = useState(false);
-  //=========================================================
+  //==========================================================================
   //              สร้าง state สำหรับควบคุม Accordion
-  //====================== ผู้ชี้แจง ==========================//
+  //================================ ผู้ชี้แจง ===================================//
   const [isMinimizeexplainOpen, setisMinimizeExplainOpen] = useState(true);
   const [isMinimizetoolOpen, setisMinimizeToolOpen] = useState(true);
   const [isMinimizeobservOpen, setisMinimizeObservOpen] = useState(true);
@@ -411,12 +398,13 @@ export default function ExplaintBody({
   const [isMinimizeclosedetailOpen, setisMinimizeClosedetailOpen] = useState(true);
   const [isMinimizeclosenoteOpen, setisMinimizeClosenoteOpen] = useState(true);
   const [isMinimizefilecloseOpen, setisMinimizeFilecloseOpen] = useState(true);
+  //=================================================================================//
 
   //======================= Tempเก็บค่า ========================//
   const [TempDataSC, setTempDataSC] = useState(null);
-  const [TempDataQC, setTempDataQC] = useState(null);
+  const [TempDataQMR, setTempDataQMR] = useState(null);
   const [TempDataReturnClose, setTempDataReturnClose] = useState(null);
-
+  //=========================================================//
 
   const grouped = {config_file: dataset_configfile || [],};
   const TuRef = useRef<HTMLDivElement>(null);
@@ -432,7 +420,7 @@ export default function ExplaintBody({
   const showPlaceholderclosedetail = isActionCloseAdd && !close_detail;
   const showPlaceholderclosenote = isActionCloseAdd && !close_note;
   const isFollowUpDate = dataelement?.follow_up_date_condition === "1";
-  //================================================================================================================================================//
+  //================================================================================//
 
   //=====================Validate================================//
   useEffect(() => {
@@ -474,40 +462,8 @@ export default function ExplaintBody({
     }
   }, [submitCount]);
   //=====================Validate================================//
-  // CheckBox Tool used
-  const handleCheckboxChangeTU = (item: LovType) => {
-    setdataToolUse((prev: LovType[] = []) => {
-      let newData: LovType[];
 
-      if (prev.some((t) => t.id === item.id)) {
-        // ถ้ามีอยู่แล้ว → เอาออก
-        newData = prev.filter((t) => t.id !== item.id);
-
-        // ถ้าเอาออกแล้วเป็น Other → เคลียร์ค่า
-        if (item.lov2 === "Y") {
-          setToolOther("");
-        }
-      } else {
-        // เพิ่ม object แบบเต็ม
-        newData = [...prev, item];
-      }
-
-      // สร้าง array ลดรูป
-      const reducedArray = newData.map((t) => ({
-        explain_tu_id: t.id,
-        label: t.lov1,
-        isOther: t.lov2,
-      }));
-      // อัปเดตเข้า context
-      setdataToolUseValue(reducedArray);
-
-      if (onToolUseChange) {
-        onToolUseChange(newData); // ส่งค่าใหม่กลับไปให้ Parent
-      }
-      return newData;
-    });
-  };
-
+  //=====================ซ่อนกล่องต่างๆตามประเภทเอกสาร=========================//
   const setVisibilityByReportType = (reportTypeCode: string) => {
 
     setIsTUHidden(["OBS"].includes(reportTypeCode));
@@ -524,96 +480,11 @@ export default function ExplaintBody({
 
   };
 
-  // Check Box DD
-  const handleCheckboxChangeDD = (item: LovType) => {
-    setdataDecision((prev: LovType[] = []) => {
-      let newData: LovType[];
-
-      if (prev.some((dd) => dd.id === item.id)) {
-        // ถ้ามีอยู่แล้ว → เอาออก
-        newData = prev.filter((dd) => dd.id !== item.id);
-
-        if (item.lov2 === "Y") {
-          setDecisionOther("");
-        }
-      } else {
-        // เพิ่ม object แบบเต็ม
-        newData = [...prev, item];
-      }
-
-      // สร้าง array ลดรูปสำหรับ context
-      const reducedArray = newData.map((dd) => ({
-        explain_dd_id: dd.id,
-        label: dd.lov1,
-        isOther: dd.lov2,
-      }));
-
-      setdataDecisionValue(reducedArray);
-
-      if (onDdChange) {
-        onDdChange(newData); // ส่งค่าใหม่กลับไปให้ Parent
-      }
-      return newData;
-    });
-  };
-
-  // ฟังก์ชัน setTooluse
-  const setTooluse = (data: any) => {
-    const newData: any[] = [];
-    Array.isArray(data) &&
-      data.forEach((el) => {
-        const filter = dataToolUse_Combobox.find(
-          (item: any) => item.id === el.tool_use_id
-        );
-        if (filter) {
-          newData.push({
-            ...filter,
-            other: el.other || "",
-          });
-        }
-      });
-    return newData;
-  };
-
-  const handleFileChange = (fileArray: ComplaintFile[], cf_type: "Explain" | "Close") => {
-    if (!fileArray || fileArray.length === 0) return;
-    if (cf_type === "Explain") {
-      setexplainFiles((prev: any) => [...prev, ...fileArray]);
-    } else {
-      setcloseFiles((prev: any) => [...prev, ...fileArray]);
-    }
-  };
-
-  useEffect(() => {
-    if (isActionExplainAdd && prevFiles && prevFiles.length > 0) {
-      setexplainFiles(prevFiles);
-      setcomplaintFiles(prevFiles);
-    }
-  }, [prevFiles, isActionExplainAdd]);
-
- 
-  const handleRemoveFile = (index: number, cf_type: "Explain" | "Close") => {
-    if (cf_type === "Explain") {
-      setexplainFiles((prev: any) =>
-        prev.filter((_: any, i: any) => i !== index)
-      );
-    } else {
-      setcloseFiles((prev: any) =>
-        prev.filter((_: any, i: any) => i !== index)
-      );
-    }
-  };
-
+  //=======================================================================
   const ComplaintFile_Get = async (cf_type: "Explain" | "Close") => {
-
     // ตรวจสอบว่ามี dataelement?.id หรือไม่  ไม่error หากไม่มีไฟล์
-    if (!dataelement?.id) {
-      if (cf_type === "Explain")
-        setexplainFiles([]);
-      else setcloseFiles([]);
-      return;
-    }
-
+    if (!dataelement?.id) return;
+  
     // setIsLoadingScreen(true);
     const dataset = {
       explain_id: dataelement.id,
@@ -669,40 +540,76 @@ export default function ExplaintBody({
     }
   };
 
-  const ExplaintApprove_Get = async (explain_id: string) => {
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        "[Calling Function] : ExplaintApprove_Get"
-      );
+//===================================================================================================
 
-    if (!explain_id) return [];
+  // CheckBox Tool used
+  const handleCheckboxChangeTU = (item: LovType) => {
+    setdataToolUse((prev: LovType[] = []) => {
+      let newData: LovType[];
 
-    setIsLoadingScreen(true);
-    const dataset = { explain_id };
+      if (prev.some((t) => t.id === item.id)) {
+        // ถ้ามีอยู่แล้ว → เอาออก
+        newData = prev.filter((t) => t.id !== item.id);
 
-    try {
-      const response = await _POST(
-        dataset,
-        "/ExplaintApprove/ExplaintApproveGet"
-      );
-      if (response?.status === "success") {
-        
-        setApproveList(response.data || []);
-        return response.data || [];
+        // ถ้าเอาออกแล้วเป็น Other → เคลียร์ค่า
+        if (item.lov2 === "Y") {
+          setToolOther("");
+        }
+      } else {
+        // เพิ่ม object แบบเต็ม
+        newData = [...prev, item];
       }
-      return [];
-    } catch (e) {
-      console.error("ExplaintApprove_Get error:", e);
-      return [];
-    } finally {
-      setIsLoadingScreen(false);
-    }
+
+      // สร้าง array ลดรูป
+      const reducedArray = newData.map((t) => ({
+        explain_tu_id: t.id,
+        label: t.lov1,
+        isOther: t.lov2,
+      }));
+      // อัปเดตเข้า context
+      setdataToolUseValue(reducedArray);
+
+      if (onToolUseChange) {
+        onToolUseChange(newData); // ส่งค่าใหม่กลับไปให้ Parent
+      }
+      return newData;
+    });
+  };
+
+  // Check Box DD
+  const handleCheckboxChangeDD = (item: LovType) => {
+    setdataDecision((prev: LovType[] = []) => {
+      let newData: LovType[];
+
+      if (prev.some((dd) => dd.id === item.id)) {
+        // ถ้ามีอยู่แล้ว → เอาออก
+        newData = prev.filter((dd) => dd.id !== item.id);
+
+        if (item.lov2 === "Y") {
+          setDecisionOther("");
+        }
+      } else {
+        // เพิ่ม object แบบเต็ม
+        newData = [...prev, item];
+      }
+
+      // สร้าง array ลดรูปสำหรับ context
+      const reducedArray = newData.map((dd) => ({
+        explain_dd_id: dd.id,
+        label: dd.lov1,
+        isOther: dd.lov2,
+      }));
+
+      setdataDecisionValue(reducedArray);
+
+      if (onDdChange) {
+        onDdChange(newData); // ส่งค่าใหม่กลับไปให้ Parent
+      }
+      return newData;
+    });
   };
 
   const setExplainDD = (data: any) => {
-
     const newData: any[] = [];
     Array.isArray(data) &&
       data.forEach((el) => {
@@ -718,6 +625,27 @@ export default function ExplaintBody({
         }
       });
     return newData;
+  };
+
+  const handleFileChange = (fileArray: ComplaintFile[], cf_type: "Explain" | "Close") => {
+    if (!fileArray || fileArray.length === 0) return;
+    if (cf_type === "Explain") {
+      setexplainFiles((prev: any) => [...prev, ...fileArray]);
+    } else {
+      setcloseFiles((prev: any) => [...prev, ...fileArray]);
+    }
+  };
+
+  const handleRemoveFile = (index: number, cf_type: "Explain" | "Close") => {
+    if (cf_type === "Explain") {
+      setexplainFiles((prev: any) =>
+        prev.filter((_: any, i: any) => i !== index)
+      );
+    } else {
+      setcloseFiles((prev: any) =>
+        prev.filter((_: any, i: any) => i !== index)
+      );
+    }
   };
 
   const getApproveDetailLabel = (approveData: any) => {
@@ -744,6 +672,25 @@ export default function ExplaintBody({
     }
   };
   //===================================================================================================
+
+  //ดึงไฟล์ที่เคยเพิ่มไว้ตอน Explain อีกครั้ง
+  React.useEffect(() => {
+    if (isActionExplainAdd && prevFiles && prevFiles.length > 0) {
+      setexplainFiles(prevFiles);
+      setcomplaintFiles(prevFiles);
+    }
+  }, [prevFiles, isActionExplainAdd]);
+
+  //แสดงไฟล์ตอนดูข้อมูล
+  React.useEffect(() => {
+    if (!dataelement?.id) return;
+  
+    if (!isActionExplainAdd) {
+     ComplaintFile_Get("Explain");
+    }
+    ComplaintFile_Get("Close");
+  }, [dataelement?.id]);
+
 
   React.useEffect(() => {
     const updateData = async () => {
@@ -865,43 +812,43 @@ export default function ExplaintBody({
         const val = reportTypeToUse;
 
         if (!isItAdmin) {
-          const newFilteredSecApprove = (dataApprove_Combobox || []).filter(
+          const newFilteredScApprove = (dataApprove_Combobox || []).filter(
             (item: LovType) => item.lov_type === "approve_select"
           );
-          setFilteredSecApprove(newFilteredSecApprove);
+          setFilteredScApprove(newFilteredScApprove);
         }
         if (!isItAdmin) {
-          const newFilteredQcApprove = (dataApprove_Combobox || []).filter(
+          const newFilteredQmrApprove = (dataApprove_Combobox || []).filter(
             (item: LovType) => item.lov_type === "approve_select"
           );
-          setFilteredQcApprove((prev: LovType[]) => {
-            if (JSON.stringify(prev) !== JSON.stringify(newFilteredQcApprove))
-              return newFilteredQcApprove;
+          setFilteredQmrApprove((prev: LovType[]) => {
+            if (JSON.stringify(prev) !== JSON.stringify(newFilteredQmrApprove))
+              return newFilteredQmrApprove;
             return prev;
           });
         }
         // // Follow-up approve options
         if (!isItAdmin) {
-          const newFilteredFuApprove = (dataApprove_Combobox || []).filter(
+          const newFilteredCloseApprove = (dataApprove_Combobox || []).filter(
             (item: LovType) => item.lov_type === "approve_select"
           );
 
           setFilteredCloseApprove((prev: LovType[]) => {
-            if (JSON.stringify(prev) !== JSON.stringify(newFilteredFuApprove))
-              return newFilteredFuApprove;
+            if (JSON.stringify(prev) !== JSON.stringify(newFilteredCloseApprove))
+              return newFilteredCloseApprove;
             return prev;
           });
         }
 
-        const newFilteredToolUse =
-          isItAdmin ?
-            (dataToolUse_Combobox || []).filter(
-              (item: LovType) => item.lov_type === "tool_use" && item.lov_group == dataelement?.responsible_company_id
-            )
-            :
-            (dataToolUse_Combobox || []).filter(
-              (item: LovType) => item.lov_type === "tool_use"
-            )
+      const newFilteredToolUse =
+        isItAdmin ?
+          (dataToolUse_Combobox || []).filter(
+            (item: LovType) => item.lov_type === "tool_use" && item.lov_group == dataelement?.responsible_company_id
+          )
+          :
+          (dataToolUse_Combobox || []).filter(
+            (item: LovType) => item.lov_type === "tool_use"
+          )
         setFilteredTooluse((prev: LovType[]) => {
           if (JSON.stringify(prev) !== JSON.stringify(newFilteredToolUse))
             return newFilteredToolUse;
@@ -940,8 +887,8 @@ export default function ExplaintBody({
         // ถ้ายังไม่มี reportType ก็ reset
         setFilteredTooluse([]);
         setFilteredDecision([]);
-        setFilteredQcApprove([]);
-        setFilteredSecApprove([]);
+        setFilteredQmrApprove([]);
+        setFilteredScApprove([]);
         setFilteredphoto([]);
       }
     };
@@ -1049,7 +996,7 @@ export default function ExplaintBody({
     approveList,
   ]);
 
-  //////////////////////// Approve Read //////////////////////////
+  //////////////////////// Read //////////////////////////
   React.useEffect(() => {
     if (
       dataelement &&
@@ -1095,14 +1042,14 @@ export default function ExplaintBody({
         setfollow_up_date(dayjs(dataelement.follow_up_date));
       }
 
-      // SC Approve = approve_seq = 1
+      //หาค่าลำดับขั้นการอนุมัติจาก approveList
       const TempscApprove = approveList?.find(
         (x: any) => x.explain_id === dataelement?.id && x.approve_seq === 1
       );
-      const TempqcApprove = approveList?.find(
+      const TempqmrApprove = approveList?.find(
         (x: any) => x.explain_id === dataelement?.id && x.approve_seq === 2
       );
-
+      
       // Set explain fields
       setobservation_analysis(dataelement?.observation_analysis || "");
       setroot_cause(dataelement?.root_cause || "");
@@ -1140,44 +1087,43 @@ export default function ExplaintBody({
       }
       
       if (dataelement) {
-        const reportTypeObj = dataset_reporttype_inactive?.find(
+        const TempReportTypeobj = dataset_reporttype_inactive?.find(
           (item: LovType) =>
             item.id === dataelement.report_type ||
             item.lov_code === dataelement.report_type
         );
-
-        if (reportTypeObj) {
-          setVisibilityByReportType(reportTypeObj.lov_code);
+        if (TempReportTypeobj) {
+          setVisibilityByReportType(TempReportTypeobj.lov_code);
         }
       }
 
       // Load QC approve data from dataelement (for CloseAdd mode)
       if (isActionCloseAdd || isActionClose || isActionCloseHistory) {
         // Set QC approve name
-        if (TempqcApprove?.approve_name) {
-          setqcapprove_name(TempqcApprove.approve_name);
+        if (TempqmrApprove?.approve_name) {
+          setqcapprove_name(TempqmrApprove.approve_name);
         }
 
         // Set QC approve company
-        if (TempqcApprove?.approve_company_id) {
-          const qcCompany = dataset_company?.find(
+        if (TempqmrApprove?.approve_company_id) {
+          const qmrCompany = dataset_company?.find(
             (el: any) =>
-              String(el.company_id) === String(TempqcApprove.approve_company_id)
+              String(el.company_id) === String(TempqmrApprove.approve_company_id)
           );
-          if (qcCompany) {
-            setqcapprove_company_id(qcCompany);
+          if (qmrCompany) {
+            setqcapprove_company_id(qmrCompany);
           }
         }
 
         // Set QC approve department
-        if (TempqcApprove?.approve_department_id) {
-          const qcDepartment = dataset_department?.find(
+        if (TempqmrApprove?.approve_department_id) {
+          const qmrDepartment = dataset_department?.find(
             (el: any) =>
               String(el.department_id) ===
-              String(TempqcApprove.approve_department_id)
+              String(TempqmrApprove.approve_department_id)
           );
-          if (qcDepartment) {
-            setqcapprove_department_id(qcDepartment);
+          if (qmrDepartment) {
+            setqcapprove_department_id(qmrDepartment);
           }
         }
 
@@ -1186,46 +1132,45 @@ export default function ExplaintBody({
 
         if (isItAdmin) {
           // ✅ เฉพาะ IT Admin: กรองตาม approve_company_id → lov_group
-          const approveCompanyId = TempqcApprove?.approve_company_id;
+          const approveCompanyId = TempqmrApprove?.approve_company_id;
 
           result =
             dataApprove_Combobox
               .filter((item: any) => Number(item.lov_group) === Number(approveCompanyId))
-              .find((item: any) => item.lov_code === TempqcApprove?.approve_status) || null;
+              .find((item: any) => item.lov_code === TempqmrApprove?.approve_status) || null;
 
         } else {
           // ✅ แบบเดิม: จับแค่ lov_code
           result =
             dataApprove_Combobox.find(
-              (item: any) => item.lov_code === TempqcApprove?.approve_status
+              (item: any) => item.lov_code === TempqmrApprove?.approve_status
             ) || null;
         }
 
         setdataQcapp(result);
 
         // Set other QC approve fields
-        if (TempqcApprove?.approve_position) {
-          setqcapprove_position(TempqcApprove.approve_position);
+        if (TempqmrApprove?.approve_position) {
+          setqcapprove_position(TempqmrApprove.approve_position);
         }
-        if (TempqcApprove?.approve_email) {
-          setqcapprove_email(TempqcApprove.approve_email);
+        if (TempqmrApprove?.approve_email) {
+          setqcapprove_email(TempqmrApprove.approve_email);
         }
-        if (TempqcApprove?.approve_date) {
-          setqcapprove_date(dayjs(TempqcApprove.approve_date));
+        if (TempqmrApprove?.approve_date) {
+          setqcapprove_date(dayjs(TempqmrApprove.approve_date));
         }
-        if (TempqcApprove?.approve_detail) {
-          setqcapprove_detail(TempqcApprove.approve_detail);
+        if (TempqmrApprove?.approve_detail) {
+          setqcapprove_detail(TempqmrApprove.approve_detail);
         }
-        if (TempqcApprove?.approve_note) {
-          setqcapprove_note(TempqcApprove.approve_note);
+        if (TempqmrApprove?.approve_note) {
+          setqcapprove_note(TempqmrApprove.approve_note);
         }
       }
       setTempDataSC(TempscApprove || null);
-      setTempDataQC(TempqcApprove || null);
+      setTempDataQMR(TempqmrApprove || null);
 
-      // Process ToolUse data - wait until combobox loaded
-      // Filter Sec Approve
-      const secFiltered = isItAdmin
+      // Filter SC Approve
+      const scFiltered = isItAdmin
         ? dataApprove_Combobox.filter(
           (item: any) =>
             item.lov_type === "approve_select" &&
@@ -1235,16 +1180,16 @@ export default function ExplaintBody({
           (item: any) => item.lov_type === "approve_select"
         );
 
-      setFilteredSecApprove(secFiltered);
+      setFilteredScApprove(scFiltered);
 
-      // Filter QC Approve
-      const qcFiltered = isItAdmin
+      // Filter QMR Approve
+      const qmrFiltered = isItAdmin
         ? (
-          TempqcApprove?.approve_company_id
+          TempqmrApprove?.approve_company_id
             ? dataApprove_Combobox.filter(
               (item: any) =>
                 item.lov_type === "approve_select" &&
-                item.lov_group == TempqcApprove.approve_company_id
+                item.lov_group == TempqmrApprove.approve_company_id
             )
             : dataApprove_Combobox.filter(
               (item: any) => item.lov_type === "approve_select"
@@ -1253,7 +1198,7 @@ export default function ExplaintBody({
         : dataApprove_Combobox.filter(
           (item: any) => item.lov_type === "approve_select"
         );
-      setFilteredQcApprove(qcFiltered);
+      setFilteredQmrApprove(qmrFiltered);
 
       // Filter close Approve
       const closeFiltered = isItAdmin
@@ -1396,41 +1341,6 @@ export default function ExplaintBody({
 
   }, [action, user, dataset_company, dataset_department]);
 
-  // useEffect สำหรับโหลดไฟล์ Close จาก NAS
-  React.useEffect(() => {
-    if (
-      dataelement?.id &&
-      (isActionReadClose || isActionCloseHistory)
-    ) {
-      ComplaintFile_Get("Close");
-    }
-  }, [dataelement?.id, isActionReadClose, isActionCloseHistory]);
-
-  // 🔹 Load QC approve data and radio when in CloseAdd mode
-  React.useEffect(() => {
-    if (
-      !isActionCloseAdd ||
-      !currentExplainForApproval ||
-      !dataApprove_Combobox?.length
-    )
-      return;
-
-    const fetchQcApproveData = async () => {
-      
-      const approveData = await ExplaintApprove_Get(
-        currentExplainForApproval.id
-      );
-
-      if (approveData?.length > 0) {
-        const TempqcApprove = approveData.find(
-          (item: any) => item.approve_seq === 2
-        );
-      }
-    };
-
-    fetchQcApproveData();
-  }, [isActionCloseAdd, currentExplainForApproval, dataApprove_Combobox]);
-
   React.useEffect(() => {
     if (!dataelement) return;
     
@@ -1460,7 +1370,6 @@ export default function ExplaintBody({
         isOther: t.lov2,
       }))
     );
-
 
     const otherTU = tu.find((el: any) => el.lov2 === "Y");
     setToolOther(otherTU?.other || "");
@@ -1500,35 +1409,8 @@ export default function ExplaintBody({
     setDecisionOther(otherDD?.other || "");
   }, [dataelement, dataDecision_Combobox]);
 
-  
-  React.useEffect(() => {
-    if (
-      (isActionExplainRead ||
-        isActionExplainApproveScAdd ||
-        isActionExplainApproveQcAdd ||
-        isActionCloseHistory ||
-        isActionCloseAdd) &&
-      dataelement?.id
-    ) {
-      ComplaintFile_Get("Explain");
-      ComplaintFile_Get("Close");
-    }
-  }, [action, dataelement]);
-
-  React.useEffect(() => {
-    if ((isActionExplainRead || isActionReadExplain || isActionExplainApproveScRead || isActionExplainApproveQcRead || isActionReadClose) && dataelement?.id) {
-      ComplaintFile_Get("Explain");
-      ComplaintFile_Get("Close");
-    }
-  }, [action, dataelement]);
 
   const setExplainTU = (data: any) => {
-    // if (true)
-    // console.log(
-    //   "🕑 ",
-    //   dayjs().format("HH:mm:ss.SSS"),
-    //   " [Calling Function]  :  setExplainTU"
-    // );
 
     const newData: any[] = [];
     if (Array.isArray(data)) {
@@ -1549,19 +1431,15 @@ export default function ExplaintBody({
           };
           newData.push(processedItem);
         } else {
-          console.warn(`🚫 No matching tool found for targetId: ${targetId}`);
         }
       });
     } else {
-      console.warn("🚫 setExplainTU input data is not an array:", data);
     }
     return newData;
   };
 
   
-
-
-  const checkQcCondition = () => {
+  const checkQMRCondition = () => {
     let currentReportType = dataset_reporttype_inactive?.find(
       (item: any) =>
         item.id === dataelement?.report_type ||
@@ -1572,7 +1450,6 @@ export default function ExplaintBody({
       const levels = String(currentReportType.lov5).split(',');
       return levels.length > 1;
     }
-    
   };
 
   return (
@@ -2793,7 +2670,7 @@ export default function ExplaintBody({
                               );
                             }}
                           >
-                            {(filteredSecApprove || []).map((item: LovType) => (
+                            {(filteredScApprove || []).map((item: LovType) => (
                               <FormControlLabel
                                 key={item.id}
                                 value={item.id}
@@ -3009,14 +2886,14 @@ export default function ExplaintBody({
       {/* //ส่วนของ Qc */}
       {
         (isActionExplainApproveQcAdd  ||
-          (isActionExplainReadApproveQc && TempDataQC) ||
-          (isActionExplainApproveQcRead && TempDataQC) ||
-          (isActionReadExplain && TempDataQC) ||
-          (isActionExplainRead && TempDataQC) ||
-          (isActionExplainApproveScRead && TempDataQC) ||
-          (isActionReadClose && TempDataQC) ||
-          (isActionCloseHistory && TempDataQC) ||
-          (isActionCloseAdd && checkQcCondition())) && (
+          (isActionExplainReadApproveQc && TempDataQMR) ||
+          (isActionExplainApproveQcRead && TempDataQMR) ||
+          (isActionReadExplain && TempDataQMR) ||
+          (isActionExplainRead && TempDataQMR) ||
+          (isActionExplainApproveScRead && TempDataQMR) ||
+          (isActionReadClose && TempDataQMR) ||
+          (isActionCloseHistory && TempDataQMR) ||
+          (isActionCloseAdd && checkQMRCondition())) && (
             <Accordion
                expanded={isMinimizeqmrappOpen}
                 onChange={() =>
@@ -3217,7 +3094,7 @@ export default function ExplaintBody({
                               {(() => {
                                 return null;
                               })()}
-                              {(filteredQcApprove || []).map((item: LovType, index: number) => {
+                              {(filteredQmrApprove || []).map((item: LovType, index: number) => {
 
                                 return (
                                   <FormControlLabel

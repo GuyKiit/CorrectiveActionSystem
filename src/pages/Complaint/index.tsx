@@ -6683,7 +6683,7 @@ export default function Complaint() {
     setPrevExplainFiles([]);
     // Clear file states to prevent old files from persisting
     setexplainFiles([]);
-    setcloseFiles([]);
+    // setcloseFiles([]);
     setcomplaintFiles([]);
 
     // ตั้งค่าวันที่ชี้แจงเป็นวันปัจจุบัน
