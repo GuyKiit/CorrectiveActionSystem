@@ -426,13 +426,10 @@ export default function Complaint() {
   const [complaintMainData, setComplaintMainData] = useState<any>(null);
   const [approveSelectionCode, setApproveSelectionCode] = useState<string | null>(null);
   const [action, setAction] = React.useState("");
-
   const [prevExplainFiles, setPrevExplainFiles] = React.useState<any[]>([]);
 
   // Date Search Variables (from index.tsx)
-  const [respondWithinSearch, setrespondWithinSearch] = React.useState<dayjs.Dayjs | undefined | null>(dayjs().subtract(1, "month"));
   const [documentDateSearch, setdocumentDateSearch] = React.useState<dayjs.Dayjs | null>(null);
-  const [endDateSearch, setEndDateSearch] = React.useState<dayjs.Dayjs | undefined | null>(dayjs().add(3, "month"));
 
   // Search Variables (from index.tsx)
   const [TextNameSearch, setTextNameSearch] = React.useState({
@@ -494,12 +491,11 @@ export default function Complaint() {
   const [closeDetailError, setCloseDetailError] = useState(false);
   const [closeNoteError, setCloseNoteError] = useState(false);
 
-  const handleOpenAddList = () => setOpenAddlist(true);
-
   // For On-Off Calling Function Log
   const [isCallFuncLogOn] = useState(true);
+  
   const [searchTrigger, setSearchTrigger] = useState(false);
-
+  const handleOpenAddList = () => setOpenAddlist(true);
   const grouped = { config_file: dataset_configfile || [], };
 
   const tempRoleUser = dataset_roleProfile?.filter(
@@ -545,13 +541,6 @@ export default function Complaint() {
       setdataset_department([]);
       setrespondent_department_id(null);
     }
-  };
-
-  // Reset Form Function (from index.tsx)
-  const resetSearchTable = () => {
-    setdocumentDateSearch(null);
-    setrespondWithinSearch(null);
-    setEndDateSearch(null);
   };
 
   // Reset Form Function (from index.tsx)
@@ -5933,7 +5922,6 @@ export default function Complaint() {
     setdataComplaintTypeValue_Combobox([]);
     setdataComplaintRsValue_Combobox([]);
     setdataphotoValue_Combobox([]);
-    setrespondWithinSearch(null);
     setdocumentDateSearch(null);
     setTextNameSearch({
       dataset_company: "",
@@ -6028,11 +6016,6 @@ export default function Complaint() {
   // =====================================================================================================
   // USEEFFECT - INITIALIZATION (from index.tsx and ComplaintRead.tsx)
   // =====================================================================================================
-
-  // Initialize data on component mount
-  React.useEffect(() => {
-    resetSearchTable();
-  }, []);
 
   const effectRan = React.useRef(false); // ป้องกัน run ซ้ำใน dev mode
 
@@ -7446,34 +7429,6 @@ export default function Complaint() {
           />
         }
       />
-
-      {/* =================== Dialog Sections =================== */}
-
-      <Grow in={successCardOpen} mountOnEnter unmountOnExit>
-        <Card
-          sx={{
-            position: "fixed",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            zIndex: 1500,
-            minWidth: 300,
-            bgcolor: "#e8f5e9",
-            boxShadow: 8,
-            borderRadius: 3,
-          }}
-        >
-          <CardContent sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-            <CheckCircleIcon color="success" fontSize="large" />
-            <Typography variant="body1" sx={{ flexGrow: 1 }}>
-              {successCardMessage}
-            </Typography>
-            <IconButton size="small" onClick={() => setSuccessCardOpen(false)}>
-              <CloseIcon />
-            </IconButton>
-          </CardContent>
-        </Card>
-      </Grow>
     </>
   );
 }
