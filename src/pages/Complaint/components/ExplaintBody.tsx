@@ -197,18 +197,6 @@ export default function ExplaintBody({
   onCloseDetailChange,
   onCloseNoteChange,
   //====================Validate==================================//
-
-  //=======================Other=============================//
-
-  complaint_status_lable,
-  readonlyTextField,
-  bgcolorTextField,
-  onBlocksChange,
-  handleOpenAdd,
-  handleOnclickExplainView,
-  handleOnclickExplainApproveSc,
-  //=======================Other=============================//
-
   submitCount,
 }: ExplaintBody) {
   // const isActionRead =
@@ -242,19 +230,8 @@ export default function ExplaintBody({
   //⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐//
   const {
     dataelement,
-    date_of_detection,
-    respondent_department_id,
-    respondent_email,
-    product_name,
-    detail,
-    compTypeOther,
-    compRsOther,
-    clauseOther,
     dataReportTypeValue,
-    dataComplaintType_Combobox,
-    dataComplaintRs_Combobox,
     dataphoto_Combobox,
-    complaint_status_id,
     // Dataset
     dataset_reporttype,
     dataset_reporttype_inactive,
@@ -268,19 +245,11 @@ export default function ExplaintBody({
     approveList,
     dataTooluse,
     dataToolUse_Combobox,
-    dataToolUseValue_Combobox,
     dataDecision,
     dataDecision_Combobox,
-    dataDecisionValue_Combobox,
-
     dataSectionapp,
     dataQcapp,
     dataApprove_Combobox,
-    dataSectionappValue,
-    dataQcappValue,
-    explain_id,
-    complaint_id,
-    explain_seq,
     observation_analysis,
     root_cause,
     corrective_action,
@@ -292,7 +261,6 @@ export default function ExplaintBody({
     responsible_position,
     responsible_email,
     responsible_date,
-    close_status,
     close_name,
     close_company_id,
     close_department_id,
@@ -302,18 +270,7 @@ export default function ExplaintBody({
     close_detail,
     close_note,
     return_detail,
-    return_name,
-    return_company_id,
-    return_department_id,
-    return_position,
-    return_email,
-    return_datetime,
-    explain_record_status,
-    explain_create_by,
-    explain_create_datetime,
-    explain_update_by,
-    explain_update_datetime,
-    dataFuapp,
+    followup_approve, //มันคือ Radio Close 
     approve_name,
     approve_company_id,
     approve_department_id,
@@ -331,69 +288,28 @@ export default function ExplaintBody({
     qcapprove_date,
     qcapprove_detail,
     qcapprove_note,
-    isApproveScBoxHidden,
-    isApproveQcBoxHidden,
-    isApproveCloseBoxHidden,
     dataset_configfile,
-    follow_up_date_condition,
     explainFiles,
     closeFiles,
 
-    setcas_number,
-    setdoc_date,
-    setdate_of_detection,
-    setrequest_name,
-    setrequest_company_id,
-    setrequest_domain_id,
-    setrequest_position,
-    setrequest_email,
-    setrequest_phone,
+    
     setrespondent_company_id,
-    setrespondent_domain_id,
     setrespondent_department_id,
-    setrespondent_email,
-    setproduct_name,
-    setdetail,
-    setrespond_date_within,
-    setlot_no,
-    setcompTypeOther,
-    setotherText,
-    setcompRsOther,
-    setclauseOther,
-    setphoTypeOther,
     setdataReportTypeValue,
-    setdataComplaintTypeValue_Combobox,
-    setdataComplaintRsValue_Combobox,
-    setdataphotoValue_Combobox,
-    setdatapriorityValue_Combobox,
-
     // Dataset
     setdataset_reporttype,
     setdataset_reporttype_inactive,
-    setdataset_company,
-    setdataset_department,
-    setdataset_domain,
     setcomplaintFiles,
-
     //Explaint
-    setExplainList,
     setApproveList,
     setdataToolUse,
-    setdataToolUse_Combobox,
     setdataToolUseValue,
     setToolOther,
     setdataDecision,
-    setdataDecision_Combobox,
     setdataDecisionValue,
     setDecisionOther,
-    setdataApprove_Combobox,
     setdataSectionapp,
-    setdataSectionappValue,
     setdataQcapp,
-    setdataQcappValue,
-    setexplain_id,
-    setcomplaint_id,
-    setexplain_seq,
     setobservation_analysis,
     setroot_cause,
     setcorrective_action,
@@ -405,7 +321,6 @@ export default function ExplaintBody({
     setresponsible_position,
     setresponsible_email,
     setresponsible_date,
-    setclose_status,
     setclose_name,
     setclose_company_id,
     setclose_department_id,
@@ -414,18 +329,6 @@ export default function ExplaintBody({
     setclose_date,
     setclose_detail,
     setclose_note,
-    setreturn_detail,
-    setreturn_name,
-    setreturn_company_id,
-    setreturn_department_id,
-    setreturn_position,
-    setreturn_email,
-    setreturn_datetime,
-    setexplain_record_status,
-    setexplain_create_by,
-    setexplain_create_datetime,
-    setexplain_update_by,
-    setexplain_update_datetime,
     setapprove_name,
     setapprove_company_id,
     setapprove_department_id,
@@ -434,7 +337,6 @@ export default function ExplaintBody({
     setapprove_date,
     setapprove_detail,
     setapprove_note,
-
     setqcapprove_name,
     setqcapprove_company_id,
     setqcapprove_department_id,
@@ -443,43 +345,25 @@ export default function ExplaintBody({
     setqcapprove_date,
     setqcapprove_detail,
     setqcapprove_note,
-    setisApproveScBoxHidden,
-    setisApproveQcBoxHidden,
-    setisApproveCloseBoxHidden,
-    setdataset_configfile,
-    setdataFuapp,
-    setfollow_up_date_condition,
+    setfollowup_approve, //มันคือ Radio Close 
     setexplainFiles,
     setcloseFiles,
   } = useListComplaint();
   //⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐//
   // Utility Variables ======================================================
-  const { Customer } = useData();
   const { setIsLoadingScreen } = useLayout();
 
   // For On-Off Calling Function Log
   const [isCallFuncLogOn] = useState(true);
   // Get Master Variables ======================================================
-
   const [filteredphoto, setFilteredphoto] = useState<LovType[]>([]);
   const [filteredTooluse, setFilteredTooluse] = useState<LovType[]>([]);
   const [filteredDecision, setFilteredDecision] = useState<LovType[]>([]);
-  const [filteredSecApprove, setFilteredSecApprove] = useState<LovType[]>([]);
-  const [filteredQcApprove, setFilteredQcApprove] = useState<LovType[]>([]);
-  const [test, setTest] = useState<LovType[]>([]);
-  const [filteredFuApprove, setFilteredFuApprove] = useState<LovType[]>([]);//⭐
-  // Value Variables ======================================================
-  const [dataComplaintType, setdataComplaintType] = useState<LovType[]>([]);
-  const [dataphoto, setdataphoto] = useState<LovType[]>([]);
-  const [datapriority, setdatapriority] = useState<LovType | null>(null);
-  const [fileList, setFileList] = useState<FileData[]>([]);
-  const [request_department_id, setrequest_department_id] = React.useState<{
-    itasset_department_id: number;
-    itasset_department_name: string;
-  } | null>(null);
-  // const [dataDecision, setdataDecision] = useState<LovType[]>([]);
-  const [dataTooluseCheckbox, setdataTooluseCheckbox] = useState<LovType[]>([]);
-  // Hidden Variables ======================================================
+  const [filteredScApprove, setFilteredScApprove] = useState<LovType[]>([]);
+  const [filteredQmrApprove, setFilteredQmrApprove] = useState<LovType[]>([]);
+  const [filteredCloseApprove, setFilteredCloseApprove] = useState<LovType[]>([]);
+  //======================= Value Variables =======================
+  //======================= Hidden Variables ======================
   const [isFormHidden, setIsFormHidden] = useState(false);
   const [isDDHidden, setIsDDHidden] = useState(true);
   const [isTUHidden, setIsTUHidden] = useState(true);
@@ -487,8 +371,10 @@ export default function ExplaintBody({
   const [isPAPHidden, setIsPAPHidden] = useState(true);
   const [isOBSAHidden, setIsOBSAHidden] = useState(true);
   const [isROOTHidden, setIsROOTHidden] = useState(false);
-
-  // สร้าง state สำหรับควบคุม Accordion
+  //==========================================================================
+  //              สร้าง state สำหรับควบคุม Accordion
+  //================================ ผู้ชี้แจง ===================================//
+  const [isMinimizeexplainOpen, setisMinimizeExplainOpen] = useState(true);
   const [isMinimizetoolOpen, setisMinimizeToolOpen] = useState(true);
   const [isMinimizeobservOpen, setisMinimizeObservOpen] = useState(true);
   const [isMinimizeddOpen, setisMinimizeDdOpen] = useState(true);
@@ -496,23 +382,31 @@ export default function ExplaintBody({
   const [isMinimizecaOpen, setisMinimizeCaOpen] = useState(true);
   const [isMinimizepapOpen, setisMinimizePapOpen] = useState(true);
   const [isMinimizefileOpen, setisMinimizeFileOpen] = useState(true);
-  const [isMinimizefilecloseOpen, setisMinimizeFilecloseOpen] = useState(true);
+  //=================== หัวหน้าส่วนผู้อนุมัติ ===================//
   const [isMinimizesectionappOpen, setisMinimizeSectionappOpen] = useState(true);
+  const [isMinimizesectionradioOpen, setisMinimizeSectionradioOpen] = useState(true);
   const [isMinimizedeappOpen, setisMinimizeDeappOpen] = useState(true);
   const [isMinimizeotappOpen, setisMinimizeOtappOpen] = useState(true);
-  const [isMinimizedeapp2Open, setisMinimizeDeapp2Open] = useState(true);
-
-  const [isMinimizefuappOpen, setisMinimizeFuappOpen] = useState(true);
+  //=================== ผู้จัดการโรงงานผู้อนุมัติ ===================//
+  const [isMinimizeqmrappOpen, setisMinimizeQmrappOpen] = useState(true);
+  const [isMinimizeqmrradioOpen, setisMinimizeQmrradioOpen] = useState(true);
+  const [isMinimizeqmrdetailOpen, setisMinimizeQmrdetailOpen] = useState(true);
+  const [isMinimizeqmrnoteOpen, setisMinimizeQmrnoteOpen] = useState(true);
+  //======================= ผู้ปิดรายการ ========================//
   const [isMinimizecloseOpen, setisMinimizeCloseOpen] = useState(true);
-  const [foundSC, setFoundSC] = useState(null);
-  const [foundQC, setFoundQC] = useState(null);
-  const [foundCLOSE, setFoundCLOSE] = React.useState<any>(null);
+  const [isMinimizecloseradioOpen, setisMinimizeCloseradioOpen] = useState(true);
+  const [isMinimizeclosedetailOpen, setisMinimizeClosedetailOpen] = useState(true);
+  const [isMinimizeclosenoteOpen, setisMinimizeClosenoteOpen] = useState(true);
+  const [isMinimizefilecloseOpen, setisMinimizeFilecloseOpen] = useState(true);
+  //=================================================================================//
 
+  //======================= Tempเก็บค่า ========================//
+  const [TempDataSC, setTempDataSC] = useState(null);
+  const [TempDataQMR, setTempDataQMR] = useState(null);
+  const [TempDataReturnClose, setTempDataReturnClose] = useState(null);
+  //=========================================================//
 
-  const grouped = {
-    config_file: dataset_configfile || [],
-  };
-
+  const grouped = {config_file: dataset_configfile || [],};
   const TuRef = useRef<HTMLDivElement>(null);
   const DdRef = useRef<HTMLDivElement>(null);
   const [firstErrorField, setFirstErrorField] = useState<string | null>(null);
@@ -522,21 +416,12 @@ export default function ExplaintBody({
   const isApproveqmr = dataQcapp?.lov_code === "APPROVE";
   const showPlaceholderqmrdetail = isActionExplainApproveQcAdd && !qcapprove_detail;
   const showPlaceholderqmrnote = isActionExplainApproveQcAdd && !qcapprove_note;
-  const isApproveFu = dataFuapp?.lov_code === "APPROVE";
+  const isApproveClose = followup_approve?.lov_code === "APPROVE";
   const showPlaceholderclosedetail = isActionCloseAdd && !close_detail;
   const showPlaceholderclosenote = isActionCloseAdd && !close_note;
-  const isReturnPage = action === "CloseAdd" || action === "CloseHistory";
-
   const isFollowUpDate = dataelement?.follow_up_date_condition === "1";
-  //================================================================================================================================================//
+  //================================================================================//
 
-  // ตั้งค่า isROOTHidden เป็น false เมื่ออยู่ในโหมดดูข้อมูล
-  React.useEffect(() => {
-    //console.log("Step:0",action, isViewMode);
-    if (action === "ExplainRead" || isViewMode) {
-      // setIsROOTHidden(false);
-    }
-  }, [action, isViewMode]);
   //=====================Validate================================//
   useEffect(() => {
     if (!validateText) return;
@@ -577,47 +462,8 @@ export default function ExplaintBody({
     }
   }, [submitCount]);
   //=====================Validate================================//
-  // CheckBox Tool used
-  const handleCheckboxChangeTU = (item: LovType) => {
-    // if (true)
-    //   console.log(
-    //     "🕑 ",
-    //     dayjs().format("HH:mm:ss.SSS"),
-    //     " [Calling Function]  :  handleCheckboxChangeTU"
-    //   );
 
-    setdataToolUse((prev: LovType[] = []) => {
-      let newData: LovType[];
-
-      if (prev.some((t) => t.id === item.id)) {
-        // ถ้ามีอยู่แล้ว → เอาออก
-        newData = prev.filter((t) => t.id !== item.id);
-
-        // ถ้าเอาออกแล้วเป็น Other → เคลียร์ค่า
-        if (item.lov2 === "Y") {
-          setToolOther("");
-        }
-      } else {
-        // เพิ่ม object แบบเต็ม
-        newData = [...prev, item];
-      }
-
-      // สร้าง array ลดรูป
-      const reducedArray = newData.map((t) => ({
-        explain_tu_id: t.id,
-        label: t.lov1,
-        isOther: t.lov2,
-      }));
-      // อัปเดตเข้า context
-      setdataToolUseValue(reducedArray);
-
-      if (onToolUseChange) {
-        onToolUseChange(newData); // ส่งค่าใหม่กลับไปให้ Parent
-      }
-      return newData;
-    });
-  };
-
+  //=====================ซ่อนกล่องต่างๆตามประเภทเอกสาร=========================//
   const setVisibilityByReportType = (reportTypeCode: string) => {
 
     setIsTUHidden(["OBS"].includes(reportTypeCode));
@@ -634,293 +480,11 @@ export default function ExplaintBody({
 
   };
 
-  // Check Box DD
-  const handleCheckboxChangeDD = (item: LovType) => {
-    // if (true)
-    //   console.log(
-    //     "🕑 ",
-    //     dayjs().format("HH:mm:ss.SSS"),
-    //     " [Calling Function]  :  handleCheckboxChangeDD"
-    //   );
-
-    setdataDecision((prev: LovType[] = []) => {
-      //console.log("💚💚item", item);
-      let newData: LovType[];
-
-      if (prev.some((dd) => dd.id === item.id)) {
-        // ถ้ามีอยู่แล้ว → เอาออก
-        newData = prev.filter((dd) => dd.id !== item.id);
-
-        if (item.lov2 === "Y") {
-          setDecisionOther("");
-        }
-      } else {
-        // เพิ่ม object แบบเต็ม
-        newData = [...prev, item];
-      }
-
-      // สร้าง array ลดรูปสำหรับ context
-      const reducedArray = newData.map((dd) => ({
-        explain_dd_id: dd.id,
-        label: dd.lov1,
-        isOther: dd.lov2,
-      }));
-
-      setdataDecisionValue(reducedArray);
-
-      if (onDdChange) {
-        onDdChange(newData); // ส่งค่าใหม่กลับไปให้ Parent
-      }
-      return newData;
-    });
-  };
-
-  // ฟังก์ชัน setTooluse
-  const setTooluse = (data: any) => {
-    const newData: any[] = [];
-    Array.isArray(data) &&
-      data.forEach((el) => {
-        const filter = dataToolUse_Combobox.find(
-          (item: any) => item.id === el.tool_use_id
-        );
-        if (filter) {
-          newData.push({
-            ...filter,
-            other: el.other || "",
-          });
-        }
-      });
-    return newData;
-  };
-
-  // รับ ComplaintFile[] จาก BrowseFileUpload
-  // const handleFileChange = (fileArray: ComplaintFile[],cf_type: "Explain" | "Close") => {
-  //   // if (true)
-  //   //   console.log(
-  //   //     "🕑 ",
-  //   //     dayjs().format("HH:mm:ss.SSS"),
-  //   //     " [Calling Function]  :  handleFileChange"
-  //   //   );
-
-  //   if (!fileArray || fileArray.length === 0) return;
-  //   const updatedList = [...fileList, ...fileArray];
-  //   setFileList(updatedList);
-  //   setcomplaintFiles(updatedList);
-  // };
-  const handleFileChange = (fileArray: ComplaintFile[], cf_type: "Explain" | "Close") => {
-    // if (true)
-    //   console.log(
-    //     "🕑 ",
-    //     dayjs().format("HH:mm:ss.SSS"),
-    //     " [Calling Function]  :  handleFileChange"
-    //   );
-
-    if (!fileArray || fileArray.length === 0) return;
-    if (cf_type === "Explain") {
-      setexplainFiles((prev: any) => [...prev, ...fileArray]);
-    } else {
-      setcloseFiles((prev: any) => [...prev, ...fileArray]);
-    }
-  };
-
-  // ✅ Populate files from previous explain
-  // useEffect(() => {
-  //   if (isActionExplainAdd && prevFiles && prevFiles.length > 0) {
-  //     console.log("📂 Pre-populating files from previous explain:", prevFiles);
-  //     // Check if files are already populated to avoid duplicates or infinite loops if needed
-  //     // But normally prevFiles is passed once.
-  //     // We overwrite or merge? The user probably wants it to *be* the initial state.
-  //     setFileList(prevFiles);
-  //     setcomplaintFiles(prevFiles);
-  //   }
-  // }, [prevFiles, isActionExplainAdd]);
-  useEffect(() => {
-    if (isActionExplainAdd && prevFiles && prevFiles.length > 0) {
-      // console.log("📂 Pre-populating files from previous explain:", prevFiles);
-      // Check if files are already populated to avoid duplicates or infinite loops if needed
-      // But normally prevFiles is passed once.
-      // We overwrite or merge? The user probably wants it to *be* the initial state.
-      setexplainFiles(prevFiles);
-      setcomplaintFiles(prevFiles);
-    }
-  }, [prevFiles, isActionExplainAdd]);
-
-  // Functions (Initial, Calculation or ETC.) =================================================
-  const resetForm = () => {
-    // if (true)
-    //   console.log(
-    //     "🕑 ",
-    //     dayjs().format("HH:mm:ss.SSS"),
-    //     " [Calling Function]  :  resetForm"
-    //   );
-
-    setdataReportTypeValue("");
-    setcas_number("");
-    setproduct_name("");
-    setlot_no("");
-    setrequest_name("");
-    setrequest_company_id(null);
-    setrequest_domain_id("");
-    setrequest_department_id(null);
-    setrequest_position("");
-    setrequest_email("");
-    setrequest_phone("");
-    setrespondent_company_id(null);
-    setrespondent_domain_id("");
-    setrespondent_department_id(null);
-    setrespondent_email("");
-
-    setdoc_date(dayjs(null));
-    setrespond_date_within(dayjs(null));
-    setdetail("");
-    setcompTypeOther("");
-    setotherText("");
-    setcompRsOther("");
-  };
-  const resetCloseState = () => {
-    setclose_name("");
-    setclose_company_id(null);
-    setclose_department_id(null);
-    setclose_position("");
-    setclose_email("");
-    setclose_date(null);
-    setdataFuapp(null);
-    setclose_detail("");
-    setclose_note("");
-    setFoundCLOSE(null);
-  };
-
-  // ลบไฟล์
-  // const handleRemoveFile = (index: number) => {
-  //   // if (true)
-  //   //   console.log(
-  //   //     "🕑 ",
-  //   //     dayjs().format("HH:mm:ss.SSS"),
-  //   //     " [Calling Function]  :  handleRemoveFile"
-  //   //   );
-
-  //   setFileList((prev) => {
-  //     const updatedList = prev.filter((_, i) => i !== index);
-  //     return updatedList;
-  //   });
-  // };
-  // useEffect(() => {
-  //   //console.log("Step:01", filteredTooluse, fileList);
-  //   setcomplaintFiles(fileList); // sync
-  // }, [fileList, filteredTooluse]);
-  const handleRemoveFile = (index: number, cf_type: "Explain" | "Close") => {
-    // if (true)
-    //   console.log(
-    //     "🕑 ",
-    //     dayjs().format("HH:mm:ss.SSS"),
-    //     " [Calling Function]  :  handleRemoveFile"
-    //   );
-    if (cf_type === "Explain") {
-      setexplainFiles((prev: any) =>
-        prev.filter((_: any, i: any) => i !== index)
-      );
-    } else {
-      setcloseFiles((prev: any) =>
-        prev.filter((_: any, i: any) => i !== index)
-      );
-    }
-  };
-  useEffect(() => {
-    //console.log("Step:01", filteredTooluse, fileList);
-    setcomplaintFiles(fileList); // sync
-  }, [fileList, filteredTooluse]);
-
-  // Get File
-  // const ComplaintFile_Get = async () => {
-  //   // if (true)
-  //   //   console.log(
-  //   //     "🕑 ",
-  //   //     dayjs().format("HH:mm:ss.SSS"),
-  //   //     " [Calling Function]  :  ComplaintFile_Get"
-  //   //   );
-
-  //   // ตรวจสอบว่ามี dataelement?.id หรือไม่  ไม่error หากไม่มีไฟล์
-  //   if (!dataelement?.id) {
-  //     // console.log("No complaint ID, skipping file fetch");
-  //     setFileList([]);
-  //     setcomplaintFiles([]);
-  //     return;
-  //   }
-
-  //   // setIsLoadingScreen(true);
-  //   const dataset = {
-  //     explain_id: dataelement?.id,
-  //     cf_type: "Explain",
-  //   };
-
-  //   try {
-  //     let response = await _POST(dataset, "/ComplaintFile/ComplaintFileGet");
-  //     //console.log(response, "response_Get");
-  //     if (response && response.status === "success") {
-  //       setIsLoadingScreen(false);
-  //       const responseData: any = [];
-
-  //       if (Array.isArray(response.data) && response.data.length > 0) {
-  //         // console.log(
-  //         //   "################# FILE #######################:",
-  //         //   response.data
-  //         // ); // เช็คว่ามีกี่แถวจริง ๆ
-
-  //         const mappedFiles: ComplaintFile[] = response.data.map(
-  //           (file: any) => ({
-  //             file: {
-  //               name: file.user_file_name || "unknown",
-  //               size: Number(file.file_size) || 0,
-  //               type: file.file_type || "",
-  //             } as File,
-  //             attachmentType: file.complaint_at_id,
-  //             otherText: file.other,
-  //             original_file_name: file.user_file_name,
-  //             img_url: file.img_url,
-  //             full_path: file.full_path,
-  //             id: file.id, // เพิ่ม id สำหรับการลบไฟล์
-  //           })
-  //         );
-
-  //         setFileList(mappedFiles);
-  //         setcomplaintFiles(mappedFiles);
-  //       } else {
-  //         // ไม่มีไฟล์
-  //         // console.log("No files found");
-  //         setFileList([]);
-  //         setcomplaintFiles([]);
-  //       }
-  //     } else {
-  //       // Response ไม่สำเร็จ
-  //       // console.log("Failed to get files:", response);
-  //       setFileList([]);
-  //       setcomplaintFiles([]);
-  //     }
-  //   } catch (e) {
-  //     // console.log("Error getting files:", e);
-  //     setFileList([]);
-  //     setcomplaintFiles([]);
-  //   } finally {
-  //     setIsLoadingScreen(false);
-  //   }
-  // };
-
+  //=======================================================================
   const ComplaintFile_Get = async (cf_type: "Explain" | "Close") => {
-    // if (true)
-    //   console.log(
-    //     "🕑 ",
-    //     dayjs().format("HH:mm:ss.SSS"),
-    //     " [Calling Function]  :  ComplaintFile_Get"
-    //   );
-
     // ตรวจสอบว่ามี dataelement?.id หรือไม่  ไม่error หากไม่มีไฟล์
-    if (!dataelement?.id) {
-      if (cf_type === "Explain")
-        setexplainFiles([]);
-      else setcloseFiles([]);
-      return;
-    }
-
+    if (!dataelement?.id) return;
+  
     // setIsLoadingScreen(true);
     const dataset = {
       explain_id: dataelement.id,
@@ -930,7 +494,6 @@ export default function ExplaintBody({
 
     try {
       let response = await _POST(dataset, "/ComplaintFile/ComplaintFileGet");
-      //console.log(response, "response_Get");
       if (response && response.status === "success") {
         setIsLoadingScreen(false);
         const responseData: any = [];
@@ -967,7 +530,6 @@ export default function ExplaintBody({
         }
       }
     } catch (e) {
-      // console.log("Error getting files:", e);
       if (cf_type === "Explain") {
         setexplainFiles([]);
       } else {
@@ -978,47 +540,76 @@ export default function ExplaintBody({
     }
   };
 
-  const ExplaintApprove_Get = async (explain_id: string) => {
-    if (isCallFuncLogOn)
-      console.log(
-        "🕑 ",
-        dayjs().format("HH:mm:ss.SSS"),
-        "[Calling Function] : ExplaintApprove_Get"
-      );
+//===================================================================================================
 
-    if (!explain_id) return [];
+  // CheckBox Tool used
+  const handleCheckboxChangeTU = (item: LovType) => {
+    setdataToolUse((prev: LovType[] = []) => {
+      let newData: LovType[];
 
-    setIsLoadingScreen(true);
-    const dataset = { explain_id };
+      if (prev.some((t) => t.id === item.id)) {
+        // ถ้ามีอยู่แล้ว → เอาออก
+        newData = prev.filter((t) => t.id !== item.id);
 
-    try {
-      const response = await _POST(
-        dataset,
-        "/ExplaintApprove/ExplaintApproveGet"
-      );
-      //console.log("📡 Response ExplaintApprove_Get:", response.data);
-      if (response?.status === "success") {
-        
-        setApproveList(response.data || []);
-        return response.data || [];
+        // ถ้าเอาออกแล้วเป็น Other → เคลียร์ค่า
+        if (item.lov2 === "Y") {
+          setToolOther("");
+        }
+      } else {
+        // เพิ่ม object แบบเต็ม
+        newData = [...prev, item];
       }
-      return [];
-    } catch (e) {
-      console.error("ExplaintApprove_Get error:", e);
-      return [];
-    } finally {
-      setIsLoadingScreen(false);
-    }
+
+      // สร้าง array ลดรูป
+      const reducedArray = newData.map((t) => ({
+        explain_tu_id: t.id,
+        label: t.lov1,
+        isOther: t.lov2,
+      }));
+      // อัปเดตเข้า context
+      setdataToolUseValue(reducedArray);
+
+      if (onToolUseChange) {
+        onToolUseChange(newData); // ส่งค่าใหม่กลับไปให้ Parent
+      }
+      return newData;
+    });
+  };
+
+  // Check Box DD
+  const handleCheckboxChangeDD = (item: LovType) => {
+    setdataDecision((prev: LovType[] = []) => {
+      let newData: LovType[];
+
+      if (prev.some((dd) => dd.id === item.id)) {
+        // ถ้ามีอยู่แล้ว → เอาออก
+        newData = prev.filter((dd) => dd.id !== item.id);
+
+        if (item.lov2 === "Y") {
+          setDecisionOther("");
+        }
+      } else {
+        // เพิ่ม object แบบเต็ม
+        newData = [...prev, item];
+      }
+
+      // สร้าง array ลดรูปสำหรับ context
+      const reducedArray = newData.map((dd) => ({
+        explain_dd_id: dd.id,
+        label: dd.lov1,
+        isOther: dd.lov2,
+      }));
+
+      setdataDecisionValue(reducedArray);
+
+      if (onDdChange) {
+        onDdChange(newData); // ส่งค่าใหม่กลับไปให้ Parent
+      }
+      return newData;
+    });
   };
 
   const setExplainDD = (data: any) => {
-    // if (true)
-    //   console.log(
-    //     "🕑 ",
-    //     dayjs().format("HH:mm:ss.SSS"),
-    //     " [Calling Function]  :  setExplainDD"
-    //   );
-
     const newData: any[] = [];
     Array.isArray(data) &&
       data.forEach((el) => {
@@ -1036,6 +627,27 @@ export default function ExplaintBody({
     return newData;
   };
 
+  const handleFileChange = (fileArray: ComplaintFile[], cf_type: "Explain" | "Close") => {
+    if (!fileArray || fileArray.length === 0) return;
+    if (cf_type === "Explain") {
+      setexplainFiles((prev: any) => [...prev, ...fileArray]);
+    } else {
+      setcloseFiles((prev: any) => [...prev, ...fileArray]);
+    }
+  };
+
+  const handleRemoveFile = (index: number, cf_type: "Explain" | "Close") => {
+    if (cf_type === "Explain") {
+      setexplainFiles((prev: any) =>
+        prev.filter((_: any, i: any) => i !== index)
+      );
+    } else {
+      setcloseFiles((prev: any) =>
+        prev.filter((_: any, i: any) => i !== index)
+      );
+    }
+  };
+
   const getApproveDetailLabel = (approveData: any) => {
     if (!approveData) return "หมายเหตุการอนุมัติ";
 
@@ -1046,12 +658,6 @@ export default function ExplaintBody({
     else if (approveData.lov2 === "APPROVE") {
       return "หมายเหตุการอนุมัติ";
     }
-    // Fallback for legacy or other codes if needed (preserving user's manual "ADD" check if relevant, but prioritizing lov2)
-    // const code = approveData.lov_code?.toUpperCase();
-    // if (code === "ADD" || code === "REJECT") {
-    //    return "หมายเหตุการไม่อนุมัติ";
-    // }
-    // return "หมายเหตุการอนุมัติ";
   };
 
   const getCloseDetailLabel = (approveData: any) => {
@@ -1067,8 +673,26 @@ export default function ExplaintBody({
   };
   //===================================================================================================
 
+  //ดึงไฟล์ที่เคยเพิ่มไว้ตอน Explain อีกครั้ง
   React.useEffect(() => {
-    // console.log("Step:02",  dataelement);
+    if (isActionExplainAdd && prevFiles && prevFiles.length > 0) {
+      setexplainFiles(prevFiles);
+      setcomplaintFiles(prevFiles);
+    }
+  }, [prevFiles, isActionExplainAdd]);
+
+  //แสดงไฟล์ตอนดูข้อมูล
+  React.useEffect(() => {
+    if (!dataelement?.id) return;
+  
+    if (!isActionExplainAdd) {
+     ComplaintFile_Get("Explain");
+    }
+    ComplaintFile_Get("Close");
+  }, [dataelement?.id]);
+
+
+  React.useEffect(() => {
     const updateData = async () => {
       // ================================
       // Map ค่า default ของ company
@@ -1094,24 +718,14 @@ export default function ExplaintBody({
         Array.isArray(dataset_department) &&
         dataelement?.respondent_department_id
       ) {
-        // console.log(
-        //   "🗺️ Looking for department with ID:",
-        //   dataelement.respondent_department_id
-        // );
-        // console.log("🗺️ Available departments:", dataset_department);
-        // console.log("🗺️🗺️🗺️ filteredTooluse:", filteredTooluse);
-
         const mappedDept = await setValueMas(
           dataset_department,
           dataelement.respondent_department_id,
           "department_id"
         );
-
-        // console.log("🗺️ Mapped department result:", mappedDept);
         if (mappedDept) {
           setrespondent_department_id(mappedDept); // ค่า default ของ Combobox
         } else {
-          // console.warn("⚠️ No department found for ID:",dataelement.respondent_department_id);
         }
       }
 
@@ -1129,9 +743,6 @@ export default function ExplaintBody({
             dataelement.report_type,
             "id"
           );
-          // console.log("dataset_reporttype_inactive",dataset_reporttype_inactive);
-          // console.log("dataelement.report_type", dataelement.report_type);
-          
           // mapped อาจเป็น undefined หรือ array — ให้ใช้ mapped ถ้ามีค่าที่แตกต่างจากเดิม
           if (mapped && Array.isArray(mapped)) {
             // ถ้า different -> update state
@@ -1158,23 +769,15 @@ export default function ExplaintBody({
         Array.isArray(dataset_department) &&
         dataelement?.responsible_department_id
       ) {
-        // console.log(
-        //   "🗺️ Looking for department with ID:",
-        //   dataelement.responsible_department_id
-        // );
-        // console.log("😡 Avable departments:", dataset_department);
-
         const mappedDept = await setValueMas(
           dataset_department,
           dataelement.responsible_department_id,
           "department_id"
         );
 
-        // console.log("🗺️ Mapped department result:", mappedDept);
         if (mappedDept) {
           setresponsible_department_id(mappedDept); // ค่า default ของ Combobox
         } else {
-          // console.warn("⚠️ No department found for ID:",dataelement.responsible_department_id);
         }
       }
       // 2) ถ้า action === "Read" หรือ "Explain" และมี dataelement.report_type ให้หา default จาก newDataset (ถ้ามี)
@@ -1197,18 +800,9 @@ export default function ExplaintBody({
             !dataReportTypeValue ||
             dataReportTypeValue.id !== defaultVal.id
           ) {
-            // console.log("🔍 ExplaintBody - Setting Report Type:", defaultVal);
-            // console.log("🔍 defaultVal.id", defaultVal.id);
-            // console.log("🔍 dataReportTypeValue.id", dataReportTypeValue?.id);
-            // console.log("🔍Explain ID:", dataelement?.id);
-            // console.log("🔍Complaint ID:", dataelement?.complaint_id);
             setdataReportTypeValue(defaultVal);
           }
         } else {
-          // console.log(
-          //   "🔍 ExplaintBody - No matching Report Type found for:",
-          //   dataelement?.report_type
-          // );
         }
       }
 
@@ -1218,43 +812,43 @@ export default function ExplaintBody({
         const val = reportTypeToUse;
 
         if (!isItAdmin) {
-          const newFilteredSecApprove = (dataApprove_Combobox || []).filter(
+          const newFilteredScApprove = (dataApprove_Combobox || []).filter(
             (item: LovType) => item.lov_type === "approve_select"
           );
-          setFilteredSecApprove(newFilteredSecApprove);
+          setFilteredScApprove(newFilteredScApprove);
         }
         if (!isItAdmin) {
-          const newFilteredQcApprove = (dataApprove_Combobox || []).filter(
+          const newFilteredQmrApprove = (dataApprove_Combobox || []).filter(
             (item: LovType) => item.lov_type === "approve_select"
           );
-          setFilteredQcApprove((prev: LovType[]) => {
-            if (JSON.stringify(prev) !== JSON.stringify(newFilteredQcApprove))
-              return newFilteredQcApprove;
+          setFilteredQmrApprove((prev: LovType[]) => {
+            if (JSON.stringify(prev) !== JSON.stringify(newFilteredQmrApprove))
+              return newFilteredQmrApprove;
             return prev;
           });
         }
         // // Follow-up approve options
         if (!isItAdmin) {
-          const newFilteredFuApprove = (dataApprove_Combobox || []).filter(
+          const newFilteredCloseApprove = (dataApprove_Combobox || []).filter(
             (item: LovType) => item.lov_type === "approve_select"
           );
 
-          setFilteredFuApprove((prev: LovType[]) => {
-            if (JSON.stringify(prev) !== JSON.stringify(newFilteredFuApprove))
-              return newFilteredFuApprove;
+          setFilteredCloseApprove((prev: LovType[]) => {
+            if (JSON.stringify(prev) !== JSON.stringify(newFilteredCloseApprove))
+              return newFilteredCloseApprove;
             return prev;
           });
         }
 
-        const newFilteredToolUse =
-          isItAdmin ?
-            (dataToolUse_Combobox || []).filter(
-              (item: LovType) => item.lov_type === "tool_use" && item.lov_group == dataelement?.responsible_company_id
-            )
-            :
-            (dataToolUse_Combobox || []).filter(
-              (item: LovType) => item.lov_type === "tool_use"
-            )
+      const newFilteredToolUse =
+        isItAdmin ?
+          (dataToolUse_Combobox || []).filter(
+            (item: LovType) => item.lov_type === "tool_use" && item.lov_group == dataelement?.responsible_company_id
+          )
+          :
+          (dataToolUse_Combobox || []).filter(
+            (item: LovType) => item.lov_type === "tool_use"
+          )
         setFilteredTooluse((prev: LovType[]) => {
           if (JSON.stringify(prev) !== JSON.stringify(newFilteredToolUse))
             return newFilteredToolUse;
@@ -1281,8 +875,6 @@ export default function ExplaintBody({
                 (item: LovType) => item.lov_type === "decision_disposition"
               )
 
-          // console.log("t1 : ", filteredDecision);
-          // console.log("t2 : ", dataelement);
           setFilteredDecision((prev: LovType[]) => {
             if (JSON.stringify(prev) !== JSON.stringify(newFilteredDecision))
               return newFilteredDecision;
@@ -1295,17 +887,13 @@ export default function ExplaintBody({
         // ถ้ายังไม่มี reportType ก็ reset
         setFilteredTooluse([]);
         setFilteredDecision([]);
-        setFilteredQcApprove([]);
-        setFilteredSecApprove([]);
+        setFilteredQmrApprove([]);
+        setFilteredScApprove([]);
         setFilteredphoto([]);
-
-
-        // หมายเหตุ: filteredpriority เรา update ข้างบนแล้ว
       }
     };
 
     updateData();
-    // dependency: ให้ trigger เมื่อสิ่งที่สำคัญเปลี่ยนจริง ๆ (action, property ที่เปลี่ยน, dataset ที่ load)
   }, [
     action,
     dataelement?.report_type, // ใช้ property เพื่อให้ effect รันเมื่อ report_type เปลี่ยน
@@ -1326,7 +914,6 @@ export default function ExplaintBody({
 
   ////////////////////////// Set ค่า User Approve  //////////////////////////
   React.useEffect(() => {
-    //console.log("Step:03", action, dataelement, approveList);
     if (!user?.[0]) return; // รอ user โหลดก่อน
 
     // Variable
@@ -1335,7 +922,6 @@ export default function ExplaintBody({
 
     //==========================================================================
 
-    // Filter Variable
     // helper เพื่อหาจาก dataset ที่อาจมีคีย์ต่างกัน (itasset_company_id / company_id)
     const findCompany = (id: string) =>
       (Array.isArray(dataset_company) ? dataset_company : []).find(
@@ -1356,7 +942,6 @@ export default function ExplaintBody({
       isActionExplainApproveQcAdd ||
       isActionCloseAdd
     ) {
-      // alert(1)
       setapprove_name(user[0].employee_username || "");
       setclose_name(user[0].employee_username || "");
       setapprove_position(user[0].employee_position || "");
@@ -1376,27 +961,6 @@ export default function ExplaintBody({
       if (userDept) setclose_department_id(userDept);
     }
     else if (dataelement) {
-      // setclose_name(dataelement.close_name || "");
-      // setapprove_position(dataelement.approve_position || "");
-      // setclose_position(dataelement.close_position || "");
-      // setapprove_email(dataelement.approve_email || "");
-      // setclose_email(dataelement.close_email || "");
-      // setapprove_date(
-      //   dataelement?.approve_date
-      //     ? dayjs(dataelement.setapprove_date, "DD-MM-YYYY")
-      //     : dayjs()
-      // );
-      // setqcapprove_date(
-      //   dataelement?.qcapprove_date
-      //     ? dayjs(dataelement.setqcapprove_date, "DD-MM-YYYY")
-      //     : dayjs()
-      // );
-      // setclose_date(
-      //   dataelement?.close_date
-      //     ? dayjs(dataelement.setclose_date, "DD-MM-YYYY")
-      //     : dayjs()
-      // );
-
       // ถ้า dataelement มี company/department ให้แมปกับ dataset (ถ้า available)
       if (dataelement.approve_company_id && Array.isArray(dataset_company)) {
         const compId =
@@ -1425,7 +989,6 @@ export default function ExplaintBody({
     isActionExplainApproveScAdd,
     isActionExplainApproveQcAdd,
     isActionCloseAdd,
-    // user,
     isActionClose,
     dataset_company,
     dataset_department,
@@ -1433,13 +996,11 @@ export default function ExplaintBody({
     approveList,
   ]);
 
-  //////////////////////// Approve Read //////////////////////////
+  //////////////////////// Read //////////////////////////
   React.useEffect(() => {
-    // console.log("Step:02", dataelement);
-
     if (
       dataelement &&
-      (action === "ExplainAdd" ||
+       (isActionExplainAdd ||
         isActionExplainRead ||
         isActionReadExplain ||
         isActionExplainApproveScAdd ||
@@ -1481,22 +1042,14 @@ export default function ExplaintBody({
         setfollow_up_date(dayjs(dataelement.follow_up_date));
       }
 
-      // SC Approve = approve_seq = 1
-      const scApprove = approveList?.find(
+      //หาค่าลำดับขั้นการอนุมัติจาก approveList
+      const TempscApprove = approveList?.find(
         (x: any) => x.explain_id === dataelement?.id && x.approve_seq === 1
       );
-      // console.log("scApprove", scApprove);
-      // QC Approve = approve_seq = 2
-      const qcApprove = approveList?.find(
+      const TempqmrApprove = approveList?.find(
         (x: any) => x.explain_id === dataelement?.id && x.approve_seq === 2
       );
-      // console.log("qcApprove", qcApprove);
-
-      const closeItem = explainList?.find(
-        (x: any) => x.id === dataelement?.id && ["REJECT", "ADD"].includes(x.close_status)
-      );
-      // console.log("🔥 explainList", explainList);
-
+      
       // Set explain fields
       setobservation_analysis(dataelement?.observation_analysis || "");
       setroot_cause(dataelement?.root_cause || "");
@@ -1507,78 +1060,70 @@ export default function ExplaintBody({
         const company =
           dataset_company?.find(
             (c: any) =>
-              Number(c.company_id) === Number(scApprove?.approve_company_id)
+              Number(c.company_id) === Number(TempscApprove?.approve_company_id)
           ) || null;
         setapprove_company_id(company);
         const department =
           dataset_department?.find(
             (c: any) =>
               Number(c.department_id) ===
-              Number(scApprove?.approve_department_id)
+              Number(TempscApprove?.approve_department_id)
           ) || null;
         setapprove_department_id(department);
         setdataSectionapp(
           dataApprove_Combobox.find(
-            (item: any) => item.lov_code === scApprove?.approve_status
+            (item: any) => item.lov_code === TempscApprove?.approve_status
           ) || null
         );
-        setapprove_name(scApprove?.approve_name || "");
+        setapprove_name(TempscApprove?.approve_name || "");
         setapprove_company_id;
-        setapprove_position(scApprove?.approve_position || "");
-        setapprove_email(scApprove?.approve_email || "");
-        if (scApprove?.approve_date) {
-          setapprove_date(dayjs(scApprove.approve_date));
+        setapprove_position(TempscApprove?.approve_position || "");
+        setapprove_email(TempscApprove?.approve_email || "");
+        if (TempscApprove?.approve_date) {
+          setapprove_date(dayjs(TempscApprove.approve_date));
         }
-        setapprove_detail(scApprove?.approve_detail || "");
-        setapprove_note(scApprove?.approve_note || "");
+        setapprove_detail(TempscApprove?.approve_detail || "");
+        setapprove_note(TempscApprove?.approve_note || "");
       }
-      // console.log("😁dataelement", dataelement);
-      // console.log("😁dataelement.report_type", dataelement.report_type);
-      // Set visibility based on report type from dataelement
-      // const reportTypeToUse = dataset_reporttype_inactive?.length? dataset_reporttype_inactive : dataset_reporttype;
-      // console.log("reportTypeToUse", reportTypeToUse);
-      // console.log("dataelement", dataelement);
-      // console.log("dataelement.report_type", dataelement.report_type);
       
       if (dataelement) {
-        const reportTypeObj = dataset_reporttype_inactive?.find(
+        const TempReportTypeobj = dataset_reporttype_inactive?.find(
           (item: LovType) =>
             item.id === dataelement.report_type ||
             item.lov_code === dataelement.report_type
         );
-
-        if (reportTypeObj) {
-          setVisibilityByReportType(reportTypeObj.lov_code);
+        if (TempReportTypeobj) {
+          setVisibilityByReportType(TempReportTypeobj.lov_code);
         }
       }
 
       // Load QC approve data from dataelement (for CloseAdd mode)
       if (isActionCloseAdd || isActionClose || isActionCloseHistory) {
         // Set QC approve name
-        if (qcApprove?.approve_name) {
-          setqcapprove_name(qcApprove.approve_name);
+        if (TempqmrApprove?.approve_name) {
+          setqcapprove_name(TempqmrApprove.approve_name);
         }
 
         // Set QC approve company
-        if (qcApprove?.approve_company_id) {
-          const qcCompany = dataset_company?.find(
+        if (TempqmrApprove?.approve_company_id) {
+          const qmrCompany = dataset_company?.find(
             (el: any) =>
-              String(el.company_id) === String(qcApprove.approve_company_id)
+              String(el.company_id) === String(TempqmrApprove.approve_company_id)
           );
-          if (qcCompany) {
-            setqcapprove_company_id(qcCompany);
+          if (qmrCompany) {
+            setqcapprove_company_id(qmrCompany);
           }
         }
 
         // Set QC approve department
-        if (qcApprove?.approve_department_id) {
-          const qcDepartment = dataset_department?.find(
+        if (TempqmrApprove?.approve_department_id) {
+          const qmrDepartment = dataset_department?.find(
             (el: any) =>
               String(el.department_id) ===
-              String(qcApprove.approve_department_id)
+              String(TempqmrApprove.approve_department_id)
           );
-          if (qcDepartment) {
-            setqcapprove_department_id(qcDepartment);
+          if (qmrDepartment) {
+            setqcapprove_department_id(qmrDepartment);
           }
         }
 
@@ -1587,65 +1132,64 @@ export default function ExplaintBody({
 
         if (isItAdmin) {
           // ✅ เฉพาะ IT Admin: กรองตาม approve_company_id → lov_group
-          const approveCompanyId = qcApprove?.approve_company_id;
+          const approveCompanyId = TempqmrApprove?.approve_company_id;
 
           result =
             dataApprove_Combobox
               .filter((item: any) => Number(item.lov_group) === Number(approveCompanyId))
-              .find((item: any) => item.lov_code === qcApprove?.approve_status) || null;
+              .find((item: any) => item.lov_code === TempqmrApprove?.approve_status) || null;
 
         } else {
           // ✅ แบบเดิม: จับแค่ lov_code
           result =
             dataApprove_Combobox.find(
-              (item: any) => item.lov_code === qcApprove?.approve_status
+              (item: any) => item.lov_code === TempqmrApprove?.approve_status
             ) || null;
         }
 
         setdataQcapp(result);
 
         // Set other QC approve fields
-        if (qcApprove?.approve_position) {
-          setqcapprove_position(qcApprove.approve_position);
+        if (TempqmrApprove?.approve_position) {
+          setqcapprove_position(TempqmrApprove.approve_position);
         }
-        if (qcApprove?.approve_email) {
-          setqcapprove_email(qcApprove.approve_email);
+        if (TempqmrApprove?.approve_email) {
+          setqcapprove_email(TempqmrApprove.approve_email);
         }
-        if (qcApprove?.approve_date) {
-          setqcapprove_date(dayjs(qcApprove.approve_date));
+        if (TempqmrApprove?.approve_date) {
+          setqcapprove_date(dayjs(TempqmrApprove.approve_date));
         }
-        if (qcApprove?.approve_detail) {
-          setqcapprove_detail(qcApprove.approve_detail);
+        if (TempqmrApprove?.approve_detail) {
+          setqcapprove_detail(TempqmrApprove.approve_detail);
         }
-        if (qcApprove?.approve_note) {
-          setqcapprove_note(qcApprove.approve_note);
+        if (TempqmrApprove?.approve_note) {
+          setqcapprove_note(TempqmrApprove.approve_note);
         }
       }
-      setFoundSC(scApprove || null);
-      setFoundQC(qcApprove || null);
+      setTempDataSC(TempscApprove || null);
+      setTempDataQMR(TempqmrApprove || null);
 
-      // Process ToolUse data - wait until combobox loaded
-      // Filter Sec Approve
-      const secFiltered = isItAdmin
+      // Filter SC Approve
+      const scFiltered = isItAdmin
         ? dataApprove_Combobox.filter(
           (item: any) =>
             item.lov_type === "approve_select" &&
-            item.lov_group == (scApprove?.approve_company_id ?? "")
+            item.lov_group == (TempscApprove?.approve_company_id ?? "")
         )
         : dataApprove_Combobox.filter(
           (item: any) => item.lov_type === "approve_select"
         );
 
-      setFilteredSecApprove(secFiltered);
+      setFilteredScApprove(scFiltered);
 
-      // Filter QC Approve
-      const qcFiltered = isItAdmin
+      // Filter QMR Approve
+      const qmrFiltered = isItAdmin
         ? (
-          qcApprove?.approve_company_id
+          TempqmrApprove?.approve_company_id
             ? dataApprove_Combobox.filter(
               (item: any) =>
                 item.lov_type === "approve_select" &&
-                item.lov_group == qcApprove.approve_company_id
+                item.lov_group == TempqmrApprove.approve_company_id
             )
             : dataApprove_Combobox.filter(
               (item: any) => item.lov_type === "approve_select"
@@ -1654,10 +1198,10 @@ export default function ExplaintBody({
         : dataApprove_Combobox.filter(
           (item: any) => item.lov_type === "approve_select"
         );
-      setFilteredQcApprove(qcFiltered);
+      setFilteredQmrApprove(qmrFiltered);
 
-      // Filter Fu Approve
-      const fuFiltered = isItAdmin
+      // Filter close Approve
+      const closeFiltered = isItAdmin
         ? (dataApprove_Combobox || []).filter(
           (item: any) =>
             item.lov_type === "approve_select" &&
@@ -1666,7 +1210,7 @@ export default function ExplaintBody({
         : (dataApprove_Combobox || []).filter(
           (item: any) => item.lov_type === "approve_select"
         );
-      setFilteredFuApprove(fuFiltered);
+      setFilteredCloseApprove(closeFiltered);
     }
   }, [
     dataelement,
@@ -1678,16 +1222,11 @@ export default function ExplaintBody({
     isActionClose,
     isActionCloseHistory,
     approveList,
-    // isItAdmin,
   ]);
-  //   useEffect(() => {
-
-  // }, [foundSC, foundQC, foundCLOSE]);
 
   const selectedClose = React.useMemo(() => {
-    // if (action === "Add") return null;
     if (!explainList?.length || !dataelement) return null;
-    if (action === "CloseAdd") return
+    if (isActionCloseAdd) return
 
     // 👉 PRIORITY 1: Return (ต้องมี dataelement ก่อน)
     if (dataelement) {
@@ -1714,7 +1253,7 @@ export default function ExplaintBody({
     if (selectedClose.type === "RETURN") {
       const c = selectedClose.data;
 
-      setFoundCLOSE((prev: any) =>
+      setTempDataReturnClose((prev: any) =>
         prev?.id === c.id ? prev : c
       );
       setclose_name(c.return_name ?? "");
@@ -1727,7 +1266,7 @@ export default function ExplaintBody({
       setclose_position(c.return_position ?? "");
       setclose_email(c.return_email ?? "");
       setclose_date(c.return_datetime ? dayjs(c.return_datetime) : null);
-      setdataFuapp(
+      setfollowup_approve(
         dataApprove_Combobox.find((x: any) => x.lov_code === c.close_status) || null
       );
       setclose_detail(c.return_detail ?? "");
@@ -1748,11 +1287,12 @@ export default function ExplaintBody({
       setclose_position(c.close_position || "");
       setclose_email(c.close_email || "");
       setclose_date(dayjs(c.close_date));
-      setdataFuapp(
+      setfollowup_approve(
         dataApprove_Combobox.find((x: any) => x.lov_code === c.close_status) || null
       );
       setclose_detail(c.close_detail || "");
       setclose_note(c.close_note || "");
+      
     }
   }, [
     selectedClose,
@@ -1770,7 +1310,6 @@ export default function ExplaintBody({
       return;
     }
 
-    // 🛑 รอ data ให้พร้อมก่อน
     if (
       closeAddInitRef.current ||
       !user?.length ||
@@ -1802,101 +1341,13 @@ export default function ExplaintBody({
 
   }, [action, user, dataset_company, dataset_department]);
 
-  // useEffect สำหรับโหลดไฟล์ Close จาก NAS
-  React.useEffect(() => {
-    // console.log("🔍 Close File useEffect:", {
-    //   dataelementId: dataelement?.id,
-    //   isActionReadClose,
-    //   isActionCloseHistory
-    // });
-    if (
-      dataelement?.id &&
-      (isActionReadClose || isActionCloseHistory)
-    ) {
-      // console.log("✅ Calling ComplaintFile_Get('Close')");
-      ComplaintFile_Get("Close");
-    }
-  }, [dataelement?.id, isActionReadClose, isActionCloseHistory]);
-
-  //   React.useEffect(() => {
-  //   if (!explainList?.length || !dataelement) return;
-
-  //   const closeItem = explainList?.find(
-  //     (x:any) =>
-  //       x.id === dataelement?.id && 
-  //       ["REJECT", "ADD"].includes(x.close_status)
-  //   );
-
-  //   if (!closeItem) {
-  //     // 🔒 reset เฉพาะตอน "อยู่หน้า Return"
-  //     if (isReturnPage && foundCLOSE) {
-  //       resetCloseState();
-  //     }
-  //     return;
-  //   }
-  //     setFoundCLOSE(closeItem);
-
-  //     setclose_name(closeItem?.return_name ?? "");
-  //     setclose_company_id(
-  //       dataset_company.find((c:any) => Number(c.company_id) === closeItem.return_company_id) || null
-  //     );
-  //     setclose_department_id(
-  //       dataset_department.find((d:any) => Number(d.department_id) === closeItem.return_department_id) || null
-  //     );
-  //     setclose_position(closeItem.return_position ?? "");
-  //     setclose_email(closeItem.return_email ?? "");
-  //     setclose_date(closeItem.return_datetime ? dayjs(closeItem.return_datetime) : null);
-  //     setdataFuapp(
-  //       dataApprove_Combobox.find((item:any) => item.lov_code === closeItem.close_status) || null
-  //     );
-  //     setclose_detail(closeItem.return_detail ?? "");
-  //     setclose_note(closeItem.return_note ?? "");
-
-  // }, [explainList, dataelement, dataset_company, dataset_department, dataApprove_Combobox,isReturnPage,foundCLOSE]);
-
-
-
-
-
-  // 🔹 Load QC approve data and radio when in CloseAdd mode
-  React.useEffect(() => {
-    if (
-      !isActionCloseAdd ||
-      !currentExplainForApproval ||
-      !dataApprove_Combobox?.length
-    )
-      return;
-
-    const fetchQcApproveData = async () => {
-      
-      const approveData = await ExplaintApprove_Get(
-        currentExplainForApproval.id
-      );
-
-      if (approveData?.length > 0) {
-        // หา QC approve record (approve_seq === 2)
-        const qcApprove = approveData.find(
-          (item: any) => item.approve_seq === 2
-        );
-      }
-    };
-
-    fetchQcApproveData();
-  }, [isActionCloseAdd, currentExplainForApproval, dataApprove_Combobox]);
-
   React.useEffect(() => {
     if (!dataelement) return;
-
-    const hasTu =
-      dataelement?.ToolUse ||
-      dataelement?.tooluse ||
-      dataelement?.explainTu;
-
+    
     // 🔥 ถ้า record นี้ "ไม่มี explain" → reset แล้วจบ
-    if (!hasTu) {
+    if (!dataelement?.explainTu) {
       setdataToolUse([]);
       setdataToolUseValue([]);
-      setdataTooluseCheckbox([]);
       setToolOther("");
       return;
     }
@@ -1905,13 +1356,9 @@ export default function ExplaintBody({
       Array.isArray(dataToolUse_Combobox) && dataToolUse_Combobox.length > 0;
     if (!isComboReady) return;
 
-    const rawTU = Array.isArray(dataelement?.ToolUse)
-      ? dataelement.ToolUse
-      : Array.isArray(dataelement?.tooluse)
-        ? dataelement.tooluse
-        : Array.isArray(dataelement?.explainTu)
-          ? dataelement.explainTu
-          : [];
+    const rawTU = Array.isArray(dataelement?.explainTu)
+      ? dataelement.explainTu
+      : [];
 
     const tu = setExplainTU(rawTU);
     setdataToolUse(tu);
@@ -1924,21 +1371,14 @@ export default function ExplaintBody({
       }))
     );
 
-    if (Array.isArray(dataelement?.tooluse)) {
-      setdataTooluseCheckbox(setTooluse(dataelement.tooluse));
-    }
-
     const otherTU = tu.find((el: any) => el.lov2 === "Y");
     setToolOther(otherTU?.other || "");
   }, [dataelement, dataToolUse_Combobox]);
 
   React.useEffect(() => {
     if (!dataelement) return;
-
-    const hasDecision =
-      dataelement?.Decision || dataelement?.explainDd;
-
-    if (!hasDecision) {
+    
+    if (!dataelement?.explainDd) {
       setdataDecision([]);
       setdataDecisionValue([]);
       setDecisionOther("");
@@ -1950,11 +1390,9 @@ export default function ExplaintBody({
       dataDecision_Combobox.length > 0;
     if (!isDecisionComboReady) return;
 
-    const rawDD = Array.isArray(dataelement?.Decision)
-      ? dataelement.Decision
-      : Array.isArray(dataelement?.explainDd)
-        ? dataelement.explainDd
-        : [];
+    const rawDD = Array.isArray(dataelement?.explainDd)
+      ? dataelement.explainDd
+      : [];
 
     const dd = setExplainDD(rawDD);
     setdataDecision(dd);
@@ -1971,51 +1409,12 @@ export default function ExplaintBody({
     setDecisionOther(otherDD?.other || "");
   }, [dataelement, dataDecision_Combobox]);
 
-  // Debug useEffect for dataTooluseCheckbox state changes
-  React.useEffect(() => {
-    //console.log("step:10 dataTooluseCheckbox changed:", dataTooluseCheckbox);
-  }, [dataTooluseCheckbox]);
-  //   React.useEffect(() => {
-  //   setdataToolUse([]);
-  //   setdataToolUseValue([]);
-  //   setdataTooluseCheckbox([]);
-  //   setToolOther("");
 
-  //   setdataDecision([]);
-  //   setdataDecisionValue([]);
-  //   setDecisionOther("");
-  // }, [dataelement?.id]); // 🔥 สำคัญ: ใช้ id
-
-  React.useEffect(() => {
-    //console.log("step:11 Action change detected:", action);
-    if (
-      (action === "ExplainRead" ||
-        action === "ApproveSCAdd" ||
-        action === "ApproveQCAdd" ||
-        isActionCloseHistory ||
-        action === "CloseAdd") &&
-      dataelement?.id
-    ) {
-      ComplaintFile_Get("Explain");
-      ComplaintFile_Get("Close");
-
-    }
-  }, [action, dataelement]);
   const setExplainTU = (data: any) => {
-    // if (true)
-    // console.log(
-    //   "🕑 ",
-    //   dayjs().format("HH:mm:ss.SSS"),
-    //   " [Calling Function]  :  setExplainTU"
-    // );
-    // console.log("🔍 setExplainTU input data:", data);
-    // console.log("🔍 dataToolUse_Combobox available:", dataToolUse_Combobox);
 
     const newData: any[] = [];
     if (Array.isArray(data)) {
       data.forEach((el, index) => {
-        //console.log(`🔍 Processing Tools Used item ${index}:`, el);
-        // Support multiple possible key names from API: explain_tu_id, tool_use_id, id
         const targetId =
           (el &&
             (el.explain_tu_id || el.tool_use_id || el.tooluse_id || el.id)) ??
@@ -2024,57 +1423,33 @@ export default function ExplaintBody({
         const filter = dataToolUse_Combobox.find(
           (item: any) => String(item.id) === String(targetId)
         );
-        //console.log(`🔍 Found matching tool for ${targetId}:`, filter);
 
         if (filter) {
           const processedItem = {
             ...filter,
             other: el.other || "", // ⭐ เก็บค่าข้อความ Other มาด้วย
           };
-          //console.log(`🔍 Adding processed item:`, processedItem);
           newData.push(processedItem);
         } else {
-          console.warn(`🚫 No matching tool found for targetId: ${targetId}`);
         }
       });
     } else {
-      console.warn("🚫 setExplainTU input data is not an array:", data);
     }
-
-    //console.log("🔍 setExplainTU returning:", newData);
     return newData;
   };
 
-  React.useEffect(() => {
-    //console.log("Step:12 Action change detected for ComplaintFile_Get:", action);
-    if ((isActionExplainRead || isActionReadExplain || isActionExplainApproveScRead || isActionExplainApproveQcRead || isActionReadClose) && dataelement?.id) {
-      ComplaintFile_Get("Explain");
-      ComplaintFile_Get("Close");
-    }
-  }, [action, dataelement]);
-
-
-  React.useEffect(() => {
-    //   //console.log("Step:13 close_name changed detected:", close_name);
-  }, [close_name])
-
-
-  const checkQcCondition = () => {
+  
+  const checkQMRCondition = () => {
     let currentReportType = dataset_reporttype_inactive?.find(
       (item: any) =>
         item.id === dataelement?.report_type ||
         item.lov_code === dataelement?.report_type
     );
-    // console.log("😋😋😋dataset_reporttype_inactive",dataset_reporttype_inactive);
-    // console.log("😋😋😋dataelement",dataelement);
-    // console.log("😋😋😋dataelement.report_type",dataelement.report_type);
-    // console.log("😋😋😋currentReportType",currentReportType);
     
     if ( currentReportType.lov5) {
       const levels = String(currentReportType.lov5).split(',');
       return levels.length > 1;
     }
-    
   };
 
   return (
@@ -2113,51 +1488,63 @@ export default function ExplaintBody({
             <label className="sarabun-regular-datatable">
               {dataReportTypeValue?.lov4}
             </label>
-            <Divider sx={{ my: 1 }} />
+            <Divider sx={{ my: 2 }} />
             <Grid container spacing={2}>
-              <Paper
-                elevation={3}
+              <Accordion
+                expanded={isMinimizeexplainOpen}
+                onChange={() =>
+                  setisMinimizeExplainOpen(!isMinimizeexplainOpen)
+                }
                 sx={{
-                  p: 3,
-                  mt: 3,
-                  width: "100%",
                   borderRadius: 3,
-                  background:
-                    "linear-gradient(135deg, #fff5f5 0%, #ffffff 100%)",
-                  border: "1px solid #ffcdd2",
+                  background: "linear-gradient(135deg, #ffebeb 0%, #ffffff 100%)",
+                  border: "1px solid #f44336",
                   boxShadow: "0 4px 12px rgba(244,67,54,0.1)",
                 }}
               >
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    mb: 3,
-                    pb: 2,
-                    borderBottom: "2px solid #f44336",
-                  }}
+                {/* 🔹 หัวข้อ */}
+                <AccordionSummary
+                  expandIcon={<ExpandMoreIcon sx={{ color: "#f44336" }} />}
+                  aria-controls="dept-content"
+                  id="dept-header"
+                  sx={{ px: 2 }}
                 >
-                  <Box
-                    sx={{
-                      width: 6,
-                      height: 24,
-                      backgroundColor: "#f44336",
-                      borderRadius: 1,
-                      mr: 2,
-                    }}
-                  />
-                  <label
-                    className="sarabun-regular-datatable"
-                    style={{
-                      fontSize: "18px",
-                      fontWeight: "600",
-                      color: "#d32f2f",
-                      margin: 0,
-                    }}
-                  >
-                    ข้อมูลผู้ชี้แจง
-                  </label>
-                </Box>
+                  <Box sx={{ flexGrow: 1 }}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        py: 2,
+                        px: 2,
+                        borderBottom: "none", // 👈 ปิดไว้ก่อน
+                        ".Mui-expanded &": {
+                        borderBottom: "2px solid #f44336", // 👈 แสดงเฉพาะตอนเปิด
+                        },
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          width: 6,
+                          height: 24,
+                          backgroundColor: "#f44336",
+                          borderRadius: 1,
+                          mr: 2,
+                        }}
+                      />
+                      <Typography
+                        className="sarabun-regular-datatable"
+                        sx={{
+                          fontSize: 18,
+                          fontWeight: 600,
+                          color: "#d32f2f",
+                        }}
+                      >
+                        ข้อมูลผู้ชี้แจง
+                      </Typography>
+                    </Box>
+                  </Box>
+                </AccordionSummary>
+                <AccordionDetails sx={{ p: 3 }}>
                 <Grid container spacing={3}>
                   <Grid size={4}>
                     <FullWidthTextField
@@ -2301,7 +1688,6 @@ export default function ExplaintBody({
                   </Box>
 
                   <Grid container spacing={2} sx={{ alignItems: "stretch" }}>
-                    {/* ✅ Accordion แทน Paper */}
                     {!isTUHidden && dataReportTypeValue && (
                       <Grid size={12}>
                         <Accordion
@@ -2441,8 +1827,7 @@ export default function ExplaintBody({
                                 color: "#333",
                               }}
                             >
-                              การตัดสินใจเกี่ยวกับแนวทางการจัดการ (Decision on
-                              Disposition)
+                              การตัดสินใจเกี่ยวกับแนวทางการจัดการ (Decision on Disposition)
                               <span style={{ color: "red" }}> *</span>
                             </Typography>
                           </AccordionSummary>
@@ -2515,8 +1900,7 @@ export default function ExplaintBody({
                                 className="fs-7 py-1 sarabun-regular-lable-validate"
                                 style={{ color: "red" }}
                               >
-                                กรุณาเลือกการตัดสินใจเกี่ยวกับแนวทางการจัดการ (Decision on
-                                Disposition)
+                                กรุณาเลือกการตัดสินใจเกี่ยวกับแนวทางการจัดการ (Decision on Disposition)
                               </label>
                             )}
                           </AccordionDetails>
@@ -2552,8 +1936,7 @@ export default function ExplaintBody({
                             color: "#333",
                           }}
                         >
-                          การวิเคราะห์เบื้องต้นของข้อสังเกต (Observation
-                          Analysis)
+                          การวิเคราะห์เบื้องต้นของข้อสังเกต (Observation Analysis)
                           <span style={{ color: "red" }}> *</span>
                         </Typography>
                       </AccordionSummary>
@@ -2569,7 +1952,6 @@ export default function ExplaintBody({
                               alignItems: "flex-start",
                             }}
                           >
-                            {/* Response Date Field - positioned after Emergency option */}
                             <Grid size={12}>
                               <FullWidthTextArea
                                 value={observation_analysis}
@@ -2649,7 +2031,6 @@ export default function ExplaintBody({
                               alignItems: "flex-start",
                             }}
                           >
-                            {/* Response Date Field - positioned after Emergency option */}
                             <Grid size={12}>
                               <FullWidthTextArea
                                 value={root_cause}
@@ -2729,7 +2110,6 @@ export default function ExplaintBody({
                               alignItems: "flex-start",
                             }}
                           >
-                            {/* Response Date Field - positioned after Emergency option */}
                             <Grid size={12}>
                               <FullWidthTextArea
                                 value={corrective_action}
@@ -2793,8 +2173,7 @@ export default function ExplaintBody({
                             color: "#333",
                           }}
                         >
-                          แผนการป้องกันไม่ให้ปัญหาเกิดขึ้นซ้ำ (Preventive Action
-                          Plan)
+                          แผนการป้องกันไม่ให้ปัญหาเกิดขึ้นซ้ำ (Preventive Action Plan)
                           <span style={{ color: "red" }}> *</span>
                         </Typography>
                       </AccordionSummary>
@@ -2810,7 +2189,6 @@ export default function ExplaintBody({
                               alignItems: "flex-start",
                             }}
                           >
-                            {/* Response Date Field - positioned after Emergency option */}
                             <Grid size={12}>
                               <FullWidthTextArea
                                 value={preventive_action_plan}
@@ -2849,20 +2227,18 @@ export default function ExplaintBody({
                   )}
 
                   {/* ไฟล์ */}
-
                   <Accordion
                     expanded={isMinimizefileOpen}
                     onChange={() => setisMinimizeFileOpen(!isMinimizefileOpen)}
                     sx={{
-                      borderRadius: 3,
+                      borderRadius: 1,
                       background:
                         "linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%)",
-                      border: "1px solid #e0e0e0",
+                      border: "1px solid #616161",
                       boxShadow: "0 4px 12px rgba(158,158,158,0.1)",
                       mt: 3,
                     }}
                   >
-                    {/* 🔹 หัวข้อ */}
                     <AccordionSummary
                       expandIcon={<ExpandMoreIcon sx={{ color: "#616161" }} />}
                       aria-controls="dept-content"
@@ -2875,7 +2251,7 @@ export default function ExplaintBody({
                             display: "flex",
                             alignItems: "center",
                             pb: 2,
-                            borderBottom: "2px solid #616161", // ✅ เส้นเต็มเหมือนเดิม
+                        borderBottom: isMinimizefileOpen ? "2px solid #616161" : "none",
                           }}
                         >
                           <Box
@@ -2892,7 +2268,7 @@ export default function ExplaintBody({
                             sx={{
                               fontSize: 18,
                               fontWeight: 600,
-                              color: "#616161",
+                              color: "#524f4fff",
                             }}
                           >
                             แนบไฟล์ (Attachments)
@@ -2920,8 +2296,6 @@ export default function ExplaintBody({
                                 isViewMode={isViewMode}
                               />
                             )}
-
-                            {/* Grouped display by attachment type - Full width boxes stacked vertically */}
                             <Box sx={{ mt: 1 }}>
                               {(filteredphoto || []).map((photoType: any) => {
                                 const items = explainFiles.filter(
@@ -3007,17 +2381,6 @@ export default function ExplaintBody({
                                                         f.attachmentType ===
                                                         item.attachmentType
                                                     );
-                                                  // console.log(
-                                                  //   "🔍 Remove file debug:",
-                                                  //   {
-                                                  //     itemName: item.file.name,
-                                                  //     itemType:
-                                                  //       item.attachmentType,
-                                                  //     actualIndex,
-                                                  //     fileListLength:
-                                                  //       fileList.length,
-                                                  //   }
-                                                  // );
                                                   if (actualIndex !== -1) {
                                                     handleRemoveFile(actualIndex, "Explain");
                                                   }
@@ -3026,25 +2389,10 @@ export default function ExplaintBody({
                                                 <DeleteIcon />
                                               </IconButton>
                                             )}
-
                                           {/* //ปุ่มดูไฟล์ */}
-
                                           <IconButton
                                             color="primary"
                                             onClick={() => {
-                                              // console.log(
-                                              //   "full_path:",
-                                              //   item.full_path
-                                              // );
-                                              // console.log(
-                                              //   "file type:",
-                                              //   typeof item.file
-                                              // );
-                                              // console.log(
-                                              //   "file instanceof File:",
-                                              //   item.file instanceof File
-                                              // );
-
                                               // ตรวจสอบว่าเป็นไฟล์ใหม่ (ไม่มี full_path) หรือไฟล์เก่า (มี full_path)
                                               if (item.full_path) {
                                                 // ไฟล์เก่า - เปิดจาก NAS
@@ -3070,17 +2418,12 @@ export default function ExplaintBody({
                                                   1000
                                                 );
                                               } else {
-                                                // console.log(
-                                                //   "Cannot preview file - no full_path or File object"
-                                                // );
                                               }
                                             }}
                                           >
                                             <VisibilityIcon />
                                           </IconButton>
-
                                           {/* //ปุ่มดาวน์โหลดไฟล์ */}
-
                                           {!isActionExplainAdd && (
                                             <IconButton
                                               color="primary"
@@ -3131,7 +2474,6 @@ export default function ExplaintBody({
                                   </Paper>
                                 );
                               })}
-
                               {explainFiles.length === 0 && (
                                 <Paper
                                   elevation={0}
@@ -3151,54 +2493,52 @@ export default function ExplaintBody({
                     </AccordionDetails>
                   </Accordion>
                 </Box>
-              </Paper>
+                </AccordionDetails>
+              </Accordion>
             </Grid>
-          </Paper>
-        )}
-
-
-
 
       {/* //ส่วนของ Section Head */}
-      {(isActionExplainApproveScAdd ||
-        isActionExplainApproveQcAdd ||
-        isActionCloseAdd ||
-        (isActionReadExplain && foundSC) ||
-        (isActionExplainRead && foundSC) ||
-        (isActionExplainReadApproveSc && foundSC) ||
-        (isActionExplainApproveScRead && foundSC) ||
-        (isActionExplainReadApproveQc && foundSC) ||
-        isActionExplainApproveQcRead ||
-        isActionCloseHistory ||
-        (isActionReadClose && foundSC)) && (
-          <Paper
-            elevation={3}
-            sx={{
-              p: 3,
-              mt: 3,
-              width: "100%",
-              borderRadius: 3,
-              background: "linear-gradient(135deg, #e6f4ea 0%, #ffffff 100%)",
-              border: "1px solid #a5d6a7",
-              boxShadow: "0 4px 12px rgba(158,158,158,0.12)",
-            }}
-          >
+        {(isActionExplainApproveScAdd ||
+          isActionExplainApproveQcAdd ||
+          isActionCloseAdd ||
+          (isActionReadExplain && TempDataSC) ||
+          (isActionExplainRead && TempDataSC) ||
+          (isActionExplainReadApproveSc && TempDataSC) ||
+          (isActionExplainApproveScRead && TempDataSC) ||
+          (isActionExplainReadApproveQc && TempDataSC) ||
+          isActionExplainApproveQcRead ||
+          isActionCloseHistory ||
+          (isActionReadClose && TempDataSC)) && (
             <Accordion
-              defaultExpanded
-              sx={{ backgroundColor: "transparent", boxShadow: "none" }}
-            >
+                expanded={isMinimizesectionappOpen}
+                onChange={() =>
+                  setisMinimizeSectionappOpen(!isMinimizesectionappOpen)
+                }
+                sx={{
+                  borderRadius: 1,
+                  background: "linear-gradient(135deg, #e9faeeff 0%, #ffffff 100%)",
+                  border: "1px solid #22c55e",
+                  boxShadow: "0 4px 14px rgba(34, 197, 94, 0.12)",
+                  mt: 3,
+                }}
+              >
               <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="section-head-content"
-                id="section-head-header"
+                expandIcon={<ExpandMoreIcon sx={{ color: "#16a34a" }} />}
+                aria-controls="dept-content"
+                id="dept-header"
+                sx={{ px: 2 }}
               >
                 <Box
                   sx={{
                     display: "flex",
                     alignItems: "center",
                     width: "100%",
-                    pb: 2,
-                    borderBottom: "2px solid #81c784",
+                    py: 2,
+                    px: 2,
+                    borderBottom: "none", // 👈 ปิดไว้ก่อน
+                    ".Mui-expanded &": {
+                      borderBottom: "2px solid #22c55e", // 👈 แสดงเฉพาะตอนเปิด
+                    },
                   }}
                 >
                   <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -3206,7 +2546,7 @@ export default function ExplaintBody({
                       sx={{
                         width: 6,
                         height: 24,
-                        backgroundColor: "#66bb6a",
+                        background: "#22c55e",
                         borderRadius: 1,
                         mr: 2,
                       }}
@@ -3216,7 +2556,7 @@ export default function ExplaintBody({
                       sx={{
                         fontSize: "18px",
                         fontWeight: "600",
-                        color: "#2e7d32",
+                        color: "#15803d",
                       }}
                     >
                       ข้อมูลหัวหน้าส่วน (Section Head)
@@ -3225,12 +2565,10 @@ export default function ExplaintBody({
                 </Box>
               </AccordionSummary>
               <AccordionDetails>
-                {/* ... ส่วน Grid แสดงชื่อ/แผนก/วันที่ ด้านบน (ละไว้ตามเดิม) ... */}
                 <Grid container spacing={3} sx={{ mt: 1 }}>
                   <Grid size={4}>
                     <FullWidthTextField value={approve_name || ""} labelName="ชื่อผู้อนุมัติ (Approved by)" readonly />
                   </Grid>
-                  {/* ... (Other fields) ... */}
                   <Grid size={4}>
                     <AutocompleteComboBox value={approve_company_id} labelName={"บริษัท (Company)"} options={dataset_company} column="company_name" setvalue={(v) => setapprove_company_id(v)} bgcolorTextField={true} readonly />
                   </Grid>
@@ -3247,8 +2585,6 @@ export default function ExplaintBody({
                     <DesktopDatePickers labelName={"วันที่อนุมัติ (Date)"} value={approve_date} handleChange={(val) => setapprove_date(val ?? null)} bgcolorTextField={true} readonly />
                   </Grid>
                 </Grid>
-
-
                 <Box sx={{ mt: 4 }}>
                   <Box
                     sx={{
@@ -3256,14 +2592,14 @@ export default function ExplaintBody({
                       alignItems: "center",
                       mb: 3,
                       pb: 1,
-                      borderBottom: "1px solid #66bb6a",
+                      borderBottom: "1px solid #22c55e",
                     }}
                   >
                     <Box
                       sx={{
                         width: 4,
                         height: 16,
-                        backgroundColor: "#388e3c",
+                        backgroundColor: "#22c55e",
                         borderRadius: 0.5,
                         mr: 1.5,
                       }}
@@ -3273,7 +2609,7 @@ export default function ExplaintBody({
                       style={{
                         fontSize: "19px",
                         fontWeight: "600",
-                        color: "#2e7d32",
+                        color: "#15803d",
                         margin: 0,
                       }}
                     >
@@ -3282,15 +2618,14 @@ export default function ExplaintBody({
                   </Box>
                 </Box>
 
-                <Grid container spacing={2} sx={{ alignItems: "stretch" }}>
+                <Grid container spacing={1} sx={{ alignItems: "stretch" }}>
                   <Grid size={12}>
-                    {/* 1. ส่วนเลือกผลการอนุมัติ (Radio) */}
                     <Accordion
-                      expanded={isMinimizesectionappOpen}
+                      expanded={isMinimizesectionradioOpen}
                       onChange={() =>
-                        setisMinimizeSectionappOpen(!isMinimizesectionappOpen)
+                        setisMinimizeSectionradioOpen(!isMinimizesectionradioOpen)
                       }
-                      sx={{ borderRadius: 2, backgroundColor: "#fafafa" }}
+                      sx={{ borderRadius: 1, backgroundColor: "#fafafa", mb: 2 }}
                     >
                       <AccordionSummary
                         expandIcon={<ExpandMoreIcon />}
@@ -3335,7 +2670,7 @@ export default function ExplaintBody({
                               );
                             }}
                           >
-                            {(filteredSecApprove || []).map((item: LovType) => (
+                            {(filteredScApprove || []).map((item: LovType) => (
                               <FormControlLabel
                                 key={item.id}
                                 value={item.id}
@@ -3365,9 +2700,8 @@ export default function ExplaintBody({
                         </Box>
                       </AccordionDetails>
                     </Accordion>
-
-                    {/* 2. ส่วนกรอกรายละเอียด (Detail) - แสดงเมื่อเลือกค่าใดค่าหนึ่ง */}
                     <Collapse
+                      sx={{ mt: 2 }} 
                       in={
                         dataSectionapp?.lov_code === "APPROVE" ||
                         dataSectionapp?.lov_code === "ADD" ||
@@ -3376,7 +2710,7 @@ export default function ExplaintBody({
                       timeout={400}
                       unmountOnExit
                     >
-                      <div style={{ marginBottom: '24px' }}>
+                      <div>
                         <Accordion
                           expanded={isMinimizedeappOpen}
                           onChange={() =>
@@ -3385,7 +2719,6 @@ export default function ExplaintBody({
                           sx={{
                             borderRadius: 2,
                             backgroundColor: "#fafafa",
-                            mt: 4,
                             border: validateText?.ScDetail
                               ? "1px solid #f44336"
                               : "1px solid #e0e0e0",
@@ -3410,7 +2743,6 @@ export default function ExplaintBody({
                               )}
                             </Typography>
                           </AccordionSummary>
-
                           <AccordionDetails>
                             <Box sx={{ mt: -3 }}>
                               <Divider sx={{ my: 1 }} />
@@ -3459,9 +2791,8 @@ export default function ExplaintBody({
                         </Accordion>
                       </div>
                     </Collapse>
-
-                    {/* 3. ส่วนหมายเหตุเพิ่มเติม (Note) - แสดงเฉพาะตอน APPROVE */}
                     <Collapse
+                      sx={{ mt: 2 }} 
                       in={dataSectionapp?.lov_code === "APPROVE"}
                       timeout={400}
                       unmountOnExit
@@ -3475,7 +2806,7 @@ export default function ExplaintBody({
                           sx={{
                             borderRadius: 2,
                             backgroundColor: "#fafafa",
-                            mt: 4,
+                            mb: 2,
                             border: validateText?.ScNote
                               ? "1px solid #f44336"
                               : "1px solid #e0e0e0",
@@ -3550,48 +2881,49 @@ export default function ExplaintBody({
                 </Grid>
               </AccordionDetails>
             </Accordion>
-          </Paper>
         )}
 
       {/* //ส่วนของ Qc */}
       {
         (isActionExplainApproveQcAdd  ||
-          (isActionExplainReadApproveQc && foundQC) ||
-          (isActionExplainApproveQcRead && foundQC) ||
-          (isActionReadExplain && foundQC) ||
-          (isActionExplainRead && foundQC) ||
-          (isActionExplainApproveScRead && foundQC) ||
-          (isActionReadClose && foundQC) ||
-          (isActionCloseHistory && foundQC) ||
-          (isActionCloseAdd && checkQcCondition())) && (
-          <Paper
-            elevation={3}
-            sx={{
-              p: 3,
-              mt: 3,
-              width: "100%",
-              borderRadius: 3,
-              background: "linear-gradient(135deg, #e6f4ea 0%, #ffffff 100%)",
-              border: "1px solid #a5d6a7",
-              boxShadow: "0 4px 12px rgba(158,158,158,0.12)",
-            }}
-          >
+          (isActionExplainReadApproveQc && TempDataQMR) ||
+          (isActionExplainApproveQcRead && TempDataQMR) ||
+          (isActionReadExplain && TempDataQMR) ||
+          (isActionExplainRead && TempDataQMR) ||
+          (isActionExplainApproveScRead && TempDataQMR) ||
+          (isActionReadClose && TempDataQMR) ||
+          (isActionCloseHistory && TempDataQMR) ||
+          (isActionCloseAdd && checkQMRCondition())) && (
             <Accordion
-              defaultExpanded
-              sx={{ backgroundColor: "transparent", boxShadow: "none" }}
+               expanded={isMinimizeqmrappOpen}
+                onChange={() =>
+                  setisMinimizeQmrappOpen(!isMinimizeqmrappOpen)
+                }
+                sx={{
+                  borderRadius: 1,
+                  background: "linear-gradient(135deg, #e6f4ea 0%, #ffffff 100%)",
+                  border: "1px solid #22c55e",
+                  boxShadow: "0 4px 14px rgba(34, 197, 94, 0.12)",
+                  mt: 3,
+                }}
             >
               <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="section-head-content"
-                id="section-head-header"
+                expandIcon={<ExpandMoreIcon sx={{ color: "#16a34a" }} />}
+                aria-controls="dept-content"
+                id="dept-header"
+                sx={{ px: 2 }}
               >
                 <Box
                   sx={{
                     display: "flex",
                     alignItems: "center",
                     width: "100%",
-                    pb: 2,
-                    borderBottom: "2px solid #81c784",
+                    py: 2,
+                    px: 2,
+                    borderBottom: "none", // 👈 ปิดไว้ก่อน
+                    ".Mui-expanded &": {
+                      borderBottom: "2px solid #22c55e", // 👈 แสดงเฉพาะตอนเปิด
+                    },
                   }}
                 >
                   <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -3599,7 +2931,7 @@ export default function ExplaintBody({
                       sx={{
                         width: 6,
                         height: 24,
-                        backgroundColor: "#66bb6a",
+                        backgroundColor: "#22c55e",
                         borderRadius: 1,
                         mr: 2,
                       }}
@@ -3609,7 +2941,7 @@ export default function ExplaintBody({
                       sx={{
                         fontSize: "18px",
                         fontWeight: "600",
-                        color: "#2e7d32",
+                        color: "#15803d",
                       }}
                     >
                       ข้อมูลผู้อำนวยการโรงงาน (QMR)
@@ -3680,14 +3012,14 @@ export default function ExplaintBody({
                       alignItems: "center",
                       mb: 3,
                       pb: 1,
-                      borderBottom: "1px solid #66bb6a",
+                      borderBottom: "1px solid #22c55e",
                     }}
                   >
                     <Box
                       sx={{
                         width: 4,
                         height: 16,
-                        backgroundColor: "#388e3c",
+                        backgroundColor: "#22c55e",
                         borderRadius: 0.5,
                         mr: 1.5,
                       }}
@@ -3697,7 +3029,7 @@ export default function ExplaintBody({
                       style={{
                         fontSize: "19px",
                         fontWeight: "600",
-                        color: "#2e7d32",
+                        color: "#15803d",
                         margin: 0,
                       }}
                     >
@@ -3710,11 +3042,11 @@ export default function ExplaintBody({
                   {
                     <Grid size={12}>
                       <Accordion
-                        expanded={isMinimizesectionappOpen}
+                        expanded={isMinimizeqmrradioOpen}
                         onChange={() =>
-                          setisMinimizeSectionappOpen(!isMinimizesectionappOpen)
+                          setisMinimizeQmrradioOpen(!isMinimizeqmrradioOpen)
                         }
-                        sx={{ borderRadius: 2, backgroundColor: "#fafafa" }}
+                        sx={{ borderRadius: 1, backgroundColor: "#fafafa" }}
                       >
                         <AccordionSummary
                           expandIcon={<ExpandMoreIcon />}
@@ -3760,20 +3092,9 @@ export default function ExplaintBody({
                               }}
                             >
                               {(() => {
-                                // console.log("ss1:", dataQcapp);
-                                // console.log("ss2:", filteredQcApprove);
                                 return null;
                               })()}
-                              {(filteredQcApprove || []).map((item: LovType, index: number) => {
-
-                                // console.log("Step:01 🟦 QC Approve Render:", {
-                                //   index,
-                                //   item_id: item.id,
-                                //   item_lov1: item.lov1,
-                                //   selected_id: dataQcapp?.id,
-                                //   isSelected: dataQcapp?.id === item.id,
-                                //   isDisabled: !isActionExplainApproveQcAdd,
-                                // });
+                              {(filteredQmrApprove || []).map((item: LovType, index: number) => {
 
                                 return (
                                   <FormControlLabel
@@ -3805,6 +3126,7 @@ export default function ExplaintBody({
                       </Accordion>
 
                       <Collapse
+                        sx={{ mt: 2 }} 
                         in={
                           dataQcapp?.lov_code === "APPROVE" ||
                           dataQcapp?.lov_code === "ADD" ||
@@ -3813,16 +3135,15 @@ export default function ExplaintBody({
                         timeout={400}
                         unmountOnExit
                       >
-                        <div style={{ marginBottom: '24px' }}>
+                        <div>
                           <Accordion
-                            expanded={isMinimizedeappOpen}
+                            expanded={isMinimizeqmrdetailOpen}
                             onChange={() =>
-                              setisMinimizeDeappOpen(!isMinimizedeappOpen)
+                              setisMinimizeQmrdetailOpen(!isMinimizeqmrdetailOpen)
                             }
                             sx={{
                               borderRadius: 2,
                               backgroundColor: "#fafafa",
-                              mt: 2,
                               border: validateText?.QcDetail
                                 ? "1px solid #f44336"
                                 : "1px solid #e0e0e0",
@@ -3882,7 +3203,6 @@ export default function ExplaintBody({
                                       Validate={validateText?.QcDetail || false}
                                       validateTextLable={
                                         validateText?.QcDetail
-                                          // ? "กรุณากรอกหมายเหตุการอนุมัติ"
                                           ? `กรุณากรอก${getApproveDetailLabel(dataQcapp)}`
                                           : ""
                                       }
@@ -3898,20 +3218,20 @@ export default function ExplaintBody({
                       </Collapse>
 
                       <Collapse
+                        sx={{ mt: 2 }} 
                         in={dataQcapp?.lov_code === "APPROVE"}
                         timeout={400}
                         unmountOnExit
                       >
                         <div>
                           <Accordion
-                            expanded={isMinimizeotappOpen}
+                            expanded={isMinimizeqmrnoteOpen}
                             onChange={() =>
-                              setisMinimizeOtappOpen(!isMinimizeotappOpen)
+                              setisMinimizeQmrnoteOpen(!isMinimizeqmrnoteOpen)
                             }
                             sx={{
                               borderRadius: 2,
                               backgroundColor: "#fafafa",
-                              mt: 2,
                               border: validateText?.QcNote
                                 ? "1px solid #f44336"
                                 : "1px solid #e0e0e0",
@@ -3988,21 +3308,75 @@ export default function ExplaintBody({
                 </Grid>
               </AccordionDetails>
             </Accordion>
-          </Paper>
         )
       }
 
       {/* //ส่วนของ Close */}
       {
         (isActionCloseAdd ||
-          (isActionReadClose && foundCLOSE) ||
-          (isActionCloseHistory && foundCLOSE) ||
-          (isActionReadExplain && foundCLOSE) ||
-          (isActionExplainRead && foundCLOSE) ||
-          (isActionExplainApproveScRead && foundCLOSE) ||
-          (isActionExplainApproveQcRead && foundCLOSE)
+          (isActionReadClose && TempDataReturnClose) ||
+          (isActionCloseHistory && TempDataReturnClose) ||
+          (isActionReadExplain && TempDataReturnClose) ||
+          (isActionExplainRead && TempDataReturnClose) ||
+          (isActionExplainApproveScRead && TempDataReturnClose) ||
+          (isActionExplainApproveQcRead && TempDataReturnClose)
         ) && (
-          <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>
+            <Accordion
+              expanded={isMinimizecloseOpen}
+              onChange={() => setisMinimizeCloseOpen(!isMinimizecloseOpen)}
+              sx={{
+                width: "100%",
+                borderRadius: 1,
+                background:
+                  "linear-gradient(135deg, #e0e0e0 0%, #f5f5f5 100%)",
+                border: "1px solid #424242",
+                boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+                mt: 3,
+              }}
+            >
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon sx={{ color: "#424242" }} />}
+                aria-controls="dept-content"
+                id="dept-header"
+                sx={{ px: 2 }}
+              >
+                <Box sx={{ flexGrow: 1 }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  py: 2,
+                  px: 2,
+                  borderBottom: "none", // 👈 ปิดไว้ก่อน
+                  ".Mui-expanded &": {
+                  borderBottom: "2px solid #424242", // 👈 แสดงเฉพาะตอนเปิด
+                  },
+                }}
+              >
+                <Box
+                  sx={{
+                    width: 6,
+                    height: 24,
+                    backgroundColor: "#424242",
+                    borderRadius: 1,
+                    mr: 2,
+                  }}
+                />
+                <Typography
+                  className="sarabun-regular-datatable"
+                  sx={{
+                    fontSize: 18,
+                    fontWeight: 600,
+                    color: "#000000",
+                  }}
+                >
+                  ปิดรายการคำร้องเรียน (Close Complaint)
+                </Typography>
+              </Box>
+            </Box>
+          </AccordionSummary>
+
+          <AccordionDetails>
             <Paper
               elevation={3}
               sx={{
@@ -4010,778 +3384,689 @@ export default function ExplaintBody({
                 mt: 3,
                 width: "100%",
                 borderRadius: 3,
-                background: "linear-gradient(135deg, #e0e0e0 0%, #f5f5f5 100%)",
+                background:
+                  "linear-gradient(135deg, #e0e0e0 0%, #fafafa 100%)",
                 border: "1px solid #9e9e9e",
-                boxShadow: "0 4px 12px rgba(158,158,158,0.1)",
+                boxShadow: "0 4px 12px rgba(158,158,158,0.12)",
               }}
             >
-              <Grid container spacing={2}>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  mb: 3,
+                  pb: 2,
+                  borderBottom: "2px solid #424242",
+                }}
+              >
+                <Box
+                  sx={{
+                    width: 6,
+                    height: 24,
+                    backgroundColor: "#424242",
+                    borderRadius: 1,
+                    mr: 2,
+                  }}
+                />
+                <label
+                  className="sarabun-regular-datatable"
+                  style={{
+                    fontSize: "18px",
+                    fontWeight: "600",
+                    color: "#000000",
+                    margin: 0,
+                  }}
+                >
+                  ข้อมูลผู้ตรวจติดตาม (แผนกต้นทาง)
+                </label>
+              </Box>
+              <Grid container spacing={3}>
+                <Grid size={4}>
+                  <FullWidthTextField
+                    value={close_name}
+                    labelName="ผู้ตรวจติดตาม (Follow-up by)"
+                    readonly
+                  />
+                </Grid>
+                <Grid size={4}>
+                  <AutocompleteComboBox
+                    value={close_company_id}
+                    labelName={"บริษัท (Company)"}
+                    options={dataset_company}
+                    column="company_name"
+                    setvalue={(v) => setclose_company_id(v)}
+                    bgcolorTextField={true}
+                    readonly
+                  />
+                </Grid>
+                <Grid size={4}>
+                  <AutocompleteComboBox
+                    value={close_department_id}
+                    labelName={"แผนก (Department)"}
+                    options={dataset_department}
+                    column="department_name"
+                    setvalue={(e) => {
+                      setclose_department_id(e);
+                    }}
+                    readonly
+                  />
+                </Grid>
+                <Grid size={4}>
+                  <FullWidthTextField
+                    value={close_position}
+                    labelName="ตำแหน่ง (Position)"
+                    onchange={(e) => setclose_position(e)}
+                    readonly
+                  />
+                </Grid>
+                <Grid size={4}>
+                  <FullWidthTextField
+                    value={close_email}
+                    labelName="อีเมล (Email)"
+                    onchange={(e) => setclose_email(e)}
+                    readonly
+                  />
+                </Grid>
+                <Grid size={4}>
+                  <DesktopDatePickers
+                    labelName={"วันที่ปิดรายการ (Date)"}
+                    value={close_date}
+                    handleChange={(val) => setclose_date(val ?? null)}
+                    readonly
+                  />
+                </Grid>
+              </Grid>
+
+              <Box sx={{ mt: 4 }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    mb: 3,
+                    pb: 1,
+                    borderBottom: "1px solid #424242",
+                  }}
+                >
+                  <Box
+                    sx={{
+                      width: 4,
+                      height: 16,
+                      backgroundColor: "#424242",
+                      borderRadius: 0.5,
+                      mr: 1.5,
+                    }}
+                  />
+                  <label
+                    className="sarabun-regular-datatable"
+                    style={{
+                      fontSize: "16px",
+                      fontWeight: "500",
+                      color: "#000000",
+                      margin: 0,
+                    }}
+                  >
+                    รายละเอียด
+                  </label>
+                </Box>
+              </Box>
+              <Grid
+                container
+                spacing={2}
+                sx={{ alignItems: "stretch" }}
+              >
                 <Grid size={12}>
                   <Accordion
-                    expanded={isMinimizecloseOpen}
-                    onChange={() => setisMinimizeCloseOpen(!isMinimizecloseOpen)}
+                    expanded={isMinimizecloseradioOpen}
+                    onChange={() =>
+                      setisMinimizeCloseradioOpen(!isMinimizecloseradioOpen)
+                    }
                     sx={{
-                      width: "100%",
-                      borderRadius: 3,
-                      background:
-                        "linear-gradient(135deg, #e0e0e0 0%, #f5f5f5 100%)",
-                      border: "1px solid #9e9e9e",
-                      boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-                      mt: 3,
+                      borderRadius: 2,
+                      backgroundColor: "#fafafa",
                     }}
                   >
                     <AccordionSummary
                       expandIcon={<ExpandMoreIcon />}
-                      aria-controls="reporting-dept-content"
-                      id="reporting-dept-header"
+                      aria-controls="complaint-type-content"
+                      id="complaint-type-header"
                     >
-                      <Box sx={{ display: "flex", alignItems: "center" }}>
-                        <Box
-                          sx={{
-                            width: 6,
-                            height: 24,
-                            backgroundColor: "#424242",
-                            borderRadius: 1,
-                            mr: 2,
-                          }}
-                        />
-                        <Typography
-                          className="sarabun-regular-datatable"
-                          sx={{ fontSize: 18, fontWeight: 600, color: "#000000" }}
-                        >
-                          ปิดรายการคำร้องเรียน (Close Complaint)
-                        </Typography>
-                      </Box>
+                      <Typography
+                        className="sarabun-regular-datatable"
+                        sx={{
+                          fontSize: "18px",
+                          fontWeight: 600,
+                          color: "#333",
+                        }}
+                      >
+                        ผลการตรวจติดตาม (Follow-up)
+                        <span style={{ color: "red" }}> *</span>
+                      </Typography>
                     </AccordionSummary>
 
                     <AccordionDetails>
-                      <Divider
-                        sx={{ my: 1, borderBottom: "2px solid #424242" }}
-                      />
-                      <Paper
-                        elevation={3}
+                      <Divider sx={{ my: 1 }} />
+                      <Box
                         sx={{
-                          p: 3,
-                          mt: 3,
-                          width: "100%",
-                          borderRadius: 3,
-                          background:
-                            "linear-gradient(135deg, #e0e0e0 0%, #fafafa 100%)",
-                          border: "1px solid #9e9e9e",
-                          boxShadow: "0 4px 12px rgba(158,158,158,0.12)",
+                          flexGrow: 1,
+                          display: "flex",
+                          flexDirection: "column",
                         }}
                       >
+                        <RadioGroup
+                          row
+                          value={followup_approve?.id || ""}
+                          onChange={(e) => {
+                            const selectedId = e.target.value;
+                            const selectedItem = (
+                              filteredCloseApprove || []
+                            ).find((item) => item.id === selectedId);
+                            if (onApproveChange) {
+                              onApproveChange(selectedItem || null);
+                            }
+                            setfollowup_approve(
+                              selectedItem
+                                ? { ...selectedItem }
+                                : null
+                            );
+                          }}
+                        >
+                          {(filteredCloseApprove || []).map(
+                            (item: LovType) => (
+                              <FormControlLabel
+                                key={item.id}
+                                value={item.id}
+                                control={<Radio />}
+                                label={item.lov1}
+                                disabled={!isActionCloseAdd}
+                                sx={{
+                                  m: 1,
+                                  px: 1,
+                                  py: 1,
+                                  borderRadius: 2,
+                                  border:
+                                    followup_approve?.id === item.id
+                                      ? "2px solid #4caf50"
+                                      : "none",
+                                  bgcolor:
+                                    followup_approve?.id === item.id
+                                      ? "#d0f0c0"
+                                      : "#f5f5f5",
+                                  "&:hover": {
+                                    bgcolor: "#c8e6c9",
+                                  },
+                                }}
+                              />
+                            )
+                          )}
+                        </RadioGroup>
+                      </Box>
+                    </AccordionDetails>
+                  </Accordion>
+                            
+                  <Collapse
+                    sx={{ mt: 2 }} 
+                    in={
+                      followup_approve?.lov_code === "APPROVE" ||
+                      followup_approve?.lov_code === "ADD" ||
+                      followup_approve?.lov_code === "REJECT"
+                    }
+                    timeout={400}
+                    unmountOnExit
+                  >
+                    <div style={{ marginBottom: '24px' }}>
+                      <Accordion
+                        expanded={isMinimizeclosedetailOpen}
+                        onChange={() =>
+                          setisMinimizeClosedetailOpen(!isMinimizeclosedetailOpen)
+                        }
+                        sx={{
+                          borderRadius: 2,
+                          backgroundColor: "#fafafa",
+                          border: validateText?.CloseDetail
+                            ? "1px solid #f44336"
+                            : "1px solid #e0e0e0",
+                        }}
+                      >
+                        <AccordionSummary
+                          expandIcon={<ExpandMoreIcon />}
+                          aria-controls="detail-content"
+                          id="detail-header"
+                        >
+                          <Typography
+                            className="sarabun-regular-datatable"
+                            sx={{
+                              fontSize: "18px",
+                              fontWeight: 600,
+                              color: "#333",
+                            }}
+                          >
+                            {/* หมายเหตุการปิดรายการ */}
+                            {getCloseDetailLabel(followup_approve)}
+                            {followup_approve?.lov_code !== "APPROVE" && (<span style={{ color: "red" }}> *</span>)}
+                          </Typography>
+                        </AccordionSummary>
+
+                        <AccordionDetails>
+                          <Box sx={{ mt: -3 }}>
+                            <Divider sx={{ my: 1 }} />
+                            <Grid
+                              container
+                              spacing={2}
+                              sx={{
+                                justifyContent: "center",
+                                alignItems: "flex-start",
+                              }}
+                            >
+                              {/* Response Date Field - positioned after Emergency option */}
+                              <Grid size={12}>
+                                <FullWidthTextArea
+                                  value={close_detail || return_detail}
+                                  labelName=""
+                                  placeholderlabel={
+                                    showPlaceholderclosedetail
+                                      ? isApproveClose
+                                        ? `${getApproveDetailLabel(followup_approve)} (ถ้ามี)`
+                                        : `กรอก${getApproveDetailLabel(followup_approve)}`
+                                      : ""
+                                  }
+                                  onchange={(e) => {
+                                    setclose_detail(e);
+                                    if (onCloseDetailChange) {
+                                      onCloseDetailChange(e);
+                                    }
+                                  }}
+                                  bgcolorTextField={
+                                    isActionCloseAdd ? false : true
+                                  }
+                                  readonly={!isActionCloseAdd}
+                                  Validate={
+                                    validateText?.CloseDetail || false
+                                  }
+                                  validateTextLable={
+                                    validateText?.CloseDetail
+                                      ? "กรุณากรอกหมายเหตุการปิดรายการ"
+                                      : ""
+                                  }
+                                  shouldFocusError={firstErrorField === "CloseDetail"}
+                                  submitCount={submitCount}
+                                />
+                              </Grid>
+                            </Grid>
+                          </Box>
+                        </AccordionDetails>
+                      </Accordion>
+                    </div>
+                  </Collapse>
+
+                  <Collapse
+                    sx={{ mt: 2 }} 
+                    in={followup_approve?.lov_code === "APPROVE"}
+                    timeout={400}
+                    unmountOnExit
+                  >
+                    <div>
+                      <Accordion
+                        expanded={isMinimizeclosenoteOpen}
+                        onChange={() =>
+                          setisMinimizeClosenoteOpen(!isMinimizeclosenoteOpen)
+                        }
+                        sx={{
+                          borderRadius: 2,
+                          backgroundColor: "#fafafa",
+                          border: validateText?.CloseNote
+                            ? "1px solid #f44336"
+                            : "1px solid #e0e0e0",
+                        }}
+                      >
+                        <AccordionSummary
+                          expandIcon={<ExpandMoreIcon />}
+                          aria-controls="detail-content"
+                          id="detail-header"
+                        >
+                          <Typography
+                            className="sarabun-regular-datatable"
+                            sx={{
+                              fontSize: "18px",
+                              fontWeight: 600,
+                              color: "#333",
+                            }}
+                          >
+                            หมายเหตุเพิ่มเติม
+                            {followup_approve?.lov_code !== "APPROVE" && (<span style={{ color: "red" }}> *</span>)}
+                          </Typography>
+                        </AccordionSummary>
+
+                        <AccordionDetails>
+                          <Box sx={{ mt: -3 }}>
+                            <Divider sx={{ my: 1 }} />
+                            <Grid
+                              container
+                              spacing={2}
+                              sx={{
+                                justifyContent: "center",
+                                alignItems: "flex-start",
+                              }}
+                            >
+                              <Grid size={12}>
+                                <FullWidthTextArea
+                                  value={close_note}
+                                  labelName=""
+                                  placeholderlabel={
+                                    showPlaceholderclosenote
+                                      ? isApproveClose
+                                      ? "หมายเหตุเพิ่มเติม (ถ้ามี)"
+                                      : "กรอกหมายเหตุเพิ่มเติม"
+                                      : ""
+                                  }
+                                  onchange={(e) => {
+                                    setclose_note(e);
+                                    if (onCloseNoteChange) {
+                                      onCloseNoteChange(e);
+                                    }
+                                  }}
+                                  bgcolorTextField={
+                                    isActionCloseAdd ? false : true
+                                  }
+                                  readonly={!isActionCloseAdd}
+                                  Validate={
+                                    validateText?.CloseNote || false
+                                  }
+                                  validateTextLable={
+                                    validateText?.CloseNote
+                                      ? "กรุณากรอกหมายเหตุเพิ่มเติม"
+                                      : ""
+                                  }
+                                  shouldFocusError={firstErrorField === "CloseNote"}
+                                  submitCount={submitCount}
+                                />
+                              </Grid>
+                            </Grid>
+                          </Box>
+                        </AccordionDetails>
+                      </Accordion>
+                    </div>
+                  </Collapse>
+                  
+                  <Accordion
+                    expanded={isMinimizefilecloseOpen}
+                    onChange={() => setisMinimizeFilecloseOpen(!isMinimizefilecloseOpen)}
+                    sx={{
+                      borderRadius: 1,
+                      background:
+                        "linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%)",
+                      border: "1px solid #616161",
+                      boxShadow: "0 4px 12px rgba(158,158,158,0.1)",
+                      mt: 1,
+                    }}
+                  >
+                    <AccordionSummary
+                      expandIcon={<ExpandMoreIcon sx={{ color: "#616161" }} />}
+                      aria-controls="dept-content"
+                      id="dept-header"
+                      sx={{ px: 2 }}
+                    >
+                      <Box sx={{ flexGrow: 1 }}>
                         <Box
                           sx={{
                             display: "flex",
                             alignItems: "center",
-                            mb: 3,
-                            pb: 2,
-                            borderBottom: "2px solid #424242",
+                            py: 2,
+                            px: 2,
+                            borderBottom: isMinimizefilecloseOpen ? "2px solid #616161" : "none",
                           }}
                         >
                           <Box
                             sx={{
                               width: 6,
                               height: 24,
-                              backgroundColor: "#424242",
+                              backgroundColor: "#616161",
                               borderRadius: 1,
                               mr: 2,
                             }}
                           />
-                          <label
+                          <Typography
                             className="sarabun-regular-datatable"
-                            style={{
-                              fontSize: "18px",
-                              fontWeight: "600",
-                              color: "#000000",
-                              margin: 0,
-                            }}
-                          >
-                            ข้อมูลผู้ตรวจติดตาม (แผนกต้นทาง)
-                          </label>
-                        </Box>
-                        <Grid container spacing={3}>
-                          <Grid size={4}>
-                            <FullWidthTextField
-                              value={close_name}
-                              labelName="ผู้ตรวจติดตาม (Follow-up by)"
-                              readonly
-                            />
-                          </Grid>
-                          <Grid size={4}>
-                            <AutocompleteComboBox
-                              value={close_company_id}
-                              labelName={"บริษัท (Company)"}
-                              options={dataset_company}
-                              column="company_name"
-                              setvalue={(v) => setclose_company_id(v)}
-                              bgcolorTextField={true}
-                              readonly
-                            />
-                          </Grid>
-                          <Grid size={4}>
-                            <AutocompleteComboBox
-                              value={close_department_id}
-                              labelName={"แผนก (Department)"}
-                              options={dataset_department}
-                              column="department_name"
-                              setvalue={(e) => {
-                                setclose_department_id(e);
-                              }}
-                              readonly
-                            />
-                          </Grid>
-                          <Grid size={4}>
-                            <FullWidthTextField
-                              value={close_position}
-                              labelName="ตำแหน่ง (Position)"
-                              onchange={(e) => setclose_position(e)}
-                              readonly
-                            />
-                          </Grid>
-                          <Grid size={4}>
-                            <FullWidthTextField
-                              value={close_email}
-                              labelName="อีเมล (Email)"
-                              onchange={(e) => setclose_email(e)}
-                              readonly
-                            />
-                          </Grid>
-                          <Grid size={4}>
-                            <DesktopDatePickers
-                              labelName={"วันที่ปิดรายการ (Date)"}
-                              value={close_date}
-                              handleChange={(val) => setclose_date(val ?? null)}
-                              readonly
-                            />
-                          </Grid>
-                        </Grid>
-
-                        <Box sx={{ mt: 4 }}>
-                          <Box
                             sx={{
-                              display: "flex",
-                              alignItems: "center",
-                              mb: 3,
-                              pb: 1,
-                              borderBottom: "1px solid #424242",
+                              fontSize: 18,
+                              fontWeight: 600,
+                              color: "#524f4fff",
                             }}
                           >
-                            <Box
-                              sx={{
-                                width: 4,
-                                height: 16,
-                                backgroundColor: "#424242",
-                                borderRadius: 0.5,
-                                mr: 1.5,
-                              }}
-                            />
-                            <label
-                              className="sarabun-regular-datatable"
-                              style={{
-                                fontSize: "16px",
-                                fontWeight: "500",
-                                color: "#000000",
-                                margin: 0,
-                              }}
-                            >
-                              รายละเอียด
-                            </label>
-                          </Box>
+                            แนบไฟล์ (Attachments)
+                          </Typography>
                         </Box>
-                        <Grid
-                          container
-                          spacing={2}
-                          sx={{ alignItems: "stretch" }}
-                        >
-                          {/* ✅ Accordion แทน Paper */}
-                          {/* {dataReportTypeValue && ( */}
-                          <Grid size={12}>
-                            <Accordion
-                              expanded={isMinimizefuappOpen}
-                              onChange={() =>
-                                setisMinimizeFuappOpen(!isMinimizefuappOpen)
-                              }
-                              sx={{
-                                borderRadius: 2,
-                                backgroundColor: "#fafafa",
-                              }}
-                            >
-                              <AccordionSummary
-                                expandIcon={<ExpandMoreIcon />}
-                                aria-controls="complaint-type-content"
-                                id="complaint-type-header"
-                              >
-                                <Typography
-                                  className="sarabun-regular-datatable"
-                                  sx={{
-                                    fontSize: "18px",
-                                    fontWeight: 600,
-                                    color: "#333",
-                                  }}
-                                >
-                                  ผลการตรวจติดตาม (Follow-up)
-                                  <span style={{ color: "red" }}> *</span>
-                                </Typography>
-                              </AccordionSummary>
+                      </Box>
+                    </AccordionSummary>
+                    <AccordionDetails sx={{ p: 3 }}>
+                      <Grid container spacing={2}>
+                        <Grid size={12}>
+                          {(isActionCloseAdd) && !isViewMode && (
+                            <BrowseFileUpload
+                              setFile={(files) => handleFileChange(files, "Close")}
+                              setFileName={() => { }}
+                              options={(filteredphoto || []).map((p: any) => ({
+                                id: p.id,
+                                lov1: p.lov1,
+                                lov2: p.lov2,
+                                isOther: p.lov2,
+                                lov_code: "CheckTypeFileImage",
+                              }))}
+                              grouped={grouped}
+                              action={action}
+                              isViewMode={isViewMode}
+                            />
+                          )}
 
-                              <AccordionDetails>
-                                <Divider sx={{ my: 1 }} />
-                                <Box
+                          {/* Grouped display by attachment type - Full width boxes stacked vertically */}
+                          <Box sx={{ mt: 1 }}>
+                            {(filteredphoto || []).map((photoType: any) => {
+                              const items = closeFiles.filter(
+                                (f: any) => f.attachmentType === photoType.id
+                              );
+                              if (items.length === 0) return null;
+                              return (
+                                <Paper
+                                  key={photoType.id}
+                                  elevation={1}
                                   sx={{
-                                    flexGrow: 1,
-                                    display: "flex",
-                                    flexDirection: "column",
+                                    p: 2,
+                                    borderRadius: 2,
+                                    mb: 2,
+                                    width: "100%",
                                   }}
                                 >
-                                  {/* ✅ ใช้ RadioGroup แทน Checkbox */}
-                                  <RadioGroup
-                                    row
-                                    value={dataFuapp?.id || ""}
-                                    onChange={(e) => {
-                                      const selectedId = e.target.value;
-                                      const selectedItem = (
-                                        filteredFuApprove || []
-                                      ).find((item) => item.id === selectedId);
-                                      if (onApproveChange) {
-                                        onApproveChange(selectedItem || null);
-                                      }
-                                      setdataFuapp(
-                                        selectedItem
-                                          ? { ...selectedItem }
-                                          : null
-                                      );
+                                  <label
+                                    className="sarabun-regular-datatable"
+                                    style={{
+                                      fontWeight: 600,
+                                      fontSize: "16px",
                                     }}
                                   >
-                                    {/* ให้ radio อยู่บรรทัดเดียวกัน */}
-                                    {(filteredFuApprove || []).map(
-                                      (item: LovType) => (
-                                        <FormControlLabel
-                                          key={item.id}
-                                          value={item.id}
-                                          control={<Radio />}
-                                          label={item.lov1}
-                                          disabled={!isActionCloseAdd}
-                                          sx={{
-                                            m: 1,
-                                            px: 1,
-                                            py: 1,
-                                            borderRadius: 2,
-                                            border:
-                                              dataFuapp?.id === item.id
-                                                ? "2px solid #4caf50"
-                                                : "none",
-                                            bgcolor:
-                                              dataFuapp?.id === item.id
-                                                ? "#d0f0c0"
-                                                : "#f5f5f5",
-                                            "&:hover": {
-                                              bgcolor: "#c8e6c9",
-                                            },
-                                          }}
-                                        />
-                                      )
-                                    )}
-                                  </RadioGroup>
-                                </Box>
-                              </AccordionDetails>
-                            </Accordion>
-                            {/* {dataReportTypeValue && ( */}
-                            <Collapse
-                              in={
-                                dataFuapp?.lov_code === "APPROVE" ||
-                                dataFuapp?.lov_code === "ADD" ||
-                                dataFuapp?.lov_code === "REJECT"
-                              }
-                              timeout={400}
-                              unmountOnExit
-                            >
-                              <div style={{ marginBottom: '24px' }}>
-                                <Accordion
-                                  expanded={isMinimizedeapp2Open}
-                                  onChange={() =>
-                                    setisMinimizeDeapp2Open(!isMinimizedeapp2Open)
-                                  }
-                                  sx={{
-                                    borderRadius: 2,
-                                    backgroundColor: "#fafafa",
-                                    mt: 2, // <-- เพิ่ม margin-top
-                                    border: validateText?.CloseDetail
-                                      ? "1px solid #f44336"
-                                      : "1px solid #e0e0e0",
-                                  }}
-                                >
-                                  <AccordionSummary
-                                    expandIcon={<ExpandMoreIcon />}
-                                    aria-controls="detail-content"
-                                    id="detail-header"
-                                  >
-                                    <Typography
-                                      className="sarabun-regular-datatable"
-                                      sx={{
-                                        fontSize: "18px",
-                                        fontWeight: 600,
-                                        color: "#333",
-                                      }}
-                                    >
-                                      {/* หมายเหตุการปิดรายการ */}
-                                      {getCloseDetailLabel(dataFuapp)}
-                                      {dataFuapp?.lov_code !== "APPROVE" && (<span style={{ color: "red" }}> *</span>)}
-                                    </Typography>
-                                  </AccordionSummary>
-
-                                  <AccordionDetails>
-                                    <Box sx={{ mt: -3 }}>
-                                      <Divider sx={{ my: 1 }} />
-                                      <Grid
-                                        container
-                                        spacing={2}
-                                        sx={{
-                                          justifyContent: "center",
-                                          alignItems: "flex-start",
-                                        }}
-                                      >
-                                        {/* Response Date Field - positioned after Emergency option */}
-                                        <Grid size={12}>
-                                          <FullWidthTextArea
-                                            value={close_detail || return_detail}
-                                            labelName=""
-                                            placeholderlabel={
-                                              showPlaceholderclosedetail
-                                                ? isApproveFu
-                                                  ? `${getApproveDetailLabel(dataFuapp)} (ถ้ามี)`
-                                                  : `กรอก${getApproveDetailLabel(dataFuapp)}`
-                                                : ""
-                                            }
-                                            onchange={(e) => {
-                                              setclose_detail(e);
-                                              if (onCloseDetailChange) {
-                                                onCloseDetailChange(e);
-                                              }
-                                            }}
-                                            bgcolorTextField={
-                                              isActionCloseAdd ? false : true
-                                            }
-                                            readonly={!isActionCloseAdd}
-                                            Validate={
-                                              validateText?.CloseDetail || false
-                                            }
-                                            validateTextLable={
-                                              validateText?.CloseDetail
-                                                ? "กรุณากรอกหมายเหตุการปิดรายการ"
-                                                : ""
-                                            }
-                                            shouldFocusError={firstErrorField === "CloseDetail"}
-                                            submitCount={submitCount}
-                                          />
-                                        </Grid>
-                                      </Grid>
-                                    </Box>
-                                  </AccordionDetails>
-                                </Accordion>
-                              </div>
-                            </Collapse>
-
-                            <Collapse
-                              in={dataFuapp?.lov_code === "APPROVE"}
-                              timeout={400}
-                              unmountOnExit
-                            >
-                              <div>
-                                <Accordion
-                                  expanded={isMinimizeotappOpen}
-                                  onChange={() =>
-                                    setisMinimizeOtappOpen(!isMinimizeotappOpen)
-                                  }
-                                  sx={{
-                                    borderRadius: 2,
-                                    backgroundColor: "#fafafa",
-                                    mt: 2,
-                                    border: validateText?.CloseNote
-                                      ? "1px solid #f44336"
-                                      : "1px solid #e0e0e0",
-                                  }}
-                                >
-                                  <AccordionSummary
-                                    expandIcon={<ExpandMoreIcon />}
-                                    aria-controls="detail-content"
-                                    id="detail-header"
-                                  >
-                                    <Typography
-                                      className="sarabun-regular-datatable"
-                                      sx={{
-                                        fontSize: "18px",
-                                        fontWeight: 600,
-                                        color: "#333",
-                                      }}
-                                    >
-                                      หมายเหตุเพิ่มเติม
-                                      {dataFuapp?.lov_code !== "APPROVE" && (<span style={{ color: "red" }}> *</span>)}
-                                    </Typography>
-                                  </AccordionSummary>
-
-                                  <AccordionDetails>
-                                    <Box sx={{ mt: -3 }}>
-                                      <Divider sx={{ my: 1 }} />
-                                      <Grid
-                                        container
-                                        spacing={2}
-                                        sx={{
-                                          justifyContent: "center",
-                                          alignItems: "flex-start",
-                                        }}
-                                      >
-                                        <Grid size={12}>
-                                          <FullWidthTextArea
-                                            value={close_note}
-                                            labelName=""
-                                            placeholderlabel={
-                                              showPlaceholderclosenote
-                                                ? isApproveFu
-                                                  ? "หมายเหตุเพิ่มเติม (ถ้ามี)"
-                                                  : "กรอกหมายเหตุเพิ่มเติม"
-                                                : ""
-                                            }
-                                            onchange={(e) => {
-                                              setclose_note(e);
-                                              if (onCloseNoteChange) {
-                                                onCloseNoteChange(e);
-                                              }
-                                            }}
-                                            bgcolorTextField={
-                                              isActionCloseAdd ? false : true
-                                            }
-                                            readonly={!isActionCloseAdd}
-                                            Validate={
-                                              validateText?.CloseNote || false
-                                            }
-                                            validateTextLable={
-                                              validateText?.CloseNote
-                                                ? "กรุณากรอกหมายเหตุเพิ่มเติม"
-                                                : ""
-                                            }
-                                            shouldFocusError={firstErrorField === "CloseNote"}
-                                            submitCount={submitCount}
-                                          />
-                                        </Grid>
-                                      </Grid>
-                                    </Box>
-                                  </AccordionDetails>
-                                </Accordion>
-                              </div>
-                            </Collapse>
-                            <Accordion
-                              expanded={isMinimizefilecloseOpen}
-                              onChange={() => setisMinimizeFilecloseOpen(!isMinimizefilecloseOpen)}
-                              sx={{
-                                borderRadius: 3,
-                                background:
-                                  "linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%)",
-                                border: "1px solid #e0e0e0",
-                                boxShadow: "0 4px 12px rgba(158,158,158,0.1)",
-                                mt: 3,
-                              }}
-                            >
-                              {/* 🔹 หัวข้อ */}
-                              <AccordionSummary
-                                expandIcon={<ExpandMoreIcon sx={{ color: "#616161" }} />}
-                                aria-controls="dept-content"
-                                id="dept-header"
-                                sx={{ px: 2 }}
-                              >
-                                <Box sx={{ flexGrow: 1 }}>
-                                  <Box
-                                    sx={{
-                                      display: "flex",
-                                      alignItems: "center",
-                                      pb: 2,
-                                      borderBottom: "2px solid #616161", // ✅ เส้นเต็มเหมือนเดิม
-                                    }}
-                                  >
+                                    {photoType.lov1}
+                                  </label>
+                                  <Divider sx={{ my: 1 }} />
+                                  {items.map((item: any, idx: any) => (
                                     <Box
+                                      key={idx}
                                       sx={{
-                                        width: 6,
-                                        height: 24,
-                                        backgroundColor: "#616161",
+                                        p: 1.5,
+                                        border: "1px solid #e0e0e0",
                                         borderRadius: 1,
-                                        mr: 2,
-                                      }}
-                                    />
-                                    <Typography
-                                      className="sarabun-regular-datatable"
-                                      sx={{
-                                        fontSize: 18,
-                                        fontWeight: 600,
-                                        color: "#616161",
+                                        mb: 1,
+                                        display: "flex",
+                                        justifyContent: "space-between",
+                                        alignItems: "center",
+                                        gap: 2,
                                       }}
                                     >
-                                      แนบไฟล์ (Attachments)
-                                    </Typography>
-                                  </Box>
-                                </Box>
-                              </AccordionSummary>
-                              <AccordionDetails sx={{ p: 3 }}>
-                                <Grid container spacing={2}>
-
-                                  <Grid size={12}>
-                                    {(isActionCloseAdd) && !isViewMode && (
-                                      <BrowseFileUpload
-                                        setFile={(files) => handleFileChange(files, "Close")}
-                                        setFileName={() => { }}
-                                        options={(filteredphoto || []).map((p: any) => ({
-                                          id: p.id,
-                                          lov1: p.lov1,
-                                          lov2: p.lov2,
-                                          isOther: p.lov2,
-                                          lov_code: "CheckTypeFileImage",
-                                        }))}
-                                        grouped={grouped}
-                                        action={action}
-                                        isViewMode={isViewMode}
-                                      />
-                                    )}
-
-                                    {/* Grouped display by attachment type - Full width boxes stacked vertically */}
-                                    <Box sx={{ mt: 1 }}>
-                                      {(filteredphoto || []).map((photoType: any) => {
-                                        const items = closeFiles.filter(
-                                          (f: any) => f.attachmentType === photoType.id
-                                        );
-                                        if (items.length === 0) return null;
-                                        return (
-                                          <Paper
-                                            key={photoType.id}
-                                            elevation={1}
-                                            sx={{
-                                              p: 2,
-                                              borderRadius: 2,
-                                              mb: 2,
-                                              width: "100%",
-                                            }}
-                                          >
-                                            <label
-                                              className="sarabun-regular-datatable"
-                                              style={{
-                                                fontWeight: 600,
-                                                fontSize: "16px",
-                                              }}
-                                            >
-                                              {photoType.lov1}
-                                            </label>
-                                            <Divider sx={{ my: 1 }} />
-                                            {items.map((item: any, idx: any) => (
-                                              <Box
-                                                key={idx}
-                                                sx={{
-                                                  p: 1.5,
-                                                  border: "1px solid #e0e0e0",
-                                                  borderRadius: 1,
-                                                  mb: 1,
-                                                  display: "flex",
-                                                  justifyContent: "space-between",
-                                                  alignItems: "center",
-                                                  gap: 2,
-                                                }}
-                                              >
-                                                <Box>
-                                                  <div style={{ fontWeight: "bold" }}>
-                                                    {item.file.name}
-                                                  </div>
-                                                  <div
-                                                    style={{
-                                                      fontSize: "15px",
-                                                      color: "#484444ff",
-                                                    }}
-                                                  >
-                                                    {item.file.size < 1024 * 1024
-                                                      ? `${(item.file.size / 1024).toFixed(2)} KB`
-                                                      : `${(item.file.size / (1024 * 1024)).toFixed(2)} MB`}
-                                                  </div>
-                                                  {photoType.lov2 === "Y" && (
-                                                    <div
-                                                      style={{
-                                                        fontSize: "15px",
-                                                        color: "#484444ff",
-                                                        marginTop: "4px",
-                                                      }}
-                                                    >
-                                                      รายละเอียด: {item.otherText}
-                                                    </div>
-                                                  )}
-                                                </Box>
-                                                <Box sx={{ display: "flex", gap: 1 }}>
-                                                  {/* //ปุ่มลบไฟล์ */}
-                                                  {(isActionEdit ||
-                                                    isActionAdd ||
-                                                    isActionExplainAdd ||
-                                                    isActionCloseAdd) && (
-                                                      <IconButton
-                                                        color="error"
-                                                        onClick={() => {
-                                                          // หา index ที่ถูกต้องใน fileList
-                                                          const actualIndex =
-                                                            closeFiles.findIndex(
-                                                              (f: any) =>
-                                                                f.file.name ===
-                                                                item.file.name &&
-                                                                f.attachmentType ===
-                                                                item.attachmentType
-                                                            );
-                                                          // console.log(
-                                                          //   "🔍 Remove file debug:",
-                                                          //   {
-                                                          //     itemName: item.file.name,
-                                                          //     itemType:
-                                                          //       item.attachmentType,
-                                                          //     actualIndex,
-                                                          //     fileListLength:
-                                                          //       fileList.length,
-                                                          //   }
-                                                          // );
-                                                          if (actualIndex !== -1) {
-                                                            handleRemoveFile(actualIndex, "Close");
-                                                          }
-                                                        }}
-                                                      >
-                                                        <DeleteIcon />
-                                                      </IconButton>
-                                                    )}
-
-                                                  {/* //ปุ่มดูไฟล์ */}
-
-                                                  <IconButton
-                                                    color="primary"
-                                                    onClick={() => {
-                                                      // console.log(
-                                                      //   "full_path:",
-                                                      //   item.full_path
-                                                      // );
-                                                      // console.log(
-                                                      //   "file type:",
-                                                      //   typeof item.file
-                                                      // );
-                                                      // console.log(
-                                                      //   "file instanceof File:",
-                                                      //   item.file instanceof File
-                                                      // );
-
-                                                      // ตรวจสอบว่าเป็นไฟล์ใหม่ (ไม่มี full_path) หรือไฟล์เก่า (มี full_path)
-                                                      if (item.full_path) {
-                                                        // ไฟล์เก่า - เปิดจาก NAS
-                                                        window.open(
-                                                          item.full_path,
-                                                          "_blank"
-                                                        );
-                                                      } else if (
-                                                        item.file instanceof File
-                                                      ) {
-                                                        // ไฟล์ใหม่ - เปิดจาก File object
-                                                        const fileUrl =
-                                                          URL.createObjectURL(
-                                                            item.file
-                                                          );
-                                                        window.open(fileUrl, "_blank");
-                                                        // Clean up URL after a delay to free memory
-                                                        setTimeout(
-                                                          () =>
-                                                            URL.revokeObjectURL(
-                                                              fileUrl
-                                                            ),
-                                                          1000
-                                                        );
-                                                      } else {
-                                                        // console.log(
-                                                        //   "Cannot preview file - no full_path or File object"
-                                                        // );
-                                                      }
-                                                    }}
-                                                  >
-                                                    <VisibilityIcon />
-                                                  </IconButton>
-
-                                                  {/* //ปุ่มดาวน์โหลดไฟล์ */}
-
-                                                  {!(isActionExplainAdd || isActionCloseAdd) && (
-                                                    <IconButton
-                                                      color="primary"
-                                                      onClick={async () => {
-                                                        if (!item.full_path) return;
-
-                                                        try {
-                                                          const response = await fetch(
-                                                            item.full_path,
-                                                            { method: "GET" }
-                                                          );
-                                                          const blob =
-                                                            await response.blob();
-                                                          const url =
-                                                            URL.createObjectURL(blob);
-
-                                                          const link =
-                                                            document.createElement("a");
-                                                          link.href = url;
-                                                          link.setAttribute(
-                                                            "download",
-                                                            item.original_file_name ??
-                                                            "file"
-                                                          );
-                                                          document.body.appendChild(
-                                                            link
-                                                          );
-                                                          link.click();
-                                                          document.body.removeChild(
-                                                            link
-                                                          );
-
-                                                          URL.revokeObjectURL(url); // cleanup memory
-                                                        } catch (err) {
-                                                          console.error(
-                                                            "Download failed:",
-                                                            err
-                                                          );
-                                                        }
-                                                      }}
-                                                    >
-                                                      <DownloadIcon />
-                                                    </IconButton>
-                                                  )}
-                                                </Box>
-                                              </Box>
-                                            ))}
-                                          </Paper>
-                                        );
-                                      })}
-
-                                      {closeFiles.length === 0 && (
-                                        <Paper
-                                          elevation={0}
-                                          sx={{
-                                            p: 2,
-                                            textAlign: "center",
-                                            color: "#999",
+                                      <Box>
+                                        <div style={{ fontWeight: "bold" }}>
+                                          {item.file.name}
+                                        </div>
+                                        <div
+                                          style={{
+                                            fontSize: "15px",
+                                            color: "#484444ff",
                                           }}
                                         >
-                                          ยังไม่มีไฟล์ที่แนบ
-                                        </Paper>
-                                      )}
-                                    </Box>
-                                  </Grid>
+                                          {item.file.size < 1024 * 1024
+                                            ? `${(item.file.size / 1024).toFixed(2)} KB`
+                                            : `${(item.file.size / (1024 * 1024)).toFixed(2)} MB`}
+                                        </div>
+                                        {photoType.lov2 === "Y" && (
+                                          <div
+                                            style={{
+                                              fontSize: "15px",
+                                              color: "#484444ff",
+                                              marginTop: "4px",
+                                            }}
+                                          >
+                                            รายละเอียด: {item.otherText}
+                                          </div>
+                                        )}
+                                      </Box>
+                                      <Box sx={{ display: "flex", gap: 1 }}>
+                                        {/* //ปุ่มลบไฟล์ */}
+                                        {(isActionEdit ||
+                                          isActionAdd ||
+                                          isActionExplainAdd ||
+                                          isActionCloseAdd) && (
+                                          <IconButton
+                                            color="error"
+                                            onClick={() => {
+                                              // หา index ที่ถูกต้องใน fileList
+                                              const actualIndex =
+                                                closeFiles.findIndex(
+                                                  (f: any) =>
+                                                    f.file.name ===
+                                                    item.file.name &&
+                                                    f.attachmentType ===
+                                                    item.attachmentType
+                                                );
+                                                if (actualIndex !== -1) {
+                                                  handleRemoveFile(actualIndex, "Close");
+                                                }
+                                              }}
+                                            >
+                                              <DeleteIcon />
+                                            </IconButton>
+                                        )}
 
-                                </Grid>
-                              </AccordionDetails>
-                            </Accordion>
-                          </Grid>
+                                        {/* //ปุ่มดูไฟล์ */}
+
+                                        <IconButton
+                                          color="primary"
+                                          onClick={() => {
+                                            // ตรวจสอบว่าเป็นไฟล์ใหม่ (ไม่มี full_path) หรือไฟล์เก่า (มี full_path)
+                                            if (item.full_path) {
+                                              // ไฟล์เก่า - เปิดจาก NAS
+                                              window.open(
+                                                item.full_path,
+                                                "_blank"
+                                              );
+                                            } else if (
+                                              item.file instanceof File
+                                            ) {
+                                              // ไฟล์ใหม่ - เปิดจาก File object
+                                              const fileUrl =
+                                                URL.createObjectURL(
+                                                  item.file
+                                                );
+                                              window.open(fileUrl, "_blank");
+                                              // Clean up URL after a delay to free memory
+                                              setTimeout(
+                                                () =>
+                                                  URL.revokeObjectURL(
+                                                    fileUrl
+                                                  ),
+                                                1000
+                                              );
+                                            } else {
+                                            }
+                                          }}
+                                        >
+                                          <VisibilityIcon />
+                                        </IconButton>
+
+                                        {/* //ปุ่มดาวน์โหลดไฟล์ */}
+
+                                        {!(isActionExplainAdd || isActionCloseAdd) && (
+                                          <IconButton
+                                            color="primary"
+                                            onClick={async () => {
+                                              if (!item.full_path) return;
+
+                                              try {
+                                                const response = await fetch(
+                                                  item.full_path,
+                                                  { method: "GET" }
+                                                );
+                                                const blob =
+                                                  await response.blob();
+                                                const url =
+                                                  URL.createObjectURL(blob);
+
+                                                const link =
+                                                  document.createElement("a");
+                                                link.href = url;
+                                                link.setAttribute(
+                                                  "download",
+                                                  item.original_file_name ??
+                                                  "file"
+                                                );
+                                                document.body.appendChild(
+                                                  link
+                                                );
+                                                link.click();
+                                                document.body.removeChild(
+                                                  link
+                                                );
+
+                                                URL.revokeObjectURL(url); // cleanup memory
+                                              } catch (err) {
+                                                console.error(
+                                                  "Download failed:",
+                                                  err
+                                                );
+                                              }
+                                            }}
+                                          >
+                                            <DownloadIcon />
+                                          </IconButton>
+                                        )}
+                                      </Box>
+                                    </Box>
+                                  ))}
+                                </Paper>
+                              );
+                            })}
+
+                            {closeFiles.length === 0 && (
+                              <Paper
+                                elevation={0}
+                                sx={{
+                                  p: 2,
+                                  textAlign: "center",
+                                  color: "#999",
+                                }}
+                              >
+                                ยังไม่มีไฟล์ที่แนบ
+                              </Paper>
+                            )}
+                          </Box>
                         </Grid>
-                      </Paper>
+                      </Grid>
                     </AccordionDetails>
                   </Accordion>
                 </Grid>
               </Grid>
             </Paper>
-          </Paper >
-        )
-      }
-    </Box >
-  );
+          </AccordionDetails>
+        </Accordion>
+      )
+    }
+  </Paper>
+  )}
+  </Box >
+ );
 }

@@ -332,7 +332,7 @@ export default function Complaint() {
     setToolOther,
     setdataSectionapp,
     setdataQcapp,
-    setdataFuapp,
+    setfollowup_approve,//มันคือ Radio Close 
     setdataDecision_Combobox,
     setdataApprove_Combobox,
     setdataDecision,
@@ -595,7 +595,7 @@ export default function Complaint() {
     setapprove_email("");
 
     // เคลียร์ข้อมูล Approve
-    setdataFuapp(null);
+    setfollowup_approve(null);
     setapprove_date(null);
     setapprove_detail("");
     setapprove_note("");
@@ -5388,7 +5388,7 @@ export default function Complaint() {
 
     // Clear file states to prevent old files from persisting
     setexplainFiles([]);
-    setcloseFiles([]);
+    // setcloseFiles([]);
     setcomplaintFiles([]);
 
     // ตั้งค่าวันที่ชี้แจงเป็นวันปัจจุบัน

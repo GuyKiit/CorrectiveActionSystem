@@ -1,13 +1,10 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import * as React from 'react';
 import IndeterminateCheckBoxRoundedIcon from '@mui/icons-material/IndeterminateCheckBoxRounded';
-import DisabledByDefaultRoundedIcon from '@mui/icons-material/DisabledByDefaultRounded';
 import AddBoxRoundedIcon from '@mui/icons-material/AddBoxRounded';
 import { styled, alpha } from '@mui/material/styles';
 import { SimpleTreeView } from '@mui/x-tree-view/SimpleTreeView';
 import { TreeItem, treeItemClasses } from '@mui/x-tree-view/TreeItem';
-import { Box, Divider } from '@mui/material';
+import { Box } from '@mui/material';
 import ReportBody from './reportbody';
  
 const CustomTreeItem = styled(TreeItem)(({ theme }) => ({
@@ -36,34 +33,20 @@ function CollapseIcon(
 ) {
   return <IndeterminateCheckBoxRoundedIcon {...props} sx={{ opacity: 0.8 }} />;
 }
- 
-function EndIcon(props: React.PropsWithoutRef<typeof DisabledByDefaultRoundedIcon>) {
-  return <DisabledByDefaultRoundedIcon {...props} sx={{ opacity: 0.3 }} />;
-}
+
  
 export default function ReportTreeView() {
-  const [dataOrgReport, setDataOrgReport] = React.useState([])
   const [reportList, setReportList] = React.useState<any>([])
   const [reportListName, setReportListName] = React.useState(['head-0', 'head-1']);
   const [openReport, setOpenReport] = React.useState(false);
   const [tempReportParam, setTempReportParam] = React.useState<any>(null);
  
  
- 
   const reports = [
-    // {
-    //   headName: "ประเภทรายงานข้อบกพร่อง",
-    //   sub_report: [
-    //     { id: 1, report_code: "NCR", report_name: "รายงานข้อบกพร่องที่ไม่เป็นไปตามข้อกำหนด" },
-    //     { id: 2, report_code: "CAR", report_name: "รายงานคำร้องขอดำเนินการแก้ไข" },
-    //     { id: 4, report_code: "CPAR", report_name: "รายงานคำร้องขอดำเนินการแก้ไขและป้องกัน" },
-    //     { id: 5, report_code: "OBS", report_name: "รายงานข้อบกพร่องที่สามารถยอมรับได้" },
-    //   ]
-    // },
     {
       headName: "สรุปรวมประเภทรายงาน",
       sub_report: [
-        { id: 6, report_code: "RPT_Complaint_Summary", report_name: "รายงานสรุปรายการข้อร้องเรียน" }
+        { id: 1, report_code: "RPT_Complaint_Summary", report_name: "รายงานสรุปรายการข้อร้องเรียน" }
       ]
     },
   ];
@@ -71,7 +54,6 @@ export default function ReportTreeView() {
   const hadleOnclickReport = (data: any) => {
     setTempReportParam(data);
     setOpenReport(true);
-    console.log("Selected Report:", data);
   };
  
   React.useEffect(() => {
@@ -79,7 +61,6 @@ export default function ReportTreeView() {
   }, []);
  
   return (
-
     <Box
         sx={{
           p: 2,
@@ -93,13 +74,8 @@ export default function ReportTreeView() {
         <div className="px-2 pt-2 pb-5">
           <label className="sarabun-regular-datatable">รายงาน (Report)</label>
         </div>
-
         <div>
           <div className="max-lg rounded overflow-hidden bg-white mt-2 mb-5">
-            {/* <div className="px-6 pt-4">
-              <label className="text-2xl ml-2 mt-3 mb-5 sarabun-regular text-black">รายงาน (Report)</label>
-            </div> */}
-            {/* <Divider className="mb-5" sx={{ my: 1, borderWidth: "1px" }} /> */}
             <div className="row px-10 pt-0 pb-5">
               {reportList.length > 0 && (
                 <Box sx={{ minHeight: 250, minWidth: 250 }}>
@@ -109,9 +85,7 @@ export default function ReportTreeView() {
                     slots={{
                       expandIcon: ExpandIcon,
                       collapseIcon: CollapseIcon,
-                      // endIcon: EndIcon,
                     }}
-                  
                   >
                     {reportList.map((el: any, index: number) => (
                       <CustomTreeItem
@@ -140,11 +114,6 @@ export default function ReportTreeView() {
                     ))}
                   </SimpleTreeView>
                   {/* ==================== Report Preview ==================== */}
-                  {/* {dataelement && (
-                    <Box sx={{ mt: 4 }}>
-                      <ReportBody dataelement={dataelement} />
-                    </Box>
-                  )} */}
                   <ReportBody
                     mode="summary_report"
                     open={openReport}
@@ -156,14 +125,11 @@ export default function ReportTreeView() {
             </div>
           </div>
         </div>
-       
       </Box>
 
     //==============================================================================================================
     //==============================================================================================================
     //==============================================================================================================
-
-   
   );
 }
  
