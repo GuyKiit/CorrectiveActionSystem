@@ -3,9 +3,6 @@ import { _POST, _POST_API_INTRANET } from ".";
 import dayjs from "dayjs";
 import React from "react";
 
-
-//===========================================================================================================
-
 // Function - Get Company
 export async function mas_CompanyGet(company_id: number, set_company: (data: any) => void, user: any, isCallFuncLogOn: boolean) {
   // if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  CompanyGet");
@@ -25,15 +22,10 @@ export async function mas_CompanyGet(company_id: number, set_company: (data: any
   }
 };
 
-
 export async function mas_DomainGet(company_id: string, set_domain: (data: any) => void, user: any, isCallFuncLogOn: boolean) {
   // if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  DomainGet");
 
   try {
-    // const dataset = {
-    //   company_id: company_id,
-    // };
-
     const dataset = {
       domain: user[0]?.employee_domain,
       company_id: company_id,
@@ -42,9 +34,7 @@ export async function mas_DomainGet(company_id: string, set_domain: (data: any) 
     const response = await _POST(dataset, "/Complaint/CasDomainRelateGet");
     if (response && response.status === "success") {
       if (Array.isArray(response.data)) {
-
         set_domain(response.data);
-
       }
     }
   } catch (e) {
@@ -151,8 +141,8 @@ export async function mas_DepartmentGet_Complaint(value: any, setdataset_departm
 
       let datasetToSet = response.data;
 
-      if (action === "Add") {
-        // ฟิลเตอร์เฉพาะ Add
+      // ฟิลเตอร์ Add และ Edit
+      if (action === "Add" || action === "Edit") {
         datasetToSet = response.data.filter(
           (item: any) => item.department_id != user[0]?.itasset_department_id
         );
@@ -198,7 +188,6 @@ export async function mas_UsernameGet(value: any, setUsernameOptions: (data: any
     setUsernameOptions([]);
   }
 };
-
 
 export async function mas_UsernameGetAll(setmaster_user: (data: any) => void, isCallFuncLogOn: boolean) {
   // if (isCallFuncLogOn) console.log("🕑 ", dayjs().format('HH:mm:ss.SSS'), " [Calling Function]  :  CasUsernameGet");

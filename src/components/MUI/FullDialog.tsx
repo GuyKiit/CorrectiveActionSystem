@@ -89,12 +89,23 @@ export default function FuncDialog(props: FuncDialog) {
         {/* Left side - Save Draft */}
         <div style={{ display: "flex", gap: "8px" }}>
           {!props.hideSaveDraft && props.openBottonHidden && (
-            <FullWidthButton
-              handleonClick={props.handlesavedraft ?? props.handleClose}
-              labelName="ร่างแบบฟอร์ม"
-              variant_text="contained"
-              colorname={props.buttonColor ?? "primary"}
-            />
+            <div className="draft-btn-wrapper">
+              <style>{`
+                .draft-btn-wrapper button {
+                  background-color: #32a738ff !important;
+                  color: white !important;
+                }
+                .draft-btn-wrapper button:hover {
+                  background-color: #237720ff !important;
+                }
+              `}</style>
+              <FullWidthButton
+                handleonClick={props.handlesavedraft ?? props.handleClose}
+                labelName="ร่างแบบฟอร์ม"
+                variant_text="contained"
+                colorname={props.buttonColor ?? "primary"}
+              />
+            </div>
           )}
 
           {!props.hideReject && props.openBottonHidden && (
@@ -106,34 +117,31 @@ export default function FuncDialog(props: FuncDialog) {
               colorname="error"
             />
           )}
-
-          {/* <FullWidthButton
-            disabled={props.disableReject}
-            handleonClick={props.handlereject ?? props.handleClose}
-            labelName="Reject"
-            variant_text="contained"
-            colorname="error"
-            /> */}
         </div>
 
         {/* Right side - Save and Submit, Cancel */}
         <div className="flex gap-3">
           {!props.hideSaveSubmit && props.openBottonHidden && (
-            <FullWidthButton
-              disabled={props.disableSaveSubmit}
-              handleonClick={props.handlefunction ?? props.handleClose}
-              labelName={props.buttonText ?? "บันทึกและส่ง"}
-              variant_text="contained"
-              colorname={props.buttonColor ?? "primary"}
-            />
+            <div className="submit-btn-wrapper">
+              <style>{`
+                .submit-btn-wrapper button {
+                  background-color: #207c25ff !important;
+                  color: white !important;
+                }
+                .submit-btn-wrapper button:hover {
+                  background-color: rgba(23, 105, 20, 1) !important;
+                }
+              `}</style>
+              <FullWidthButton
+                disabled={props.disableSaveSubmit}
+                handleonClick={props.handlefunction ?? props.handleClose}
+                labelName={props.buttonText ?? "บันทึกและส่ง"}
+                variant_text="contained"
+                colorname={props.buttonColor ?? "primary"}
+              />
+            </div>
           )}
-          {/* <FullWidthButton
-            disabled={props.disableSaveSubmit}
-            handleonClick={props.handlefunction ?? props.handleClose}
-            labelName="Approve"
-            variant_text="contained"
-            colorname={props.buttonColor ?? "primary"}
-            /> */}
+
           <FullWidthButton
             handleonClick={props.handleClose}
             labelName="ยกเลิก"
