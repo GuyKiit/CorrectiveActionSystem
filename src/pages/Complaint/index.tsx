@@ -1703,6 +1703,7 @@ export default function Complaint() {
 
   //validate Edit
   const validateSaveDraft = (): boolean => {
+    setSubmitCount((prev) => prev + 1); // สำหรับ shouldFocusError
     let valid = true;
 
     setRespondentDepartmentError(false);

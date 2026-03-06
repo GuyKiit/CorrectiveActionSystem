@@ -122,24 +122,13 @@ export default function FuncDialog(props: FuncDialog) {
         {/* Right side - Save and Submit, Cancel */}
         <div className="flex gap-3">
           {!props.hideSaveSubmit && props.openBottonHidden && (
-            <div className="submit-btn-wrapper">
-              <style>{`
-                .submit-btn-wrapper button {
-                  background-color: #207c25ff !important;
-                  color: white !important;
-                }
-                .submit-btn-wrapper button:hover {
-                  background-color: rgba(23, 105, 20, 1) !important;
-                }
-              `}</style>
-              <FullWidthButton
-                disabled={props.disableSaveSubmit}
-                handleonClick={props.handlefunction ?? props.handleClose}
-                labelName={props.buttonText ?? "บันทึกและส่ง"}
-                variant_text="contained"
-                colorname={props.buttonColor ?? "primary"}
-              />
-            </div>
+            <FullWidthButton
+              disabled={props.disableSaveSubmit}
+              handleonClick={props.handlefunction ?? props.handleClose}
+              labelName={props.buttonText ?? "บันทึกและส่ง"}
+              variant_text="contained"
+              colorname={props.buttonColor ?? "primary"}
+            />
           )}
 
           <FullWidthButton
