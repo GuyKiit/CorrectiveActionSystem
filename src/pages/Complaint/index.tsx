@@ -493,7 +493,7 @@ export default function Complaint() {
 
   // For On-Off Calling Function Log
   const [isCallFuncLogOn] = useState(true);
-  
+
   const [searchTrigger, setSearchTrigger] = useState(false);
   const handleOpenAddList = () => setOpenAddlist(true);
   const grouped = { config_file: dataset_configfile || [], };
@@ -1703,6 +1703,7 @@ export default function Complaint() {
 
   //validate Edit
   const validateSaveDraft = (): boolean => {
+    setSubmitCount((prev) => prev + 1); // สำหรับ shouldFocusError
     let valid = true;
 
     setRespondentDepartmentError(false);
@@ -3013,6 +3014,20 @@ export default function Complaint() {
   // Function - Delete Complaint
   const ComplaintDelete = async () => {
     updateSessionStorageCurrentAccess("event_name", "ComplaintDelete");
+
+    const result = await FullSweetalert({
+      title: "ยืนยันการลบ?",
+      text: "คุณต้องการลบข้อมูลนี้หรือไม่<style>.swal2-confirm, .swal2-cancel { width: 100px !important; }</style>",
+      icon: "error",
+      showCancelButton: true,
+      confirmButtonText: "ลบ",
+      cancelButtonText: "ยกเลิก",
+      cancelButtonColor: "#AAAAAA",
+      confirmButtonColor: "#FF4B6E",
+    });
+
+    if (!result.isConfirmed)
+      return;
 
     const complaintPayload = {
       ComplaintModel: {

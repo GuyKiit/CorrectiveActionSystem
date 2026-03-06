@@ -89,12 +89,23 @@ export default function FuncDialog(props: FuncDialog) {
         {/* Left side - Save Draft */}
         <div style={{ display: "flex", gap: "8px" }}>
           {!props.hideSaveDraft && props.openBottonHidden && (
-            <FullWidthButton
-              handleonClick={props.handlesavedraft ?? props.handleClose}
-              labelName="ร่างแบบฟอร์ม"
-              variant_text="contained"
-              colorname={props.buttonColor ?? "primary"}
-            />
+            <div className="draft-btn-wrapper">
+              <style>{`
+                .draft-btn-wrapper button {
+                  background-color: #32a738ff !important;
+                  color: white !important;
+                }
+                .draft-btn-wrapper button:hover {
+                  background-color: #237720ff !important;
+                }
+              `}</style>
+              <FullWidthButton
+                handleonClick={props.handlesavedraft ?? props.handleClose}
+                labelName="ร่างแบบฟอร์ม"
+                variant_text="contained"
+                colorname={props.buttonColor ?? "primary"}
+              />
+            </div>
           )}
 
           {!props.hideReject && props.openBottonHidden && (
@@ -106,14 +117,6 @@ export default function FuncDialog(props: FuncDialog) {
               colorname="error"
             />
           )}
-
-          {/* <FullWidthButton
-            disabled={props.disableReject}
-            handleonClick={props.handlereject ?? props.handleClose}
-            labelName="Reject"
-            variant_text="contained"
-            colorname="error"
-            /> */}
         </div>
 
         {/* Right side - Save and Submit, Cancel */}
@@ -127,13 +130,7 @@ export default function FuncDialog(props: FuncDialog) {
               colorname={props.buttonColor ?? "primary"}
             />
           )}
-          {/* <FullWidthButton
-            disabled={props.disableSaveSubmit}
-            handleonClick={props.handlefunction ?? props.handleClose}
-            labelName="Approve"
-            variant_text="contained"
-            colorname={props.buttonColor ?? "primary"}
-            /> */}
+
           <FullWidthButton
             handleonClick={props.handleClose}
             labelName="ยกเลิก"
