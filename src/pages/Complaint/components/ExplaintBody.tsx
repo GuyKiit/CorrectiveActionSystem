@@ -1485,7 +1485,14 @@ export default function ExplaintBody({
           isActionExplainApproveQcRead ||
           isActionCloseAdd) && (
           <Paper elevation={2} sx={{ p: 2, mt: 2, borderRadius: 2 }}>
-            <label className="sarabun-regular-datatable">
+            <label 
+                className="sarabun-regular-datatable"
+                style={{
+                fontSize: "18px",
+                fontWeight: "600",
+                color: "#333",
+                margin: 0,
+              }}>
               {dataReportTypeValue?.lov4}
             </label>
             <Divider sx={{ my: 2 }} />
@@ -3386,7 +3393,7 @@ export default function ExplaintBody({
                 borderRadius: 3,
                 background:
                   "linear-gradient(135deg, #e0e0e0 0%, #fafafa 100%)",
-                border: "1px solid #9e9e9e",
+                border: "1px solid #424242",
                 boxShadow: "0 4px 12px rgba(158,158,158,0.12)",
               }}
             >
