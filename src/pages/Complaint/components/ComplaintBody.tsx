@@ -379,19 +379,21 @@ export default function ComplaintBody({
   //=========================================================
   //              สร้าง state สำหรับควบคุม Accordion
   //====================== ผู้ออกร้องเรียน ========================//
-  const [isMinimizecomplaintOpen, setisMinimizeComplaintOpen] = useState(!(isActionAdd || isActionEdit) ? false : true);
-  const [isMinimizetypeOpen, setisMinimizeTypeOpen] = useState(!(isActionAdd || isActionEdit) ? false : true);
-  const [isMinimizersOpen, setisMinimizeRsOpen] = useState(!(isActionAdd || isActionEdit) ? false : true);
-  const [isMinimizedetailOpen, setisMinimizeDetailOpen] = useState(!(isActionAdd || isActionEdit) ? false : true);
-  const [isMinimizepriorityOpen, setisMinimizePriorityOpen] = useState(!(isActionAdd || isActionEdit) ? false : true);
-  const [isMinimizefileOpen, setisMinimizeFileOpen] = useState(!(isActionAdd || isActionEdit) ? false : true);
-  const [isMinimizerespondOpen, setisMinimizeRespondOpen] = useState(!(isActionAdd || isActionEdit) ? false : true);
+  const defaultOpen = isActionAdd || isActionEdit;
+
+  const [isMinimizecomplaintOpen, setisMinimizeComplaintOpen] = useState(defaultOpen);
+  const [isMinimizetypeOpen, setisMinimizeTypeOpen] = useState(defaultOpen);
+  const [isMinimizersOpen, setisMinimizeRsOpen] = useState(defaultOpen);
+  const [isMinimizedetailOpen, setisMinimizeDetailOpen] = useState(defaultOpen);
+  const [isMinimizepriorityOpen, setisMinimizePriorityOpen] = useState(defaultOpen);
+  const [isMinimizefileOpen, setisMinimizeFileOpen] = useState(defaultOpen);
+  const [isMinimizerespondOpen, setisMinimizeRespondOpen] = useState(defaultOpen);
 
   //====================== ส่วนกล่องชี้แจง ========================//
   const [isMinimizeexlistOpen, setisMinimizeExlistOpen] = useState(!(isActionAdd || isActionExplain || isActionExplainApproveSc || isActionExplainApproveQc || isActionClose) ? false : true);
 
   //====================== ส่วนกล่องปิดรายการ ========================//
-  const [isMinimizecloseOpen, setisMinimizeCloseOpen] = useState(!(isActionAdd || isActionEdit) ? false : true);
+  const [isMinimizecloseOpen, setisMinimizeCloseOpen] = useState(defaultOpen);
   const [isMinimizefuappOpen, setisMinimizeFuappOpen] = useState(true);
   const [isMinimizedeapp2Open, setisMinimizeDeapp2Open] = useState(true);
   const [isMinimizeotapp2Open, setisMinimizeOtapp2Open] = useState(true);
@@ -1805,9 +1807,17 @@ export default function ComplaintBody({
             <Box sx={{ width: "100%" }}>
               <Accordion
                 expanded={isMinimizecomplaintOpen}
-                onChange={() =>
-                  setisMinimizeComplaintOpen(!isMinimizecomplaintOpen)
-                }
+                onChange={(_, expanded) => {
+                  setisMinimizeComplaintOpen(expanded);
+
+                  // ถ้าเปิด complaint → เปิด type ตาม
+                  if (expanded) {
+                    setisMinimizeTypeOpen(true);
+                    setisMinimizeRsOpen(true);
+                    setisMinimizeDetailOpen(true);
+                    setisMinimizePriorityOpen(true);
+                  }
+                }}
                 sx={{
                   borderRadius: 3,
                   background:"linear-gradient(135deg, #ffebeb 0%, #ffffff 100%)",
@@ -3274,7 +3284,7 @@ export default function ComplaintBody({
                   }}
                 >
                   <AccordionSummary
-                    expandIcon={<ExpandMoreIcon />}
+                    expandIcon={<ExpandMoreIcon sx={{ color: "#424242" }} />}
                     aria-controls="reporting-dept-content"
                     id="reporting-dept-header"
                   >
@@ -3319,7 +3329,7 @@ export default function ComplaintBody({
                         borderRadius: 3,
                         background:
                           "linear-gradient(135deg, #e0e0e0 0%, #fafafa 100%)",
-                        border: "1px solid #9e9e9e",
+                        border: "1px solid #424242",
                         boxShadow: "0 4px 12px rgba(158,158,158,0.12)",
                       }}
                     >
