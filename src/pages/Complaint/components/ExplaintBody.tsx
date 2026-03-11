@@ -828,10 +828,16 @@ export default function ExplaintBody({
           });
         }
         // // Follow-up approve options
-        if (!isItAdmin) {
-          const newFilteredCloseApprove = (dataApprove_Combobox || []).filter(
-            (item: LovType) => item.lov_type === "approve_select"
-          );
+        {
+          const newFilteredCloseApprove = isItAdmin
+            ? (dataApprove_Combobox || []).filter(
+                (item: LovType) =>
+                  item.lov_type === "approve_select" &&
+                  item.lov_group == dataelement?.responsible_company_id
+              )
+            : (dataApprove_Combobox || []).filter(
+                (item: LovType) => item.lov_type === "approve_select"
+              );
 
           setFilteredCloseApprove((prev: LovType[]) => {
             if (JSON.stringify(prev) !== JSON.stringify(newFilteredCloseApprove))
@@ -1211,6 +1217,7 @@ export default function ExplaintBody({
           (item: any) => item.lov_type === "approve_select"
         );
       setFilteredCloseApprove(closeFiltered);
+
     }
   }, [
     dataelement,
@@ -1267,7 +1274,13 @@ export default function ExplaintBody({
       setclose_email(c.return_email ?? "");
       setclose_date(c.return_datetime ? dayjs(c.return_datetime) : null);
       setfollowup_approve(
-        dataApprove_Combobox.find((x: any) => x.lov_code === c.close_status) || null
+        isItAdmin
+          ? dataApprove_Combobox.find(
+              (x: any) =>
+                x.lov_code === c.close_status &&
+                x.lov_group == dataelement?.responsible_company_id
+            ) || null
+          : dataApprove_Combobox.find((x: any) => x.lov_code === c.close_status) || null
       );
       setclose_detail(c.return_detail ?? "");
       setclose_note(c.return_note ?? "");
@@ -1288,7 +1301,13 @@ export default function ExplaintBody({
       setclose_email(c.close_email || "");
       setclose_date(dayjs(c.close_date));
       setfollowup_approve(
-        dataApprove_Combobox.find((x: any) => x.lov_code === c.close_status) || null
+        isItAdmin
+          ? dataApprove_Combobox.find(
+              (x: any) =>
+                x.lov_code === c.close_status &&
+                x.lov_group == dataelement?.responsible_company_id
+            ) || null
+          : dataApprove_Combobox.find((x: any) => x.lov_code === c.close_status) || null
       );
       setclose_detail(c.close_detail || "");
       setclose_note(c.close_note || "");
