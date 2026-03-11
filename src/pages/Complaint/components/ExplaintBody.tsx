@@ -2912,13 +2912,13 @@ export default function ExplaintBody({
       {/* //ส่วนของ Qc */}
       {
         (isActionExplainApproveQcAdd  ||
-          (isActionExplainReadApproveQc && TempDataQMR) ||
-          (isActionExplainApproveQcRead && TempDataQMR) ||
+          (isActionExplainReadApproveQc && TempDataQMR && checkQMRCondition()) ||
+          (isActionExplainApproveQcRead && TempDataQMR && checkQMRCondition()) ||
           (isActionReadExplain && TempDataQMR) ||
           (isActionExplainRead && TempDataQMR) ||
-          (isActionExplainApproveScRead && TempDataQMR) ||
-          (isActionReadClose && TempDataQMR) ||
-          (isActionCloseHistory && TempDataQMR) ||
+          (isActionExplainApproveScRead && TempDataQMR && checkQMRCondition()) ||
+          (isActionReadClose && TempDataQMR && checkQMRCondition()) ||
+          (isActionCloseHistory && TempDataQMR && checkQMRCondition()) ||
           (isActionCloseAdd && checkQMRCondition())) && (
             <Accordion
                expanded={isMinimizeqmrappOpen}
@@ -2970,7 +2970,7 @@ export default function ExplaintBody({
                         color: "#15803d",
                       }}
                     >
-                      ข้อมูลผู้อำนวยการโรงงาน (QMR)
+                      ข้อมูลผู้อำนวยการโรงงาน (QMR) 
                     </Typography>
                   </Box>
                 </Box>

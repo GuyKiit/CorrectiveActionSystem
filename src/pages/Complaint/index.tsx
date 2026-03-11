@@ -1163,7 +1163,7 @@ export default function Complaint() {
   const ComplaintGet = async () => {
     updateSessionStorageCurrentAccess("event_name", "ComplaintGet");
 
-    setIsLoadingScreen(false);
+    setIsLoadingScreen(true);
 
     const dataset = {
       CurrentAccessModel: getCurrentAccessObject(
@@ -1193,7 +1193,7 @@ export default function Complaint() {
         // Extract selected lov_codes
         const selectedIds = TextNameSearch.report_code.split(',');
         const selectedCodes = new Set(
-          selectedIds.map(id => dataset_reporttype.find((rt: any) => String(rt.id) === id)?.lov_code)
+          selectedIds.map(id => dataset_reporttype_inactive.find((rt: any) => String(rt.id) === id)?.lov_code)
             .filter(Boolean)
         );
 
@@ -1204,7 +1204,7 @@ export default function Complaint() {
           (c: any) => String(c.company_id) === String(TextNameSearch.dataset_company)
         );
 
-        const newIds = dataset_reporttype
+        const newIds = dataset_reporttype_inactive
           .filter((item: any) =>
             selectedCodes.has(item.lov_code) &&
             (!isCompanyValid || String(item.lov_group) === String(TextNameSearch.dataset_company))
@@ -6220,7 +6220,7 @@ export default function Complaint() {
     );
   }, [TextNameSearch.dataset_domain]);
 
-  const search_report_code = dataset_reporttype?.filter(
+  const search_report_code = dataset_reporttype_inactive?.filter(
     (item: any, index: number, self: any) =>
       index === self.findIndex((t: any) => t.lov_code === item.lov_code)
   ) || [];
@@ -6375,7 +6375,7 @@ export default function Complaint() {
                 const result: any[] = [];
 
                 selectedIds.forEach((id: string) => {
-                  const found = dataset_reporttype.find((ds: any) => String(ds.id) === id);
+                  const found = dataset_reporttype_inactive.find((ds: any) => String(ds.id) === id);
                   if (found) {
                     const key = found.lov_code;
                     if (!matchedCodes.has(key)) {
@@ -6438,7 +6438,7 @@ export default function Complaint() {
                   (c: any) => String(c.company_id) === String(TextNameSearch.dataset_company)
                 );
                 const allIds = newValue.flatMap((selected: any) =>
-                  dataset_reporttype
+                  dataset_reporttype_inactive
                     .filter(
                       (item: any) =>
                         item.lov_code === selected.lov_code &&

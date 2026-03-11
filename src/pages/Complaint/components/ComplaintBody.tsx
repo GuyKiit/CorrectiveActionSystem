@@ -1052,11 +1052,11 @@ export default function ComplaintBody({
 
             const defaultVal =
               (await setValueMas(
-                dataset_reporttype,
+                dataset_reporttype_inactive,
                 dataelement.report_type,
                 "id"
               )) ||
-              dataset_reporttype.find(
+              dataset_reporttype_inactive.find(
                 (item: LovType) =>
                   item.lov_code === dataelement.report_type ||
                   item.id === dataelement.report_type
