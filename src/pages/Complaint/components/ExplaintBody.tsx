@@ -1152,7 +1152,6 @@ export default function ExplaintBody({
               (item: any) => item.lov_code === TempqmrApprove?.approve_status
             ) || null;
         }
-
         setdataQcapp(result);
 
         // Set other QC approve fields
@@ -1174,7 +1173,6 @@ export default function ExplaintBody({
       }
       setTempDataSC(TempscApprove || null);
       setTempDataQMR(TempqmrApprove || null);
-
       // Filter SC Approve
       const scFiltered = isItAdmin
         ? dataApprove_Combobox.filter(
@@ -1459,14 +1457,25 @@ export default function ExplaintBody({
 
   
   const checkQMRCondition = () => {
-    let currentReportType = dataset_reporttype_inactive?.find(
-      (item: any) =>
-        item.id === dataelement?.report_type ||
-        item.lov_code === dataelement?.report_type
-    );
-    
-    if ( currentReportType.lov5) {
-      const levels = String(currentReportType.lov5).split(',');
+
+    let currentReportType
+    if (!isItAdmin){
+      currentReportType = dataset_reporttype_inactive?.find(
+        (item: any) =>
+          item.id === dataelement?.report_type ||
+          item.lov_code === dataelement?.report_type
+      );
+    }
+    else{
+      currentReportType = dataset_reporttype_inactive?.find(
+          (item: any) =>
+            item.id === dataelement?.report_type ||
+            item.lov_code === dataelement?.report_type && item.lov_group === String(dataelement?.responsible_company_id)
+        );
+    }
+        
+    if ( currentReportType?.lov5) {
+      const levels = String(currentReportType?.lov5).split(',');
       return levels.length > 1;
     }
   };
