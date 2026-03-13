@@ -32,7 +32,7 @@ export default function BasicChips(props: BasicChips) {
               : "#95A5A6",
     EXPLAINED: props.role === "section_head" && props.step === "EXPLAIN" ? "#F1C40F" : "#95A5A6",
     APPROVED: props.isAllowedTypeSingle && (props.role === "user" || props.role === "user_admin") && props.step === "COMPLAINT" && (props.requestdept == props.userdept)? "#85d47f" // หากถึงขั้นอนุมัติสูงสุดของรายการนั้นๆ (ปิดได้เลย) ให้เป็นสีเขียวเข้ม
-        : !props.isAllowedTypeSingle && props.role === "qc" && !props.isApproveStepMax && (props.requestdept == props.userdept) ? "#85d47f"    // หากเป็นแค่ขั้นระหว่างทาง (เช่นรอ QC) ให้เป็นสีเขียวอ่อน
+        : !props.isAllowedTypeSingle && props.role === "qc" && !props.isApproveStepMax  ? "#85d47f"    // หากเป็นแค่ขั้นระหว่างทาง (เช่นรอ QC) ให้เป็นสีเขียวอ่อน
         : !props.isAllowedTypeSingle && (props.role === "user" || props.role === "user_admin") && props.isApproveStepMax && (props.requestdept == props.userdept) ? "#27AE60"    // หากเป็นแค่ขั้นระหว่างทาง (เช่นรอ QC) ให้เป็นสีเขียวอ่อน
         : "#95A5A6",
     CLOSED: "#95A5A6",
