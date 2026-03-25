@@ -4,6 +4,8 @@ import { logintType, AuthModel, auth_role_profile, auth_role_menu, auth_role_men
 import { fetchIpAddress } from '../../service/ip';
 import { useLayout } from '../../layout/core/LayoutProvider';
 import MobileDetect from 'mobile-detect';
+import { _POST } from '../../service/mas';
+import { employee_mockup_get } from '../../service/mockup';
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -188,6 +190,48 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     sessionStorage.setItem("current_access", JSON.stringify(currentAccessData));
   };
+  
+  // ====================================================
+
+  // Function - Get LOV Master Data
+  // const hrdb_mockup_get = async (
+  //   // mode?: any,
+  //   // respondent_domain_id?: any,
+  //   // isItAdmin?: boolean,
+  //   // complaint_status_id?: string,
+  //   // lov_approve_step_id?: string
+  // ) => {
+
+  //   try {
+  //       // const dataset = {
+          
+  //       // } 
+
+  //       const response = await _POST("/Lov/HrdbMockupGet");
+
+  //       if (response && response.status === "success") {
+
+
+
+  //       }
+  //     } catch {
+  //     }
+
+  // };
+
+  // ====================================================
+
+  const func_employee_mockup_get = async (user: string) => {
+
+    const dataset = {
+      employee_username: user,
+    };
+
+    const tempEmpMockupData = await employee_mockup_get(dataset, "/Lov/EmployeeMockupGet");
+
+    return tempEmpMockupData
+
+  };
 
   const login = async (user: string, password: string) => {
     setIsLoadingScreen(true)
@@ -203,11 +247,43 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       initialValues.password = password;
       initialValues.client_ip = await fetchIpAddress();
 
-      const response = await login_auth_emp_get(initialValues);
-      const { data } = response;
 
-      // console.log("🔑 auth_role_profile : ",data?.data?.auth_role_profile);
-      // console.log("🔑 auth_role_profile['employee_domain'] : ",data?.data?.auth_role_profile[0]?.employee_domain);
+      const response = await login_auth_emp_get(initialValues);
+
+      console.log("🔑🔑 response.data.data.auth_role_profile of login_auth_emp_get : ", response.data.data.auth_role_profile[0]);
+
+      // =============================================================================
+      // =============================================================================
+      // =============================================================================
+      
+      // For Display Mockup Data (ON/OFF)
+      const isEmpDataMockup = false;
+      let tempEmpMockupData: any;
+
+      if (isEmpDataMockup) {
+
+        tempEmpMockupData = await func_employee_mockup_get(user);
+
+        console.log("🔑🔑 response of tempEmpMockup : ", tempEmpMockupData.data[0]);
+
+        if (tempEmpMockupData?.data?.[0] && response?.data?.data?.auth_role_profile?.[0]) {
+
+          response.data.data.auth_role_profile[0].employee_fname_en = tempEmpMockupData.data[0].employee_fname_en;
+          response.data.data.auth_role_profile[0].employee_lname_en = tempEmpMockupData.data[0].employee_lname_en;
+          response.data.data.auth_role_profile[0].employee_tel = tempEmpMockupData.data[0].employee_tel;
+          response.data.data.auth_role_profile[0].employee_email = tempEmpMockupData.data[0].employee_email;
+
+          console.log("✅✅✅✅ Transfer Data Completed : ", response.data.data.auth_role_profile[0]);
+
+        }
+
+      }
+
+      // =============================================================================
+      // =============================================================================
+      // =============================================================================
+
+      const { data } = response;
 
 
       if (data?.status === 'Success' && data?.data?.auth_role_profile) {
