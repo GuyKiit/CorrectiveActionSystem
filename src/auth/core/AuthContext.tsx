@@ -190,7 +190,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     sessionStorage.setItem("current_access", JSON.stringify(currentAccessData));
   };
-  
+
   // ====================================================
 
   // Function - Get LOV Master Data
@@ -204,7 +204,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   //   try {
   //       // const dataset = {
-          
+
   //       // } 
 
   //       const response = await _POST("/Lov/HrdbMockupGet");
@@ -255,7 +255,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // =============================================================================
       // =============================================================================
       // =============================================================================
-      
+
       // For Display Mockup Data (ON/OFF)
       const isEmpDataMockup = false;
       let tempEmpMockupData: any;
