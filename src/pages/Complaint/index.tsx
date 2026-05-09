@@ -2241,7 +2241,7 @@ export default function Complaint() {
         แจ้งเตือนปัญหาข้อร้องเรียนของรายการ CAS Number : CAS_NUMBER มีรายละเอียดดังต่อไปนี้
       </p>
       <b style="margin-top: 5px;">
-        ** หากต้องการติดตามรายการข้อร้องเรียน สามารถติดตามได้ผ่านระบบ <a href="http://intranet.trrgroup.com/cas"style="color:#0b5ed7; text-decoration:underline;">[CAS] Corrective Action System </a>** 
+        ** หากต้องการติดตามรายการข้อร้องเรียน สามารถติดตามได้ผ่านระบบ <a href="http://intranet.your-company.com/cas"style="color:#0b5ed7; text-decoration:underline;">[CAS] Corrective Action System </a>** 
       </b>
         <br />
         <h2 style="color: #d32f2f; border-bottom: 2px solid #d32f2f; padding-bottom: 10px;">
@@ -2330,7 +2330,7 @@ export default function Complaint() {
         <p style="margin-top: 20px; font-size: 14px; color: #000000;">
         ขอแสดงความนับถือ,<br />
           CAS - Corrective Action System<br />
-          Thai Roong Ruang Sugar Group
+          Your Company Group
           <br /><br /><br />
           ****************************************************************************************<br />
           อีเมลฉบับนี้ เป็นการจัดส่งผ่านระบบอัติโนมัติ โดยท่านไม่สามารถตอบกลับผ่านเมลนี้ได้
@@ -2355,7 +2355,7 @@ export default function Complaint() {
         แจ้งเตือนปัญหาข้อร้องเรียนของรายการ CAS Number : CAS_NUMBER มีรายละเอียดดังต่อไปนี้
       </p>
       <b style="margin-top: 5px;">
-        ** หากต้องการติดตามรายการข้อร้องเรียน สามารถติดตามได้ผ่านระบบ <a href="http://intranet.trrgroup.com/cas"style="color:#0b5ed7; text-decoration:underline;">[CAS] Corrective Action System </a>** 
+        ** หากต้องการติดตามรายการข้อร้องเรียน สามารถติดตามได้ผ่านระบบ <a href="http://intranet.your-company.com/cas"style="color:#0b5ed7; text-decoration:underline;">[CAS] Corrective Action System </a>** 
       </b>
         <br />
         <h2 style="color: #d32f2f; border-bottom: 2px solid #d32f2f; padding-bottom: 10px;">
@@ -2444,7 +2444,7 @@ export default function Complaint() {
         <p style="margin-top: 20px; font-size: 14px; color: #000000;">
         ขอแสดงความนับถือ,<br />
           CAS - Corrective Action System<br />
-          Thai Roong Ruang Sugar Group
+          Your Company Group
           <br /><br /><br />
           ****************************************************************************************<br />
           อีเมลฉบับนี้ เป็นการจัดส่งผ่านระบบอัติโนมัติ โดยท่านไม่สามารถตอบกลับผ่านเมลนี้ได้
@@ -2622,7 +2622,7 @@ export default function Complaint() {
       </p>
         <br />
         <b style="margin-top: 5px;">
-        ** หากต้องการติดตามรายการข้อร้องเรียน สามารถติดตามได้ผ่านระบบ <a href="http://intranet.trrgroup.com/cas"style="color:#0b5ed7; text-decoration:underline;">[CAS] Corrective Action System </a>** 
+        ** หากต้องการติดตามรายการข้อร้องเรียน สามารถติดตามได้ผ่านระบบ <a href="http://intranet.your-company.com/cas"style="color:#0b5ed7; text-decoration:underline;">[CAS] Corrective Action System </a>** 
       </b>
         <h2 style="color: #d32f2f; border-bottom: 2px solid #d32f2f; padding-bottom: 10px;">
           แผนกผู้ถูกร้องเรียน (Respondent Department)
@@ -2711,7 +2711,7 @@ export default function Complaint() {
         <p style="margin-top: 20px; font-size: 14px; color: #000000;">
         ขอแสดงความนับถือ,<br />
           CAS - Corrective Action System<br />
-          Thai Roong Ruang Sugar Group
+          Your Company Group
           <br /><br /><br />
           ****************************************************************************************<br />
           อีเมลฉบับนี้ เป็นการจัดส่งผ่านระบบอัติโนมัติ โดยท่านไม่สามารถตอบกลับผ่านเมลนี้ได้
@@ -2736,7 +2736,7 @@ export default function Complaint() {
         แจ้งเตือนปัญหาข้อร้องเรียนของรายการ CAS Number : CAS_NUMBER มีรายละเอียดดังต่อไปนี้
       </p>
       <b style="margin-top: 5px;">
-        ** หากต้องการติดตามรายการข้อร้องเรียน สามารถติดตามได้ผ่านระบบ <a href="http://intranet.trrgroup.com/cas"style="color:#0b5ed7; text-decoration:underline;">[CAS] Corrective Action System </a>** 
+        ** หากต้องการติดตามรายการข้อร้องเรียน สามารถติดตามได้ผ่านระบบ <a href="http://intranet.your-company.com/cas"style="color:#0b5ed7; text-decoration:underline;">[CAS] Corrective Action System </a>** 
       </b>
         <br />
         <h2 style="color: #d32f2f; border-bottom: 2px solid #d32f2f; padding-bottom: 10px;">
@@ -2825,7 +2825,7 @@ export default function Complaint() {
         <p style="margin-top: 20px; font-size: 14px; color: #000000;">
         ขอแสดงความนับถือ,<br />
           CAS - Corrective Action System<br />
-          Thai Roong Ruang Sugar Group
+          Your Company Group
           <br /><br /><br />
           ****************************************************************************************<br />
           อีเมลฉบับนี้ เป็นการจัดส่งผ่านระบบอัติโนมัติ โดยท่านไม่สามารถตอบกลับผ่านเมลนี้ได้
@@ -3135,7 +3135,7 @@ export default function Complaint() {
         เรียนมาเพื่อทราบ เพื่อพิจารณายกเลิก หรือ แก้ไข
       </p>
       <b style="margin-top: 5px;">
-        ** หากต้องการติดตามรายการข้อร้องเรียน สามารถติดตามได้ผ่านระบบ <a href="http://intranet.trrgroup.com/cas"style="color:#0b5ed7; text-decoration:underline;">[CAS] Corrective Action System </a>** 
+        ** หากต้องการติดตามรายการข้อร้องเรียน สามารถติดตามได้ผ่านระบบ <a href="http://intranet.your-company.com/cas"style="color:#0b5ed7; text-decoration:underline;">[CAS] Corrective Action System </a>** 
       </b>
         <br />
         <h2 style="color: #2196f3; border-bottom: 2px solid #2196f3; padding-bottom: 10px;">
@@ -3173,7 +3173,7 @@ export default function Complaint() {
         <p style="margin-top: 20px; font-size: 14px; color: #000000;">
         ขอแสดงความนับถือ,<br />
           CAS - Corrective Action System<br />
-          Thai Roong Ruang Sugar Group
+          Your Company Group
           <br /><br /><br />
           ****************************************************************************************<br />
           อีเมลฉบับนี้ เป็นการจัดส่งผ่านระบบอัติโนมัติ โดยท่านไม่สามารถตอบกลับผ่านเมลนี้ได้
@@ -3321,7 +3321,7 @@ export default function Complaint() {
         เรียนมาเพื่อทราบ เพื่อพิจารณายกเลิก หรือ แก้ไข
       </p>
       <b style="margin-top: 5px;">
-        ** หากต้องการติดตามรายการข้อร้องเรียน สามารถติดตามได้ผ่านระบบ <a href="http://intranet.trrgroup.com/cas"style="color:#0b5ed7; text-decoration:underline;">[CAS] Corrective Action System </a>** 
+        ** หากต้องการติดตามรายการข้อร้องเรียน สามารถติดตามได้ผ่านระบบ <a href="http://intranet.your-company.com/cas"style="color:#0b5ed7; text-decoration:underline;">[CAS] Corrective Action System </a>** 
       </b>
         <br />
          <h2 style="color: #d32f2f; border-bottom: 2px solid #d32f2f; padding-bottom: 10px;">
@@ -3368,7 +3368,7 @@ export default function Complaint() {
         <p style="margin-top: 20px; font-size: 14px; color: #000000;">
         ขอแสดงความนับถือ,<br />
           CAS - Corrective Action System<br />
-          Thai Roong Ruang Sugar Group
+          Your Company Group
           <br /><br /><br />
           ****************************************************************************************<br />
           อีเมลฉบับนี้ เป็นการจัดส่งผ่านระบบอัติโนมัติ โดยท่านไม่สามารถตอบกลับผ่านเมลนี้ได้
@@ -3577,7 +3577,7 @@ export default function Complaint() {
         เรียนมาเพื่อทราบ เพื่อพิจารณายกเลิก หรือ แก้ไข
       </p>
       <b style="margin-top: 5px;">
-        ** หากต้องการติดตามรายการข้อร้องเรียน สามารถติดตามได้ผ่านระบบ <a href="http://intranet.trrgroup.com/cas"style="color:#0b5ed7; text-decoration:underline;">[CAS] Corrective Action System </a>** 
+        ** หากต้องการติดตามรายการข้อร้องเรียน สามารถติดตามได้ผ่านระบบ <a href="http://intranet.your-company.com/cas"style="color:#0b5ed7; text-decoration:underline;">[CAS] Corrective Action System </a>** 
       </b>
         <br />
         <h2 style="color: #d32f2f; border-bottom: 2px solid #d32f2f; padding-bottom: 10px;">
@@ -3624,7 +3624,7 @@ export default function Complaint() {
         <p style="margin-top: 20px; font-size: 14px; color: #000000;">
         ขอแสดงความนับถือ,<br />
           CAS - Corrective Action System<br />
-          Thai Roong Ruang Sugar Group
+          Your Company Group
           <br /><br /><br />
           ****************************************************************************************<br />
           อีเมลฉบับนี้ เป็นการจัดส่งผ่านระบบอัติโนมัติ โดยท่านไม่สามารถตอบกลับผ่านเมลนี้ได้
@@ -3825,7 +3825,7 @@ export default function Complaint() {
         แจ้งเตือนปัญหาข้อร้องเรียนของรายการ CAS Number : ${email_casNumber} มีรายละเอียดดังต่อไปนี้
       </p>
       <b style="margin-top: 5px;">
-        ** หากต้องการติดตามรายการข้อร้องเรียน สามารถติดตามได้ผ่านระบบ <a href="http://intranet.trrgroup.com/cas"style="color:#0b5ed7; text-decoration:underline;">[CAS] Corrective Action System </a>** 
+        ** หากต้องการติดตามรายการข้อร้องเรียน สามารถติดตามได้ผ่านระบบ <a href="http://intranet.your-company.com/cas"style="color:#0b5ed7; text-decoration:underline;">[CAS] Corrective Action System </a>** 
       </b>
         <br />
         <h2 style="color: #d32f2f; border-bottom: 2px solid #d32f2f; padding-bottom: 10px;">
@@ -3872,7 +3872,7 @@ export default function Complaint() {
         <p style="margin-top: 20px; font-size: 14px; color: #000000;">
         ขอแสดงความนับถือ,<br />
           CAS - Corrective Action System<br />
-          Thai Roong Ruang Sugar Group
+          Your Company Group
           <br /><br /><br />
           ****************************************************************************************<br />
           อีเมลฉบับนี้ เป็นการจัดส่งผ่านระบบอัติโนมัติ โดยท่านไม่สามารถตอบกลับผ่านเมลนี้ได้
@@ -4170,7 +4170,7 @@ export default function Complaint() {
         แจ้งเตือนปัญหาข้อร้องเรียนของรายการ CAS Number : ${email_casNumber} มีรายละเอียดดังต่อไปนี้
       </p>
       <b style="margin-top: 5px;">
-        ** หากต้องการติดตามรายการข้อร้องเรียน สามารถติดตามได้ผ่านระบบ <a href="http://intranet.trrgroup.com/cas"style="color:#0b5ed7; text-decoration:underline;">[CAS] Corrective Action System </a>** 
+        ** หากต้องการติดตามรายการข้อร้องเรียน สามารถติดตามได้ผ่านระบบ <a href="http://intranet.your-company.com/cas"style="color:#0b5ed7; text-decoration:underline;">[CAS] Corrective Action System </a>** 
       </b>
         <br />
         <h2 style="color: #ff9800; border-bottom: 2px solid #ff9800; padding-bottom: 10px;">
@@ -4265,7 +4265,7 @@ export default function Complaint() {
         <p style="margin-top: 20px; font-size: 14px; color: #000000;">
         ขอแสดงความนับถือ,<br />
           CAS - Corrective Action System<br />
-          Thai Roong Ruang Sugar Group
+          Your Company Group
           <br /><br /><br />
           ****************************************************************************************<br />
           อีเมลฉบับนี้ เป็นการจัดส่งผ่านระบบอัติโนมัติ โดยท่านไม่สามารถตอบกลับผ่านเมลนี้ได้
@@ -4419,7 +4419,7 @@ export default function Complaint() {
         แจ้งเตือนปัญหาข้อร้องเรียนของรายการ CAS Number : ${email_casNumber} มีรายละเอียดดังต่อไปนี้
       </p>
       <b style="margin-top: 5px;">
-        ** หากต้องการติดตามรายการข้อร้องเรียน สามารถติดตามได้ผ่านระบบ <a href="http://intranet.trrgroup.com/cas"style="color:#0b5ed7; text-decoration:underline;">[CAS] Corrective Action System </a>** 
+        ** หากต้องการติดตามรายการข้อร้องเรียน สามารถติดตามได้ผ่านระบบ <a href="http://intranet.your-company.com/cas"style="color:#0b5ed7; text-decoration:underline;">[CAS] Corrective Action System </a>** 
       </b>
         <br />
         <h2 style="color: #2196f3; border-bottom: 2px solid #2196f3; padding-bottom: 10px;">
@@ -4476,7 +4476,7 @@ export default function Complaint() {
         <p style="margin-top: 20px; font-size: 14px; color: #000000;">
         ขอแสดงความนับถือ,<br />
           CAS - Corrective Action System<br />
-          Thai Roong Ruang Sugar Group
+          Your Company Group
           <br /><br /><br />
           ****************************************************************************************<br />
           อีเมลฉบับนี้ เป็นการจัดส่งผ่านระบบอัติโนมัติ โดยท่านไม่สามารถตอบกลับผ่านเมลนี้ได้
@@ -4700,7 +4700,7 @@ export default function Complaint() {
         แจ้งเตือนปัญหาข้อร้องเรียนของรายการ CAS Number : ${email_casNumber} มีรายละเอียดดังต่อไปนี้
       </p>
       <b style="margin-top: 5px;">
-        ** หากต้องการติดตามรายการข้อร้องเรียน สามารถติดตามได้ผ่านระบบ <a href="http://intranet.trrgroup.com/cas"style="color:#0b5ed7; text-decoration:underline;">[CAS] Corrective Action System </a>** 
+        ** หากต้องการติดตามรายการข้อร้องเรียน สามารถติดตามได้ผ่านระบบ <a href="http://intranet.your-company.com/cas"style="color:#0b5ed7; text-decoration:underline;">[CAS] Corrective Action System </a>** 
       </b>
         <br />
         <h2 style="color: #2196f3; border-bottom: 2px solid #2196f3; padding-bottom: 10px;">
@@ -4757,7 +4757,7 @@ export default function Complaint() {
         <p style="margin-top: 20px; font-size: 14px; color: #000000;">
         ขอแสดงความนับถือ,<br />
           CAS - Corrective Action System<br />
-          Thai Roong Ruang Sugar Group
+          Your Company Group
           <br /><br /><br />
           ****************************************************************************************<br />
           อีเมลฉบับนี้ เป็นการจัดส่งผ่านระบบอัติโนมัติ โดยท่านไม่สามารถตอบกลับผ่านเมลนี้ได้
@@ -4979,7 +4979,7 @@ export default function Complaint() {
         แจ้งเตือนการปิดปัญหาข้อร้องเรียน มีรายละเอียดดังต่อไปนี้
       </p>
       <b style="margin-top: 5px;">
-        ** หากต้องการติดตามรายการข้อร้องเรียน สามารถติดตามได้ผ่านระบบ <a href="http://intranet.trrgroup.com/cas"style="color:#0b5ed7; text-decoration:underline;">[CAS] Corrective Action System </a>** 
+        ** หากต้องการติดตามรายการข้อร้องเรียน สามารถติดตามได้ผ่านระบบ <a href="http://intranet.your-company.com/cas"style="color:#0b5ed7; text-decoration:underline;">[CAS] Corrective Action System </a>** 
       </b>
         <br />
         <h2 style="color: #5a5a5aff; border-bottom: 2px solid #5a5a5aff; padding-bottom: 10px;">
@@ -5036,7 +5036,7 @@ export default function Complaint() {
         <p style="margin-top: 20px; font-size: 14px; color: #000000;">
         ขอแสดงความนับถือ,<br />
           CAS - Corrective Action System<br />
-          Thai Roong Ruang Sugar Group
+          Your Company Group
           <br /><br /><br />
           ****************************************************************************************<br />
           อีเมลฉบับนี้ เป็นการจัดส่งผ่านระบบอัติโนมัติ โดยท่านไม่สามารถตอบกลับผ่านเมลนี้ได้

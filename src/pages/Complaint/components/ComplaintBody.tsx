@@ -776,7 +776,7 @@ export default function ComplaintBody({
         <p style="margin-top: 20px; font-size: 14px; color: #000000;">
         ขอแสดงความนับถือ,<br />
           CAS - Corrective Action System<br />
-          Thai Roong Ruang Sugar Group
+          Your Company Group
           <br /><br /><br />
           ****************************************************************************************<br />
           อีเมลฉบับนี้ เป็นการจัดส่งผ่านระบบอัติโนมัติ โดยท่านไม่สามารถตอบกลับผ่านเมลนี้ได้

@@ -21,7 +21,7 @@ export default function LoadingScreen(props: LoadingScreen) {
       >
         <div className="w-96 h-72">
           <img
-            //src="https://uat-tools.trrgroup.com/storage/INTRANET/PROD/Asset/LoadingGIF/LIN_Loading_V2(Develop Version).gif"
+            //src="https://uat-tools.your-company.com/storage/INTRANET/PROD/Asset/LoadingGIF/Loading_V2(Develop Version).gif"
             src={`${import.meta.env.VITE_APP_TRR_URL_LOADING}`}
             className="light-logo"
             alt="Metronic light logo++++++++++++"

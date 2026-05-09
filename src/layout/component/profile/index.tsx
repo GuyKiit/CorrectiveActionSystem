@@ -28,7 +28,7 @@ const isDefaultPhotoUrl = (url: string) => {
     const targetFilename = "nophoto.png";
 
     // 1. Split the URL path by '/'
-    // Example: "http://.../TRRGROUP.COM/nophoto.png" -> ["http:", "", "dev-web.trrgroup.com", "empimage", "TRRGROUP.COM", "nophoto.png"]
+    // Example: "http://.../COMPANY.COM/nophoto.png" -> ["http:", "", "dev-web.your-company.com", "empimage", "COMPANY.COM", "nophoto.png"]
     const parts = url.split('/');
 
     // 2. Get the last part (the filename)
@@ -48,8 +48,8 @@ export default function Profile({ isOpen }: Profile) {
   const [profileModalOpen, setProfileModalOpen] = React.useState(false);
   const [isDefaultPhoto, setIsDefaultPhoto] = React.useState(false);
   const [manualGuideOpen, setManualGuideOpen] = React.useState(false);
-  const manualGuideUrl = "https://intra-tools.trrgroup.com/storage/CAS/PROD/UserManual/UserManual-CAS-20260202.pdf";
-  // const manualGuideUrl = "https://intra-tools.trrgroup.com/storage/AVL/PROD/doc_form/TRR-Business-Ethics-for-partners.pdf";
+  const manualGuideUrl = `${import.meta.env.VITE_APP_SYS_STORAGE}/CAS/PROD/UserManual/UserManual-CAS-20260202.pdf`;
+  // const manualGuideUrl = `${import.meta.env.VITE_APP_SYS_STORAGE}/AVL/PROD/doc_form/Business-Ethics-for-partners.pdf`;
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);

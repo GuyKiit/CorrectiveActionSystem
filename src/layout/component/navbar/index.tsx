@@ -72,9 +72,9 @@ export default function Navbar({ isOpen, setIsOpen }: NavbarProps) {
               {/* Company Logo */}
               <a href="/" className="flex ml-6">
                 <img
-                  src="https://intra-tools.trrgroup.com/storage/INTRANET/PROD/Asset/Logo_structure/Logo/EN/org_logo_en_light_std.png"
+                  src={`${import.meta.env.VITE_APP_TRR_URL_LOGO}`}
                   className="h-14"
-                  alt="TRR Logo"
+                  alt="Company Logo"
                 />
               </a>
 

@@ -467,7 +467,7 @@ export default function DepartmentSettingBody({
                                 }
                             />
                             <Typography variant="caption" color="textSecondary" sx={{ mt: 0.5, display: 'block' }}>
-                                กรุณากรอกอีเมลที่ต้องการให้มีการส่งอีเมลแจ้งเตือน ยกตัวอย่างเช่น test1@trrgroup.com (ในกรณีที่มีหลายอีเมล กรุณาใช้ , ในการแบ่งอีเมล เช่น test1@trrgroup.com,test2@trrgroup.com,test3@trrgroup.com)
+                                กรุณากรอกอีเมลที่ต้องการให้มีการส่งอีเมลแจ้งเตือน ยกตัวอย่างเช่น test1@your-company.com (ในกรณีที่มีหลายอีเมล กรุณาใช้ , ในการแบ่งอีเมล เช่น test1@your-company.com,test2@your-company.com,test3@your-company.com)
                             </Typography>
                            
                         </Grid>

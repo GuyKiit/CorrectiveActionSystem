@@ -72,7 +72,7 @@ export default function OnlineUsers() {
       const response = await _POST_LOG(
         dataset,
         "/syslog/sys_current_access_count"
-        // "http://trr-api.trrgroup.com/api_sys_log/syslog/sys_current_access_count"
+        // "http://your-api.your-company.com/api_sys_log/syslog/sys_current_access_count"
       );
 
       // console.log("🔍 [user_current_count] Response:", response);
@@ -246,7 +246,7 @@ export default function OnlineUsers() {
                     <Tooltip title="Chat on Teams">
                       <IconButton 
                         size="small" 
-                        onClick={() => window.open(`https://teams.microsoft.com/l/chat/0/0?users=${user.name.replace(' ', '.').toLowerCase()}@trrgroup.com`, '_blank')}
+                        onClick={() => window.open(`https://teams.microsoft.com/l/chat/0/0?users=${user.name.replace(' ', '.').toLowerCase()}@your-company.com`, '_blank')}
                         sx={{ 
                           color: '#6264A7', // Microsoft Teams color
                           bgcolor: 'rgba(98, 100, 167, 0.1)',
